@@ -14,7 +14,7 @@ export function App() {
       </div>
 
       <div>
-        <h2>Po1sts</h2>
+        <h2>Gateways</h2>
         Data = {data}
         <br />
         isLonading = {isLoading}

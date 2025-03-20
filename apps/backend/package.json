@@ -1,0 +1,28 @@
+{
+  "name": "@director/cli",
+  "module": "index.ts",
+  "type": "module",
+  "version": "0.0.1",
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/bun": "latest",
+    "@types/express": "^5.0.0"
+  },
+  "scripts": {
+    "backend": "bun run bin/backend.ts",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "build": "bun build ./bin/backend.ts --compile --outfile ./dist/backend",
+    "inspector": "npx @modelcontextprotocol/inspector",
+    "clean": "rm -rf .turbo dist/*",
+    "test": "bun test"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@director/core": "0.0.1",
+    "@modelcontextprotocol/sdk": "^1.7.0",
+    "express": "^4.21.2"
+  }
+}

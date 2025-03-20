@@ -23,38 +23,6 @@ bun cli start my-first-proxy
 bun cli install my-first-proxy -c claude
 ```
 
-## Configuration
-
-Configuration is stored in `~/.mcp-cli/config.json`. On first run, a default configuration is created with example servers.
-
-Example configuration:
-```json
-{
-  "ssePort": 3006,
-  "proxies": [
-    {
-      "name": "my-first-proxy",
-      "servers": [
-        {
-          "name": "Hackernews",
-          "transport": {
-            "command": "uvx",
-            "args": ["mcp-hn"]
-          }
-        },
-        {
-          "name": "Fetch",
-          "transport": {
-            "command": "uvx",
-            "args": ["mcp-server-fetch"]
-          }
-        }
-      ]
-    }
-  ]
-}
-```
-
 ## Development
 
 ```bash
@@ -70,8 +38,3 @@ bun lint
 # Format code
 bun format
 ```
-
-## TODO
-
-- Install to Cursor
-- http://localhost:3006/<proxy_name>/sse

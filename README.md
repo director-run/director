@@ -45,3 +45,8 @@ bun run dev
 ### Build
 
 TODO
+
+## TODO
+
+- Install to Cursor
+- http://localhost:3006/<proxy_name>/sse

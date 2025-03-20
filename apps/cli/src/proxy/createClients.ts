@@ -7,14 +7,17 @@ import { getLogger } from "../logger";
 
 const logger = getLogger("proxy/createClients");
 
-const sleep = (time: number) => new Promise<void>((resolve) => setTimeout(() => resolve(), time));
+const sleep = (time: number) =>
+  new Promise<void>((resolve) => setTimeout(() => resolve(), time));
 export interface ConnectedClient {
   client: Client;
   cleanup: () => Promise<void>;
   name: string;
 }
 
-const createClient = (server: ServerConfig): { client: Client | undefined; transport: Transport | undefined } => {
+const createClient = (
+  server: ServerConfig,
+): { client: Client | undefined; transport: Transport | undefined } => {
   let transport: Transport | null = null;
   try {
     if (server.transport.type === "sse") {
@@ -34,7 +37,10 @@ const createClient = (server: ServerConfig): { client: Client | undefined; trans
       });
     }
   } catch (error) {
-    console.error(`Failed to create transport ${server.transport.type || "stdio"} to ${server.name}:`, error);
+    console.error(
+      `Failed to create transport ${server.transport.type || "stdio"} to ${server.name}:`,
+      error,
+    );
   }
 
   if (!transport) {
@@ -59,7 +65,9 @@ const createClient = (server: ServerConfig): { client: Client | undefined; trans
   return { client, transport };
 };
 
-export const createClients = async (servers: ServerConfig[]): Promise<ConnectedClient[]> => {
+export const createClients = async (
+  servers: ServerConfig[],
+): Promise<ConnectedClient[]> => {
   const clients: ConnectedClient[] = [];
 
   for (const server of servers) {

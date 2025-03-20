@@ -16,17 +16,19 @@
     "test": "echo 'No tests yet for desktop app'"
   },
   "dependencies": {
+    "@director/ui": "workspace:*",
+    "@tailwindcss/vite": "^4.0.14",
     "@tauri-apps/api": "^1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "tsc": "^2.0.4"
+    "tailwindcss": "^4.0.14"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1",
-    "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
+    "@types/react": "^19.0.12",
     "@vitejs/plugin-react": "^4.3.4",
-    "typescript": "~5.6.2",
+    "typescript": "^5.8.2",
     "vite": "^6.0.3"
   }
 }

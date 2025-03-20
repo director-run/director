@@ -19,7 +19,16 @@ const displaySans = localFont({
       style: "italic",
     },
   ],
-  fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", "monospace"],
+  fallback: [
+    "ui-monospace",
+    "SFMono-Regular",
+    "Menlo",
+    "Monaco",
+    "Consolas",
+    "Liberation Mono",
+    "Courier New",
+    "monospace",
+  ],
   variable: "--font-sans",
 });
 
@@ -28,8 +37,8 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
-  title: "working.dev",
-  description: "Working is a new toolbox for product builders.",
+  title: "director.run",
+  description: "director.run is a new toolbox for product builders.",
 };
 
 export default function RootLayout({

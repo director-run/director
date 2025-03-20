@@ -17,6 +17,9 @@
     "clean": "rm -rf .turbo dist/*",
     "test": "bun test"
   },
+  "exports": {
+    "./router": "./src/trpc/router.ts"
+  },
   "peerDependencies": {
     "typescript": "^5"
   },

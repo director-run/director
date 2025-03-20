@@ -14,6 +14,13 @@
     "verbatimModuleSyntax": true,
     "noEmit": true,
 
+    // Path mapping for workspace packages
+    "baseUrl": ".",
+    "paths": {
+      "@director/core": ["../../packages/core"],
+      "@director/core/*": ["../../packages/core/*"]
+    },
+
     // Best practices
     "strict": true,
     "skipLibCheck": true,

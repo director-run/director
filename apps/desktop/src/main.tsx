@@ -1,35 +1,19 @@
-import { AppRouter } from "@director/backend/router";
 import { Command } from "@tauri-apps/api/shell";
 import type { Child } from "@tauri-apps/api/shell";
-import { createTRPCClient, httpBatchLink } from "@trpc/client";
+import {} from "@trpc/client";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { App } from "./App";
 import { getLogger } from "./logger";
+import { TRPCProvider } from "./trpc/client";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <App />
+    <TRPCProvider>
+      <App />
+    </TRPCProvider>
   </React.StrictMode>,
 );
-
-async function trpcConnect() {
-  const logger = getLogger("trpc");
-  logger.info("Connecting to backend...");
-
-  const trpc = createTRPCClient<AppRouter>({
-    links: [
-      httpBatchLink({
-        url: "http://localhost:3000",
-      }),
-    ],
-  });
-  console.log(trpc);
-  // const greeting = await trpc.helloRouter.greeting({ name: "somkiat" });
-  // logger.info({ greeting }, "Greeting received");
-}
-
-trpcConnect();
 
 async function startBackend() {
   const logger = getLogger("backend");

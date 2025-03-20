@@ -18,7 +18,8 @@
   },
   "dependencies": {
     "@tauri-apps/api": "^1",
-    "@trpc/client": "^10.45.2",
+    "@trpc/client": "11.0.0-rc.700",
+    "@trpc/react-query": "11.0.0-rc.700",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tsc": "^2.0.4"

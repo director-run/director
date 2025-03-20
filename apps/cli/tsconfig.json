@@ -16,6 +16,8 @@
 
     // Path mapping for workspace packages
     "baseUrl": ".",
+
+    // TODO: Is this the right way to use turbo packages?
     "paths": {
       "@director/core": ["../../packages/core"],
       "@director/core/*": ["../../packages/core/*"]

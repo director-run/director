@@ -2,6 +2,7 @@ import { CONFIG_FILE_PATH, getLogger, readConfig } from "@director/core";
 import {} from "@director/core";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { Command } from "commander";
+import cors from "cors";
 import express from "express";
 import { appRouter } from "../trpc/router";
 
@@ -18,6 +19,8 @@ logger.info(`Hello backend`);
 
 const app = express();
 const port = 3000;
+
+app.use(cors());
 
 app.use(
   "/trpc",

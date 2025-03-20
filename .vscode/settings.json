@@ -49,11 +49,5 @@
   ],
   "search.exclude": {
     "**/node_modules": true
-  },
-  "[yaml]": {
-    "editor.defaultFormatter": "redhat.vscode-yaml"
-  },
-  "[html]": {
-    "editor.defaultFormatter": "vscode.html-language-features"
   }
 }

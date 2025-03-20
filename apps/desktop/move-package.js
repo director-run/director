@@ -36,7 +36,7 @@ fs.mkdirSync(targetDirFullPath, { recursive: true });
 const sourceFullPath = path.resolve(__dirname, sourcePath + ext);
 
 // Extract binary name from source path
-const binaryName = path.basename(sourcePath).split('.')[0];
+const binaryName = path.basename(sourcePath).split(".")[0];
 
 // Create target path with triple
 const targetFullPath = path.join(targetDirFullPath, `${binaryName}-${targetTriple}${ext}`);

@@ -15,8 +15,8 @@ async function startBackend() {
   const logger = getLogger("backend");
   logger.info("Starting backend...");
 
-  const command = Command.sidecar("binaries/cli", ["start", "my-first-proxy"]);
-  logger.info("Starting CLI process...");
+  const command = Command.sidecar("binaries/backend");
+  logger.info("Starting backend process...");
 
   // Set up event listeners before spawning
   command.on("close", (data) => {

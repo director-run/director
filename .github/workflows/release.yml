@@ -66,4 +66,5 @@ jobs:
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
+          verbose: true
           projectPath: "apps/desktop/"

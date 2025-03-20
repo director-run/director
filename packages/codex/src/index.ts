@@ -1,1 +1,0 @@
-export { codex } from "./codex";

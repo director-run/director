@@ -22,7 +22,16 @@
   "packageManager": "bun@1.1.45",
   "workspaces": ["packages/*", "apps/*"],
   "trustedDependencies": [
+    "@biomejs/biome",
     "@tree-sitter-grammars/tree-sitter-markdown",
-    "tree-sitter-markdown"
+    "@workingco/icons",
+    "@workingdev/codex",
+    "esbuild",
+    "sharp",
+    "tree-sitter",
+    "tree-sitter-javascript",
+    "tree-sitter-json",
+    "tree-sitter-markdown",
+    "tree-sitter-typescript"
   ]
 }

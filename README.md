@@ -12,13 +12,11 @@ Find out more about each application and package in their respective `README.md`
 apps/
 ├── cli                 # cli application
 ├── desktop             # desktop application
-├── design-playground   # ?
 └── website             # https://director.run
 
 packages/
-├── icons               # ?
-└── design              # ?
-└── codex               # ?
+├── icons               # We need to replace this because these icons aint opensource, but will leave for now
+└── design              # Shared design components
 ```
 
 ## Development

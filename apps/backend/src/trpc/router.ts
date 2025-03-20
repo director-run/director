@@ -1,5 +1,6 @@
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
+import { z } from "zod";
 
 export const createTRPCContext = async (_opts: { headers: Headers }) => {
   return {};
@@ -21,6 +22,11 @@ export const healthRouter = createTRPCRouter({
 
 export const appRouter = createTRPCRouter({
   health: healthRouter,
+  greeting: t.procedure
+    .input(z.object({ name: z.string() }))
+    .query(({ input }) => {
+      return `Hello ${input.name}` as const;
+    }),
 });
 
 // export type definition of API

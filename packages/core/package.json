@@ -6,7 +6,6 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@types/bun": "latest",
-    "@types/express": "^5.0.0",
     "@types/lodash": "^4.17.16"
   },
   "scripts": {
@@ -22,8 +21,6 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.7.0",
-    "cors": "^2.8.5",
-    "express": "^4.21.2",
     "lodash": "^4.17.21",
     "pino": "^9.6.0",
     "pino-pretty": "^13.0.0",

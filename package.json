@@ -20,6 +20,5 @@
     "typescript": "^5.7.3"
   },
   "packageManager": "bun@1.1.45",
-  "workspaces": ["packages/*", "apps/*"],
-  "trustedDependencies": ["@workingco/icons"]
+  "workspaces": ["packages/*", "apps/*"]
 }

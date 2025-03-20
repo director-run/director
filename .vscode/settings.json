@@ -5,25 +5,11 @@
     "quickfix.biome": "explicit",
     "source.organizeImports.biome": "explicit"
   },
-  "tailwindCSS.files.exclude": [
-    "!**/*.tsx",
-    "!**/*.css",
-    "**/.git/**",
-    "**/node_modules/**",
-    "**/.hg/**"
-  ],
-  "tailwindCSS.experimental.classRegex": [
-    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
-    ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
-    ["classNames\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
-    ["className\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
-  ],
+  "tailwindCSS.files.exclude": ["!**/*.tsx", "!**/*.css", "**/.git/**", "**/node_modules/**", "**/.hg/**"],
+  "tailwindCSS.experimental.classRegex": [["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"], ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"], ["classNames\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"], ["className\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]],
   "tailwindCSS.experimental.configFile": {
     "./apps/website/src/app/globals.css": "./apps/website/src/**/*",
-    "./apps/design-playground/src/app/globals.css": [
-      "./apps/design-playground/src/**/*",
-      "./packages/design/src/**/*"
-    ]
+    "./apps/design-playground/src/app/globals.css": ["./apps/design-playground/src/**/*", "./packages/design/src/**/*"]
   },
   "jest.runMode": "on-demand",
   "[prisma]": {
@@ -46,11 +32,14 @@
   },
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.preferences.autoImportFileExcludePatterns": [
-    "next/router.d.ts",
-    "next/dist/client/router.d.ts"
-  ],
+  "typescript.preferences.autoImportFileExcludePatterns": ["next/router.d.ts", "next/dist/client/router.d.ts"],
   "search.exclude": {
     "**/node_modules": true
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
   }
 }

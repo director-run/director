@@ -1,0 +1,36 @@
+{
+  "name": "@director/core",
+  "module": "index.ts",
+  "type": "module",
+  "version": "0.0.1",
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/bun": "latest",
+    "@types/lodash": "^4.17.16"
+  },
+  "scripts": {
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "build": "bun build ./bin/cli.ts --compile --outfile ./dist/cli",
+    "inspector": "npx @modelcontextprotocol/inspector",
+    "clean": "rm -rf .turbo dist/*",
+    "test": "bun test"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "exports": {
+    "./config/*": "./src/config/*.ts",
+    "./error": "./src/error.ts",
+    "./logger": "./src/logger.ts",
+    "./proxy/*": "./src/proxy/*.ts",
+    "./installer/*": "./src/installer/*.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.7.0",
+    "lodash": "^4.17.21",
+    "pino": "^9.6.0",
+    "pino-pretty": "^13.0.0",
+    "zod": "^3.24.2"
+  }
+}

@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/1",
   "build": {
-    "beforeDevCommand": "bun run clean && bun run backend:build && bun run frontend:dev",
-    "beforeBuildCommand": "bun run clean && bun run frontend:build && bun run backend:build",
+    "beforeDevCommand": "bun run clean && bun run cli:build && bun run backend:build && bun run frontend:dev",
+    "beforeBuildCommand": "bun run clean && bun run frontend:build && bun run backend:build && bun run cli:build",
     "devPath": "http://localhost:1420",
     "distDir": "../dist"
   },
@@ -13,11 +13,14 @@
   "tauri": {
     "allowlist": {
       "all": false,
+      "process": {
+        "all": true
+      },
       "shell": {
         "all": false,
         "open": true,
         "sidecar": true,
-        "scope": [{ "name": "binaries/cli", "sidecar": true }]
+        "scope": [{ "name": "binaries/backend", "sidecar": true }]
       }
     },
     "windows": [
@@ -34,8 +37,11 @@
       "active": true,
       "targets": "all",
       "identifier": "dev.working.director",
-      "externalBin": ["binaries/cli"],
-      "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"]
+      "externalBin": ["binaries/cli", "binaries/backend"],
+      "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
+      "macOS": {
+        "entitlements": "./Entitlements.plist"
+      }
     }
   }
 }

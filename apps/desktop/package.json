@@ -7,7 +7,8 @@
     "clean": "rm -rf dist/* && rm -rf src-tauri/binaries/* && rm -rf src-tauri/target/*",
     "frontend:build": "vite build",
     "frontend:dev": "vite",
-    "backend:build": "cd ../cli && bun run build && cd ../desktop && bun run move-package.js",
+    "backend:build": "cd ../backend && bun run build && cd ../desktop && bun run move-package.js ../backend/dist/backend",
+    "cli:build": "cd ../cli && bun run build && cd ../desktop && bun run move-package.js ../cli/dist/cli",
     "build": "bun run tauri build",
     "dev": "bun run tauri dev",
     "tauri": "tauri",
@@ -18,10 +19,16 @@
   "dependencies": {
     "@director/ui": "workspace:*",
     "@tailwindcss/vite": "^4.0.14",
+    "@tanstack/react-query": "^5.26.0",
     "@tauri-apps/api": "^1",
+    "@trpc/client": "11.0.0-rc.700",
+    "@trpc/react-query": "11.0.0-rc.700",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwindcss": "^4.0.14"
+    "superjson": "^2.2.1",
+    "tauri-plugin-store-api": "tauri-apps/tauri-plugin-store",
+    "tsc": "^2.0.4"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1",

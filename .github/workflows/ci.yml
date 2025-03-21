@@ -32,5 +32,5 @@ jobs:
       run: bun run lint
     - name: Test
       run: bun run test
-    # - name: Build
-    #   run: bun run build
+    - name: Build
+      run: bun run build

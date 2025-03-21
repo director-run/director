@@ -9,7 +9,7 @@
     "frontend:dev": "vite",
     "backend:build": "cd ../backend && bun run build && cd ../desktop && bun run move-package.js ../backend/dist/backend",
     "cli:build": "cd ../cli && bun run build && cd ../desktop && bun run move-package.js ../cli/dist/cli",
-    "build": "bun run tauri build",
+    "build": "bun run tauri build -b app --verbose",
     "dev": "bun run tauri dev",
     "tauri": "tauri",
     "lint": "biome check .",

@@ -11,13 +11,13 @@ import { makeQueryClient } from "./query-client";
 
 /**
  * The main tRPC React client instance.
- * 
+ *
  * This object provides access to all your tRPC procedures as React Query hooks.
  * Import this in your components to make tRPC requests.
- * 
+ *
  * @example
  * import { trpc } from './trpc/client';
- * 
+ *
  * // In a component:
  * const greeting = trpc.greeting.useQuery({ name: "World" });
  * console.log(greeting.data); // "Hello World"
@@ -32,10 +32,10 @@ let clientQueryClientSingleton: QueryClient;
 
 /**
  * Gets or creates a QueryClient instance.
- * 
+ *
  * In a desktop application, we always use a singleton pattern to maintain
  * a single query cache throughout the application's lifecycle.
- * 
+ *
  * @returns A QueryClient instance configured for the application
  */
 function getQueryClient() {
@@ -46,7 +46,7 @@ function getQueryClient() {
 
 /**
  * Returns the URL for the tRPC API endpoint.
- * 
+ *
  * In a desktop application, this should point to the local backend server.
  * For development, we use localhost:3000/trpc.
  */
@@ -57,14 +57,14 @@ function getUrl() {
 
 /**
  * TRPCProvider sets up the tRPC client and React Query for the application.
- * 
+ *
  * This provider should be used at the root of your application to enable
  * tRPC hooks and queries throughout your component tree.
- * 
+ *
  * @example
  * // In your main.tsx or App.tsx:
  * import { TRPCProvider } from './trpc/client';
- * 
+ *
  * ReactDOM.createRoot(document.getElementById("root")).render(
  *   <React.StrictMode>
  *     <TRPCProvider>
@@ -72,14 +72,14 @@ function getUrl() {
  *     </TRPCProvider>
  *   </React.StrictMode>
  * );
- * 
+ *
  * // Then in your components, you can use the trpc hooks:
  * import { trpc } from './trpc/client';
- * 
+ *
  * function MyComponent() {
  *   // Use the greeting procedure from your router
  *   const { data, isLoading } = trpc.greeting.useQuery({ name: "User" });
- *   
+ *
  *   if (isLoading) return <div>Loading...</div>;
  *   return <div>{data}</div>;
  * }

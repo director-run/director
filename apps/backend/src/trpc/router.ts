@@ -22,11 +22,9 @@ export const healthRouter = createTRPCRouter({
 
 export const appRouter = createTRPCRouter({
   health: healthRouter,
-  greeting: t.procedure
-    .input(z.object({ name: z.string() }))
-    .query(({ input }) => {
-      return `Hello ${input.name}` as const;
-    }),
+  greeting: t.procedure.input(z.object({ name: z.string() })).query(({ input }) => {
+    return `Hello ${input.name}` as const;
+  }),
 });
 
 // export type definition of API

@@ -1,5 +1,7 @@
-import { CONFIG_FILE_PATH, getLogger, readConfig } from "@director/core";
-import {} from "@director/core";
+import { CONFIG_FILE_PATH } from "@director/core/config/env";
+import { readConfig } from "@director/core/config/readConfig";
+import { getLogger } from "@director/core/logger";
+
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { Command } from "commander";
 import cors from "cors";

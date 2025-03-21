@@ -55,12 +55,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Apple signing & notarization, see: https://v1.tauri.app/v1/guides/distribution/sign-macos
-          # APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
-          # APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-          # APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }} # Using just the part in the parentheses is usually enough, for example ABCDE12345 in Developer ID Application: Walter Tauri (ABCDE12345)
-          # APPLE_ID: ${{ secrets.APPLE_ID }} # Only worked with @icloud.com account for some reason?
-          # APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }} # Use app specific password
-          # APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }} # same as apple signing identity
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }} # Using just the part in the parentheses is usually enough, for example ABCDE12345 in Developer ID Application: Walter Tauri (ABCDE12345)
+          APPLE_ID: ${{ secrets.APPLE_ID }} # Only worked with @icloud.com account for some reason?
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }} # Use app specific password
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }} # same as apple signing identity
         with:
           tagName: v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
           releaseName: 'v__VERSION__'

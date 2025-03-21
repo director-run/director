@@ -25,6 +25,7 @@
     "@modelcontextprotocol/sdk": "^1.7.0",
     "cli-table3": "^0.6.5",
     "commander": "^13.1.0",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "vitest": "^3.0.9"
   }
 }

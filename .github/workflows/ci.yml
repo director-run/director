@@ -6,8 +6,8 @@ name: Test
 on:
   push:
     branches: [ "bm/test-build" ]
-  # pull_request:
-  #   branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:

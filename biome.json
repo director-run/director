@@ -4,23 +4,13 @@
     "enabled": true
   },
   "files": {
-    "ignore": ["node_modules", ".next", "test", "dist", "**/src-tauri/target/**", "public", "**/icons/src/**"]
+    "ignore": ["node_modules", ".next", "test", "dist", "**/src-tauri/target/**", "public"]
   },
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
     "indentWidth": 2,
     "lineWidth": 320
-  },
-  "javascript": {
-    "formatter": {
-      "quoteStyle": "double"
-    }
-  },
-  "json": {
-    "formatter": {
-      "enabled": true
-    }
   },
   "linter": {
     "enabled": true,
@@ -59,6 +49,24 @@
           }
         }
       }
+    }
+  },
+  "css": {
+    "formatter": {
+      "enabled": false
+    },
+    "linter": {
+      "enabled": false
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double"
+    }
+  },
+  "json": {
+    "formatter": {
+      "enabled": true
     }
   },
   "overrides": [

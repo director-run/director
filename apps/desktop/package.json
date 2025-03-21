@@ -30,8 +30,7 @@
     "react-dom": "^19.0.0",
     "superjson": "^2.2.1",
     "tailwindcss": "^4.0.14",
-    "tauri-plugin-store-api": "tauri-apps/tauri-plugin-store",
-    "tsc": "^2.0.4"
+    "tauri-plugin-store-api": "tauri-apps/tauri-plugin-store"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1",

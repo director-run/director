@@ -21,7 +21,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-
+    - name: Install WebKit2GTK from Jammy
+      run: |
+        echo "deb http://archive.ubuntu.com/ubuntu jammy main universe" | sudo tee /etc/apt/sources.list.d/ubuntu22.list
+        sudo apt update
+        sudo apt install -y libwebkit2gtk-4.0-dev
+        sudo rm /etc/apt/sources.list.d/ubuntu22.list
     # Required for tauri build
     - name: Install Linux Dependencies (Ubuntu)
       # if: matrix.os == 'ubuntu-latest'
@@ -36,12 +41,6 @@ jobs:
                             libayatana-appindicator3-dev \
                             librsvg2-dev \
                             libsoup2.4-dev
-    - name: Oll
-      run: |
-        sudo echo "deb http://archive.ubuntu.com/ubuntu jammy main universe" > /etc/apt/sources.list.d/ubuntu22.list
-        sudo apt update
-        sudo apt install -y libwebkit2gtk-4.0-dev
-        sudo rm /etc/apt/sources.list.d/ubuntu22.list
 
 
     - name: Install uv

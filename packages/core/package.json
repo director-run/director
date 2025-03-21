@@ -11,8 +11,6 @@
   "scripts": {
     "lint": "biome check .",
     "format": "biome format --write .",
-    "build": "bun build ./bin/cli.ts --compile --outfile ./dist/cli",
-    "inspector": "npx @modelcontextprotocol/inspector",
     "clean": "rm -rf .turbo dist/*",
     "test": "bun test"
   },

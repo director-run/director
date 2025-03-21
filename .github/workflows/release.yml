@@ -3,7 +3,7 @@ name: 'Release'
 on:
   push:
     branches:
-      - bm/core
+      - bm/ooo
 
 jobs:
   publish-tauri:

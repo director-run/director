@@ -3,13 +3,11 @@ import { readConfig } from "@director/core/config/readConfig";
 import { getLogger } from "@director/core/logger";
 
 import * as trpcExpress from "@trpc/server/adapters/express";
-import { Command } from "commander";
 import cors from "cors";
 import express from "express";
 import { appRouter } from "../trpc/router";
 
 const config = await readConfig(CONFIG_FILE_PATH);
-const program = new Command();
 
 const logger = getLogger("cli");
 

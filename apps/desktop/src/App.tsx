@@ -9,20 +9,12 @@ export function App() {
   return (
     <div className="flex h-[100dvh] w-full flex-col items-center justify-center p-8">
       <Logo className="size-10" />
-    </div>
-    <main className="container">
-      <h1>Welcome to Director</h1>
-
-      <div className="row">
-        <img src={reactLogo} className="logo react" alt="React logo" />
-      </div>
-
       <div>
         <h2>Gateways</h2>
         Data = {data}
         <br />
         isLoading = {isLoading}
       </div>
-    </main>
+    </div>
   );
 }

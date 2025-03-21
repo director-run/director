@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "echo 'TODO: \"next build\" is failing for some reason'",
+    "build": "next build",
     "start": "next start",
     "lint": "biome check .",
     "format": "biome format --write .",

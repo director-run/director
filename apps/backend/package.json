@@ -15,7 +15,7 @@
     "build": "bun build ./bin/backend.ts --compile --outfile ./dist/backend",
     "inspector": "npx @modelcontextprotocol/inspector",
     "clean": "rm -rf .turbo dist/*",
-    "test": "bun test"
+    "test": "echo 'No tests yet for backend app'"
   },
   "exports": {
     "./router": "./src/trpc/router.ts"

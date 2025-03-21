@@ -22,21 +22,14 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    # libgtk-3-dev & libsoup2.4-dev is required for tauri build
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libgtk-3-dev
-
+        sudo apt-get install -y libgtk-3-dev libsoup2.4-dev
 
     - name: Install uv
       uses: astral-sh/setup-uv@v5
-
-    # - uses: oven-sh/setup-bun@v2
-    #   with:
-    #     bun-version: latest
-    # - name: Install dependencies
-    #   run: bun install
-
 
     # - name: Install Rust stable
     #   uses: dtolnay/rust-toolchain@stable
@@ -52,6 +45,9 @@ jobs:
     #   run: bun run lint
     # - name: Test
     #   run: bun run test
-
+    
+    # TODO: add website to the build process
+    # - name: Build
+    #   run: bun turbo run build --filter=!@director/website
     - name: Build
-      run: bun turbo run build --filter=!@director/website
+      run: bun run build --filter '@director/desktop'

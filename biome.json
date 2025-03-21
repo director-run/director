@@ -4,15 +4,7 @@
     "enabled": true
   },
   "files": {
-    "ignore": [
-      "node_modules",
-      ".next",
-      "test",
-      "dist",
-      "**/src-tauri/target/**",
-      "public",
-      "**/icons/src/**"
-    ]
+    "ignore": ["node_modules", ".next", "test", "dist", "**/src-tauri/target/**", "public", "**/icons/src/**"]
   },
   "formatter": {
     "enabled": true,
@@ -71,16 +63,7 @@
   },
   "overrides": [
     {
-      "include": [
-        "**/*.d.ts",
-        "app/**/layout.tsx",
-        "app/**/page.tsx",
-        "app/**/route.ts",
-        "app/**/loading.tsx",
-        "app/**/error.tsx",
-        "app/**/not-found.tsx",
-        "*.config.*"
-      ],
+      "include": ["**/*.d.ts", "app/**/layout.tsx", "app/**/page.tsx", "app/**/route.ts", "app/**/loading.tsx", "app/**/error.tsx", "app/**/not-found.tsx", "*.config.*"],
       "linter": {
         "rules": {
           "style": {

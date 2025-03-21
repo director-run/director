@@ -52,3 +52,13 @@ TODO
 
 - Install to Cursor
 - http://localhost:3006/<proxy_name>/sse
+
+## Release
+
+To release a new version of the app, run:
+
+```bash
+bun run release.ts <version>
+```
+
+Where `<version>` is the new version number of the desktop app (e.g. `0.1.1`). This will automatically update the version of the desktop app and push commits to github.

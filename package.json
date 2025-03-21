@@ -20,5 +20,9 @@
     "typescript": "^5.8.2"
   },
   "packageManager": "bun@1.1.45",
-  "workspaces": ["packages/*", "apps/*"]
+  "workspaces": ["packages/*", "apps/*"],
+  "dependencies": {
+    "semver": "^7.7.1",
+    "zx": "^8.4.1"
+  }
 }

@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "Director",
-    "version": "0.0.1"
+    "version": "0.0.0"
   },
   "tauri": {
     "allowlist": {
@@ -20,7 +20,12 @@
         "all": false,
         "open": true,
         "sidecar": true,
-        "scope": [{ "name": "binaries/backend", "sidecar": true }]
+        "scope": [
+          {
+            "name": "binaries/backend",
+            "sidecar": true
+          }
+        ]
       }
     },
     "windows": [

@@ -17,7 +17,7 @@ export function App() {
         <h2>Gateways</h2>
         Data = {data}
         <br />
-        isLonading = {isLoading}
+        isLoading = {isLoading}
       </div>
     </main>
   );

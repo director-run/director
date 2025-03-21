@@ -11,8 +11,7 @@ export interface Logger {
  * Creates a simple logger that uses console methods
  */
 export const getLogger = (name: string): Logger => {
-  const formatMessage = (msg?: string) =>
-    msg ? `[${name}] ${msg}` : `[${name}]`;
+  const formatMessage = (msg?: string) => (msg ? `[${name}] ${msg}` : `[${name}]`);
   const formatObject = (obj: object | string) => {
     if (typeof obj === "string") {
       return formatMessage(obj);

@@ -1,22 +1,12 @@
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import {
-  ListResourcesRequestSchema,
-  ListResourcesResultSchema,
-  ReadResourceRequestSchema,
-  ReadResourceResultSchema,
-} from "@modelcontextprotocol/sdk/types.js";
+import { ListResourcesRequestSchema, ListResourcesResultSchema, ReadResourceRequestSchema, ReadResourceResultSchema } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
 import type { ConnectedClient } from "../createClients";
 
-export function setupResourceHandlers(
-  server: Server,
-  connectedClients: ConnectedClient[],
-  resourceToClientMap: Map<string, ConnectedClient>,
-) {
+export function setupResourceHandlers(server: Server, connectedClients: ConnectedClient[], resourceToClientMap: Map<string, ConnectedClient>) {
   // List Resources Handler
   server.setRequestHandler(ListResourcesRequestSchema, async (request) => {
-    const allResources: z.infer<typeof ListResourcesResultSchema>["resources"] =
-      [];
+    const allResources: z.infer<typeof ListResourcesResultSchema>["resources"] = [];
     resourceToClientMap.clear();
 
     for (const connectedClient of connectedClients) {
@@ -43,10 +33,7 @@ export function setupResourceHandlers(
           allResources.push(...resourcesWithSource);
         }
       } catch (error) {
-        console.error(
-          `Error fetching resources from ${connectedClient.name}:`,
-          error,
-        );
+        console.error(`Error fetching resources from ${connectedClient.name}:`, error);
       }
     }
 
@@ -77,10 +64,7 @@ export function setupResourceHandlers(
         ReadResourceResultSchema,
       );
     } catch (error) {
-      console.error(
-        `Error reading resource from ${clientForResource.name}:`,
-        error,
-      );
+      console.error(`Error reading resource from ${clientForResource.name}:`, error);
       throw error;
     }
   });

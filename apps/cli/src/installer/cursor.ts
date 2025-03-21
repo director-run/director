@@ -1,5 +1,4 @@
-const SQLITE_DB_PATH =
-  "/Users/barnaby/Library/Application Support/Cursor/User/globalStorage/state.vscdb";
+const SQLITE_DB_PATH = "/Users/barnaby/Library/Application Support/Cursor/User/globalStorage/state.vscdb";
 
 const READ_SQL_QUERY = `
 SELECT json_extract(value, '$.mcpServers') FROM ItemTable 

@@ -13,10 +13,7 @@ export async function startStdioServer({
   const proxyConfig = config.proxies.find((proxy) => proxy.name === name);
 
   if (!proxyConfig) {
-    throw new AppError(
-      ErrorCode.NOT_FOUND,
-      `Proxy config for ${name} not found`,
-    );
+    throw new AppError(ErrorCode.NOT_FOUND, `Proxy config for ${name} not found`);
   }
 
   const transport = new StdioServerTransport();

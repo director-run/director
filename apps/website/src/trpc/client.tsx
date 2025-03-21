@@ -2,12 +2,7 @@
 
 import type { QueryClient } from "@tanstack/react-query";
 import { QueryClientProvider } from "@tanstack/react-query";
-import {
-  httpBatchLink,
-  httpLink,
-  isNonJsonSerializable,
-  splitLink,
-} from "@trpc/client";
+import { httpBatchLink, httpLink, isNonJsonSerializable, splitLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import { useState } from "react";
 import superjson from "superjson";
@@ -81,9 +76,7 @@ export function TRPCProvider(
 
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        {props.children}
-      </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>{props.children}</QueryClientProvider>
     </trpc.Provider>
   );
 }

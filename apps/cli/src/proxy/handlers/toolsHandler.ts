@@ -1,18 +1,9 @@
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import {
-  CallToolRequestSchema,
-  CompatibilityCallToolResultSchema,
-  ListToolsRequestSchema,
-  ListToolsResultSchema,
-} from "@modelcontextprotocol/sdk/types.js";
+import { CallToolRequestSchema, CompatibilityCallToolResultSchema, ListToolsRequestSchema, ListToolsResultSchema } from "@modelcontextprotocol/sdk/types.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import type { ConnectedClient } from "../createClients";
 
-export function setupToolHandlers(
-  server: Server,
-  connectedClients: ConnectedClient[],
-  toolToClientMap: Map<string, ConnectedClient>,
-) {
+export function setupToolHandlers(server: Server, connectedClients: ConnectedClient[], toolToClientMap: Map<string, ConnectedClient>) {
   // List Tools Handler
   server.setRequestHandler(ListToolsRequestSchema, async (request) => {
     const allTools: Tool[] = [];
@@ -41,10 +32,7 @@ export function setupToolHandlers(
           allTools.push(...toolsWithSource);
         }
       } catch (error) {
-        console.error(
-          `Error fetching tools from ${connectedClient.name}:`,
-          error,
-        );
+        console.error(`Error fetching tools from ${connectedClient.name}:`, error);
       }
     }
 

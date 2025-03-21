@@ -1,18 +1,9 @@
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import {
-  GetPromptRequestSchema,
-  GetPromptResultSchema,
-  ListPromptsRequestSchema,
-  ListPromptsResultSchema,
-} from "@modelcontextprotocol/sdk/types.js";
+import { GetPromptRequestSchema, GetPromptResultSchema, ListPromptsRequestSchema, ListPromptsResultSchema } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
 import type { ConnectedClient } from "../createClients";
 
-export function setupPromptHandlers(
-  server: Server,
-  connectedClients: ConnectedClient[],
-  promptToClientMap: Map<string, ConnectedClient>,
-) {
+export function setupPromptHandlers(server: Server, connectedClients: ConnectedClient[], promptToClientMap: Map<string, ConnectedClient>) {
   // Get Prompt Handler
   server.setRequestHandler(GetPromptRequestSchema, async (request) => {
     const { name } = request.params;
@@ -40,10 +31,7 @@ export function setupPromptHandlers(
 
       return response;
     } catch (error) {
-      console.error(
-        `Error getting prompt from ${clientForPrompt.name}:`,
-        error,
-      );
+      console.error(`Error getting prompt from ${clientForPrompt.name}:`, error);
       throw error;
     }
   });
@@ -79,10 +67,7 @@ export function setupPromptHandlers(
           allPrompts.push(...promptsWithSource);
         }
       } catch (error) {
-        console.error(
-          `Error fetching prompts from ${connectedClient.name}:`,
-          error,
-        );
+        console.error(`Error fetching prompts from ${connectedClient.name}:`, error);
       }
     }
 

@@ -22,20 +22,36 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: install Rust stable
-      uses: dtolnay/rust-toolchain@stable
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
 
-    # - name: Install uv
-    #   uses: astral-sh/setup-uv@v5
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
 
     # - uses: oven-sh/setup-bun@v2
     #   with:
     #     bun-version: latest
     # - name: Install dependencies
     #   run: bun install
+
+
+    # - name: Install Rust stable
+    #   uses: dtolnay/rust-toolchain@stable
+
+    - uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: latest
+
+    - name: Install dependencies
+      run: bun install
+
     # - name: Lint
     #   run: bun run lint
     # - name: Test
     #   run: bun run test
+
     - name: Build
-      run: bun run build
+      run: bun turbo run build --filter=!@director/website

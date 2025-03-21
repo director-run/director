@@ -1,7 +1,7 @@
-import type { Config } from "@director/core";
-import { AppError, ErrorCode } from "@director/core";
-import { getLogger } from "@director/core";
-import { createProxyServer } from "@director/core";
+import type { Config } from "@director/core/config/types";
+import { AppError, ErrorCode } from "@director/core/error";
+import { getLogger } from "@director/core/logger";
+import { createProxyServer } from "@director/core/proxy/createProxyServer";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
 

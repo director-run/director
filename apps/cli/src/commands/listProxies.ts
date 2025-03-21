@@ -1,4 +1,4 @@
-import type { Config } from "@director/core";
+import type { Config } from "@director/core/config/types";
 import Table from "cli-table3";
 
 export const listProxies = ({ config }: { config: Config }) => {

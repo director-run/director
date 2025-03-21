@@ -1,6 +1,10 @@
 import { existsSync } from "node:fs";
-import { CONFIG_FILE_PATH, DEFAULT_CONFIG, PACKAGE_NAME, PACKAGE_VERSION, getLogger, readConfig, writeConfig } from "@director/core";
-import { installToClaude, restartClaude, uninstallFromClaude } from "@director/core";
+import { CONFIG_FILE_PATH, DEFAULT_CONFIG, PACKAGE_NAME, PACKAGE_VERSION } from "@director/core/config/env";
+import { readConfig } from "@director/core/config/readConfig";
+import { writeConfig } from "@director/core/config/writeConfig";
+import { getLogger } from "@director/core/logger";
+
+import { installToClaude, restartClaude, uninstallFromClaude } from "@director/core/installer/claude";
 import { Command, Option } from "commander";
 import { listProxies } from "../src/commands/listProxies";
 import { startSSEServer } from "../src/commands/startSSEServer";

@@ -19,6 +19,13 @@
   "peerDependencies": {
     "typescript": "^5"
   },
+  "exports": {
+    "./config/*": "./src/config/*.ts",
+    "./error": "./src/error.ts",
+    "./logger": "./src/logger.ts",
+    "./proxy/*": "./src/proxy/*.ts",
+    "./installer/*": "./src/installer/*.ts"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.7.0",
     "lodash": "^4.17.21",

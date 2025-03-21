@@ -11,6 +11,7 @@ edition = "2021"
 tauri-build = { version = "1", features = [] }
 
 [dependencies]
+# TODO: devtools feature allows dev tools on prod build - this is a macOS private API
 tauri = { version = "1", features = [ "shell-sidecar", "shell-open", "devtools"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"

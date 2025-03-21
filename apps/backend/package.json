@@ -12,7 +12,7 @@
     "backend": "bun run bin/backend.ts",
     "lint": "biome check .",
     "format": "biome format --write .",
-    "build": "bun build ./bin/backend.ts --compile --source-map --target=bun-darwin-arm64 --outfile ./dist/backend",
+    "build": "bun build ./bin/backend.ts --outfile ./dist/backend",
     "inspector": "npx @modelcontextprotocol/inspector",
     "clean": "rm -rf .turbo dist/*",
     "test": "bun test"

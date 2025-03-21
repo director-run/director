@@ -59,5 +59,3 @@ jobs:
     # TODO: add website to the build process
     - name: Build
       run: bun turbo run build --filter=!@director/website
-    # - name: Build
-    #   run: bun run build --filter '@director/desktop'

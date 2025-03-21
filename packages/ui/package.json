@@ -10,7 +10,8 @@
     "format": "biome format --write .",
     "check-types": "tsc --noEmit",
     "clean": "rm -rf dist node_modules",
-    "test": "echo 'No tests yet for design package'"
+    "test": "echo 'No tests yet for design package'",
+    "postinstall": "bun run build"
   },
   "files": ["dist", "assets"],
   "exports": {

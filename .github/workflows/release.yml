@@ -54,7 +54,7 @@ jobs:
       - name: install backend dependencies
         run: |
           cd apps/cli
-          bun build
+          bun run build
           ./dist/cli
 
       - uses: tauri-apps/tauri-action@v0

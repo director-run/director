@@ -1,13 +1,11 @@
-import { readFileSync } from "node:fs";
-import { readFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import type { Config } from "./types";
-
-const packageJson = JSON.parse(readFileSync(path.join(__dirname, "../../package.json"), "utf-8"));
+import defaultConfig from "../../config/config.default.json";
+import packageJson from "../../package.json";
 
 // This is the default config that is written to the config file if it doesn't exist
-export const DEFAULT_CONFIG: Config = JSON.parse(await readFile(path.join(__dirname, "../../config/config.default.json"), "utf-8"));
+export const DEFAULT_CONFIG: Config = defaultConfig;
 
 const DATA_DIRECTORY = path.join(os.homedir(), ".mcp-cli");
 

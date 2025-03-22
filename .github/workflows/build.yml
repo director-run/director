@@ -6,11 +6,6 @@ on:
   pull_request:
     branches: [ "main" ]
 
-# Cancel in-progress runs on new PR updates
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   test-build:
     runs-on: ubuntu-latest

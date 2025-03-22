@@ -66,7 +66,5 @@ bun run desktop:version bump
 # Step 3: Release
 git checkout main
 git pull
-version=$(bun run desktop:version print)
-git tag -a "v${version}" -m "Release v${version}"
-git push origin "v${version}"
+bun run desktop:release
 ```

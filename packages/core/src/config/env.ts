@@ -1,8 +1,8 @@
 import os from "node:os";
 import path from "node:path";
-import type { Config } from "./types";
 import defaultConfig from "../../config/config.default.json";
 import packageJson from "../../package.json";
+import type { Config } from "./types";
 
 // This is the default config that is written to the config file if it doesn't exist
 export const DEFAULT_CONFIG: Config = defaultConfig;

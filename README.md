@@ -53,12 +53,19 @@ TODO
 - Install to Cursor
 - http://localhost:3006/<proxy_name>/sse
 
-## Release
+## Release Management
 
-To release a new version of the app, run:
+We use github tags to manage releases. Right now we package the entire app as a desktop app and release it as a new version. Here's how to release a new version of the application:
 
 ```bash
-bun run release.ts <version>
+# Step 1: Make changes on a branch, bump the version
+...
+bun run desktop:version bump
+# Step 2: Merge the branch in github ...
+# Step 3: Release
+git checkout main
+git pull
+version=$(bun run desktop:version print)
+git tag -a "v${version}" -m "Release v${version}"
+git push origin "v${version}"
 ```
-
-Where `<version>` is the new version number of the desktop app (e.g. `0.1.1`). This will automatically update the version of the desktop app and push commits to github.

@@ -11,7 +11,8 @@
     "test": "turbo run test",
     "check-types": "turbo run check-types",
     "clean": "rm -rf .turbo node_modules && turbo run clean",
-    "cli": "turbo run cli"
+    "cli": "turbo run cli",
+    "desktop:version": "bun run apps/desktop/scripts/version.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

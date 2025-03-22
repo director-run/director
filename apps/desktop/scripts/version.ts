@@ -16,13 +16,13 @@ program
     try {
       let newVersion;
       const currentVersion = await getPackageVersion();
-      
+
       if (options.newVersion) {
         newVersion = options.newVersion;
       } else {
         newVersion = semver.inc(currentVersion, "patch");
       }
-      
+
       // Check newVersion is valid semver
       if (!semver.valid(newVersion) || newVersion.startsWith("v")) {
         console.error(`❌ Invalid version format: ${newVersion}`);
@@ -35,10 +35,10 @@ program
         console.error(`❌ New version ${newVersion} must be higher than current version ${currentVersion}.`);
         process.exit(1);
       }
-      
+
       // Update all version files
       await updateVersions(rootDir, newVersion);
-      
+
       console.log(`✅ Successfully bumped version from ${currentVersion} to ${newVersion}`);
     } catch (error) {
       console.error("❌ Error bumping version:");
@@ -54,6 +54,20 @@ program
     try {
       await checkVersionConsistency();
       console.log("✅ All version numbers are consistent.");
+    } catch (error) {
+      console.error("❌ Version mismatch detected:");
+      console.error(error.message);
+      process.exit(1);
+    }
+  });
+
+program
+  .command("print")
+  .description("Print the current version number")
+  .action(async () => {
+    try {
+      await checkVersionConsistency();
+      console.log(await getPackageVersion());
     } catch (error) {
       console.error("❌ Version mismatch detected:");
       console.error(error.message);
@@ -91,7 +105,6 @@ async function getPackageVersion(): Promise<string> {
   const packageVersion = packageJson.version;
   return packageVersion;
 }
-
 
 async function updateVersions(rootDir: string, newVersion: string): Promise<void> {
   // Update package.json

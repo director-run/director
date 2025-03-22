@@ -1,5 +1,9 @@
 # Director
 
+[![Test](https://github.com/theworkingcompany/director/actions/workflows/test.yml/badge.svg)](https://github.com/theworkingcompany/director/actions/workflows/test.yml)
+[![Build](https://github.com/theworkingcompany/director/actions/workflows/build.yml/badge.svg)](https://github.com/theworkingcompany/director/actions/workflows/build.yml)
+[![Release](https://github.com/theworkingcompany/director/actions/workflows/release.yml/badge.svg)](https://github.com/theworkingcompany/director/actions/workflows/release.yml)
+
 ## Getting Started
 
 This is a monorepo managed with [Turborepo](https://turbo.build/).

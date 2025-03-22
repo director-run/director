@@ -14,7 +14,8 @@
     "tauri": "tauri",
     "lint": "biome check .",
     "format": "biome format --write .",
-    "test": "echo 'No tests yet for desktop app'"
+    "test": "bun run version check",
+    "version": "bun run scripts/version.js"
   },
   "dependencies": {
     "@director/ui": "workspace:*",
@@ -23,10 +24,11 @@
     "@tauri-apps/api": "^1",
     "@trpc/client": "11.0.0-rc.700",
     "@trpc/react-query": "11.0.0-rc.700",
+    "commander": "^13.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "tailwindcss": "^4.0.14",
     "superjson": "^2.2.1",
+    "tailwindcss": "^4.0.14",
     "tauri-plugin-store-api": "tauri-apps/tauri-plugin-store",
     "tsc": "^2.0.4"
   },

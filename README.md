@@ -59,8 +59,9 @@ We use github tags to manage releases. Right now we package the entire app as a 
 
 ```bash
 # Step 1: Make changes on a branch, bump the version
-...
+... # make changes
 bun run desktop:version bump
+... # commit & push version changes
 # Step 2: Merge the branch in github ...
 # Step 3: Release
 git checkout main

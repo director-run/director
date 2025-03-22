@@ -20,11 +20,11 @@ program
       if (options.newVersion) {
         newVersion = options.newVersion;
       } else {
-        newVersion = semver.inc(currentVersion, "minor");
+        newVersion = semver.inc(currentVersion, "patch");
       }
       
       // Check newVersion is valid semver
-      if (!semver.valid(newVersion) && !newVersion.startsWith("v")) {
+      if (!semver.valid(newVersion) || newVersion.startsWith("v")) {
         console.error(`❌ Invalid version format: ${newVersion}`);
         console.error("Version must be a valid semver string (e.g., 1.2.3 or 1.2.3-beta.1)");
         process.exit(1);

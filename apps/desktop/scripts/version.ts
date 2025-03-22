@@ -1,6 +1,6 @@
-import { Command, Option } from "commander";
-import * as path from "path";
 import { promises as fs } from "fs";
+import * as path from "path";
+import { Command } from "commander";
 import * as semver from "semver";
 
 const rootDir = path.resolve(__dirname, "..");

@@ -15,7 +15,9 @@ const logger = pino(
           ? {
               type: error.name,
               ...pick(error, "message", "stack", "code", "props"),
-              ...(error.cause instanceof Error ? { cause: pino.stdSerializers.errWithCause(error.cause) } : {}),
+              ...(error.cause instanceof Error
+                ? { cause: pino.stdSerializers.errWithCause(error.cause) }
+                : {}),
             }
           : pino.stdSerializers.errWithCause(error),
     },

@@ -11,7 +11,12 @@ export const listProxies = ({ config }: { config: Config }) => {
         head: ["green"],
       },
     });
-    table.push(...config.proxies.map((proxy) => [proxy.name, proxy.servers.map((s) => s.name).join(",")]));
+    table.push(
+      ...config.proxies.map((proxy) => [
+        proxy.name,
+        proxy.servers.map((s) => s.name).join(","),
+      ]),
+    );
 
     console.log(table.toString());
   }

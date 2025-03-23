@@ -14,4 +14,5 @@ export enum ErrorCode {
   NOT_FOUND = "NOT_FOUND",
 }
 
-export const isAppError = (error: unknown): error is AppError => error instanceof AppError;
+export const isAppError = (error: unknown): error is AppError =>
+  error instanceof AppError;

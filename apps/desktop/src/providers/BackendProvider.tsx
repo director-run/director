@@ -58,7 +58,9 @@ export function BackendProvider({ children }: BackendProviderProps) {
         // Check for and kill any existing backend process
         const backendPid = await store.get<number>("backendPid");
         if (backendPid) {
-          logger.info(`Found existing backend process (PID: ${backendPid}), killing it...`);
+          logger.info(
+            `Found existing backend process (PID: ${backendPid}), killing it...`,
+          );
           try {
             const existingChild = new Child(backendPid);
             await existingChild.kill();
@@ -144,9 +146,14 @@ export function BackendProvider({ children }: BackendProviderProps) {
           // If unmounted during spawn, kill the process immediately
           try {
             await newChild.kill();
-            logger.info("Killed backend process because component unmounted during startup");
+            logger.info(
+              "Killed backend process because component unmounted during startup",
+            );
           } catch (killErr) {
-            logger.error("Error killing process after unmount:", String(killErr));
+            logger.error(
+              "Error killing process after unmount:",
+              String(killErr),
+            );
           }
           return;
         }
@@ -185,13 +192,22 @@ export function BackendProvider({ children }: BackendProviderProps) {
         store
           .delete("backendPid")
           .then(() => store.save())
-          .catch((err) => logger.error("Error cleaning up backend PID:", String(err)));
+          .catch((err) =>
+            logger.error("Error cleaning up backend PID:", String(err)),
+          );
 
         // Kill the process
         child
           .kill()
-          .then(() => logger.info("Backend process killed successfully on unmount"))
-          .catch((err) => logger.error("Error killing backend process on unmount:", String(err)));
+          .then(() =>
+            logger.info("Backend process killed successfully on unmount"),
+          )
+          .catch((err) =>
+            logger.error(
+              "Error killing backend process on unmount:",
+              String(err),
+            ),
+          );
       }
     };
   }, []); // Empty dependency array ensures this effect only runs once
@@ -238,5 +254,9 @@ export function BackendProvider({ children }: BackendProviderProps) {
     }
   };
 
-  return <BackendContext.Provider value={{ status, error, logs }}>{renderContent()}</BackendContext.Provider>;
+  return (
+    <BackendContext.Provider value={{ status, error, logs }}>
+      {renderContent()}
+    </BackendContext.Provider>
+  );
 }

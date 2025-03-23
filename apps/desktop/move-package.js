@@ -39,7 +39,10 @@ const sourceFullPath = path.resolve(__dirname, sourcePath + ext);
 const binaryName = path.basename(sourcePath).split(".")[0];
 
 // Create target path with triple
-const targetFullPath = path.join(targetDirFullPath, `${binaryName}-${targetTriple}${ext}`);
+const targetFullPath = path.join(
+  targetDirFullPath,
+  `${binaryName}-${targetTriple}${ext}`,
+);
 
 // Move the file
 console.log(`Moving ${sourceFullPath} to ${targetFullPath}`);

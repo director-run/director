@@ -1,10 +1,19 @@
 import { existsSync } from "node:fs";
-import { CONFIG_FILE_PATH, DEFAULT_CONFIG, PACKAGE_NAME, PACKAGE_VERSION } from "@director/core/config/env";
+import {
+  CONFIG_FILE_PATH,
+  DEFAULT_CONFIG,
+  PACKAGE_NAME,
+  PACKAGE_VERSION,
+} from "@director/core/config/env";
 import { readConfig } from "@director/core/config/readConfig";
 import { writeConfig } from "@director/core/config/writeConfig";
 import { getLogger } from "@director/core/logger";
 
-import { installToClaude, restartClaude, uninstallFromClaude } from "@director/core/installer/claude";
+import {
+  installToClaude,
+  restartClaude,
+  uninstallFromClaude,
+} from "@director/core/installer/claude";
 import { Command, Option } from "commander";
 import { listProxies } from "../src/commands/listProxies";
 import { startSSEServer } from "../src/commands/startSSEServer";
@@ -22,7 +31,10 @@ const logger = getLogger("cli");
 // Print out the full command that was called with all arguments
 logger.info(`Command called: ${process.argv.join(" ")}`);
 
-program.name(PACKAGE_NAME).description("CLI to operate mcp server").version(PACKAGE_VERSION);
+program
+  .name(PACKAGE_NAME)
+  .description("CLI to operate mcp server")
+  .version(PACKAGE_VERSION);
 
 program
   .command("start <name>")
@@ -61,8 +73,14 @@ function mandatoryOption(flags: string, description?: string) {
 
 program
   .command("install <name>")
-  .description("Install an mcp server to a client app (currently only Claude is supported)")
-  .addOption(mandatoryOption("-c, --client [type]", "client to install to").choices(["claude"]))
+  .description(
+    "Install an mcp server to a client app (currently only Claude is supported)",
+  )
+  .addOption(
+    mandatoryOption("-c, --client [type]", "client to install to").choices([
+      "claude",
+    ]),
+  )
   .action(async (name, options) => {
     if (options.client === "claude") {
       await installToClaude({ name });
@@ -73,8 +91,14 @@ program
 
 program
   .command("uninstall <name>")
-  .description("Uninstall an mcp server from a client app (currently only Claude is supported)")
-  .addOption(mandatoryOption("-c, --client [type]", "client to uninstall from").choices(["claude"]))
+  .description(
+    "Uninstall an mcp server from a client app (currently only Claude is supported)",
+  )
+  .addOption(
+    mandatoryOption("-c, --client [type]", "client to uninstall from").choices([
+      "claude",
+    ]),
+  )
   .action(async (name, options) => {
     if (options.client === "claude") {
       await uninstallFromClaude({ name });

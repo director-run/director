@@ -18,7 +18,10 @@ export const startSSEServer = async ({
   const proxyConfig = config.proxies.find((proxy) => proxy.name === name);
 
   if (!proxyConfig) {
-    throw new AppError(ErrorCode.NOT_FOUND, `Proxy config for ${name} not found`);
+    throw new AppError(
+      ErrorCode.NOT_FOUND,
+      `Proxy config for ${name} not found`,
+    );
   }
 
   const { server, cleanup } = await createProxyServer(proxyConfig);
@@ -26,7 +29,8 @@ export const startSSEServer = async ({
   let transport: SSEServerTransport;
 
   app.get("/sse", async (req, res) => {
-    const clientIp = req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown";
+    const clientIp =
+      req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown";
     const userAgent = req.headers["user-agent"] || "unknown";
     logger.info("Received connection", { userAgent, clientIp });
 
@@ -48,7 +52,9 @@ export const startSSEServer = async ({
   });
 
   const expressServer = app.listen(config.ssePort, () => {
-    logger.info(`server started successfully at http://localhost:${config.ssePort}/sse`);
+    logger.info(
+      `server started successfully at http://localhost:${config.ssePort}/sse`,
+    );
   });
 
   process.on("SIGINT", async () => {

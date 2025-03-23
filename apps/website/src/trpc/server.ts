@@ -30,4 +30,7 @@ export const getQueryClient = cache(makeQueryClient);
 
 const caller = createCallerFactory(appRouter)(createContext);
 
-export const { trpc, HydrateClient } = createHydrationHelpers<AppRouter>(caller, getQueryClient);
+export const { trpc, HydrateClient } = createHydrationHelpers<AppRouter>(
+  caller,
+  getQueryClient,
+);

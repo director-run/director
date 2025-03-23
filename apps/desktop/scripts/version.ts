@@ -6,7 +6,9 @@ import * as semver from "semver";
 const rootDir = path.resolve(__dirname, "..");
 const program = new Command();
 
-program.name("version").description("utility to manage the version of the desktop app");
+program
+  .name("version")
+  .description("utility to manage the version of the desktop app");
 
 program
   .command("bump")
@@ -26,20 +28,26 @@ program
       // Check newVersion is valid semver
       if (!semver.valid(newVersion) || newVersion.startsWith("v")) {
         console.error(`❌ Invalid version format: ${newVersion}`);
-        console.error("Version must be a valid semver string (e.g., 1.2.3 or 1.2.3-beta.1)");
+        console.error(
+          "Version must be a valid semver string (e.g., 1.2.3 or 1.2.3-beta.1)",
+        );
         process.exit(1);
       }
 
       // Check if new version is higher than current
       if (!semver.gt(newVersion, currentVersion)) {
-        console.error(`❌ New version ${newVersion} must be higher than current version ${currentVersion}.`);
+        console.error(
+          `❌ New version ${newVersion} must be higher than current version ${currentVersion}.`,
+        );
         process.exit(1);
       }
 
       // Update all version files
       await updateVersions(rootDir, newVersion);
 
-      console.log(`✅ Successfully bumped version from ${currentVersion} to ${newVersion}`);
+      console.log(
+        `✅ Successfully bumped version from ${currentVersion} to ${newVersion}`,
+      );
     } catch (error) {
       console.error("❌ Error bumping version:");
       console.error(error);
@@ -95,7 +103,9 @@ async function checkVersionConsistency(): Promise<void> {
   const cargoVersion = cargoVersionMatch[1];
 
   if (cargoVersion !== packageVersion || packageVersion !== tauriVersion) {
-    throw new Error(`package.json (${packageVersion}) ≠ tauri.conf.json (${tauriVersion}) ≠ Cargo.toml (${cargoVersion})\n`);
+    throw new Error(
+      `package.json (${packageVersion}) ≠ tauri.conf.json (${tauriVersion}) ≠ Cargo.toml (${cargoVersion})\n`,
+    );
   }
 }
 
@@ -106,7 +116,10 @@ async function getPackageVersion(): Promise<string> {
   return packageVersion;
 }
 
-async function updateVersions(rootDir: string, newVersion: string): Promise<void> {
+async function updateVersions(
+  rootDir: string,
+  newVersion: string,
+): Promise<void> {
   // Update package.json
   const packageJsonPath = path.join(rootDir, "package.json");
   const packageJson = JSON.parse(await fs.readFile(packageJsonPath, "utf8"));

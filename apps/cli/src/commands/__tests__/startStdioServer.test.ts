@@ -46,7 +46,14 @@ describe("startStdioServer", () => {
   test("should connect and list tools", async () => {
     const toolsResult = await client.listTools();
 
-    const expectedToolNames = ["get_stories", "get_user_info", "search_stories", "get_story_info", "fetch", "echo"];
+    const expectedToolNames = [
+      "get_stories",
+      "get_user_info",
+      "search_stories",
+      "get_story_info",
+      "fetch",
+      "echo",
+    ];
 
     for (const toolName of expectedToolNames) {
       const tool = toolsResult.tools.find((t) => t.name === toolName);
@@ -54,11 +61,21 @@ describe("startStdioServer", () => {
       expect(tool?.name).toBe(toolName);
     }
 
-    expect(toolsResult.tools.find((t) => t.name === "get_stories")?.description).toContain("[Hackernews]");
-    expect(toolsResult.tools.find((t) => t.name === "get_user_info")?.description).toContain("[Hackernews]");
-    expect(toolsResult.tools.find((t) => t.name === "search_stories")?.description).toContain("[Hackernews]");
-    expect(toolsResult.tools.find((t) => t.name === "get_story_info")?.description).toContain("[Hackernews]");
+    expect(
+      toolsResult.tools.find((t) => t.name === "get_stories")?.description,
+    ).toContain("[Hackernews]");
+    expect(
+      toolsResult.tools.find((t) => t.name === "get_user_info")?.description,
+    ).toContain("[Hackernews]");
+    expect(
+      toolsResult.tools.find((t) => t.name === "search_stories")?.description,
+    ).toContain("[Hackernews]");
+    expect(
+      toolsResult.tools.find((t) => t.name === "get_story_info")?.description,
+    ).toContain("[Hackernews]");
 
-    expect(toolsResult.tools.find((t) => t.name === "fetch")?.description).toContain("[Fetch]");
+    expect(
+      toolsResult.tools.find((t) => t.name === "fetch")?.description,
+    ).toContain("[Fetch]");
   }, 30000);
 });

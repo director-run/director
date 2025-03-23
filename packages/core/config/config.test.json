@@ -8,7 +8,11 @@
           "name": "Hackernews",
           "transport": {
             "command": "uvx",
-            "args": ["--from", "git+https://github.com/erithwik/mcp-hn", "mcp-hn"]
+            "args": [
+              "--from",
+              "git+https://github.com/erithwik/mcp-hn",
+              "mcp-hn"
+            ]
           }
         },
         {

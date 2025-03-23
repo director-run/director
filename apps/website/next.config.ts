@@ -1,9 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig = {
-  devIndicators: {
-    appIsrStatus: false,
-  },
   typescript: {
     ignoreBuildErrors: true,
   },

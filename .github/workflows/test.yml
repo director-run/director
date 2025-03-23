@@ -4,6 +4,7 @@ on:
     types: [synchronize, opened, labeled, ready_for_review]
 jobs:
   lint:
+    name: Lint
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
@@ -16,6 +17,8 @@ jobs:
       - name: Lint
         run: bun run lint
   test:
+    name: Tests
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4

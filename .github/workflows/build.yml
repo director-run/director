@@ -1,20 +1,10 @@
 name: Build
-
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
-
+    types: [synchronize, opened, labeled, ready_for_review]
 jobs:
   test-build:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [23.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
     - uses: actions/checkout@v4
     # Required for tauri build
@@ -40,10 +30,8 @@ jobs:
     - uses: oven-sh/setup-bun@v2
       with:
         bun-version: latest
-
     - name: Install dependencies
       run: bun install
-    
     # TODO: add website to the build process
     - name: Build
       run: bun turbo run build --filter=!@director/website

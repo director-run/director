@@ -2,6 +2,8 @@ name: Test and Lint
 on:
   pull_request:
     types: [synchronize, opened, labeled, ready_for_review]
+  push:
+    branches: [ "main" ]
 jobs:
   lint:
     name: Lint

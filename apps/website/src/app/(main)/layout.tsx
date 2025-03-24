@@ -3,10 +3,13 @@ import {
   DefaultLayoutFooter,
   DefaultLayoutHeader,
 } from "@/components/layouts/default-layout";
+import { trpc } from "@/trpc/server";
 
-export default function MainLayout({
+export default async function MainLayout({
   children,
 }: { children: React.ReactNode }) {
+  const dmg = await trpc.github.dmg();
+
   return (
     <DefaultLayout>
       <DefaultLayoutHeader />
@@ -18,7 +21,8 @@ export default function MainLayout({
             items: [
               {
                 label: "Download for OSX",
-                href: "https://github.com/download.dmg",
+                href: dmg.dmg ? dmg.dmg : "https://github.com/download.dmg",
+                disabled: !dmg.ok,
               },
               {
                 label: "Install CLI",
@@ -26,41 +30,7 @@ export default function MainLayout({
               },
               {
                 label: "Releases",
-                href: "/",
-              },
-            ],
-          },
-          {
-            title: "Developers",
-            items: [
-              {
-                label: "Docs",
-                href: "/",
-              },
-              {
-                label: "Guides",
-                href: "/",
-              },
-              {
-                label: "Github",
-                href: "https://director.run",
-              },
-            ],
-          },
-          {
-            title: "Team",
-            items: [
-              {
-                label: "Manifesto",
-                href: "/",
-              },
-              {
-                label: "Privacy Policy",
-                href: "/",
-              },
-              {
-                label: "Terms of Service",
-                href: "/",
+                href: "https://github.com/theworkingcompany/director/releases",
               },
             ],
           },
@@ -69,15 +39,11 @@ export default function MainLayout({
             items: [
               {
                 label: "X/Twitter",
-                href: "https://director.run",
+                href: "https://x.com/theworkingco",
               },
               {
                 label: "Github",
-                href: "https://director.run",
-              },
-              {
-                label: "Discord",
-                href: "https://director.run",
+                href: "https://github.com/theworkingcompany/director",
               },
             ],
           },

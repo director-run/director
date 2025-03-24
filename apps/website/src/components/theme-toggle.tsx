@@ -18,7 +18,7 @@ export function ModeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button label="Switch theme" variant="secondary" size="icon">
+        <Button label="Switch theme" variant="ghost" size="icon">
           <SunHorizon
             weight="bold"
             className="dark:-rotate-90 h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:scale-0"

@@ -2,13 +2,13 @@ import { Slot } from "@radix-ui/react-slot";
 import { type VariantProps, cva } from "class-variance-authority";
 import * as React from "react";
 
+import { Conditional } from "@/components/conditional";
 import { cn } from "@/lib/cn";
-import { Conditional } from "@director/ui/components/conditional";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
 const buttonVariants = cva(
   [
-    "inline-flex shrink-0 select-none items-center justify-center gap-1.5 whitespace-nowrap rounded-xs transition-all",
+    "inline-flex shrink-0 cursor-pointer select-none items-center justify-center gap-1.5 whitespace-nowrap rounded-xs transition-all",
     "font-mono font-normal text-xs uppercase leading-none tracking-[0.1em]",
     "outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50",
     "disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",

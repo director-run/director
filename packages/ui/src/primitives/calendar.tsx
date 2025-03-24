@@ -3,7 +3,7 @@ import * as React from "react";
 import { DayPicker } from "react-day-picker";
 
 import { cn } from "@/lib/cn";
-import { buttonVariants } from "@/primatives/button";
+import { buttonVariants } from "@/primitives/button";
 
 function Calendar({
   className,

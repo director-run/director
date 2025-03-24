@@ -9,7 +9,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/primatives/dialog";
+} from "@/primitives/dialog";
 
 function Command({
   className,

@@ -12,7 +12,7 @@ import {
 } from "react-hook-form";
 
 import { cn } from "@/lib/cn";
-import { Label } from "@/primatives/label";
+import { Label } from "@/primitives/label";
 
 const Form = FormProvider;
 

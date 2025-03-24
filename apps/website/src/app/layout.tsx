@@ -1,3 +1,4 @@
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import { BASE_URL } from "@/lib/url";
 import { TRPCProvider } from "@/trpc/client";
 import { cn } from "@director/ui/lib/cn";
@@ -7,7 +8,6 @@ import localFont from "next/font/local";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
 
 const jetBrainsMono = localFont({
   src: [

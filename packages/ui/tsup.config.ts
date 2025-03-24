@@ -1,5 +1,7 @@
 import { Options, defineConfig } from "tsup";
 
+const isProduction = process.env.NODE_ENV === "production";
+
 export const options: Options[] = [
   {
     entry: ["src/**/*.{ts,tsx}"],
@@ -8,7 +10,7 @@ export const options: Options[] = [
     dts: true,
     treeshake: "recommended",
     sourcemap: true,
-    clean: true,
+    clean: isProduction,
     external: ["react", "react-dom"],
   },
 ];

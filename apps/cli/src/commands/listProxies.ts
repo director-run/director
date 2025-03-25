@@ -1,5 +1,5 @@
-import type { Config } from "@director/core/config/types";
 import Table from "cli-table3";
+import type { Config } from "../config/types";
 
 export const listProxies = ({ config }: { config: Config }) => {
   if (config.proxies.length === 0) {

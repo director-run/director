@@ -13,8 +13,8 @@ export const addProxy = async (proxy: {
     data: {
       name: proxy.name,
       servers: {
-        create: proxy.servers.map(server => {
-          if ('command' in server.transport) {
+        create: proxy.servers.map((server) => {
+          if ("command" in server.transport) {
             // Command-based transport
             return {
               name: server.name,
@@ -24,9 +24,9 @@ export const addProxy = async (proxy: {
                   args: JSON.stringify(server.transport.args),
                   // Use empty strings instead of null
                   type: "",
-                  url: ""
-                }
-              }
+                  url: "",
+                },
+              },
             };
           } else {
             // SSE-based transport
@@ -38,13 +38,13 @@ export const addProxy = async (proxy: {
                   command: "",
                   args: "",
                   type: server.transport.type,
-                  url: server.transport.url
-                }
-              }
+                  url: server.transport.url,
+                },
+              },
             };
           }
-        })
-      }
+        }),
+      },
     },
   });
 };

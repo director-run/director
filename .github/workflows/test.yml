@@ -32,4 +32,4 @@ jobs:
     - name: Install dependencies
       run: bun install
     - name: Test
-      run: bun turbo run build --filter=!@director/backend
+      run: bun run test

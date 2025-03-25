@@ -6,6 +6,7 @@
     "dev": "turbo run dev",
     "dev:desktop": "turbo run dev --filter='!@director/website'",
     "dev:website": "turbo run dev --filter='!@director/desktop'",
+    "dev:reset": "bun run clean && bun install",
     "build": "turbo run build",
     "build:desktop": "turbo run build --filter='!@director/website'",
     "build:website": "turbo run build --filter='!@director/desktop'",
@@ -23,8 +24,9 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
+    "@types/bun": "^1.2.6",
     "tailwindcss": "^4.0.6",
-    "turbo": "^2.4.0",
+    "turbo": "^2.4.4",
     "typescript": "^5.8.2"
   },
   "packageManager": "bun@1.2.5",

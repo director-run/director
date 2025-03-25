@@ -1,5 +1,5 @@
 {
-  "name": "@director/core",
+  "name": "@director/backend",
   "module": "index.ts",
   "type": "module",
   "version": "0.0.1",

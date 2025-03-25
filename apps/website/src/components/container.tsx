@@ -1,5 +1,5 @@
-import { cn } from "@director/ui/lib/cn";
-import { Slot } from "@radix-ui/react-slot";
+import { cn } from "@director.run/ui/lib/cn";
+import { Slot } from "@director.run/ui/primitives/slot";
 import * as React from "react";
 
 interface ContainerProps extends React.ComponentProps<"div"> {

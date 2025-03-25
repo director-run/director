@@ -1,5 +1,5 @@
 {
-  "name": "@director/ui",
+  "name": "@director.run/ui",
   "type": "module",
   "version": "0.1.0",
   "private": true,
@@ -90,6 +90,7 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@director.run/tsconfig": "workspace:*",
     "@biomejs/biome": "^1.9.4",
     "@types/bun": "^1.2.5",
     "@types/node": "^22.13.10",

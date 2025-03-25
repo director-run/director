@@ -1,7 +1,7 @@
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { BASE_URL } from "@/lib/url";
 import { TRPCProvider } from "@/trpc/client";
-import { cn } from "@director/ui/lib/cn";
+import { cn } from "@director.run/ui/lib/cn";
 import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
 import localFont from "next/font/local";

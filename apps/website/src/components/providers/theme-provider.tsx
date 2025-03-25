@@ -1,6 +1,6 @@
 "use client";
 
-import { TooltipProvider } from "@director/ui/primitives/tooltip";
+import { TooltipProvider } from "@director.run/ui/primitives/tooltip";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import type React from "react";
 

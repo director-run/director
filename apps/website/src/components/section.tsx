@@ -1,6 +1,5 @@
-import {} from "@/components/contents";
-import { cn } from "@director/ui/lib/cn";
-import { Slot } from "@radix-ui/react-slot";
+import { cn } from "@director.run/ui/lib/cn";
+import { Slot } from "@director.run/ui/primitives/slot";
 
 interface SectionProps extends React.ComponentProps<"div"> {
   name?: string;

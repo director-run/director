@@ -18,7 +18,7 @@
     "version": "bun run scripts/version.js"
   },
   "dependencies": {
-    "@director/ui": "workspace:*",
+    "@director.run/ui": "workspace:*",
     "@tailwindcss/vite": "^4.0.14",
     "@tanstack/react-query": "^5.26.0",
     "@tauri-apps/api": "^1",

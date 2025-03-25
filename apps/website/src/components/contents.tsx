@@ -1,4 +1,4 @@
-import { cn } from "@director/ui/lib/cn";
+import { cn } from "@director.run/ui/lib/cn";
 import { ArrowRight, ArrowUpRight } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 

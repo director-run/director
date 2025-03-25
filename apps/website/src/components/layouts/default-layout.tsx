@@ -1,9 +1,9 @@
 import { Container } from "@/components/container";
 import { ModeToggle } from "@/components/theme-toggle";
 import { trpc } from "@/trpc/server";
-import { Logo } from "@director/ui/components/brand";
-import { cn } from "@director/ui/lib/cn";
-import { Button } from "@director/ui/primitives/button";
+import { Logo } from "@director.run/ui/components/brand";
+import { cn } from "@director.run/ui/lib/cn";
+import { Button } from "@director.run/ui/primitives/button";
 import { ArrowDown, ArrowUpRight, Star } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import * as React from "react";

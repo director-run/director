@@ -3,14 +3,14 @@
 import { CloudMoon, SunHorizon } from "@phosphor-icons/react";
 import { useTheme } from "next-themes";
 
-import { Button } from "@director/ui/primitives/button";
+import { Button } from "@director.run/ui/primitives/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from "@director/ui/primitives/dropdown-menu";
+} from "@director.run/ui/primitives/dropdown-menu";
 
 export function ModeToggle() {
   const { setTheme, theme } = useTheme();

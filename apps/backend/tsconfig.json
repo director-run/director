@@ -14,9 +14,6 @@
     "verbatimModuleSyntax": true,
     "noEmit": true,
 
-    // Path mapping for workspace packages
-    "baseUrl": ".",
-
     // Best practices
     "strict": true,
     "skipLibCheck": true,

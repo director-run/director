@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/1",
   "build": {
-    "beforeDevCommand": "bun run clean && bun run cli:build && bun run backend:build && bun run frontend:dev",
-    "beforeBuildCommand": "bun run clean && bun run frontend:build && bun run backend:build && bun run cli:build",
+    "beforeDevCommand": "bun run clean && bun run backend:build && bun run frontend:dev",
+    "beforeBuildCommand": "bun run clean && bun run backend:build && bun run frontend:build",
     "devPath": "http://localhost:1420",
     "distDir": "../dist"
   },

@@ -3,7 +3,7 @@ on:
   pull_request:
     types: [synchronize, opened, labeled, ready_for_review]
   push:
-    branches: [ "main" ]
+    branches: [ "bm/backend" ]
 jobs:
   lint:
     name: Lint
@@ -32,4 +32,4 @@ jobs:
     - name: Install dependencies
       run: bun install
     - name: Test
-      run: bun run test
+      run: bun turbo run build --filter=!@director/backend

@@ -7,13 +7,17 @@
     "@biomejs/biome": "^1.9.4",
     "@types/bun": "latest",
     "@types/lodash": "^4.17.16",
-    "prisma": "^6.5.0"
+    "prisma": "^6.5.0",
+    "@types/express": "^5.0.0"
   },
   "scripts": {
     "lint": "biome check .",
     "format": "biome format --write .",
     "clean": "rm -rf .turbo dist/*",
-    "test": "bun test"
+    "test": "bun test",
+    "backend": "bun run bin/backend.ts",
+    "build": "bun build ./bin/backend.ts --compile --outfile ./dist/backend",
+    "inspector": "npx @modelcontextprotocol/inspector"
   },
   "peerDependencies": {
     "typescript": "^5"
@@ -32,6 +36,11 @@
     "lodash": "^4.17.21",
     "pino": "^9.6.0",
     "pino-pretty": "^13.0.0",
-    "zod": "^3.24.2"
+    "zod": "^3.24.2",
+    "@trpc/server": "11.0.0-rc.700",
+    "@types/cors": "^2.8.17",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "superjson": "^2.2.1"
   }
 }

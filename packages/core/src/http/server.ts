@@ -15,22 +15,23 @@ const logger = getLogger("cli");
 // --header 'Cookie: Cookie_1=value' | jq
 
 // Print out the full command that was called with all arguments
-logger.info(`Hello backend`);
 
-const app = express();
-const port = 3000;
+export function startServer() {
+  logger.info(`Hello backend`);
 
-app.use(cors());
+  const app = express();
+  const port = 3000;
 
-app.use(
-  "/trpc",
-  trpcExpress.createExpressMiddleware({
-    router: appRouter,
-  }),
-);
+  app.use(cors());
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+  app.use(
+    "/trpc",
+    trpcExpress.createExpressMiddleware({
+      router: appRouter,
+    }),
+  );
 
-export function startServer() {}
+  app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
+  });
+}

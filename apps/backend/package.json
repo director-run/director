@@ -16,7 +16,10 @@
     "clean": "rm -rf .turbo dist/*",
     "test": "bun test",
     "backend": "bun run bin/backend.ts",
-    "build": "bun build ./bin/backend.ts --compile --outfile ./dist/backend",
+    "cli": "bun run bin/cli.ts",
+    "build:backend": "bun build ./bin/backend.ts --compile --outfile ./dist/backend",
+    "build:cli": "bun build ./bin/cli.ts --compile --outfile ./dist/cli",
+    "build": "bun run build:backend && bun run build:cli",
     "inspector": "npx @modelcontextprotocol/inspector"
   },
   "peerDependencies": {

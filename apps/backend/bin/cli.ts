@@ -1,14 +1,14 @@
 import { existsSync } from "node:fs";
-import { CONFIG_FILE_PATH, DEFAULT_CONFIG, PACKAGE_NAME, PACKAGE_VERSION } from "@director/core/config/env";
-import { readConfig } from "@director/core/config/readConfig";
-import { writeConfig } from "@director/core/config/writeConfig";
-import { getLogger } from "@director/core/logger";
+import { CONFIG_FILE_PATH, DEFAULT_CONFIG, PACKAGE_NAME, PACKAGE_VERSION } from "../src/config/env";
+import { readConfig } from "../src/config/readConfig";
+import { writeConfig } from "../src/config/writeConfig";
+import { getLogger } from "../src/logger";
 
-import { installToClaude, restartClaude, uninstallFromClaude } from "@director/core/installer/claude";
 import { Command, Option } from "commander";
 import { listProxies } from "../src/commands/listProxies";
 import { startSSEServer } from "../src/commands/startSSEServer";
 import { startStdioServer } from "../src/commands/startStdioServer";
+import { installToClaude, restartClaude, uninstallFromClaude } from "../src/installer/claude";
 
 if (!existsSync(CONFIG_FILE_PATH)) {
   await writeConfig(CONFIG_FILE_PATH, DEFAULT_CONFIG);

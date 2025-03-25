@@ -1,9 +1,9 @@
-import type { Config } from "@director/core/config/types";
-import { AppError, ErrorCode } from "@director/core/error";
-import { getLogger } from "@director/core/logger";
-import { createProxyServer } from "@director/core/proxy/createProxyServer";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
+import type { Config } from "../config/types";
+import { AppError, ErrorCode } from "../error";
+import { getLogger } from "../logger";
+import { createProxyServer } from "../proxy/createProxyServer";
 
 const logger = getLogger("startSSEServer");
 

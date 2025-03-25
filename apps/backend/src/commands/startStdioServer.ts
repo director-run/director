@@ -1,7 +1,7 @@
-import type { Config } from "@director/core/config/types";
-import { AppError, ErrorCode } from "@director/core/error";
-import { createProxyServer } from "@director/core/proxy/createProxyServer";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import type { Config } from "../config/types";
+import { AppError, ErrorCode } from "../error";
+import { createProxyServer } from "../proxy/createProxyServer";
 
 export async function startStdioServer({
   name,

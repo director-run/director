@@ -10,7 +10,7 @@ import * as React from "react";
 
 export function DefaultLayout({ children }: { children: React.ReactNode }) {
   return (
-    <main className="mx-auto flex min-h-device flex-col justify-between gap-y-12 py-4 sm:py-6 md:py-8">
+    <main className="mx-auto flex min-h-device flex-col justify-between gap-y-24 py-4 sm:py-6 md:py-8">
       {children}
     </main>
   );
@@ -18,15 +18,16 @@ export function DefaultLayout({ children }: { children: React.ReactNode }) {
 
 export async function DefaultLayoutHeader({
   className,
+  children,
   ...props
-}: Omit<React.ComponentProps<"header">, "children">) {
+}: React.ComponentProps<"header">) {
   const [dmg, stars] = await Promise.all([
     trpc.github.dmg(),
     trpc.github.stars(),
   ]);
 
   return (
-    <Container asChild>
+    <Container className="gap-y-8" asChild>
       <header {...props}>
         <div
           className={cn(
@@ -35,7 +36,7 @@ export async function DefaultLayoutHeader({
           )}
         >
           <Link
-            className="flex items-center gap-x-2 outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-offset-4 focus-visible:ring-offset-background"
+            className="flex items-center gap-x-2.5 outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-offset-4 focus-visible:ring-offset-background"
             href="/"
           >
             <Logo />
@@ -62,6 +63,7 @@ export async function DefaultLayoutHeader({
             )}
           </nav>
         </div>
+        {children}
       </header>
     </Container>
   );
@@ -100,7 +102,7 @@ export function DefaultLayoutFooter({
   const year = new Date().getFullYear();
 
   return (
-    <Container className="gap-y-16" asChild>
+    <Container className="gap-y-12" asChild>
       <footer {...props}>
         {hasSections && (
           <div
@@ -113,9 +115,9 @@ export function DefaultLayoutFooter({
             {sections.map((section) => {
               return (
                 <div key={section.title} className="flex flex-col gap-y-5">
-                  <h3 className="font-semibold text-xs uppercase tracking-widest before:mr-2 before:text-gray-8 before:content-['##'] dark:font-normal">
+                  <h4 className="font-semibold text-xs uppercase tracking-widest before:mr-2 before:text-gray-8 before:content-['####'] dark:font-normal">
                     {section.title}
-                  </h3>
+                  </h4>
 
                   <ul className="flex flex-col gap-y-1 font-light leading-6 dark:font-extralight">
                     {section.items.map((item) => {

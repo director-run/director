@@ -1,3 +1,4 @@
+import { Contents, ContentsItem } from "@/components/contents";
 import {
   DefaultLayout,
   DefaultLayoutFooter,
@@ -12,7 +13,25 @@ export default async function MainLayout({
 
   return (
     <DefaultLayout>
-      <DefaultLayoutHeader />
+      <DefaultLayoutHeader>
+        <Contents>
+          <ContentsItem position={0} href="#introduction">
+            Introduction
+          </ContentsItem>
+          <ContentsItem position={1} href="#get-started">
+            Get started
+          </ContentsItem>
+          <ContentsItem position={2} href="#features">
+            Features
+          </ContentsItem>
+          <ContentsItem
+            position={3}
+            href="https://github.com/theworkingcompany/director/releases"
+          >
+            Releases
+          </ContentsItem>
+        </Contents>
+      </DefaultLayoutHeader>
       {children}
       <DefaultLayoutFooter
         sections={[

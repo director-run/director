@@ -1,3 +1,7 @@
-import { startServer } from "src/http/server";
+import { listProxies } from "@director/core/services/listProxies";
 
-startServer();
+const proxies = await listProxies();
+
+console.log(proxies);
+
+// startServer();

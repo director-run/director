@@ -49,3 +49,13 @@ bun lint
 # Format code
 bun format
 ```
+
+## Prisma
+
+```bash
+bun run prisma migrate dev --name init
+bun run prisma generate
+bun run prisma db push
+```
+
+

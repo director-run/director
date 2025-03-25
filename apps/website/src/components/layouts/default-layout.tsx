@@ -1,10 +1,12 @@
+"use client";
+
 import { Container } from "@/components/container";
+import { useAppContext } from "@/components/providers/app-context";
 import { ModeToggle } from "@/components/theme-toggle";
-import { trpc } from "@/trpc/server";
 import { Logo } from "@director.run/ui/components/brand";
 import { cn } from "@director.run/ui/lib/cn";
 import { Button } from "@director.run/ui/primitives/button";
-import { ArrowDown, ArrowUpRight, Star } from "@phosphor-icons/react/dist/ssr";
+import { ArrowDown, ArrowUpRight, Star } from "@phosphor-icons/react";
 import Link from "next/link";
 import * as React from "react";
 
@@ -16,15 +18,12 @@ export function DefaultLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export async function DefaultLayoutHeader({
+export function DefaultLayoutHeader({
   className,
   children,
   ...props
 }: React.ComponentProps<"header">) {
-  const [dmg, stars] = await Promise.all([
-    trpc.github.dmg(),
-    trpc.github.stars(),
-  ]);
+  const { repo, downloads } = useAppContext();
 
   return (
     <Container className="gap-y-8" asChild>
@@ -52,13 +51,13 @@ export async function DefaultLayoutHeader({
                 rel="noopener noreferrer"
               >
                 <Star weight="fill" />
-                {stars.stars}
+                {repo.stars}
               </Link>
             </Button>
 
-            {dmg.dmg && (
+            {downloads.osx && (
               <Button variant="default" asChild>
-                <Link href={dmg.dmg}>Download for OSX</Link>
+                <Link href={downloads.osx}>Download for OSX</Link>
               </Button>
             )}
           </nav>

@@ -1,5 +1,5 @@
 import { octokit } from "@/lib/github";
-import { createTRPCRouter, t } from "../init";
+import { createTRPCRouter, t } from "@/trpc/init";
 
 export const githubRouter = createTRPCRouter({
   stars: t.procedure.query(async () => {
@@ -16,7 +16,7 @@ export const githubRouter = createTRPCRouter({
 
     return { stars: response.data.length };
   }),
-  dmg: t.procedure.query(async () => {
+  latest: t.procedure.query(async ({ ctx }) => {
     const response = await octokit.request(
       "GET /repos/{owner}/{repo}/releases/latest",
       {
@@ -25,14 +25,17 @@ export const githubRouter = createTRPCRouter({
       },
     );
 
-    const assets = response.data.assets;
-
-    const dmg = assets.find((asset) => asset.name.endsWith(".dmg"));
-
-    if (!dmg || !dmg.browser_download_url) {
-      return { ok: false, error: "No DMG found" };
+    if (response.data.assets.length === 0) {
+      return { ok: true, osx: null };
     }
 
-    return { ok: true, dmg: dmg.browser_download_url };
+    const dmg = response.data.assets.find((asset) =>
+      asset.name.endsWith(".dmg"),
+    );
+
+    return {
+      ok: true,
+      osx: dmg?.browser_download_url ?? null,
+    };
   }),
 });

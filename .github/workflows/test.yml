@@ -32,4 +32,6 @@ jobs:
     - name: Install dependencies
       run: bun install
     - name: Test
-      run: bun run test
+      run: |
+        bun run prisma generate
+        bun run test

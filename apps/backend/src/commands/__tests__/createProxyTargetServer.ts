@@ -41,5 +41,6 @@ export const createProxyTargetServer = async () => {
     await transport.handlePostMessage(req, res);
   });
 
-  return app.listen(4521);
+  const instance = app.listen(4521);
+  return instance;
 };

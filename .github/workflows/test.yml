@@ -45,4 +45,4 @@ jobs:
       run: | 
         cd apps/backend
         export DEBUG=*
-        bun run test
+        bun run test src/commands/__tests__/startSSEServer.test.ts

@@ -1,5 +1,5 @@
 {
-  "ssePort": 3999,
+  "ssePort": 32999,
   "proxies": [
     {
       "name": "test-proxy",

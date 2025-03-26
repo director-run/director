@@ -42,5 +42,5 @@ jobs:
         bun run prisma:generate
     - name: Test
       run: |
-        export DATABASE_URL=file:./dev.db
+        cd apps/backend
         bun run test

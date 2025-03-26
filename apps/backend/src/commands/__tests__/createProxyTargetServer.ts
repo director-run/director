@@ -14,19 +14,22 @@ export const createProxyTargetServer = async () => {
   }));
 
   const app = express();
-  // Set up middleware before defining routes
   // app.use(express.json());
 
   let transport: SSEServerTransport;
 
   app.get("/sse", async (req, res) => {
-    // Set proper content-type header for SSE
-    // res.setHeader("Content-Type", "text/event-stream");
-    // res.setHeader("Cache-Control", "no-cache");
-    // res.setHeader("Connection", "keep-alive");
+    // // This is critical - SSE requires text/event-stream content type
+    // res.writeHead(200, {
+    //   "Content-Type": "text/event-stream",
+    //   "Cache-Control": "no-cache",
+    //   Connection: "keep-alive",
+    //   "Access-Control-Allow-Origin": "*",
+    // });
 
     transport = new SSEServerTransport("/message", res);
 
+    // Send initial ping
     res.write("event: ping\ndata: connected\n\n");
 
     await server.connect(transport);

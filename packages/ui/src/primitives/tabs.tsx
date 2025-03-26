@@ -10,7 +10,7 @@ function Tabs({
   return (
     <TabsPrimitive.Root
       data-slot="tabs"
-      className={cn("flex flex-col gap-2", className)}
+      className={cn("flex flex-col gap-4", className)}
       {...props}
     />
   );
@@ -24,7 +24,8 @@ function TabsList({
     <TabsPrimitive.List
       data-slot="tabs-list"
       className={cn(
-        "inline-flex h-9 w-fit items-center justify-center rounded-lg bg-muted p-[3px] text-muted-foreground",
+        "inline-flex w-fit items-center justify-center gap-x-0.5",
+        "rounded-sm bg-gray-12 p-0.5",
         className,
       )}
       {...props}
@@ -40,7 +41,11 @@ function TabsTrigger({
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       className={cn(
-        "inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-transparent px-2 py-1 font-medium text-foreground text-sm transition-[color,box-shadow] focus-visible:border-ring focus-visible:outline-1 focus-visible:outline-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:shadow-sm dark:text-muted-foreground dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 dark:data-[state=active]:text-foreground [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        "inline-flex shrink-0 cursor-pointer select-none items-center justify-center gap-1.5 whitespace-nowrap rounded-xs transition-all",
+        "h-6 px-2.5 font-mono font-normal text-xs uppercase leading-none tracking-widest",
+        "outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50",
+        "data-[state=active]:bg-gray-1 data-[state=active]:text-gray-12",
+        "data-[state=inactive]:bg-transparent data-[state=inactive]:text-gray-9 data-[state=inactive]:hover:bg-gray-11 data-[state=inactive]:hover:text-gray-1",
         className,
       )}
       {...props}

@@ -1,5 +1,7 @@
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import { BASE_URL } from "@/lib/url";
 import { TRPCProvider } from "@/trpc/client";
+import { cn } from "@director.run/ui/lib/cn";
 import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
@@ -7,14 +9,14 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import "./globals.css";
 
-const displaySans = localFont({
+const jetBrainsMono = localFont({
   src: [
     {
-      path: "../../public/fonts/JetBrainsMono[wght].ttf",
+      path: "../../../../assets/fonts/JetBrainsMono[wght].ttf",
       weight: "100 800",
     },
     {
-      path: "../../public/fonts/JetBrainsMono-Italic[wght].ttf",
+      path: "../../../../assets/fonts/JetBrainsMono-Italic[wght].ttf",
       weight: "100 800",
       style: "italic",
     },
@@ -28,6 +30,32 @@ const displaySans = localFont({
     "Liberation Mono",
     "Courier New",
     "monospace",
+  ],
+  variable: "--font-mono",
+});
+
+const geistSans = localFont({
+  src: [
+    {
+      path: "../../../../assets/fonts/Geist[wght].ttf",
+      weight: "100 900",
+    },
+  ],
+  fallback: [
+    "ui-sans-serif",
+    "system-ui",
+    "-apple-system",
+    "BlinkMacSystemFont",
+    "Segoe UI",
+    "Roboto",
+    "Helvetica Neue",
+    "Arial",
+    "Noto Sans",
+    "sans-serif",
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    "Segoe UI Symbol",
+    "Noto Color Emoji",
   ],
   variable: "--font-sans",
 });
@@ -48,10 +76,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={displaySans.variable}>
-        <TRPCProvider>
-          <NuqsAdapter>{children}</NuqsAdapter>
-        </TRPCProvider>
+      <body className={cn(jetBrainsMono.variable, geistSans.variable)}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <TRPCProvider>
+            <NuqsAdapter>{children}</NuqsAdapter>
+          </TRPCProvider>
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>

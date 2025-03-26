@@ -20,7 +20,6 @@ apps/
 └── website             # https://director.run
 
 packages/
-├── icons               # We need to replace this because these icons aint opensource, but will leave for now
 ├── core                # Core business logic and functionality
 └── design              # Shared design components
 ```

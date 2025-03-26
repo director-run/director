@@ -1,5 +1,5 @@
 {
-  "name": "@director/ui",
+  "name": "@director.run/ui",
   "type": "module",
   "version": "0.1.0",
   "private": true,
@@ -14,7 +14,6 @@
     "postinstall": "bun run build",
     "shadcn": "bunx --bun shadcn@latest"
   },
-  "sideEffects": ["./src/styles/ui.css"],
   "exports": {
     "./package.json": "./package.json",
     "./postcss.config": "./postcss.config.mjs",
@@ -24,10 +23,10 @@
       "import": "./dist/lib/*.js",
       "require": "./dist/lib/*.cjs"
     },
-    "./primatives/*": {
-      "types": "./dist/primatives/*.d.ts",
-      "import": "./dist/primatives/*.js",
-      "require": "./dist/primatives/*.cjs"
+    "./primitives/*": {
+      "types": "./dist/primitives/*.d.ts",
+      "import": "./dist/primitives/*.js",
+      "require": "./dist/primitives/*.cjs"
     },
     "./components/*": {
       "types": "./dist/components/*.d.ts",
@@ -91,6 +90,7 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@director.run/tsconfig": "workspace:*",
     "@biomejs/biome": "^1.9.4",
     "@types/bun": "^1.2.5",
     "@types/node": "^22.13.10",

@@ -1,4 +1,4 @@
-import { Logo } from "@director/ui/components/brand";
+import { Logo } from "@director.run/ui/components/brand";
 
 import "./App.css";
 import { trpc } from "./trpc/client";

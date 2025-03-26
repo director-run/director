@@ -20,8 +20,8 @@ jobs:
         run: bun run lint
   test:
     name: Tests
-    timeout-minutes: 10
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
     - uses: actions/checkout@v4
     - name: Install uv

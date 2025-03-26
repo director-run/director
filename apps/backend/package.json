@@ -26,7 +26,7 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.7.0",
+    "@modelcontextprotocol/sdk": "^1.8.0",
     "@prisma/client": "^6.5.0",
     "@trpc/server": "11.0.0-rc.700",
     "@types/cors": "^2.8.17",

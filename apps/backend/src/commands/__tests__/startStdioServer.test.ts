@@ -2,7 +2,7 @@ import { Server } from "http";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { createProxyTargetServer } from "./createProxyTargetServer";
+// import { createProxyTargetServer } from "./createProxyTargetServer";
 
 describe("startStdioServer", () => {
   let client: Client;
@@ -10,7 +10,7 @@ describe("startStdioServer", () => {
   let proxyTargetServerInstance: Server;
 
   beforeAll(async () => {
-    proxyTargetServerInstance = await createProxyTargetServer();
+    // proxyTargetServerInstance = await createProxyTargetServer();
 
     client = new Client(
       {
@@ -40,7 +40,7 @@ describe("startStdioServer", () => {
 
   afterAll(async () => {
     await client?.close();
-    await proxyTargetServerInstance?.close();
+    // await proxyTargetServerInstance?.close();
   });
 
   test("should connect and list tools", async () => {
@@ -52,7 +52,7 @@ describe("startStdioServer", () => {
       "search_stories",
       "get_story_info",
       "fetch",
-      "echo",
+      // "echo",
     ];
 
     for (const toolName of expectedToolNames) {

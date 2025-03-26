@@ -4,6 +4,11 @@ on:
   #   types: [synchronize, opened, labeled, ready_for_review]
   push:
     branches: [ "bm/backend" ]
+
+
+env:
+  DATABASE_URL: file:./dev.db
+
 jobs:
   lint:
     name: Lint
@@ -34,6 +39,7 @@ jobs:
     - name: Prepare Prisma
       run: |
         cd apps/backend
+        bun run prisma migrate deploy
         bun run prisma generate
     - name: Test
       run: | 

@@ -21,6 +21,13 @@
             "command": "uvx",
             "args": ["mcp-server-fetch"]
           }
+        },
+        {
+          "name": "test-sse-transport",
+          "transport": {
+            "type": "sse",
+            "url": "http://localhost:4521/sse"
+          }
         }
       ]
     }

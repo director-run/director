@@ -42,5 +42,4 @@ jobs:
         bun run prisma:generate
     - name: Test
       run: |
-        cd apps/backend
         bun run test

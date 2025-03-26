@@ -43,8 +43,11 @@ describe("startSSEServer", () => {
     const transport = new SSEClientTransport(
       new URL(`http://localhost:${testConfig.ssePort}/sse`),
     );
+    console.log("iiii Transport created");
     await client.connect(transport);
+    console.log("iiii Client connected");
     const toolsResult = await client.listTools();
+    console.log("iiii Tools listed");
 
     const expectedToolNames = [
       "get_stories",

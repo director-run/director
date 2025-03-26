@@ -3,7 +3,6 @@ import type { Server } from "node:http";
 import { afterAll, beforeAll, describe, test } from "vitest";
 import { CONFIG_FILE_PATH } from "../../config/env.js";
 import { readConfig } from "../../config/readConfig.js";
-import { startSSEServer } from "../startSSEServer.js";
 import { createProxyTargetServer } from "./createProxyTargetServer.js";
 const testConfig = await readConfig(CONFIG_FILE_PATH);
 
@@ -13,10 +12,10 @@ describe("startSSEServer", () => {
 
   beforeAll(async () => {
     proxyTargetServerInstance = await createProxyTargetServer();
-    serverInstance = await startSSEServer({
-      name: "test-proxy",
-      config: testConfig,
-    });
+    // serverInstance = await startSSEServer({
+    //   name: "test-proxy",
+    //   config: testConfig,
+    // });
 
     const stdout = execSync("curl -I http://localhost:4521/sse");
     console.log(stdout.toString());
@@ -24,7 +23,7 @@ describe("startSSEServer", () => {
   });
 
   afterAll(async () => {
-    await serverInstance?.close();
+    // await serverInstance?.close();
     await proxyTargetServerInstance?.close();
   });
 

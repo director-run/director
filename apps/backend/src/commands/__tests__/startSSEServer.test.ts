@@ -46,42 +46,47 @@ describe("startSSEServer", () => {
     console.log("iiii Transport created");
     await client.connect(transport);
     console.log("iiii Client connected");
-    const toolsResult = await client.listTools();
-    console.log("iiii Tools listed");
+    try {
+      const toolsResult = await client.listTools();
+      console.log("iiii Tools listed");
 
-    const expectedToolNames = [
-      "get_stories",
-      "get_user_info",
-      "search_stories",
-      "get_story_info",
-      "fetch",
-      // "echo",
-    ];
+      const expectedToolNames = [
+        "get_stories",
+        "get_user_info",
+        "search_stories",
+        "get_story_info",
+        "fetch",
+        // "echo",
+      ];
 
-    for (const toolName of expectedToolNames) {
-      const tool = toolsResult.tools.find((t) => t.name === toolName);
-      expect(tool).toBeDefined();
-      expect(tool?.name).toBe(toolName);
+      for (const toolName of expectedToolNames) {
+        const tool = toolsResult.tools.find((t) => t.name === toolName);
+        expect(tool).toBeDefined();
+        expect(tool?.name).toBe(toolName);
+      }
+
+      expect(
+        toolsResult.tools.find((t) => t.name === "get_stories")?.description,
+      ).toContain("[Hackernews]");
+      expect(
+        toolsResult.tools.find((t) => t.name === "get_user_info")?.description,
+      ).toContain("[Hackernews]");
+      expect(
+        toolsResult.tools.find((t) => t.name === "search_stories")?.description,
+      ).toContain("[Hackernews]");
+      expect(
+        toolsResult.tools.find((t) => t.name === "get_story_info")?.description,
+      ).toContain("[Hackernews]");
+
+      // Verify Fetch tool has correct description
+      expect(
+        toolsResult.tools.find((t) => t.name === "fetch")?.description,
+      ).toContain("[Fetch]");
+
+      await client.close();
+    } catch (error) {
+      console.error("iiii Error:", error);
+      throw error;
     }
-
-    expect(
-      toolsResult.tools.find((t) => t.name === "get_stories")?.description,
-    ).toContain("[Hackernews]");
-    expect(
-      toolsResult.tools.find((t) => t.name === "get_user_info")?.description,
-    ).toContain("[Hackernews]");
-    expect(
-      toolsResult.tools.find((t) => t.name === "search_stories")?.description,
-    ).toContain("[Hackernews]");
-    expect(
-      toolsResult.tools.find((t) => t.name === "get_story_info")?.description,
-    ).toContain("[Hackernews]");
-
-    // Verify Fetch tool has correct description
-    expect(
-      toolsResult.tools.find((t) => t.name === "fetch")?.description,
-    ).toContain("[Fetch]");
-
-    await client.close();
   });
 });

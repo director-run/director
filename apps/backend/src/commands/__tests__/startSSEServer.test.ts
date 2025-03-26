@@ -5,7 +5,7 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { CONFIG_FILE_PATH } from "../../config/env.js";
 import { readConfig } from "../../config/readConfig.js";
 import { startSSEServer } from "../startSSEServer.js";
-// import { createProxyTargetServer } from "./createProxyTargetServer.js";
+import { createProxyTargetServer } from "./createProxyTargetServer.js";
 const testConfig = await readConfig(CONFIG_FILE_PATH);
 
 describe("startSSEServer", () => {
@@ -13,7 +13,7 @@ describe("startSSEServer", () => {
   let proxyTargetServerInstance: Server;
 
   beforeAll(async () => {
-    // proxyTargetServerInstance = await createProxyTargetServer();
+    proxyTargetServerInstance = await createProxyTargetServer();
     serverInstance = await startSSEServer({
       name: "test-proxy",
       config: testConfig,
@@ -29,7 +29,7 @@ describe("startSSEServer", () => {
     await serverInstance?.close();
     console.log("Closed");
 
-    // await proxyTargetServerInstance?.close();
+    await proxyTargetServerInstance?.close();
   });
 
   test("should connect and list tools", async () => {
@@ -61,7 +61,7 @@ describe("startSSEServer", () => {
       "search_stories",
       "get_story_info",
       "fetch",
-      // "echo",
+      "echo",
     ];
     for (const toolName of expectedToolNames) {
       const tool = toolsResult.tools.find((t) => t.name === toolName);

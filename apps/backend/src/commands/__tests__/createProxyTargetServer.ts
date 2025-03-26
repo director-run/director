@@ -30,7 +30,7 @@ export const createProxyTargetServer = async () => {
     transport = new SSEServerTransport("/message", res);
 
     // Send initial ping
-    res.write("event: ping\ndata: connected\n\n");
+    // res.write("event: ping\ndata: connected\n\n");
 
     await server.connect(transport);
   });

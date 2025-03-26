@@ -14,9 +14,17 @@ export const createProxyTargetServer = async () => {
   }));
 
   const app = express();
+  // Set up middleware before defining routes
+  app.use(express.json());
+
   let transport: SSEServerTransport;
 
   app.get("/sse", async (req, res) => {
+    // Set proper content-type header for SSE
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+
     transport = new SSEServerTransport("/message", res);
 
     res.write("event: ping\ndata: connected\n\n");
@@ -25,8 +33,6 @@ export const createProxyTargetServer = async () => {
   });
 
   app.post("/message", async (req, res) => {
-    app.use(express.json());
-
     await transport.handlePostMessage(req, res);
   });
 

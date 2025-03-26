@@ -18,17 +18,10 @@ describe("startSSEServer", () => {
       name: "test-proxy",
       config: testConfig,
     });
-
-    // const stdout = execSync("curl -I http://localhost:4521/sse");
-    // console.log(stdout.toString());
-    // true;
   });
 
   afterAll(async () => {
-    console.log("Closing servers");
     await serverInstance?.close();
-    console.log("Closed");
-
     await proxyTargetServerInstance?.close();
   });
 
@@ -49,12 +42,8 @@ describe("startSSEServer", () => {
     const transport = new SSEClientTransport(
       new URL(`http://localhost:${testConfig.ssePort}/sse`),
     );
-    console.log("iiii Transport created");
     await client.connect(transport);
-    console.log("iiii Client connected");
-    // try {
     const toolsResult = await client.listTools();
-    console.log("iiii Tools listed");
     const expectedToolNames = [
       "get_stories",
       "get_user_info",
@@ -80,11 +69,10 @@ describe("startSSEServer", () => {
     expect(
       toolsResult.tools.find((t) => t.name === "get_story_info")?.description,
     ).toContain("[Hackernews]");
-    // Verify Fetch tool has correct description
     expect(
       toolsResult.tools.find((t) => t.name === "fetch")?.description,
     ).toContain("[Fetch]");
-    console.log("iiii Tools verified");
+
     await client.close();
   });
 });

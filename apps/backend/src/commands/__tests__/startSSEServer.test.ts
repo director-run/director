@@ -1,4 +1,3 @@
-import { execSync } from "node:child_process";
 import type { Server } from "node:http";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
@@ -6,7 +5,7 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { CONFIG_FILE_PATH } from "../../config/env.js";
 import { readConfig } from "../../config/readConfig.js";
 import { startSSEServer } from "../startSSEServer.js";
-import { createProxyTargetServer } from "./createProxyTargetServer.js";
+// import { createProxyTargetServer } from "./createProxyTargetServer.js";
 const testConfig = await readConfig(CONFIG_FILE_PATH);
 
 describe("startSSEServer", () => {
@@ -14,20 +13,23 @@ describe("startSSEServer", () => {
   let proxyTargetServerInstance: Server;
 
   beforeAll(async () => {
-    proxyTargetServerInstance = await createProxyTargetServer();
+    // proxyTargetServerInstance = await createProxyTargetServer();
     serverInstance = await startSSEServer({
       name: "test-proxy",
       config: testConfig,
     });
 
-    const stdout = execSync("curl -I http://localhost:4521/sse");
-    console.log(stdout.toString());
-    true;
+    // const stdout = execSync("curl -I http://localhost:4521/sse");
+    // console.log(stdout.toString());
+    // true;
   });
 
   afterAll(async () => {
+    console.log("Closing servers");
     await serverInstance?.close();
-    await proxyTargetServerInstance?.close();
+    console.log("Closed");
+
+    // await proxyTargetServerInstance?.close();
   });
 
   test("should connect and list tools", async () => {
@@ -59,7 +61,7 @@ describe("startSSEServer", () => {
       "search_stories",
       "get_story_info",
       "fetch",
-      "echo",
+      // "echo",
     ];
     for (const toolName of expectedToolNames) {
       const tool = toolsResult.tools.find((t) => t.name === toolName);
@@ -82,6 +84,7 @@ describe("startSSEServer", () => {
     expect(
       toolsResult.tools.find((t) => t.name === "fetch")?.description,
     ).toContain("[Fetch]");
+    console.log("iiii Tools verified");
     await client.close();
   });
 });

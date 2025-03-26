@@ -44,4 +44,4 @@ jobs:
     - name: Test
       run: | 
         cd apps/backend
-        bun run vitest src/commands/__tests__/startSSEServer.test.ts
+        bun run vitest

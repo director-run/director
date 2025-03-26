@@ -44,4 +44,5 @@ jobs:
     - name: Test
       run: | 
         cd apps/backend
+        export DEBUG=*
         bun run test

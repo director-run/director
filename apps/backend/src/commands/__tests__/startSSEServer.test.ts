@@ -1,3 +1,4 @@
+import { execSync } from "node:child_process";
 import type { Server } from "node:http";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
@@ -5,7 +6,6 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { CONFIG_FILE_PATH } from "../../config/env.js";
 import { readConfig } from "../../config/readConfig.js";
 import { startSSEServer } from "../startSSEServer.js";
-
 import { createProxyTargetServer } from "./createProxyTargetServer.js";
 const testConfig = await readConfig(CONFIG_FILE_PATH);
 
@@ -19,6 +19,10 @@ describe("startSSEServer", () => {
       name: "test-proxy",
       config: testConfig,
     });
+
+    const stdout = execSync("curl -I http://localhost:4521/sse");
+    console.log(stdout.toString());
+    true;
   });
 
   afterAll(async () => {
@@ -44,6 +48,7 @@ describe("startSSEServer", () => {
     const transport = new SSEClientTransport(
       new URL(`http://localhost:${testConfig.ssePort}/sse`),
     );
+
     console.log("iiii Transport created");
     await client.connect(transport);
     console.log("iiii Client connected");

@@ -21,7 +21,7 @@ export function Section({
       data-slot="section"
       id={name?.toLowerCase().replace(/ /g, "-")}
       className={cn(
-        "flex flex-col gap-y-4",
+        "flex scroll-m-20 flex-col gap-y-4",
         name &&
           "before:text-gray-8 before:text-xs before:uppercase before:tracking-widest before:content-['<<<'attr(data-name)'>>>']",
         name &&

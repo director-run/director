@@ -20,19 +20,13 @@ export default async function MainLayout({
       <DefaultLayout>
         <DefaultLayoutHeader>
           <Contents>
-            <ContentsItem position={0} href="#introduction">
-              Introduction
+            <ContentsItem href="#introduction">Introduction</ContentsItem>
+            <ContentsItem href="#get-started">Get started</ContentsItem>
+            <ContentsItem href="#features">Features</ContentsItem>
+            <ContentsItem href="https://github.com/theworkingcompany/director/releases">
+              Documentation
             </ContentsItem>
-            <ContentsItem position={1} href="#get-started">
-              Get started
-            </ContentsItem>
-            <ContentsItem position={2} href="#features">
-              Features
-            </ContentsItem>
-            <ContentsItem
-              position={3}
-              href="https://github.com/theworkingcompany/director/releases"
-            >
+            <ContentsItem href="https://github.com/theworkingcompany/director/releases">
               Releases
             </ContentsItem>
           </Contents>

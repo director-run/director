@@ -2,43 +2,16 @@ import { cn } from "@director.run/ui/lib/cn";
 import { ArrowRight, ArrowUpRight } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 
-const ABC = [
-  "A",
-  "B",
-  "C",
-  "D",
-  "E",
-  "F",
-  "G",
-  "H",
-  "I",
-  "J",
-  "K",
-  "L",
-  "M",
-  "N",
-  "O",
-  "P",
-  "Q",
-  "R",
-  "S",
-  "T",
-  "U",
-  "V",
-  "W",
-  "X",
-  "Y",
-  "Z",
-];
-
 export function Contents({
   children,
   className,
+  style,
   ...props
 }: React.ComponentProps<"ol">) {
   return (
     <ol
       className={cn("flex select-none flex-col gap-y-1", className)}
+      style={{ counterReset: "count 0", ...style }}
       {...props}
     >
       {children}
@@ -48,33 +21,31 @@ export function Contents({
 
 interface ContentsItemProps extends React.ComponentProps<"li"> {
   href: string;
-  position: number;
 }
 
 export function ContentsItem({
   children,
   className,
   href,
-  position,
+  style,
   ...props
 }: ContentsItemProps) {
   const isExternal = href.startsWith("http");
 
   return (
-    <li {...props}>
+    <li {...props} style={{ counterIncrement: "count 1", ...style }}>
       <Link
         href={href}
         className={cn(
           "group/contents-item",
           "grid grid-cols-[28px_1fr_28px] gap-x-0.5",
-          "*:bg-gray-4 *:first:rounded-l-xs *:last:rounded-r-xs dark:*:bg-gray-2",
+          "*:bg-gray-4 *:last:rounded-r-xs dark:*:bg-gray-2",
           "*:transition-colors *:duration-200 *:ease-in-out hover:*:bg-gray-5 dark:hover:*:bg-gray-4",
+          "before:flex before:size-7 before:items-center before:justify-center before:rounded-l-xs before:bg-gray-4 before:font-medium before:text-gray-10 before:uppercase before:content-[counter(count,_upper-alpha)] group-hover/contents-item:before:text-gray-11 dark:before:bg-gray-2",
+          "before:transition-colors before:duration-200 before:ease-in-out hover:before:bg-gray-5 dark:hover:before:bg-gray-4",
           className,
         )}
       >
-        <span className="flex size-7 items-center justify-center font-medium text-gray-10 uppercase group-hover/contents-item:text-gray-11">
-          {ABC[position]}
-        </span>
         <span className="truncate px-2 font-light leading-7 tracking-wide dark:font-extralight">
           {children}
         </span>

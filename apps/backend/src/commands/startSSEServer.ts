@@ -38,7 +38,7 @@ export const startSSEServer = async ({
     logger.info("Post connection-");
 
     // Send an initial ping to ensure connection is established (SSE doesn't work in Bun otherwise)
-    res.write("event: ping\ndata: connected\n\n");
+    // res.write("event: ping\ndata: connected\n\n");
 
     await server.connect(transport);
     logger.info("Post server.connect-");

@@ -7,7 +7,7 @@ on:
 
 
 env:
-  DATABASE_URL: file:./apps/backend/dev.db
+  DATABASE_URL: file:./dev.db
 
 jobs:
   lint:
@@ -41,4 +41,6 @@ jobs:
         cd apps/backend
         bun run prisma:generate
     - name: Test
-      run: DATABASE_URL=file:./apps/backend/dev.db bun run test
+      run: |
+        export DATABASE_URL=file:./dev.db
+        bun run test

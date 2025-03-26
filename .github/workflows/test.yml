@@ -42,6 +42,4 @@ jobs:
         bun run prisma migrate deploy
         bun run prisma generate
     - name: Test
-      run: | 
-        cd apps/backend
-        bun run test
+      run: bun run test

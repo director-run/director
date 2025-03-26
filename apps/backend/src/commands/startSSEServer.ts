@@ -32,9 +32,10 @@ export const startSSEServer = async ({
     const clientIp =
       req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown";
     const userAgent = req.headers["user-agent"] || "unknown";
-    logger.info("Received connection", { userAgent, clientIp });
+    logger.info("Received connection-", { userAgent, clientIp });
 
     transport = new SSEServerTransport("/message", res);
+    logger.info("Post connection-");
 
     // Send an initial ping to ensure connection is established (SSE doesn't work in Bun otherwise)
     res.write("event: ping\ndata: connected\n\n");

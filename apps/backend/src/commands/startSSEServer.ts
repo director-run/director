@@ -41,6 +41,7 @@ export const startSSEServer = async ({
     res.write("event: ping\ndata: connected\n\n");
 
     await server.connect(transport);
+    logger.info("Post server.connect-");
 
     server.onerror = (err) => {
       logger.error(`Server onerror: ${err.stack}`);

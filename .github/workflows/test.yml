@@ -36,4 +36,6 @@ jobs:
         cd apps/backend
         bun run prisma generate
     - name: Test
-      run: bun run test --filter=@director/backend
+      run: | 
+        cd apps/backend
+        bun run test

@@ -33,9 +33,9 @@ model Server {
 model Transport {
   id        Int      @id @default(autoincrement())
   command   String?
-  args      String?  // Stored as JSON string
-  type      String?  // For SSE transport: "sse"
-  url       String?  // For SSE transport: URL
+  args      String? // Stored as JSON string
+  type      String? // For SSE transport: "sse"
+  url       String? // For SSE transport: URL
   server    Server   @relation(fields: [serverId], references: [id], onDelete: Cascade)
   serverId  Int      @unique
   createdAt DateTime @default(now())

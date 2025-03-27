@@ -1,6 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import { getPrismaClient } from "./getPrismaClient";
 
-const prisma = new PrismaClient();
+const prisma = getPrismaClient();
 
 export const listProxies = async () => {
   return prisma.proxy.findMany();

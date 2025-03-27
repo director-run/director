@@ -5,23 +5,27 @@ console.log("----------------");
 console.log("----------------");
 console.log("----------------");
 
+import { CONFIG_FILE_PATH } from "../src/config/env";
 import { startServer } from "../src/http/server";
+import { getPrismaClient } from "../src/services/getPrismaClient";
 import { listProxies } from "../src/services/listProxies";
 
-import path from "node:path";
-import { PrismaClient } from "@prisma/client";
-import { CONFIG_FILE_PATH } from "../src/config/env";
-
 // Initialize the PrismaClient
-const prisma = new PrismaClient();
+const prisma = getPrismaClient();
 
-console.log(`Config file path: ${CONFIG_FILE_PATH}`);
-console.log("database URL", process.env.DATABASE_URL);
-console.log(
-  `Prisma sqlite file: ${path.resolve(process.env.DATABASE_URL ?? "?")}`,
-);
-console.log("Directory name", __dirname);
-console.log("File name", __filename);
+console.log(`CONFIG_FILE_PATH: ${CONFIG_FILE_PATH}`);
+console.log("process.env.DATABASE_URL: ", process.env.DATABASE_URL);
+console.log("----------------");
+
+console.log("__dirname: ", __dirname);
+console.log("__filename: ", __filename);
+console.log("----------------");
+
+console.log("prisma dirname", prisma._engine.config.dirname);
+console.log("prisma datamodelPath", prisma._engine.config.datamodelPath);
+console.log("prisma cwd", prisma._engine.config.cwd);
+console.log("prisma env", prisma._engine.config.env);
+
 console.log("----------------");
 console.log("----------------");
 console.log("----------------");

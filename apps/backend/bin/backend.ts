@@ -1,3 +1,7 @@
+console.log("Environment variables:");
+console.log("----------------");
+console.log(process.env);
+
 import { startServer } from "../src/http/server";
 import { listProxies } from "../src/services/listProxies";
 
@@ -5,7 +9,6 @@ import path from "node:path";
 import { PrismaClient } from "@prisma/client";
 import { CONFIG_FILE_PATH } from "../src/config/env";
 import { readConfig } from "../src/config/readConfig";
-import { addProxy } from "../src/services/addProxy";
 
 // Initialize the PrismaClient
 const prisma = new PrismaClient();
@@ -34,7 +37,7 @@ const proxyData = {
 };
 
 // Act
-await addProxy(proxyData);
+// await addProxy(proxyData);
 
 const proxies = await listProxies();
 console.log("Proxies:");

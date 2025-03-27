@@ -19,3 +19,7 @@ export const PACKAGE_NAME = packageJson.name;
 export const PACKAGE_VERSION = packageJson.version;
 export const LOG_LEVEL = "trace";
 export const LOG_PRETTY = true;
+
+// console.log("Environment variables:");
+// console.log("----------------");
+// console.log(process.env);

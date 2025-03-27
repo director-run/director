@@ -18,8 +18,8 @@
     "backend": "bun run bin/backend.ts",
     "backend:watch": "bun run --watch bin/backend.ts",
     "cli": "bun run bin/cli.ts",
-    "build:backend": "bun build ./bin/backend.ts --compile --outfile ./dist/backend",
-    "build:cli": "bun build ./bin/cli.ts --compile --outfile ./dist/cli",
+    "build:backend": "bun run prisma generate && bun build ./bin/backend.ts --compile --outfile ./dist/backend",
+    "build:cli": "bun run prisma generate && bun build ./bin/cli.ts --compile --outfile ./dist/cli",
     "build": "bun run build:backend && bun run build:cli",
     "inspector": "npx @modelcontextprotocol/inspector",
     "prisma:generate": "bun run prisma migrate deploy && bun run prisma generate"

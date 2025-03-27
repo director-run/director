@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
+  url      = "file:./director.test.db" //env("DATABASE_URL")
 }
 
 model Proxy {

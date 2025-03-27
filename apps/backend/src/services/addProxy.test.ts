@@ -1,4 +1,3 @@
-import { PrismaClient } from "@prisma/client";
 import {
   afterAll,
   beforeAll,
@@ -8,10 +7,11 @@ import {
   test,
 } from "vitest";
 import { addProxy } from "./addProxy";
+import { getPrismaClient } from "./getPrismaClient";
 import { listProxies } from "./listProxies";
 
 // Create a real Prisma client for integration tests
-const prisma = new PrismaClient();
+const prisma = getPrismaClient();
 
 describe("addProxy integration", () => {
   // Clean up the database before all tests

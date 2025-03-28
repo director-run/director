@@ -1,4 +1,4 @@
-import { getLogger } from "../logger";
+import { getLogger } from "../helpers/logger";
 
 import * as trpcExpress from "@trpc/server/adapters/express";
 import cors from "cors";

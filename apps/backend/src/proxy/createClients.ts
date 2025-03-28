@@ -3,7 +3,7 @@ import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import type { ServerConfig } from "../config/types";
-import { getLogger } from "../logger";
+import { getLogger } from "../helpers/logger";
 
 const logger = getLogger("proxy/createClients");
 

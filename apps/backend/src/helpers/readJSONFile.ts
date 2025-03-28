@@ -1,5 +1,5 @@
 import fs from "fs";
-import { AppError, ErrorCode } from "../error";
+import { AppError, ErrorCode } from "../helpers/error";
 
 export async function readJSONFile<T>(filePath: string): Promise<T> {
   if (!fs.existsSync(filePath)) {

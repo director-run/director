@@ -1,7 +1,7 @@
 import { pick } from "lodash";
 import pino, { type Logger } from "pino";
 import pinoPretty from "pino-pretty";
-import { LOG_LEVEL, LOG_PRETTY } from "./config/env";
+import { LOG_LEVEL, LOG_PRETTY } from "../config/env";
 import { isAppError } from "./error";
 
 const logger = pino(

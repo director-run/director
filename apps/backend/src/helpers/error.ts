@@ -12,6 +12,7 @@ export class AppError extends Error {
 
 export enum ErrorCode {
   NOT_FOUND = "NOT_FOUND",
+  CONFLICT = "CONFLICT",
 }
 
 export const isAppError = (error: unknown): error is AppError =>

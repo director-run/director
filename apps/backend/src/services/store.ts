@@ -35,6 +35,14 @@ export async function createProxy(proxy: Proxy): Promise<Proxy> {
   const newProxy = {
     ...proxy,
   };
+  const existingProxy = db.proxies.find((p) => p.name === proxy.name);
+  if (existingProxy) {
+    throw new AppError(
+      ErrorCode.CONFLICT,
+      `Proxy ${proxy.name} already exists`,
+    );
+  }
+
   db.proxies.push(newProxy);
   await writeJSONFile<ProxyDB>(PROXY_DB_FILE_PATH, db);
   return newProxy;

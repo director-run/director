@@ -2,11 +2,9 @@ import type { Server } from "node:http";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { CONFIG_FILE_PATH } from "../../config/env.js";
-import { readConfig } from "../../config/readConfig.js";
+import { SSE_PORT } from "../../config/env";
 import { startSSEServer } from "../startSSEServer.js";
 import { createProxyTargetServer } from "./createProxyTargetServer.js";
-const testConfig = await readConfig(CONFIG_FILE_PATH);
 
 describe("startSSEServer", () => {
   let serverInstance: Server;
@@ -14,10 +12,7 @@ describe("startSSEServer", () => {
 
   beforeAll(async () => {
     proxyTargetServerInstance = await createProxyTargetServer();
-    serverInstance = await startSSEServer({
-      name: "test-proxy",
-      config: testConfig,
-    });
+    serverInstance = await startSSEServer("test-proxy");
   });
 
   afterAll(async () => {
@@ -40,7 +35,7 @@ describe("startSSEServer", () => {
       },
     );
     const transport = new SSEClientTransport(
-      new URL(`http://localhost:${testConfig.ssePort}/sse`),
+      new URL(`http://localhost:${SSE_PORT}/sse`),
     );
     await client.connect(transport);
     const toolsResult = await client.listTools();

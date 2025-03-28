@@ -1,26 +1,11 @@
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import type { Config } from "../config/types";
-import { AppError, ErrorCode } from "../error";
 import { createProxyServer } from "../proxy/createProxyServer";
+import { getProxy } from "../services/store";
 
-export async function startStdioServer({
-  name,
-  config,
-}: {
-  name: string;
-  config: Config;
-}) {
-  const proxyConfig = config.proxies.find((proxy) => proxy.name === name);
-
-  if (!proxyConfig) {
-    throw new AppError(
-      ErrorCode.NOT_FOUND,
-      `Proxy config for ${name} not found`,
-    );
-  }
-
+export async function startStdioServer(name: string) {
+  const proxy = await getProxy(name);
   const transport = new StdioServerTransport();
-  const { server, cleanup } = await createProxyServer(proxyConfig);
+  const { server, cleanup } = await createProxyServer(proxy);
 
   await server.connect(transport);
 

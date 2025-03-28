@@ -1,8 +1,9 @@
 import Table from "cli-table3";
-import type { Config } from "../config/types";
+import { getProxies } from "../services/store";
 
-export const listProxies = ({ config }: { config: Config }) => {
-  if (config.proxies.length === 0) {
+export const listProxies = async () => {
+  const proxies = await getProxies();
+  if (proxies.length === 0) {
     // biome-ignore lint/suspicious/noConsoleLog: This is a CLI command that needs to output to console
     console.log("no proxies configured yet.");
   } else {
@@ -13,7 +14,7 @@ export const listProxies = ({ config }: { config: Config }) => {
       },
     });
     table.push(
-      ...config.proxies.map((proxy) => [
+      ...proxies.map((proxy) => [
         proxy.name,
         proxy.servers.map((s) => s.name).join(","),
       ]),

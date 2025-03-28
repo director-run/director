@@ -1,30 +1,17 @@
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
-import type { Config } from "../config/types";
-import { AppError, ErrorCode } from "../error";
+import { SSE_PORT } from "../config/env";
 import { getLogger } from "../logger";
 import { createProxyServer } from "../proxy/createProxyServer";
+import { getProxy } from "../services/store";
 
 const logger = getLogger("startSSEServer");
 
-export const startSSEServer = async ({
-  name,
-  config,
-}: {
-  name: string;
-  config: Config;
-}) => {
+export const startSSEServer = async (name: string) => {
   const app = express();
-  const proxyConfig = config.proxies.find((proxy) => proxy.name === name);
+  const proxy = await getProxy(name);
 
-  if (!proxyConfig) {
-    throw new AppError(
-      ErrorCode.NOT_FOUND,
-      `Proxy config for ${name} not found`,
-    );
-  }
-
-  const { server, cleanup } = await createProxyServer(proxyConfig);
+  const { server, cleanup } = await createProxyServer(proxy);
 
   let transport: SSEServerTransport;
 
@@ -53,9 +40,9 @@ export const startSSEServer = async ({
     await transport.handlePostMessage(req, res);
   });
 
-  const expressServer = app.listen(config.ssePort, () => {
+  const expressServer = app.listen(SSE_PORT, () => {
     logger.info(
-      `server started successfully at http://localhost:${config.ssePort}/sse`,
+      `server started successfully at http://localhost:${SSE_PORT}/sse`,
     );
   });
 

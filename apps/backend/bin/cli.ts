@@ -1,16 +1,10 @@
-import { existsSync } from "node:fs";
-import {
-  CONFIG_FILE_PATH,
-  DEFAULT_CONFIG,
-  PACKAGE_NAME,
-  PACKAGE_VERSION,
-} from "../src/config/env";
-import { readConfig } from "../src/config/readConfig";
-import { writeConfig } from "../src/config/writeConfig";
+import { PACKAGE_NAME, PACKAGE_VERSION } from "../src/config/env";
 import { getLogger } from "../src/logger";
 
 import { Command, Option } from "commander";
+import { debug } from "../src/commands/debug";
 import { listProxies } from "../src/commands/listProxies";
+import { seed } from "../src/commands/seed";
 import { startSSEServer } from "../src/commands/startSSEServer";
 import { startStdioServer } from "../src/commands/startStdioServer";
 import {
@@ -19,11 +13,6 @@ import {
   uninstallFromClaude,
 } from "../src/installer/claude";
 
-if (!existsSync(CONFIG_FILE_PATH)) {
-  await writeConfig(CONFIG_FILE_PATH, DEFAULT_CONFIG);
-}
-
-const config = await readConfig(CONFIG_FILE_PATH);
 const program = new Command();
 
 const logger = getLogger("cli");
@@ -43,9 +32,9 @@ program
   .action(async (name, options) => {
     try {
       if (options.transport === "stdio") {
-        await startStdioServer({ config, name });
+        await startStdioServer(name);
       } else if (!options.transport || options.transport === "sse") {
-        await startSSEServer({ config, name });
+        await startSSEServer(name);
       } else {
         console.error(`Unsupported transport type: ${options.transport}`);
         console.error("Supported types: stdio, sse");
@@ -62,8 +51,16 @@ program
   .alias("list")
   .description("List all configured MCP proxies")
   .action(() => {
-    listProxies({ config });
+    listProxies();
   });
+
+program.command("debug").action(() => {
+  debug();
+});
+
+program.command("seed").action(() => {
+  seed();
+});
 
 function mandatoryOption(flags: string, description?: string) {
   const option = new Option(flags, description);

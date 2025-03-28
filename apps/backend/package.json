@@ -7,7 +7,8 @@
     "@biomejs/biome": "^1.9.4",
     "@types/bun": "latest",
     "@types/lodash": "^4.17.16",
-    "@types/express": "^5.0.0"
+    "@types/express": "^5.0.0",
+    "@types/cors": "^2.8.17"
   },
   "scripts": {
     "lint": "biome check .",
@@ -17,27 +18,21 @@
     "backend": "bun run bin/backend.ts",
     "backend:watch": "bun run --watch bin/backend.ts",
     "cli": "bun run bin/cli.ts",
-    "build:backend": "bun run prisma:generate && bun build ./bin/backend.ts --compile --outfile ./dist/backend",
-    "build:backend:o": "bun run prisma:generate && bun build ./bin/backend.ts --compile --outfile ~/tmp/backend",
-    "build:cli": "bun run prisma:generate && bun build ./bin/cli.ts --compile --outfile ./dist/cli",
+    "build:backend": "bun build ./bin/backend.ts --compile --outfile ./dist/backend",
+    "build:cli": "bun build ./bin/cli.ts --compile --outfile ./dist/cli",
     "build": "bun run build:backend && bun run build:cli",
-    "inspector": "npx @modelcontextprotocol/inspector",
-    "prisma:generate": "bun run prisma generate",
-    "prisma:migrate": "bun run prisma migrate deploy"
+    "inspector": "npx @modelcontextprotocol/inspector"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.8.0",
-    "@prisma/client": "^6.5.0",
     "@trpc/server": "11.0.0-rc.700",
-    "@types/cors": "^2.8.17",
     "cli-table3": "^0.6.5",
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "lodash": "^4.17.21",
-    "prisma": "^6.5.0",
     "pino": "^9.6.0",
     "pino-pretty": "^13.0.0",
     "superjson": "^2.2.1",

@@ -4,9 +4,6 @@ on:
     types: [synchronize, opened, labeled, ready_for_review]
   push:
     branches: [ "main" ]
-env:
-  DATABASE_URL: file:./dev.db
-
 jobs:
   lint:
     name: Lint
@@ -34,9 +31,5 @@ jobs:
         bun-version: latest
     - name: Install dependencies
       run: bun install
-    - name: Prepare Prisma
-      run: |
-        cd apps/backend
-        bun run prisma:migrate
     - name: Test
       run: bun run test

@@ -1,8 +1,7 @@
 {
-  "ssePort": 3006,
   "proxies": [
     {
-      "name": "my-first-proxy",
+      "name": "test-proxy",
       "servers": [
         {
           "name": "Hackernews",
@@ -20,6 +19,13 @@
           "transport": {
             "command": "uvx",
             "args": ["mcp-server-fetch"]
+          }
+        },
+        {
+          "name": "test-sse-transport",
+          "transport": {
+            "type": "sse",
+            "url": "http://localhost:4521/sse"
           }
         }
       ]

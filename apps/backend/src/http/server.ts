@@ -3,7 +3,7 @@ import { getLogger } from "../helpers/logger";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import cors from "cors";
 import express from "express";
-import { appRouter } from "../trpc/router";
+import { appRouter } from "./router";
 
 const logger = getLogger("server");
 

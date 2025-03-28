@@ -1,7 +1,7 @@
 {
   "name": "@director/desktop",
   "private": true,
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
   "scripts": {
     "clean": "rm -rf dist/* && rm -rf src-tauri/binaries/* && rm -rf src-tauri/target/*",

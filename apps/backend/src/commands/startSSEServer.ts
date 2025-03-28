@@ -1,6 +1,6 @@
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
-import { SSE_PORT } from "../config/env";
+import { SSE_PORT } from "../env";
 import { getLogger } from "../helpers/logger";
 import { createProxyServer } from "../proxy/createProxyServer";
 import { getProxy } from "../services/store";

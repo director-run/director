@@ -1,4 +1,4 @@
-import * as config from "../config/env";
+import * as config from "../env";
 
 export async function debug() {
   console.log("----------------");

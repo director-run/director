@@ -1,4 +1,4 @@
-import { PACKAGE_NAME, PACKAGE_VERSION } from "../src/config/env";
+import { PACKAGE_NAME, PACKAGE_VERSION } from "../src/env";
 import { getLogger } from "../src/helpers/logger";
 
 import { Command, Option } from "commander";

@@ -1,6 +1,6 @@
 import os from "node:os";
 import path from "node:path";
-import packageJson from "../../package.json";
+import packageJson from "../package.json";
 
 export const DATA_DIR =
   process.env.DATA_DIR ?? path.join(os.homedir(), ".director");

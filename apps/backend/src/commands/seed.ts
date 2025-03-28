@@ -1,4 +1,4 @@
-import { PROXY_DB_FILE_PATH } from "../config/env";
+import { PROXY_DB_FILE_PATH } from "../env";
 import { getLogger } from "../helpers/logger";
 import { writeJSONFile } from "../helpers/writeJSONFile";
 import type { ProxyDB } from "../services/store";

@@ -1,4 +1,4 @@
-import { PROXY_DB_FILE_PATH } from "../config/env";
+import { PROXY_DB_FILE_PATH } from "../env";
 import { AppError, ErrorCode } from "../helpers/error";
 import { readJSONFile } from "../helpers/readJSONFile";
 import { writeJSONFile } from "../helpers/writeJSONFile";

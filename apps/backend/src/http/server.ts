@@ -1,5 +1,3 @@
-import { CONFIG_FILE_PATH } from "../config/env";
-import { readConfig } from "../config/readConfig";
 import { getLogger } from "../logger";
 
 import * as trpcExpress from "@trpc/server/adapters/express";
@@ -7,9 +5,7 @@ import cors from "cors";
 import express from "express";
 import { appRouter } from "../trpc/router";
 
-const config = await readConfig(CONFIG_FILE_PATH);
-
-const logger = getLogger("cli");
+const logger = getLogger("server");
 
 // curl --location --globoff 'http://localhost:3000/trpc/greeting?input={%22name%22%3A%22somkiat%22}' \
 // --header 'Cookie: Cookie_1=value' | jq
@@ -17,7 +13,7 @@ const logger = getLogger("cli");
 // Print out the full command that was called with all arguments
 
 export function startServer() {
-  logger.info(`Hello backend`);
+  logger.info(`Starting backend server`);
 
   const app = express();
   const port = 3000;
@@ -32,6 +28,6 @@ export function startServer() {
   );
 
   app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+    logger.info(`Server running at http://localhost:${port}`);
   });
 }

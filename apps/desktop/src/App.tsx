@@ -7,6 +7,7 @@ import { trpc } from "./trpc/client";
 export function App() {
   const [newProxyName, setNewProxyName] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [expandedProxy, setExpandedProxy] = useState<string | null>(null);
 
   // Query to fetch all proxies
   const { data: proxies, isLoading, refetch } = trpc.store.getAll.useQuery();
@@ -102,18 +103,29 @@ export function App() {
                   key={proxy.name}
                   className="flex items-center justify-between border-b p-4 last:border-b-0"
                 >
-                  <div>
+                  <div className="flex items-center">
                     <span className="font-medium">{proxy.name}</span>
                     <span className="ml-2 text-gray-500 text-sm">
                       {proxy.servers.length} servers
                     </span>
                   </div>
+
                   <button
-                    onClick={() => handleDeleteProxy(proxy.name)}
-                    className="text-red-500 hover:text-red-700"
+                    className="text-gray-500 hover:text-gray-700"
+                    onClick={() => {
+                      setExpandedProxy(
+                        expandedProxy === proxy.name ? null : proxy.name,
+                      );
+                    }}
                   >
-                    Delete
+                    {expandedProxy === proxy.name ? "Collapse" : "Expand"}
                   </button>
+
+                  {expandedProxy === proxy.name && (
+                    <pre className="mt-4">
+                      <code>{JSON.stringify(proxy, null, 2)}</code>
+                    </pre>
+                  )}
                 </li>
               ))}
             </ul>

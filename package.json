@@ -19,6 +19,7 @@
     "check-types": "turbo run check-types",
     "clean": "rm -rf .turbo node_modules && turbo run clean",
     "cli": "turbo run cli",
+    "desktop:version": "bun run apps/desktop/scripts/version.ts",
     "desktop:version:bump": "bun run apps/desktop/scripts/version.ts bump && bun run format",
     "desktop:release": "version=$(bun run desktop:version print) && git tag -a \"v${version}\" -m \"Release v${version}\" && git push origin \"v${version}\""
   },

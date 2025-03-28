@@ -41,7 +41,7 @@
     },
     "apps/desktop": {
       "name": "@director/desktop",
-      "version": "0.0.3",
+      "version": "0.0.4",
       "dependencies": {
         "@director.run/ui": "workspace:*",
         "@tailwindcss/vite": "^4.0.14",

@@ -4,19 +4,17 @@ import * as trpcExpress from "@trpc/server/adapters/express";
 import cors from "cors";
 import express from "express";
 import { appRouter } from "./router";
+import { BACKEND_PORT } from "../config";
 
 const logger = getLogger("server");
 
 // curl --location --globoff 'http://localhost:3000/trpc/greeting?input={%22name%22%3A%22somkiat%22}' \
 // --header 'Cookie: Cookie_1=value' | jq
 
-// Print out the full command that was called with all arguments
-
 export function startServer() {
   logger.info(`Starting backend server`);
 
   const app = express();
-  const port = 3000;
 
   app.use(cors());
 
@@ -27,7 +25,7 @@ export function startServer() {
     }),
   );
 
-  app.listen(port, () => {
-    logger.info(`Server running at http://localhost:${port}`);
+  app.listen(BACKEND_PORT, () => {
+    logger.info(`Server running at http://localhost:${BACKEND_PORT}`);
   });
 }

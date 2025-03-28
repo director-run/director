@@ -1,8 +1,8 @@
 import Table from "cli-table3";
-import { getProxies } from "../services/store";
+import { getAllProxies } from "../services/store";
 
 export const listProxies = async () => {
-  const proxies = await getProxies();
+  const proxies = await getAllProxies();
   if (proxies.length === 0) {
     // biome-ignore lint/suspicious/noConsoleLog: This is a CLI command that needs to output to console
     console.log("no proxies configured yet.");

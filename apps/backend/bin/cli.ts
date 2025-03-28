@@ -12,6 +12,7 @@ import {
   restartClaude,
   uninstallFromClaude,
 } from "../src/services/installer/claude";
+import { initStore } from "../src/services/store";
 
 const program = new Command();
 
@@ -19,6 +20,8 @@ const logger = getLogger("cli");
 
 // Print out the full command that was called with all arguments
 logger.info(`Command called: ${process.argv.join(" ")}`);
+
+await initStore();
 
 program
   .name(PACKAGE_NAME)

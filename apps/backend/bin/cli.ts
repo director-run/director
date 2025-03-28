@@ -11,7 +11,7 @@ import {
   installToClaude,
   restartClaude,
   uninstallFromClaude,
-} from "../src/installer/claude";
+} from "../src/services/installer/claude";
 
 const program = new Command();
 

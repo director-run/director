@@ -4,8 +4,8 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
-import { AppError, ErrorCode } from "../helpers/error";
-import { getLogger } from "../helpers/logger";
+import { AppError, ErrorCode } from "../../helpers/error";
+import { getLogger } from "../../helpers/logger";
 
 const CLAUDE_CONFIG_PATH = path.join(
   os.homedir(),

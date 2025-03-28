@@ -5,7 +5,6 @@ import { getLogger } from "../helpers/logger";
 import { readJSONFile } from "../helpers/readJSONFile";
 import { writeJSONFile } from "../helpers/writeJSONFile";
 
-
 type TransportConfigStdio = {
   type?: "stdio";
   command: string;
@@ -21,7 +20,7 @@ type TransportConfigSSE = {
 export type Server = {
   name: string;
   transport: TransportConfigSSE | TransportConfigStdio;
-}
+};
 
 export type Proxy = {
   name: string;

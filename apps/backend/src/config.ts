@@ -11,7 +11,7 @@ export const SSE_PORT = Number(process.env.SSE_PORT ?? 3006);
 export const PROXY_DB_FILE_PATH =
   process.env.PROXY_DB_FILE_PATH ??
   (process.env.NODE_ENV === "test"
-    ? path.join(__dirname, "../../config/proxy.db.test.json")
+    ? path.join(__dirname, "../config/proxy.db.test.json")
     : path.join(DATA_DIR, "proxy.db.json"));
 
 export const PACKAGE_NAME = packageJson.name;

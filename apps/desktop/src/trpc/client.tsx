@@ -1,4 +1,4 @@
-import type { AppRouter } from "@director/backend/router";
+import type { AppRouter } from "@director/backend/src/http/router";
 import type { QueryClient } from "@tanstack/react-query";
 import { QueryClientProvider } from "@tanstack/react-query";
 import {

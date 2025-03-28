@@ -2,7 +2,7 @@ import type { Server } from "node:http";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { SSE_PORT } from "../../env.js";
+import { SSE_PORT } from "../../config.js";
 import { startSSEServer } from "../startSSEServer.js";
 import { createProxyTargetServer } from "./createProxyTargetServer.js";
 

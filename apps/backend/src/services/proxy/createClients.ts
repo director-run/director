@@ -2,8 +2,8 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
-import type { ServerConfig } from "../config/types";
-import { getLogger } from "../helpers/logger";
+import type { Server } from "../store";
+import { getLogger } from "../../helpers/logger";
 
 const logger = getLogger("proxy/createClients");
 
@@ -16,7 +16,7 @@ export interface ConnectedClient {
 }
 
 const createClient = (
-  server: ServerConfig,
+  server: Server,
 ): { client: Client | undefined; transport: Transport | undefined } => {
   let transport: Transport | null = null;
   try {
@@ -66,7 +66,7 @@ const createClient = (
 };
 
 export const createClients = async (
-  servers: ServerConfig[],
+  servers: Server[],
 ): Promise<ConnectedClient[]> => {
   const clients: ConnectedClient[] = [];
 

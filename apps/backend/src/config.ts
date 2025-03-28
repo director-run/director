@@ -6,6 +6,7 @@ export const DATA_DIR =
   process.env.DATA_DIR ?? path.join(os.homedir(), ".director");
 
 export const SSE_PORT = Number(process.env.SSE_PORT ?? 3006);
+export const BACKEND_PORT = Number(process.env.BACKEND_PORT ?? 3000);
 
 // This is the path to the config file
 export const PROXY_DB_FILE_PATH =

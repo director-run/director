@@ -5,14 +5,27 @@ import { getLogger } from "../helpers/logger";
 import { readJSONFile } from "../helpers/readJSONFile";
 import { writeJSONFile } from "../helpers/writeJSONFile";
 
-type Proxy = {
+
+type TransportConfigStdio = {
+  type?: "stdio";
+  command: string;
+  args?: string[];
+  env?: string[];
+};
+
+type TransportConfigSSE = {
+  type: "sse";
+  url: string;
+};
+
+export type Server = {
   name: string;
-  servers: Array<{
-    name: string;
-    transport:
-      | { command: string; args: string[] }
-      | { type: "sse"; url: string };
-  }>;
+  transport: TransportConfigSSE | TransportConfigStdio;
+}
+
+export type Proxy = {
+  name: string;
+  servers: Array<Server>;
 };
 
 export type ProxyDB = {

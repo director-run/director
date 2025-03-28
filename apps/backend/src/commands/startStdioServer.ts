@@ -1,5 +1,5 @@
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { createProxyServer } from "../proxy/createProxyServer";
+import { createProxyServer } from "../services/proxy/createProxyServer";
 import { getProxy } from "../services/store";
 
 export async function startStdioServer(name: string) {

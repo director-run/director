@@ -1,6 +1,6 @@
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import * as eventsource from "eventsource";
-import type { ProxyConfig } from "../config/types";
+import type { Proxy } from "../store";
 import { createClients } from "./createClients";
 import type { ConnectedClient } from "./createClients";
 import { setupPromptHandlers } from "./handlers/promptsHandler";
@@ -10,7 +10,7 @@ import { setupToolHandlers } from "./handlers/toolsHandler";
 
 global.EventSource = eventsource.EventSource;
 
-export const createProxyServer = async (config: ProxyConfig) => {
+export const createProxyServer = async (config: Proxy) => {
   const connectedClients = await createClients(config.servers);
   // logger.info(`Connected to ${connectedClients.length} servers`);
 

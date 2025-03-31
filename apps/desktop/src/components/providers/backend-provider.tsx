@@ -1,8 +1,17 @@
+"use client";
+
+import { getLogger } from "@/utils/logger";
 import { Command } from "@tauri-apps/api/shell";
 import { Child } from "@tauri-apps/api/shell";
 import React, { useEffect, useState } from "react";
 import { Store } from "tauri-plugin-store-api";
-import { getLogger } from "../logger";
+
+declare global {
+  interface Window {
+    // biome-ignore lint/suspicious/noExplicitAny: TODO: fix this
+    __TAURI__: any;
+  }
+}
 
 // Initialize logger and persistent store
 const logger = getLogger("backend");

@@ -1,3 +1,6 @@
+"use client";
+
+import { makeQueryClient } from "@/trpc/query-client";
 import type { AppRouter } from "@director/backend/src/http/router";
 import type { QueryClient } from "@tanstack/react-query";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -10,7 +13,6 @@ import {
 import { createTRPCReact } from "@trpc/react-query";
 import { useState } from "react";
 import superjson from "superjson";
-import { makeQueryClient } from "./query-client";
 
 /**
  * The main tRPC React client instance.

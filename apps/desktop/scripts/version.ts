@@ -64,7 +64,7 @@ program
       console.log("✅ All version numbers are consistent.");
     } catch (error) {
       console.error("❌ Version mismatch detected:");
-      console.error(error.message);
+      console.error((error as Error).message);
       process.exit(1);
     }
   });
@@ -78,7 +78,7 @@ program
       console.log(await getPackageVersion());
     } catch (error) {
       console.error("❌ Version mismatch detected:");
-      console.error(error.message);
+      console.error((error as Error).message);
       process.exit(1);
     }
   });

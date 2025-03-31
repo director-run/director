@@ -3,7 +3,7 @@
   "build": {
     "beforeDevCommand": "bun run clean && bun run backend:build && bun run frontend:dev",
     "beforeBuildCommand": "bun run clean && bun run backend:build && bun run frontend:build",
-    "devPath": "http://localhost:1420",
+    "devPath": "http://localhost:3001",
     "distDir": "../dist"
   },
   "package": {
@@ -31,8 +31,11 @@
     "windows": [
       {
         "title": "Director",
+        "minWidth": 500,
+        "minHeight": 380,
         "width": 800,
-        "height": 600
+        "height": 600,
+        "titleBarStyle": "Overlay"
       }
     ],
     "security": {

@@ -1,10 +1,10 @@
+"use client";
+
+import { trpc } from "@/trpc/client";
 import { Logo } from "@director.run/ui/components/brand";
 import { useState } from "react";
 
-import "./App.css";
-import { trpc } from "./trpc/client";
-
-export function App() {
+export default function HomePage() {
   const [newProxyName, setNewProxyName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [expandedProxy, setExpandedProxy] = useState<string | null>(null);
@@ -65,7 +65,7 @@ export function App() {
       <Logo className="mb-4 size-10" />
 
       <div className="w-full max-w-md">
-        <h2 className="mb-4 text-xl font-bold">Proxies</h2>
+        <h2 className="mb-4 font-bold text-xl">Proxies</h2>
 
         {/* Error message display */}
         {error && (
@@ -75,7 +75,7 @@ export function App() {
         )}
 
         {/* Add new proxy form */}
-        <div className="flex mb-4">
+        <div className="mb-4 flex">
           <input
             type="text"
             value={newProxyName}

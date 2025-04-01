@@ -1,7 +1,7 @@
 import { PROXY_DB_FILE_PATH } from "../config";
 import { getLogger } from "../helpers/logger";
 import { writeJSONFile } from "../helpers/writeJSONFile";
-import type { ProxyDB } from "../services/store";
+import type { ProxyDB } from "../services/store/types";
 
 export async function seed() {
   const logger = getLogger("seed");

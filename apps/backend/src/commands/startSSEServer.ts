@@ -11,7 +11,7 @@ export const startSSEServer = async (name: string) => {
   const app = express();
   const proxy = await getProxy(name);
 
-  const { server, cleanup } = await createProxyServer(proxy);
+  const { server, cleanup } = await createProxyServer(proxy.servers);
 
   let transport: SSEServerTransport;
 

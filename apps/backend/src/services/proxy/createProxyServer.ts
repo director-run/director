@@ -6,7 +6,6 @@ import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import * as eventsource from "eventsource";
 import { getLogger } from "../../helpers/logger";
 import type { Server as StoreServer } from "../store/types";
-import type { Proxy } from "../store/types";
 import { setupPromptHandlers } from "./handlers/promptsHandler";
 import { setupResourceTemplateHandlers } from "./handlers/resourceTemplatesHandler";
 import { setupResourceHandlers } from "./handlers/resourcesHandler";
@@ -17,9 +16,9 @@ const logger = getLogger("createProxyServer");
 global.EventSource = eventsource.EventSource;
 
 export const createProxyServer = async (
-  config: Proxy,
+  servers: StoreServer[],
 ): Promise<{ server: Server; cleanup: () => Promise<void> }> => {
-  const connectedClients = await createClients(config.servers);
+  const connectedClients = await createClients(servers);
 
   const toolToClientMap = new Map<string, ConnectedClient>();
   const resourceToClientMap = new Map<string, ConnectedClient>();

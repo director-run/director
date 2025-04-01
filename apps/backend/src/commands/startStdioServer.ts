@@ -5,7 +5,7 @@ import { getProxy } from "../services/store";
 export async function startStdioServer(name: string) {
   const proxy = await getProxy(name);
   const transport = new StdioServerTransport();
-  const { server, cleanup } = await createProxyServer(proxy);
+  const { server, cleanup } = await createProxyServer(proxy.servers);
 
   await server.connect(transport);
 

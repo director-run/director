@@ -2,7 +2,7 @@ import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
 import { SSE_PORT } from "../config";
 import { getLogger } from "../helpers/logger";
-import { createProxyServer } from "../services/proxy/createProxyServer";
+import { makeMCPProxyServer } from "../services/proxy/makeMCPProxyServer";
 import { getProxy } from "../services/store";
 
 const logger = getLogger("startSSEServer");
@@ -11,7 +11,7 @@ export const startSSEServer = async (name: string) => {
   const app = express();
   const proxy = await getProxy(name);
 
-  const { server, cleanup } = await createProxyServer(proxy.servers);
+  const { server, cleanup } = await makeMCPProxyServer(proxy.servers);
 
   let transport: SSEServerTransport;
 

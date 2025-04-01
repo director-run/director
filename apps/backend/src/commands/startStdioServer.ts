@@ -1,11 +1,11 @@
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { createProxyServer } from "../services/proxy/createProxyServer";
+import { makeMCPProxyServer } from "../services/proxy/makeMCPProxyServer";
 import { getProxy } from "../services/store";
 
 export async function startStdioServer(name: string) {
   const proxy = await getProxy(name);
   const transport = new StdioServerTransport();
-  const { server, cleanup } = await createProxyServer(proxy.servers);
+  const { server, cleanup } = await makeMCPProxyServer(proxy.servers);
 
   await server.connect(transport);
 

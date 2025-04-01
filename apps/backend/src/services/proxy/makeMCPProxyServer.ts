@@ -11,11 +11,11 @@ import { setupResourceTemplateHandlers } from "./handlers/resourceTemplatesHandl
 import { setupResourceHandlers } from "./handlers/resourcesHandler";
 import { setupToolHandlers } from "./handlers/toolsHandler";
 
-const logger = getLogger("createProxyServer");
+const logger = getLogger("makeMCPProxyServer");
 
 global.EventSource = eventsource.EventSource;
 
-export const createProxyServer = async (
+export const makeMCPProxyServer = async (
   servers: StoreServer[],
 ): Promise<{ server: Server; cleanup: () => Promise<void> }> => {
   const connectedClients = await createClients(servers);

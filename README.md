@@ -49,13 +49,6 @@ bun run dev
 
 ### Build
 
-TODO
-
-## TODO
-
-- Install to Cursor
-- http://localhost:3006/<proxy_name>/sse
-
 ## Release Management
 
 We use github tags to manage releases. Right now we package the entire app as a desktop app and release it as a new version. Here's how to release a new version of the application:

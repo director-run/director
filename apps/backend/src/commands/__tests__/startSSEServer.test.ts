@@ -11,7 +11,7 @@ describe("startSSEServer", () => {
   let proxyTargetServerInstance: Server;
 
   beforeAll(async () => {
-    proxyTargetServerInstance = await createProxyTargetServer();
+    proxyTargetServerInstance = await createProxyTargetServer(4521);
     serverInstance = await startSSEServer("test-proxy");
   });
 

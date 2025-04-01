@@ -3,7 +3,7 @@ import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
 import { z } from "zod";
 
-export const createProxyTargetServer = async () => {
+export const createProxyTargetServer = async (port: number) => {
   const server = new McpServer({
     name: "test-sse-proxy-target",
     version: "1.0.0",
@@ -41,6 +41,6 @@ export const createProxyTargetServer = async () => {
     await transport.handlePostMessage(req, res);
   });
 
-  const instance = app.listen(4521);
+  const instance = app.listen(port);
   return instance;
 };

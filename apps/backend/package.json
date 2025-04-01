@@ -14,7 +14,7 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "clean": "rm -rf .turbo dist/*",
-    "test": "bun run vitest",
+    "test": "bun run vitest  --fileParallelism=false",
     "backend": "bun run bin/backend.ts",
     "backend:watch": "bun run --watch bin/backend.ts",
     "cli": "bun run bin/cli.ts",

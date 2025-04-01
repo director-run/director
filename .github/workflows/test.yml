@@ -3,7 +3,7 @@ on:
   pull_request:
     types: [synchronize, opened, labeled, ready_for_review]
   push:
-    branches: [ "main" ]
+    branches: [ "**" ]
 jobs:
   lint:
     name: Lint

@@ -6,7 +6,7 @@ import {
   ReadResourceResultSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
-import type { ConnectedClient } from "../createClients";
+import type { ConnectedClient } from "../makeMCPProxyServer";
 
 export function setupResourceHandlers(
   server: Server,

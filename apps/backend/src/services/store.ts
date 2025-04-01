@@ -5,21 +5,21 @@ import { getLogger } from "../helpers/logger";
 import { readJSONFile } from "../helpers/readJSONFile";
 import { writeJSONFile } from "../helpers/writeJSONFile";
 
-type TransportConfigStdio = {
+type StdioTransport = {
   type?: "stdio";
   command: string;
   args?: string[];
   env?: string[];
 };
 
-type TransportConfigSSE = {
+type SSETransport = {
   type: "sse";
   url: string;
 };
 
 export type Server = {
   name: string;
-  transport: TransportConfigSSE | TransportConfigStdio;
+  transport: SSETransport | StdioTransport;
 };
 
 export type Proxy = {

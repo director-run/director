@@ -5,7 +5,7 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import * as eventsource from "eventsource";
 import { getLogger } from "../../helpers/logger";
-import type { Server as StoreServer } from "../store/types";
+import type { MCPServer } from "../store/types";
 import { setupPromptHandlers } from "./handlers/promptsHandler";
 import { setupResourceTemplateHandlers } from "./handlers/resourceTemplatesHandler";
 import { setupResourceHandlers } from "./handlers/resourcesHandler";
@@ -16,7 +16,7 @@ const logger = getLogger("makeMCPProxyServer");
 global.EventSource = eventsource.EventSource;
 
 export const makeMCPProxyServer = async (
-  servers: StoreServer[],
+  servers: MCPServer[],
 ): Promise<{ server: Server; cleanup: () => Promise<void> }> => {
   const connectedClients = await createClients(servers);
 
@@ -59,7 +59,7 @@ export interface ConnectedClient {
 }
 
 const createClient = (
-  server: StoreServer,
+  server: MCPServer,
 ): { client: Client | undefined; transport: Transport | undefined } => {
   let transport: Transport | null = null;
   try {
@@ -109,7 +109,7 @@ const createClient = (
 };
 
 const createClients = async (
-  servers: StoreServer[],
+  servers: MCPServer[],
 ): Promise<ConnectedClient[]> => {
   const clients: ConnectedClient[] = [];
 

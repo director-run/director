@@ -10,14 +10,14 @@ export type SSETransport = {
   url: string;
 };
 
-export type Server = {
+export type MCPServer = {
   name: string;
   transport: SSETransport | StdioTransport;
 };
 
 export type Proxy = {
   name: string;
-  servers: Array<Server>;
+  servers: Array<MCPServer>;
 };
 
 export type ProxyDB = {

@@ -1,42 +1,17 @@
 import fs from "node:fs";
-import { PROXY_DB_FILE_PATH } from "../config";
-import { AppError, ErrorCode } from "../helpers/error";
-import { getLogger } from "../helpers/logger";
-import { readJSONFile } from "../helpers/readJSONFile";
-import { writeJSONFile } from "../helpers/writeJSONFile";
-
-type StdioTransport = {
-  type?: "stdio";
-  command: string;
-  args?: string[];
-  env?: string[];
-};
-
-type SSETransport = {
-  type: "sse";
-  url: string;
-};
-
-export type Server = {
-  name: string;
-  transport: SSETransport | StdioTransport;
-};
-
-export type Proxy = {
-  name: string;
-  servers: Array<Server>;
-};
-
-export type ProxyDB = {
-  proxies: Proxy[];
-};
+import { PROXY_DB_FILE_PATH } from "../../config";
+import { AppError, ErrorCode } from "../../helpers/error";
+import { getLogger } from "../../helpers/logger";
+import { readJSONFile } from "../../helpers/readJSONFile";
+import { writeJSONFile } from "../../helpers/writeJSONFile";
+import type { Proxy, ProxyDB } from "./types";
 
 const logger = getLogger("store");
 
 export async function initStore() {
   if (!fs.existsSync(PROXY_DB_FILE_PATH)) {
     logger.info(`Creating store at path: ${PROXY_DB_FILE_PATH}`);
-    await writeJSONFile<ProxyDB>(PROXY_DB_FILE_PATH, {
+    await writeStore({
       proxies: [],
     });
   }
@@ -44,6 +19,10 @@ export async function initStore() {
 
 async function readStore(): Promise<ProxyDB> {
   return await readJSONFile<ProxyDB>(PROXY_DB_FILE_PATH);
+}
+
+async function writeStore(db: ProxyDB): Promise<void> {
+  await writeJSONFile<ProxyDB>(PROXY_DB_FILE_PATH, db);
 }
 
 export async function createProxy(proxy: Proxy): Promise<Proxy> {

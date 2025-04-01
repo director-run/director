@@ -1,6 +1,6 @@
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import * as eventsource from "eventsource";
-import type { Proxy } from "../store";
+import type { Proxy } from "../store/types";
 import { createClients } from "./createClients";
 import type { ConnectedClient } from "./createClients";
 import { setupPromptHandlers } from "./handlers/promptsHandler";
@@ -12,9 +12,7 @@ global.EventSource = eventsource.EventSource;
 
 export const createProxyServer = async (config: Proxy) => {
   const connectedClients = await createClients(config.servers);
-  // logger.info(`Connected to ${connectedClients.length} servers`);
 
-  // Maps to track which client owns which resource
   const toolToClientMap = new Map<string, ConnectedClient>();
   const resourceToClientMap = new Map<string, ConnectedClient>();
   const promptToClientMap = new Map<string, ConnectedClient>();

@@ -1,6 +1,6 @@
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { SSE_PORT } from "../../config";
 import { getLogger } from "../../helpers/logger";
 import { makeMCPProxyServer } from "../../services/proxy/makeMCPProxyServer";
@@ -18,7 +18,9 @@ interface ProxyServerInstance {
 class ProxyServerStore {
   private proxyServers: Map<string, ProxyServerInstance> = new Map();
 
-  async getOrCreateProxyServer(proxyName: string): Promise<ProxyServerInstance | null> {
+  async getOrCreateProxyServer(
+    proxyName: string,
+  ): Promise<ProxyServerInstance | null> {
     // Return existing proxy server if it exists
     if (this.proxyServers.has(proxyName)) {
       const server = this.proxyServers.get(proxyName);
@@ -31,19 +33,19 @@ class ProxyServerStore {
       // Create a new proxy server
       const proxy = await getProxy(proxyName);
       const { server, cleanup } = await makeMCPProxyServer(proxy.servers);
-      
+
       const proxyInstance: ProxyServerInstance = {
         server,
         cleanup,
-        transports: new Map()
+        transports: new Map(),
       };
-      
+
       this.proxyServers.set(proxyName, proxyInstance);
       return proxyInstance;
     } catch (error) {
       logger.error({
         message: `Failed to create proxy server for ${proxyName}`,
-        error
+        error,
       });
       return null;
     }
@@ -60,7 +62,7 @@ class ProxyServerStore {
 
   async cleanupAllProxyServers(): Promise<void> {
     const cleanupPromises = Array.from(this.proxyServers.entries()).map(
-      async ([proxyName]) => this.cleanupProxyServer(proxyName)
+      async ([proxyName]) => this.cleanupProxyServer(proxyName),
     );
     await Promise.all(cleanupPromises);
   }
@@ -77,8 +79,9 @@ export const startProxyServer = async () => {
   // Handle SSE connections for specific proxy
   app.get("/:proxy_name/sse", async (req, res) => {
     const proxyName = req.params.proxy_name;
-    const connectionId = req.query.connectionId?.toString() || Date.now().toString();
-    
+    const connectionId =
+      req.query.connectionId?.toString() || Date.now().toString();
+
     logger.info({
       message: "Received SSE connection",
       proxyName,
@@ -100,12 +103,12 @@ export const startProxyServer = async () => {
     proxyInstance.server.onerror = (err) => {
       logger.error({
         message: `Server onerror for proxy ${proxyName}`,
-        error: err.stack
+        error: err.stack,
       });
     };
 
     // Clean up transport when connection closes
-    res.on('close', () => {
+    res.on("close", () => {
       proxyInstance.transports.delete(connectionId);
     });
   });
@@ -114,7 +117,7 @@ export const startProxyServer = async () => {
   app.post("/:proxy_name/message", async (req, res) => {
     const proxyName = req.params.proxy_name;
     const connectionId = req.query.connectionId?.toString();
-    
+
     logger.info({
       message: "Received message",
       proxyName,
@@ -136,13 +139,13 @@ export const startProxyServer = async () => {
         return;
       }
     }
-    
+
     // Otherwise use the first available transport
     const transports = Array.from(proxyInstance.transports.values());
     if (transports.length > 0) {
       await transports[0].handlePostMessage(req, res);
     } else {
-      res.status(400).send('No active connections for this proxy');
+      res.status(400).send("No active connections for this proxy");
     }
   });
 
@@ -151,13 +154,13 @@ export const startProxyServer = async () => {
     try {
       const proxies = await getAllProxies();
       res.json({
-        availableProxies: proxies.map(p => p.name),
-        activeProxies: proxyStore.getProxyNames()
+        availableProxies: proxies.map((p) => p.name),
+        activeProxies: proxyStore.getProxyNames(),
       });
     } catch (error) {
       logger.error({
         message: "Failed to list proxies",
-        error
+        error,
       });
       res.status(500).send("Failed to list proxies");
     }
@@ -215,7 +218,7 @@ export const startSSEServer = async (name: string) => {
       `server started successfully at http://localhost:${SSE_PORT}/sse`,
     );
     logger.warn(
-      `This method is deprecated. Please use the new proxy server with the URL pattern /:proxy_name/sse`
+      `This method is deprecated. Please use the new proxy server with the URL pattern /:proxy_name/sse`,
     );
   });
 

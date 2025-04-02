@@ -3,11 +3,11 @@ import http from "http";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { PROXY_DB_FILE_PATH, SSE_PORT } from "../../config";
-import { startServer } from "./startServer";
+import { PROXY_DB_FILE_PATH, SSE_PORT } from "../config";
+import { startServer } from "../services/proxy/startServer";
 
 import type { Server } from "node:http";
-import { createProxyTargetServer } from "../../commands/__tests__/createProxyTargetServer";
+import { createProxyTargetServer } from "../commands/__tests__/createProxyTargetServer";
 
 // Test configuration to use for tests
 const testConfig = {

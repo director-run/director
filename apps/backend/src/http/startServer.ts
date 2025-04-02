@@ -1,9 +1,12 @@
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
-import { SSE_PORT } from "../../config";
-import { getLogger } from "../../helpers/logger";
-import { getAllProxies, getProxy } from "../../services/store";
-import { type ProxyServerInstance, proxyMCPServers } from "./proxyMCPServers";
+import { SSE_PORT } from "../config";
+import { getLogger } from "../helpers/logger";
+import {
+  type ProxyServerInstance,
+  proxyMCPServers,
+} from "../services/proxy/proxyMCPServers";
+import { getAllProxies, getProxy } from "../services/store";
 
 const logger = getLogger("proxyServer");
 

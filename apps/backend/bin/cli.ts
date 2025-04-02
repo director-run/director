@@ -5,13 +5,13 @@ import { Command, Option } from "commander";
 import { debug } from "../src/commands/debug";
 import { listProxies } from "../src/commands/listProxies";
 import { seed } from "../src/commands/seed";
+import { startServer } from "../src/http/startServer";
 import {
   installToClaude,
   restartClaude,
   uninstallFromClaude,
 } from "../src/services/installer/claude";
 import { proxySSEToStdio } from "../src/services/proxy/proxySSEToStdio";
-import { startServer } from "../src/services/proxy/startServer";
 import { initStore } from "../src/services/store";
 
 const program = new Command();

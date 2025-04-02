@@ -56,9 +56,6 @@ export const installToClaude = async ({
           `http://localhost:3006/${name}/sse`,
         ],
         command: "bun",
-        env: {
-          LOG_LEVEL: "silent",
-        },
       },
     },
   };

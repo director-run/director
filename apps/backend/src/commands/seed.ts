@@ -1,12 +1,12 @@
 import { PROXY_DB_FILE_PATH } from "../config";
 import { getLogger } from "../helpers/logger";
 import { writeJSONFile } from "../helpers/writeJSONFile";
-import type { ProxyDB } from "../services/store/types";
+import type { ConfigDB } from "../services/store/types";
 
 export async function seed() {
   const logger = getLogger("seed");
   logger.info(`Seeding database at path: ${PROXY_DB_FILE_PATH}`);
-  const seedProxyDB: ProxyDB = {
+  const seedProxyDB: ConfigDB = {
     proxies: [
       {
         name: "my-first-proxy",
@@ -34,5 +34,5 @@ export async function seed() {
     ],
   };
 
-  await writeJSONFile<ProxyDB>(PROXY_DB_FILE_PATH, seedProxyDB);
+  await writeJSONFile<ConfigDB>(PROXY_DB_FILE_PATH, seedProxyDB);
 }

@@ -1,25 +1,25 @@
-export type StdioTransport = {
+export type StdioTransportConfig = {
   type?: "stdio";
   command: string;
   args?: string[];
   env?: string[];
 };
 
-export type SSETransport = {
+export type SSETransportConfig = {
   type: "sse";
   url: string;
 };
 
-export type MCPServer = {
+export type ServerConfigItem = {
   name: string;
-  transport: SSETransport | StdioTransport;
+  transport: SSETransportConfig | StdioTransportConfig;
 };
 
-export type Proxy = {
+export type ProxyConfigItem = {
   name: string;
-  servers: Array<MCPServer>;
+  servers: Array<ServerConfigItem>;
 };
 
-export type ProxyDB = {
-  proxies: Proxy[];
+export type ConfigDB = {
+  proxies: ProxyConfigItem[];
 };

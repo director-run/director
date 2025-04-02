@@ -16,7 +16,11 @@ export const startSSEServer = async (name: string) => {
   let transport: SSEServerTransport;
 
   app.get("/sse", async (req, res) => {
-    logger.info("Received SSE connection");
+    logger.info({
+      message: "Received SSE connection",
+      query: req.query,
+      params: req.params,
+    });
     transport = new SSEServerTransport("/message", res);
 
     await server.connect(transport);
@@ -27,7 +31,11 @@ export const startSSEServer = async (name: string) => {
   });
 
   app.post("/message", async (req, res) => {
-    logger.info("Received message", req.body);
+    logger.info({
+      message: "Received message",
+      query: req.query,
+      params: req.params,
+    });
     await transport.handlePostMessage(req, res);
   });
 

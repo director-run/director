@@ -5,7 +5,7 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import * as eventsource from "eventsource";
 import { getLogger } from "../../helpers/logger";
-import type { MCPServer } from "../store/types";
+import type { ServerConfigItem } from "../store/types";
 import { setupPromptHandlers } from "./handlers/promptsHandler";
 import { setupResourceTemplateHandlers } from "./handlers/resourceTemplatesHandler";
 import { setupResourceHandlers } from "./handlers/resourcesHandler";
@@ -16,7 +16,7 @@ const logger = getLogger("makeMCPProxyServer");
 global.EventSource = eventsource.EventSource;
 
 export const makeMCPProxyServer = async (
-  servers: MCPServer[],
+  servers: ServerConfigItem[],
 ): Promise<{ server: Server; cleanup: () => Promise<void> }> => {
   const connectedClients = await createClients(servers);
 
@@ -52,6 +52,7 @@ export const makeMCPProxyServer = async (
 
 const sleep = (time: number) =>
   new Promise<void>((resolve) => setTimeout(() => resolve(), time));
+
 export interface ConnectedClient {
   client: Client;
   cleanup: () => Promise<void>;
@@ -59,7 +60,7 @@ export interface ConnectedClient {
 }
 
 const createClient = (
-  server: MCPServer,
+  server: ServerConfigItem,
 ): { client: Client | undefined; transport: Transport | undefined } => {
   let transport: Transport | null = null;
   try {
@@ -109,7 +110,7 @@ const createClient = (
 };
 
 const createClients = async (
-  servers: MCPServer[],
+  servers: ServerConfigItem[],
 ): Promise<ConnectedClient[]> => {
   const clients: ConnectedClient[] = [];
 

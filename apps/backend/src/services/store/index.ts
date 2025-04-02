@@ -4,7 +4,7 @@ import { AppError, ErrorCode } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
 import { readJSONFile } from "../../helpers/readJSONFile";
 import { writeJSONFile } from "../../helpers/writeJSONFile";
-import type { Proxy, ProxyDB } from "./types";
+import type { ConfigDB, ProxyConfigItem } from "./types";
 
 const logger = getLogger("store");
 
@@ -17,15 +17,17 @@ export async function initStore() {
   }
 }
 
-async function readStore(): Promise<ProxyDB> {
-  return await readJSONFile<ProxyDB>(PROXY_DB_FILE_PATH);
+async function readStore(): Promise<ConfigDB> {
+  return await readJSONFile<ConfigDB>(PROXY_DB_FILE_PATH);
 }
 
-async function writeStore(db: ProxyDB): Promise<void> {
-  await writeJSONFile<ProxyDB>(PROXY_DB_FILE_PATH, db);
+async function writeStore(db: ConfigDB): Promise<void> {
+  await writeJSONFile<ConfigDB>(PROXY_DB_FILE_PATH, db);
 }
 
-export async function createProxy(proxy: Proxy): Promise<Proxy> {
+export async function createProxy(
+  proxy: ProxyConfigItem,
+): Promise<ProxyConfigItem> {
   const db = await readStore();
   const newProxy = {
     ...proxy,
@@ -39,12 +41,12 @@ export async function createProxy(proxy: Proxy): Promise<Proxy> {
   }
 
   db.proxies.push(newProxy);
-  await writeJSONFile<ProxyDB>(PROXY_DB_FILE_PATH, db);
+  await writeJSONFile<ConfigDB>(PROXY_DB_FILE_PATH, db);
   return newProxy;
 }
 
-export async function getProxy(name: string): Promise<Proxy> {
-  const db: ProxyDB = await readStore();
+export async function getProxy(name: string): Promise<ProxyConfigItem> {
+  const db: ConfigDB = await readStore();
   const proxy = db.proxies.find((p) => p.name === name);
   if (!proxy) {
     throw new AppError(ErrorCode.NOT_FOUND, `Proxy ${name} not found`);
@@ -53,29 +55,29 @@ export async function getProxy(name: string): Promise<Proxy> {
 }
 
 export async function deleteProxy(name: string): Promise<void> {
-  const db: ProxyDB = await readStore();
+  const db: ConfigDB = await readStore();
   if (!db.proxies.find((p) => p.name === name)) {
     throw new AppError(ErrorCode.NOT_FOUND, `Proxy ${name} not found`);
   }
   db.proxies = db.proxies.filter((p) => p.name !== name);
-  await writeJSONFile<ProxyDB>(PROXY_DB_FILE_PATH, db);
+  await writeJSONFile<ConfigDB>(PROXY_DB_FILE_PATH, db);
 }
 
 export async function updateProxy(
   name: string,
-  attributes: Partial<Proxy>,
-): Promise<Proxy> {
-  const db: ProxyDB = await readStore();
+  attributes: Partial<ProxyConfigItem>,
+): Promise<ProxyConfigItem> {
+  const db: ConfigDB = await readStore();
   const proxy = db.proxies.find((p) => p.name === name);
   if (!proxy) {
     throw new AppError(ErrorCode.NOT_FOUND, `Proxy ${name} not found`);
   }
   Object.assign(proxy, attributes);
-  await writeJSONFile<ProxyDB>(PROXY_DB_FILE_PATH, db);
+  await writeJSONFile<ConfigDB>(PROXY_DB_FILE_PATH, db);
   return proxy;
 }
 
-export async function getAllProxies(): Promise<Proxy[]> {
-  const db: ProxyDB = await readStore();
+export async function getAllProxies(): Promise<ProxyConfigItem[]> {
+  const db: ConfigDB = await readStore();
   return db.proxies;
 }

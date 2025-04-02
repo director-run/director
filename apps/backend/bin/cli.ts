@@ -12,7 +12,7 @@ import {
   restartClaude,
   uninstallFromClaude,
 } from "../src/services/installer/claude";
-import { startProxyServer } from "../src/services/proxy/startServer";
+import { startServer } from "../src/services/proxy/startServer";
 import { initStore } from "../src/services/store";
 
 const program = new Command();
@@ -62,7 +62,7 @@ program
   .command("proxy:start")
   .description("Start the proxy server for all proxies")
   .action(async () => {
-    await startProxyServer();
+    await startServer();
   });
 
 program.command("debug").action(() => {

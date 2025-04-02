@@ -3,8 +3,8 @@ import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
 import { SSE_PORT } from "../../config";
 import { getLogger } from "../../helpers/logger";
-import { makeMCPProxyServer } from "../../services/proxy/makeMCPProxyServer";
 import { getAllProxies, getProxy } from "../../services/store";
+import { createMCPProxy } from "./createMCPProxy";
 
 const logger = getLogger("proxyServer");
 
@@ -32,7 +32,7 @@ class ProxyServerStore {
     try {
       // Create a new proxy server
       const proxy = await getProxy(proxyName);
-      const { server, cleanup } = await makeMCPProxyServer(proxy.servers);
+      const { server, cleanup } = await createMCPProxy(proxy.servers);
 
       const proxyInstance: ProxyServerInstance = {
         server,

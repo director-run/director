@@ -15,7 +15,7 @@ const logger = getLogger("makeMCPProxyServer");
 
 global.EventSource = eventsource.EventSource;
 
-export const makeMCPProxyServer = async (
+export const createMCPProxy = async (
   servers: ServerConfigItem[],
 ): Promise<{ server: Server; cleanup: () => Promise<void> }> => {
   const connectedClients = await createClients(servers);

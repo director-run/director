@@ -17,5 +17,5 @@ export const PROXY_DB_FILE_PATH =
 
 export const PACKAGE_NAME = packageJson.name;
 export const PACKAGE_VERSION = packageJson.version;
-export const LOG_LEVEL = "trace";
+export const LOG_LEVEL = process.env.LOG_LEVEL ?? "trace";
 export const LOG_PRETTY = true;

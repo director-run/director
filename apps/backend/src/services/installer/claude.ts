@@ -51,14 +51,14 @@ export const installToClaude = async ({
       ...(claudeConfig.mcpServers ?? {}),
       [`${CLAUDE_CONFIG_KEY_PREFIX}__${name}`]: {
         args: [
-          "run",
-          path.resolve(__dirname, "../../bin/cli.ts"),
-          "start",
-          name,
-          "--transport",
-          "stdio",
+          path.resolve(__dirname, "../../../bin/cli.ts"),
+          "sse2stdio",
+          `http://localhost:3006/${name}/sse`,
         ],
         command: "bun",
+        env: {
+          LOG_LEVEL: "silent",
+        },
       },
     },
   };

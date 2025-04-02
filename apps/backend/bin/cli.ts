@@ -5,13 +5,12 @@ import { Command, Option } from "commander";
 import { debug } from "../src/commands/debug";
 import { listProxies } from "../src/commands/listProxies";
 import { seed } from "../src/commands/seed";
-import { startSSEServer } from "../src/commands/startSSEServer";
-import { startStdioServer } from "../src/commands/startStdioServer";
 import {
   installToClaude,
   restartClaude,
   uninstallFromClaude,
 } from "../src/services/installer/claude";
+import { sse2stdio } from "../src/services/proxy/sse2stdio";
 import { startServer } from "../src/services/proxy/startServer";
 import { initStore } from "../src/services/store";
 
@@ -30,27 +29,6 @@ program
   .version(PACKAGE_VERSION);
 
 program
-  .command("start <name>")
-  .description("Start an mcp server")
-  .option("-t, --transport <type>", "Transport type (`stdio` or `sse`)")
-  .action(async (name, options) => {
-    try {
-      if (options.transport === "stdio") {
-        await startStdioServer(name);
-      } else if (!options.transport || options.transport === "sse") {
-        await startSSEServer(name);
-      } else {
-        console.error(`Unsupported transport type: ${options.transport}`);
-        console.error("Supported types: stdio, sse");
-        process.exit(1);
-      }
-    } catch (error) {
-      logger.error(error);
-      process.exit(1);
-    }
-  });
-
-program
   .command("ls")
   .alias("list")
   .description("List all configured MCP proxies")
@@ -59,7 +37,7 @@ program
   });
 
 program
-  .command("proxy:start")
+  .command("start")
   .description("Start the proxy server for all proxies")
   .action(async () => {
     await startServer();
@@ -72,6 +50,13 @@ program.command("debug").action(() => {
 program.command("seed").action(() => {
   seed();
 });
+
+program
+  .command("sse2stdio <sse_url>")
+  .description("Proxy a SSE connection to a stdio stream")
+  .action(async (sseUrl) => {
+    await sse2stdio(sseUrl);
+  });
 
 function mandatoryOption(flags: string, description?: string) {
   const option = new Option(flags, description);

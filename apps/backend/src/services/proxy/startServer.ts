@@ -1,19 +1,13 @@
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
 import { SSE_PORT } from "../../config";
 import { getLogger } from "../../helpers/logger";
 import { getAllProxies, getProxy } from "../../services/store";
-import { createMCPProxy } from "./createMCPProxy";
+import { createMCPProxy, type ProxyServerInstance } from "./createMCPProxy";
 
 const logger = getLogger("proxyServer");
 
-// Store for active proxy servers
-interface ProxyServerInstance {
-  server: Server;
-  cleanup: () => Promise<void>;
-  transports: Map<string, SSEServerTransport>; // Connection ID -> Transport
-}
+// ProxyServerStore manages multiple proxy server instances
 
 class ProxyServerStore {
   private proxyServers: Map<string, ProxyServerInstance> = new Map();
@@ -32,14 +26,7 @@ class ProxyServerStore {
     try {
       // Create a new proxy server
       const proxy = await getProxy(proxyName);
-      const { server, cleanup } = await createMCPProxy(proxy.servers);
-
-      const proxyInstance: ProxyServerInstance = {
-        server,
-        cleanup,
-        transports: new Map(),
-      };
-
+      const proxyInstance = await createMCPProxy(proxy.servers);
       this.proxyServers.set(proxyName, proxyInstance);
       return proxyInstance;
     } catch (error) {

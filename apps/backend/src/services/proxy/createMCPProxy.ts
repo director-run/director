@@ -2,6 +2,7 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import * as eventsource from "eventsource";
 import { getLogger } from "../../helpers/logger";
@@ -11,13 +12,20 @@ import { setupResourceTemplateHandlers } from "./handlers/resourceTemplatesHandl
 import { setupResourceHandlers } from "./handlers/resourcesHandler";
 import { setupToolHandlers } from "./handlers/toolsHandler";
 
-const logger = getLogger("makeMCPProxyServer");
+const logger = getLogger("createMCPProxy");
 
 global.EventSource = eventsource.EventSource;
 
+// Store for active proxy server connections
+export interface ProxyServerInstance {
+  server: Server;
+  cleanup: () => Promise<void>;
+  transports: Map<string, SSEServerTransport>; // Connection ID -> Transport
+}
+
 export const createMCPProxy = async (
   servers: ServerConfigItem[],
-): Promise<{ server: Server; cleanup: () => Promise<void> }> => {
+): Promise<ProxyServerInstance> => {
   const connectedClients = await createClients(servers);
 
   const toolToClientMap = new Map<string, ConnectedClient>();
@@ -43,11 +51,13 @@ export const createMCPProxy = async (
   setupResourceHandlers(server, connectedClients, resourceToClientMap);
   setupResourceTemplateHandlers(server, connectedClients);
 
-  const cleanup = async () => {
-    await Promise.all(connectedClients.map(({ cleanup }) => cleanup()));
+  return {
+    server,
+    cleanup: async () => {
+      await Promise.all(connectedClients.map(({ cleanup }) => cleanup()));
+    },
+    transports: new Map<string, SSEServerTransport>(),
   };
-
-  return { server, cleanup };
 };
 
 const sleep = (time: number) =>

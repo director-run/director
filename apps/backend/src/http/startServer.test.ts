@@ -4,7 +4,7 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { PROXY_DB_FILE_PATH, SSE_PORT } from "../config";
-import { startServer } from "../services/proxy/startServer";
+import { startServer } from "./startServer";
 
 import type { Server } from "node:http";
 import { createProxyTargetServer } from "../commands/__tests__/createProxyTargetServer";

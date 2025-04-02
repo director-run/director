@@ -8,7 +8,7 @@ import { startServer } from "./startServer";
 
 import type { Server } from "node:http";
 import { z } from "zod";
-import { createMCPServer } from "../commands/__tests__/createMCPServer";
+import { createMCPServer } from "../services/proxy/createMCPServer";
 
 // Test configuration to use for tests
 const testConfig = {

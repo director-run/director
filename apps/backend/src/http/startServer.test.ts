@@ -7,7 +7,8 @@ import { PROXY_DB_FILE_PATH, SSE_PORT } from "../config";
 import { startServer } from "./startServer";
 
 import type { Server } from "node:http";
-import { createProxyTargetServer } from "../commands/__tests__/createProxyTargetServer";
+import { z } from "zod";
+import { createMCPServer } from "../commands/__tests__/createMCPServer";
 
 // Test configuration to use for tests
 const testConfig = {
@@ -52,7 +53,11 @@ describe("Proxy Server Integration Tests", () => {
 
   beforeAll(async () => {
     fs.writeFileSync(PROXY_DB_FILE_PATH, JSON.stringify(testConfig, null, 2));
-    proxyTargetServerInstance = await createProxyTargetServer(4521);
+    proxyTargetServerInstance = await createMCPServer(4521, (server) => {
+      server.tool("echo", { message: z.string() }, async ({ message }) => ({
+        content: [{ type: "text", text: `Tool echo: ${message}` }],
+      }));
+    });
     proxyServer = await startServer();
   });
 

@@ -2,7 +2,8 @@ import type { Server } from "node:http";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { createProxyTargetServer } from "../../commands/__tests__/createProxyTargetServer";
+import { z } from "zod";
+import { createMCPServer } from "../../commands/__tests__/createMCPServer";
 
 describe("proxySSEToStdio", () => {
   let client: Client;
@@ -10,8 +11,11 @@ describe("proxySSEToStdio", () => {
   let proxyTargetServerInstance: Server;
 
   beforeAll(async () => {
-    proxyTargetServerInstance = await createProxyTargetServer(4521);
-
+    proxyTargetServerInstance = await createMCPServer(4521, (server) => {
+      server.tool("echo", { message: z.string() }, async ({ message }) => ({
+        content: [{ type: "text", text: `Tool echo: ${message}` }],
+      }));
+    });
     client = new Client(
       {
         name: "test-client",

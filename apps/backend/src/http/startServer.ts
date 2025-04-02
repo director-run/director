@@ -8,7 +8,7 @@ import {
 } from "../services/proxy/proxyMCPServers";
 import { getAllProxies, getProxy } from "../services/store";
 
-const logger = getLogger("proxyServer");
+const logger = getLogger("startServer");
 
 // ProxyServerStore manages multiple proxy server instances
 

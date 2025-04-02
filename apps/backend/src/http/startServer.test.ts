@@ -3,7 +3,7 @@ import http from "http";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { PROXY_DB_FILE_PATH, SSE_PORT } from "../config";
+import { BACKEND_PORT, PROXY_DB_FILE_PATH } from "../config";
 import { startServer } from "./startServer";
 
 import type { Server } from "node:http";
@@ -87,7 +87,7 @@ describe("Proxy Server Integration Tests", () => {
       },
     );
     const transport = new SSEClientTransport(
-      new URL(`http://localhost:${SSE_PORT}/test-proxy/sse`),
+      new URL(`http://localhost:${BACKEND_PORT}/test-proxy/sse`),
     );
     await client.connect(transport);
     const toolsResult = await client.listTools();

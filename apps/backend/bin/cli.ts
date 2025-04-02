@@ -12,6 +12,7 @@ import {
   restartClaude,
   uninstallFromClaude,
 } from "../src/services/installer/claude";
+import { startProxyServer } from "../src/services/proxy/startServer";
 import { initStore } from "../src/services/store";
 
 const program = new Command();
@@ -55,6 +56,13 @@ program
   .description("List all configured MCP proxies")
   .action(() => {
     listProxies();
+  });
+
+program
+  .command("proxy:start")
+  .description("Start the proxy server for all proxies")
+  .action(async () => {
+    await startProxyServer();
   });
 
 program.command("debug").action(() => {

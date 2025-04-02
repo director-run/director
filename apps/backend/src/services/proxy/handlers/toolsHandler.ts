@@ -6,7 +6,7 @@ import {
   ListToolsResultSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
-import type { ConnectedClient } from "../createMCPProxy";
+import type { ConnectedClient } from "../proxyMCPServers";
 
 export function setupToolHandlers(
   server: Server,

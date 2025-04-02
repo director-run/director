@@ -4,7 +4,7 @@ import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js"
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { createProxyTargetServer } from "../../commands/__tests__/createProxyTargetServer";
 
-describe("startStdioServer", () => {
+describe("proxySSEToStdio", () => {
   let client: Client;
   let transport: StdioClientTransport;
   let proxyTargetServerInstance: Server;

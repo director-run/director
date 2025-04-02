@@ -10,16 +10,13 @@ import {
   restartClaude,
   uninstallFromClaude,
 } from "../src/services/installer/claude";
-import { sse2stdio } from "../src/services/proxy/sse2stdio";
+import { proxySSEToStdio } from "../src/services/proxy/proxySSEToStdio";
 import { startServer } from "../src/services/proxy/startServer";
 import { initStore } from "../src/services/store";
 
 const program = new Command();
 
 const logger = getLogger("cli");
-
-// Print out the full command that was called with all arguments
-logger.info(`Command called: ${process.argv.join(" ")}`);
 
 await initStore();
 
@@ -55,7 +52,7 @@ program
   .command("sse2stdio <sse_url>")
   .description("Proxy a SSE connection to a stdio stream")
   .action(async (sseUrl) => {
-    await sse2stdio(sseUrl);
+    await proxySSEToStdio(sseUrl);
   });
 
 function mandatoryOption(flags: string, description?: string) {

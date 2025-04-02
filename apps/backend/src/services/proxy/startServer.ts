@@ -3,7 +3,7 @@ import express from "express";
 import { SSE_PORT } from "../../config";
 import { getLogger } from "../../helpers/logger";
 import { getAllProxies, getProxy } from "../../services/store";
-import { createMCPProxy, type ProxyServerInstance } from "./createMCPProxy";
+import { type ProxyServerInstance, proxyMCPServers } from "./proxyMCPServers";
 
 const logger = getLogger("proxyServer");
 
@@ -26,7 +26,7 @@ class ProxyServerStore {
     try {
       // Create a new proxy server
       const proxy = await getProxy(proxyName);
-      const proxyInstance = await createMCPProxy(proxy.servers);
+      const proxyInstance = await proxyMCPServers(proxy.servers);
       this.proxyServers.set(proxyName, proxyInstance);
       return proxyInstance;
     } catch (error) {

@@ -12,7 +12,7 @@ import { setupResourceTemplateHandlers } from "./handlers/resourceTemplatesHandl
 import { setupResourceHandlers } from "./handlers/resourcesHandler";
 import { setupToolHandlers } from "./handlers/toolsHandler";
 
-const logger = getLogger("createMCPProxy");
+const logger = getLogger("proxyMCPServers");
 
 global.EventSource = eventsource.EventSource;
 
@@ -23,7 +23,7 @@ export interface ProxyServerInstance {
   transports: Map<string, SSEServerTransport>; // Connection ID -> Transport
 }
 
-export const createMCPProxy = async (
+export const proxyMCPServers = async (
   servers: ServerConfigItem[],
 ): Promise<ProxyServerInstance> => {
   const connectedClients = await createClients(servers);

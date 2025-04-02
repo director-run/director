@@ -6,61 +6,9 @@ import {
   type ProxyServerInstance,
   proxyMCPServers,
 } from "../services/proxy/proxyMCPServers";
-import { getAllProxies, getProxy } from "../services/store";
+import { getProxy } from "../services/store";
 
 const logger = getLogger("startServer");
-
-// ProxyServerStore manages multiple proxy server instances
-
-class ProxyServerStore {
-  private proxyServers: Map<string, ProxyServerInstance> = new Map();
-
-  async getOrCreateProxyServer(
-    proxyName: string,
-  ): Promise<ProxyServerInstance | null> {
-    // Return existing proxy server if it exists
-    if (this.proxyServers.has(proxyName)) {
-      const server = this.proxyServers.get(proxyName);
-      if (server) {
-        return server;
-      }
-    }
-
-    try {
-      // Create a new proxy server
-      const proxy = await getProxy(proxyName);
-      const proxyInstance = await proxyMCPServers(proxy.servers);
-      this.proxyServers.set(proxyName, proxyInstance);
-      return proxyInstance;
-    } catch (error) {
-      logger.error({
-        message: `Failed to create proxy server for ${proxyName}`,
-        error,
-      });
-      return null;
-    }
-  }
-
-  async cleanupProxyServer(proxyName: string): Promise<void> {
-    const proxyInstance = this.proxyServers.get(proxyName);
-    if (proxyInstance) {
-      await proxyInstance.cleanup();
-      await proxyInstance.server.close();
-      this.proxyServers.delete(proxyName);
-    }
-  }
-
-  async cleanupAllProxyServers(): Promise<void> {
-    const cleanupPromises = Array.from(this.proxyServers.entries()).map(
-      async ([proxyName]) => this.cleanupProxyServer(proxyName),
-    );
-    await Promise.all(cleanupPromises);
-  }
-
-  getProxyNames(): string[] {
-    return Array.from(this.proxyServers.keys());
-  }
-}
 
 export const startServer = async () => {
   const app = express();
@@ -139,23 +87,6 @@ export const startServer = async () => {
     }
   });
 
-  // List available proxies
-  app.get("/proxies", async (_req, res) => {
-    try {
-      const proxies = await getAllProxies();
-      res.json({
-        availableProxies: proxies.map((p) => p.name),
-        activeProxies: proxyStore.getProxyNames(),
-      });
-    } catch (error) {
-      logger.error({
-        message: "Failed to list proxies",
-        error,
-      });
-      res.status(500).send("Failed to list proxies");
-    }
-  });
-
   const expressServer = app.listen(SSE_PORT, () => {
     logger.info(
       `Proxy server started successfully at http://localhost:${SSE_PORT}/:proxy_name/sse`,
@@ -169,3 +100,53 @@ export const startServer = async () => {
 
   return expressServer;
 };
+
+class ProxyServerStore {
+  private proxyServers: Map<string, ProxyServerInstance> = new Map();
+
+  async getOrCreateProxyServer(
+    proxyName: string,
+  ): Promise<ProxyServerInstance | null> {
+    // Return existing proxy server if it exists
+    if (this.proxyServers.has(proxyName)) {
+      const server = this.proxyServers.get(proxyName);
+      if (server) {
+        return server;
+      }
+    }
+
+    try {
+      // Create a new proxy server
+      const proxy = await getProxy(proxyName);
+      const proxyInstance = await proxyMCPServers(proxy.servers);
+      this.proxyServers.set(proxyName, proxyInstance);
+      return proxyInstance;
+    } catch (error) {
+      logger.error({
+        message: `Failed to create proxy server for ${proxyName}`,
+        error,
+      });
+      return null;
+    }
+  }
+
+  async cleanupProxyServer(proxyName: string): Promise<void> {
+    const proxyInstance = this.proxyServers.get(proxyName);
+    if (proxyInstance) {
+      await proxyInstance.cleanup();
+      await proxyInstance.server.close();
+      this.proxyServers.delete(proxyName);
+    }
+  }
+
+  async cleanupAllProxyServers(): Promise<void> {
+    const cleanupPromises = Array.from(this.proxyServers.entries()).map(
+      async ([proxyName]) => this.cleanupProxyServer(proxyName),
+    );
+    await Promise.all(cleanupPromises);
+  }
+
+  getProxyNames(): string[] {
+    return Array.from(this.proxyServers.keys());
+  }
+}

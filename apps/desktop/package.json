@@ -26,7 +26,7 @@
     "@trpc/react-query": "11.0.0-rc.700",
     "@types/semver": "^7.5.8",
     "commander": "^13.1.0",
-    "next": "15.2.3",
+    "next": "15.2.4",
     "next-themes": "^0.4.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

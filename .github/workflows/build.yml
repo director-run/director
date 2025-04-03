@@ -37,4 +37,4 @@ jobs:
       run: bun install
     # TODO: add website to the build process
     - name: Build
-      run: bun turbo run build --filter=!@director/website
+      run: bun turbo run build

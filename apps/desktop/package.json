@@ -41,6 +41,6 @@
     "@types/react": "^19.0.12",
     "@vitejs/plugin-react": "^4.3.4",
     "typescript": "^5.8.2",
-    "vite": "^6.0.3"
+    "vite": "^6.2.5"
   }
 }

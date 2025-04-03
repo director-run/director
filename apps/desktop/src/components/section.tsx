@@ -1,7 +1,10 @@
-import { cn } from "@director.run/ui/lib/cn";
-import { Slot } from "@director.run/ui/primitives/slot";
+import { cn } from "@/lib/cn";
+import { Slot } from "@radix-ui/react-slot";
+import { VariantProps } from "class-variance-authority";
+import { textVariants } from "./typography";
+import { Separator } from "./ui/separator";
 
-interface SectionProps extends React.ComponentProps<"div"> {
+interface SectionProps extends React.ComponentProps<"section"> {
   name?: string;
   asChild?: boolean;
 }
@@ -13,7 +16,7 @@ export function Section({
   name,
   ...props
 }: SectionProps) {
-  const Comp = asChild ? Slot : "div";
+  const Comp = asChild ? Slot : "section";
 
   return (
     <Comp
@@ -21,11 +24,14 @@ export function Section({
       data-slot="section"
       id={name?.toLowerCase().replace(/ /g, "-")}
       className={cn(
-        "flex scroll-m-20 flex-col gap-y-4",
+        "relative flex scroll-m-20 flex-col gap-y-8",
+        "before:font-mono after:font-mono",
+        name && "py-10",
         name &&
-          "before:text-gray-8 before:text-xs before:uppercase before:tracking-widest before:content-['<<<'attr(data-name)'>>>']",
+          "before:absolute before:top-0 before:block before:h-4 before:text-gray-9 before:text-xs before:uppercase before:tracking-widest before:content-['<<<'attr(data-name)'>>>']",
         name &&
-          "after:text-gray-8 after:text-xs after:uppercase after:tracking-widest after:content-['<<</'attr(data-name)'>>>']",
+          "after:absolute after:bottom-0 after:block after:h-4 after:text-gray-9 after:text-xs after:uppercase after:tracking-widest after:content-['<<</'attr(data-name)'>>>']",
+        className,
       )}
       {...props}
     >
@@ -33,3 +39,80 @@ export function Section({
     </Comp>
   );
 }
+
+export function SectionHeader({
+  children,
+  className,
+  ...props
+}: React.ComponentProps<"header">) {
+  return (
+    <header className={cn("flex flex-col gap-3", className)} {...props}>
+      {children}
+    </header>
+  );
+}
+
+interface SectionTitleProps
+  extends React.ComponentProps<"h1">,
+    Omit<VariantProps<typeof textVariants>, "variant"> {
+  asChild?: boolean;
+}
+
+export function SectionTitle({
+  children,
+  className,
+  asChild,
+  invisibles,
+  ...props
+}: SectionTitleProps) {
+  const Comp = asChild ? Slot : "h1";
+
+  return (
+    <Comp
+      className={cn(
+        textVariants({ variant: "h1", invisibles }),
+        "select-none",
+        className,
+      )}
+      {...props}
+    >
+      {children}
+    </Comp>
+  );
+}
+
+interface SectionDescriptionProps
+  extends React.ComponentProps<"p">,
+    Omit<VariantProps<typeof textVariants>, "variant"> {
+  asChild?: boolean;
+}
+
+export function SectionDescription({
+  children,
+  className,
+  asChild,
+  invisibles,
+  ...props
+}: SectionDescriptionProps) {
+  const Comp = asChild ? Slot : "p";
+
+  return (
+    <Comp
+      className={cn(
+        textVariants({ variant: "p", invisibles }),
+        "select-none text-gray-11",
+        className,
+      )}
+      {...props}
+    >
+      {children}
+    </Comp>
+  );
+}
+
+export const SectionSeparator = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof Separator>) => {
+  return <Separator className={cn("", className)} {...props} />;
+};

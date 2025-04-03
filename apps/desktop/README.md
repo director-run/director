@@ -1,32 +1,7 @@
-# Director Desktop Application
+# Tauri + React + Typescript
 
-This is the native desktop application managed by Tauri.
+This template should help get you started developing with Tauri, React and Typescript in Vite.
 
-### Pre-requisits
-- Rust
+## Recommended IDE Setup
 
-### Installation
-
-```bash 
-brew install rust
-bun install
-```
-
-## Developpment
-
-This will build the backend and start a development app:
-
-```bash
-bun run dev
-```
-
-Note: to open the inspector, use the `Command + Option + I` keyboard shortcut
-
-## Build
-
-This will build the backend and create a DMG.
-
-```bash
-bun run build
-```
-
+- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)

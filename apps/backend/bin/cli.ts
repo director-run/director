@@ -5,7 +5,6 @@ import { Command, Option } from "commander";
 import { debug } from "../src/commands/debug";
 import { listProxies } from "../src/commands/listProxies";
 import { seed } from "../src/commands/seed";
-import { startServer } from "../src/http/startServer";
 import {
   installToClaude,
   restartClaude,
@@ -13,6 +12,7 @@ import {
 } from "../src/services/installer/claude";
 import { proxySSEToStdio } from "../src/services/proxy/proxySSEToStdio";
 import { initStore } from "../src/services/store";
+import { startServer } from "../src/startServer";
 
 const program = new Command();
 

@@ -4,17 +4,12 @@ import packageJson from "../package.json";
 
 export const DATA_DIR =
   process.env.DATA_DIR ?? path.join(os.homedir(), ".director");
-
-export const SSE_PORT = Number(process.env.SSE_PORT ?? 3006);
 export const BACKEND_PORT = Number(process.env.BACKEND_PORT ?? 3000);
-
-// This is the path to the config file
-export const PROXY_DB_FILE_PATH =
-  process.env.PROXY_DB_FILE_PATH ??
+export const DB_FILE_PATH =
+  process.env.DB_FILE_PATH ??
   (process.env.NODE_ENV === "test"
     ? path.join(__dirname, "db.test.json")
     : path.join(DATA_DIR, "db.json"));
-
 export const PACKAGE_NAME = packageJson.name;
 export const PACKAGE_VERSION = packageJson.version;
 export const LOG_LEVEL = process.env.LOG_LEVEL ?? "trace";

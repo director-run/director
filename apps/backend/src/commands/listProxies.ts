@@ -1,4 +1,5 @@
 import Table from "cli-table3";
+import { BACKEND_PORT } from "../config";
 import { getAllProxies } from "../services/store";
 
 export const listProxies = async () => {
@@ -7,7 +8,7 @@ export const listProxies = async () => {
     console.log("no proxies configured yet.");
   } else {
     const table = new Table({
-      head: ["name", "servers"],
+      head: ["name", "servers", "url"],
       style: {
         head: ["green"],
       },
@@ -16,6 +17,7 @@ export const listProxies = async () => {
       ...proxies.map((proxy) => [
         proxy.name,
         proxy.servers.map((s) => s.name).join(","),
+        `http://localhost:${BACKEND_PORT}/${proxy.name}/sse`,
       ]),
     );
 

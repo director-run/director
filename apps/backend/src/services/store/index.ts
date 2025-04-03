@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { PROXY_DB_FILE_PATH } from "../../config";
+import { DB_FILE_PATH } from "../../config";
 import { AppError, ErrorCode } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
 import { readJSONFile } from "../../helpers/readJSONFile";
@@ -9,8 +9,8 @@ import type { ConfigDB, ProxyConfigItem } from "./types";
 const logger = getLogger("store");
 
 export async function initStore() {
-  if (!fs.existsSync(PROXY_DB_FILE_PATH)) {
-    logger.info(`Creating store at path: ${PROXY_DB_FILE_PATH}`);
+  if (!fs.existsSync(DB_FILE_PATH)) {
+    logger.info(`Creating store at path: ${DB_FILE_PATH}`);
     await writeStore({
       proxies: [],
     });
@@ -18,11 +18,11 @@ export async function initStore() {
 }
 
 async function readStore(): Promise<ConfigDB> {
-  return await readJSONFile<ConfigDB>(PROXY_DB_FILE_PATH);
+  return await readJSONFile<ConfigDB>(DB_FILE_PATH);
 }
 
 async function writeStore(db: ConfigDB): Promise<void> {
-  await writeJSONFile<ConfigDB>(PROXY_DB_FILE_PATH, db);
+  await writeJSONFile<ConfigDB>(DB_FILE_PATH, db);
 }
 
 export async function createProxy(
@@ -41,7 +41,7 @@ export async function createProxy(
   }
 
   db.proxies.push(newProxy);
-  await writeJSONFile<ConfigDB>(PROXY_DB_FILE_PATH, db);
+  await writeJSONFile<ConfigDB>(DB_FILE_PATH, db);
   return newProxy;
 }
 
@@ -60,7 +60,7 @@ export async function deleteProxy(name: string): Promise<void> {
     throw new AppError(ErrorCode.NOT_FOUND, `Proxy ${name} not found`);
   }
   db.proxies = db.proxies.filter((p) => p.name !== name);
-  await writeJSONFile<ConfigDB>(PROXY_DB_FILE_PATH, db);
+  await writeJSONFile<ConfigDB>(DB_FILE_PATH, db);
 }
 
 export async function updateProxy(
@@ -73,7 +73,7 @@ export async function updateProxy(
     throw new AppError(ErrorCode.NOT_FOUND, `Proxy ${name} not found`);
   }
   Object.assign(proxy, attributes);
-  await writeJSONFile<ConfigDB>(PROXY_DB_FILE_PATH, db);
+  await writeJSONFile<ConfigDB>(DB_FILE_PATH, db);
   return proxy;
 }
 

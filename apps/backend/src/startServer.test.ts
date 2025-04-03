@@ -1,16 +1,14 @@
 import fs from "fs";
 import http from "http";
+import type { Server } from "node:http";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { BACKEND_PORT, PROXY_DB_FILE_PATH } from "../config";
+import { z } from "zod";
+import { BACKEND_PORT, DB_FILE_PATH } from "./config";
+import { createMCPServer } from "./services/proxy/createMCPServer";
 import { startServer } from "./startServer";
 
-import type { Server } from "node:http";
-import { z } from "zod";
-import { createMCPServer } from "../services/proxy/createMCPServer";
-
-// Test configuration to use for tests
 const testConfig = {
   proxies: [
     {
@@ -46,13 +44,12 @@ const testConfig = {
   ],
 };
 
-// Path to the test config file
 describe("Proxy Server Integration Tests", () => {
   let proxyServer: http.Server | undefined;
   let proxyTargetServerInstance: Server;
 
   beforeAll(async () => {
-    fs.writeFileSync(PROXY_DB_FILE_PATH, JSON.stringify(testConfig, null, 2));
+    fs.writeFileSync(DB_FILE_PATH, JSON.stringify(testConfig, null, 2));
     proxyTargetServerInstance = await createMCPServer(4521, (server) => {
       server.tool("echo", { message: z.string() }, async ({ message }) => ({
         content: [{ type: "text", text: `Tool echo: ${message}` }],
@@ -62,7 +59,7 @@ describe("Proxy Server Integration Tests", () => {
   });
 
   afterAll(async () => {
-    fs.unlinkSync(PROXY_DB_FILE_PATH);
+    fs.unlinkSync(DB_FILE_PATH);
     if (proxyServer) {
       await new Promise<void>((resolve) => {
         proxyServer?.close(() => resolve());

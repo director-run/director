@@ -1,10 +1,10 @@
 import * as trpcExpress from "@trpc/server/adapters/express";
 import cors from "cors";
 import express from "express";
-import { BACKEND_PORT } from "../config";
-import { getLogger } from "../helpers/logger";
-import { sse } from "./routers/sse";
-import { appRouter } from "./routers/trpc";
+import { BACKEND_PORT } from "./config";
+import { getLogger } from "./helpers/logger";
+import { sse } from "./http/routers/sse";
+import { appRouter } from "./http/routers/trpc";
 
 const logger = getLogger("startServer");
 

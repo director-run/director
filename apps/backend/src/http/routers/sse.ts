@@ -10,9 +10,6 @@ import { getProxy } from "../../services/store";
 
 const logger = getLogger("Healthcheck");
 
-/**
- * Helthcheck endpoint
- */
 export function sse(): Router {
   const router = express.Router();
 

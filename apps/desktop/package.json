@@ -4,15 +4,18 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "tauri dev",
+    "dev:frontend": "vite",
+    "build": "tauri build -b app",
+    "build:frontend": "vite build",
     "preview": "vite preview",
     "tauri": "tauri",
     "lint": "biome check .",
     "format": "biome format --write .",
     "check-types": "tsc --noEmit",
     "clean": "rm -rf .next .turbo node_modules",
-    "shadcn": "bunx --bun shadcn@latest"
+    "shadcn": "bunx --bun shadcn@latest",
+    "version": "bun run scripts/version.ts"
   },
   "dependencies": {
     "@director/backend": "workspace:*",
@@ -52,6 +55,8 @@
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.1",
     "@vitejs/plugin-react": "^4.3.4",
+    "commander": "^13.1.0",
+    "semver": "^7.7.1",
     "tailwindcss": "^4.1.2",
     "typescript": "~5.8.2",
     "vite": "^6.2.5",

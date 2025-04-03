@@ -1,12 +1,12 @@
 {
   "name": "@director.run/desktop",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.0.7",
   "type": "module",
   "scripts": {
     "dev": "tauri dev",
     "dev:frontend": "vite",
-    "build": "tauri build -b app",
+    "build": "tauri build",
     "build:frontend": "vite build",
     "preview": "vite preview",
     "tauri": "tauri",

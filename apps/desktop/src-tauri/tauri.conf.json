@@ -4,9 +4,9 @@
   "version": "0.1.0",
   "identifier": "dev.working.director",
   "build": {
-    "beforeDevCommand": "bun run dev:frontend",
+    "beforeDevCommand": "bun run build:bins && bun run dev:frontend",
     "devUrl": "http://localhost:3001",
-    "beforeBuildCommand": "bun run build:frontend",
+    "beforeBuildCommand": "bun run build:bins && bun run build:frontend",
     "frontendDist": "../dist"
   },
   "app": {

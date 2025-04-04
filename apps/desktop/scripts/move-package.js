@@ -14,8 +14,8 @@ import fs from "fs";
 import path from "path";
 
 // Get command line arguments
-const sourcePath = process.argv[2] || "../cli/dist/cli";
-const targetDir = "./src-tauri/binaries";
+const sourcePath = process.argv[2] || "../../backend/dist/cli";
+const targetDir = "../src-tauri/binaries";
 
 // Platform-specific executable extension
 const ext = process.platform === "win32" ? ".exe" : "";
@@ -46,4 +46,4 @@ const targetFullPath = path.join(
 
 // Move the file
 console.log(`Moving ${sourceFullPath} to ${targetFullPath}`);
-fs.renameSync(sourceFullPath, targetFullPath);
+fs.copyFileSync(sourceFullPath, targetFullPath);

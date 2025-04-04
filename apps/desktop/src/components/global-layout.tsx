@@ -8,7 +8,10 @@ export function GlobalLayout({
   ...props
 }: React.ComponentProps<"div">) {
   return (
-    <div className={cn("flex h-device w-full flex-col", className)} {...props}>
+    <div
+      className={cn("flex min-h-device w-full flex-col", className)}
+      {...props}
+    >
       {children}
     </div>
   );

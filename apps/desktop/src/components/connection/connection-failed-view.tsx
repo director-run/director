@@ -11,7 +11,7 @@ export function ConnectionFailedView() {
 
   return (
     <div className="flex grow flex-col items-center justify-center">
-      <Container size="sm">
+      <Container size="sm" className="gap-y-20 py-20">
         <div className="flex flex-col gap-y-20">
           <Section name="Connection">
             <div className="flex flex-col gap-2">

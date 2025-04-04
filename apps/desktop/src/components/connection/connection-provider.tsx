@@ -93,26 +93,24 @@ export function ConnectionProvider({
 
   return (
     <ContextProvider value={{ status: connectionStatus, servers: data ?? [] }}>
-      {(() => {
-        switch (connectionStatus) {
-          case "idle":
-            return (
-              <div className="grid h-screen w-full place-items-center">
-                <Loader2Icon className="animate-spin text-gray-8" />
-              </div>
-            );
-          case "connected":
-            return children;
-          case "disconnected":
-            return (
-              <GlobalLayout>
-                <ConnectionFailedView />
-              </GlobalLayout>
-            );
-          default:
-            return assertUnreachable(connectionStatus);
-        }
-      })()}
+      <GlobalLayout>
+        {(() => {
+          switch (connectionStatus) {
+            case "idle":
+              return (
+                <div className="grid h-screen w-full place-items-center">
+                  <Loader2Icon className="animate-spin text-gray-8" />
+                </div>
+              );
+            case "connected":
+              return children;
+            case "disconnected":
+              return <ConnectionFailedView />;
+            default:
+              return assertUnreachable(connectionStatus);
+          }
+        })()}
+      </GlobalLayout>
     </ContextProvider>
   );
 }

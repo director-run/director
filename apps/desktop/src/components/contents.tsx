@@ -40,7 +40,7 @@ export function ContentsItem({
         className={cn(
           "group/contents-item",
           "grid grid-cols-[28px_1fr_28px] gap-x-0.5",
-          "*:bg-gray-4 *:last:rounded-r-xs dark:*:bg-gray-4",
+          "outline-none *:bg-gray-4 *:last:rounded-r-xs dark:*:bg-gray-4",
           "*:transition-colors *:duration-200 *:ease-in-out hover:*:bg-gray-5 dark:hover:*:bg-gray-6",
           "before:flex before:size-7 before:items-center before:justify-center before:rounded-l-xs before:bg-gray-4 before:font-medium before:text-gray-10 before:text-sm before:uppercase before:content-[counter(count,_upper-alpha)] group-hover/contents-item:before:text-gray-11 dark:before:bg-gray-4",
           "before:transition-colors before:duration-200 before:ease-in-out hover:before:bg-gray-5 dark:hover:before:bg-gray-6",

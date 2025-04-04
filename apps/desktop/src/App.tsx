@@ -1,9 +1,13 @@
-import { NavLink } from "react-router";
-
-import "./App.css";
+import { Container } from "./components/container";
 
 function App() {
-  return <NavLink to="/getting-started">Getting Started</NavLink>;
+  return (
+    <div className="flex grow flex-col items-center py-20">
+      <Container size="sm">
+        <div>Hello</div>
+      </Container>
+    </div>
+  );
 }
 
 // biome-ignore lint/style/noDefaultExport: <explanation>

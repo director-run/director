@@ -14,7 +14,9 @@
       {
         "title": "Director",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "minWidth": 800,
+        "minHeight": 600
       }
     ],
     "security": {
@@ -22,6 +24,7 @@
     }
   },
   "bundle": {
+    "externalBin": ["binaries/backend"],
     "macOS": {
       "entitlements": "./Entitlements.plist"
     },

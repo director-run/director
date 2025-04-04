@@ -4,7 +4,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { TRPCProvider } from "@/lib/trpc/client";
 import { NuqsAdapter } from "nuqs/adapters/react-router/v7";
 import { Outlet } from "react-router";
-import { ThemeToggle } from "../theme-toggle";
 import { ThemeProvider } from "./theme-provider";
 
 export function AppProviders() {
@@ -19,7 +18,6 @@ export function AppProviders() {
           </TRPCProvider>
         </NuqsAdapter>
         <Toaster position="bottom-center" />
-        <ThemeToggle />
       </TooltipProvider>
     </ThemeProvider>
   );

@@ -9,7 +9,7 @@ export const textVariants = cva("", {
       h4: "text-balance font-mono font-normal text-xs uppercase tracking-widest",
       p: "text-pretty font-light font-mono text-sm leading-relaxed",
       inlineLink:
-        "text-inherit underline decoration-gray-10 decoration-dashed underline-offset-3 hover:decoration-gray-12",
+        "text-inherit underline decoration-gray-10 decoration-dashed underline-offset-3 outline-none hover:decoration-gray-12",
     },
     invisibles: {
       false: "",

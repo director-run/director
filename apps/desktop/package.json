@@ -7,6 +7,7 @@
     "dev": "tauri dev",
     "dev:frontend": "vite",
     "build": "tauri build",
+    "build:bins": "bun run scripts/move-package.js ../../backend/dist/backend",
     "build:frontend": "vite build",
     "preview": "vite preview",
     "tauri": "tauri",

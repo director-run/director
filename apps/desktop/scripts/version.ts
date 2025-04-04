@@ -90,8 +90,9 @@ async function checkVersionConsistency(): Promise<void> {
 
   // Get tauri.conf.json version
   const tauriConfPath = path.join(rootDir, "src-tauri", "tauri.conf.json");
-  const tauriConf = JSON.parse(await fs.readFile(tauriConfPath, "utf8"));
-  const tauriVersion = tauriConf.package.version;
+  const tauriConfContents = await fs.readFile(tauriConfPath, "utf8");
+  const tauriConf = JSON.parse(tauriConfContents);
+  const tauriVersion = tauriConf.version;
 
   // Get Cargo.toml version
   const cargoTomlPath = path.join(rootDir, "src-tauri", "Cargo.toml");
@@ -129,7 +130,7 @@ async function updateVersions(
   // Update tauri.conf.json
   const tauriConfPath = path.join(rootDir, "src-tauri", "tauri.conf.json");
   const tauriConf = JSON.parse(await fs.readFile(tauriConfPath, "utf8"));
-  tauriConf.package.version = newVersion;
+  tauriConf.version = newVersion;
   await fs.writeFile(tauriConfPath, JSON.stringify(tauriConf, null, 2));
 
   // Update Cargo.toml

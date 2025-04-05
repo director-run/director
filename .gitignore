@@ -42,3 +42,6 @@ next-env.d.ts
 
 public/sw*
 public/swe-worker*
+
+**/bun.lockb
+**/bun.lock

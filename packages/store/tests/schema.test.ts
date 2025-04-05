@@ -91,6 +91,7 @@ describe("Schema Validation", () => {
   describe("proxySchema", () => {
     it("should validate a valid proxy", () => {
       const validProxy = {
+        id: "test-proxy",
         name: "test-proxy",
         description: "Test proxy",
         servers: [
@@ -108,6 +109,7 @@ describe("Schema Validation", () => {
 
     it("should validate a proxy without description", () => {
       const minimalProxy = {
+        id: "test-proxy",
         name: "test-proxy",
         servers: [
           {
@@ -134,9 +136,12 @@ describe("Schema Validation", () => {
   describe("configSchema", () => {
     it("should validate a valid config", () => {
       const validConfig = {
+        version: "beta",
+        port: 3000,
         proxies: [
           {
-            name: "test-proxy",
+            id: "test-proxy",
+            name: "Test Proxy",
             servers: [
               {
                 name: "server1",
@@ -154,6 +159,8 @@ describe("Schema Validation", () => {
 
     it("should validate an empty config", () => {
       const emptyConfig = {
+        version: "beta",
+        port: 3000,
         proxies: [],
       };
       expect(() => configSchema.parse(emptyConfig)).not.toThrow();

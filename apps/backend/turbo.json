@@ -6,6 +6,9 @@
     },
     "dev": {
       "dependsOn": ["^@director.run/store#build"]
+    },
+    "test": {
+      "dependsOn": ["^@director.run/store#build"]
     }
   }
 }

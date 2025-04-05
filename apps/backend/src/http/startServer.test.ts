@@ -1,24 +1,29 @@
 import fs from "fs";
 import http from "http";
+import type { Server } from "node:http";
+import type { Config } from "@director.run/store/schema";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { BACKEND_PORT, PROXY_DB_FILE_PATH } from "../config";
 import { startServer } from "./startServer";
 
-import type { Server } from "node:http";
 import { z } from "zod";
 import { createMCPServer } from "../services/proxy/createMCPServer";
 
 // Test configuration to use for tests
-const testConfig = {
+const testConfig: Config = {
+  version: "beta",
+  port: 3000,
   proxies: [
     {
+      id: "test-proxy",
       name: "test-proxy",
       servers: [
         {
           name: "Hackernews",
           transport: {
+            type: "stdio",
             command: "uvx",
             args: [
               "--from",
@@ -30,6 +35,7 @@ const testConfig = {
         {
           name: "Fetch",
           transport: {
+            type: "stdio",
             command: "uvx",
             args: ["mcp-server-fetch"],
           },

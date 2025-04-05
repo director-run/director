@@ -1,6 +1,5 @@
 import { z } from "zod";
-
-import { optionalStringSchema, requiredStringSchema } from "@/util/validation";
+import { optionalStringSchema, requiredStringSchema } from "./util/validation";
 
 export const StdioTransportSchema = z.object({
   type: z.literal("stdio"),

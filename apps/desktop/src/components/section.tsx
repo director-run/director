@@ -24,8 +24,9 @@ export function Section({
       data-slot="section"
       id={name?.toLowerCase().replace(/ /g, "-")}
       className={cn(
-        "relative flex select-none scroll-m-20 flex-col gap-y-8",
+        "relative flex select-none scroll-m-20 flex-col gap-y-12",
         "before:font-mono after:font-mono",
+        !name && "before:hidden after:hidden",
         name && "py-10",
         name &&
           "before:absolute before:top-0 before:block before:h-4 before:text-gray-9 before:text-xs before:uppercase before:tracking-widest before:content-['<<<'attr(data-name)'>>>']",
@@ -46,7 +47,7 @@ export function SectionHeader({
   ...props
 }: React.ComponentProps<"header">) {
   return (
-    <header className={cn("flex flex-col gap-3", className)} {...props}>
+    <header className={cn("flex flex-col gap-4", className)} {...props}>
       {children}
     </header>
   );
@@ -54,7 +55,7 @@ export function SectionHeader({
 
 interface SectionTitleProps
   extends React.ComponentProps<"h1">,
-    Omit<VariantProps<typeof textVariants>, "variant"> {
+    VariantProps<typeof textVariants> {
   asChild?: boolean;
 }
 
@@ -63,6 +64,7 @@ export function SectionTitle({
   className,
   asChild,
   invisibles,
+  variant = "h1",
   ...props
 }: SectionTitleProps) {
   const Comp = asChild ? Slot : "h1";
@@ -70,7 +72,7 @@ export function SectionTitle({
   return (
     <Comp
       className={cn(
-        textVariants({ variant: "h1", invisibles }),
+        textVariants({ variant, invisibles }),
         "select-none",
         className,
       )}
@@ -99,8 +101,8 @@ export function SectionDescription({
   return (
     <Comp
       className={cn(
-        textVariants({ variant: "p", invisibles }),
-        "select-none text-gray-11",
+        textVariants({ variant: "h4", invisibles }),
+        "select-none text-muted-foreground",
         className,
       )}
       {...props}

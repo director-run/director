@@ -89,6 +89,7 @@ export class ProxyServerStore {
       name,
       description,
       servers: servers ?? [],
+      integrations: [],
     });
     const proxyServer = await ProxyServer.create({
       name: name,

@@ -9,7 +9,8 @@ export async function seed() {
 
   await db.purge();
   await db.addProxy({
-    name: "Claude proxy",
+    name: "claude-proxy",
+    integrations: [],
     servers: [
       {
         name: "Fetch",
@@ -31,7 +32,8 @@ export async function seed() {
   });
 
   await db.addProxy({
-    name: "Inspector proxy",
+    name: "inspector-proxy",
+    integrations: [],
     servers: [
       {
         name: "Fetch",
@@ -45,7 +47,8 @@ export async function seed() {
   });
 
   await db.addProxy({
-    name: "Cursor proxy",
+    name: "cursor-proxy",
+    integrations: [],
     servers: [
       {
         name: "Hackernews",

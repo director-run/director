@@ -7,7 +7,7 @@ import { cn } from "@/lib/cn";
 const containerVariants = cva(
   [
     "grid w-full auto-rows-min",
-    "gap-x-6 gap-y-10",
+    "gap-x-6 gap-y-20",
     "*:col-span-1 *:col-start-2",
   ],
   {

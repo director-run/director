@@ -18,7 +18,7 @@
     ["classNames\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
     ["className\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
   ],
-  "tailwindCSS.experimental.configFile": "./packages/ui/src/styles/ui.css",
+  "tailwindCSS.experimental.configFile": "./apps/desktop/src/global.css",
   "jest.runMode": "on-demand",
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"

@@ -10,8 +10,7 @@ import { trpc } from "@/lib/trpc/trpc";
 import { Proxy } from "@director/backend/src/services/db/schema";
 import { Loader2Icon } from "lucide-react";
 import { useLocation, useNavigate } from "react-router";
-import { GlobalLayout } from "../global-layout";
-import { toast } from "../ui/sonner";
+import { toast } from "sonner";
 import { ConnectionFailedView } from "./connection-failed-view";
 
 export type ConnectionStatus = "idle" | "connected" | "disconnected";
@@ -28,6 +27,7 @@ export const useConnectionContext = useContext;
 export function ConnectionProvider({
   children,
 }: { children: React.ReactNode }) {
+  const [servers, setServers] = useState<Proxy[]>([]);
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [enabled, setEnabled] = useState(false);
@@ -37,6 +37,7 @@ export function ConnectionProvider({
   const { data, status, error } = trpc.store.getAll.useQuery(undefined, {
     refetchInterval: 1000,
     retry: false,
+    refetchOnWindowFocus: true,
     throwOnError: false,
     enabled,
   });
@@ -58,15 +59,13 @@ export function ConnectionProvider({
   useEffect(() => {
     switch (status) {
       case "success":
-        toast({
-          title: "Connection established",
+        toast("Connection established", {
           description: "You are now connected to Director",
         });
         break;
       case "error":
         if (connectionStatus === "connected") {
-          toast({
-            title: "Connection lost",
+          toast.error("Connection lost", {
             description: "Please check your connection and try again",
           });
         }
@@ -77,6 +76,12 @@ export function ConnectionProvider({
         assertUnreachable(status);
     }
   }, [status]);
+
+  useEffect(() => {
+    if (data) {
+      setServers(data);
+    }
+  }, [data]);
 
   useEffect(() => {
     const hasServers = data?.length;
@@ -92,25 +97,23 @@ export function ConnectionProvider({
   }, [connectionStatus, data, pathname]);
 
   return (
-    <ContextProvider value={{ status: connectionStatus, servers: data ?? [] }}>
-      <GlobalLayout>
-        {(() => {
-          switch (connectionStatus) {
-            case "idle":
-              return (
-                <div className="grid h-screen w-full place-items-center">
-                  <Loader2Icon className="animate-spin text-gray-8" />
-                </div>
-              );
-            case "connected":
-              return children;
-            case "disconnected":
-              return <ConnectionFailedView />;
-            default:
-              return assertUnreachable(connectionStatus);
-          }
-        })()}
-      </GlobalLayout>
+    <ContextProvider value={{ status: connectionStatus, servers }}>
+      {(() => {
+        switch (connectionStatus) {
+          case "idle":
+            return (
+              <div className="grid h-screen w-full place-items-center">
+                <Loader2Icon className="animate-spin text-gray-8" />
+              </div>
+            );
+          case "connected":
+            return children;
+          case "disconnected":
+            return <ConnectionFailedView />;
+          default:
+            return assertUnreachable(connectionStatus);
+        }
+      })()}
     </ContextProvider>
   );
 }

@@ -38,6 +38,7 @@ export function setupToolHandlers(
         if (result.tools) {
           const toolsWithSource = result.tools.map((tool) => {
             toolToClientMap.set(tool.name, connectedClient);
+
             return {
               ...tool,
               description: `[${connectedClient.name}] ${tool.description || ""}`,

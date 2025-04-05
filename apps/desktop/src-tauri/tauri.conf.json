@@ -4,9 +4,9 @@
   "version": "0.0.9",
   "identifier": "dev.working.director",
   "build": {
-    "beforeDevCommand": "bun run build:bins && bun run dev:frontend",
+    "beforeDevCommand": "cd ../backend && bun run build:backend && cd ../desktop && bun run build:bins && bun run dev:frontend",
     "devUrl": "http://localhost:3001",
-    "beforeBuildCommand": "bun run build:bins && bun run build:frontend",
+    "beforeBuildCommand": "cd ../backend && bun run build:backend && cd ../desktop && bun run build:bins && bun run build:frontend",
     "frontendDist": "../dist"
   },
   "app": {
@@ -15,8 +15,8 @@
         "title": "Director",
         "width": 800,
         "height": 600,
-        "minWidth": 800,
-        "minHeight": 600
+        "minWidth": 640,
+        "minHeight": 480
       }
     ],
     "security": {

@@ -26,11 +26,22 @@ export const McpServerSchema = z.object({
 
 export type McpServer = z.infer<typeof McpServerSchema>;
 
+export const integrationEnum = z.enum([
+  "claude-desktop",
+  "cursor",
+  "goose",
+  "raycast",
+  "windsurf",
+]);
+
+export type Integration = z.infer<typeof integrationEnum>;
+
 export const proxySchema = z.object({
   id: requiredStringSchema,
   name: requiredStringSchema,
   description: optionalStringSchema,
   servers: z.array(McpServerSchema),
+  integrations: z.array(integrationEnum),
 });
 
 export type Proxy = z.infer<typeof proxySchema>;

@@ -16,7 +16,8 @@ describe("SSE Router", () => {
   beforeAll(async () => {
     await db.purge();
     await db.addProxy({
-      name: "Test proxy",
+      name: "test-proxy",
+      integrations: [],
       servers: [
         {
           name: "Hackernews",

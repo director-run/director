@@ -7,7 +7,7 @@ import { useTimeout } from "usehooks-ts";
 import { assertUnreachable } from "@/lib/assert-unreachable";
 import { createCtx } from "@/lib/create-ctx";
 import { trpc } from "@/lib/trpc/trpc";
-import { ProxyConfigItem } from "@director/backend/src/services/store/types";
+import { Proxy } from "@director.run/store/schema";
 import { Loader2Icon } from "lucide-react";
 import { useLocation, useNavigate } from "react-router";
 import { GlobalLayout } from "../global-layout";
@@ -18,7 +18,7 @@ export type ConnectionStatus = "idle" | "connected" | "disconnected";
 
 export interface ConnectionContext {
   status: ConnectionStatus;
-  servers: ProxyConfigItem[];
+  servers: Proxy[];
 }
 
 const [useContext, ContextProvider] = createCtx<ConnectionContext>();

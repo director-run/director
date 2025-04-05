@@ -1,4 +1,5 @@
 import { Container } from "@/components/container";
+import { CreateProxyForm } from "@/components/proxies/create-proxy-form";
 import {
   Section,
   SectionDescription,
@@ -6,7 +7,6 @@ import {
   SectionSeparator,
   SectionTitle,
 } from "@/components/section";
-import { ServerForm } from "@/components/servers/server-form";
 
 export function GetStartedView() {
   return (
@@ -20,7 +20,7 @@ export function GetStartedView() {
             </SectionDescription>
           </SectionHeader>
           <SectionSeparator />
-          <ServerForm />
+          <CreateProxyForm />
         </Section>
       </Container>
     </div>

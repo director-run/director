@@ -1,6 +1,11 @@
-import { PACKAGE_NAME, PACKAGE_VERSION } from "../src/config";
+import {
+  PACKAGE_NAME,
+  PACKAGE_VERSION,
+  PROXY_DB_FILE_PATH,
+} from "../src/config";
 import { getLogger } from "../src/helpers/logger";
 
+import { createStore, storeExistsSync } from "@director.run/store";
 import { Command, Option } from "commander";
 import { debug } from "../src/commands/debug";
 import { listProxies } from "../src/commands/listProxies";
@@ -12,13 +17,14 @@ import {
   uninstallFromClaude,
 } from "../src/services/installer/claude";
 import { proxySSEToStdio } from "../src/services/proxy/proxySSEToStdio";
-import { initStore } from "../src/services/store";
 
 const program = new Command();
 
 const logger = getLogger("cli");
 
-await initStore();
+if (!storeExistsSync(PROXY_DB_FILE_PATH)) {
+  await createStore(PROXY_DB_FILE_PATH);
+}
 
 program
   .name(PACKAGE_NAME)

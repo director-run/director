@@ -1,14 +1,15 @@
-import { initTRPC } from "@trpc/server";
-import superjson from "superjson";
-import { z } from "zod";
-
 import {
   createProxy,
   deleteProxy,
-  getAllProxies,
   getProxy,
   updateProxy,
-} from "../../services/store";
+} from "@director.run/store";
+import { getProxies } from "@director.run/store";
+import { proxySchema } from "@director.run/store/schema";
+import { initTRPC } from "@trpc/server";
+import superjson from "superjson";
+import { z } from "zod";
+import { PROXY_DB_FILE_PATH } from "../../config";
 
 export const createTRPCContext = async (_opts: { headers: Headers }) => {
   return {};
@@ -22,56 +23,35 @@ const createTRPCRouter = t.router;
 
 const storeRouter = createTRPCRouter({
   getAll: t.procedure.query(() => {
-    return getAllProxies();
+    try {
+      return getProxies(PROXY_DB_FILE_PATH);
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
   }),
   get: t.procedure.input(z.object({ name: z.string() })).query(({ input }) => {
-    return getProxy(input.name);
+    return getProxy(input.name, PROXY_DB_FILE_PATH);
   }),
   create: t.procedure
-    .input(
-      z.object({
-        name: z.string(),
-        servers: z.array(
-          z.object({
-            name: z.string(),
-            transport: z.union([
-              z.object({ command: z.string(), args: z.array(z.string()) }),
-              z.object({ type: z.literal("sse"), url: z.string() }),
-            ]),
-          }),
-        ),
-      }),
-    )
+    .input(proxySchema.omit({ id: true }))
     .mutation(({ input }) => {
-      return createProxy(input);
+      return createProxy(input, PROXY_DB_FILE_PATH);
     }),
   update: t.procedure
     .input(
       z.object({
         name: z.string(),
-        attributes: z.object({
-          name: z.string().optional(),
-          servers: z
-            .array(
-              z.object({
-                name: z.string(),
-                transport: z.union([
-                  z.object({ command: z.string(), args: z.array(z.string()) }),
-                  z.object({ type: z.literal("sse"), url: z.string() }),
-                ]),
-              }),
-            )
-            .optional(),
-        }),
+        attributes: proxySchema.partial(),
       }),
     )
     .mutation(({ input }) => {
-      return updateProxy(input.name, input.attributes);
+      return updateProxy(input.name, input.attributes, PROXY_DB_FILE_PATH);
     }),
   delete: t.procedure
     .input(z.object({ name: z.string() }))
     .mutation(({ input }) => {
-      return deleteProxy(input.name);
+      return deleteProxy(input.name, PROXY_DB_FILE_PATH);
     }),
 });
 

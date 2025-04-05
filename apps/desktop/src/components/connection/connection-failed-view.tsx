@@ -27,7 +27,7 @@ export function ConnectionFailedView() {
 
               <p className={cn(textVariants({ variant: "p" }), "mt-2 text-sm")}>
                 <NavLink
-                  to="/get-started"
+                  to="get-started"
                   className={textVariants({ variant: "inlineLink" })}
                 >
                   Running on another port?

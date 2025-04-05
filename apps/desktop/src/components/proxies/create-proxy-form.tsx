@@ -1,9 +1,7 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { type Proxy, proxySchema } from "@director.run/store/schema";
 import { useNavigate } from "react-router";
-import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,27 +14,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/sonner";
+import { useZodForm } from "@/hooks/use-zod-form";
 import { trpc } from "@/lib/trpc/trpc";
 
-const ServerFormSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
-  }),
-  servers: z.array(
-    z.object({
-      name: z.string(),
-      transport: z.union([
-        z.object({ command: z.string(), args: z.array(z.string()) }),
-        z.object({ type: z.literal("sse"), url: z.string() }),
-      ]),
-    }),
-  ),
-});
-
-export function ServerForm() {
+export function CreateProxyForm() {
   const navigate = useNavigate();
-  const form = useForm<z.infer<typeof ServerFormSchema>>({
-    resolver: zodResolver(ServerFormSchema),
+
+  const form = useZodForm({
+    schema: proxySchema.omit({ id: true }),
     defaultValues: {
       name: "",
       servers: [],
@@ -47,7 +32,7 @@ export function ServerForm() {
 
   const createServerMutation = trpc.store.create.useMutation();
 
-  async function onSubmit(data: z.infer<typeof ServerFormSchema>) {
+  async function onSubmit(data: Omit<Proxy, "id">) {
     const res = await createServerMutation.mutateAsync(data);
 
     toast({
@@ -55,8 +40,8 @@ export function ServerForm() {
       description: `${res.name} has been created successfully.`,
     });
 
-    utils.store.getAll.invalidate();
-    navigate("/");
+    await utils.store.getAll.refetch();
+    await navigate("/");
   }
 
   return (

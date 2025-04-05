@@ -1,15 +1,14 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "stream",
-  "globalDependencies": [".env"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+      "inputs": ["$TURBO_DEFAULT$"],
+      "outputs": ["dist/**"]
     },
     "dev": {
-      "inputs": ["$TURBO_DEFAULT$", ".env"],
+      "inputs": ["$TURBO_DEFAULT$"],
       "persistent": true,
       "cache": false
     },

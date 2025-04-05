@@ -1,0 +1,11 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^@director/backend#build"]
+    },
+    "dev": {
+      "dependsOn": ["^@director/backend#build"]
+    }
+  }
+}

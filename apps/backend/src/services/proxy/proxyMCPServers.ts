@@ -1,3 +1,4 @@
+import type { McpServer } from "@director.run/store/schema";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
@@ -6,7 +7,6 @@ import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import * as eventsource from "eventsource";
 import { getLogger } from "../../helpers/logger";
-import type { ServerConfigItem } from "../store/types";
 import { setupPromptHandlers } from "./handlers/promptsHandler";
 import { setupResourceTemplateHandlers } from "./handlers/resourceTemplatesHandler";
 import { setupResourceHandlers } from "./handlers/resourcesHandler";
@@ -24,7 +24,7 @@ export interface ProxyServerInstance {
 }
 
 export const proxyMCPServers = async (
-  servers: ServerConfigItem[],
+  servers: McpServer[],
 ): Promise<ProxyServerInstance> => {
   const connectedClients = await createClients(servers);
 
@@ -70,7 +70,7 @@ export interface ConnectedClient {
 }
 
 const createClient = (
-  server: ServerConfigItem,
+  server: McpServer,
 ): { client: Client | undefined; transport: Transport | undefined } => {
   let transport: Transport | null = null;
   try {
@@ -120,7 +120,7 @@ const createClient = (
 };
 
 const createClients = async (
-  servers: ServerConfigItem[],
+  servers: McpServer[],
 ): Promise<ConnectedClient[]> => {
   const clients: ConnectedClient[] = [];
 

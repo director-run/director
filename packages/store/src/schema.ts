@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { optionalStringSchema, requiredStringSchema } from "./util/validation";
+import { optionalStringSchema, requiredStringSchema } from "@/util/validation";
 
 export const StdioTransportSchema = z.object({
   type: z.literal("stdio"),
@@ -26,6 +26,7 @@ export const McpServerSchema = z.object({
 export type McpServer = z.infer<typeof McpServerSchema>;
 
 export const proxySchema = z.object({
+  id: requiredStringSchema,
   name: requiredStringSchema,
   description: optionalStringSchema,
   servers: z.array(McpServerSchema),
@@ -34,6 +35,8 @@ export const proxySchema = z.object({
 export type Proxy = z.infer<typeof proxySchema>;
 
 export const configSchema = z.object({
+  version: z.literal("beta").describe("The version of the config file"),
+  port: z.number(),
   proxies: z.array(proxySchema),
 });
 

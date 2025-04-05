@@ -4,8 +4,8 @@ import {
   type PathOrFileDescriptor,
   readFileSync,
 } from "node:fs";
-import { type FileHandle } from "node:fs/promises";
-import { JsonObject } from "type-fest";
+import type { FileHandle } from "node:fs/promises";
+import type { JsonObject } from "type-fest";
 
 const { readFile } = fs;
 

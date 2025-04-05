@@ -1,19 +1,23 @@
+import { writeStore } from "@director.run/store";
+import type { Config } from "@director.run/store/schema";
 import { PROXY_DB_FILE_PATH } from "../config";
 import { getLogger } from "../helpers/logger";
-import { writeJSONFile } from "../helpers/writeJSONFile";
-import type { ConfigDB } from "../services/store/types";
 
 export async function seed() {
   const logger = getLogger("seed");
   logger.info(`Seeding database at path: ${PROXY_DB_FILE_PATH}`);
-  const seedProxyDB: ConfigDB = {
+  const seedProxyDB: Config = {
+    version: "beta",
+    port: 3000,
     proxies: [
       {
+        id: "my-first-proxy",
         name: "my-first-proxy",
         servers: [
           {
             name: "Hackernews",
             transport: {
+              type: "stdio",
               command: "uvx",
               args: [
                 "--from",
@@ -25,6 +29,7 @@ export async function seed() {
           {
             name: "Fetch",
             transport: {
+              type: "stdio",
               command: "uvx",
               args: ["mcp-server-fetch"],
             },
@@ -34,5 +39,5 @@ export async function seed() {
     ],
   };
 
-  await writeJSONFile<ConfigDB>(PROXY_DB_FILE_PATH, seedProxyDB);
+  await writeStore(seedProxyDB, PROXY_DB_FILE_PATH);
 }

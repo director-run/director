@@ -1,12 +1,13 @@
+import { getProxy } from "@director.run/store";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
 import type { Router } from "express";
+import { PROXY_DB_FILE_PATH } from "../../config";
 import { getLogger } from "../../helpers/logger";
 import {
   type ProxyServerInstance,
   proxyMCPServers,
 } from "../../services/proxy/proxyMCPServers";
-import { getProxy } from "../../services/store";
 
 const logger = getLogger("Healthcheck");
 
@@ -112,7 +113,7 @@ class ProxyServerStore {
 
     try {
       // Create a new proxy server
-      const proxy = await getProxy(proxyName);
+      const proxy = await getProxy(proxyName, PROXY_DB_FILE_PATH);
       const proxyInstance = await proxyMCPServers(proxy.servers);
       this.proxyServers.set(proxyName, proxyInstance);
       return proxyInstance;

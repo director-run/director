@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "turbo run dev",
+    "dev:backend": "turbo run dev --filter=backend",
     "dev:reset": "bun run clean && bun install",
     "build": "turbo run build",
     "start": "turbo run start",

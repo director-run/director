@@ -1,8 +1,10 @@
+import { getProxies } from "@director.run/store";
 import Table from "cli-table3";
-import { getAllProxies } from "../services/store";
+import { PROXY_DB_FILE_PATH } from "../config";
 
 export const listProxies = async () => {
-  const proxies = await getAllProxies();
+  const proxies = await getProxies(PROXY_DB_FILE_PATH);
+
   if (proxies.length === 0) {
     console.log("no proxies configured yet.");
   } else {

@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { optionalStringSchema, requiredStringSchema } from "./util/validation";
+import { optionalStringSchema } from "../helpers/validation";
+import { requiredStringSchema } from "../helpers/validation";
 
 export const StdioTransportSchema = z.object({
   type: z.literal("stdio"),
@@ -34,8 +35,6 @@ export const proxySchema = z.object({
 export type Proxy = z.infer<typeof proxySchema>;
 
 export const configSchema = z.object({
-  version: z.literal("beta").describe("The version of the config file"),
-  port: z.number(),
   proxies: z.array(proxySchema),
 });
 

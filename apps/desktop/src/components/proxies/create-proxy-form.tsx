@@ -1,6 +1,6 @@
 "use client";
 
-import { type Proxy, proxySchema } from "@director.run/store/schema";
+import { type Proxy, proxySchema } from "@director/backend/src/config/schema";
 import { useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";

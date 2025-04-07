@@ -1,5 +1,5 @@
-import { createStore, storeExistsSync } from "@director.run/store";
-import { PROXY_DB_FILE_PATH } from "../src/config";
+import { createStore, storeExistsSync } from "../src/config";
+import { PROXY_DB_FILE_PATH } from "../src/constants";
 import { startServer } from "../src/http/startServer";
 
 if (!storeExistsSync(PROXY_DB_FILE_PATH)) {

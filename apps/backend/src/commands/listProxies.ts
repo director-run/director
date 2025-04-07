@@ -1,6 +1,6 @@
-import { getProxies } from "@director.run/store";
 import Table from "cli-table3";
-import { PROXY_DB_FILE_PATH } from "../config";
+import { getProxies } from "../config";
+import { PROXY_DB_FILE_PATH } from "../constants";
 
 export const listProxies = async () => {
   const proxies = await getProxies(PROXY_DB_FILE_PATH);

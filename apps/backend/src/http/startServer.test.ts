@@ -1,11 +1,12 @@
 import fs from "fs";
 import http from "http";
 import type { Server } from "node:http";
-import type { Config } from "@director.run/store/schema";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { BACKEND_PORT, PROXY_DB_FILE_PATH } from "../config";
+import type { Config } from "../config/schema";
+import { PROXY_DB_FILE_PATH } from "../constants";
+import { DEFAULT_SERVICE_PORT } from "../constants";
 import { startServer } from "./startServer";
 
 import { z } from "zod";
@@ -13,8 +14,6 @@ import { createMCPServer } from "../services/proxy/createMCPServer";
 
 // Test configuration to use for tests
 const testConfig: Config = {
-  version: "beta",
-  port: 3000,
   proxies: [
     {
       id: "test-proxy",
@@ -93,7 +92,7 @@ describe("Proxy Server Integration Tests", () => {
       },
     );
     const transport = new SSEClientTransport(
-      new URL(`http://localhost:${BACKEND_PORT}/test-proxy/sse`),
+      new URL(`http://localhost:${DEFAULT_SERVICE_PORT}/test-proxy/sse`),
     );
     await client.connect(transport);
     const toolsResult = await client.listTools();

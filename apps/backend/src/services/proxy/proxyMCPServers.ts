@@ -1,4 +1,3 @@
-import type { McpServer } from "@director.run/store/schema";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
@@ -6,6 +5,7 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import * as eventsource from "eventsource";
+import type { McpServer } from "../../config/schema";
 import { getLogger } from "../../helpers/logger";
 import { setupPromptHandlers } from "./handlers/promptsHandler";
 import { setupResourceTemplateHandlers } from "./handlers/resourceTemplatesHandler";

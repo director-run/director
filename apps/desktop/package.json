@@ -19,7 +19,6 @@
     "version": "bun run scripts/version.ts"
   },
   "dependencies": {
-    "@director.run/store": "workspace:*",
     "@director/backend": "workspace:*",
     "@hookform/resolvers": "^5.0.1",
     "@radix-ui/react-dropdown-menu": "^2.1.6",

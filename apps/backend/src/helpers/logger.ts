@@ -1,14 +1,16 @@
 import { pick } from "lodash";
 import pino, { type Logger } from "pino";
 import pinoPretty from "pino-pretty";
-import { LOG_LEVEL, LOG_PRETTY } from "../config";
 import { isAppError } from "./error";
+
+const LOG_PRETTY = process.env.LOG_PRETTY !== "false";
+const LOG_LEVEL = process.env.LOG_LEVEL ?? "trace";
 
 const logger = pino(
   {
     level: LOG_LEVEL.toLowerCase(),
     messageKey: "message",
-    timestamp: LOG_PRETTY,
+    timestamp: true,
     serializers: {
       error: (error: Error) =>
         isAppError(error)

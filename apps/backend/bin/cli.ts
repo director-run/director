@@ -1,15 +1,11 @@
-import {
-  PACKAGE_NAME,
-  PACKAGE_VERSION,
-  PROXY_DB_FILE_PATH,
-} from "../src/config";
+import { PROXY_DB_FILE_PATH } from "../src/constants";
 import { getLogger } from "../src/helpers/logger";
 
-import { createStore, storeExistsSync } from "@director.run/store";
 import { Command, Option } from "commander";
 import { debug } from "../src/commands/debug";
 import { listProxies } from "../src/commands/listProxies";
 import { seed } from "../src/commands/seed";
+import { createStore, storeExistsSync } from "../src/config";
 import { startServer } from "../src/http/startServer";
 import {
   installToClaude,
@@ -17,6 +13,8 @@ import {
   uninstallFromClaude,
 } from "../src/services/installer/claude";
 import { proxySSEToStdio } from "../src/services/proxy/proxySSEToStdio";
+
+import packageJson from "../package.json";
 
 const program = new Command();
 
@@ -27,9 +25,9 @@ if (!storeExistsSync(PROXY_DB_FILE_PATH)) {
 }
 
 program
-  .name(PACKAGE_NAME)
+  .name(packageJson.name)
   .description("CLI to operate mcp server")
-  .version(PACKAGE_VERSION);
+  .version(packageJson.version);
 
 program
   .command("ls")

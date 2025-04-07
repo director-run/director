@@ -1,15 +1,15 @@
-import {
-  createProxy,
-  deleteProxy,
-  getProxy,
-  updateProxy,
-} from "@director.run/store";
-import { getProxies } from "@director.run/store";
-import { proxySchema } from "@director.run/store/schema";
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { z } from "zod";
-import { PROXY_DB_FILE_PATH } from "../../config";
+import {
+  createProxy,
+  deleteProxy,
+  getProxies,
+  getProxy,
+  updateProxy,
+} from "../../config";
+import { proxySchema } from "../../config/schema";
+import { PROXY_DB_FILE_PATH } from "../../constants";
 
 export const createTRPCContext = async (_opts: { headers: Headers }) => {
   return {};

@@ -1,17 +1,16 @@
 import { promises as fs, existsSync } from "node:fs";
-import { DEFAULT_CONFIG, DEFAULT_CONFIG_PATH } from "@/constants";
-import type { Config, Proxy } from "@/schema";
-import { configSchema } from "@/schema";
-import { readJsonFile, readJsonFileSync } from "@/util/read-json";
-import { writeJsonFile, writeJsonFileSync } from "@/util/write-json";
 import slugify from "slugify";
+import { DEFAULT_CONFIG, PROXY_DB_FILE_PATH } from "../constants";
+import { readJsonFile, readJsonFileSync } from "../helpers/read-json";
+import { writeJsonFile, writeJsonFileSync } from "../helpers/write-json";
+import { type Config, type Proxy, configSchema } from "./schema";
 
 export function storeExistsSync(absolutePath?: string) {
-  return existsSync(absolutePath ?? DEFAULT_CONFIG_PATH);
+  return existsSync(absolutePath ?? PROXY_DB_FILE_PATH);
 }
 
 export async function storeExists(absolutePath?: string) {
-  return await fs.exists(absolutePath ?? DEFAULT_CONFIG_PATH);
+  return await fs.exists(absolutePath ?? PROXY_DB_FILE_PATH);
 }
 
 export function createStoreSync(absolutePath?: string) {
@@ -19,7 +18,7 @@ export function createStoreSync(absolutePath?: string) {
     throw new Error("Store already exists");
   }
 
-  return writeJsonFileSync(absolutePath ?? DEFAULT_CONFIG_PATH, DEFAULT_CONFIG);
+  return writeJsonFileSync(absolutePath ?? PROXY_DB_FILE_PATH, DEFAULT_CONFIG);
 }
 
 export async function createStore(absolutePath?: string) {
@@ -28,27 +27,27 @@ export async function createStore(absolutePath?: string) {
   }
 
   return await writeJsonFile(
-    absolutePath ?? DEFAULT_CONFIG_PATH,
+    absolutePath ?? PROXY_DB_FILE_PATH,
     DEFAULT_CONFIG,
   );
 }
 
 export function readStoreSync(absolutePath?: string) {
-  const store = readJsonFileSync(absolutePath ?? DEFAULT_CONFIG_PATH);
+  const store = readJsonFileSync(absolutePath ?? PROXY_DB_FILE_PATH);
   return configSchema.parse(store);
 }
 
 export async function readStore(absolutePath?: string) {
-  const store = await readJsonFile(absolutePath ?? DEFAULT_CONFIG_PATH);
+  const store = await readJsonFile(absolutePath ?? PROXY_DB_FILE_PATH);
   return configSchema.parse(store);
 }
 
 export function writeStoreSync(store: Config, absolutePath?: string) {
-  return writeJsonFileSync(absolutePath ?? DEFAULT_CONFIG_PATH, store);
+  return writeJsonFileSync(absolutePath ?? PROXY_DB_FILE_PATH, store);
 }
 
 export async function writeStore(store: Config, absolutePath?: string) {
-  return await writeJsonFile(absolutePath ?? DEFAULT_CONFIG_PATH, store);
+  return await writeJsonFile(absolutePath ?? PROXY_DB_FILE_PATH, store);
 }
 
 export function createProxySync(

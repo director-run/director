@@ -1,8 +1,8 @@
-import { getProxy } from "@director.run/store";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
 import type { Router } from "express";
-import { PROXY_DB_FILE_PATH } from "../../config";
+import { getProxy } from "../../config";
+import { PROXY_DB_FILE_PATH } from "../../constants";
 import { getLogger } from "../../helpers/logger";
 import {
   type ProxyServerInstance,

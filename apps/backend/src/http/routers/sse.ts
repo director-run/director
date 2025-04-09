@@ -2,15 +2,13 @@ import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
 import type { Router } from "express";
 import { getLogger } from "../../helpers/logger";
-import { ProxyServerStore } from "../../services/proxy/ProxyServerStore";
+import type { ProxyServerStore } from "../../services/proxy/ProxyServerStore";
 import {} from "../../services/proxy/proxyMCPServers";
 
 const logger = getLogger("SSE Router");
 
-export async function sse(): Promise<Router> {
+export function sse({ proxyStore }: { proxyStore: ProxyServerStore }): Router {
   const router = express.Router();
-
-  const proxyStore = await ProxyServerStore.create();
 
   // Handle SSE connections for specific proxy
   router.get("/:proxy_name/sse", async (req, res) => {

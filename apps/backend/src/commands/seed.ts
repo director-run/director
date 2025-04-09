@@ -1,4 +1,4 @@
-import { writeStore } from "../config";
+import { writeConfig } from "../config";
 import type { Config } from "../config/schema";
 import { PROXY_DB_FILE_PATH } from "../constants";
 import { getLogger } from "../helpers/logger";
@@ -37,5 +37,5 @@ export async function seed() {
     ],
   };
 
-  await writeStore(seedProxyDB, PROXY_DB_FILE_PATH);
+  await writeConfig(seedProxyDB, PROXY_DB_FILE_PATH);
 }

@@ -16,7 +16,8 @@
     "check-types": "tsc --noEmit",
     "clean": "rm -rf .next .turbo node_modules",
     "shadcn": "bunx --bun shadcn@latest",
-    "version": "bun run scripts/version.ts"
+    "version": "bun run scripts/version.ts",
+    "test": "bun run version check"
   },
   "dependencies": {
     "@director/backend": "workspace:*",

@@ -6,6 +6,7 @@ import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import * as eventsource from "eventsource";
 import { getLogger } from "../../helpers/logger";
+import { sleep } from "../../helpers/util";
 import type { McpServer } from "../db/schema";
 import { setupPromptHandlers } from "./handlers/promptsHandler";
 import { setupResourceTemplateHandlers } from "./handlers/resourceTemplatesHandler";
@@ -61,9 +62,6 @@ export const proxyMCPServers = async (
     transports: new Map<string, SSEServerTransport>(),
   };
 };
-
-const sleep = (time: number) =>
-  new Promise<void>((resolve) => setTimeout(() => resolve(), time));
 
 export interface ConnectedClient {
   client: Client;

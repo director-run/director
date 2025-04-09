@@ -1,8 +1,8 @@
 import os from "node:os";
 import path from "node:path";
 import { getLogger } from "../../helpers/logger";
-import { readJsonFile } from "../../helpers/readJsonFile";
-import { writeJsonFile } from "../../helpers/write-json";
+import { readJSONFile } from "../../helpers/readJSONFile";
+import { writeJSONFile } from "../../helpers/writeJSONFile";
 
 const CURSOR_CONFIG_PATH = path.join(os.homedir(), ".cursor/mcp.json");
 const CURSOR_CONFIG_KEY_PREFIX = "director";
@@ -25,7 +25,7 @@ export const installToCursor = async ({
 }) => {
   logger.info(`updating to Cursor configuration in ${CURSOR_CONFIG_PATH}`);
 
-  const config = await readJsonFile<CursorConfig>(CURSOR_CONFIG_PATH);
+  const config = await readJSONFile<CursorConfig>(CURSOR_CONFIG_PATH);
 
   const updatedConfig = {
     ...config,
@@ -37,7 +37,7 @@ export const installToCursor = async ({
     },
   };
 
-  await writeJsonFile(CURSOR_CONFIG_PATH, updatedConfig);
+  await writeJSONFile(CURSOR_CONFIG_PATH, updatedConfig);
 
   logger.info(`${name} successfully written to Cursor config`);
 };
@@ -50,7 +50,7 @@ export const uninstallFromCursor = async ({
   logger.info(
     `uninstalling from Cursor configuration in ${CURSOR_CONFIG_PATH}`,
   );
-  const config = await readJsonFile<CursorConfig>(CURSOR_CONFIG_PATH);
+  const config = await readJSONFile<CursorConfig>(CURSOR_CONFIG_PATH);
 
   // Create a new config object without the entry to be removed
   const serverKey = `${CURSOR_CONFIG_KEY_PREFIX}__${name}`;
@@ -70,6 +70,6 @@ export const uninstallFromCursor = async ({
     mcpServers: remainingServers,
   };
 
-  await writeJsonFile(CURSOR_CONFIG_PATH, updatedConfig);
+  await writeJSONFile(CURSOR_CONFIG_PATH, updatedConfig);
   logger.info(`${name} successfully removed from Cursor config`);
 };

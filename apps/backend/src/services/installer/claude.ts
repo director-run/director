@@ -1,9 +1,9 @@
 import os from "node:os";
 import path from "node:path";
 import { getLogger } from "../../helpers/logger";
-import { readJsonFile } from "../../helpers/readJsonFile";
+import { readJSONFile } from "../../helpers/readJSONFile";
 import { App, restartApp } from "../../helpers/restartApp";
-import { writeJsonFile } from "../../helpers/write-json";
+import { writeJSONFile } from "../../helpers/writeJSONFile";
 
 const CLAUDE_CONFIG_PATH = path.join(
   os.homedir(),
@@ -31,7 +31,7 @@ export const installToClaude = async ({
 }) => {
   logger.info(`updating to Claude configuration in ${CLAUDE_CONFIG_PATH}`);
 
-  const claudeConfig = await readJsonFile<ClaudeConfig>(CLAUDE_CONFIG_PATH);
+  const claudeConfig = await readJSONFile<ClaudeConfig>(CLAUDE_CONFIG_PATH);
 
   const updatedConfig = {
     ...claudeConfig,
@@ -48,7 +48,7 @@ export const installToClaude = async ({
     },
   };
 
-  await writeJsonFile(CLAUDE_CONFIG_PATH, updatedConfig);
+  await writeJSONFile(CLAUDE_CONFIG_PATH, updatedConfig);
 
   logger.info(`${name} successfully written to Claude config`);
 
@@ -63,7 +63,7 @@ export const uninstallFromClaude = async ({
   logger.info(
     `uninstalling from Claude configuration in ${CLAUDE_CONFIG_PATH}`,
   );
-  const claudeConfig = await readJsonFile<ClaudeConfig>(CLAUDE_CONFIG_PATH);
+  const claudeConfig = await readJSONFile<ClaudeConfig>(CLAUDE_CONFIG_PATH);
 
   // Create a new config object without the entry to be removed
   const serverKey = `${CLAUDE_CONFIG_KEY_PREFIX}__${name}`;
@@ -83,7 +83,7 @@ export const uninstallFromClaude = async ({
     mcpServers: remainingServers,
   };
 
-  await writeJsonFile(CLAUDE_CONFIG_PATH, updatedConfig);
+  await writeJSONFile(CLAUDE_CONFIG_PATH, updatedConfig);
   logger.info(`${name} successfully removed from Claude config`);
   await restartApp(App.CLAUDE);
 };

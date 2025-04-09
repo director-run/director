@@ -2,7 +2,7 @@ import fs, { type PathLike } from "node:fs";
 import { existsSync } from "node:fs";
 import { AppError, ErrorCode } from "./error";
 
-export async function readJsonFile<T = unknown>(
+export async function readJSONFile<T = unknown>(
   filePath: PathLike,
 ): Promise<T> {
   if (!existsSync(filePath)) {

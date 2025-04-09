@@ -1,8 +1,8 @@
 import { existsSync } from "node:fs";
 import slugify from "slugify";
 import { DEFAULT_CONFIG, PROXY_DB_FILE_PATH } from "../constants";
-import { readJsonFile } from "../helpers/readJsonFile";
-import { writeJsonFile } from "../helpers/write-json";
+import { readJSONFile } from "../helpers/readJSONFile";
+import { writeJSONFile } from "../helpers/writeJSONFile";
 import { type Config, type Proxy, configSchema } from "./schema";
 
 export function storeExistsSync(absolutePath?: string) {
@@ -14,19 +14,19 @@ export async function createStore(absolutePath?: string) {
     throw new Error("Store already exists");
   }
 
-  return await writeJsonFile(
+  return await writeJSONFile(
     absolutePath ?? PROXY_DB_FILE_PATH,
     DEFAULT_CONFIG,
   );
 }
 
 export async function readStore(absolutePath?: string) {
-  const store = await readJsonFile(absolutePath ?? PROXY_DB_FILE_PATH);
+  const store = await readJSONFile(absolutePath ?? PROXY_DB_FILE_PATH);
   return configSchema.parse(store);
 }
 
 export async function writeStore(store: Config, absolutePath?: string) {
-  return await writeJsonFile(absolutePath ?? PROXY_DB_FILE_PATH, store);
+  return await writeJSONFile(absolutePath ?? PROXY_DB_FILE_PATH, store);
 }
 
 export async function createProxy(

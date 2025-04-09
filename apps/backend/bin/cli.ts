@@ -1,12 +1,15 @@
+import Table from "cli-table3";
 import { Command, Option } from "commander";
 import packageJson from "../package.json";
-import { debug } from "../src/commands/debug";
-import { listProxies } from "../src/commands/listProxies";
 import { getLogger } from "../src/helpers/logger";
 import { restartApp } from "../src/helpers/restartApp";
 import { App } from "../src/helpers/restartApp";
 import { startServer } from "../src/http/startServer";
-import { initConfigFile } from "../src/services/config";
+import {
+  getProxyConfigEntries,
+  initConfigFile,
+  readConfigFile,
+} from "../src/services/config";
 import { seed } from "../src/services/config/seed";
 import {
   installToClaude,
@@ -33,8 +36,27 @@ program
   .command("ls")
   .alias("list")
   .description("List all configured MCP proxies")
-  .action(() => {
-    listProxies();
+  .action(async () => {
+    const proxies = await getProxyConfigEntries();
+
+    if (proxies.length === 0) {
+      console.log("no proxies configured yet.");
+    } else {
+      const table = new Table({
+        head: ["name", "servers"],
+        style: {
+          head: ["green"],
+        },
+      });
+      table.push(
+        ...proxies.map((proxy) => [
+          proxy.name,
+          proxy.servers.map((s) => s.name).join(","),
+        ]),
+      );
+
+      console.log(table.toString());
+    }
   });
 
 program
@@ -44,8 +66,12 @@ program
     await startServer();
   });
 
-program.command("debug").action(() => {
-  debug();
+program.command("debug").action(async () => {
+  console.log("----------------");
+  console.log("__dirname: ", __dirname);
+  console.log("__filename: ", __filename);
+  console.log(`config:`, await readConfigFile());
+  console.log("----------------");
 });
 
 program.command("seed").action(() => {

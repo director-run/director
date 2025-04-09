@@ -1,7 +1,7 @@
 import { ErrorCode } from "../../helpers/error";
 import { AppError } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
-import { readConfigFile } from "../config";
+import { readConfigFile } from "../db";
 import { type ProxyServerInstance, proxyMCPServers } from "./proxyMCPServers";
 
 const logger = getLogger("ProxyServerStore");

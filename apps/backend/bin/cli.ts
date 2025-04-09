@@ -8,8 +8,8 @@ import {
   getProxyConfigEntries,
   initConfigFile,
   readConfigFile,
-} from "../src/services/config";
-import { seed } from "../src/services/config/seed";
+} from "../src/services/db";
+import { seed } from "../src/services/db/seed";
 import {
   installToClaude,
   uninstallFromClaude,

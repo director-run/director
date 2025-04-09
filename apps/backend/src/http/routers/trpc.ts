@@ -8,8 +8,8 @@ import {
   getProxyConfigEntries,
   getProxyConfigEntry,
   updateProxyConfigEntry,
-} from "../../services/config";
-import { proxySchema } from "../../services/config/schema";
+} from "../../services/db";
+import { proxySchema } from "../../services/db/schema";
 
 export const createTRPCContext = async (_opts: { headers: Headers }) => {
   return {};

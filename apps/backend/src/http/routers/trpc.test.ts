@@ -4,8 +4,8 @@ import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import superjson from "superjson";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { PORT, PROXY_DB_FILE_PATH } from "../../constants";
-import { writeConfigFile } from "../../services/config";
-import type { Config } from "../../services/config/schema";
+import { writeConfigFile } from "../../services/db";
+import type { Config } from "../../services/db/schema";
 import { startService } from "../../startService";
 import type { AppRouter } from "./trpc";
 

@@ -1,6 +1,8 @@
 // import { getProxies, getProxy } from "../../config";
 import type { Config } from "../../config/schema";
 import { PROXY_DB_FILE_PATH } from "../../constants";
+import { ErrorCode } from "../../helpers/error";
+import { AppError } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
 import { readJsonFile } from "../../helpers/readJson";
 import { type ProxyServerInstance, proxyMCPServers } from "./proxyMCPServers";
@@ -29,20 +31,11 @@ export class ProxyServerStore {
 
     for (const proxyConfig of proxies) {
       const proxyName = proxyConfig.name;
-      try {
-        logger.info(`Initializing proxy server instance for: ${proxyName}`);
-        // Assuming getProxy fetches the detailed config needed by proxyMCPServers
-        const proxyInstance = await proxyMCPServers(proxyConfig.servers);
-        this.proxyServers.set(proxyName, proxyInstance);
-        logger.info(`Successfully initialized proxy server for: ${proxyName}`);
-      } catch (error) {
-        logger.error({
-          message: `Failed to initialize proxy server for ${proxyName}`,
-          error: error instanceof Error ? error.message : String(error),
-        });
-        // Decide if one failure should stop all initialization or just skip
-        // Currently skipping the failed one
-      }
+      logger.info({ message: `Initializing proxy`, proxyName });
+      this.proxyServers.set(
+        proxyName,
+        await proxyMCPServers(proxyConfig.servers),
+      );
     }
   }
 
@@ -50,11 +43,8 @@ export class ProxyServerStore {
   public get(proxyName: string): ProxyServerInstance {
     const server = this.proxyServers.get(proxyName);
     if (!server) {
-      // Log warning and throw error if server doesn't exist in the map
-      logger.warn(
-        `Attempted to get non-existent or failed-to-initialize proxy server: ${proxyName}`,
-      );
-      throw new Error(
+      throw new AppError(
+        ErrorCode.NOT_FOUND,
         `Proxy server '${proxyName}' not found or failed to initialize.`,
       );
     }

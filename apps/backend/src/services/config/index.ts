@@ -1,23 +1,35 @@
 import { existsSync } from "node:fs";
 import slugify from "slugify";
-import { DEFAULT_CONFIG, PROXY_DB_FILE_PATH } from "../../constants";
+import { PROXY_DB_FILE_PATH } from "../../constants";
 import { readJSONFile } from "../../helpers/readJSONFile";
 import { writeJSONFile } from "../../helpers/writeJSONFile";
 import { type Config, type Proxy, configSchema } from "./schema";
 
-export function storeExistsSync(absolutePath?: string) {
-  return existsSync(absolutePath ?? PROXY_DB_FILE_PATH);
-}
+// export function storeExistsSync(absolutePath?: string) {
+//   return existsSync(absolutePath ?? PROXY_DB_FILE_PATH);
+// }
 
-export async function createStore(absolutePath?: string) {
-  if (storeExistsSync(absolutePath)) {
-    throw new Error("Store already exists");
+// export async function createStore(absolutePath?: string) {
+//   if (storeExistsSync(absolutePath)) {
+//     throw new Error("Store already exists");
+//   }
+
+//   return await writeJSONFile(absolutePath ?? PROXY_DB_FILE_PATH, {
+//     proxies: [],
+//   });
+// }
+
+export async function initConfigFile(configFilePath = PROXY_DB_FILE_PATH) {
+  if (existsSync(configFilePath)) {
+    return;
+  } else {
+    writeConfigFile(
+      {
+        proxies: [],
+      },
+      configFilePath,
+    );
   }
-
-  return await writeJSONFile(
-    absolutePath ?? PROXY_DB_FILE_PATH,
-    DEFAULT_CONFIG,
-  );
 }
 
 export async function readConfigFile(absolutePath?: string): Promise<Config> {

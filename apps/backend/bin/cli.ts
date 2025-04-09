@@ -1,15 +1,13 @@
-import { PROXY_DB_FILE_PATH } from "../src/constants";
-import { getLogger } from "../src/helpers/logger";
-
 import { Command, Option } from "commander";
 import packageJson from "../package.json";
 import { debug } from "../src/commands/debug";
 import { listProxies } from "../src/commands/listProxies";
-import { seed } from "../src/commands/seed";
+import { getLogger } from "../src/helpers/logger";
 import { restartApp } from "../src/helpers/restartApp";
 import { App } from "../src/helpers/restartApp";
 import { startServer } from "../src/http/startServer";
-import { createStore, storeExistsSync } from "../src/services/config";
+import { initConfigFile } from "../src/services/config";
+import { seed } from "../src/services/config/seed";
 import {
   installToClaude,
   uninstallFromClaude,
@@ -24,9 +22,7 @@ const program = new Command();
 
 const logger = getLogger("cli");
 
-if (!storeExistsSync(PROXY_DB_FILE_PATH)) {
-  await createStore(PROXY_DB_FILE_PATH);
-}
+await initConfigFile();
 
 program
   .name(packageJson.name)

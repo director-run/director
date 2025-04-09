@@ -1,7 +1,7 @@
 import os from "node:os";
 import path from "node:path";
 import { getLogger } from "../../helpers/logger";
-import { readJSONFile } from "../../helpers/readJSONFileo";
+import { readJSONFile } from "../../helpers/readJSONFile";
 import { App, restartApp } from "../../helpers/restartApp";
 import { writeJSONFile } from "../../helpers/writeJSONFile";
 

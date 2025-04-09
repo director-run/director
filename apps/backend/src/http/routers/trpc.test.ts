@@ -1,18 +1,19 @@
-import fs from "fs";
 import http from "http";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import superjson from "superjson";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { DB_FILE_PATH, PORT } from "../../config";
-import { writeDBFile } from "../../services/db";
-import type { DatabaseSchema } from "../../services/db/schema";
+import { PORT } from "../../config";
+import { db } from "../../services/db";
 import { startService } from "../../startService";
 import type { AppRouter } from "./trpc";
 
-const testConfig: DatabaseSchema = {
-  proxies: [
-    {
-      id: "test-proxy",
+describe("TRPC Router", () => {
+  let proxyServer: http.Server | undefined;
+  let trpcClient: ReturnType<typeof createTRPCClient<AppRouter>>;
+
+  beforeAll(async () => {
+    await db.purge();
+    await db.addProxy({
       name: "test-proxy",
       servers: [
         {
@@ -36,16 +37,7 @@ const testConfig: DatabaseSchema = {
           },
         },
       ],
-    },
-  ],
-};
-
-describe("TRPC Router", () => {
-  let proxyServer: http.Server | undefined;
-  let trpcClient: ReturnType<typeof createTRPCClient<AppRouter>>;
-
-  beforeAll(async () => {
-    await writeDBFile(testConfig, DB_FILE_PATH);
+    });
     proxyServer = await startService();
 
     trpcClient = createTRPCClient<AppRouter>({
@@ -59,7 +51,7 @@ describe("TRPC Router", () => {
   });
 
   afterAll(async () => {
-    fs.unlinkSync(DB_FILE_PATH);
+    await db.purge();
     if (proxyServer) {
       await new Promise<void>((resolve) => {
         proxyServer?.close(() => resolve());

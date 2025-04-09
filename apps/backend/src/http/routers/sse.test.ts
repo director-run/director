@@ -1,22 +1,21 @@
-import fs from "fs";
 import http from "http";
 import type { Server } from "node:http";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
-import { DB_FILE_PATH } from "../../config";
 import { PORT } from "../../config";
-import { writeDBFile } from "../../services/db";
-import type { DatabaseSchema } from "../../services/db/schema";
+import { db } from "../../services/db";
 import { createMCPServer } from "../../services/proxy/createMCPServer";
 import { startService } from "../../startService";
 
-// Test configuration to use for tests
-const testConfig: DatabaseSchema = {
-  proxies: [
-    {
-      id: "test-proxy",
+describe("SSE Router", () => {
+  let proxyServer: http.Server | undefined;
+  let proxyTargetServerInstance: Server;
+
+  beforeAll(async () => {
+    await db.purge();
+    await db.addProxy({
       name: "test-proxy",
       servers: [
         {
@@ -47,16 +46,7 @@ const testConfig: DatabaseSchema = {
           },
         },
       ],
-    },
-  ],
-};
-
-describe("SSE Router", () => {
-  let proxyServer: http.Server | undefined;
-  let proxyTargetServerInstance: Server;
-
-  beforeAll(async () => {
-    await writeDBFile(testConfig, DB_FILE_PATH);
+    });
     proxyTargetServerInstance = await createMCPServer(4521, (server) => {
       server.tool("echo", { message: z.string() }, async ({ message }) => ({
         content: [{ type: "text", text: `Tool echo: ${message}` }],
@@ -66,7 +56,7 @@ describe("SSE Router", () => {
   });
 
   afterAll(async () => {
-    fs.unlinkSync(DB_FILE_PATH);
+    await db.purge();
     if (proxyServer) {
       await new Promise<void>((resolve) => {
         proxyServer?.close(() => resolve());

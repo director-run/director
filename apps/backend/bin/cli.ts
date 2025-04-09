@@ -1,10 +1,11 @@
 import Table from "cli-table3";
 import { Command, Option } from "commander";
 import packageJson from "../package.json";
+import * as config from "../src/config";
 import { getLogger } from "../src/helpers/logger";
 import { restartApp } from "../src/helpers/os";
 import { App } from "../src/helpers/os";
-import { getProxyConfigEntries, initDB, readDBFile } from "../src/services/db";
+import { db } from "../src/services/db";
 import { seed } from "../src/services/db/seed";
 import {
   installToClaude,
@@ -21,8 +22,6 @@ const program = new Command();
 
 const logger = getLogger("cli");
 
-await initDB();
-
 program
   .name(packageJson.name)
   .description("CLI to operate mcp server")
@@ -33,7 +32,7 @@ program
   .alias("list")
   .description("List all configured MCP proxies")
   .action(async () => {
-    const proxies = await getProxyConfigEntries();
+    const proxies = await db.listProxies();
 
     if (proxies.length === 0) {
       console.log("no proxies configured yet.");
@@ -66,7 +65,7 @@ program.command("debug").action(async () => {
   console.log("----------------");
   console.log("__dirname: ", __dirname);
   console.log("__filename: ", __filename);
-  console.log(`config:`, await readDBFile());
+  console.log(`config:`, config);
   console.log("----------------");
 });
 

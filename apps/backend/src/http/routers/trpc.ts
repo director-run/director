@@ -1,14 +1,7 @@
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { z } from "zod";
-import { DB_FILE_PATH } from "../../config";
-import {
-  addProxyConfigEntry,
-  deleteProxyConfigEntry,
-  getProxyConfigEntries,
-  getProxyConfigEntry,
-  updateProxyConfigEntry,
-} from "../../services/db";
+import { db } from "../../services/db";
 import { proxySchema } from "../../services/db/schema";
 
 export const createTRPCContext = async (_opts: { headers: Headers }) => {
@@ -24,19 +17,19 @@ const createTRPCRouter = t.router;
 const storeRouter = createTRPCRouter({
   getAll: t.procedure.query(() => {
     try {
-      return getProxyConfigEntries(DB_FILE_PATH);
+      return db.listProxies();
     } catch (error) {
       console.error(error);
       return [];
     }
   }),
   get: t.procedure.input(z.object({ name: z.string() })).query(({ input }) => {
-    return getProxyConfigEntry(input.name, DB_FILE_PATH);
+    return db.getProxy(input.name);
   }),
   create: t.procedure
     .input(proxySchema.omit({ id: true }))
     .mutation(({ input }) => {
-      return addProxyConfigEntry(input, DB_FILE_PATH);
+      return db.addProxy(input);
     }),
   update: t.procedure
     .input(
@@ -46,12 +39,12 @@ const storeRouter = createTRPCRouter({
       }),
     )
     .mutation(({ input }) => {
-      return updateProxyConfigEntry(input.name, input.attributes, DB_FILE_PATH);
+      return db.updateProxy(input.name, input.attributes);
     }),
   delete: t.procedure
     .input(z.object({ name: z.string() }))
     .mutation(({ input }) => {
-      return deleteProxyConfigEntry(input.name, DB_FILE_PATH);
+      return db.deleteProxy(input.name);
     }),
 });
 

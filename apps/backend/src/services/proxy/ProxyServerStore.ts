@@ -1,8 +1,9 @@
-import { getProxies, getProxy } from "../../config";
+// import { getProxies, getProxy } from "../../config";
+import type { Config } from "../../config/schema";
 import { PROXY_DB_FILE_PATH } from "../../constants";
 import { getLogger } from "../../helpers/logger";
+import { readJsonFile } from "../../helpers/read-json";
 import { type ProxyServerInstance, proxyMCPServers } from "./proxyMCPServers";
-
 // Create a logger specific to this store
 const logger = getLogger("ProxyServerStore");
 
@@ -21,36 +22,17 @@ export class ProxyServerStore {
     return store;
   }
 
-  // Private initialization method
   private async initialize(): Promise<void> {
     logger.info("Fetching proxy configurations...");
-    let proxies;
-    try {
-      proxies = await getProxies(PROXY_DB_FILE_PATH);
-      logger.info(`Found ${proxies.length} proxy configurations.`);
-    } catch (error) {
-      logger.error({
-        message: "Failed to fetch initial proxy configurations",
-        error: error instanceof Error ? error.message : String(error),
-      });
-      // Depending on requirements, might rethrow or return early
-      throw new Error(
-        "Failed to initialize ProxyServerStore due to configuration fetch error.",
-      );
-    }
+    const config = await readJsonFile<Config>(PROXY_DB_FILE_PATH);
+    let proxies = config.proxies;
 
     for (const proxyConfig of proxies) {
       const proxyName = proxyConfig.name;
       try {
         logger.info(`Initializing proxy server instance for: ${proxyName}`);
         // Assuming getProxy fetches the detailed config needed by proxyMCPServers
-        const detailedProxyConfig = await getProxy(
-          proxyName,
-          PROXY_DB_FILE_PATH,
-        );
-        const proxyInstance = await proxyMCPServers(
-          detailedProxyConfig.servers,
-        );
+        const proxyInstance = await proxyMCPServers(proxyConfig.servers);
         this.proxyServers.set(proxyName, proxyInstance);
         logger.info(`Successfully initialized proxy server for: ${proxyName}`);
       } catch (error) {

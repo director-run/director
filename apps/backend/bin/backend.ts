@@ -1,6 +1,6 @@
-import { startServer } from "../src/http/startServer";
 import { initConfigFile } from "../src/services/config";
+import { startService } from "../src/startService";
 
 await initConfigFile();
 
-startServer();
+startService();

@@ -5,12 +5,12 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
-import { PROXY_DB_FILE_PATH } from "../constants";
-import { PORT } from "../constants";
-import { writeConfigFile } from "../services/config";
-import type { Config } from "../services/config/schema";
-import { createMCPServer } from "../services/proxy/createMCPServer";
-import { startServer } from "./startServer";
+import { PROXY_DB_FILE_PATH } from "../../constants";
+import { PORT } from "../../constants";
+import { writeConfigFile } from "../../services/config";
+import type { Config } from "../../services/config/schema";
+import { createMCPServer } from "../../services/proxy/createMCPServer";
+import { startService } from "../../startService";
 
 // Test configuration to use for tests
 const testConfig: Config = {
@@ -63,7 +63,7 @@ describe("Proxy Server Integration Tests", () => {
         content: [{ type: "text", text: `Tool echo: ${message}` }],
       }));
     });
-    proxyServer = await startServer();
+    proxyServer = await startService();
   });
 
   afterAll(async () => {

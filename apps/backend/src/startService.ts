@@ -1,15 +1,15 @@
 import * as trpcExpress from "@trpc/server/adapters/express";
 import cors from "cors";
 import express from "express";
-import { PORT } from "../constants";
-import { getLogger } from "../helpers/logger";
-import { ProxyServerStore } from "../services/proxy/ProxyServerStore";
-import { sse } from "./routers/sse";
-import { appRouter } from "./routers/trpc";
+import { PORT } from "./constants";
+import { getLogger } from "./helpers/logger";
+import { sse } from "./http/routers/sse";
+import { appRouter } from "./http/routers/trpc";
+import { ProxyServerStore } from "./services/proxy/ProxyServerStore";
 
-const logger = getLogger("startServer");
+const logger = getLogger("startService");
 
-export const startServer = async () => {
+export const startService = async () => {
   const app = express();
   const proxyStore = await ProxyServerStore.create();
 

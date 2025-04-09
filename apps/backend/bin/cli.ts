@@ -4,7 +4,6 @@ import packageJson from "../package.json";
 import { getLogger } from "../src/helpers/logger";
 import { restartApp } from "../src/helpers/restartApp";
 import { App } from "../src/helpers/restartApp";
-import { startServer } from "../src/http/startServer";
 import {
   getProxyConfigEntries,
   initConfigFile,
@@ -20,6 +19,7 @@ import {
   uninstallFromCursor,
 } from "../src/services/installer/cursor";
 import { proxySSEToStdio } from "../src/services/proxy/proxySSEToStdio";
+import { startService } from "../src/startService";
 
 const program = new Command();
 
@@ -63,7 +63,7 @@ program
   .command("start")
   .description("Start the proxy server for all proxies")
   .action(async () => {
-    await startServer();
+    await startService();
   });
 
 program.command("debug").action(async () => {

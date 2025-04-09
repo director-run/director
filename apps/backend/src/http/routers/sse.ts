@@ -100,7 +100,7 @@ export async function sse(): Promise<Router> {
 
   process.on("SIGINT", async () => {
     logger.info("Received SIGINT, cleaning up proxy servers...");
-    await proxyStore.cleanupAllProxyServers();
+    await proxyStore.closeAll();
     process.exit(0);
   });
 

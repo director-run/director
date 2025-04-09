@@ -133,7 +133,7 @@ export class ProxyServerStore {
    *
    * @returns A Promise that resolves when all cleanup operations are complete
    */
-  async cleanupAllProxyServers(): Promise<void> {
+  async closeAll(): Promise<void> {
     logger.info("Cleaning up all proxy servers...");
     const cleanupPromises = Array.from(this.proxyServers.keys()).map(
       (proxyName) => this.close(proxyName),

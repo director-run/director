@@ -14,6 +14,10 @@ import {
   installToClaude,
   uninstallFromClaude,
 } from "../src/services/installer/claude";
+import {
+  installToCursor,
+  uninstallFromCursor,
+} from "../src/services/installer/cursor";
 import { proxySSEToStdio } from "../src/services/proxy/proxySSEToStdio";
 
 const program = new Command();
@@ -67,17 +71,18 @@ function mandatoryOption(flags: string, description?: string) {
 
 program
   .command("install <name>")
-  .description(
-    "Install an mcp server to a client app (currently only Claude is supported)",
-  )
+  .description("Install an mcp server to a client app")
   .addOption(
     mandatoryOption("-c, --client [type]", "client to install to").choices([
       "claude",
+      "cursor",
     ]),
   )
   .action(async (name, options) => {
     if (options.client === "claude") {
       await installToClaude({ name });
+    } else if (options.client === "cursor") {
+      await installToCursor({ name });
     } else {
       logger.error(`unsupported client: ${options.client}`);
     }
@@ -85,17 +90,18 @@ program
 
 program
   .command("uninstall <name>")
-  .description(
-    "Uninstall an mcp server from a client app (currently only Claude is supported)",
-  )
+  .description("Uninstall an mcp server from a client app")
   .addOption(
     mandatoryOption("-c, --client [type]", "client to uninstall from").choices([
       "claude",
+      "cursor",
     ]),
   )
   .action(async (name, options) => {
     if (options.client === "claude") {
       await uninstallFromClaude({ name });
+    } else if (options.client === "cursor") {
+      await uninstallFromCursor({ name });
     } else {
       logger.error(`unsupported client: ${options.client}`);
     }

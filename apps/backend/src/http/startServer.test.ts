@@ -97,11 +97,11 @@ describe("Proxy Server Integration Tests", () => {
     await client.connect(transport);
     const toolsResult = await client.listTools();
     const expectedToolNames = [
-      // "get_stories",
-      // "get_user_info",
-      // "search_stories",
-      // "get_story_info",
-      // "fetch",
+      "get_stories",
+      "get_user_info",
+      "search_stories",
+      "get_story_info",
+      "fetch",
       "echo",
     ];
     for (const toolName of expectedToolNames) {
@@ -109,21 +109,21 @@ describe("Proxy Server Integration Tests", () => {
       expect(tool).toBeDefined();
       expect(tool?.name).toBe(toolName);
     }
-    // expect(
-    //   toolsResult.tools.find((t) => t.name === "get_stories")?.description,
-    // ).toContain("[Hackernews]");
-    // expect(
-    //   toolsResult.tools.find((t) => t.name === "get_user_info")?.description,
-    // ).toContain("[Hackernews]");
-    // expect(
-    //   toolsResult.tools.find((t) => t.name === "search_stories")?.description,
-    // ).toContain("[Hackernews]");
-    // expect(
-    //   toolsResult.tools.find((t) => t.name === "get_story_info")?.description,
-    // ).toContain("[Hackernews]");
-    // expect(
-    //   toolsResult.tools.find((t) => t.name === "fetch")?.description,
-    // ).toContain("[Fetch]");
+    expect(
+      toolsResult.tools.find((t) => t.name === "get_stories")?.description,
+    ).toContain("[Hackernews]");
+    expect(
+      toolsResult.tools.find((t) => t.name === "get_user_info")?.description,
+    ).toContain("[Hackernews]");
+    expect(
+      toolsResult.tools.find((t) => t.name === "search_stories")?.description,
+    ).toContain("[Hackernews]");
+    expect(
+      toolsResult.tools.find((t) => t.name === "get_story_info")?.description,
+    ).toContain("[Hackernews]");
+    expect(
+      toolsResult.tools.find((t) => t.name === "fetch")?.description,
+    ).toContain("[Fetch]");
 
     await client.close();
   });

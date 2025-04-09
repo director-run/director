@@ -1,8 +1,8 @@
 import os from "node:os";
 import path from "node:path";
 import { getLogger } from "../../helpers/logger";
+import { App, restartApp } from "../../helpers/os";
 import { readJSONFile } from "../../helpers/readJSONFile";
-import { App, restartApp } from "../../helpers/restartApp";
 import { writeJSONFile } from "../../helpers/writeJSONFile";
 import { getProxySSEUrl } from "../proxy/getProxySSEUrl";
 

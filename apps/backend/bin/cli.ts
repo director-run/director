@@ -2,8 +2,8 @@ import Table from "cli-table3";
 import { Command, Option } from "commander";
 import packageJson from "../package.json";
 import { getLogger } from "../src/helpers/logger";
-import { restartApp } from "../src/helpers/restartApp";
-import { App } from "../src/helpers/restartApp";
+import { restartApp } from "../src/helpers/os";
+import { App } from "../src/helpers/os";
 import { getProxyConfigEntries, initDB, readDBFile } from "../src/services/db";
 import { seed } from "../src/services/db/seed";
 import {

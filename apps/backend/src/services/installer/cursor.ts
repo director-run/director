@@ -1,8 +1,7 @@
 import os from "node:os";
 import path from "node:path";
+import { readJSONFile, writeJSONFile } from "../../helpers/json";
 import { getLogger } from "../../helpers/logger";
-import { readJSONFile } from "../../helpers/readJSONFile";
-import { writeJSONFile } from "../../helpers/writeJSONFile";
 import { getProxySSEUrl } from "../proxy/getProxySSEUrl";
 
 const CURSOR_CONFIG_PATH = path.join(os.homedir(), ".cursor/mcp.json");

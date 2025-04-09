@@ -1,8 +1,7 @@
 import { existsSync } from "node:fs";
 import slugify from "slugify";
 import { PROXY_DB_FILE_PATH } from "../../constants";
-import { readJSONFile } from "../../helpers/readJSONFile";
-import { writeJSONFile } from "../../helpers/writeJSONFile";
+import { readJSONFile, writeJSONFile } from "../../helpers/json";
 import { type DatabaseSchema, type Proxy, databaseSchema } from "./schema";
 
 export async function initDB(configFilePath = PROXY_DB_FILE_PATH) {

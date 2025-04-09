@@ -61,13 +61,13 @@ export class ProxyServerStore {
     return server;
   }
 
-  async cleanupProxyServer(proxyName: string): Promise<void> {
+  async close(proxyName: string): Promise<void> {
     const proxyInstance = this.proxyServers.get(proxyName);
     if (proxyInstance) {
       logger.info(`Cleaning up proxy server: ${proxyName}`);
       // Ensure cleanup logic is robust
       try {
-        await proxyInstance.cleanup();
+        await proxyInstance.close();
       } catch (cleanupError) {
         logger.error({
           message: `Error during cleanup() for ${proxyName}`,
@@ -106,7 +106,7 @@ export class ProxyServerStore {
   async cleanupAllProxyServers(): Promise<void> {
     logger.info("Cleaning up all proxy servers...");
     const cleanupPromises = Array.from(this.proxyServers.keys()).map(
-      (proxyName) => this.cleanupProxyServer(proxyName),
+      (proxyName) => this.close(proxyName),
     );
     await Promise.all(cleanupPromises);
     logger.info("Finished cleaning up all proxy servers.");

@@ -19,7 +19,7 @@ global.EventSource = eventsource.EventSource;
 // Store for active proxy server connections
 export interface ProxyServerInstance {
   server: Server;
-  cleanup: () => Promise<void>;
+  close: () => Promise<void>;
   transports: Map<string, SSEServerTransport>; // Connection ID -> Transport
 }
 
@@ -53,8 +53,10 @@ export const proxyMCPServers = async (
 
   return {
     server,
-    cleanup: async () => {
-      await Promise.all(connectedClients.map(({ cleanup }) => cleanup()));
+    close: async () => {
+      await Promise.all(
+        connectedClients.map(({ close: cleanup }) => cleanup()),
+      );
     },
     transports: new Map<string, SSEServerTransport>(),
   };
@@ -65,7 +67,7 @@ const sleep = (time: number) =>
 
 export interface ConnectedClient {
   client: Client;
-  cleanup: () => Promise<void>;
+  close: () => Promise<void>;
   name: string;
 }
 
@@ -145,7 +147,7 @@ const createClients = async (
         clients.push({
           client,
           name: server.name,
-          cleanup: async () => {
+          close: async () => {
             await transport.close();
           },
         });

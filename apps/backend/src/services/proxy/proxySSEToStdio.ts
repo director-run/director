@@ -3,7 +3,7 @@ import { proxyMCPServers } from "./proxyMCPServers";
 
 export async function proxySSEToStdio(sseUrl: string) {
   const transport = new StdioServerTransport();
-  const { server, cleanup } = await proxyMCPServers([
+  const { server, close } = await proxyMCPServers([
     {
       name: "test-sse-transport",
       transport: {
@@ -17,7 +17,7 @@ export async function proxySSEToStdio(sseUrl: string) {
 
   // Cleanup on exit
   process.on("SIGINT", async () => {
-    await cleanup();
+    await close();
     await server.close();
     process.exit(0);
   });

@@ -25,7 +25,7 @@ export async function sse(): Promise<Router> {
       query: req.query,
     });
 
-    const proxyInstance = await proxyStore.getProxyServer(proxyName);
+    const proxyInstance = await proxyStore.get(proxyName);
     if (!proxyInstance) {
       res.status(404).send(`Proxy '${proxyName}' not found`);
       return;
@@ -64,7 +64,7 @@ export async function sse(): Promise<Router> {
       query: req.query,
     });
 
-    const proxyInstance = await proxyStore.getProxyServer(proxyName);
+    const proxyInstance = await proxyStore.get(proxyName);
     if (!proxyInstance) {
       res.status(404).send(`Proxy '${proxyName}' not found`);
       return;

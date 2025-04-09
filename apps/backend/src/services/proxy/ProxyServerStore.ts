@@ -65,7 +65,7 @@ export class ProxyServerStore {
   }
 
   // Renamed: Get an already initialized proxy server
-  public getProxyServer(proxyName: string): ProxyServerInstance {
+  public get(proxyName: string): ProxyServerInstance {
     const server = this.proxyServers.get(proxyName);
     if (!server) {
       // Log warning and throw error if server doesn't exist in the map

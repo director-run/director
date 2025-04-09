@@ -9,4 +9,4 @@ export const PROXY_DB_FILE_PATH =
     ? path.join(__dirname, "db.test.json")
     : path.join(DATA_DIR, "db.json"));
 
-export const DEFAULT_SERVICE_PORT = Number(process.env.PORT ?? 3000);
+export const PORT = Number(process.env.PORT ?? 3000);

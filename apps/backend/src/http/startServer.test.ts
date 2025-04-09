@@ -6,7 +6,7 @@ import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
 import { PROXY_DB_FILE_PATH } from "../constants";
-import { DEFAULT_SERVICE_PORT } from "../constants";
+import { PORT } from "../constants";
 import { writeConfigFile } from "../services/config";
 import type { Config } from "../services/config/schema";
 import { createMCPServer } from "../services/proxy/createMCPServer";
@@ -92,7 +92,7 @@ describe("Proxy Server Integration Tests", () => {
       },
     );
     const transport = new SSEClientTransport(
-      new URL(`http://localhost:${DEFAULT_SERVICE_PORT}/test-proxy/sse`),
+      new URL(`http://localhost:${PORT}/test-proxy/sse`),
     );
     await client.connect(transport);
     const toolsResult = await client.listTools();

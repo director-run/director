@@ -1,7 +1,7 @@
 import * as trpcExpress from "@trpc/server/adapters/express";
 import cors from "cors";
 import express from "express";
-import { DEFAULT_SERVICE_PORT } from "../constants";
+import { PORT } from "../constants";
 import { getLogger } from "../helpers/logger";
 import { sse } from "./routers/sse";
 import { appRouter } from "./routers/trpc";
@@ -19,8 +19,8 @@ export const startServer = async () => {
       router: appRouter,
     }),
   );
-  const expressServer = app.listen(DEFAULT_SERVICE_PORT, () => {
-    logger.info(`Server running at http://localhost:${DEFAULT_SERVICE_PORT}`);
+  const expressServer = app.listen(PORT, () => {
+    logger.info(`Server running at http://localhost:${PORT}`);
   });
 
   return expressServer;

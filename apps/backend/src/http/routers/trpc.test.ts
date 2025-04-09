@@ -4,12 +4,12 @@ import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import superjson from "superjson";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { PORT, PROXY_DB_FILE_PATH } from "../../constants";
-import { writeConfigFile } from "../../services/db";
-import type { Config } from "../../services/db/schema";
+import { writeDBFile } from "../../services/db";
+import type { DatabaseSchema } from "../../services/db/schema";
 import { startService } from "../../startService";
 import type { AppRouter } from "./trpc";
 
-const testConfig: Config = {
+const testConfig: DatabaseSchema = {
   proxies: [
     {
       id: "test-proxy",
@@ -45,7 +45,7 @@ describe("TRPC Router", () => {
   let trpcClient: ReturnType<typeof createTRPCClient<AppRouter>>;
 
   beforeAll(async () => {
-    await writeConfigFile(testConfig, PROXY_DB_FILE_PATH);
+    await writeDBFile(testConfig, PROXY_DB_FILE_PATH);
     proxyServer = await startService();
 
     trpcClient = createTRPCClient<AppRouter>({

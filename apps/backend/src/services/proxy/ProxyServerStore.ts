@@ -1,7 +1,7 @@
 import { ErrorCode } from "../../helpers/error";
 import { AppError } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
-import { readConfigFile } from "../db";
+import { readDBFile } from "../db";
 import { type ProxyServerInstance, proxyMCPServers } from "./proxyMCPServers";
 
 const logger = getLogger("ProxyServerStore");
@@ -43,7 +43,7 @@ export class ProxyServerStore {
    */
   private async initialize(): Promise<void> {
     logger.info("Fetching proxy configurations...");
-    const config = await readConfigFile();
+    const config = await readDBFile();
     let proxies = config.proxies;
 
     for (const proxyConfig of proxies) {

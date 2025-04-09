@@ -35,8 +35,8 @@ export const proxySchema = z.object({
 
 export type Proxy = z.infer<typeof proxySchema>;
 
-export const configSchema = z.object({
+export const databaseSchema = z.object({
   proxies: z.array(proxySchema),
 });
 
-export type Config = z.infer<typeof configSchema>;
+export type DatabaseSchema = z.infer<typeof databaseSchema>;

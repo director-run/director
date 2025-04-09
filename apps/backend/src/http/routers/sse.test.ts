@@ -7,13 +7,13 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
 import { PROXY_DB_FILE_PATH } from "../../constants";
 import { PORT } from "../../constants";
-import { writeConfigFile } from "../../services/db";
-import type { Config } from "../../services/db/schema";
+import { writeDBFile } from "../../services/db";
+import type { DatabaseSchema } from "../../services/db/schema";
 import { createMCPServer } from "../../services/proxy/createMCPServer";
 import { startService } from "../../startService";
 
 // Test configuration to use for tests
-const testConfig: Config = {
+const testConfig: DatabaseSchema = {
   proxies: [
     {
       id: "test-proxy",
@@ -56,7 +56,7 @@ describe("SSE Router", () => {
   let proxyTargetServerInstance: Server;
 
   beforeAll(async () => {
-    await writeConfigFile(testConfig, PROXY_DB_FILE_PATH);
+    await writeDBFile(testConfig, PROXY_DB_FILE_PATH);
     proxyTargetServerInstance = await createMCPServer(4521, (server) => {
       server.tool("echo", { message: z.string() }, async ({ message }) => ({
         content: [{ type: "text", text: `Tool echo: ${message}` }],

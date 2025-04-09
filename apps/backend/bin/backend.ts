@@ -1,6 +1,6 @@
-import { initConfigFile } from "../src/services/db";
+import { initDB } from "../src/services/db";
 import { startService } from "../src/startService";
 
-await initConfigFile();
+await initDB();
 
 startService();

@@ -4,11 +4,7 @@ import packageJson from "../package.json";
 import { getLogger } from "../src/helpers/logger";
 import { restartApp } from "../src/helpers/restartApp";
 import { App } from "../src/helpers/restartApp";
-import {
-  getProxyConfigEntries,
-  initConfigFile,
-  readConfigFile,
-} from "../src/services/db";
+import { getProxyConfigEntries, initDB, readDBFile } from "../src/services/db";
 import { seed } from "../src/services/db/seed";
 import {
   installToClaude,
@@ -25,7 +21,7 @@ const program = new Command();
 
 const logger = getLogger("cli");
 
-await initConfigFile();
+await initDB();
 
 program
   .name(packageJson.name)
@@ -70,7 +66,7 @@ program.command("debug").action(async () => {
   console.log("----------------");
   console.log("__dirname: ", __dirname);
   console.log("__filename: ", __filename);
-  console.log(`config:`, await readConfigFile());
+  console.log(`config:`, await readDBFile());
   console.log("----------------");
 });
 

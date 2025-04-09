@@ -2,20 +2,19 @@ import { PROXY_DB_FILE_PATH } from "../src/constants";
 import { getLogger } from "../src/helpers/logger";
 
 import { Command, Option } from "commander";
+import packageJson from "../package.json";
 import { debug } from "../src/commands/debug";
 import { listProxies } from "../src/commands/listProxies";
 import { seed } from "../src/commands/seed";
 import { createStore, storeExistsSync } from "../src/config";
+import { restartApp } from "../src/helpers/restartApp";
+import { App } from "../src/helpers/restartApp";
 import { startServer } from "../src/http/startServer";
 import {
   installToClaude,
   uninstallFromClaude,
 } from "../src/services/installer/claude";
 import { proxySSEToStdio } from "../src/services/proxy/proxySSEToStdio";
-
-import packageJson from "../package.json";
-import { restartApp } from "../src/helpers/restartApp";
-import { App } from "../src/helpers/restartApp";
 
 const program = new Command();
 

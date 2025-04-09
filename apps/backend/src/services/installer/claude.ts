@@ -4,6 +4,7 @@ import { getLogger } from "../../helpers/logger";
 import { readJSONFile } from "../../helpers/readJSONFile";
 import { App, restartApp } from "../../helpers/restartApp";
 import { writeJSONFile } from "../../helpers/writeJSONFile";
+import { getProxySSEUrl } from "../proxy/getProxySSEUrl";
 
 const CLAUDE_CONFIG_PATH = path.join(
   os.homedir(),
@@ -41,7 +42,7 @@ export const installToClaude = async ({
         args: [
           path.resolve(__dirname, "../../../bin/cli.ts"),
           "sse2stdio",
-          `http://localhost:3006/${name}/sse`,
+          getProxySSEUrl(name),
         ],
         command: "bun",
       },

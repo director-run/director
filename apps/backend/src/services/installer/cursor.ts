@@ -3,6 +3,7 @@ import path from "node:path";
 import { getLogger } from "../../helpers/logger";
 import { readJSONFile } from "../../helpers/readJSONFile";
 import { writeJSONFile } from "../../helpers/writeJSONFile";
+import { getProxySSEUrl } from "../proxy/getProxySSEUrl";
 
 const CURSOR_CONFIG_PATH = path.join(os.homedir(), ".cursor/mcp.json");
 const CURSOR_CONFIG_KEY_PREFIX = "director";
@@ -32,7 +33,7 @@ export const installToCursor = async ({
     mcpServers: {
       ...(config.mcpServers ?? {}),
       [`${CURSOR_CONFIG_KEY_PREFIX}__${name}`]: {
-        url: `http://localhost:3006/${name}/sse`,
+        url: getProxySSEUrl(name),
       },
     },
   };

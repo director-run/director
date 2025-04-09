@@ -14,14 +14,10 @@ Find out more about each application and package in their respective `README.md`
 
 ```
 apps/
-├── cli                 # cli application
-├── backend             # backend for the desktop
+├── cli                 # cli application [TODO]
+├── backend             # backend service
 ├── desktop             # desktop application
 └── website             # https://director.run
-
-packages/
-├── core                # Core business logic and functionality
-└── design              # Shared design components
 ```
 
 ## Development

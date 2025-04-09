@@ -8,7 +8,7 @@ export async function initDB(configFilePath = DB_FILE_PATH) {
   if (existsSync(configFilePath)) {
     return;
   } else {
-    writeDBFile(
+    await writeDBFile(
       {
         proxies: [],
       },

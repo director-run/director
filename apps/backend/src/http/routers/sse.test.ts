@@ -51,8 +51,7 @@ const testConfig: Config = {
   ],
 };
 
-// Path to the test config file
-describe("Proxy Server Integration Tests", () => {
+describe("SSE Router", () => {
   let proxyServer: http.Server | undefined;
   let proxyTargetServerInstance: Server;
 

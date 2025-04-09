@@ -6,10 +6,10 @@ import packageJson from "../package.json";
 import { debug } from "../src/commands/debug";
 import { listProxies } from "../src/commands/listProxies";
 import { seed } from "../src/commands/seed";
-import { createStore, storeExistsSync } from "../src/config";
 import { restartApp } from "../src/helpers/restartApp";
 import { App } from "../src/helpers/restartApp";
 import { startServer } from "../src/http/startServer";
+import { createStore, storeExistsSync } from "../src/services/config";
 import {
   installToClaude,
   uninstallFromClaude,

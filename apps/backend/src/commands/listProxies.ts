@@ -1,9 +1,9 @@
 import Table from "cli-table3";
-import { getProxies } from "../config";
 import { PROXY_DB_FILE_PATH } from "../constants";
+import { getProxyConfigEntries } from "../services/config";
 
 export const listProxies = async () => {
-  const proxies = await getProxies(PROXY_DB_FILE_PATH);
+  const proxies = await getProxyConfigEntries(PROXY_DB_FILE_PATH);
 
   if (proxies.length === 0) {
     console.log("no proxies configured yet.");

@@ -1,6 +1,6 @@
 import os from "node:os";
 import path from "node:path";
-import type { Config } from "./config/schema";
+import type { Config } from "./services/config/schema";
 
 export const HOME_DIR = os.homedir();
 

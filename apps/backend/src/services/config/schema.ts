@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { optionalStringSchema } from "../helpers/validation";
-import { requiredStringSchema } from "../helpers/validation";
+import { optionalStringSchema } from "../../helpers/validation";
+import { requiredStringSchema } from "../../helpers/validation";
 
 export const StdioTransportSchema = z.object({
   type: z.literal("stdio"),

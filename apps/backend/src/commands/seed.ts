@@ -1,7 +1,7 @@
-import { writeConfig } from "../config";
-import type { Config } from "../config/schema";
 import { PROXY_DB_FILE_PATH } from "../constants";
 import { getLogger } from "../helpers/logger";
+import { writeConfigFile } from "../services/config";
+import type { Config } from "../services/config/schema";
 
 export async function seed() {
   const logger = getLogger("seed");
@@ -37,5 +37,5 @@ export async function seed() {
     ],
   };
 
-  await writeConfig(seedProxyDB, PROXY_DB_FILE_PATH);
+  await writeConfigFile(seedProxyDB, PROXY_DB_FILE_PATH);
 }

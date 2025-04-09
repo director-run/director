@@ -1,8 +1,8 @@
 import { existsSync } from "node:fs";
 import slugify from "slugify";
-import { DEFAULT_CONFIG, PROXY_DB_FILE_PATH } from "../constants";
-import { readJSONFile } from "../helpers/readJSONFile";
-import { writeJSONFile } from "../helpers/writeJSONFile";
+import { DEFAULT_CONFIG, PROXY_DB_FILE_PATH } from "../../constants";
+import { readJSONFile } from "../../helpers/readJSONFile";
+import { writeJSONFile } from "../../helpers/writeJSONFile";
 import { type Config, type Proxy, configSchema } from "./schema";
 
 export function storeExistsSync(absolutePath?: string) {
@@ -20,20 +20,20 @@ export async function createStore(absolutePath?: string) {
   );
 }
 
-export async function readConfig(absolutePath?: string): Promise<Config> {
+export async function readConfigFile(absolutePath?: string): Promise<Config> {
   const store = await readJSONFile(absolutePath ?? PROXY_DB_FILE_PATH);
   return configSchema.parse(store);
 }
 
-export async function writeConfig(store: Config, absolutePath?: string) {
+export async function writeConfigFile(store: Config, absolutePath?: string) {
   return await writeJSONFile(absolutePath ?? PROXY_DB_FILE_PATH, store);
 }
 
-export async function createProxy(
+export async function addProxyConfigEntry(
   proxy: Omit<Proxy, "id">,
   absolutePath?: string,
 ) {
-  const store = await readConfig(absolutePath);
+  const store = await readConfigFile(absolutePath);
 
   const existingProxy = store.proxies.find((p) => p.name === proxy.name);
 
@@ -46,13 +46,13 @@ export async function createProxy(
     id: slugify(proxy.name, { lower: true, trim: true }),
   });
 
-  await writeConfig(store, absolutePath);
+  await writeConfigFile(store, absolutePath);
 
   return proxy;
 }
 
-export async function getProxy(name: string, absolutePath?: string) {
-  const store = await readConfig(absolutePath);
+export async function getProxyConfigEntry(name: string, absolutePath?: string) {
+  const store = await readConfigFile(absolutePath);
   const proxy = store.proxies.find((p) => p.name === name);
 
   if (!proxy) {
@@ -62,8 +62,11 @@ export async function getProxy(name: string, absolutePath?: string) {
   return proxy;
 }
 
-export async function deleteProxy(name: string, absolutePath?: string) {
-  const store = await readConfig(absolutePath);
+export async function deleteProxyConfigEntry(
+  name: string,
+  absolutePath?: string,
+) {
+  const store = await readConfigFile(absolutePath);
   const proxy = store.proxies.find((p) => p.name === name);
 
   if (!proxy) {
@@ -72,15 +75,15 @@ export async function deleteProxy(name: string, absolutePath?: string) {
 
   store.proxies = store.proxies.filter((p) => p.name !== name);
 
-  await writeConfig(store, absolutePath);
+  await writeConfigFile(store, absolutePath);
 }
 
-export async function updateProxy(
+export async function updateProxyConfigEntry(
   name: string,
   attributes: Partial<Proxy>,
   absolutePath?: string,
 ) {
-  const store = await readConfig(absolutePath);
+  const store = await readConfigFile(absolutePath);
   const proxy = store.proxies.find((p) => p.name === name);
 
   if (!proxy) {
@@ -88,12 +91,12 @@ export async function updateProxy(
   }
 
   Object.assign(proxy, attributes);
-  await writeConfig(store, absolutePath);
+  await writeConfigFile(store, absolutePath);
 
   return proxy;
 }
 
-export async function getProxies(absolutePath?: string) {
-  const store = await readConfig(absolutePath);
+export async function getProxyConfigEntries(absolutePath?: string) {
+  const store = await readConfigFile(absolutePath);
   return store.proxies;
 }

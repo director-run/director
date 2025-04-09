@@ -4,7 +4,7 @@ import { PROXY_DB_FILE_PATH } from "../../constants";
 import { ErrorCode } from "../../helpers/error";
 import { AppError } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
-import { readJsonFile } from "../../helpers/readJson";
+import { readJsonFile } from "../../helpers/readJsonFile";
 import { type ProxyServerInstance, proxyMCPServers } from "./proxyMCPServers";
 
 const logger = getLogger("ProxyServerStore");

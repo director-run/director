@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import slugify from "slugify";
 import { DEFAULT_CONFIG, PROXY_DB_FILE_PATH } from "../constants";
-import { readJsonFile } from "../helpers/readJson";
+import { readJsonFile } from "../helpers/readJsonFile";
 import { writeJsonFile } from "../helpers/write-json";
 import { type Config, type Proxy, configSchema } from "./schema";
 

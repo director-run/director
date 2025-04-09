@@ -1,10 +1,10 @@
-import { existsSync } from "node:fs";
-import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { AppError, ErrorCode } from "../../helpers/error";
+import {} from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
+import { readJsonFile } from "../../helpers/readJsonFile";
 import { App, restartApp } from "../../helpers/restartApp";
+import { writeJsonFile } from "../../helpers/write-json";
 
 const CLAUDE_CONFIG_PATH = path.join(
   os.homedir(),
@@ -15,22 +15,25 @@ const CLAUDE_CONFIG_KEY_PREFIX = "director";
 
 const logger = getLogger("installer/claude");
 
+type ClaudeConfig = {
+  mcpServers: Record<
+    string,
+    {
+      args: string[];
+      command: string;
+    }
+  >;
+};
+
 export const installToClaude = async ({
   name,
 }: {
   name: string;
 }) => {
-  if (!existsSync(CLAUDE_CONFIG_PATH)) {
-    throw new AppError(
-      ErrorCode.NOT_FOUND,
-      `Claude config file not found at: ${CLAUDE_CONFIG_PATH}`,
-    );
-  }
-
   logger.info(`updating to Claude configuration in ${CLAUDE_CONFIG_PATH}`);
-  // Read the current config
-  const configData = await fs.readFile(CLAUDE_CONFIG_PATH, "utf-8");
-  const claudeConfig = JSON.parse(configData);
+
+  const claudeConfig = await readJsonFile<ClaudeConfig>(CLAUDE_CONFIG_PATH);
+
   const updatedConfig = {
     ...claudeConfig,
     mcpServers: {
@@ -46,13 +49,10 @@ export const installToClaude = async ({
     },
   };
 
-  // Write the updated config back
-  await fs.writeFile(
-    CLAUDE_CONFIG_PATH,
-    JSON.stringify(updatedConfig, null, 2),
-  );
+  await writeJsonFile(CLAUDE_CONFIG_PATH, updatedConfig);
 
   logger.info(`${name} successfully written to Claude config`);
+
   await restartApp(App.CLAUDE);
 };
 
@@ -64,28 +64,12 @@ export const uninstallFromClaude = async ({
   logger.info(
     `uninstalling from Claude configuration in ${CLAUDE_CONFIG_PATH}`,
   );
-  // Check if the Claude config file exists
-  if (!existsSync(CLAUDE_CONFIG_PATH)) {
-    throw new AppError(
-      ErrorCode.NOT_FOUND,
-      `Claude config file not found at: ${CLAUDE_CONFIG_PATH}`,
-    );
-  }
-
-  // Read the current config
-  const configData = await fs.readFile(CLAUDE_CONFIG_PATH, "utf-8");
-  const claudeConfig = JSON.parse(configData);
-
-  // Check if mcpServers exists in the config
-  if (!claudeConfig.mcpServers) {
-    logger.info("No mcpServers found in Claude config, nothing to uninstall");
-    return;
-  }
+  const claudeConfig = await readJsonFile<ClaudeConfig>(CLAUDE_CONFIG_PATH);
 
   // Create a new config object without the entry to be removed
   const serverKey = `${CLAUDE_CONFIG_KEY_PREFIX}__${name}`;
 
-  if (!claudeConfig.mcpServers[serverKey]) {
+  if (!claudeConfig?.mcpServers[serverKey]) {
     logger.info(
       `Server "${name}" not found in Claude config, nothing to uninstall`,
     );
@@ -100,12 +84,7 @@ export const uninstallFromClaude = async ({
     mcpServers: remainingServers,
   };
 
-  // Write the updated config back
-  await fs.writeFile(
-    CLAUDE_CONFIG_PATH,
-    JSON.stringify(updatedConfig, null, 2),
-  );
-
+  await writeJsonFile(CLAUDE_CONFIG_PATH, updatedConfig);
   logger.info(`${name} successfully removed from Claude config`);
   await restartApp(App.CLAUDE);
 };

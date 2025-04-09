@@ -19,26 +19,26 @@ const testConfig: Config = {
       id: "test-proxy",
       name: "test-proxy",
       servers: [
-        // {
-        //   name: "Hackernews",
-        //   transport: {
-        //     type: "stdio",
-        //     command: "uvx",
-        //     args: [
-        //       "--from",
-        //       "git+https://github.com/erithwik/mcp-hn",
-        //       "mcp-hn",
-        //     ],
-        //   },
-        // },
-        // {
-        //   name: "Fetch",
-        //   transport: {
-        //     type: "stdio",
-        //     command: "uvx",
-        //     args: ["mcp-server-fetch"],
-        //   },
-        // },
+        {
+          name: "Hackernews",
+          transport: {
+            type: "stdio",
+            command: "uvx",
+            args: [
+              "--from",
+              "git+https://github.com/erithwik/mcp-hn",
+              "mcp-hn",
+            ],
+          },
+        },
+        {
+          name: "Fetch",
+          transport: {
+            type: "stdio",
+            command: "uvx",
+            args: ["mcp-server-fetch"],
+          },
+        },
         {
           name: "test-sse-transport",
           transport: {

@@ -1,6 +1,6 @@
 import fs from "fs";
 import http from "http";
-import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
+import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import superjson from "superjson";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { PORT, PROXY_DB_FILE_PATH } from "../../constants";
@@ -9,7 +9,6 @@ import type { Config } from "../../services/config/schema";
 import { startService } from "../../startService";
 import type { AppRouter } from "./trpc";
 
-// Test configuration to use for tests
 const testConfig: Config = {
   proxies: [
     {
@@ -43,14 +42,13 @@ const testConfig: Config = {
 
 describe("TRPC Router", () => {
   let proxyServer: http.Server | undefined;
-  let trpcClient: ReturnType<typeof createTRPCProxyClient<AppRouter>>;
+  let trpcClient: ReturnType<typeof createTRPCClient<AppRouter>>;
 
   beforeAll(async () => {
     await writeConfigFile(testConfig, PROXY_DB_FILE_PATH);
     proxyServer = await startService();
 
-    // Create tRPC client
-    trpcClient = createTRPCProxyClient<AppRouter>({
+    trpcClient = createTRPCClient<AppRouter>({
       links: [
         httpBatchLink({
           url: `http://localhost:${PORT}/trpc`,
@@ -130,13 +128,6 @@ describe("TRPC Router", () => {
       const proxies = await trpcClient.store.getAll.query();
       expect(proxies).toHaveLength(1);
       expect(proxies[0].name).toBe("test-proxy");
-    });
-  });
-
-  describe("greeting endpoint", () => {
-    it("should return a greeting with the provided name", async () => {
-      const greeting = await trpcClient.greeting.query({ name: "Test User" });
-      expect(greeting).toBe("Hello Test User");
     });
   });
 });

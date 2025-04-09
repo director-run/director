@@ -7,10 +7,10 @@ import {} from "../../services/proxy/proxyMCPServers";
 
 const logger = getLogger("SSE Router");
 
-export function sse(): Router {
+export async function sse(): Promise<Router> {
   const router = express.Router();
 
-  const proxyStore = new ProxyServerStore();
+  const proxyStore = await ProxyServerStore.create();
 
   // Handle SSE connections for specific proxy
   router.get("/:proxy_name/sse", async (req, res) => {
@@ -25,7 +25,7 @@ export function sse(): Router {
       query: req.query,
     });
 
-    const proxyInstance = await proxyStore.getOrCreateProxyServer(proxyName);
+    const proxyInstance = await proxyStore.getProxyServer(proxyName);
     if (!proxyInstance) {
       res.status(404).send(`Proxy '${proxyName}' not found`);
       return;
@@ -64,7 +64,7 @@ export function sse(): Router {
       query: req.query,
     });
 
-    const proxyInstance = await proxyStore.getOrCreateProxyServer(proxyName);
+    const proxyInstance = await proxyStore.getProxyServer(proxyName);
     if (!proxyInstance) {
       res.status(404).send(`Proxy '${proxyName}' not found`);
       return;

@@ -1,4 +1,4 @@
-import { getProxy } from "../../config";
+import { getProxies, getProxy } from "../../config";
 import { PROXY_DB_FILE_PATH } from "../../constants";
 import { getLogger } from "../../helpers/logger";
 import { type ProxyServerInstance, proxyMCPServers } from "./proxyMCPServers";
@@ -9,46 +9,90 @@ const logger = getLogger("ProxyServerStore");
 export class ProxyServerStore {
   private proxyServers: Map<string, ProxyServerInstance> = new Map();
 
-  async getOrCreateProxyServer(
-    proxyName: string,
-  ): Promise<ProxyServerInstance | null> {
-    // Return existing proxy server if it exists
-    if (this.proxyServers.has(proxyName)) {
-      const server = this.proxyServers.get(proxyName);
-      if (server) {
-        return server;
-      }
+  // Private constructor - initialization must use create()
+  private constructor() {}
+
+  // Static async factory method for initialization
+  public static async create(): Promise<ProxyServerStore> {
+    logger.info("Creating and initializing ProxyServerStore...");
+    const store = new ProxyServerStore();
+    await store.initialize();
+    logger.info("ProxyServerStore initialization complete.");
+    return store;
+  }
+
+  // Private initialization method
+  private async initialize(): Promise<void> {
+    logger.info("Fetching proxy configurations...");
+    let proxies;
+    try {
+      proxies = await getProxies(PROXY_DB_FILE_PATH);
+      logger.info(`Found ${proxies.length} proxy configurations.`);
+    } catch (error) {
+      logger.error({
+        message: "Failed to fetch initial proxy configurations",
+        error: error instanceof Error ? error.message : String(error),
+      });
+      // Depending on requirements, might rethrow or return early
+      throw new Error(
+        "Failed to initialize ProxyServerStore due to configuration fetch error.",
+      );
     }
 
-    try {
-      // Create a new proxy server
-      logger.info(`Creating new proxy server instance for: ${proxyName}`);
-      const proxy = await getProxy(proxyName, PROXY_DB_FILE_PATH);
-      const proxyInstance = await proxyMCPServers(proxy.servers);
-      this.proxyServers.set(proxyName, proxyInstance);
-      logger.info(
-        `Successfully created proxy server instance for: ${proxyName}`,
-      );
-      return proxyInstance;
-    } catch (error) {
-      // Catch error as unknown implicit type
-      // Type guard to safely access error properties
-      let errorMessage = `Failed to create proxy server for ${proxyName}`;
-      if (error instanceof Error) {
-        errorMessage += `: ${error.message}`;
-      } else if (typeof error === "string") {
-        errorMessage += `: ${error}`;
+    for (const proxyConfig of proxies) {
+      const proxyName = proxyConfig.name;
+      try {
+        logger.info(`Initializing proxy server instance for: ${proxyName}`);
+        // Assuming getProxy fetches the detailed config needed by proxyMCPServers
+        const detailedProxyConfig = await getProxy(
+          proxyName,
+          PROXY_DB_FILE_PATH,
+        );
+        const proxyInstance = await proxyMCPServers(
+          detailedProxyConfig.servers,
+        );
+        this.proxyServers.set(proxyName, proxyInstance);
+        logger.info(`Successfully initialized proxy server for: ${proxyName}`);
+      } catch (error) {
+        logger.error({
+          message: `Failed to initialize proxy server for ${proxyName}`,
+          error: error instanceof Error ? error.message : String(error),
+        });
+        // Decide if one failure should stop all initialization or just skip
+        // Currently skipping the failed one
       }
-      logger.error({ message: errorMessage, error });
-      return null;
     }
+  }
+
+  // Renamed: Get an already initialized proxy server
+  public getProxyServer(proxyName: string): ProxyServerInstance {
+    const server = this.proxyServers.get(proxyName);
+    if (!server) {
+      // Log warning and throw error if server doesn't exist in the map
+      logger.warn(
+        `Attempted to get non-existent or failed-to-initialize proxy server: ${proxyName}`,
+      );
+      throw new Error(
+        `Proxy server '${proxyName}' not found or failed to initialize.`,
+      );
+    }
+    return server;
   }
 
   async cleanupProxyServer(proxyName: string): Promise<void> {
     const proxyInstance = this.proxyServers.get(proxyName);
     if (proxyInstance) {
       logger.info(`Cleaning up proxy server: ${proxyName}`);
-      await proxyInstance.cleanup();
+      // Ensure cleanup logic is robust
+      try {
+        await proxyInstance.cleanup();
+      } catch (cleanupError) {
+        logger.error({
+          message: `Error during cleanup() for ${proxyName}`,
+          error: cleanupError,
+        });
+      }
+
       // Check if server and close method exist before calling
       if (
         proxyInstance.server &&

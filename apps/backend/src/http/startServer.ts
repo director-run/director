@@ -12,7 +12,7 @@ export const startServer = async () => {
   const app = express();
 
   app.use(cors());
-  app.use("/", sse());
+  app.use("/", await sse());
   app.use(
     "/trpc",
     trpcExpress.createExpressMiddleware({

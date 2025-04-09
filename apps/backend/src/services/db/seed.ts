@@ -1,5 +1,5 @@
 import { writeDBFile } from ".";
-import { PROXY_DB_FILE_PATH } from "../../constants";
+import { PROXY_DB_FILE_PATH } from "../../config";
 import { getLogger } from "../../helpers/logger";
 import type { DatabaseSchema } from "./schema";
 

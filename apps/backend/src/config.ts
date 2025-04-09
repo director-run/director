@@ -1,13 +1,16 @@
 import os from "node:os";
 import path from "node:path";
+import env from "dotenv";
 
-export const DATA_DIR = path.join(os.homedir(), ".director");
+if (process.env.NODE_ENV === "test") {
+  env.config({ path: "./env/test.env" });
+}
+
+export const DATA_DIR =
+  process.env.DATA_DIR ?? path.join(os.homedir(), ".director");
 
 export const PROXY_DB_FILE_PATH =
-  process.env.PROXY_DB_FILE_PATH ??
-  (process.env.NODE_ENV === "test"
-    ? path.join(__dirname, "db.test.json")
-    : path.join(DATA_DIR, "db.json"));
+  process.env.PROXY_DB_FILE_PATH ?? path.join(DATA_DIR, "db.json");
 
 export const PORT = Number(process.env.PORT ?? 3000);
 

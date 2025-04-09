@@ -3,7 +3,7 @@ import http from "http";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import superjson from "superjson";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { PORT, PROXY_DB_FILE_PATH } from "../../constants";
+import { PORT, PROXY_DB_FILE_PATH } from "../../config";
 import { writeDBFile } from "../../services/db";
 import type { DatabaseSchema } from "../../services/db/schema";
 import { startService } from "../../startService";

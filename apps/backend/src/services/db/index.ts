@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import slugify from "slugify";
-import { PROXY_DB_FILE_PATH } from "../../constants";
+import { PROXY_DB_FILE_PATH } from "../../config";
 import { readJSONFile, writeJSONFile } from "../../helpers/json";
 import { type DatabaseSchema, type Proxy, databaseSchema } from "./schema";
 

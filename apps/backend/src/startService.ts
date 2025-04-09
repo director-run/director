@@ -1,7 +1,7 @@
 import * as trpcExpress from "@trpc/server/adapters/express";
 import cors from "cors";
 import express from "express";
-import { PORT } from "./constants";
+import { PORT } from "./config";
 import { getLogger } from "./helpers/logger";
 import { sse } from "./http/routers/sse";
 import { appRouter } from "./http/routers/trpc";

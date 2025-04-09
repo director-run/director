@@ -25,5 +25,11 @@ export const startServer = async () => {
     logger.info(`Server running at http://localhost:${PORT}`);
   });
 
+  process.on("SIGINT", async () => {
+    logger.info("Received SIGINT, cleaning up proxy servers...");
+    await proxyStore.closeAll();
+    process.exit(0);
+  });
+
   return expressServer;
 };

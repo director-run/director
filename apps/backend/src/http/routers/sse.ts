@@ -3,7 +3,6 @@ import express from "express";
 import type { Router } from "express";
 import { getLogger } from "../../helpers/logger";
 import type { ProxyServerStore } from "../../services/proxy/ProxyServerStore";
-import {} from "../../services/proxy/proxyMCPServers";
 
 const logger = getLogger("SSE Router");
 
@@ -94,12 +93,6 @@ export function sse({ proxyStore }: { proxyStore: ProxyServerStore }): Router {
       );
       res.status(400).send("No active connections for this proxy");
     }
-  });
-
-  process.on("SIGINT", async () => {
-    logger.info("Received SIGINT, cleaning up proxy servers...");
-    await proxyStore.closeAll();
-    process.exit(0);
   });
 
   return router;

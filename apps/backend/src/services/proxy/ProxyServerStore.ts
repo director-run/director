@@ -6,7 +6,7 @@ import { AppError } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
 import { readJsonFile } from "../../helpers/readJson";
 import { type ProxyServerInstance, proxyMCPServers } from "./proxyMCPServers";
-// Create a logger specific to this store
+
 const logger = getLogger("ProxyServerStore");
 
 /**

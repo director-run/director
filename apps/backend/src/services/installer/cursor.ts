@@ -1,29 +1,119 @@
-const SQLITE_DB_PATH =
-  "/Users/barnaby/Library/Application Support/Cursor/User/globalStorage/state.vscdb";
+import { exec } from "node:child_process";
+import { existsSync } from "node:fs";
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import { promisify } from "node:util";
+import { AppError, ErrorCode } from "../../helpers/error";
+import { getLogger } from "../../helpers/logger";
+import { sleep } from "../../helpers/sleep";
 
-const READ_SQL_QUERY = `
-SELECT json_extract(value, '$.mcpServers') FROM ItemTable 
-WHERE key = 'src.vs.platform.reactivestorage.browser.reactiveStorageServiceImpl.persistentStorage.applicationUser'
-`;
+const CURSOR_CONFIG_PATH = path.join(os.homedir(), ".cursor/mcp.json");
+const CURSOR_CONFIG_KEY_PREFIX = "director";
 
-const WRITE_SQL_QUERY = `
-UPDATE ItemTable
-SET value = json_patch(value, 
-  json_object('mcpServers', json_array(
-    json_object(
-      'identifier', 'def12345-6789-abcd-ef01-23456789abcd',
-      'name', 'dev-server',
-      'url', 'http://localhost:8080/api',
-      'type', 'rest'
-    ),
-    json_object(
-      'identifier', 'abc98765-4321-dcba-fe10-9876543210ab',
-      'name', 'test-env',
-      'url', 'https://test-api.example.com/events',
-      'type', 'sse'
-    )
-  ))
-)
-WHERE key = 'src.vs.platform.reactivestorage.browser.reactiveStorageServiceImpl.persistentStorage.applicationUser';
+const execAsync = promisify(exec);
 
-`;
+const logger = getLogger("installer/claude");
+
+export async function restartClaude(): Promise<void> {
+  logger.info("restarting Claude...");
+  await execAsync("osascript -e 'tell application \"Claude\" to quit'");
+  await sleep(2000);
+  await execAsync("open -a Claude");
+  logger.info("Claude has been restarted");
+}
+
+export const installToClaude = async ({
+  name,
+}: {
+  name: string;
+}) => {
+  if (!existsSync(CURSOR_CONFIG_PATH)) {
+    throw new AppError(
+      ErrorCode.NOT_FOUND,
+      `Claude config file not found at: ${CURSOR_CONFIG_PATH}`,
+    );
+  }
+
+  logger.info(`updating to Claude configuration in ${CURSOR_CONFIG_PATH}`);
+  // Read the current config
+  const configData = await fs.readFile(CURSOR_CONFIG_PATH, "utf-8");
+  const claudeConfig = JSON.parse(configData);
+  const updatedConfig = {
+    ...claudeConfig,
+    mcpServers: {
+      ...(claudeConfig.mcpServers ?? {}),
+      [`${CURSOR_CONFIG_KEY_PREFIX}__${name}`]: {
+        args: [
+          path.resolve(__dirname, "../../../bin/cli.ts"),
+          "sse2stdio",
+          `http://localhost:3006/${name}/sse`,
+        ],
+        command: "bun",
+      },
+    },
+  };
+
+  // Write the updated config back
+  await fs.writeFile(
+    CURSOR_CONFIG_PATH,
+    JSON.stringify(updatedConfig, null, 2),
+  );
+
+  logger.info(`${name} successfully written to Claude config`);
+  await restartClaude();
+};
+
+export const uninstallFromClaude = async ({
+  name,
+}: {
+  name: string;
+}) => {
+  logger.info(
+    `uninstalling from Claude configuration in ${CURSOR_CONFIG_PATH}`,
+  );
+  // Check if the Claude config file exists
+  if (!existsSync(CURSOR_CONFIG_PATH)) {
+    throw new AppError(
+      ErrorCode.NOT_FOUND,
+      `Claude config file not found at: ${CURSOR_CONFIG_PATH}`,
+    );
+  }
+
+  // Read the current config
+  const configData = await fs.readFile(CURSOR_CONFIG_PATH, "utf-8");
+  const claudeConfig = JSON.parse(configData);
+
+  // Check if mcpServers exists in the config
+  if (!claudeConfig.mcpServers) {
+    logger.info("No mcpServers found in Claude config, nothing to uninstall");
+    return;
+  }
+
+  // Create a new config object without the entry to be removed
+  const serverKey = `${CURSOR_CONFIG_KEY_PREFIX}__${name}`;
+
+  if (!claudeConfig.mcpServers[serverKey]) {
+    logger.info(
+      `Server "${name}" not found in Claude config, nothing to uninstall`,
+    );
+    return;
+  }
+
+  // Remove the entry
+  const { [serverKey]: removed, ...remainingServers } = claudeConfig.mcpServers;
+
+  const updatedConfig = {
+    ...claudeConfig,
+    mcpServers: remainingServers,
+  };
+
+  // Write the updated config back
+  await fs.writeFile(
+    CURSOR_CONFIG_PATH,
+    JSON.stringify(updatedConfig, null, 2),
+  );
+
+  logger.info(`${name} successfully removed from Claude config`);
+  await restartClaude();
+};

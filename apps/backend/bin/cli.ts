@@ -9,12 +9,13 @@ import { createStore, storeExistsSync } from "../src/config";
 import { startServer } from "../src/http/startServer";
 import {
   installToClaude,
-  restartClaude,
   uninstallFromClaude,
 } from "../src/services/installer/claude";
 import { proxySSEToStdio } from "../src/services/proxy/proxySSEToStdio";
 
 import packageJson from "../package.json";
+import { restartApp } from "../src/helpers/restartApp";
+import { App } from "../src/helpers/restartApp";
 
 const program = new Command();
 
@@ -105,7 +106,7 @@ program
   .command("claude:restart")
   .description("Restart Claude")
   .action(async () => {
-    await restartClaude();
+    await restartApp(App.CLAUDE);
   });
 
 program.parse();

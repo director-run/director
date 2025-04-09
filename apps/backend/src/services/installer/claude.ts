@@ -1,33 +1,19 @@
-import { exec } from "node:child_process";
 import { existsSync } from "node:fs";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { promisify } from "node:util";
 import { AppError, ErrorCode } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
+import { App, restartApp } from "../../helpers/restartApp";
 
 const CLAUDE_CONFIG_PATH = path.join(
   os.homedir(),
   "Library/Application Support/Claude/claude_desktop_config.json",
 );
 
-const CLAUDE_CONFIG_KEY_PREFIX = "mcp-cli";
-
-const execAsync = promisify(exec);
-
-const sleep = (ms: number): Promise<void> =>
-  new Promise((resolve) => setTimeout(resolve, ms));
+const CLAUDE_CONFIG_KEY_PREFIX = "director";
 
 const logger = getLogger("installer/claude");
-
-export async function restartClaude(): Promise<void> {
-  logger.info("restarting Claude...");
-  await execAsync("osascript -e 'tell application \"Claude\" to quit'");
-  await sleep(2000);
-  await execAsync("open -a Claude");
-  logger.info("Claude has been restarted");
-}
 
 export const installToClaude = async ({
   name,
@@ -67,7 +53,7 @@ export const installToClaude = async ({
   );
 
   logger.info(`${name} successfully written to Claude config`);
-  await restartClaude();
+  await restartApp(App.CLAUDE);
 };
 
 export const uninstallFromClaude = async ({
@@ -121,5 +107,5 @@ export const uninstallFromClaude = async ({
   );
 
   logger.info(`${name} successfully removed from Claude config`);
-  await restartClaude();
+  await restartApp(App.CLAUDE);
 };

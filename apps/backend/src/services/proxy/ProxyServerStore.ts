@@ -2,7 +2,7 @@
 import type { Config } from "../../config/schema";
 import { PROXY_DB_FILE_PATH } from "../../constants";
 import { getLogger } from "../../helpers/logger";
-import { readJsonFile } from "../../helpers/read-json";
+import { readJsonFile } from "../../helpers/readJson";
 import { type ProxyServerInstance, proxyMCPServers } from "./proxyMCPServers";
 // Create a logger specific to this store
 const logger = getLogger("ProxyServerStore");

@@ -1,6 +1,5 @@
 import os from "node:os";
 import path from "node:path";
-import {} from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
 import { readJsonFile } from "../../helpers/readJsonFile";
 import { App, restartApp } from "../../helpers/restartApp";

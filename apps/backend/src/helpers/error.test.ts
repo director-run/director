@@ -1,8 +1,8 @@
 import { describe, expect, test } from "vitest";
-import { PROXY_DB_FILE_PATH } from "../config";
+import { DB_FILE_PATH } from "../config";
 import { AppError, ErrorCode, isAppError } from "./error";
 
-console.log(PROXY_DB_FILE_PATH);
+console.log(DB_FILE_PATH);
 
 describe("errors", () => {
   describe("AppError", () => {

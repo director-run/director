@@ -5,7 +5,7 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
-import { PROXY_DB_FILE_PATH } from "../../config";
+import { DB_FILE_PATH } from "../../config";
 import { PORT } from "../../config";
 import { writeDBFile } from "../../services/db";
 import type { DatabaseSchema } from "../../services/db/schema";
@@ -56,7 +56,7 @@ describe("SSE Router", () => {
   let proxyTargetServerInstance: Server;
 
   beforeAll(async () => {
-    await writeDBFile(testConfig, PROXY_DB_FILE_PATH);
+    await writeDBFile(testConfig, DB_FILE_PATH);
     proxyTargetServerInstance = await createMCPServer(4521, (server) => {
       server.tool("echo", { message: z.string() }, async ({ message }) => ({
         content: [{ type: "text", text: `Tool echo: ${message}` }],
@@ -66,7 +66,7 @@ describe("SSE Router", () => {
   });
 
   afterAll(async () => {
-    fs.unlinkSync(PROXY_DB_FILE_PATH);
+    fs.unlinkSync(DB_FILE_PATH);
     if (proxyServer) {
       await new Promise<void>((resolve) => {
         proxyServer?.close(() => resolve());

@@ -1,10 +1,10 @@
 import { existsSync } from "node:fs";
 import slugify from "slugify";
-import { PROXY_DB_FILE_PATH } from "../../config";
+import { DB_FILE_PATH } from "../../config";
 import { readJSONFile, writeJSONFile } from "../../helpers/json";
 import { type DatabaseSchema, type Proxy, databaseSchema } from "./schema";
 
-export async function initDB(configFilePath = PROXY_DB_FILE_PATH) {
+export async function initDB(configFilePath = DB_FILE_PATH) {
   if (existsSync(configFilePath)) {
     return;
   } else {
@@ -20,7 +20,7 @@ export async function initDB(configFilePath = PROXY_DB_FILE_PATH) {
 export async function readDBFile(
   absolutePath?: string,
 ): Promise<DatabaseSchema> {
-  const store = await readJSONFile(absolutePath ?? PROXY_DB_FILE_PATH);
+  const store = await readJSONFile(absolutePath ?? DB_FILE_PATH);
   return databaseSchema.parse(store);
 }
 
@@ -28,7 +28,7 @@ export async function writeDBFile(
   store: DatabaseSchema,
   absolutePath?: string,
 ) {
-  return await writeJSONFile(absolutePath ?? PROXY_DB_FILE_PATH, store);
+  return await writeJSONFile(absolutePath ?? DB_FILE_PATH, store);
 }
 
 export async function addProxyConfigEntry(

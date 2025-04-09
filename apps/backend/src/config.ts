@@ -9,8 +9,8 @@ if (process.env.NODE_ENV === "test") {
 export const DATA_DIR =
   process.env.DATA_DIR ?? path.join(os.homedir(), ".director");
 
-export const PROXY_DB_FILE_PATH =
-  process.env.PROXY_DB_FILE_PATH ?? path.join(DATA_DIR, "db.json");
+export const DB_FILE_PATH =
+  process.env.DB_FILE_PATH ?? path.join(DATA_DIR, "db.json");
 
 export const PORT = Number(process.env.PORT ?? 3000);
 

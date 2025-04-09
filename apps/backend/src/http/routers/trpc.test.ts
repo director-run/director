@@ -3,7 +3,7 @@ import http from "http";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import superjson from "superjson";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { PORT, PROXY_DB_FILE_PATH } from "../../config";
+import { DB_FILE_PATH, PORT } from "../../config";
 import { writeDBFile } from "../../services/db";
 import type { DatabaseSchema } from "../../services/db/schema";
 import { startService } from "../../startService";
@@ -45,7 +45,7 @@ describe("TRPC Router", () => {
   let trpcClient: ReturnType<typeof createTRPCClient<AppRouter>>;
 
   beforeAll(async () => {
-    await writeDBFile(testConfig, PROXY_DB_FILE_PATH);
+    await writeDBFile(testConfig, DB_FILE_PATH);
     proxyServer = await startService();
 
     trpcClient = createTRPCClient<AppRouter>({
@@ -59,7 +59,7 @@ describe("TRPC Router", () => {
   });
 
   afterAll(async () => {
-    fs.unlinkSync(PROXY_DB_FILE_PATH);
+    fs.unlinkSync(DB_FILE_PATH);
     if (proxyServer) {
       await new Promise<void>((resolve) => {
         proxyServer?.close(() => resolve());

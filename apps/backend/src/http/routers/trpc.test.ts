@@ -14,7 +14,7 @@ describe("TRPC Router", () => {
   beforeAll(async () => {
     await db.purge();
     await db.addProxy({
-      name: "test-proxy",
+      name: "Test proxy",
       servers: [
         {
           name: "Hackernews",
@@ -64,18 +64,20 @@ describe("TRPC Router", () => {
     it("should get all proxies", async () => {
       const proxies = await trpcClient.store.getAll.query();
       expect(proxies).toHaveLength(1);
-      expect(proxies[0].name).toBe("test-proxy");
+      expect(proxies[0].name).toBe("Test proxy");
+      expect(proxies[0].id).toBe("test-proxy");
     });
 
     it("should get a specific proxy", async () => {
-      const proxy = await trpcClient.store.get.query({ name: "test-proxy" });
+      const proxy = await trpcClient.store.get.query({ proxyId: "test-proxy" });
       expect(proxy).toBeDefined();
-      expect(proxy?.name).toBe("test-proxy");
+      expect(proxy?.id).toBe("test-proxy");
+      expect(proxy?.name).toBe("Test proxy");
     });
 
     it("should create a new proxy", async () => {
       const newProxy = {
-        name: "new-test-proxy",
+        name: "New test proxy",
         servers: [
           {
             name: "Test Server",
@@ -89,7 +91,8 @@ describe("TRPC Router", () => {
       };
 
       const createdProxy = await trpcClient.store.create.mutate(newProxy);
-      expect(createdProxy.name).toBe("new-test-proxy");
+      expect(createdProxy.name).toBe("New test proxy");
+      expect(createdProxy.id).toBe("new-test-proxy");
       expect(createdProxy.servers).toHaveLength(1);
 
       // Verify it was actually created
@@ -99,7 +102,7 @@ describe("TRPC Router", () => {
 
     it("should update a proxy", async () => {
       const update = {
-        name: "test-proxy",
+        proxyId: "test-proxy",
         attributes: {
           description: "Updated description",
         },
@@ -109,17 +112,18 @@ describe("TRPC Router", () => {
       expect(updatedProxy.description).toBe("Updated description");
 
       // Verify the update
-      const proxy = await trpcClient.store.get.query({ name: "test-proxy" });
+      const proxy = await trpcClient.store.get.query({ proxyId: "test-proxy" });
       expect(proxy?.description).toBe("Updated description");
     });
 
     it("should delete a proxy", async () => {
-      await trpcClient.store.delete.mutate({ name: "new-test-proxy" });
+      await trpcClient.store.delete.mutate({ proxyId: "new-test-proxy" });
 
       // Verify it was deleted
       const proxies = await trpcClient.store.getAll.query();
       expect(proxies).toHaveLength(1);
-      expect(proxies[0].name).toBe("test-proxy");
+      expect(proxies[0].name).toBe("Test proxy");
+      expect(proxies[0].id).toBe("test-proxy");
     });
   });
 });

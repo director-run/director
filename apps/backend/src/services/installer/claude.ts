@@ -25,9 +25,9 @@ type ClaudeConfig = {
 };
 
 export const installToClaude = async ({
-  name,
+  proxyId,
 }: {
-  name: string;
+  proxyId: string;
 }) => {
   logger.info(`updating to Claude configuration in ${CLAUDE_CONFIG_PATH}`);
 
@@ -37,11 +37,11 @@ export const installToClaude = async ({
     ...claudeConfig,
     mcpServers: {
       ...(claudeConfig.mcpServers ?? {}),
-      [`${CLAUDE_CONFIG_KEY_PREFIX}__${name}`]: {
+      [`${CLAUDE_CONFIG_KEY_PREFIX}__${proxyId}`]: {
         args: [
           path.resolve(__dirname, "../../../bin/cli.ts"),
           "sse2stdio",
-          getProxySSEUrl(name),
+          getProxySSEUrl(proxyId),
         ],
         command: "bun",
       },
@@ -50,15 +50,15 @@ export const installToClaude = async ({
 
   await writeJSONFile(CLAUDE_CONFIG_PATH, updatedConfig);
 
-  logger.info(`${name} successfully written to Claude config`);
+  logger.info(`${proxyId} successfully written to Claude config`);
 
   await restartApp(App.CLAUDE);
 };
 
 export const uninstallFromClaude = async ({
-  name,
+  proxyId,
 }: {
-  name: string;
+  proxyId: string;
 }) => {
   logger.info(
     `uninstalling from Claude configuration in ${CLAUDE_CONFIG_PATH}`,
@@ -66,11 +66,11 @@ export const uninstallFromClaude = async ({
   const claudeConfig = await readJSONFile<ClaudeConfig>(CLAUDE_CONFIG_PATH);
 
   // Create a new config object without the entry to be removed
-  const serverKey = `${CLAUDE_CONFIG_KEY_PREFIX}__${name}`;
+  const serverKey = `${CLAUDE_CONFIG_KEY_PREFIX}__${proxyId}`;
 
   if (!claudeConfig?.mcpServers[serverKey]) {
     logger.info(
-      `Server "${name}" not found in Claude config, nothing to uninstall`,
+      `Server "${proxyId}" not found in Claude config, nothing to uninstall`,
     );
     return;
   }
@@ -84,6 +84,6 @@ export const uninstallFromClaude = async ({
   };
 
   await writeJSONFile(CLAUDE_CONFIG_PATH, updatedConfig);
-  logger.info(`${name} successfully removed from Claude config`);
+  logger.info(`${proxyId} successfully removed from Claude config`);
   await restartApp(App.CLAUDE);
 };

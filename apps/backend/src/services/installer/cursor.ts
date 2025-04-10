@@ -19,9 +19,9 @@ type CursorConfig = {
 };
 
 export const installToCursor = async ({
-  name,
+  proxyId,
 }: {
-  name: string;
+  proxyId: string;
 }) => {
   logger.info(`updating to Cursor configuration in ${CURSOR_CONFIG_PATH}`);
 
@@ -31,21 +31,21 @@ export const installToCursor = async ({
     ...config,
     mcpServers: {
       ...(config.mcpServers ?? {}),
-      [`${CURSOR_CONFIG_KEY_PREFIX}__${name}`]: {
-        url: getProxySSEUrl(name),
+      [`${CURSOR_CONFIG_KEY_PREFIX}__${proxyId}`]: {
+        url: getProxySSEUrl(proxyId),
       },
     },
   };
 
   await writeJSONFile(CURSOR_CONFIG_PATH, updatedConfig);
 
-  logger.info(`${name} successfully written to Cursor config`);
+  logger.info(`${proxyId} successfully written to Cursor config`);
 };
 
 export const uninstallFromCursor = async ({
-  name,
+  proxyId,
 }: {
-  name: string;
+  proxyId: string;
 }) => {
   logger.info(
     `uninstalling from Cursor configuration in ${CURSOR_CONFIG_PATH}`,
@@ -53,11 +53,11 @@ export const uninstallFromCursor = async ({
   const config = await readJSONFile<CursorConfig>(CURSOR_CONFIG_PATH);
 
   // Create a new config object without the entry to be removed
-  const serverKey = `${CURSOR_CONFIG_KEY_PREFIX}__${name}`;
+  const serverKey = `${CURSOR_CONFIG_KEY_PREFIX}__${proxyId}`;
 
   if (!config?.mcpServers[serverKey]) {
     logger.info(
-      `Server "${name}" not found in Cursor config, nothing to uninstall`,
+      `Server "${proxyId}" not found in Cursor config, nothing to uninstall`,
     );
     return;
   }
@@ -71,5 +71,5 @@ export const uninstallFromCursor = async ({
   };
 
   await writeJSONFile(CURSOR_CONFIG_PATH, updatedConfig);
-  logger.info(`${name} successfully removed from Cursor config`);
+  logger.info(`${proxyId} successfully removed from Cursor config`);
 };

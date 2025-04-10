@@ -13,18 +13,18 @@ export function sse({ proxyStore }: { proxyStore: ProxyServerStore }): Router {
   const router = express.Router();
 
   router.get(
-    "/:proxy_name/sse",
+    "/:proxy_id/sse",
     asyncHandler(async (req, res) => {
-      const proxyName = req.params.proxy_name;
-      const proxyInstance = await proxyStore.get(proxyName);
-      const transport = new SSEServerTransport(`/${proxyName}/message`, res);
+      const proxyId = req.params.proxy_id;
+      const proxyInstance = proxyStore.get(proxyId);
+      const transport = new SSEServerTransport(`/${proxyId}/message`, res);
 
       proxyInstance.transports.set(transport.sessionId, transport);
 
       logger.info({
         message: "SSE connection started",
         sessionId: transport.sessionId,
-        proxyName,
+        proxyId,
       });
 
       /**
@@ -38,7 +38,7 @@ export function sse({ proxyStore }: { proxyStore: ProxyServerStore }): Router {
         logger.info({
           message: "SSE connection closed",
           sessionId: transport.sessionId,
-          proxyName,
+          proxyId,
         });
         proxyInstance.transports.delete(transport.sessionId);
       });
@@ -48,11 +48,11 @@ export function sse({ proxyStore }: { proxyStore: ProxyServerStore }): Router {
   );
 
   router.post(
-    "/:proxy_name/message",
+    "/:proxy_id/message",
     asyncHandler(async (req, res) => {
-      const proxyName = req.params.proxy_name;
+      const proxyId = req.params.proxy_id;
       const sessionId = req.query.sessionId?.toString();
-      const proxyInstance = await proxyStore.get(proxyName);
+      const proxyInstance = proxyStore.get(proxyId);
 
       if (!sessionId) {
         // TODO: Add a test case for this.
@@ -62,7 +62,7 @@ export function sse({ proxyStore }: { proxyStore: ProxyServerStore }): Router {
 
       logger.info({
         message: "Message received",
-        proxyName,
+        proxyId,
         sessionId,
         method: body.method,
       });
@@ -74,7 +74,7 @@ export function sse({ proxyStore }: { proxyStore: ProxyServerStore }): Router {
         logger.warn({
           message: "Transport not found",
           sessionId,
-          proxyName,
+          proxyId,
         });
         throw new AppError(ErrorCode.NOT_FOUND, "Transport not found");
       }

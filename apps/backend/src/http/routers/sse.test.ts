@@ -16,7 +16,7 @@ describe("SSE Router", () => {
   beforeAll(async () => {
     await db.purge();
     await db.addProxy({
-      name: "test-proxy",
+      name: "Test proxy",
       servers: [
         {
           name: "Hackernews",
@@ -47,11 +47,13 @@ describe("SSE Router", () => {
         },
       ],
     });
+
     proxyTargetServerInstance = await createMCPServer(4521, (server) => {
       server.tool("echo", { message: z.string() }, async ({ message }) => ({
         content: [{ type: "text", text: `Tool echo: ${message}` }],
       }));
     });
+
     proxyServer = await startService();
   });
 
@@ -63,7 +65,7 @@ describe("SSE Router", () => {
       });
       proxyServer = undefined;
     }
-    await proxyTargetServerInstance?.close();
+    proxyTargetServerInstance?.close();
   });
 
   test("should return 404 when proxy not found", async () => {
@@ -108,6 +110,9 @@ describe("SSE Router", () => {
       new URL(`http://localhost:${PORT}/test-proxy/sse`),
     );
     await client.connect(transport);
+
+    console.log({ client: client.getServerCapabilities });
+
     const toolsResult = await client.listTools();
     const expectedToolNames = [
       "get_stories",

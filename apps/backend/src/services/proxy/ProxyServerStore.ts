@@ -46,10 +46,10 @@ export class ProxyServerStore {
     let proxies = await db.listProxies();
 
     for (const proxyConfig of proxies) {
-      const proxyName = proxyConfig.name;
-      logger.info({ message: `Initializing proxy`, proxyName });
+      const proxyId = proxyConfig.id;
+      logger.info({ message: `Initializing proxy`, proxyId });
       this.proxyServers.set(
-        proxyName,
+        proxyId,
         await proxyMCPServers(proxyConfig.servers),
       );
     }
@@ -58,16 +58,16 @@ export class ProxyServerStore {
   /**
    * Retrieves a proxy server instance by name.
    *
-   * @param proxyName - The name of the proxy server to retrieve
+   * @param proxyId - The id of the proxy server to retrieve
    * @returns The ProxyServerInstance for the specified proxy
    * @throws {AppError} If the proxy server is not found or failed to initialize
    */
-  public get(proxyName: string): ProxyServerInstance {
-    const server = this.proxyServers.get(proxyName);
+  public get(proxyId: string): ProxyServerInstance {
+    const server = this.proxyServers.get(proxyId);
     if (!server) {
       throw new AppError(
         ErrorCode.NOT_FOUND,
-        `Proxy server '${proxyName}' not found or failed to initialize.`,
+        `Proxy server '${proxyId}' not found or failed to initialize.`,
       );
     }
     return server;
@@ -78,19 +78,19 @@ export class ProxyServerStore {
    * This method handles both the proxy instance cleanup and server closure,
    * with appropriate error handling and logging.
    *
-   * @param proxyName - The name of the proxy server to close
+   * @param proxyId - The id of the proxy server to close
    * @returns A Promise that resolves when the cleanup is complete
    */
-  async close(proxyName: string): Promise<void> {
-    const proxyInstance = this.proxyServers.get(proxyName);
+  async close(proxyId: string): Promise<void> {
+    const proxyInstance = this.proxyServers.get(proxyId);
     if (proxyInstance) {
-      logger.info(`Cleaning up proxy server: ${proxyName}`);
+      logger.info(`Cleaning up proxy server: ${proxyId}`);
       // Ensure cleanup logic is robust
       try {
         await proxyInstance.close();
       } catch (cleanupError) {
         logger.error({
-          message: `Error during cleanup() for ${proxyName}`,
+          message: `Error during cleanup() for ${proxyId}`,
           error: cleanupError,
         });
       }
@@ -103,7 +103,7 @@ export class ProxyServerStore {
         try {
           await proxyInstance.server.close();
         } catch (closeError) {
-          let errorMessage = `Error closing server for proxy ${proxyName}`;
+          let errorMessage = `Error closing server for proxy ${proxyId}`;
           if (closeError instanceof Error) {
             errorMessage += `: ${closeError.message}`;
           }
@@ -111,14 +111,14 @@ export class ProxyServerStore {
         }
       } else {
         logger.warn(
-          `Server object or close method not found for proxy: ${proxyName} during cleanup.`,
+          `Server object or close method not found for proxy: ${proxyId} during cleanup.`,
         );
       }
-      this.proxyServers.delete(proxyName);
-      logger.info(`Successfully cleaned up proxy server: ${proxyName}`);
+      this.proxyServers.delete(proxyId);
+      logger.info(`Successfully cleaned up proxy server: ${proxyId}`);
     } else {
       logger.warn(
-        `Attempted to clean up non-existent proxy server: ${proxyName}`,
+        `Attempted to clean up non-existent proxy server: ${proxyId}`,
       );
     }
   }
@@ -132,7 +132,7 @@ export class ProxyServerStore {
   async closeAll(): Promise<void> {
     logger.info("Cleaning up all proxy servers...");
     const cleanupPromises = Array.from(this.proxyServers.keys()).map(
-      (proxyName) => this.close(proxyName),
+      (proxyId) => this.close(proxyId),
     );
     await Promise.all(cleanupPromises);
     logger.info("Finished cleaning up all proxy servers.");
@@ -143,7 +143,7 @@ export class ProxyServerStore {
    *
    * @returns An array of strings containing the names of all managed proxy servers
    */
-  getProxyNames(): string[] {
+  getProxyIds(): string[] {
     return Array.from(this.proxyServers.keys());
   }
 }

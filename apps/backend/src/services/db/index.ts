@@ -51,9 +51,9 @@ class Database {
     return newProxy;
   }
 
-  async getProxy(name: string): Promise<Proxy> {
+  async getProxy(id: string): Promise<Proxy> {
     const store = await readDB(this.filePath);
-    const proxy = store.proxies.find((p) => p.name === name);
+    const proxy = store.proxies.find((p) => p.id === id);
 
     if (!proxy) {
       throw new Error("Proxy not found");
@@ -62,21 +62,21 @@ class Database {
     return proxy;
   }
 
-  async deleteProxy(name: string): Promise<void> {
+  async deleteProxy(id: string): Promise<void> {
     const store = await readDB(this.filePath);
-    const proxy = store.proxies.find((p) => p.name === name);
+    const proxy = store.proxies.find((p) => p.id === id);
 
     if (!proxy) {
       throw new Error("Proxy not found");
     }
 
-    store.proxies = store.proxies.filter((p) => p.name !== name);
+    store.proxies = store.proxies.filter((p) => p.id !== id);
     await writeDB(this.filePath, store);
   }
 
-  async updateProxy(name: string, attributes: Partial<Proxy>): Promise<Proxy> {
+  async updateProxy(id: string, attributes: Partial<Proxy>): Promise<Proxy> {
     const store = await readDB(this.filePath);
-    const proxy = store.proxies.find((p) => p.name === name);
+    const proxy = store.proxies.find((p) => p.id === id);
 
     if (!proxy) {
       throw new Error("Proxy not found");

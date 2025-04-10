@@ -23,9 +23,11 @@ const storeRouter = createTRPCRouter({
       return [];
     }
   }),
-  get: t.procedure.input(z.object({ name: z.string() })).query(({ input }) => {
-    return db.getProxy(input.name);
-  }),
+  get: t.procedure
+    .input(z.object({ proxyId: z.string() }))
+    .query(({ input }) => {
+      return db.getProxy(input.proxyId);
+    }),
   create: t.procedure
     .input(proxySchema.omit({ id: true }))
     .mutation(({ input }) => {
@@ -34,27 +36,22 @@ const storeRouter = createTRPCRouter({
   update: t.procedure
     .input(
       z.object({
-        name: z.string(),
+        proxyId: z.string(),
         attributes: proxySchema.partial(),
       }),
     )
     .mutation(({ input }) => {
-      return db.updateProxy(input.name, input.attributes);
+      return db.updateProxy(input.proxyId, input.attributes);
     }),
   delete: t.procedure
-    .input(z.object({ name: z.string() }))
+    .input(z.object({ proxyId: z.string() }))
     .mutation(({ input }) => {
-      return db.deleteProxy(input.name);
+      return db.deleteProxy(input.proxyId);
     }),
 });
 
 export const appRouter = createTRPCRouter({
   store: storeRouter,
-  greeting: t.procedure
-    .input(z.object({ name: z.string() }))
-    .query(({ input }) => {
-      return `Hello ${input.name}` as const;
-    }),
 });
 
 // export type definition of API

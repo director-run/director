@@ -3,6 +3,7 @@ import express from "express";
 import type { Router } from "express";
 import { AppError, ErrorCode } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
+import { parseMCPMessageBody } from "../../helpers/mcp";
 import type { ProxyServerStore } from "../../services/proxy/ProxyServerStore";
 import { asyncHandler } from "../middleware";
 
@@ -57,11 +58,13 @@ export function sse({ proxyStore }: { proxyStore: ProxyServerStore }): Router {
         // TODO: Add a test case for this.
         throw new AppError(ErrorCode.BAD_REQUEST, "No sessionId provided");
       }
+      const body = await parseMCPMessageBody(req);
 
       logger.info({
         message: "Message received",
         proxyName,
         sessionId,
+        method: body.method,
       });
 
       const transport = proxyInstance.transports.get(sessionId);
@@ -76,7 +79,7 @@ export function sse({ proxyStore }: { proxyStore: ProxyServerStore }): Router {
         throw new AppError(ErrorCode.NOT_FOUND, "Transport not found");
       }
 
-      await transport.handlePostMessage(req, res);
+      await transport.handlePostMessage(req, res, body);
     }),
   );
 

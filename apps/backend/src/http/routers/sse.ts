@@ -5,7 +5,7 @@ import { getLogger } from "../../helpers/logger";
 import type { ProxyServerStore } from "../../services/proxy/ProxyServerStore";
 import { asyncHandler } from "../middleware";
 
-const logger = getLogger("SSE Router");
+const logger = getLogger("routers/sse");
 
 export function sse({ proxyStore }: { proxyStore: ProxyServerStore }): Router {
   const router = express.Router();
@@ -14,27 +14,30 @@ export function sse({ proxyStore }: { proxyStore: ProxyServerStore }): Router {
     "/:proxy_name/sse",
     asyncHandler(async (req, res) => {
       const proxyName = req.params.proxy_name;
-      logger.info({
-        message: "GET /:proxy_name/sse",
-        proxyName,
-      });
-
       const proxyInstance = await proxyStore.get(proxyName);
       const transport = new SSEServerTransport(`/${proxyName}/message`, res);
 
       proxyInstance.transports.set(transport.sessionId, transport);
+
+      logger.info({
+        message: "SSE connection started",
+        sessionId: transport.sessionId,
+        proxyName,
+      });
 
       /**
        * The MCP documentation says to use res.on("close", () => { ... }) to
        * clean up the transport when the connection is closed. However, this
        * doesn't work for some reason. So we use this instead.
        *
-       * [TODO] Figure out if this is correct.
+       * [TODO] Figure out if this is correct. Also add a test case for this.
        */
       req.socket.on("close", () => {
-        logger.info(
-          `SSE connection closed for ${proxyName}, sessionId: ${transport.sessionId}`,
-        );
+        logger.info({
+          message: "SSE connection closed",
+          sessionId: transport.sessionId,
+          proxyName,
+        });
         proxyInstance.transports.delete(transport.sessionId);
       });
 
@@ -47,13 +50,6 @@ export function sse({ proxyStore }: { proxyStore: ProxyServerStore }): Router {
     asyncHandler(async (req, res) => {
       const proxyName = req.params.proxy_name;
       const sessionId = req.query.sessionId?.toString();
-
-      logger.info({
-        message: "POST /:proxy_name/message",
-        proxyName,
-        sessionId,
-      });
-
       const proxyInstance = await proxyStore.get(proxyName);
 
       if (!sessionId) {
@@ -61,6 +57,12 @@ export function sse({ proxyStore }: { proxyStore: ProxyServerStore }): Router {
         res.status(400).send("No sessionId provided");
         return;
       }
+
+      logger.info({
+        message: "Message received",
+        proxyName,
+        sessionId,
+      });
 
       const transport = proxyInstance.transports.get(sessionId);
       if (!transport) {

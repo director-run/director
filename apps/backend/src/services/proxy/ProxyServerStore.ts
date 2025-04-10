@@ -1,5 +1,5 @@
-import { ErrorCode } from "../../helpers/error";
 import { AppError } from "../../helpers/error";
+import { ErrorCode } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
 import { db } from "../db";
 import { type ProxyServerInstance, proxyMCPServers } from "./proxyMCPServers";

@@ -18,6 +18,7 @@ export class AppError extends Error {
 
 export enum ErrorCode {
   NOT_FOUND = "NOT_FOUND",
+  BAD_REQUEST = "BAD_REQUEST",
 }
 
 export function isAppError(error: unknown): error is AppError {

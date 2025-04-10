@@ -55,6 +55,9 @@ function appErrorToHttpResponse(error: AppError) {
     case ErrorCode.NOT_FOUND:
       status = 404;
       break;
+    case ErrorCode.BAD_REQUEST:
+      status = 400;
+      break;
     default:
       status = 500;
   }

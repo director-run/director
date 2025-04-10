@@ -1,6 +1,7 @@
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
 import type { Router } from "express";
+import { AppError, ErrorCode } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
 import type { ProxyServerStore } from "../../services/proxy/ProxyServerStore";
 import { asyncHandler } from "../middleware";
@@ -53,9 +54,8 @@ export function sse({ proxyStore }: { proxyStore: ProxyServerStore }): Router {
       const proxyInstance = await proxyStore.get(proxyName);
 
       if (!sessionId) {
-        logger.warn("No sessionId provided");
-        res.status(400).send("No sessionId provided");
-        return;
+        // TODO: Add a test case for this.
+        throw new AppError(ErrorCode.BAD_REQUEST, "No sessionId provided");
       }
 
       logger.info({
@@ -65,16 +65,15 @@ export function sse({ proxyStore }: { proxyStore: ProxyServerStore }): Router {
       });
 
       const transport = proxyInstance.transports.get(sessionId);
+
       if (!transport) {
-        logger.warn(
-          `Transport not found for connectionId '${sessionId}' for proxy '${proxyName}'`,
-        );
-        res
-          .status(404)
-          .send(
-            `Transport not found for connectionId '${sessionId}' for proxy '${proxyName}'`,
-          );
-        return;
+        // TODO: Add a test case for this.
+        logger.warn({
+          message: "Transport not found",
+          sessionId,
+          proxyName,
+        });
+        throw new AppError(ErrorCode.NOT_FOUND, "Transport not found");
       }
 
       await transport.handlePostMessage(req, res);

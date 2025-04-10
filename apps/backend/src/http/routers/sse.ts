@@ -1,99 +1,87 @@
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
 import type { Router } from "express";
+import { AppError, ErrorCode } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
+import { parseMCPMessageBody } from "../../helpers/mcp";
 import type { ProxyServerStore } from "../../services/proxy/ProxyServerStore";
+import { asyncHandler } from "../middleware";
 
-const logger = getLogger("SSE Router");
+const logger = getLogger("routers/sse");
 
 export function sse({ proxyStore }: { proxyStore: ProxyServerStore }): Router {
   const router = express.Router();
 
-  // Handle SSE connections for specific proxy
-  router.get("/:proxy_name/sse", async (req, res) => {
-    const proxyName = req.params.proxy_name;
-    const connectionId =
-      req.query.connectionId?.toString() || Date.now().toString();
+  router.get(
+    "/:proxy_name/sse",
+    asyncHandler(async (req, res) => {
+      const proxyName = req.params.proxy_name;
+      const proxyInstance = await proxyStore.get(proxyName);
+      const transport = new SSEServerTransport(`/${proxyName}/message`, res);
 
-    logger.info({
-      message: "Received SSE connection",
-      proxyName,
-      connectionId,
-      query: req.query,
-    });
+      proxyInstance.transports.set(transport.sessionId, transport);
 
-    const proxyInstance = await proxyStore.get(proxyName);
-    if (!proxyInstance) {
-      res.status(404).send(`Proxy '${proxyName}' not found`);
-      return;
-    }
-
-    const transport = new SSEServerTransport(`/${proxyName}/message`, res);
-    proxyInstance.transports.set(connectionId, transport);
-
-    await proxyInstance.server.connect(transport);
-
-    proxyInstance.server.onerror = (err: Error) => {
-      logger.error({
-        message: `Server onerror for proxy ${proxyName}`,
-        error: err?.stack ?? err.message,
+      logger.info({
+        message: "SSE connection started",
+        sessionId: transport.sessionId,
+        proxyName,
       });
-    };
 
-    // Clean up transport when connection closes
-    res.on("close", () => {
-      logger.info(
-        `SSE connection closed for ${proxyName}, connectionId: ${connectionId}`,
-      );
-      proxyInstance.transports.delete(connectionId);
-    });
-  });
+      /**
+       * The MCP documentation says to use res.on("close", () => { ... }) to
+       * clean up the transport when the connection is closed. However, this
+       * doesn't work for some reason. So we use this instead.
+       *
+       * [TODO] Figure out if this is correct. Also add a test case for this.
+       */
+      req.socket.on("close", () => {
+        logger.info({
+          message: "SSE connection closed",
+          sessionId: transport.sessionId,
+          proxyName,
+        });
+        proxyInstance.transports.delete(transport.sessionId);
+      });
 
-  // Handle message posts for specific proxy
-  router.post("/:proxy_name/message", async (req, res) => {
-    const proxyName = req.params.proxy_name;
-    const connectionId = req.query.connectionId?.toString();
+      await proxyInstance.server.connect(transport);
+    }),
+  );
 
-    logger.info({
-      message: "Received message post",
-      proxyName,
-      connectionId,
-      query: req.query,
-    });
+  router.post(
+    "/:proxy_name/message",
+    asyncHandler(async (req, res) => {
+      const proxyName = req.params.proxy_name;
+      const sessionId = req.query.sessionId?.toString();
+      const proxyInstance = await proxyStore.get(proxyName);
 
-    const proxyInstance = await proxyStore.get(proxyName);
-    if (!proxyInstance) {
-      res.status(404).send(`Proxy '${proxyName}' not found`);
-      return;
-    }
-
-    // If connectionId is provided, use that specific transport
-    if (connectionId && proxyInstance.transports.has(connectionId)) {
-      const transport = proxyInstance.transports.get(connectionId);
-      if (transport) {
-        await transport.handlePostMessage(req, res);
-        return;
-      } else {
-        logger.warn(
-          `Transport not found for known connectionId ${connectionId} for proxy ${proxyName}.`,
-        );
+      if (!sessionId) {
+        // TODO: Add a test case for this.
+        throw new AppError(ErrorCode.BAD_REQUEST, "No sessionId provided");
       }
-    }
+      const body = await parseMCPMessageBody(req);
 
-    // Otherwise use the first available transport
-    const transports = Array.from(proxyInstance.transports.values());
-    if (transports.length > 0) {
-      logger.info(
-        `Using first available transport for message to proxy ${proxyName} (connectionId: ${connectionId || "none"}).`,
-      );
-      await transports[0].handlePostMessage(req, res);
-    } else {
-      logger.warn(
-        `No active SSE connections found for proxy ${proxyName} to handle message post.`,
-      );
-      res.status(400).send("No active connections for this proxy");
-    }
-  });
+      logger.info({
+        message: "Message received",
+        proxyName,
+        sessionId,
+        method: body.method,
+      });
+
+      const transport = proxyInstance.transports.get(sessionId);
+
+      if (!transport) {
+        // TODO: Add a test case for this.
+        logger.warn({
+          message: "Transport not found",
+          sessionId,
+          proxyName,
+        });
+        throw new AppError(ErrorCode.NOT_FOUND, "Transport not found");
+      }
+
+      await transport.handlePostMessage(req, res, body);
+    }),
+  );
 
   return router;
 }

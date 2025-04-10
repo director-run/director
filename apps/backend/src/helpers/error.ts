@@ -1,5 +1,11 @@
+import { isNumber } from "lodash";
+
+export type ExpressError = Error & {
+  statusCode: number;
+};
+
 export class AppError extends Error {
-  name = "ManagedError";
+  name = "AppError";
 
   constructor(
     public code: ErrorCode,
@@ -12,8 +18,17 @@ export class AppError extends Error {
 
 export enum ErrorCode {
   NOT_FOUND = "NOT_FOUND",
-  CONFLICT = "CONFLICT",
+  BAD_REQUEST = "BAD_REQUEST",
 }
 
-export const isAppError = (error: unknown): error is AppError =>
-  error instanceof AppError;
+export function isAppError(error: unknown): error is AppError {
+  return error instanceof AppError;
+}
+
+export function isExpressError(error: unknown): error is ExpressError {
+  return (
+    error instanceof Error &&
+    "statusCode" in error &&
+    isNumber(error.statusCode)
+  );
+}

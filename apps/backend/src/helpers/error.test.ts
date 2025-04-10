@@ -14,7 +14,7 @@ describe("errors", () => {
       } catch (error) {
         expect(isAppError(error)).toBe(true);
         const managedError = error as AppError;
-        expect(managedError.name).toBe("ManagedError");
+        expect(managedError.name).toBe("AppError");
         expect(managedError.props).toEqual({ foo: "bar" });
         expect(managedError.code).toBe(ErrorCode.NOT_FOUND);
         expect(managedError.message).toBe("Could not find something");

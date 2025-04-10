@@ -66,6 +66,30 @@ describe("SSE Router", () => {
     await proxyTargetServerInstance?.close();
   });
 
+  test("should return 404 when proxy not found", async () => {
+    const client = new Client(
+      {
+        name: "test-client",
+        version: "0.0.0",
+      },
+      {
+        capabilities: {
+          prompts: {},
+          resources: {},
+          tools: {},
+        },
+      },
+    );
+
+    const transport = new SSEClientTransport(
+      new URL(`http://localhost:${PORT}/not_existing_proxy/sse`),
+    );
+
+    await expect(client.connect(transport)).rejects.toMatchObject({
+      code: 404,
+    });
+  });
+
   test("should connect and list tools", async () => {
     const client = new Client(
       {

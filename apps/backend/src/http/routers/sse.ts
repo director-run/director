@@ -24,7 +24,14 @@ export function sse({ proxyStore }: { proxyStore: ProxyServerStore }): Router {
 
       proxyInstance.transports.set(transport.sessionId, transport);
 
-      res.on("close", () => {
+      /**
+       * The MCP documentation says to use res.on("close", () => { ... }) to
+       * clean up the transport when the connection is closed. However, this
+       * doesn't work for some reason. So we use this instead.
+       *
+       * [TODO] Figure out if this is correct.
+       */
+      req.socket.on("close", () => {
         logger.info(
           `SSE connection closed for ${proxyName}, sessionId: ${transport.sessionId}`,
         );

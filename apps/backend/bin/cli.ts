@@ -87,7 +87,7 @@ function mandatoryOption(flags: string, description?: string) {
 }
 
 program
-  .command("install <name>")
+  .command("install <proxyId>")
   .description("Install an mcp server to a client app")
   .addOption(
     mandatoryOption("-c, --client [type]", "client to install to").choices([
@@ -95,18 +95,18 @@ program
       "cursor",
     ]),
   )
-  .action(async (name, options) => {
+  .action(async (proxyId, options) => {
     if (options.client === "claude") {
-      await installToClaude({ name });
+      await installToClaude({ proxyId });
     } else if (options.client === "cursor") {
-      await installToCursor({ name });
+      await installToCursor({ proxyId });
     } else {
       logger.error(`unsupported client: ${options.client}`);
     }
   });
 
 program
-  .command("uninstall <name>")
+  .command("uninstall <proxyId>")
   .description("Uninstall an mcp server from a client app")
   .addOption(
     mandatoryOption("-c, --client [type]", "client to uninstall from").choices([
@@ -114,11 +114,11 @@ program
       "cursor",
     ]),
   )
-  .action(async (name, options) => {
+  .action(async (proxyId, options) => {
     if (options.client === "claude") {
-      await uninstallFromClaude({ name });
+      await uninstallFromClaude({ proxyId });
     } else if (options.client === "cursor") {
-      await uninstallFromCursor({ name });
+      await uninstallFromCursor({ proxyId });
     } else {
       logger.error(`unsupported client: ${options.client}`);
     }

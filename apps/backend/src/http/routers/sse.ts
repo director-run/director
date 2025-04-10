@@ -9,90 +9,72 @@ const logger = getLogger("SSE Router");
 export function sse({ proxyStore }: { proxyStore: ProxyServerStore }): Router {
   const router = express.Router();
 
-  // Handle SSE connections for specific proxy
   router.get("/:proxy_name/sse", async (req, res) => {
     const proxyName = req.params.proxy_name;
-    const connectionId =
-      req.query.connectionId?.toString() || Date.now().toString();
-
+    const clientName = req.query.clientName?.toString();
     logger.info({
-      message: "Received SSE connection",
+      message: "GET /:proxy_name/sse",
       proxyName,
-      connectionId,
-      query: req.query,
     });
 
     const proxyInstance = await proxyStore.get(proxyName);
     if (!proxyInstance) {
+      logger.warn(`Proxy '${proxyName}' not found`);
       res.status(404).send(`Proxy '${proxyName}' not found`);
       return;
     }
 
     const transport = new SSEServerTransport(`/${proxyName}/message`, res);
-    proxyInstance.transports.set(connectionId, transport);
+    proxyInstance.transports.set(transport.sessionId, transport);
 
-    await proxyInstance.server.connect(transport);
-
-    proxyInstance.server.onerror = (err: Error) => {
-      logger.error({
-        message: `Server onerror for proxy ${proxyName}`,
-        error: err?.stack ?? err.message,
-      });
-    };
-
-    // Clean up transport when connection closes
     res.on("close", () => {
       logger.info(
-        `SSE connection closed for ${proxyName}, connectionId: ${connectionId}`,
+        `SSE connection closed for ${proxyName}, sessionId: ${transport.sessionId}`,
       );
-      proxyInstance.transports.delete(connectionId);
+      proxyInstance.transports.delete(transport.sessionId);
     });
+
+    await proxyInstance.server.connect(transport);
   });
 
-  // Handle message posts for specific proxy
   router.post("/:proxy_name/message", async (req, res) => {
     const proxyName = req.params.proxy_name;
-    const connectionId = req.query.connectionId?.toString();
+    const sessionId = req.query.sessionId?.toString();
 
     logger.info({
-      message: "Received message post",
+      message: "POST /:proxy_name/message",
       proxyName,
-      connectionId,
-      query: req.query,
+      sessionId,
     });
 
     const proxyInstance = await proxyStore.get(proxyName);
+
     if (!proxyInstance) {
+      logger.warn(`Proxy '${proxyName}' not found`);
       res.status(404).send(`Proxy '${proxyName}' not found`);
       return;
     }
 
-    // If connectionId is provided, use that specific transport
-    if (connectionId && proxyInstance.transports.has(connectionId)) {
-      const transport = proxyInstance.transports.get(connectionId);
-      if (transport) {
-        await transport.handlePostMessage(req, res);
-        return;
-      } else {
-        logger.warn(
-          `Transport not found for known connectionId ${connectionId} for proxy ${proxyName}.`,
-        );
-      }
+    if (!sessionId) {
+      logger.warn("No sessionId provided");
+      res.status(400).send("No sessionId provided");
+      return;
     }
 
-    // Otherwise use the first available transport
-    const transports = Array.from(proxyInstance.transports.values());
-    if (transports.length > 0) {
-      logger.info(
-        `Using first available transport for message to proxy ${proxyName} (connectionId: ${connectionId || "none"}).`,
-      );
-      await transports[0].handlePostMessage(req, res);
-    } else {
+    const transport = proxyInstance.transports.get(sessionId);
+    if (!transport) {
       logger.warn(
-        `No active SSE connections found for proxy ${proxyName} to handle message post.`,
+        `Transport not found for connectionId '${sessionId}' for proxy '${proxyName}'`,
       );
-      res.status(400).send("No active connections for this proxy");
+      res
+        .status(404)
+        .send(
+          `Transport not found for connectionId '${sessionId}' for proxy '${proxyName}'`,
+        );
+      return;
     }
+
+    await transport.handlePostMessage(req, res);
   });
 
   return router;

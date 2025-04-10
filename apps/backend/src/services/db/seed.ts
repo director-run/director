@@ -6,8 +6,38 @@ const logger = getLogger("config/seed");
 
 export async function seed() {
   logger.info(`Seeding database at path: ${DB_FILE_PATH}`);
+
+  await db.purge();
   await db.addProxy({
-    name: "my-first-proxy",
+    name: "claude-proxy",
+    servers: [
+      {
+        name: "Hackernews",
+        transport: {
+          type: "stdio",
+          command: "uvx",
+          args: ["--from", "git+https://github.com/erithwik/mcp-hn", "mcp-hn"],
+        },
+      },
+    ],
+  });
+
+  await db.addProxy({
+    name: "inspector-proxy",
+    servers: [
+      {
+        name: "Fetch",
+        transport: {
+          type: "stdio",
+          command: "uvx",
+          args: ["mcp-server-fetch"],
+        },
+      },
+    ],
+  });
+
+  await db.addProxy({
+    name: "cursor-proxy",
     servers: [
       {
         name: "Hackernews",

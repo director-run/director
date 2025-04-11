@@ -1,7 +1,7 @@
 import { ArrowRightIcon, ArrowUpRightIcon } from "lucide-react";
 
 import { cn } from "@/lib/cn";
-import { NavLink } from "react-router";
+import Link, { LinkProps } from "next/link";
 
 export function Contents({
   children,
@@ -21,7 +21,7 @@ export function Contents({
 }
 
 interface ContentsItemProps extends React.ComponentProps<"li"> {
-  href: string;
+  href: LinkProps["href"];
 }
 
 export function ContentsItem({
@@ -31,12 +31,15 @@ export function ContentsItem({
   style,
   ...props
 }: ContentsItemProps) {
-  const isExternal = href.startsWith("http");
+  const isExternal =
+    typeof href === "string"
+      ? href.startsWith("http")
+      : href.pathname && href.pathname.startsWith("/");
 
   return (
     <li {...props} style={{ counterIncrement: "count 1", ...style }}>
-      <NavLink
-        to={href}
+      <Link
+        href={href}
         className={cn(
           "group/contents-item",
           "grid grid-cols-[28px_1fr_28px] gap-x-0.5",
@@ -56,7 +59,7 @@ export function ContentsItem({
         >
           {isExternal ? <ArrowUpRightIcon /> : <ArrowRightIcon />}
         </span>
-      </NavLink>
+      </Link>
     </li>
   );
 }

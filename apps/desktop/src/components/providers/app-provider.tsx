@@ -1,15 +1,17 @@
+"use client";
+
 import { ConnectionProvider } from "@/components/providers/connection-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { TRPCProvider } from "@/lib/trpc/client";
 import { IconContext } from "@phosphor-icons/react";
-import { NuqsAdapter } from "nuqs/adapters/react-router/v7";
+import { NuqsAdapter } from "nuqs/adapters/next";
 import { ThemeProvider } from "./theme-provider";
+import { TRPCProvider } from "./trpc-provider";
 
-export function AppProviders({ children }: { children: React.ReactNode }) {
+export function AppProvider({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider defaultTheme="system">
-      <IconContext.Provider value={{ size: 16, weight: "light" }}>
+      <IconContext.Provider value={{ size: 16, weight: "bold" }}>
         <TooltipProvider>
           <NuqsAdapter>
             <TRPCProvider>

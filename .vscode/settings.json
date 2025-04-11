@@ -18,7 +18,7 @@
     ["classNames\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
     ["className\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
   ],
-  "tailwindCSS.experimental.configFile": "./apps/desktop/src/global.css",
+  "tailwindCSS.experimental.configFile": "./apps/desktop/src/app/globals.css",
   "jest.runMode": "on-demand",
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
@@ -45,6 +45,8 @@
     "next/dist/client/router.d.ts"
   ],
   "search.exclude": {
-    "**/node_modules": true
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.next": true
   }
 }

@@ -1,11 +1,11 @@
 "use client";
 
+import { trpc } from "@/lib/trpc";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TRPCClientError, httpBatchLink } from "@trpc/client";
 import { useState } from "react";
 import { toast } from "sonner";
 import superjson from "superjson";
-import { trpc } from "./trpc";
 
 export function TRPCProvider(
   props: Readonly<{

@@ -38,6 +38,9 @@ export const proxySchema = z.object({
   integrations: z.array(integrationEnum),
 });
 
+export const createProxySchema = proxySchema.omit({ id: true });
+export type CreateProxyInput = z.infer<typeof createProxySchema>;
+
 export type Proxy = z.infer<typeof proxySchema>;
 
 export const databaseSchema = z.object({

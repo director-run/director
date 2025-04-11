@@ -1,23 +1,18 @@
 "use client";
 
 import { CircleNotch } from "@phosphor-icons/react";
-import { useEffect, useMemo, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useTimeout } from "usehooks-ts";
 
 import { assertUnreachable } from "@/lib/assert-unreachable";
 import { createCtx } from "@/lib/create-ctx";
-import { trpc } from "@/lib/trpc/trpc";
-import { Proxy } from "@director/backend/src/services/db/schema";
+import { trpc } from "@/lib/trpc";
 
 export type ConnectionStatus = "idle" | "connected" | "disconnected";
 
 export interface ConnectionContext {
   status: ConnectionStatus;
-  serverIds: string[];
-  serversById: Record<string, Proxy>;
-  servers: Proxy[];
 }
 
 const [useContext, ContextProvider] = createCtx<ConnectionContext>();
@@ -25,15 +20,11 @@ const [useContext, ContextProvider] = createCtx<ConnectionContext>();
 export function ConnectionProvider({
   children,
 }: { children: React.ReactNode }) {
-  const { pathname } = useLocation();
-  const navigate = useNavigate();
-
-  const [servers, setServers] = useState<Proxy[]>([]);
   const [enabled, setEnabled] = useState(false);
   const [connectionStatus, setConnectionStatus] =
     useState<ConnectionStatus>("idle");
 
-  const { data, status, error } = trpc.store.getAll.useQuery(undefined, {
+  const { status: healthStatus } = trpc.health.status.useQuery(undefined, {
     refetchInterval: 1000,
     retry: false,
     refetchOnWindowFocus: true,
@@ -46,73 +37,71 @@ export function ConnectionProvider({
   }, 1000);
 
   useEffect(() => {
-    if (status === "success") {
+    if (healthStatus === "success") {
       setConnectionStatus("connected");
     }
 
-    if (status === "error") {
+    if (healthStatus === "error") {
       setConnectionStatus("disconnected");
     }
-  }, [status, error]);
+  }, [healthStatus]);
 
   useEffect(() => {
-    switch (status) {
-      case "success":
+    switch (connectionStatus) {
+      case "connected":
         toast("Connection established", {
           description: "You are now connected to Director",
         });
         break;
-      case "error":
-        if (connectionStatus === "connected") {
-          toast.error("Connection lost", {
-            description: "Please check your connection and try again",
-          });
-        }
+      case "disconnected":
+        toast.error("Connection lost", {
+          description: "Please check your connection and try again",
+        });
         break;
-      case "pending":
+      case "idle":
         break;
       default:
-        assertUnreachable(status);
+        assertUnreachable(connectionStatus);
     }
-  }, [status]);
+  }, [connectionStatus]);
 
-  useEffect(() => {
-    if (data) {
-      setServers(data);
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (data) {
+  //     setServers(data);
+  //   }
+  // }, [data]);
 
-  useEffect(() => {
-    const hasServers = data?.length;
-    const isConnected = connectionStatus === "connected";
+  // useEffect(() => {
+  //   const hasServers = data?.length;
+  //   const isConnected = connectionStatus === "connected";
 
-    if (pathname !== "/get-started" && !hasServers && isConnected) {
-      navigate("/get-started");
-    }
+  //   if (pathname !== "/get-started" && !hasServers && isConnected) {
+  //     router.replace("/get-started");
+  //   }
 
-    if (pathname === "/get-started" && hasServers && !isConnected) {
-      navigate("/");
-    }
-  }, [connectionStatus, data, pathname]);
+  //   if (pathname === "/get-started" && hasServers && !isConnected) {
+  //     router.replace("/");
+  //   }
+  // }, [connectionStatus, data, pathname]);
 
-  const serverIds = useMemo(() => servers.map((it) => it.id), [servers]);
+  // const serverIds = useMemo(() => servers.map((it) => it.id), [servers]);
 
-  const serversById = useMemo(
-    () =>
-      servers.reduce(
-        (acc, it) => {
-          acc[it.id] = it;
-          return acc;
-        },
-        {} as Record<string, Proxy>,
-      ),
-    [servers],
-  );
+  // const serversById = useMemo(
+  //   () =>
+  //     servers.reduce(
+  //       (acc, it) => {
+  //         acc[it.id] = it;
+  //         return acc;
+  //       },
+  //       {} as Record<string, Proxy>,
+  //     ),
+  //   [servers],
+  // );
+
+  // console.log(healthData);
 
   return (
-    <ContextProvider
-      value={{ status: connectionStatus, servers, serverIds, serversById }}
-    >
+    <ContextProvider value={{ status: connectionStatus }}>
       {(() => {
         switch (connectionStatus) {
           case "idle":
@@ -134,13 +123,23 @@ export function ConnectionProvider({
 
 export const useConnectionContext = useContext;
 
-export const useCurrentServer = () => {
-  const { serversById, serverIds } = useConnectionContext();
-  const { proxyId } = useParams<{ proxyId: string }>();
+// export const useMaybeCurrentServer = () => {
+//   const { serversById, serverIds, servers } = useConnectionContext();
+//   const [proxyId] = useQueryState("proxyId");
 
-  if (!proxyId || !serverIds.includes(proxyId)) {
-    return null;
-  }
+//   if (!proxyId || !serverIds.includes(proxyId)) {
+//     return null;
+//   }
 
-  return serversById[proxyId] ?? null;
-};
+//   return serversById[proxyId] ?? null;
+// };
+
+// export const useCurrentServer = () => {
+//   const currentServer = useMaybeCurrentServer();
+
+//   if (!currentServer) {
+//     throw new Error("No current server");
+//   }
+
+//   return currentServer;
+// };

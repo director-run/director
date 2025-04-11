@@ -1,6 +1,7 @@
-import { cn } from "@/lib/cn";
 import { Slot } from "@radix-ui/react-slot";
 import { VariantProps } from "class-variance-authority";
+
+import { cn } from "@/lib/cn";
 import { textVariants } from "./typography";
 import { Separator } from "./ui/separator";
 

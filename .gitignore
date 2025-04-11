@@ -45,3 +45,5 @@ public/swe-worker*
 
 **/bun.lockb
 **/bun.lock
+
+.next

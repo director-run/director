@@ -5,13 +5,18 @@ import { useEffect, useState } from "react";
 import { useIsMounted } from "usehooks-ts";
 
 export function useMcpClient(proxyId: string) {
-  const [client, setClient] = useState<Client | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [tools, setTools] = useState<Tool[]>([]);
+  const [resources, setResources] = useState<Resource[]>([]);
+  const [prompts, setPrompts] = useState<Prompt[]>([]);
   const isMounted = useIsMounted();
 
   useEffect(() => {
     if (!isMounted) {
       return;
     }
+
+    setIsLoading(true);
 
     const transport = new SSEClientTransport(
       new URL(`http://localhost:3000/${proxyId}/sse`),
@@ -22,103 +27,26 @@ export function useMcpClient(proxyId: string) {
     });
 
     client.connect(transport).then(() => {
-      setClient(client);
+      Promise.all([
+        client.listTools(),
+        client.listResources(),
+        client.listPrompts(),
+      ])
+        .then(([tools, resources, prompts]) => {
+          setTools(tools.tools);
+          setResources(resources.resources);
+          setPrompts(prompts.prompts);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     });
 
     return () => {
       client?.close();
-      setClient(null);
+      setIsLoading(false);
     };
   }, [isMounted]);
 
-  return client;
-}
-
-export function useTools(proxyId: string) {
-  const [isLoading, setIsLoading] = useState(false);
-  const client = useMcpClient(proxyId);
-
-  const [tools, setTools] = useState<Tool[]>([]);
-
-  useEffect(() => {
-    if (!client) {
-      return;
-    }
-
-    setIsLoading(true);
-
-    console.log(client.getServerCapabilities());
-
-    client
-      .listTools()
-      .then((res) => {
-        setTools(res.tools);
-      })
-      .catch((res) => {
-        console.error(res);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, [client]);
-
-  return { tools, isLoading };
-}
-
-export function useResources(proxyId: string) {
-  const [isLoading, setIsLoading] = useState(false);
-  const client = useMcpClient(proxyId);
-
-  const [resources, setResources] = useState<Resource[]>([]);
-
-  useEffect(() => {
-    if (!client) {
-      return;
-    }
-
-    setIsLoading(true);
-
-    client
-      .listResources()
-      .then((res) => {
-        setResources(res.resources);
-      })
-      .catch((res) => {
-        console.error(res);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, [client]);
-
-  return { resources, isLoading };
-}
-
-export function usePrompts(proxyId: string) {
-  const [isLoading, setIsLoading] = useState(false);
-  const client = useMcpClient(proxyId);
-
-  const [prompts, setPrompts] = useState<Prompt[]>([]);
-
-  useEffect(() => {
-    if (!client) {
-      return;
-    }
-
-    setIsLoading(true);
-
-    client
-      .listPrompts()
-      .then((res) => {
-        setPrompts(res.prompts);
-      })
-      .catch((res) => {
-        console.error(res);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, [client]);
-
-  return { prompts, isLoading };
+  return { isLoading, tools, resources, prompts };
 }

@@ -57,7 +57,6 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.55.0",
-    "react-router": "^7.4.1",
     "sonner": "^2.0.3",
     "superjson": "^2.2.2",
     "tailwind-merge": "^3.1.0",

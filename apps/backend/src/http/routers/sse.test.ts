@@ -111,8 +111,6 @@ describe("SSE Router", () => {
     );
     await client.connect(transport);
 
-    console.log({ client: client.getServerCapabilities });
-
     const toolsResult = await client.listTools();
     const expectedToolNames = [
       "get_stories",

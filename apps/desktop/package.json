@@ -64,19 +64,13 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.1.2",
     "@tailwindcss/postcss": "^4",
     "@tauri-apps/cli": "^2.4.1",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.1",
-    "@vitejs/plugin-react": "^4.3.4",
-    "commander": "^13.1.0",
-    "semver": "^7.7.1",
     "tailwindcss": "^4.1.2",
     "tailwindcss-radix": "^4.0.2",
     "tw-animate-css": "^1.2.5",
-    "typescript": "~5.8.2",
-    "vite": "^6.2.5",
-    "vite-tsconfig-paths": "^5.1.4"
+    "typescript": "~5.8.2"
   }
 }

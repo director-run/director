@@ -24,7 +24,7 @@ export function GetStartedIndexRoute() {
 
         <CreateProxyForm
           onSuccess={(proxy) => {
-            navigate(`/proxies/${proxy.id}`);
+            navigate(`/${proxy.id}`);
           }}
         />
       </Section>

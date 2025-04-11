@@ -7,9 +7,8 @@ import { ProxiesGetRoute } from "./routes/proxies/proxies-get";
 import { ProxiesNewRoute } from "./routes/proxies/proxies-new";
 
 import "./global.css";
-import { useConnectionContext } from "./components/connection/connection-provider";
-import { MainLayout } from "./components/global/main-layout";
-import { SingleLayout } from "./components/global/single-layout";
+import { MainLayout } from "./components/layout/main-layout";
+import { useConnectionContext } from "./components/providers/connection-provider";
 
 function NavigateToFirstProxy() {
   const { servers } = useConnectionContext();
@@ -18,28 +17,25 @@ function NavigateToFirstProxy() {
     return <Navigate to="/get-started" />;
   }
 
-  return <Navigate to={`/proxies/${servers[0].name}`} />;
+  return <Navigate to={`/${servers[0].id}`} />;
 }
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <BrowserRouter>
-      <Routes>
-        <Route element={<AppProviders />}>
-          <Route path="/" element={<NavigateToFirstProxy />} />
-          <Route element={<SingleLayout />}>
-            <Route path="get-started" element={<GetStartedIndexRoute />} />
-            <Route path="*" element={<div>Not found</div>} />
-            <Route path="/proxies/new" element={<ProxiesNewRoute />} />
-          </Route>
-          <Route path="proxies">
+      <AppProviders>
+        <Routes>
+          <Route>
             <Route element={<MainLayout />}>
-              <Route index element={<NavigateToFirstProxy />} />
-              <Route path=":id" element={<ProxiesGetRoute />} />
+              <Route path="/" element={<NavigateToFirstProxy />} />
+              <Route path="get-started" element={<GetStartedIndexRoute />} />
+              <Route path="new" element={<ProxiesNewRoute />} />
+              <Route path=":proxyId" element={<ProxiesGetRoute />} />
+              <Route path="*" element={<div>Not found</div>} />
             </Route>
           </Route>
-        </Route>
-      </Routes>
+        </Routes>
+      </AppProviders>
     </BrowserRouter>
   </React.StrictMode>,
 );

@@ -1,5 +1,6 @@
 import { Container } from "@/components/container";
 import { ListTools } from "@/components/mcp/list-tools";
+import { useCurrentServer } from "@/components/providers/connection-provider";
 import {
   Section,
   SectionDescription,
@@ -20,52 +21,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { trpc } from "@/lib/trpc/trpc";
-import { Loader2 } from "lucide-react";
-import { useParams } from "react-router";
 
 export function ProxiesGetRoute() {
-  const { id } = useParams<{ id: string }>();
+  const currentServer = useCurrentServer();
 
-  const { data, isLoading } = trpc.store.get.useQuery(
-    // TODO: This should use an ID not a name
-    { name: id as string },
-    {
-      enabled: !!id,
-    },
-  );
-
-  if (!data) {
-    if (isLoading) {
-      return (
-        <div className="flex grow flex-col items-center justify-center py-16">
-          <Loader2 className="h-10 w-10 animate-spin" />
-        </div>
-      );
-    }
-
-    if (!isLoading) {
-      return (
-        <div className="flex grow flex-col items-center justify-center py-16">
-          <div>Proxy not found</div>
-        </div>
-      );
-    }
+  if (!currentServer) {
+    return <div>Proxy not found</div>;
   }
 
   return (
     <Container size="md">
       <Section>
         <SectionHeader>
-          <SectionTitle>{data?.name}</SectionTitle>
-          <SectionDescription>{data?.description}</SectionDescription>
+          <SectionTitle>{currentServer.name}</SectionTitle>
+          <SectionDescription>{currentServer.description}</SectionDescription>
         </SectionHeader>
 
         <Accordion type="single" collapsible>
           <AccordionItem value="one-click">
             <AccordionTrigger>Install via integrations</AccordionTrigger>
             <AccordionContent>
-              {data?.integrations.map((integration) => (
+              {currentServer.integrations.map((integration) => (
                 <div key={integration}>{integration}</div>
               ))}
             </AccordionContent>
@@ -73,7 +49,7 @@ export function ProxiesGetRoute() {
           <AccordionItem value="manual">
             <AccordionTrigger>Install manually</AccordionTrigger>
             <AccordionContent>
-              <p>http://localhost:3000/{data?.id}/sse</p>
+              <p>http://localhost:3000/{currentServer.id}/sse</p>
             </AccordionContent>
           </AccordionItem>
         </Accordion>
@@ -92,7 +68,7 @@ export function ProxiesGetRoute() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data?.servers.map((server) => (
+            {currentServer.servers.map((server) => (
               <TableRow key={server.name}>
                 <TableCell>{server.name}</TableCell>
                 <TableCell>{server.transport.type}</TableCell>
@@ -106,7 +82,7 @@ export function ProxiesGetRoute() {
         <SectionHeader>
           <SectionTitle variant="h2">Available tools</SectionTitle>
         </SectionHeader>
-        <ListTools proxyId={id as string} />
+        <ListTools proxyId={currentServer.id} />
       </Section>
     </Container>
   );

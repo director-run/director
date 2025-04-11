@@ -1,35 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
+import { CircleNotch } from "@phosphor-icons/react";
+import { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router";
+import { toast } from "sonner";
 import { useTimeout } from "usehooks-ts";
 
 import { assertUnreachable } from "@/lib/assert-unreachable";
 import { createCtx } from "@/lib/create-ctx";
 import { trpc } from "@/lib/trpc/trpc";
 import { Proxy } from "@director/backend/src/services/db/schema";
-import { Loader2Icon } from "lucide-react";
-import { useLocation, useNavigate } from "react-router";
-import { toast } from "sonner";
-import { ConnectionFailedView } from "./connection-failed-view";
 
 export type ConnectionStatus = "idle" | "connected" | "disconnected";
 
 export interface ConnectionContext {
   status: ConnectionStatus;
+  serverIds: string[];
+  serversById: Record<string, Proxy>;
   servers: Proxy[];
 }
 
 const [useContext, ContextProvider] = createCtx<ConnectionContext>();
 
-export const useConnectionContext = useContext;
-
 export function ConnectionProvider({
   children,
 }: { children: React.ReactNode }) {
-  const [servers, setServers] = useState<Proxy[]>([]);
   const { pathname } = useLocation();
   const navigate = useNavigate();
+
+  const [servers, setServers] = useState<Proxy[]>([]);
   const [enabled, setEnabled] = useState(false);
   const [connectionStatus, setConnectionStatus] =
     useState<ConnectionStatus>("idle");
@@ -96,20 +95,35 @@ export function ConnectionProvider({
     }
   }, [connectionStatus, data, pathname]);
 
+  const serverIds = useMemo(() => servers.map((it) => it.id), [servers]);
+
+  const serversById = useMemo(
+    () =>
+      servers.reduce(
+        (acc, it) => {
+          acc[it.id] = it;
+          return acc;
+        },
+        {} as Record<string, Proxy>,
+      ),
+    [servers],
+  );
+
   return (
-    <ContextProvider value={{ status: connectionStatus, servers }}>
+    <ContextProvider
+      value={{ status: connectionStatus, servers, serverIds, serversById }}
+    >
       {(() => {
         switch (connectionStatus) {
           case "idle":
+          case "disconnected":
             return (
               <div className="grid h-screen w-full place-items-center">
-                <Loader2Icon className="animate-spin text-gray-8" />
+                <CircleNotch className="size-10 animate-spin text-foreground/50" />
               </div>
             );
           case "connected":
             return children;
-          case "disconnected":
-            return <ConnectionFailedView />;
           default:
             return assertUnreachable(connectionStatus);
         }
@@ -117,3 +131,16 @@ export function ConnectionProvider({
     </ContextProvider>
   );
 }
+
+export const useConnectionContext = useContext;
+
+export const useCurrentServer = () => {
+  const { serversById, serverIds } = useConnectionContext();
+  const { proxyId } = useParams<{ proxyId: string }>();
+
+  if (!proxyId || !serverIds.includes(proxyId)) {
+    return null;
+  }
+
+  return serversById[proxyId] ?? null;
+};

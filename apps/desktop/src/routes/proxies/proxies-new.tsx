@@ -7,7 +7,6 @@ import {
   SectionSeparator,
   SectionTitle,
 } from "@/components/section";
-import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
 
 export function ProxiesNewRoute() {
@@ -15,14 +14,6 @@ export function ProxiesNewRoute() {
 
   return (
     <Container size="sm">
-      <Button
-        className="absolute top-4 left-4"
-        type="button"
-        variant="secondary"
-        onClick={() => navigate(-1)}
-      >
-        Back
-      </Button>
       <Section>
         <SectionHeader>
           <SectionTitle>New proxy</SectionTitle>
@@ -31,7 +22,7 @@ export function ProxiesNewRoute() {
         <SectionSeparator />
         <CreateProxyForm
           onSuccess={(res) => {
-            navigate(`/proxies/${res.id}`);
+            navigate(`/${res.id}`);
           }}
         />
       </Section>

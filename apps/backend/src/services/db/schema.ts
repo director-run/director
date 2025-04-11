@@ -26,13 +26,7 @@ export const McpServerSchema = z.object({
 
 export type McpServer = z.infer<typeof McpServerSchema>;
 
-export const integrationEnum = z.enum([
-  "claude-desktop",
-  "cursor",
-  "goose",
-  "raycast",
-  "windsurf",
-]);
+export const integrationEnum = z.enum(["claude", "cursor"]);
 
 export type Integration = z.infer<typeof integrationEnum>;
 

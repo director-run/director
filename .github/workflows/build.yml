@@ -1,4 +1,3 @@
-
 name: "Build"
 
 on:
@@ -15,6 +14,7 @@ concurrency:
 jobs:
   test-build:
     name: Build Tauri
+    if: github.event.pull_request.draft == false
     strategy:
       fail-fast: false
       matrix:

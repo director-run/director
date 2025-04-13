@@ -9,6 +9,7 @@
       "public",
       "test",
       "dist",
+      ".next",
       "**/src-tauri/target/**",
       "**/src-tauri/binaries/**",
       "**/src-tauri/gen/**"

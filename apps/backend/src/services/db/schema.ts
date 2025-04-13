@@ -3,28 +3,28 @@ import { z } from "zod";
 const requiredStringSchema = z.string().trim().min(1, "Required");
 const optionalStringSchema = z.string().trim().nullish();
 
-export const StdioTransportSchema = z.object({
+export const stdioTransportSchema = z.object({
   type: z.literal("stdio"),
   command: requiredStringSchema,
   args: z.array(requiredStringSchema).optional(),
   env: z.array(requiredStringSchema).optional(),
 });
 
-export type StdioTransport = z.infer<typeof StdioTransportSchema>;
+export type StdioTransport = z.infer<typeof stdioTransportSchema>;
 
-export const SseTransportSchema = z.object({
+export const sseTransportSchema = z.object({
   type: z.literal("sse"),
   url: requiredStringSchema,
 });
 
-export type SseTransport = z.infer<typeof SseTransportSchema>;
+export type SseTransport = z.infer<typeof sseTransportSchema>;
 
-export const McpServerSchema = z.object({
+export const mcpServerSchema = z.object({
   name: requiredStringSchema,
-  transport: z.union([StdioTransportSchema, SseTransportSchema]),
+  transport: z.union([stdioTransportSchema, sseTransportSchema]),
 });
 
-export type McpServer = z.infer<typeof McpServerSchema>;
+export type McpServer = z.infer<typeof mcpServerSchema>;
 
 export const integrationEnum = z.enum(["claude", "cursor"]);
 
@@ -34,7 +34,7 @@ export const proxySchema = z.object({
   id: requiredStringSchema,
   name: requiredStringSchema,
   description: optionalStringSchema,
-  servers: z.array(McpServerSchema),
+  servers: z.array(mcpServerSchema),
   integrations: z.array(integrationEnum),
 });
 

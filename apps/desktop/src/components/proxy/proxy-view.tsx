@@ -1,4 +1,9 @@
+import {
+  proxyQueryStatesSerializer,
+  useProxyQueryStates,
+} from "@/hooks/use-proxy-query-states";
 import { Proxy } from "@director/backend/src/services/db/schema";
+import Link from "next/link";
 import { Container } from "../container";
 import { MCPCapabilitiesList } from "../mcp-servers/mcp-capabilities-list";
 import { MCPServersList } from "../mcp-servers/mcp-servers-list";
@@ -6,8 +11,10 @@ import {
   Section,
   SectionDescription,
   SectionHeader,
+  SectionSeparator,
   SectionTitle,
 } from "../section";
+import { Button } from "../ui/button";
 import { ProxyIntegrations } from "./proxy-integrations";
 
 interface ProxyViewProps {
@@ -15,16 +22,22 @@ interface ProxyViewProps {
 }
 
 export function ProxyView({ proxy }: ProxyViewProps) {
+  const [proxyQueryStates] = useProxyQueryStates();
+
   return (
     <Container size="md">
       <Section>
         <SectionHeader>
           <SectionTitle>{proxy.name}</SectionTitle>
-          <SectionDescription>{proxy.description}</SectionDescription>
+          {proxy.description && (
+            <SectionDescription>{proxy.description}</SectionDescription>
+          )}
         </SectionHeader>
 
         <ProxyIntegrations proxy={proxy} />
       </Section>
+
+      <SectionSeparator />
 
       <Section>
         <SectionHeader>
@@ -35,7 +48,17 @@ export function ProxyView({ proxy }: ProxyViewProps) {
         </SectionHeader>
 
         <MCPServersList servers={proxy.servers} />
+
+        <Button className="w-fit" asChild>
+          <Link
+            href={`/proxy${proxyQueryStatesSerializer({ ...proxyQueryStates, add: "mcp" })}`}
+          >
+            Add MCP server
+          </Link>
+        </Button>
       </Section>
+
+      <SectionSeparator />
 
       <Section>
         <SectionHeader>

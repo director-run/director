@@ -1,8 +1,9 @@
 "use client";
+import { useProxyQueryStates } from "@/hooks/use-proxy-query-states";
 import { createCtx } from "@/lib/create-ctx";
 import { trpc } from "@/lib/trpc";
 import type { Proxy } from "@director/backend/src/services/db/schema";
-import { parseAsString, useQueryState } from "nuqs";
+import {} from "nuqs";
 import {} from "react";
 import { LoadingView } from "../loading-view";
 import { useConnectionContext } from "../providers/connection-provider";
@@ -20,7 +21,7 @@ export function ProxyContextProvider({
   children,
 }: { children: React.ReactNode }) {
   const { status } = useConnectionContext();
-  const [currentProxyId] = useQueryState("proxyId", parseAsString);
+  const [proxyQueryStates] = useProxyQueryStates();
 
   const { data, isLoading } = trpc.store.getAll.useQuery(undefined, {
     enabled: status === "connected",
@@ -40,11 +41,16 @@ export function ProxyContextProvider({
     );
   })();
 
-  const currentProxy = proxyById[currentProxyId as string] ?? null;
+  const currentProxy = proxyById[proxyQueryStates.proxyId as string] ?? null;
 
   return (
     <ContextProvider
-      value={{ currentProxyId, currentProxy, proxyIds, proxyById }}
+      value={{
+        currentProxyId: proxyQueryStates.proxyId,
+        currentProxy,
+        proxyIds,
+        proxyById,
+      }}
     >
       {isLoading && (data ?? []).length === 0 ? <LoadingView /> : children}
     </ContextProvider>
@@ -52,13 +58,3 @@ export function ProxyContextProvider({
 }
 
 export const useProxyContext = useContext;
-
-export const useCurrentServer = () => {
-  const { currentProxy } = useProxyContext();
-
-  if (!currentProxy) {
-    throw new Error("No current proxy");
-  }
-
-  return currentProxy;
-};

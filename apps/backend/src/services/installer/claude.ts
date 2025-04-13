@@ -3,6 +3,7 @@ import path from "node:path";
 import { readJSONFile, writeJSONFile } from "../../helpers/json";
 import { getLogger } from "../../helpers/logger";
 import { App, restartApp } from "../../helpers/os";
+import { db } from "../db";
 import { getProxySSEUrl } from "../db/getProxySSEUrl";
 
 const CLAUDE_CONFIG_PATH = path.join(
@@ -46,6 +47,7 @@ export const installToClaude = async ({
 }) => {
   logger.info(`updating to Claude configuration in ${CLAUDE_CONFIG_PATH}`);
 
+  const config = await db.getProxy(proxyId);
   const claudeConfig = await readJSONFile<ClaudeConfig>(CLAUDE_CONFIG_PATH);
 
   const updatedConfig = {
@@ -56,6 +58,10 @@ export const installToClaude = async ({
         getClaudeConfigEntry(proxyId),
     },
   };
+
+  await db.updateProxy(proxyId, {
+    integrations: [...config.integrations, "claude"],
+  });
 
   await writeJSONFile(CLAUDE_CONFIG_PATH, updatedConfig);
 
@@ -72,6 +78,7 @@ export const uninstallFromClaude = async ({
   logger.info(
     `uninstalling from Claude configuration in ${CLAUDE_CONFIG_PATH}`,
   );
+  const config = await db.getProxy(proxyId);
   const claudeConfig = await readJSONFile<ClaudeConfig>(CLAUDE_CONFIG_PATH);
 
   // Create a new config object without the entry to be removed
@@ -93,6 +100,9 @@ export const uninstallFromClaude = async ({
   };
 
   await writeJSONFile(CLAUDE_CONFIG_PATH, updatedConfig);
+  await db.updateProxy(proxyId, {
+    integrations: config.integrations.filter((i) => i !== "claude"),
+  });
   logger.info(`${proxyId} successfully removed from Claude config`);
   await restartApp(App.CLAUDE);
 };

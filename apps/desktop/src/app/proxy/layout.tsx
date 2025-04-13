@@ -21,7 +21,7 @@ export default function ProxyLayout({
           <Button variant="ghost">Settings</Button>
         </div>
       </GlobalLayoutHeader>
-      <GlobalLayoutContent className="items-center justify-center pt-4 pb-14">
+      <GlobalLayoutContent className="pt-12 pb-[20vh]">
         {children}
       </GlobalLayoutContent>
     </>

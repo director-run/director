@@ -4,13 +4,13 @@ import * as React from "react";
 import { cn } from "@/lib/cn";
 
 const alertVariants = cva(
-  "relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 rounded-lg border px-4 py-3 text-sm has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] has-[>svg]:gap-x-3 [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current",
+  "flex flex-col flex-wrap gap-2 rounded-3xl bg-gray-100 p-6",
   {
     variants: {
       variant: {
-        default: "bg-card text-card-foreground",
+        default: "text-card-foreground",
         destructive:
-          "bg-card text-destructive *:data-[slot=alert-description]:text-destructive/90 [&>svg]:text-current",
+          "text-destructive *:data-[slot=alert-description]:text-destructive/90 [&>svg]:text-current",
       },
     },
     defaultVariants: {

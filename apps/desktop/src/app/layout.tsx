@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { GlobalLayout } from "@/components/global-layout";
+import { LoadingView } from "@/components/loading-view";
 import { AppProvider } from "@/components/providers/app-provider";
 import { ProxyContextProvider } from "@/components/proxy/proxy-context";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,9 +36,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AppProvider>
-          <ProxyContextProvider>
-            <GlobalLayout>{children}</GlobalLayout>
-          </ProxyContextProvider>
+          <Suspense fallback={<LoadingView />}>
+            <ProxyContextProvider>
+              <GlobalLayout>{children}</GlobalLayout>
+            </ProxyContextProvider>
+          </Suspense>
         </AppProvider>
       </body>
     </html>

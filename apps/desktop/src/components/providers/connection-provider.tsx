@@ -65,41 +65,6 @@ export function ConnectionProvider({
     }
   }, [connectionStatus]);
 
-  // useEffect(() => {
-  //   if (data) {
-  //     setServers(data);
-  //   }
-  // }, [data]);
-
-  // useEffect(() => {
-  //   const hasServers = data?.length;
-  //   const isConnected = connectionStatus === "connected";
-
-  //   if (pathname !== "/get-started" && !hasServers && isConnected) {
-  //     router.replace("/get-started");
-  //   }
-
-  //   if (pathname === "/get-started" && hasServers && !isConnected) {
-  //     router.replace("/");
-  //   }
-  // }, [connectionStatus, data, pathname]);
-
-  // const serverIds = useMemo(() => servers.map((it) => it.id), [servers]);
-
-  // const serversById = useMemo(
-  //   () =>
-  //     servers.reduce(
-  //       (acc, it) => {
-  //         acc[it.id] = it;
-  //         return acc;
-  //       },
-  //       {} as Record<string, Proxy>,
-  //     ),
-  //   [servers],
-  // );
-
-  // console.log(healthData);
-
   return (
     <ContextProvider value={{ status: connectionStatus }}>
       {(() => {
@@ -122,24 +87,3 @@ export function ConnectionProvider({
 }
 
 export const useConnectionContext = useContext;
-
-// export const useMaybeCurrentServer = () => {
-//   const { serversById, serverIds, servers } = useConnectionContext();
-//   const [proxyId] = useQueryState("proxyId");
-
-//   if (!proxyId || !serverIds.includes(proxyId)) {
-//     return null;
-//   }
-
-//   return serversById[proxyId] ?? null;
-// };
-
-// export const useCurrentServer = () => {
-//   const currentServer = useMaybeCurrentServer();
-
-//   if (!currentServer) {
-//     throw new Error("No current server");
-//   }
-
-//   return currentServer;
-// };

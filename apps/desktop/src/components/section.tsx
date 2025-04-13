@@ -25,7 +25,7 @@ export function Section({
       data-slot="section"
       id={name?.toLowerCase().replace(/ /g, "-")}
       className={cn(
-        "relative flex select-none scroll-m-20 flex-col gap-y-12",
+        "relative flex select-none scroll-m-20 flex-col gap-y-8",
         "before:font-mono after:font-mono",
         !name && "before:hidden after:hidden",
         name && "py-10",

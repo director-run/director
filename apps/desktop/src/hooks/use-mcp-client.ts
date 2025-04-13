@@ -1,7 +1,7 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { Prompt, Resource, Tool } from "@modelcontextprotocol/sdk/types.js";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useIsMounted } from "usehooks-ts";
 
 export function useMcpClient(proxyId: string) {
@@ -46,7 +46,36 @@ export function useMcpClient(proxyId: string) {
       client?.close();
       setIsLoading(false);
     };
-  }, [isMounted]);
+  }, [isMounted, proxyId]);
 
-  return { isLoading, tools, resources, prompts };
+  const capabilities = useMemo(() => {
+    const results = [];
+
+    for (const tool of tools) {
+      results.push({
+        type: "tool",
+        name: tool.name,
+        description: tool.description,
+      });
+    }
+
+    for (const resource of resources) {
+      results.push({
+        type: "resource",
+        name: resource.name,
+        description: resource.description,
+      });
+    }
+
+    for (const prompt of prompts) {
+      results.push({
+        type: "prompt",
+        name: prompt.name,
+        description: prompt.description,
+      });
+    }
+    return results;
+  }, [tools, resources, prompts]);
+
+  return { isLoading, capabilities };
 }

@@ -14,12 +14,13 @@ export function ProxyIntegrations({ proxy }: ProxyIntegrationsProps) {
       {integrationEnum.options.map((it) => {
         return (
           <IntegrationButton
-            key={it}
+            key={`${proxy.id}-${it}`}
             integrationId={it}
             isInstalled={proxy.integrations.includes(it)}
           />
         );
       })}
+      <IntegrationButton integrationId="manual" isInstalled={false} />
     </div>
   );
 }

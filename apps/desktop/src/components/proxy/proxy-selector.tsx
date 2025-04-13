@@ -2,7 +2,7 @@
 import { CaretDown, Plus } from "@phosphor-icons/react";
 import Link from "next/link";
 
-import {} from "@/components/providers/connection-provider";
+import { useProxyContext } from "@/components/proxy/proxy-context";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,10 +12,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useProxyContext } from "./proxy-context";
+import {
+  proxyQueryStatesSerializer,
+  useProxyQueryStates,
+} from "@/hooks/use-proxy-query-states";
 
 export function ProxySelector() {
-  const { currentProxyId, currentProxy, proxyById } = useProxyContext();
+  const [proxyQueryStates] = useProxyQueryStates();
+  const { currentProxy, proxyById } = useProxyContext();
 
   if (!currentProxy) {
     return null;
@@ -45,10 +49,7 @@ export function ProxySelector() {
             return (
               <DropdownMenuItem key={it.id} asChild>
                 <Link
-                  href={{
-                    pathname: "/proxy",
-                    query: { proxyId: it.id },
-                  }}
+                  href={`/proxy${proxyQueryStatesSerializer({ ...proxyQueryStates, proxyId: it.id })}`}
                 >
                   <span className="truncate">{it.name}</span>
                 </Link>
@@ -57,7 +58,7 @@ export function ProxySelector() {
           })}
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
-            <Link href="/new">
+            <Link href="/proxy/new">
               <Plus />
               New server
             </Link>

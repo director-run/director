@@ -6,12 +6,12 @@ import {
   ListToolsResultSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
-import type { ConnectedClient } from "../proxyMCPServers";
+import type { ProxyClient } from "../ProxyClient";
 
 export function setupToolHandlers(
   server: Server,
-  connectedClients: ConnectedClient[],
-  toolToClientMap: Map<string, ConnectedClient>,
+  connectedClients: ProxyClient[],
+  toolToClientMap: Map<string, ProxyClient>,
 ) {
   // List Tools Handler
   server.setRequestHandler(ListToolsRequestSchema, async (request) => {

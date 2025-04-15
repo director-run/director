@@ -4,7 +4,7 @@ import {
   ListResourceTemplatesResultSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { ResourceTemplate } from "@modelcontextprotocol/sdk/types.js";
-import type { ProxyClient } from "../proxyMCPServers";
+import type { ProxyClient } from "../ProxyClient";
 
 export function setupResourceTemplateHandlers(
   server: Server,

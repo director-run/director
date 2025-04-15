@@ -6,7 +6,7 @@ import {
   ReadResourceResultSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
-import type { ProxyClient } from "../proxyMCPServers";
+import type { ProxyClient } from "../ProxyClient";
 
 export function setupResourceHandlers(
   server: Server,

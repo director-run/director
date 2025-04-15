@@ -7,7 +7,7 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "clean": "rm -rf .turbo dist/*",
-    "test": "echo 'todo'",
+    "test": "bun run vitest  --fileParallelism=false",
     "cli": "bun run bin/cli.ts",
     "build": "bun build ./bin/cli.ts --compile --outfile ./dist/cli",
     "check-types": "tsc --noEmit"

@@ -2,7 +2,6 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import * as eventsource from "eventsource";
 import { getLogger } from "../../helpers/logger";
-import { sleep } from "../../helpers/util";
 import type { McpServer } from "../db/schema";
 import { ProxyClient } from "./ProxyClient";
 import { setupPromptHandlers } from "./handlers/promptsHandler";
@@ -60,37 +59,15 @@ const createClients = async (servers: McpServer[]): Promise<ProxyClient[]> => {
   const clients: ProxyClient[] = [];
 
   for (const server of servers) {
-    // logger.info(`Connecting to server: ${server.name}`);
-
-    const waitFor = 2500;
-    const retries = 3;
-    let count = 0;
-    let retry = true;
-
-    while (retry) {
-      const client = new ProxyClient(server);
-
-      try {
-        await client.connect();
-        clients.push(client);
-        break;
-      } catch (error) {
-        logger.error({
-          message: `error while connecting to server ${server.name}`,
-          server,
-          error: error,
-        });
-
-        count++;
-        retry = count < retries;
-        if (retry) {
-          try {
-            await client.close();
-          } catch {}
-          // logger.info(`Retry connection to ${server.name} in ${waitFor}ms (${count}/${retries})`);
-          await sleep(waitFor);
-        }
-      }
+    try {
+      const proxyClient = new ProxyClient(server);
+      await proxyClient.connect();
+      clients.push(proxyClient);
+    } catch (error) {
+      logger.error({
+        message: `Failed to connect to server ${server.name}`,
+        error,
+      });
     }
   }
 

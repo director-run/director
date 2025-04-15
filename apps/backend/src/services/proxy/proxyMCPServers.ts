@@ -29,9 +29,9 @@ export const proxyMCPServers = async (
 ): Promise<ProxyServerInstance> => {
   const connectedClients = await createClients(servers);
 
-  const toolToClientMap = new Map<string, ConnectedClient>();
-  const resourceToClientMap = new Map<string, ConnectedClient>();
-  const promptToClientMap = new Map<string, ConnectedClient>();
+  const toolToClientMap = new Map<string, ProxyClient>();
+  const resourceToClientMap = new Map<string, ProxyClient>();
+  const promptToClientMap = new Map<string, ProxyClient>();
 
   const server = new Server(
     {
@@ -63,25 +63,28 @@ export const proxyMCPServers = async (
   };
 };
 
-export interface ConnectedClient {
-  client: Client;
-  close: () => Promise<void>;
-  name: string;
-}
+export class ProxyClient {
+  public client: Client;
+  private transport: Transport;
+  private target: McpServer;
 
-const createClient = (
-  server: McpServer,
-): { client: Client | undefined; transport: Transport | undefined } => {
-  let transport: Transport | null = null;
-  try {
-    if (server.transport.type === "sse") {
-      transport = new SSEClientTransport(new URL(server.transport.url));
+  get name() {
+    return this.target.name;
+  }
+
+  constructor(target: McpServer) {
+    this.target = target;
+
+    if (this.target.transport.type === "sse") {
+      this.transport = new SSEClientTransport(
+        new URL(this.target.transport.url),
+      );
     } else {
-      transport = new StdioClientTransport({
-        command: server.transport.command,
-        args: server.transport.args,
-        env: server.transport.env
-          ? server.transport.env.reduce(
+      this.transport = new StdioClientTransport({
+        command: this.target.transport.command,
+        args: this.target.transport.args,
+        env: this.target.transport.env
+          ? this.target.transport.env.reduce(
               (o, v) => ({
                 [v]: process.env[v] || "",
               }),
@@ -90,39 +93,87 @@ const createClient = (
           : undefined,
       });
     }
-  } catch (error) {
-    console.error(
-      `Failed to create transport ${server.transport.type || "stdio"} to ${server.name}:`,
-      error,
+
+    if (!this.transport) {
+      throw new Error(`Transport ${this.target.name} not available.`);
+    }
+
+    this.client = new Client(
+      {
+        name: "mcp-proxy-client",
+        version: "1.0.0",
+      },
+      {
+        capabilities: {
+          prompts: {},
+          resources: { subscribe: true },
+          tools: {},
+        },
+      },
     );
   }
 
-  if (!transport) {
-    console.warn(`Transport ${server.name} not available.`);
-    return { transport: undefined, client: undefined };
+  async connect() {
+    await this.client.connect(this.transport);
   }
 
-  const client = new Client(
-    {
-      name: "mcp-proxy-client",
-      version: "1.0.0",
-    },
-    {
-      capabilities: {
-        prompts: {},
-        resources: { subscribe: true },
-        tools: {},
-      },
-    },
-  );
+  async close() {
+    await this.client.close();
+  }
+}
 
-  return { client, transport };
-};
+// const createClient = (
+//   server: McpServer,
+// ): { client: Client | undefined; transport: Transport | undefined } => {
+//   let transport: Transport | null = null;
+//   try {
+//     if (server.transport.type === "sse") {
+//       transport = new SSEClientTransport(new URL(server.transport.url));
+//     } else {
+//       transport = new StdioClientTransport({
+//         command: server.transport.command,
+//         args: server.transport.args,
+//         env: server.transport.env
+//           ? server.transport.env.reduce(
+//               (o, v) => ({
+//                 [v]: process.env[v] || "",
+//               }),
+//               {},
+//             )
+//           : undefined,
+//       });
+//     }
+//   } catch (error) {
+//     console.error(
+//       `Failed to create transport ${server.transport.type || "stdio"} to ${server.name}:`,
+//       error,
+//     );
+//   }
 
-const createClients = async (
-  servers: McpServer[],
-): Promise<ConnectedClient[]> => {
-  const clients: ConnectedClient[] = [];
+//   if (!transport) {
+//     console.warn(`Transport ${server.name} not available.`);
+//     return { transport: undefined, client: undefined };
+//   }
+
+//   const client = new Client(
+//     {
+//       name: "mcp-proxy-client",
+//       version: "1.0.0",
+//     },
+//     {
+//       capabilities: {
+//         prompts: {},
+//         resources: { subscribe: true },
+//         tools: {},
+//       },
+//     },
+//   );
+
+//   return { client, transport };
+// };
+
+const createClients = async (servers: McpServer[]): Promise<ProxyClient[]> => {
+  const clients: ProxyClient[] = [];
 
   for (const server of servers) {
     // logger.info(`Connecting to server: ${server.name}`);
@@ -133,23 +184,11 @@ const createClients = async (
     let retry = true;
 
     while (retry) {
-      const { client, transport } = createClient(server);
-      if (!client || !transport) {
-        break;
-      }
+      const client = new ProxyClient(server);
 
       try {
-        await client.connect(transport);
-        // logger.info(`Connected to server: ${server.name}`);
-
-        clients.push({
-          client,
-          name: server.name,
-          close: async () => {
-            await transport.close();
-          },
-        });
-
+        await client.connect();
+        clients.push(client);
         break;
       } catch (error) {
         logger.error({

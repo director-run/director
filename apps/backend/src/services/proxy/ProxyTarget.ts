@@ -17,6 +17,12 @@ export class ProxyTarget {
     return this.targetServer.name;
   }
 
+  public toPlainObject() {
+    return {
+      name: this.name,
+    };
+  }
+
   constructor(targetServer: McpServer) {
     this.targetServer = targetServer;
 

@@ -31,6 +31,8 @@ export class ProxyServerStore {
         proxyId,
         await ProxyServer.create({
           id: proxyId,
+          name: proxyConfig.name,
+          description: proxyConfig.description ?? undefined,
           targets: proxyConfig.servers,
         }),
       );
@@ -52,7 +54,14 @@ export class ProxyServerStore {
     const proxy = this.get(proxyId);
     await proxy.close();
     await db.deleteProxy(proxyId);
+    this.proxyServers.delete(proxyId);
     logger.info(`successfully deleted proxy server configuration: ${proxyId}`);
+  }
+
+  async purge(): Promise<void> {
+    await this.closeAll();
+    await db.purge();
+    this.proxyServers.clear();
   }
 
   async closeAll(): Promise<void> {
@@ -69,15 +78,47 @@ export class ProxyServerStore {
 
   public async create({
     name,
+    description,
     servers,
-  }: { name: string; servers: McpServer[] }): Promise<ProxyServer> {
-    const newProxy = await db.addProxy({ name, servers });
+  }: {
+    name: string;
+    description?: string;
+    servers?: McpServer[];
+  }): Promise<ProxyServer> {
+    const newProxy = await db.addProxy({
+      name,
+      description,
+      servers: servers ?? [],
+    });
     const proxyServer = await ProxyServer.create({
+      name: name,
       id: newProxy.id,
       targets: newProxy.servers,
     });
     this.proxyServers.set(newProxy.id, proxyServer);
     logger.info({ message: `Created new proxy`, proxyId: newProxy.id });
     return proxyServer;
+  }
+
+  public async update(
+    proxyId: string,
+    attributes: Partial<{
+      name: string;
+      description: string;
+      servers: McpServer[];
+    }>,
+  ): Promise<ProxyServer> {
+    const proxy = this.get(proxyId);
+    await proxy.close();
+    const updatedProxyEntry = await db.updateProxy(proxyId, attributes);
+    const updatedProxy = await ProxyServer.create({
+      id: proxyId,
+      name: updatedProxyEntry.name,
+      description: updatedProxyEntry.description ?? undefined,
+      targets: updatedProxyEntry.servers ?? [],
+    });
+    this.proxyServers.set(proxyId, updatedProxy);
+    logger.info({ message: `Updated proxy`, proxyId });
+    return updatedProxy;
   }
 }

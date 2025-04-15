@@ -5,21 +5,23 @@ import { PORT } from "./config";
 import { getLogger } from "./helpers/logger";
 import { errorRequestHandler } from "./http/middleware";
 import { sse } from "./http/routers/sse";
-import { appRouter } from "./http/routers/trpc";
+import { createAppRouter } from "./http/routers/trpc";
 import { ProxyServerStore } from "./services/proxy/ProxyServerStore";
 
 const logger = getLogger("startService");
 
-export const startService = async () => {
+export const startService = async (attribs?: {
+  proxyStore?: ProxyServerStore;
+}) => {
   const app = express();
-  const proxyStore = await ProxyServerStore.create();
+  const proxyStore = attribs?.proxyStore ?? (await ProxyServerStore.create());
 
   app.use(cors());
   app.use("/", sse({ proxyStore }));
   app.use(
     "/trpc",
     trpcExpress.createExpressMiddleware({
-      router: appRouter,
+      router: createAppRouter({ proxyStore }),
     }),
   );
 

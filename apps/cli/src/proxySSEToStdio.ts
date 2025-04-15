@@ -5,6 +5,7 @@ export async function proxySSEToStdio(sseUrl: string) {
   const transport = new StdioServerTransport();
   const proxy = await ProxyServer.create({
     id: "sse2stdio",
+    name: "sse2stdio",
     targets: [
       {
         name: "director-sse",

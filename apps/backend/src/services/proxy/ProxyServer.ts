@@ -22,9 +22,25 @@ export class ProxyServer {
   private transports: Map<string, SSEServerTransport>;
   private proxyId: string;
   private logger: Logger;
+  private name: string;
+  private description?: string;
 
-  private constructor({ id }: { id: string }) {
+  get id() {
+    return this.proxyId;
+  }
+
+  public getTargets() {
+    return this.targets;
+  }
+
+  private constructor({
+    id,
+    name,
+    description,
+  }: { id: string; name: string; description?: string }) {
     this.proxyId = id;
+    this.name = name;
+    this.description = description;
     this.mcpServer = new Server(
       {
         name: "mcp-proxy-server",
@@ -45,9 +61,16 @@ export class ProxyServer {
 
   static async create({
     id,
+    name,
+    description,
     targets,
-  }: { id: string; targets: McpServer[] }): Promise<ProxyServer> {
-    const proxyServer = new ProxyServer({ id });
+  }: {
+    id: string;
+    name: string;
+    description?: string;
+    targets: McpServer[];
+  }): Promise<ProxyServer> {
+    const proxyServer = new ProxyServer({ id, name, description });
     await proxyServer.initialize(targets);
     return proxyServer;
   }
@@ -85,6 +108,15 @@ export class ProxyServer {
 
   getServer(): Server {
     return this.mcpServer;
+  }
+
+  public toPlainObject() {
+    return {
+      id: this.proxyId,
+      name: this.name,
+      description: this.description,
+      targets: this.targets.map((target) => target.toPlainObject()),
+    };
   }
 
   async startSSEConnection(req: express.Request, res: express.Response) {

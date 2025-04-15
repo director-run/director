@@ -1,8 +1,9 @@
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { z } from "zod";
+import { ErrorCode } from "../../helpers/error";
+import { AppError } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
-import { db } from "../../services/db";
 import { proxySchema } from "../../services/db/schema";
 import {
   installToClaude,
@@ -12,6 +13,7 @@ import {
   installToCursor,
   uninstallFromCursor,
 } from "../../services/installer/cursor";
+import type { ProxyServerStore } from "../../services/proxy/ProxyServerStore";
 
 const logger = getLogger("http/routers/trpc");
 
@@ -67,111 +69,136 @@ const createTRPCRouter = t.router;
 // Create a procedure with logging middleware
 const loggedProcedure = t.procedure.use(loggingMiddleware);
 
-const storeRouter = createTRPCRouter({
-  getAll: loggedProcedure.query(() => {
-    try {
-      return db.getAll();
-    } catch (error) {
-      console.error(error);
-      return [];
-    }
-  }),
-  get: loggedProcedure
-    .input(z.object({ proxyId: z.string() }))
-    .query(({ input }) => {
-      return db.getProxy(input.proxyId);
-    }),
-  create: loggedProcedure
-    .input(proxySchema.omit({ id: true }))
-    .mutation(({ input }) => {
-      return db.addProxy(input);
-    }),
-  update: loggedProcedure
-    .input(
-      z.object({
-        proxyId: z.string(),
-        attributes: proxySchema.partial(),
-      }),
-    )
-    .mutation(({ input }) => {
-      return db.updateProxy(input.proxyId, input.attributes);
-    }),
-  delete: loggedProcedure
-    .input(z.object({ proxyId: z.string() }))
-    .mutation(({ input }) => {
-      return db.deleteProxy(input.proxyId);
-    }),
-});
-
-const installerRouter = createTRPCRouter({
-  install: loggedProcedure
-    .input(
-      z.object({
-        proxyId: z.string(),
-        client: z.enum(["claude", "cursor"]),
-      }),
-    )
-    .mutation(async ({ input }) => {
+export function createAppRouter({
+  proxyStore,
+}: { proxyStore: ProxyServerStore }) {
+  const storeRouter = createTRPCRouter({
+    getAll: loggedProcedure.query(async () => {
       try {
-        let configPath: string;
-        if (input.client === "claude") {
-          await installToClaude({ proxyId: input.proxyId });
-          configPath =
-            "Library/Application Support/Claude/claude_desktop_config.json";
-        } else {
-          await installToCursor({ proxyId: input.proxyId });
-          configPath = ".cursor/mcp.json";
-        }
-        return {
-          status: "ok" as const,
-          configPath: configPath,
-        };
+        return (await proxyStore.getAll()).map((proxy) =>
+          proxy.toPlainObject(),
+        );
       } catch (error) {
-        return {
-          status: "fail" as const,
-          configPath: "",
-          errorMessage:
-            error instanceof Error ? error.message : "Unknown error",
-        };
+        console.error(error);
+        return [];
       }
     }),
-  uninstall: loggedProcedure
-    .input(
-      z.object({
-        proxyId: z.string(),
-        client: z.enum(["claude", "cursor"]),
-      }),
-    )
-    .mutation(async ({ input }) => {
-      try {
-        let configPath: string;
-        if (input.client === "claude") {
-          await uninstallFromClaude({ proxyId: input.proxyId });
-          configPath =
-            "Library/Application Support/Claude/claude_desktop_config.json";
-        } else {
-          await uninstallFromCursor({ proxyId: input.proxyId });
-          configPath = ".cursor/mcp.json";
+    get: loggedProcedure
+      .input(z.object({ proxyId: z.string() }))
+      .query(async ({ input }) => {
+        try {
+          return proxyStore.get(input.proxyId).toPlainObject();
+        } catch (e) {
+          if (e instanceof AppError && e.code === ErrorCode.NOT_FOUND) {
+            return undefined;
+          }
+          throw e;
         }
-        return {
-          status: "ok" as const,
-          configPath: configPath,
-        };
-      } catch (error) {
-        return {
-          status: "fail" as const,
-          configPath: "",
-          errorMessage:
-            error instanceof Error ? error.message : "Unknown error",
-        };
-      }
-    }),
-});
+      }),
+    create: loggedProcedure
+      .input(proxySchema.omit({ id: true }))
+      .mutation(async ({ input }) => {
+        return (
+          await proxyStore.create({
+            name: input.name,
+            description: input.description ?? undefined,
+            servers: input.servers,
+          })
+        ).toPlainObject();
+      }),
+    update: loggedProcedure
+      .input(
+        z.object({
+          proxyId: z.string(),
+          attributes: proxySchema.partial(),
+        }),
+      )
+      .mutation(async ({ input }) => {
+        return (
+          await proxyStore.update(input.proxyId, {
+            name: input.attributes.name,
+            description: input.attributes.description ?? undefined,
+            servers: input.attributes.servers,
+          })
+        ).toPlainObject();
+      }),
+    delete: loggedProcedure
+      .input(z.object({ proxyId: z.string() }))
+      .mutation(async ({ input }) => {
+        await proxyStore.delete(input.proxyId);
+        return { success: true };
+      }),
+  });
 
-export const appRouter = createTRPCRouter({
-  store: storeRouter,
-  installer: installerRouter,
-});
+  const installerRouter = createTRPCRouter({
+    install: loggedProcedure
+      .input(
+        z.object({
+          proxyId: z.string(),
+          client: z.enum(["claude", "cursor"]),
+        }),
+      )
+      .mutation(async ({ input }) => {
+        try {
+          let configPath: string;
+          if (input.client === "claude") {
+            await installToClaude({ proxyId: input.proxyId });
+            configPath =
+              "Library/Application Support/Claude/claude_desktop_config.json";
+          } else {
+            await installToCursor({ proxyId: input.proxyId });
+            configPath = ".cursor/mcp.json";
+          }
+          return {
+            status: "ok" as const,
+            configPath: configPath,
+          };
+        } catch (error) {
+          return {
+            status: "fail" as const,
+            configPath: "",
+            errorMessage:
+              error instanceof Error ? error.message : "Unknown error",
+          };
+        }
+      }),
+    uninstall: loggedProcedure
+      .input(
+        z.object({
+          proxyId: z.string(),
+          client: z.enum(["claude", "cursor"]),
+        }),
+      )
+      .mutation(async ({ input }) => {
+        try {
+          let configPath: string;
+          if (input.client === "claude") {
+            await uninstallFromClaude({ proxyId: input.proxyId });
+            configPath =
+              "Library/Application Support/Claude/claude_desktop_config.json";
+          } else {
+            await uninstallFromCursor({ proxyId: input.proxyId });
+            configPath = ".cursor/mcp.json";
+          }
+          return {
+            status: "ok" as const,
+            configPath: configPath,
+          };
+        } catch (error) {
+          return {
+            status: "fail" as const,
+            configPath: "",
+            errorMessage:
+              error instanceof Error ? error.message : "Unknown error",
+          };
+        }
+      }),
+  });
 
-// export type definition of API
-export type AppRouter = typeof appRouter;
+  return createTRPCRouter({
+    store: storeRouter,
+    installer: installerRouter,
+  });
+}
+
+export type AppRouter = ReturnType<typeof createAppRouter>;

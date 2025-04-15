@@ -11,8 +11,9 @@ import type { ProxyClient } from "../ProxyClient";
 export function setupResourceHandlers(
   server: Server,
   connectedClients: ProxyClient[],
-  resourceToClientMap: Map<string, ProxyClient>,
 ) {
+  const resourceToClientMap = new Map<string, ProxyClient>();
+
   // List Resources Handler
   server.setRequestHandler(ListResourcesRequestSchema, async (request) => {
     const allResources: z.infer<typeof ListResourcesResultSchema>["resources"] =

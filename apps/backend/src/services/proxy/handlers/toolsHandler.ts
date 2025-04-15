@@ -11,8 +11,10 @@ import type { ProxyClient } from "../ProxyClient";
 export function setupToolHandlers(
   server: Server,
   connectedClients: ProxyClient[],
-  toolToClientMap: Map<string, ProxyClient>,
+  // toolToClientMap: Map<string, ProxyClient>,
 ) {
+  const toolToClientMap = new Map<string, ProxyClient>();
+
   // List Tools Handler
   server.setRequestHandler(ListToolsRequestSchema, async (request) => {
     const allTools: Tool[] = [];

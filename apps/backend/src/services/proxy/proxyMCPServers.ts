@@ -26,10 +26,6 @@ export const proxyMCPServers = async (
 ): Promise<ProxyServerInstance> => {
   const connectedClients = await createClients(targets);
 
-  const toolToClientMap = new Map<string, ProxyClient>();
-  const resourceToClientMap = new Map<string, ProxyClient>();
-  const promptToClientMap = new Map<string, ProxyClient>();
-
   const server = new Server(
     {
       name: "mcp-proxy-server",
@@ -44,9 +40,9 @@ export const proxyMCPServers = async (
     },
   );
 
-  setupToolHandlers(server, connectedClients, toolToClientMap);
-  setupPromptHandlers(server, connectedClients, promptToClientMap);
-  setupResourceHandlers(server, connectedClients, resourceToClientMap);
+  setupToolHandlers(server, connectedClients);
+  setupPromptHandlers(server, connectedClients);
+  setupResourceHandlers(server, connectedClients);
   setupResourceTemplateHandlers(server, connectedClients);
 
   return {

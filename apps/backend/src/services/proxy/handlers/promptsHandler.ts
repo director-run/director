@@ -11,8 +11,8 @@ import type { ProxyClient } from "../ProxyClient";
 export function setupPromptHandlers(
   server: Server,
   connectedClients: ProxyClient[],
-  promptToClientMap: Map<string, ProxyClient>,
 ) {
+  const promptToClientMap = new Map<string, ProxyClient>();
   // Get Prompt Handler
   server.setRequestHandler(GetPromptRequestSchema, async (request) => {
     const { name } = request.params;

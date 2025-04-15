@@ -5,8 +5,8 @@ import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
 import { PORT } from "../../config";
+import { createMCPServer } from "../../helpers/testHelpers";
 import { db } from "../../services/db";
-import { createMCPServer } from "../../services/proxy/createMCPServer";
 import { startService } from "../../startService";
 
 describe("SSE Router", () => {

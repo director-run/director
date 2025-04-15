@@ -62,7 +62,11 @@ program
   });
 
 program.command("debug").action(async () => {
-  console.log("todo");
+  console.log("----------------");
+  console.log("__dirname: ", __dirname);
+  console.log("__filename: ", __filename);
+  console.log(`config:`, config);
+  console.log("----------------");
 });
 
 program.command("seed").action(() => {

@@ -1,6 +1,5 @@
 import { Command } from "commander";
 import packageJson from "../package.json";
-import * as config from "../src/config";
 import { getLogger } from "../src/helpers/logger";
 import { seed } from "../src/services/db/seed";
 import {} from "../src/services/installer/claude";
@@ -15,14 +14,6 @@ program
   .name(packageJson.name)
   .description("[DEPRECATED] CLI to operate mcp server")
   .version(packageJson.version);
-
-program.command("debug").action(async () => {
-  console.log("----------------");
-  console.log("__dirname: ", __dirname);
-  console.log("__filename: ", __filename);
-  console.log(`config:`, config);
-  console.log("----------------");
-});
 
 program.command("seed").action(() => {
   seed();

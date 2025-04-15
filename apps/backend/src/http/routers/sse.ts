@@ -25,6 +25,8 @@ export function sse({ proxyStore }: { proxyStore: ProxyServerStore }): Router {
         message: "SSE connection started",
         sessionId: transport.sessionId,
         proxyId,
+        userAgent: req.headers["user-agent"],
+        host: req.headers["host"],
       });
 
       /**

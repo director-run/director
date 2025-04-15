@@ -87,14 +87,10 @@ export class ProxyServer {
     return this.mcpServer;
   }
 
-  getTransports(): Map<string, SSEServerTransport> {
-    return this.transports;
-  }
-
   async startSSEConnection(req: express.Request, res: express.Response) {
     const transport = new SSEServerTransport(`/${this.proxyId}/message`, res);
 
-    this.getTransports().set(transport.sessionId, transport);
+    this.transports.set(transport.sessionId, transport);
 
     this.logger.info({
       message: "SSE connection started",
@@ -117,10 +113,10 @@ export class ProxyServer {
         sessionId: transport.sessionId,
         proxyId: this.proxyId,
       });
-      this.getTransports().delete(transport.sessionId);
+      this.transports.delete(transport.sessionId);
     });
 
-    await this.getServer().connect(transport);
+    await this.mcpServer.connect(transport);
   }
 
   async handleSSEMessage(req: express.Request, res: express.Response) {
@@ -139,7 +135,7 @@ export class ProxyServer {
       method: body.method,
     });
 
-    const transport = this.getTransports().get(sessionId);
+    const transport = this.transports.get(sessionId);
 
     if (!transport) {
       // TODO: Add a test case for this.
@@ -158,6 +154,6 @@ export class ProxyServer {
     this.logger.info(`Shutting down`);
 
     await Promise.all(this.targets.map((target) => target.close()));
-    await this.getServer().close();
+    await this.mcpServer.close();
   }
 }

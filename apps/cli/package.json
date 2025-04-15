@@ -1,0 +1,23 @@
+{
+  "name": "@director/cli",
+  "module": "index.ts",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "clean": "rm -rf .turbo dist/*",
+    "test": "bun run vitest  --fileParallelism=false",
+    "cli": "bun run bin/cli.ts",
+    "build": "bun build ./bin/cli.ts --compile --outfile ./dist/cli",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "cli-table3": "^0.6.5",
+    "commander": "^13.1.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "devDependencies": {}
+}

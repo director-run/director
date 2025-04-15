@@ -11,25 +11,25 @@ const logger = getLogger("ProxyTarget");
 export class ProxyTarget {
   public client: Client;
   private transport: Transport;
-  private target: McpServer;
+  private targetServer: McpServer;
 
   get name() {
-    return this.target.name;
+    return this.targetServer.name;
   }
 
-  constructor(target: McpServer) {
-    this.target = target;
+  constructor(targetServer: McpServer) {
+    this.targetServer = targetServer;
 
-    if (this.target.transport.type === "sse") {
+    if (this.targetServer.transport.type === "sse") {
       this.transport = new SSEClientTransport(
-        new URL(this.target.transport.url),
+        new URL(this.targetServer.transport.url),
       );
     } else {
       this.transport = new StdioClientTransport({
-        command: this.target.transport.command,
-        args: this.target.transport.args,
-        env: this.target.transport.env
-          ? this.target.transport.env.reduce(
+        command: this.targetServer.transport.command,
+        args: this.targetServer.transport.args,
+        env: this.targetServer.transport.env
+          ? this.targetServer.transport.env.reduce(
               (o, v) => ({
                 [v]: process.env[v] || "",
               }),
@@ -40,7 +40,7 @@ export class ProxyTarget {
     }
 
     if (!this.transport) {
-      throw new Error(`Transport ${this.target.name} not available.`);
+      throw new Error(`Transport ${this.targetServer.name} not available.`);
     }
 
     this.client = new Client(
@@ -70,8 +70,8 @@ export class ProxyTarget {
         break;
       } catch (error) {
         logger.error({
-          message: `error while connecting to server ${this.target.name}`,
-          server: this.target,
+          message: `error while connecting to server ${this.targetServer.name}`,
+          server: this.targetServer,
           error: error,
         });
 

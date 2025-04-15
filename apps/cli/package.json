@@ -13,8 +13,10 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@trpc/client": "^11.0.2",
     "cli-table3": "^0.6.5",
-    "commander": "^13.1.0"
+    "commander": "^13.1.0",
+    "superjson": "^2.2.2"
   },
   "peerDependencies": {
     "typescript": "^5"

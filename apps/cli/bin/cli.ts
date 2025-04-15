@@ -1,7 +1,22 @@
+import { createTRPCClient, httpBatchLink } from "@trpc/client";
+import Table from "cli-table3";
 import { Command, Option } from "commander";
+import superjson from "superjson";
+import type { AppRouter } from "../../backend/src/http/routers/trpc";
 import packageJson from "../package.json";
+import * as config from "../src/config";
 
 const program = new Command();
+
+// Create tRPC client
+const trpc = createTRPCClient<AppRouter>({
+  links: [
+    httpBatchLink({
+      url: `http://localhost:${config.PORT}/trpc`,
+      transformer: superjson,
+    }),
+  ],
+});
 
 program
   .name(packageJson.name)
@@ -13,7 +28,30 @@ program
   .alias("list")
   .description("List all configured MCP proxies")
   .action(async () => {
-    console.log("todo");
+    try {
+      const proxies = await trpc.store.getAll.query();
+
+      if (proxies.length === 0) {
+        console.log("no proxies configured yet.");
+      } else {
+        const table = new Table({
+          head: ["name", "servers"],
+          style: {
+            head: ["green"],
+          },
+        });
+        table.push(
+          ...proxies.map((proxy) => [
+            proxy.name,
+            proxy.servers.map((s) => s.name).join(","),
+          ]),
+        );
+
+        console.log(table.toString());
+      }
+    } catch (error) {
+      console.error("Failed to fetch proxies:", error);
+    }
   });
 
 program

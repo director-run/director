@@ -6,9 +6,9 @@ import { getLogger } from "../../helpers/logger";
 import { sleep } from "../../helpers/util";
 import type { McpServer } from "../db/schema";
 
-const logger = getLogger("ProxyClient");
+const logger = getLogger("ProxyTarget");
 
-export class ProxyClient {
+export class ProxyTarget {
   public client: Client;
   private transport: Transport;
   private target: McpServer;

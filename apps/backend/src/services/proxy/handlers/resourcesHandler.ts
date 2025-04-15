@@ -6,13 +6,13 @@ import {
   ReadResourceResultSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
-import type { ProxyClient } from "../ProxyClient";
+import type { ProxyTarget } from "../ProxyTarget";
 
 export function setupResourceHandlers(
   server: Server,
-  connectedClients: ProxyClient[],
+  connectedClients: ProxyTarget[],
 ) {
-  const resourceToClientMap = new Map<string, ProxyClient>();
+  const resourceToClientMap = new Map<string, ProxyTarget>();
 
   // List Resources Handler
   server.setRequestHandler(ListResourcesRequestSchema, async (request) => {

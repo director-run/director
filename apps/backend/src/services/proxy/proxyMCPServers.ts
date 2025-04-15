@@ -3,7 +3,7 @@ import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import * as eventsource from "eventsource";
 import { getLogger } from "../../helpers/logger";
 import type { McpServer } from "../db/schema";
-import { ProxyClient } from "./ProxyClient";
+import { ProxyTarget } from "./ProxyTarget";
 import { setupPromptHandlers } from "./handlers/promptsHandler";
 import { setupResourceTemplateHandlers } from "./handlers/resourceTemplatesHandler";
 import { setupResourceHandlers } from "./handlers/resourcesHandler";
@@ -55,12 +55,12 @@ export const proxyMCPServers = async (
   };
 };
 
-const createClients = async (servers: McpServer[]): Promise<ProxyClient[]> => {
-  const clients: ProxyClient[] = [];
+const createClients = async (servers: McpServer[]): Promise<ProxyTarget[]> => {
+  const clients: ProxyTarget[] = [];
 
   for (const server of servers) {
     try {
-      const proxyClient = new ProxyClient(server);
+      const proxyClient = new ProxyTarget(server);
       await proxyClient.connect();
       clients.push(proxyClient);
     } catch (error) {

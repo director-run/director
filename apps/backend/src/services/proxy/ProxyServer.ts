@@ -83,10 +83,6 @@ export class ProxyServer {
     setupResourceTemplateHandlers(this.mcpServer, this.targets);
   }
 
-  async close(): Promise<void> {
-    await Promise.all(this.targets.map((target) => target.close()));
-  }
-
   getServer(): Server {
     return this.mcpServer;
   }
@@ -156,5 +152,12 @@ export class ProxyServer {
     }
 
     await transport.handlePostMessage(req, res, body);
+  }
+
+  async close(): Promise<void> {
+    this.logger.info(`Shutting down`);
+
+    await Promise.all(this.targets.map((target) => target.close()));
+    await this.getServer().close();
   }
 }

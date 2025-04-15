@@ -1,8 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { DB_FILE_PATH } from "../config";
 import { AppError, ErrorCode, isAppError } from "./error";
-
-console.log(DB_FILE_PATH);
 
 describe("errors", () => {
   describe("AppError", () => {

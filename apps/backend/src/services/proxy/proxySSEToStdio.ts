@@ -1,9 +1,9 @@
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { proxyMCPServers } from "./proxyMCPServers";
+import { ProxyServer } from "./ProxyServer";
 
 export async function proxySSEToStdio(sseUrl: string) {
   const transport = new StdioServerTransport();
-  const { server, close } = await proxyMCPServers([
+  const proxy = await ProxyServer.create([
     {
       name: "test-sse-transport",
       transport: {
@@ -13,12 +13,12 @@ export async function proxySSEToStdio(sseUrl: string) {
     },
   ]);
 
-  await server.connect(transport);
+  await proxy.getServer().connect(transport);
 
   // Cleanup on exit
   process.on("SIGINT", async () => {
     await close();
-    await server.close();
+    await proxy.getServer().close();
     process.exit(0);
   });
 }

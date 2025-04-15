@@ -2,7 +2,7 @@ import { AppError } from "../../helpers/error";
 import { ErrorCode } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
 import { db } from "../db";
-import { type ProxyServerInstance, proxyMCPServers } from "./proxyMCPServers";
+import { ProxyServer } from "./ProxyServer";
 
 const logger = getLogger("ProxyServerStore");
 
@@ -12,7 +12,7 @@ const logger = getLogger("ProxyServerStore");
  * based on configuration from a JSON file.
  */
 export class ProxyServerStore {
-  private proxyServers: Map<string, ProxyServerInstance> = new Map();
+  private proxyServers: Map<string, ProxyServer> = new Map();
 
   /**
    * Private constructor to enforce initialization via the create() factory method.
@@ -50,7 +50,7 @@ export class ProxyServerStore {
       logger.info({ message: `Initializing proxy`, proxyId });
       this.proxyServers.set(
         proxyId,
-        await proxyMCPServers(proxyConfig.servers),
+        await ProxyServer.create(proxyConfig.servers),
       );
     }
   }
@@ -62,7 +62,7 @@ export class ProxyServerStore {
    * @returns The ProxyServerInstance for the specified proxy
    * @throws {AppError} If the proxy server is not found or failed to initialize
    */
-  public get(proxyId: string): ProxyServerInstance {
+  public get(proxyId: string): ProxyServer {
     const server = this.proxyServers.get(proxyId);
     if (!server) {
       throw new AppError(
@@ -97,11 +97,11 @@ export class ProxyServerStore {
 
       // Check if server and close method exist before calling
       if (
-        proxyInstance.server &&
-        typeof proxyInstance.server.close === "function"
+        proxyInstance.getServer() &&
+        typeof proxyInstance.getServer().close === "function"
       ) {
         try {
-          await proxyInstance.server.close();
+          await proxyInstance.getServer().close();
         } catch (closeError) {
           let errorMessage = `Error closing server for proxy ${proxyId}`;
           if (closeError instanceof Error) {

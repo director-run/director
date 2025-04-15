@@ -77,6 +77,23 @@ export class ProxyServerStore {
   }
 
   /**
+   * Deletes a proxy server instance and removes it from the configuration.
+   * This method:
+   * 1. Closes the proxy server and cleans up its resources
+   * 2. Removes it from the in-memory store
+   * 3. Removes it from the configuration file on disk
+   *
+   * @param proxyId - The id of the proxy server to delete
+   * @returns A Promise that resolves when the deletion is complete
+   * @throws {AppError} If the proxy server is not found
+   */
+  async delete(proxyId: string): Promise<void> {
+    await this.close(proxyId);
+    await db.deleteProxy(proxyId);
+    logger.info(`Successfully deleted proxy server configuration: ${proxyId}`);
+  }
+
+  /**
    * Closes and cleans up a specific proxy server instance.
    * This method handles both the proxy instance cleanup and server closure,
    * with appropriate error handling and logging.

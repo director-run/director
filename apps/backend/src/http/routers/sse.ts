@@ -7,7 +7,7 @@ import { parseMCPMessageBody } from "../../helpers/mcp";
 import type { ProxyServerStore } from "../../services/proxy/ProxyServerStore";
 import { asyncHandler } from "../middleware";
 
-const logger = getLogger("routers/sse");
+const logger = getLogger("http/routers/sse");
 
 export function sse({ proxyStore }: { proxyStore: ProxyServerStore }): Router {
   const router = express.Router();

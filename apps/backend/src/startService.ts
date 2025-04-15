@@ -33,7 +33,7 @@ export const startService = async (attribs?: {
 
   process.on("SIGINT", async () => {
     logger.info("Received SIGINT, cleaning up proxy servers...");
-    // await proxyStore.closeAll();
+    await proxyStore.closeAll();
     process.exit(0);
   });
 

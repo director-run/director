@@ -63,6 +63,10 @@ export class ProxyServerStore {
     logger.info("finished cleaning up all proxy servers.");
   }
 
+  public async getAll(): Promise<ProxyServer[]> {
+    return Array.from(this.proxyServers.values());
+  }
+
   public async create({
     name,
     servers,

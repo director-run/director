@@ -22,7 +22,7 @@ export class ProxyServerStore {
 
   private async initialize(): Promise<void> {
     logger.info("Fetching proxy configurations...");
-    let proxies = await db.listProxies();
+    let proxies = await db.getAll();
 
     for (const proxyConfig of proxies) {
       const proxyId = proxyConfig.id;

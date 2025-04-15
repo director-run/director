@@ -88,7 +88,7 @@ class Database {
     return proxy;
   }
 
-  async listProxies(): Promise<Proxy[]> {
+  async getAll(): Promise<Proxy[]> {
     const store = await readDB(this.filePath);
     return store.proxies;
   }

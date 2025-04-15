@@ -70,7 +70,7 @@ const loggedProcedure = t.procedure.use(loggingMiddleware);
 const storeRouter = createTRPCRouter({
   getAll: loggedProcedure.query(() => {
     try {
-      return db.listProxies();
+      return db.getAll();
     } catch (error) {
       console.error(error);
       return [];

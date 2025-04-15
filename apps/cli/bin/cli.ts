@@ -8,15 +8,40 @@ import * as config from "../src/config";
 
 const program = new Command();
 
-// Create tRPC client
 const trpc = createTRPCClient<AppRouter>({
   links: [
     httpBatchLink({
-      url: `http://localhost:${config.PORT}/trpc`,
+      url: config.DIRECTOR_URL,
       transformer: superjson,
+      fetch(url, options) {
+        return fetch(url, options).catch((error) => {
+          if (error.code === "ConnectionRefused") {
+            throw new Error(
+              `Could not connect to the service on ${config.DIRECTOR_URL}. Is it running?`,
+            );
+          }
+          throw error;
+        });
+      },
     }),
   ],
 });
+
+function withErrorHandler<Args extends unknown[]>(
+  handler: (...args: Args) => void | Promise<void>,
+): (...args: Args) => Promise<void> {
+  return async (...args: Args) => {
+    try {
+      await handler(...args);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(`Error: ${error.message}`);
+      } else {
+        console.error("Error: An unexpected error occurred");
+      }
+    }
+  };
+}
 
 program
   .name(packageJson.name)
@@ -27,8 +52,8 @@ program
   .command("ls")
   .alias("list")
   .description("List all configured MCP proxies")
-  .action(async () => {
-    try {
+  .action(
+    withErrorHandler(async () => {
       const proxies = await trpc.store.getAll.query();
 
       if (proxies.length === 0) {
@@ -49,41 +74,51 @@ program
 
         console.log(table.toString());
       }
-    } catch (error) {
-      console.error("Failed to fetch proxies:", error);
-    }
-  });
+    }),
+  );
 
 program
   .command("start")
   .description("Start the proxy server for all proxies")
-  .action(async () => {
+  .action(
+    withErrorHandler(async () => {
+      console.log("todo");
+    }),
+  );
+
+program.command("debug").action(
+  withErrorHandler(async () => {
+    console.log("----------------");
+    console.log("__dirname: ", __dirname);
+    console.log("__filename: ", __filename);
+    console.log(`config:`, config);
+    console.log("----------------");
+  }),
+);
+
+program.command("seed").action(
+  withErrorHandler(() => {
     console.log("todo");
-  });
-
-program.command("debug").action(async () => {
-  console.log("----------------");
-  console.log("__dirname: ", __dirname);
-  console.log("__filename: ", __filename);
-  console.log(`config:`, config);
-  console.log("----------------");
-});
-
-program.command("seed").action(() => {
-  console.log("todo");
-});
+  }),
+);
 
 program
   .command("sse2stdio <sse_url>")
   .description("Proxy a SSE connection to a stdio stream")
-  .action(async (sseUrl) => {
-    console.log("todo");
-  });
+  .action(
+    withErrorHandler(async (sseUrl: string) => {
+      console.log("todo");
+    }),
+  );
 
 function mandatoryOption(flags: string, description?: string) {
   const option = new Option(flags, description);
   option.makeOptionMandatory(true);
   return option;
+}
+
+interface InstallOptions {
+  client: "claude" | "cursor";
 }
 
 program
@@ -95,13 +130,15 @@ program
       "cursor",
     ]),
   )
-  .action(async (proxyId, options) => {
-    const result = await trpc.installer.install.mutate({
-      proxyId,
-      client: options.client,
-    });
-    console.log(result);
-  });
+  .action(
+    withErrorHandler(async (proxyId: string, options: InstallOptions) => {
+      const result = await trpc.installer.install.mutate({
+        proxyId,
+        client: options.client,
+      });
+      console.log(result);
+    }),
+  );
 
 program
   .command("uninstall <proxyId>")
@@ -112,19 +149,23 @@ program
       "cursor",
     ]),
   )
-  .action(async (proxyId, options) => {
-    const result = await trpc.installer.uninstall.mutate({
-      proxyId,
-      client: options.client,
-    });
-    console.log(result);
-  });
+  .action(
+    withErrorHandler(async (proxyId: string, options: InstallOptions) => {
+      const result = await trpc.installer.uninstall.mutate({
+        proxyId,
+        client: options.client,
+      });
+      console.log(result);
+    }),
+  );
 
 program
   .command("claude:restart")
   .description("Restart Claude")
-  .action(async () => {
-    console.log("todo");
-  });
+  .action(
+    withErrorHandler(async () => {
+      console.log("todo");
+    }),
+  );
 
 program.parse();

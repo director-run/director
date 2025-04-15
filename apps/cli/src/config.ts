@@ -1,1 +1,2 @@
-export const PORT = Number(process.env.PORT ?? 3000);
+export const DIRECTOR_URL =
+  process.env.DIRECTOR_URL ?? `http://localhost:3000/trpc`;

@@ -50,7 +50,10 @@ export class ProxyServerStore {
       logger.info({ message: `Initializing proxy`, proxyId });
       this.proxyServers.set(
         proxyId,
-        await ProxyServer.create(proxyConfig.servers),
+        await ProxyServer.create({
+          id: proxyId,
+          targets: proxyConfig.servers,
+        }),
       );
     }
   }

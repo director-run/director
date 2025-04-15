@@ -92,7 +92,11 @@ program
     ]),
   )
   .action(async (proxyId, options) => {
-    console.log("todo");
+    const result = await trpc.installer.install.mutate({
+      proxyId,
+      client: options.client,
+    });
+    console.log(result);
   });
 
 program
@@ -105,7 +109,11 @@ program
     ]),
   )
   .action(async (proxyId, options) => {
-    console.log("todo");
+    const result = await trpc.installer.uninstall.mutate({
+      proxyId,
+      client: options.client,
+    });
+    console.log(result);
   });
 
 program

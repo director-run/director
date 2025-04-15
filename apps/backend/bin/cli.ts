@@ -1,22 +1,11 @@
-import Table from "cli-table3";
-import { Command, Option } from "commander";
+import { Command } from "commander";
 import packageJson from "../package.json";
 import * as config from "../src/config";
 import { getLogger } from "../src/helpers/logger";
-import { restartApp } from "../src/helpers/os";
-import { App } from "../src/helpers/os";
-import { db } from "../src/services/db";
 import { seed } from "../src/services/db/seed";
-import {
-  installToClaude,
-  uninstallFromClaude,
-} from "../src/services/installer/claude";
-import {
-  installToCursor,
-  uninstallFromCursor,
-} from "../src/services/installer/cursor";
+import {} from "../src/services/installer/claude";
+import {} from "../src/services/installer/cursor";
 import { proxySSEToStdio } from "../src/services/proxy/proxySSEToStdio";
-import { startService } from "../src/startService";
 
 const program = new Command();
 
@@ -24,42 +13,8 @@ const logger = getLogger("cli");
 
 program
   .name(packageJson.name)
-  .description("CLI to operate mcp server")
+  .description("[DEPRECATED] CLI to operate mcp server")
   .version(packageJson.version);
-
-program
-  .command("ls")
-  .alias("list")
-  .description("List all configured MCP proxies")
-  .action(async () => {
-    const proxies = await db.listProxies();
-
-    if (proxies.length === 0) {
-      console.log("no proxies configured yet.");
-    } else {
-      const table = new Table({
-        head: ["name", "servers"],
-        style: {
-          head: ["green"],
-        },
-      });
-      table.push(
-        ...proxies.map((proxy) => [
-          proxy.name,
-          proxy.servers.map((s) => s.name).join(","),
-        ]),
-      );
-
-      console.log(table.toString());
-    }
-  });
-
-program
-  .command("start")
-  .description("Start the proxy server for all proxies")
-  .action(async () => {
-    await startService();
-  });
 
 program.command("debug").action(async () => {
   console.log("----------------");
@@ -78,57 +33,6 @@ program
   .description("Proxy a SSE connection to a stdio stream")
   .action(async (sseUrl) => {
     await proxySSEToStdio(sseUrl);
-  });
-
-function mandatoryOption(flags: string, description?: string) {
-  const option = new Option(flags, description);
-  option.makeOptionMandatory(true);
-  return option;
-}
-
-program
-  .command("install <proxyId>")
-  .description("Install an mcp server to a client app")
-  .addOption(
-    mandatoryOption("-c, --client [type]", "client to install to").choices([
-      "claude",
-      "cursor",
-    ]),
-  )
-  .action(async (proxyId, options) => {
-    if (options.client === "claude") {
-      await installToClaude({ proxyId });
-    } else if (options.client === "cursor") {
-      await installToCursor({ proxyId });
-    } else {
-      logger.error(`unsupported client: ${options.client}`);
-    }
-  });
-
-program
-  .command("uninstall <proxyId>")
-  .description("Uninstall an mcp server from a client app")
-  .addOption(
-    mandatoryOption("-c, --client [type]", "client to uninstall from").choices([
-      "claude",
-      "cursor",
-    ]),
-  )
-  .action(async (proxyId, options) => {
-    if (options.client === "claude") {
-      await uninstallFromClaude({ proxyId });
-    } else if (options.client === "cursor") {
-      await uninstallFromCursor({ proxyId });
-    } else {
-      logger.error(`unsupported client: ${options.client}`);
-    }
-  });
-
-program
-  .command("claude:restart")
-  .description("Restart Claude")
-  .action(async () => {
-    await restartApp(App.CLAUDE);
   });
 
 program.parse();

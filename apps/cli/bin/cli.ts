@@ -3,6 +3,9 @@ import Table from "cli-table3";
 import { Command, Option } from "commander";
 import superjson from "superjson";
 import type { AppRouter } from "../../backend/src/http/routers/trpc";
+import { seed } from "../../backend/src/services/db/seed";
+import { proxySSEToStdio } from "../../backend/src/services/proxy/proxySSEToStdio";
+
 import packageJson from "../package.json";
 import * as config from "../src/config";
 
@@ -86,30 +89,29 @@ program
     }),
   );
 
-program.command("debug").action(
-  withErrorHandler(async () => {
-    console.log("----------------");
-    console.log("__dirname: ", __dirname);
-    console.log("__filename: ", __filename);
-    console.log(`config:`, config);
-    console.log("----------------");
-  }),
-);
-
-program.command("seed").action(
-  withErrorHandler(() => {
-    console.log("todo");
-  }),
-);
+if (config.DEBUG_MODE) {
+  program.command("debug").action(
+    withErrorHandler(async () => {
+      console.log("----------------");
+      console.log("__dirname: ", __dirname);
+      console.log("__filename: ", __filename);
+      console.log(`config:`, config);
+      console.log("----------------");
+    }),
+  );
+  program.command("seed").action(
+    withErrorHandler(() => {
+      seed();
+    }),
+  );
+}
 
 program
   .command("sse2stdio <sse_url>")
   .description("Proxy a SSE connection to a stdio stream")
-  .action(
-    withErrorHandler(async (sseUrl: string) => {
-      console.log("todo");
-    }),
-  );
+  .action(async (sseUrl) => {
+    await proxySSEToStdio(sseUrl);
+  });
 
 function mandatoryOption(flags: string, description?: string) {
   const option = new Option(flags, description);

@@ -12,6 +12,17 @@ const CLAUDE_CONFIG_PATH = path.join(
 
 const CLAUDE_CONFIG_KEY_PREFIX = "director";
 
+function getClaudeConfigEntry(proxyId: string) {
+  return {
+    args: [
+      path.resolve(__dirname, "../../../../cli/bin/cli.ts"),
+      "sse2stdio",
+      getProxySSEUrl(proxyId),
+    ],
+    command: "bun",
+  };
+}
+
 const logger = getLogger("installer/claude");
 
 type ClaudeConfig = {
@@ -37,14 +48,8 @@ export const installToClaude = async ({
     ...claudeConfig,
     mcpServers: {
       ...(claudeConfig.mcpServers ?? {}),
-      [`${CLAUDE_CONFIG_KEY_PREFIX}__${proxyId}`]: {
-        args: [
-          path.resolve(__dirname, "../../../bin/cli.ts"),
-          "sse2stdio",
-          getProxySSEUrl(proxyId),
-        ],
-        command: "bun",
-      },
+      [`${CLAUDE_CONFIG_KEY_PREFIX}__${proxyId}`]:
+        getClaudeConfigEntry(proxyId),
     },
   };
 

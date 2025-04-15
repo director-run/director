@@ -23,7 +23,7 @@ export class ProxyServer {
   private proxyId: string;
   private logger: Logger;
 
-  constructor({ id }: { id: string }) {
+  private constructor({ id }: { id: string }) {
     this.proxyId = id;
     this.mcpServer = new Server(
       {

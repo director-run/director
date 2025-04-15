@@ -2,6 +2,7 @@ import { AppError } from "../../helpers/error";
 import { ErrorCode } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
 import { db } from "../db";
+import type { McpServer } from "../db/schema";
 import { ProxyServer } from "./ProxyServer";
 
 const logger = getLogger("ProxyServerStore");
@@ -60,5 +61,19 @@ export class ProxyServerStore {
     await Promise.all(this.proxyServers.values().map((proxy) => proxy.close()));
 
     logger.info("finished cleaning up all proxy servers.");
+  }
+
+  public async create({
+    name,
+    servers,
+  }: { name: string; servers: McpServer[] }): Promise<ProxyServer> {
+    const newProxy = await db.addProxy({ name, servers });
+    const proxyServer = await ProxyServer.create({
+      id: newProxy.id,
+      targets: newProxy.servers,
+    });
+    this.proxyServers.set(newProxy.id, proxyServer);
+    logger.info({ message: `Created new proxy`, proxyId: newProxy.id });
+    return proxyServer;
   }
 }

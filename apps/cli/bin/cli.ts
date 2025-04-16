@@ -30,6 +30,8 @@ program
           head: ["id", "name", "sseUrls"],
           style: {
             head: ["green"],
+            border: [],
+            compact: true,
           },
         });
         table.push(
@@ -59,7 +61,9 @@ program
       const table = new Table({
         head: ["name", "transport", "url/command"],
         style: {
-          head: ["green"],
+          head: ["blue", "bold"],
+          border: [],
+          compact: true,
         },
       });
 

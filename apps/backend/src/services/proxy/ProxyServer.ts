@@ -40,7 +40,7 @@ export class ProxyServer {
     return this.targets;
   }
 
-  private constructor({
+  constructor({
     id,
     name,
     description,
@@ -75,31 +75,7 @@ export class ProxyServer {
     this.targetConfig = targetConfig;
   }
 
-  static async create({
-    id,
-    name,
-    description,
-    targets,
-    throwOnError,
-  }: {
-    id: string;
-    name: string;
-    description?: string;
-    targets: McpServer[];
-    throwOnError?: boolean;
-  }): Promise<ProxyServer> {
-    const proxyServer = new ProxyServer({
-      id,
-      name,
-      description,
-      throwOnError,
-      targetConfig: targets,
-    });
-    await proxyServer.connectTargets();
-    return proxyServer;
-  }
-
-  private async connectTargets(): Promise<void> {
+  public async connectTargets(): Promise<void> {
     this.targets = await this.createTargets(this.targetConfig);
     this.setupHandlers();
   }

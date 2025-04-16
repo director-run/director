@@ -27,15 +27,15 @@ export class ProxyServerStore {
     for (const proxyConfig of proxies) {
       const proxyId = proxyConfig.id;
       logger.info({ message: `Initializing proxy`, proxyId });
-      this.proxyServers.set(
-        proxyId,
-        await ProxyServer.create({
-          id: proxyId,
-          name: proxyConfig.name,
-          description: proxyConfig.description ?? undefined,
-          targets: proxyConfig.servers,
-        }),
-      );
+
+      const proxyServer = new ProxyServer({
+        id: proxyId,
+        name: proxyConfig.name,
+        description: proxyConfig.description ?? undefined,
+        targetConfig: proxyConfig.servers,
+      });
+      await proxyServer.connectTargets();
+      this.proxyServers.set(proxyId, proxyServer);
     }
   }
 
@@ -90,11 +90,12 @@ export class ProxyServerStore {
       description,
       servers: servers ?? [],
     });
-    const proxyServer = await ProxyServer.create({
+    const proxyServer = new ProxyServer({
       name: name,
       id: newProxy.id,
-      targets: newProxy.servers,
+      targetConfig: newProxy.servers,
     });
+    await proxyServer.connectTargets();
     this.proxyServers.set(newProxy.id, proxyServer);
     logger.info({ message: `Created new proxy`, proxyId: newProxy.id });
     return proxyServer;
@@ -111,12 +112,13 @@ export class ProxyServerStore {
     const proxy = this.get(proxyId);
     await proxy.close();
     const updatedProxyEntry = await db.updateProxy(proxyId, attributes);
-    const updatedProxy = await ProxyServer.create({
+    const updatedProxy = new ProxyServer({
       id: proxyId,
       name: updatedProxyEntry.name,
       description: updatedProxyEntry.description ?? undefined,
-      targets: updatedProxyEntry.servers ?? [],
+      targetConfig: updatedProxyEntry.servers ?? [],
     });
+    await updatedProxy.connectTargets();
     this.proxyServers.set(proxyId, updatedProxy);
     logger.info({ message: `Updated proxy`, proxyId });
     return updatedProxy;

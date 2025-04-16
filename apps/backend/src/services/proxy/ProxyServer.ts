@@ -22,7 +22,7 @@ global.EventSource = eventsource.EventSource;
 
 const logger = getLogger(`ProxyServer`);
 
-class PServer extends Server {
+export class ProxyServer extends Server {
   private targets: ConnectedClient[];
   private attributes: ProxyAttributes;
   private transports: Map<string, SSEServerTransport>;
@@ -157,54 +157,6 @@ class PServer extends Server {
     }
 
     await transport.handlePostMessage(req, res, body);
-  }
-}
-
-export class ProxyServer {
-  private mcpServer: PServer;
-  // private transports: Map<string, SSEServerTransport>;
-
-  get id() {
-    return this.mcpServer.id;
-  }
-
-  get sseUrl() {
-    return this.mcpServer.sseUrl;
-  }
-
-  constructor(attribs: {
-    id: string;
-    name: string;
-    description?: string;
-    servers: McpServer[];
-  }) {
-    this.mcpServer = new PServer(attribs);
-  }
-
-  public async connectTargets(
-    { throwOnError } = { throwOnError: false },
-  ): Promise<void> {
-    await this.mcpServer.connectTargets({ throwOnError });
-  }
-
-  getServer(): Server {
-    return this.mcpServer;
-  }
-
-  public toPlainObject() {
-    return this.mcpServer.toPlainObject();
-  }
-
-  async startSSEConnection(req: express.Request, res: express.Response) {
-    this.mcpServer.startSSEConnection(req, res);
-  }
-
-  async handleSSEMessage(req: express.Request, res: express.Response) {
-    this.mcpServer.handleSSEMessage(req, res);
-  }
-
-  async close(): Promise<void> {
-    await this.mcpServer.close();
   }
 }
 

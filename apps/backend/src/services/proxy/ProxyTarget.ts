@@ -1,24 +1,19 @@
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
-import type { McpServer } from "../db/schema";
 import { ConnectedClient } from "./ConnectedClient";
 
 export class ProxyTarget {
   public client: ConnectedClient;
-  private targetServer: McpServer;
 
   get name() {
-    return this.targetServer.name;
+    return this.client.name;
   }
 
   public toPlainObject() {
-    return {
-      ...this.targetServer,
-    };
+    return this.client.toPlainObject();
   }
 
-  constructor(targetServer: McpServer) {
-    this.targetServer = targetServer;
-    this.client = new ConnectedClient(this.name);
+  constructor(name: string) {
+    this.client = new ConnectedClient(name);
   }
 
   async connect(transport: Transport) {

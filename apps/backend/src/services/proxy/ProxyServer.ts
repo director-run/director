@@ -81,7 +81,7 @@ export class ProxyServer {
   public async connectTargets(): Promise<void> {
     for (const server of this.targetConfig) {
       try {
-        const target = new ProxyTarget(server);
+        const target = new ProxyTarget(server.name);
         await target.connect(getTransport(server));
         this.targets.push(target);
       } catch (error) {

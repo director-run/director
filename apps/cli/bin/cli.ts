@@ -42,6 +42,44 @@ program
   );
 
 program
+  .command("info <proxyId>")
+  .description("Get the info for a proxy")
+  .action(
+    withErrorHandler(async (proxyId: string) => {
+      const proxy = await trpc.store.get.query({ proxyId });
+
+      if (!proxy) {
+        console.error(`proxy ${proxyId} not found`);
+        return;
+      }
+
+      console.log(`id=${proxy.id}`);
+      console.log(`name=${proxy.name}`);
+
+      const table = new Table({
+        head: ["name", "transport", "url/command"],
+        style: {
+          head: ["green"],
+        },
+      });
+
+      table.push(
+        ...proxy.servers.map((server) => [
+          server.name,
+          server.transport.type,
+          server.transport.type === "sse"
+            ? server.transport.url
+            : [server.transport.command, ...(server.transport.args ?? [])].join(
+                " ",
+              ),
+        ]),
+      );
+
+      console.log(table.toString());
+    }),
+  );
+
+program
   .command("start")
   .description("Start the proxy server for all proxies")
   .action(

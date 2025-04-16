@@ -6,6 +6,7 @@ import {
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { VERSION } from "../../config";
+import type { ProxyServerStore } from "./ProxyServerStore";
 
 const CreateOrUpdateFileSchema = z.object({
   owner: z.string().describe("Repository owner (username or organization)"),
@@ -34,7 +35,7 @@ const SearchRepositoriesSchema = z.object({
     .describe("Number of results per page (default: 30, max: 100)"),
 });
 
-export function createControllerServer() {
+export function createControllerServer({ store }: { store: ProxyServerStore }) {
   const server = new Server(
     {
       name: "github-mcp-server",

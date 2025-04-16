@@ -19,11 +19,11 @@ export async function proxySSEToStdio(sseUrl: string) {
     });
 
     await proxy.connectTargets({ throwOnError: true });
-    await proxy.getServer().connect(transport);
+    await proxy.connect(transport);
 
     process.on("SIGINT", async () => {
       await close();
-      await proxy.getServer().close();
+      await proxy.close();
       process.exit(0);
     });
   } catch (error) {

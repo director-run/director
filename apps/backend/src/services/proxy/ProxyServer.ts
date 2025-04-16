@@ -13,6 +13,7 @@ import { parseMCPMessageBody } from "../../helpers/mcp";
 import type { McpServer, Proxy as ProxyAttributes } from "../db/schema";
 import { ConnectedClient } from "./ConnectedClient";
 import { ControllerClient } from "./ControllerClient";
+import type { ProxyServerStore } from "./ProxyServerStore";
 import { setupPromptHandlers } from "./handlers/promptsHandler";
 import { setupResourceTemplateHandlers } from "./handlers/resourceTemplatesHandler";
 import { setupResourceHandlers } from "./handlers/resourcesHandler";
@@ -45,6 +46,11 @@ export class ProxyServer extends Server {
     this.attributes = attributes;
     this.transports = new Map<string, SSEServerTransport>();
   }
+  public async addController(store: ProxyServerStore) {
+    const controller = new ControllerClient({ store });
+    await controller.connect();
+    this.targets.push(controller);
+  }
 
   public async connectTargets(
     { throwOnError } = { throwOnError: false },
@@ -64,11 +70,6 @@ export class ProxyServer extends Server {
         }
       }
     }
-
-    // Add controller server to targets
-    const controller = new ControllerClient();
-    await controller.connect();
-    this.targets.push(controller);
 
     // Setup handlers
     setupToolHandlers(this, this.targets);

@@ -34,6 +34,7 @@ export class ProxyServerStore {
         description: proxyConfig.description ?? undefined,
         servers: proxyConfig.servers,
       });
+      await proxyServer.addController(this);
       await proxyServer.connectTargets();
       this.proxyServers.set(proxyId, proxyServer);
     }

@@ -2,7 +2,7 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import * as eventsource from "eventsource";
 import express from "express";
-import { PORT } from "../../config";
+import { PORT, VERSION } from "../../config";
 import { ErrorCode } from "../../helpers/error";
 import { AppError } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
@@ -26,6 +26,8 @@ export class ProxyServer {
   private name: string;
   private description?: string;
   private throwOnError: boolean;
+  private targetConfig: McpServer[];
+
   get id() {
     return this.proxyId;
   }
@@ -43,19 +45,21 @@ export class ProxyServer {
     name,
     description,
     throwOnError,
+    targetConfig,
   }: {
     id: string;
     name: string;
     description?: string;
     throwOnError?: boolean;
+    targetConfig: McpServer[];
   }) {
     this.proxyId = id;
     this.name = name;
     this.description = description;
     this.mcpServer = new Server(
       {
-        name: "mcp-proxy-server",
-        version: "1.0.0",
+        name: this.name,
+        version: VERSION,
       },
       {
         capabilities: {
@@ -68,6 +72,7 @@ export class ProxyServer {
     this.targets = [];
     this.transports = new Map<string, SSEServerTransport>();
     this.throwOnError = !!throwOnError;
+    this.targetConfig = targetConfig;
   }
 
   static async create({
@@ -88,13 +93,14 @@ export class ProxyServer {
       name,
       description,
       throwOnError,
+      targetConfig: targets,
     });
-    await proxyServer.initialize(targets);
+    await proxyServer.connectTargets();
     return proxyServer;
   }
 
-  private async initialize(targets: McpServer[]): Promise<void> {
-    this.targets = await this.createTargets(targets);
+  private async connectTargets(): Promise<void> {
+    this.targets = await this.createTargets(this.targetConfig);
     this.setupHandlers();
   }
 

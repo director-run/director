@@ -7,15 +7,15 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
 import { getLogger } from "../../../helpers/logger";
-import type { ProxyTarget } from "../ProxyTarget";
+import type { ConnectedClient } from "../ConnectedClient";
 
 const logger = getLogger("proxy/handlers/promptsHandler");
 
 export function setupPromptHandlers(
   server: Server,
-  connectedClients: ProxyTarget[],
+  connectedClients: ConnectedClient[],
 ) {
-  const promptToClientMap = new Map<string, ProxyTarget>();
+  const promptToClientMap = new Map<string, ConnectedClient>();
   // Get Prompt Handler
   server.setRequestHandler(GetPromptRequestSchema, async (request) => {
     const { name } = request.params;
@@ -27,7 +27,7 @@ export function setupPromptHandlers(
 
     try {
       // Match the exact structure from the example code
-      const response = await clientForPrompt.client.request(
+      const response = await clientForPrompt.request(
         {
           method: "prompts/get" as const,
           params: {
@@ -62,7 +62,7 @@ export function setupPromptHandlers(
 
     for (const connectedClient of connectedClients) {
       try {
-        const result = await connectedClient.client.request(
+        const result = await connectedClient.request(
           {
             method: "prompts/list" as const,
             params: {

@@ -7,16 +7,15 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { getLogger } from "../../../helpers/logger";
-import type { ProxyTarget } from "../ProxyTarget";
+import type { ConnectedClient } from "../ConnectedClient";
 
 const logger = getLogger("proxy/handlers/toolsHandler");
 
 export function setupToolHandlers(
   server: Server,
-  connectedClients: ProxyTarget[],
-  // toolToClientMap: Map<string, ProxyClient>,
+  connectedClients: ConnectedClient[],
 ) {
-  const toolToClientMap = new Map<string, ProxyTarget>();
+  const toolToClientMap = new Map<string, ConnectedClient>();
 
   // List Tools Handler
   server.setRequestHandler(ListToolsRequestSchema, async (request) => {
@@ -25,7 +24,7 @@ export function setupToolHandlers(
 
     for (const connectedClient of connectedClients) {
       try {
-        const result = await connectedClient.client.request(
+        const result = await connectedClient.request(
           {
             method: "tools/list",
             params: {
@@ -70,7 +69,7 @@ export function setupToolHandlers(
     }
 
     try {
-      return await clientForTool.client.request(
+      return await clientForTool.request(
         {
           method: "tools/call",
           params: {

@@ -7,15 +7,15 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
 import { getLogger } from "../../../helpers/logger";
-import type { ProxyTarget } from "../ProxyTarget";
+import type { ConnectedClient } from "../ConnectedClient";
 
 const logger = getLogger("proxy/handlers/resourcesHandler");
 
 export function setupResourceHandlers(
   server: Server,
-  connectedClients: ProxyTarget[],
+  connectedClients: ConnectedClient[],
 ) {
-  const resourceToClientMap = new Map<string, ProxyTarget>();
+  const resourceToClientMap = new Map<string, ConnectedClient>();
 
   // List Resources Handler
   server.setRequestHandler(ListResourcesRequestSchema, async (request) => {
@@ -25,7 +25,7 @@ export function setupResourceHandlers(
 
     for (const connectedClient of connectedClients) {
       try {
-        const result = await connectedClient.client.request(
+        const result = await connectedClient.request(
           {
             method: "resources/list",
             params: {
@@ -74,7 +74,7 @@ export function setupResourceHandlers(
     }
 
     try {
-      return await clientForResource.client.request(
+      return await clientForResource.request(
         {
           method: "resources/read",
           params: {

@@ -4,11 +4,11 @@ import {
   ListResourceTemplatesResultSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { ResourceTemplate } from "@modelcontextprotocol/sdk/types.js";
-import type { ProxyTarget } from "../ProxyTarget";
+import type { ConnectedClient } from "../ConnectedClient";
 
 export function setupResourceTemplateHandlers(
   server: Server,
-  connectedClients: ProxyTarget[],
+  connectedClients: ConnectedClient[],
 ) {
   // List Resource Templates Handler
   server.setRequestHandler(
@@ -18,7 +18,7 @@ export function setupResourceTemplateHandlers(
 
       for (const connectedClient of connectedClients) {
         try {
-          const result = await connectedClient.client.request(
+          const result = await connectedClient.request(
             {
               method: "resources/templates/list" as const,
               params: {

@@ -121,10 +121,22 @@ export class ProxyServer {
   }
 
   private setupHandlers(): void {
-    setupToolHandlers(this.mcpServer, this.targets);
-    setupPromptHandlers(this.mcpServer, this.targets);
-    setupResourceHandlers(this.mcpServer, this.targets);
-    setupResourceTemplateHandlers(this.mcpServer, this.targets);
+    setupToolHandlers(
+      this.mcpServer,
+      this.targets.map((target) => target.client),
+    );
+    setupPromptHandlers(
+      this.mcpServer,
+      this.targets.map((target) => target.client),
+    );
+    setupResourceHandlers(
+      this.mcpServer,
+      this.targets.map((target) => target.client),
+    );
+    setupResourceTemplateHandlers(
+      this.mcpServer,
+      this.targets.map((target) => target.client),
+    );
   }
 
   getServer(): Server {

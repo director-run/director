@@ -1,5 +1,6 @@
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
@@ -12,6 +13,7 @@ import { getLogger } from "../../helpers/logger";
 import { parseMCPMessageBody } from "../../helpers/mcp";
 import type { McpServer } from "../db/schema";
 import { ConnectedClient } from "./ConnectedClient";
+import { createControllerServer } from "./createControllerServer";
 import { setupPromptHandlers } from "./handlers/promptsHandler";
 import { setupResourceTemplateHandlers } from "./handlers/resourceTemplatesHandler";
 import { setupResourceHandlers } from "./handlers/resourcesHandler";
@@ -94,6 +96,19 @@ export class ProxyServer {
         }
       }
     }
+
+    // Add controller server to targets
+    const controller = new ConnectedClient("controller");
+    const server = await createControllerServer();
+
+    const [clientTransport, serverTransport] =
+      InMemoryTransport.createLinkedPair();
+    await Promise.all([
+      controller.connect(clientTransport),
+      server.connect(serverTransport),
+    ]);
+
+    this.targets.push(controller);
 
     this.setupHandlers();
   }

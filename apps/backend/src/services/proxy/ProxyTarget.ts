@@ -5,6 +5,7 @@ import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import {
   PROXY_TARGET_CONNECT_RETRY_COUNT,
   PROXY_TARGET_CONNECT_RETRY_INTERVAL,
+  VERSION,
 } from "../../config";
 import { getLogger } from "../../helpers/logger";
 import { sleep } from "../../helpers/util";
@@ -54,8 +55,8 @@ export class ProxyTarget {
 
     this.client = new Client(
       {
-        name: "mcp-proxy-client",
-        version: "1.0.0",
+        name: this.name,
+        version: VERSION,
       },
       {
         capabilities: {

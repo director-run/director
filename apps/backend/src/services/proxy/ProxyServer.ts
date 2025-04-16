@@ -11,7 +11,7 @@ import { AppError } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
 import { parseMCPMessageBody } from "../../helpers/mcp";
 import type { McpServer } from "../db/schema";
-import { ProxyTarget } from "./ProxyTarget";
+import { ConnectedClient } from "./ConnectedClient";
 import { setupPromptHandlers } from "./handlers/promptsHandler";
 import { setupResourceTemplateHandlers } from "./handlers/resourceTemplatesHandler";
 import { setupResourceHandlers } from "./handlers/resourcesHandler";
@@ -23,7 +23,7 @@ const logger = getLogger(`ProxyServer`);
 
 export class ProxyServer {
   private mcpServer: Server;
-  private targets: ProxyTarget[];
+  private targets: ConnectedClient[];
   private transports: Map<string, SSEServerTransport>;
   private proxyId: string;
   private name: string;
@@ -81,7 +81,7 @@ export class ProxyServer {
   public async connectTargets(): Promise<void> {
     for (const server of this.targetConfig) {
       try {
-        const target = new ProxyTarget(server.name);
+        const target = new ConnectedClient(server.name);
         await target.connect(getTransport(server));
         this.targets.push(target);
       } catch (error) {
@@ -99,22 +99,10 @@ export class ProxyServer {
   }
 
   private setupHandlers(): void {
-    setupToolHandlers(
-      this.mcpServer,
-      this.targets.map((target) => target.client),
-    );
-    setupPromptHandlers(
-      this.mcpServer,
-      this.targets.map((target) => target.client),
-    );
-    setupResourceHandlers(
-      this.mcpServer,
-      this.targets.map((target) => target.client),
-    );
-    setupResourceTemplateHandlers(
-      this.mcpServer,
-      this.targets.map((target) => target.client),
-    );
+    setupToolHandlers(this.mcpServer, this.targets);
+    setupPromptHandlers(this.mcpServer, this.targets);
+    setupResourceHandlers(this.mcpServer, this.targets);
+    setupResourceTemplateHandlers(this.mcpServer, this.targets);
   }
 
   getServer(): Server {

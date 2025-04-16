@@ -1,5 +1,8 @@
+import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
+import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
+import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import * as eventsource from "eventsource";
 import express from "express";
 import { PORT, VERSION } from "../../config";
@@ -76,18 +79,11 @@ export class ProxyServer {
   }
 
   public async connectTargets(): Promise<void> {
-    this.targets = await this.createTargets(this.targetConfig);
-    this.setupHandlers();
-  }
-
-  private async createTargets(servers: McpServer[]): Promise<ProxyTarget[]> {
-    const targets: ProxyTarget[] = [];
-
-    for (const server of servers) {
+    for (const server of this.targetConfig) {
       try {
         const target = new ProxyTarget(server);
-        await target.connect();
-        targets.push(target);
+        await target.connect(getTransport(server));
+        this.targets.push(target);
       } catch (error) {
         logger.error({
           message: `failed to connect to target ${server.name}`,
@@ -99,7 +95,7 @@ export class ProxyServer {
       }
     }
 
-    return targets;
+    this.setupHandlers();
   }
 
   private setupHandlers(): void {
@@ -202,5 +198,26 @@ export class ProxyServer {
 
     await Promise.all(this.targets.map((target) => target.close()));
     await this.mcpServer.close();
+  }
+}
+
+export function getTransport(targetServer: McpServer): Transport {
+  if (targetServer.transport.type === "sse") {
+    return new SSEClientTransport(new URL(targetServer.transport.url));
+  } else if (targetServer.transport.type === "stdio") {
+    return new StdioClientTransport({
+      command: targetServer.transport.command,
+      args: targetServer.transport.args,
+      env: targetServer.transport.env
+        ? targetServer.transport.env.reduce(
+            (_, v) => ({
+              [v]: process.env[v] || "",
+            }),
+            {},
+          )
+        : undefined,
+    });
+  } else {
+    throw new Error(`Transport ${targetServer.name} not available.`);
   }
 }

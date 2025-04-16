@@ -27,6 +27,12 @@ export class ConnectedClient extends Client {
     this.name = name;
   }
 
+  public toPlainObject() {
+    return {
+      name: this.name,
+    };
+  }
+
   async connect(transport: Transport) {
     let count = 0;
     let retry = true;

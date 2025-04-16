@@ -3,7 +3,7 @@ import path from "node:path";
 import { readJSONFile, writeJSONFile } from "../../helpers/json";
 import { getLogger } from "../../helpers/logger";
 import { App, restartApp } from "../../helpers/os";
-import { getProxySSEUrl } from "../db/getProxySSEUrl";
+import type { ProxyServer } from "../proxy/ProxyServer";
 
 const CLAUDE_CONFIG_PATH = path.join(
   os.homedir(),
@@ -12,12 +12,12 @@ const CLAUDE_CONFIG_PATH = path.join(
 
 const CLAUDE_CONFIG_KEY_PREFIX = "director";
 
-function getClaudeConfigEntry(proxyId: string) {
+function getClaudeConfigEntry(proxyServer: ProxyServer) {
   return {
     args: [
       path.resolve(__dirname, "../../../../cli/bin/cli.ts"),
       "sse2stdio",
-      getProxySSEUrl(proxyId),
+      proxyServer.sseUrl,
     ],
     command: "bun",
     env: {
@@ -40,9 +40,9 @@ type ClaudeConfig = {
 };
 
 export const installToClaude = async ({
-  proxyId,
+  proxyServer,
 }: {
-  proxyId: string;
+  proxyServer: ProxyServer;
 }) => {
   logger.info(`updating to Claude configuration in ${CLAUDE_CONFIG_PATH}`);
 
@@ -52,14 +52,14 @@ export const installToClaude = async ({
     ...claudeConfig,
     mcpServers: {
       ...(claudeConfig.mcpServers ?? {}),
-      [`${CLAUDE_CONFIG_KEY_PREFIX}__${proxyId}`]:
-        getClaudeConfigEntry(proxyId),
+      [`${CLAUDE_CONFIG_KEY_PREFIX}__${proxyServer.id}`]:
+        getClaudeConfigEntry(proxyServer),
     },
   };
 
   await writeJSONFile(CLAUDE_CONFIG_PATH, updatedConfig);
 
-  logger.info(`${proxyId} successfully written to Claude config`);
+  logger.info(`${proxyServer.id} successfully written to Claude config`);
 
   await restartApp(App.CLAUDE);
 };

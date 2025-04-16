@@ -2,6 +2,7 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import * as eventsource from "eventsource";
 import express from "express";
+import { PORT } from "../../config";
 import { ErrorCode } from "../../helpers/error";
 import { AppError } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
@@ -27,6 +28,10 @@ export class ProxyServer {
   private throwOnError: boolean;
   get id() {
     return this.proxyId;
+  }
+
+  get sseUrl() {
+    return `http://localhost:${PORT}/${this.proxyId}/sse`;
   }
 
   public getTargets() {

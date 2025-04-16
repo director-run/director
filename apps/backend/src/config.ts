@@ -1,6 +1,7 @@
 import os from "node:os";
 import path from "node:path";
 import env from "dotenv";
+import packageJson from "../package.json";
 
 if (process.env.NODE_ENV === "test") {
   env.config({ path: "./env/test.env" });
@@ -24,3 +25,5 @@ export const PROXY_TARGET_CONNECT_RETRY_INTERVAL = Number(
 export const PROXY_TARGET_CONNECT_RETRY_COUNT = Number(
   process.env.PROXY_TARGET_CONNECT_RETRY_COUNT ?? 3,
 );
+
+export const VERSION = packageJson.version;

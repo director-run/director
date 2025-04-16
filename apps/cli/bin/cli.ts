@@ -27,16 +27,13 @@ program
         console.log("no proxies configured yet.");
       } else {
         const table = new Table({
-          head: ["name", "servers"],
+          head: ["id", "name", "sseUrls"],
           style: {
             head: ["green"],
           },
         });
         table.push(
-          ...proxies.map((proxy) => [
-            proxy.name,
-            proxy.servers.map((s) => s.name).join(","),
-          ]),
+          ...proxies.map((proxy) => [proxy.id, proxy.name, "some url"]),
         );
 
         console.log(table.toString());

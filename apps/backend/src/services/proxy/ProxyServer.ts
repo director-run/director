@@ -10,7 +10,7 @@ import { ErrorCode } from "../../helpers/error";
 import { AppError } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
 import { parseMCPMessageBody } from "../../helpers/mcp";
-import type { McpServer } from "../db/schema";
+import type { McpServer, Proxy as ProxyAttributes } from "../db/schema";
 import { ConnectedClient } from "./ConnectedClient";
 import { ControllerClient } from "./ControllerClient";
 import { setupPromptHandlers } from "./handlers/promptsHandler";
@@ -26,10 +26,10 @@ class PServer extends Server {
   private targets: ConnectedClient[];
   private targetConfig: McpServer[];
 
-  constructor(name: string, targetConfig: McpServer[]) {
+  constructor(attributes: ProxyAttributes) {
     super(
       {
-        name,
+        name: attributes.name,
         version: VERSION,
       },
       {
@@ -41,7 +41,7 @@ class PServer extends Server {
       },
     );
     this.targets = [];
-    this.targetConfig = targetConfig;
+    this.targetConfig = attributes.servers;
   }
 
   public async connectTargets(
@@ -111,7 +111,7 @@ export class ProxyServer {
     this.proxyId = id;
     this.name = name;
     this.description = description;
-    this.mcpServer = new PServer(name, targetConfig);
+    this.mcpServer = new PServer({ name, servers: targetConfig });
     this.targets = [];
     this.transports = new Map<string, SSEServerTransport>();
     this.targetConfig = targetConfig;

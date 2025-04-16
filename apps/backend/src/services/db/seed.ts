@@ -12,6 +12,14 @@ export async function seed() {
     name: "Claude proxy",
     servers: [
       {
+        name: "Fetch",
+        transport: {
+          type: "stdio",
+          command: "uvx",
+          args: ["mcp-server-fetch"],
+        },
+      },
+      {
         name: "Hackernews",
         transport: {
           type: "stdio",

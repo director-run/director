@@ -28,11 +28,11 @@ export const startService = async (attribs?: {
   app.use(errorRequestHandler);
 
   const expressServer = app.listen(PORT, () => {
-    logger.info(`Server running at http://localhost:${PORT}`);
+    logger.info(`server running at http://localhost:${PORT}`);
   });
 
   process.on("SIGINT", async () => {
-    logger.info("Received SIGINT, cleaning up proxy servers...");
+    logger.info("received SIGINT, cleaning up proxy servers...");
     await proxyStore.closeAll();
     process.exit(0);
   });

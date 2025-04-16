@@ -36,7 +36,7 @@ program
         table.push(
           ...proxies.map((proxy) => [
             proxy.name,
-            proxy.targets.map((s) => s.name).join(","),
+            proxy.servers.map((s) => s.name).join(","),
           ]),
         );
 

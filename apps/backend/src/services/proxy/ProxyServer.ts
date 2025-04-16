@@ -115,7 +115,7 @@ export class ProxyServer {
       id: this.proxyId,
       name: this.name,
       description: this.description,
-      targets: this.targets.map((target) => target.toPlainObject()),
+      servers: this.targets.map((target) => target.toPlainObject()),
     };
   }
 

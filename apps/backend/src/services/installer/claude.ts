@@ -12,12 +12,12 @@ const CLAUDE_CONFIG_PATH = path.join(
 
 const CLAUDE_CONFIG_KEY_PREFIX = "director";
 
-function getClaudeConfigEntry(proxyServer: ProxyServer) {
+function sse2stdioConfigValue(sseUrl: string) {
   return {
     args: [
       path.resolve(__dirname, "../../../../cli/bin/cli.ts"),
       "sse2stdio",
-      proxyServer.sseUrl,
+      sseUrl,
     ],
     command: "bun",
     env: {
@@ -44,6 +44,36 @@ export const installToClaude = async ({
 }: {
   proxyServer: ProxyServer;
 }) => {
+  await addMCPServerToClaude({
+    key: `${CLAUDE_CONFIG_KEY_PREFIX}__${proxyServer.id}__proxy`,
+    value: sse2stdioConfigValue(proxyServer.sseUrl),
+  });
+};
+
+export const uninstallFromClaude = async ({
+  proxyServer,
+}: {
+  proxyServer: ProxyServer;
+}) => {
+  await removeMCPServerFromClaude({
+    key: `${CLAUDE_CONFIG_KEY_PREFIX}__${proxyServer.id}__proxy`,
+  });
+  await removeMCPServerFromClaude({
+    key: `${CLAUDE_CONFIG_KEY_PREFIX}__${proxyServer.id}__controller`,
+  });
+};
+
+export const addMCPServerToClaude = async ({
+  key,
+  value,
+}: {
+  key: string;
+  value: {
+    args: string[];
+    command: string;
+    env?: Record<string, string>;
+  };
+}) => {
   logger.info(`updating to Claude configuration in ${CLAUDE_CONFIG_PATH}`);
 
   const claudeConfig = await readJSONFile<ClaudeConfig>(CLAUDE_CONFIG_PATH);
@@ -52,40 +82,35 @@ export const installToClaude = async ({
     ...claudeConfig,
     mcpServers: {
       ...(claudeConfig.mcpServers ?? {}),
-      [`${CLAUDE_CONFIG_KEY_PREFIX}__${proxyServer.id}`]:
-        getClaudeConfigEntry(proxyServer),
+      [key]: value,
     },
   };
 
   await writeJSONFile(CLAUDE_CONFIG_PATH, updatedConfig);
 
-  logger.info(`${proxyServer.id} successfully written to Claude config`);
+  logger.info(`${key} successfully written to Claude config`);
 
   await restartApp(App.CLAUDE);
 };
 
-export const uninstallFromClaude = async ({
-  proxyId,
+export const removeMCPServerFromClaude = async ({
+  key,
 }: {
-  proxyId: string;
+  key: string;
 }) => {
   logger.info(
     `uninstalling from Claude configuration in ${CLAUDE_CONFIG_PATH}`,
   );
   const claudeConfig = await readJSONFile<ClaudeConfig>(CLAUDE_CONFIG_PATH);
 
-  // Create a new config object without the entry to be removed
-  const serverKey = `${CLAUDE_CONFIG_KEY_PREFIX}__${proxyId}`;
-
-  if (!claudeConfig?.mcpServers[serverKey]) {
+  if (!claudeConfig?.mcpServers[key]) {
     logger.info(
-      `Server "${proxyId}" not found in Claude config, nothing to uninstall`,
+      `Server "${key}" not found in Claude config, nothing to uninstall`,
     );
     return;
   }
 
-  // Remove the entry
-  const { [serverKey]: removed, ...remainingServers } = claudeConfig.mcpServers;
+  const { [key]: removed, ...remainingServers } = claudeConfig.mcpServers;
 
   const updatedConfig = {
     ...claudeConfig,
@@ -93,6 +118,6 @@ export const uninstallFromClaude = async ({
   };
 
   await writeJSONFile(CLAUDE_CONFIG_PATH, updatedConfig);
-  logger.info(`${proxyId} successfully removed from Claude config`);
+  logger.info(`${key} successfully removed from Claude config`);
   await restartApp(App.CLAUDE);
 };

@@ -140,18 +140,14 @@ export function createAppRouter({
       )
       .mutation(async ({ input }) => {
         try {
-          let configPath: string;
+          const proxy = await proxyStore.get(input.proxyId);
           if (input.client === "claude") {
-            await installToClaude({ proxyId: input.proxyId });
-            configPath =
-              "Library/Application Support/Claude/claude_desktop_config.json";
+            await installToClaude({ proxyServer: proxy });
           } else {
-            await installToCursor({ proxyId: input.proxyId });
-            configPath = ".cursor/mcp.json";
+            await installToCursor({ proxyServer: proxy });
           }
           return {
             status: "ok" as const,
-            configPath: configPath,
           };
         } catch (error) {
           return {
@@ -171,18 +167,14 @@ export function createAppRouter({
       )
       .mutation(async ({ input }) => {
         try {
-          let configPath: string;
+          const proxy = await proxyStore.get(input.proxyId);
           if (input.client === "claude") {
-            await uninstallFromClaude({ proxyId: input.proxyId });
-            configPath =
-              "Library/Application Support/Claude/claude_desktop_config.json";
+            await uninstallFromClaude({ proxyServer: proxy });
           } else {
-            await uninstallFromCursor({ proxyId: input.proxyId });
-            configPath = ".cursor/mcp.json";
+            await uninstallFromCursor({ proxyServer: proxy });
           }
           return {
             status: "ok" as const,
-            configPath: configPath,
           };
         } catch (error) {
           return {

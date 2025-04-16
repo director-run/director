@@ -20,6 +20,10 @@ function getClaudeConfigEntry(proxyId: string) {
       getProxySSEUrl(proxyId),
     ],
     command: "bun",
+    env: {
+      LOG_LEVEL: "silent",
+      PROXY_TARGET_CONNECT_RETRY_COUNT: "0",
+    },
   };
 }
 

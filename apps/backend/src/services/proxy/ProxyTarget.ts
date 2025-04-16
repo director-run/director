@@ -2,12 +2,15 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
+import {
+  PROXY_TARGET_CONNECT_RETRY_COUNT,
+  PROXY_TARGET_CONNECT_RETRY_INTERVAL,
+} from "../../config";
 import { getLogger } from "../../helpers/logger";
 import { sleep } from "../../helpers/util";
 import type { McpServer } from "../db/schema";
 
 const logger = getLogger("ProxyTarget");
-
 export class ProxyTarget {
   public client: Client;
   private transport: Transport;
@@ -65,8 +68,6 @@ export class ProxyTarget {
   }
 
   async connect() {
-    const waitFor = 2500;
-    const retries = 3;
     let count = 0;
     let retry = true;
 
@@ -76,18 +77,24 @@ export class ProxyTarget {
         break;
       } catch (error) {
         logger.error({
-          message: `error while connecting to server ${this.targetServer.name}`,
-          server: this.targetServer,
+          message: `error while connecting to server "${this.targetServer.name}"`,
+          name: this.name,
+          retriesRemaining: PROXY_TARGET_CONNECT_RETRY_COUNT - count,
           error: error,
         });
 
         count++;
-        retry = count < retries;
+        retry = count < PROXY_TARGET_CONNECT_RETRY_COUNT;
         if (retry) {
           try {
             await this.close();
           } catch {}
-          await sleep(waitFor);
+          await sleep(PROXY_TARGET_CONNECT_RETRY_INTERVAL);
+        } else {
+          try {
+            await this.close();
+          } catch {}
+          throw error;
         }
       }
     }

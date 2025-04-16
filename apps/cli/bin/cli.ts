@@ -2,12 +2,11 @@ import {} from "@trpc/client";
 import Table from "cli-table3";
 import { Command } from "commander";
 import { seed } from "../../backend/src/services/db/seed";
+import packageJson from "../package.json";
+import * as config from "../src/config";
 import { mandatoryOption, withErrorHandler } from "../src/helpers";
 import { proxySSEToStdio } from "../src/proxySSEToStdio";
 import { trpc } from "../src/trpc";
-
-import packageJson from "../package.json";
-import * as config from "../src/config";
 
 const program = new Command();
 

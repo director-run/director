@@ -2,7 +2,6 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import * as eventsource from "eventsource";
 import express from "express";
-import type { Logger } from "pino";
 import { ErrorCode } from "../../helpers/error";
 import { AppError } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
@@ -16,15 +15,16 @@ import { setupToolHandlers } from "./handlers/toolsHandler";
 
 global.EventSource = eventsource.EventSource;
 
+const logger = getLogger(`ProxyServer`);
+
 export class ProxyServer {
   private mcpServer: Server;
   private targets: ProxyTarget[];
   private transports: Map<string, SSEServerTransport>;
   private proxyId: string;
-  private logger: Logger;
   private name: string;
   private description?: string;
-
+  private throwOnError: boolean;
   get id() {
     return this.proxyId;
   }
@@ -37,7 +37,13 @@ export class ProxyServer {
     id,
     name,
     description,
-  }: { id: string; name: string; description?: string }) {
+    throwOnError,
+  }: {
+    id: string;
+    name: string;
+    description?: string;
+    throwOnError?: boolean;
+  }) {
     this.proxyId = id;
     this.name = name;
     this.description = description;
@@ -56,7 +62,7 @@ export class ProxyServer {
     );
     this.targets = [];
     this.transports = new Map<string, SSEServerTransport>();
-    this.logger = getLogger(`ProxyServer[${this.proxyId}]`);
+    this.throwOnError = !!throwOnError;
   }
 
   static async create({
@@ -64,13 +70,20 @@ export class ProxyServer {
     name,
     description,
     targets,
+    throwOnError,
   }: {
     id: string;
     name: string;
     description?: string;
     targets: McpServer[];
+    throwOnError?: boolean;
   }): Promise<ProxyServer> {
-    const proxyServer = new ProxyServer({ id, name, description });
+    const proxyServer = new ProxyServer({
+      id,
+      name,
+      description,
+      throwOnError,
+    });
     await proxyServer.initialize(targets);
     return proxyServer;
   }
@@ -89,10 +102,13 @@ export class ProxyServer {
         await target.connect();
         targets.push(target);
       } catch (error) {
-        this.logger.error({
-          message: `Failed to connect to target ${server.name}`,
+        logger.error({
+          message: `failed to connect to target ${server.name}`,
           error,
         });
+        if (this.throwOnError) {
+          throw error;
+        }
       }
     }
 
@@ -124,7 +140,7 @@ export class ProxyServer {
 
     this.transports.set(transport.sessionId, transport);
 
-    this.logger.info({
+    logger.info({
       message: "SSE connection started",
       sessionId: transport.sessionId,
       proxyId: this.proxyId,
@@ -140,7 +156,7 @@ export class ProxyServer {
      * [TODO] Figure out if this is correct. Also add a test case for this.
      */
     req.socket.on("close", () => {
-      this.logger.info({
+      logger.info({
         message: "SSE connection closed",
         sessionId: transport.sessionId,
         proxyId: this.proxyId,
@@ -160,7 +176,7 @@ export class ProxyServer {
     }
     const body = await parseMCPMessageBody(req);
 
-    this.logger.info({
+    logger.info({
       message: "Message received",
       proxyId: this.proxyId,
       sessionId,
@@ -171,7 +187,7 @@ export class ProxyServer {
 
     if (!transport) {
       // TODO: Add a test case for this.
-      this.logger.warn({
+      logger.warn({
         message: "Transport not found",
         sessionId,
         proxyId: this.proxyId,
@@ -183,7 +199,7 @@ export class ProxyServer {
   }
 
   async close(): Promise<void> {
-    this.logger.info(`Shutting down`);
+    logger.info({ message: `shutting down`, proxyId: this.proxyId });
 
     await Promise.all(this.targets.map((target) => target.close()));
     await this.mcpServer.close();

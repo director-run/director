@@ -22,8 +22,62 @@ global.EventSource = eventsource.EventSource;
 
 const logger = getLogger(`ProxyServer`);
 
+class PServer extends Server {
+  private targets: ConnectedClient[];
+  private targetConfig: McpServer[];
+
+  constructor(name: string, targetConfig: McpServer[]) {
+    super(
+      {
+        name,
+        version: VERSION,
+      },
+      {
+        capabilities: {
+          prompts: {},
+          resources: { subscribe: true },
+          tools: {},
+        },
+      },
+    );
+    this.targets = [];
+    this.targetConfig = targetConfig;
+  }
+
+  public async connectTargets(
+    { throwOnError } = { throwOnError: false },
+  ): Promise<void> {
+    for (const server of this.targetConfig) {
+      try {
+        const target = new ConnectedClient(server.name);
+        await target.connect(getTransport(server));
+        this.targets.push(target);
+      } catch (error) {
+        logger.error({
+          message: `failed to connect to target ${server.name}`,
+          error,
+        });
+        if (throwOnError) {
+          throw error;
+        }
+      }
+    }
+
+    // Add controller server to targets
+    const controller = new ControllerClient();
+    await controller.connect();
+    this.targets.push(controller);
+
+    // Setup handlers
+    setupToolHandlers(this, this.targets);
+    setupPromptHandlers(this, this.targets);
+    setupResourceHandlers(this, this.targets);
+    setupResourceTemplateHandlers(this, this.targets);
+  }
+}
+
 export class ProxyServer {
-  private mcpServer: Server;
+  private mcpServer: PServer;
   private targets: ConnectedClient[];
   private transports: Map<string, SSEServerTransport>;
   private proxyId: string;
@@ -57,19 +111,7 @@ export class ProxyServer {
     this.proxyId = id;
     this.name = name;
     this.description = description;
-    this.mcpServer = new Server(
-      {
-        name: this.name,
-        version: VERSION,
-      },
-      {
-        capabilities: {
-          prompts: {},
-          resources: { subscribe: true },
-          tools: {},
-        },
-      },
-    );
+    this.mcpServer = new PServer(name, targetConfig);
     this.targets = [];
     this.transports = new Map<string, SSEServerTransport>();
     this.targetConfig = targetConfig;
@@ -78,35 +120,7 @@ export class ProxyServer {
   public async connectTargets(
     { throwOnError } = { throwOnError: false },
   ): Promise<void> {
-    for (const server of this.targetConfig) {
-      try {
-        const target = new ConnectedClient(server.name);
-        await target.connect(getTransport(server));
-        this.targets.push(target);
-      } catch (error) {
-        logger.error({
-          message: `failed to connect to target ${server.name}`,
-          error,
-        });
-        if (throwOnError) {
-          throw error;
-        }
-      }
-    }
-
-    // Add controller server to targets
-    const controller = new ControllerClient();
-    await controller.connect();
-    this.targets.push(controller);
-
-    this.setupHandlers();
-  }
-
-  private setupHandlers(): void {
-    setupToolHandlers(this.mcpServer, this.targets);
-    setupPromptHandlers(this.mcpServer, this.targets);
-    setupResourceHandlers(this.mcpServer, this.targets);
-    setupResourceTemplateHandlers(this.mcpServer, this.targets);
+    await this.mcpServer.connectTargets({ throwOnError });
   }
 
   getServer(): Server {

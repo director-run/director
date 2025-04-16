@@ -1,13 +1,17 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { describe, expect, test } from "vitest";
-import { ProxyServerStore } from "./ProxyServerStore";
+import { ProxyServer } from "./ProxyServer";
 import { createControllerServer } from "./createControllerServer";
 
 describe("createControllerServer", () => {
   test("should create a controller server", async () => {
-    const store = await ProxyServerStore.create();
-    const server = await createControllerServer({ store });
+    const proxy = new ProxyServer({
+      id: "test-proxy",
+      name: "test-proxy",
+      servers: [],
+    });
+    const server = await createControllerServer({ proxy });
 
     const [clientTransport, serverTransport] =
       InMemoryTransport.createLinkedPair();

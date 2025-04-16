@@ -1,18 +1,18 @@
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { ConnectedClient } from "./ConnectedClient";
-import type { ProxyServerStore } from "./ProxyServerStore";
+import type { ProxyServer } from "./ProxyServer";
 import { createControllerServer } from "./createControllerServer";
 
 export class ControllerClient extends ConnectedClient {
-  private store: ProxyServerStore;
+  private proxy: ProxyServer;
 
-  constructor({ store }: { store: ProxyServerStore }) {
+  constructor({ proxy }: { proxy: ProxyServer }) {
     super("controller");
-    this.store = store;
+    this.proxy = proxy;
   }
 
   async connect(): Promise<void> {
-    const server = await createControllerServer({ store: this.store });
+    const server = await createControllerServer({ proxy: this.proxy });
     const [clientTransport, serverTransport] =
       InMemoryTransport.createLinkedPair();
 

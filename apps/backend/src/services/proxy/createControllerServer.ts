@@ -38,7 +38,7 @@ const SearchRepositoriesSchema = z.object({
 export function createControllerServer({ proxy }: { proxy: ProxyServer }) {
   const server = new Server(
     {
-      name: "github-mcp-server",
+      name: `${proxy.id}-controller`,
       version: VERSION,
     },
     {
@@ -52,12 +52,7 @@ export function createControllerServer({ proxy }: { proxy: ProxyServer }) {
     return {
       tools: [
         {
-          name: "create_or_update_file",
-          description: "Create or update a single file in a GitHub repository",
-          inputSchema: zodToJsonSchema(CreateOrUpdateFileSchema),
-        },
-        {
-          name: "search_repositories",
+          name: "list_targets",
           description: "Search for GitHub repositories",
           inputSchema: zodToJsonSchema(SearchRepositoriesSchema),
         },
@@ -72,7 +67,7 @@ export function createControllerServer({ proxy }: { proxy: ProxyServer }) {
       }
 
       switch (request.params.name) {
-        case "search_repositories": {
+        case "list_targets": {
           const args = SearchRepositoriesSchema.parse(request.params.arguments);
           //   const results = await repository.searchRepositories(
           //     args.query,
@@ -89,26 +84,6 @@ export function createControllerServer({ proxy }: { proxy: ProxyServer }) {
                 url: "https://github.com/test",
               },
             ],
-          };
-          return {
-            content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
-          };
-        }
-
-        case "create_or_update_file": {
-          const args = CreateOrUpdateFileSchema.parse(request.params.arguments);
-          //   const result = await files.createOrUpdateFile(
-          //     args.owner,
-          //     args.repo,
-          //     args.path,
-          //     args.content,
-          //     args.message,
-          //     args.branch,
-          //     args.sha,
-          //   );
-          const result = {
-            status: "success",
-            message: "File created/updated successfully",
           };
           return {
             content: [{ type: "text", text: JSON.stringify(result, null, 2) }],

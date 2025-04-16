@@ -35,8 +35,18 @@ describe("createControllerServer", () => {
     ]);
     const tools = await client.listTools();
 
-    expect(tools.tools).toHaveLength(2);
-    expect(tools.tools[0].name).toBe("create_or_update_file");
-    expect(tools.tools[1].name).toBe("search_repositories");
+    expect(tools.tools).toHaveLength(1);
+    expect(tools.tools[0].name).toBe("list_targets");
+
+    const result = await client.callTool({
+      name: "list_targets",
+      arguments: {
+        query: "test",
+        page: 1,
+        perPage: 10,
+      },
+    });
+
+    console.log("list_targets result:", result);
   });
 });

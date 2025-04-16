@@ -45,7 +45,7 @@ export const installToClaude = async ({
   proxyServer: ProxyServer;
 }) => {
   await addMCPServerToClaude({
-    key: `${CLAUDE_CONFIG_KEY_PREFIX}__${proxyServer.id}__proxy`,
+    key: `${CLAUDE_CONFIG_KEY_PREFIX}__${proxyServer.id}`,
     value: sse2stdioConfigValue(proxyServer.sseUrl),
   });
 };
@@ -56,10 +56,7 @@ export const uninstallFromClaude = async ({
   proxyServer: ProxyServer;
 }) => {
   await removeMCPServerFromClaude({
-    key: `${CLAUDE_CONFIG_KEY_PREFIX}__${proxyServer.id}__proxy`,
-  });
-  await removeMCPServerFromClaude({
-    key: `${CLAUDE_CONFIG_KEY_PREFIX}__${proxyServer.id}__controller`,
+    key: `${CLAUDE_CONFIG_KEY_PREFIX}__${proxyServer.id}`,
   });
 };
 

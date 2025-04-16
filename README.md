@@ -8,11 +8,6 @@
 
 This is a monorepo managed with [Turborepo](https://turbo.build/).
 
-## Copy Ideas
-
-- The last MCP server you'll ever need
-- The one MCP server to rule them all
-
 
 ## Folder Structure
 

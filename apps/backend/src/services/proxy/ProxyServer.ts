@@ -25,6 +25,7 @@ const logger = getLogger(`ProxyServer`);
 class PServer extends Server {
   private targets: ConnectedClient[];
   private attributes: ProxyAttributes;
+  private transports: Map<string, SSEServerTransport>;
 
   constructor(attributes: ProxyAttributes) {
     super(
@@ -42,6 +43,7 @@ class PServer extends Server {
     );
     this.targets = [];
     this.attributes = attributes;
+    this.transports = new Map<string, SSEServerTransport>();
   }
 
   public async connectTargets(
@@ -79,25 +81,91 @@ class PServer extends Server {
     return this.attributes;
   }
 
+  get id() {
+    return this.attributes.id;
+  }
+
   get sseUrl() {
     return `http://localhost:${PORT}/${this.attributes.id}/sse`;
   }
 
   async close(): Promise<void> {
-    logger.info({ message: `shutting down`, proxyId: this.attributes.id });
+    logger.info({ message: `shutting down`, proxyId: this.id });
 
     await Promise.all(this.targets.map((target) => target.close()));
     await super.close();
+  }
+
+  async startSSEConnection(req: express.Request, res: express.Response) {
+    const transport = new SSEServerTransport(`/${this.id}/message`, res);
+
+    this.transports.set(transport.sessionId, transport);
+
+    logger.info({
+      message: "SSE connection started",
+      sessionId: transport.sessionId,
+      proxyId: this.id,
+      userAgent: req.headers["user-agent"],
+      host: req.headers["host"],
+    });
+
+    /**
+     * The MCP documentation says to use res.on("close", () => { ... }) to
+     * clean up the transport when the connection is closed. However, this
+     * doesn't work for some reason. So we use this instead.
+     *
+     * [TODO] Figure out if this is correct. Also add a test case for this.
+     */
+    req.socket.on("close", () => {
+      logger.info({
+        message: "SSE connection closed",
+        sessionId: transport.sessionId,
+        proxyId: this.id,
+      });
+      this.transports.delete(transport.sessionId);
+    });
+
+    await this.connect(transport);
+  }
+
+  async handleSSEMessage(req: express.Request, res: express.Response) {
+    const sessionId = req.query.sessionId?.toString();
+
+    if (!sessionId) {
+      // TODO: Add a test case for this.
+      throw new AppError(ErrorCode.BAD_REQUEST, "No sessionId provided");
+    }
+    const body = await parseMCPMessageBody(req);
+
+    logger.info({
+      message: "Message received",
+      proxyId: this.id,
+      sessionId,
+      method: body.method,
+    });
+
+    const transport = this.transports.get(sessionId);
+
+    if (!transport) {
+      // TODO: Add a test case for this.
+      logger.warn({
+        message: "Transport not found",
+        sessionId,
+        proxyId: this.id,
+      });
+      throw new AppError(ErrorCode.NOT_FOUND, "Transport not found");
+    }
+
+    await transport.handlePostMessage(req, res, body);
   }
 }
 
 export class ProxyServer {
   private mcpServer: PServer;
-  private transports: Map<string, SSEServerTransport>;
-  private proxyId: string;
+  // private transports: Map<string, SSEServerTransport>;
 
   get id() {
-    return this.proxyId;
+    return this.mcpServer.id;
   }
 
   get sseUrl() {
@@ -115,14 +183,13 @@ export class ProxyServer {
     description?: string;
     targetConfig: McpServer[];
   }) {
-    this.proxyId = id;
     this.mcpServer = new PServer({
       id,
       name,
       description,
       servers: targetConfig,
     });
-    this.transports = new Map<string, SSEServerTransport>();
+    // this.transports = new Map<string, SSEServerTransport>();
   }
 
   public async connectTargets(
@@ -140,66 +207,11 @@ export class ProxyServer {
   }
 
   async startSSEConnection(req: express.Request, res: express.Response) {
-    const transport = new SSEServerTransport(`/${this.proxyId}/message`, res);
-
-    this.transports.set(transport.sessionId, transport);
-
-    logger.info({
-      message: "SSE connection started",
-      sessionId: transport.sessionId,
-      proxyId: this.proxyId,
-      userAgent: req.headers["user-agent"],
-      host: req.headers["host"],
-    });
-
-    /**
-     * The MCP documentation says to use res.on("close", () => { ... }) to
-     * clean up the transport when the connection is closed. However, this
-     * doesn't work for some reason. So we use this instead.
-     *
-     * [TODO] Figure out if this is correct. Also add a test case for this.
-     */
-    req.socket.on("close", () => {
-      logger.info({
-        message: "SSE connection closed",
-        sessionId: transport.sessionId,
-        proxyId: this.proxyId,
-      });
-      this.transports.delete(transport.sessionId);
-    });
-
-    await this.mcpServer.connect(transport);
+    this.mcpServer.startSSEConnection(req, res);
   }
 
   async handleSSEMessage(req: express.Request, res: express.Response) {
-    const sessionId = req.query.sessionId?.toString();
-
-    if (!sessionId) {
-      // TODO: Add a test case for this.
-      throw new AppError(ErrorCode.BAD_REQUEST, "No sessionId provided");
-    }
-    const body = await parseMCPMessageBody(req);
-
-    logger.info({
-      message: "Message received",
-      proxyId: this.proxyId,
-      sessionId,
-      method: body.method,
-    });
-
-    const transport = this.transports.get(sessionId);
-
-    if (!transport) {
-      // TODO: Add a test case for this.
-      logger.warn({
-        message: "Transport not found",
-        sessionId,
-        proxyId: this.proxyId,
-      });
-      throw new AppError(ErrorCode.NOT_FOUND, "Transport not found");
-    }
-
-    await transport.handlePostMessage(req, res, body);
+    this.mcpServer.handleSSEMessage(req, res);
   }
 
   async close(): Promise<void> {

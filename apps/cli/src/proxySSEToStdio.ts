@@ -7,7 +7,7 @@ export async function proxySSEToStdio(sseUrl: string) {
     const proxy = new ProxyServer({
       id: "sse2stdio",
       name: "sse2stdio",
-      targetConfig: [
+      servers: [
         {
           name: "director-sse",
           transport: {

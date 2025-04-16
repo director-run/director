@@ -32,7 +32,7 @@ export class ProxyServerStore {
         id: proxyId,
         name: proxyConfig.name,
         description: proxyConfig.description ?? undefined,
-        targetConfig: proxyConfig.servers,
+        servers: proxyConfig.servers,
       });
       await proxyServer.connectTargets();
       this.proxyServers.set(proxyId, proxyServer);
@@ -93,7 +93,7 @@ export class ProxyServerStore {
     const proxyServer = new ProxyServer({
       name: name,
       id: newProxy.id,
-      targetConfig: newProxy.servers,
+      servers: newProxy.servers,
     });
     await proxyServer.connectTargets();
     this.proxyServers.set(newProxy.id, proxyServer);
@@ -116,7 +116,7 @@ export class ProxyServerStore {
       id: proxyId,
       name: updatedProxyEntry.name,
       description: updatedProxyEntry.description ?? undefined,
-      targetConfig: updatedProxyEntry.servers ?? [],
+      servers: updatedProxyEntry.servers ?? [],
     });
     await updatedProxy.connectTargets();
     this.proxyServers.set(proxyId, updatedProxy);

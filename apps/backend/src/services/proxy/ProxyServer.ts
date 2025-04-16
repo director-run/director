@@ -172,24 +172,13 @@ export class ProxyServer {
     return this.mcpServer.sseUrl;
   }
 
-  constructor({
-    id,
-    name,
-    description,
-    targetConfig,
-  }: {
+  constructor(attribs: {
     id: string;
     name: string;
     description?: string;
-    targetConfig: McpServer[];
+    servers: McpServer[];
   }) {
-    this.mcpServer = new PServer({
-      id,
-      name,
-      description,
-      servers: targetConfig,
-    });
-    // this.transports = new Map<string, SSEServerTransport>();
+    this.mcpServer = new PServer(attribs);
   }
 
   public async connectTargets(

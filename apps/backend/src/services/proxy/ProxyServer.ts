@@ -24,7 +24,7 @@ const logger = getLogger(`ProxyServer`);
 
 class PServer extends Server {
   private targets: ConnectedClient[];
-  private targetConfig: McpServer[];
+  private attributes: ProxyAttributes;
 
   constructor(attributes: ProxyAttributes) {
     super(
@@ -41,13 +41,13 @@ class PServer extends Server {
       },
     );
     this.targets = [];
-    this.targetConfig = attributes.servers;
+    this.attributes = attributes;
   }
 
   public async connectTargets(
     { throwOnError } = { throwOnError: false },
   ): Promise<void> {
-    for (const server of this.targetConfig) {
+    for (const server of this.attributes.servers) {
       try {
         const target = new ConnectedClient(server.name);
         await target.connect(getTransport(server));
@@ -74,27 +74,34 @@ class PServer extends Server {
     setupResourceHandlers(this, this.targets);
     setupResourceTemplateHandlers(this, this.targets);
   }
+
+  public toPlainObject() {
+    return this.attributes;
+  }
+
+  get sseUrl() {
+    return `http://localhost:${PORT}/${this.attributes.id}/sse`;
+  }
+
+  async close(): Promise<void> {
+    logger.info({ message: `shutting down`, proxyId: this.attributes.id });
+
+    await Promise.all(this.targets.map((target) => target.close()));
+    await super.close();
+  }
 }
 
 export class ProxyServer {
   private mcpServer: PServer;
-  private targets: ConnectedClient[];
   private transports: Map<string, SSEServerTransport>;
   private proxyId: string;
-  private name: string;
-  private description?: string;
-  private targetConfig: McpServer[];
 
   get id() {
     return this.proxyId;
   }
 
   get sseUrl() {
-    return `http://localhost:${PORT}/${this.proxyId}/sse`;
-  }
-
-  public getTargets() {
-    return this.targets;
+    return this.mcpServer.sseUrl;
   }
 
   constructor({
@@ -109,12 +116,13 @@ export class ProxyServer {
     targetConfig: McpServer[];
   }) {
     this.proxyId = id;
-    this.name = name;
-    this.description = description;
-    this.mcpServer = new PServer({ name, servers: targetConfig });
-    this.targets = [];
+    this.mcpServer = new PServer({
+      id,
+      name,
+      description,
+      servers: targetConfig,
+    });
     this.transports = new Map<string, SSEServerTransport>();
-    this.targetConfig = targetConfig;
   }
 
   public async connectTargets(
@@ -128,12 +136,7 @@ export class ProxyServer {
   }
 
   public toPlainObject() {
-    return {
-      id: this.proxyId,
-      name: this.name,
-      description: this.description,
-      servers: this.targets.map((target) => target.toPlainObject()),
-    };
+    return this.mcpServer.toPlainObject();
   }
 
   async startSSEConnection(req: express.Request, res: express.Response) {
@@ -200,9 +203,6 @@ export class ProxyServer {
   }
 
   async close(): Promise<void> {
-    logger.info({ message: `shutting down`, proxyId: this.proxyId });
-
-    await Promise.all(this.targets.map((target) => target.close()));
     await this.mcpServer.close();
   }
 }

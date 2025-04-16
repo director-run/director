@@ -6,7 +6,10 @@ import {
   ListPromptsResultSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
+import { getLogger } from "../../../helpers/logger";
 import type { ProxyTarget } from "../ProxyTarget";
+
+const logger = getLogger("proxy/handlers/promptsHandler");
 
 export function setupPromptHandlers(
   server: Server,
@@ -40,9 +43,13 @@ export function setupPromptHandlers(
 
       return response;
     } catch (error) {
-      console.error(
-        `Error getting prompt from ${clientForPrompt.name}:`,
-        error,
+      logger.error(
+        {
+          error,
+          clientName: clientForPrompt.name,
+          promptName: name,
+        },
+        "Error getting prompt from client",
       );
       throw error;
     }
@@ -79,10 +86,14 @@ export function setupPromptHandlers(
           allPrompts.push(...promptsWithSource);
         }
       } catch (error) {
-        console.error(
-          `Error fetching prompts from ${connectedClient.name}:`,
-          error,
+        logger.warn(
+          {
+            error,
+            clientName: connectedClient.name,
+          },
+          "Could not fetch prompts from client. Continuing with other clients.",
         );
+        continue;
       }
     }
 

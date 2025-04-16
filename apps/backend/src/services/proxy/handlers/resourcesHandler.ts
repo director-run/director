@@ -6,7 +6,10 @@ import {
   ReadResourceResultSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
+import { getLogger } from "../../../helpers/logger";
 import type { ProxyTarget } from "../ProxyTarget";
+
+const logger = getLogger("proxy/handlers/resourcesHandler");
 
 export function setupResourceHandlers(
   server: Server,
@@ -44,10 +47,14 @@ export function setupResourceHandlers(
           allResources.push(...resourcesWithSource);
         }
       } catch (error) {
-        console.error(
-          `Error fetching resources from ${connectedClient.name}:`,
-          error,
+        logger.warn(
+          {
+            error,
+            clientName: connectedClient.name,
+          },
+          "Could not fetch resources from client. Continuing with other clients.",
         );
+        continue;
       }
     }
 
@@ -78,9 +85,13 @@ export function setupResourceHandlers(
         ReadResourceResultSchema,
       );
     } catch (error) {
-      console.error(
-        `Error reading resource from ${clientForResource.name}:`,
-        error,
+      logger.error(
+        {
+          error,
+          clientName: clientForResource.name,
+          uri,
+        },
+        "Error reading resource from client",
       );
       throw error;
     }

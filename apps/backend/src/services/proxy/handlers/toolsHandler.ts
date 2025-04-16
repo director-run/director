@@ -6,7 +6,10 @@ import {
   ListToolsResultSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
+import { getLogger } from "../../../helpers/logger";
 import type { ProxyTarget } from "../ProxyTarget";
+
+const logger = getLogger("proxy/handlers/toolsHandler");
 
 export function setupToolHandlers(
   server: Server,
@@ -43,10 +46,14 @@ export function setupToolHandlers(
           allTools.push(...toolsWithSource);
         }
       } catch (error) {
-        console.error(
-          `Error fetching tools from ${connectedClient.name}:`,
-          error,
+        logger.warn(
+          {
+            error,
+            clientName: connectedClient.name,
+          },
+          "Could not fetch tools from client. Continuing with other clients.",
         );
+        continue;
       }
     }
 
@@ -55,7 +62,7 @@ export function setupToolHandlers(
 
   // Call Tool Handler
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
-    const { name, arguments: args } = request.params;
+    const { name } = request.params;
     const clientForTool = toolToClientMap.get(name);
 
     if (!clientForTool) {
@@ -63,22 +70,26 @@ export function setupToolHandlers(
     }
 
     try {
-      // Use the correct schema for tool calls
       return await clientForTool.client.request(
         {
           method: "tools/call",
           params: {
             name,
-            arguments: args || {},
-            _meta: {
-              progressToken: request.params._meta?.progressToken,
-            },
+            arguments: request.params.arguments || {},
+            _meta: request.params._meta,
           },
         },
         CompatibilityCallToolResultSchema,
       );
     } catch (error) {
-      console.error(`Error calling tool through ${clientForTool.name}:`, error);
+      logger.error(
+        {
+          error,
+          clientName: clientForTool.name,
+          toolName: name,
+        },
+        "Error calling tool on client",
+      );
       throw error;
     }
   });

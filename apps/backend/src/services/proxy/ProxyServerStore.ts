@@ -65,12 +65,10 @@ export class ProxyServerStore {
   }
 
   async closeAll(): Promise<void> {
-    logger.info("cleaninga up all proxy servers...");
-
+    logger.info("cleaning up all proxy servers...");
     await Promise.all(
-      this.proxyServers?.values()?.map((proxy) => proxy.close()),
+      Array.from(this.proxyServers.values()).map((proxy) => proxy.close()),
     );
-
     logger.info("finished cleaning up all proxy servers.");
   }
 

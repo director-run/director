@@ -29,7 +29,6 @@ export class ProxyServer {
   private proxyId: string;
   private name: string;
   private description?: string;
-  private throwOnError: boolean;
   private targetConfig: McpServer[];
 
   get id() {
@@ -48,13 +47,11 @@ export class ProxyServer {
     id,
     name,
     description,
-    throwOnError,
     targetConfig,
   }: {
     id: string;
     name: string;
     description?: string;
-    throwOnError?: boolean;
     targetConfig: McpServer[];
   }) {
     this.proxyId = id;
@@ -75,11 +72,12 @@ export class ProxyServer {
     );
     this.targets = [];
     this.transports = new Map<string, SSEServerTransport>();
-    this.throwOnError = !!throwOnError;
     this.targetConfig = targetConfig;
   }
 
-  public async connectTargets(): Promise<void> {
+  public async connectTargets(
+    { throwOnError } = { throwOnError: false },
+  ): Promise<void> {
     for (const server of this.targetConfig) {
       try {
         const target = new ConnectedClient(server.name);
@@ -90,7 +88,7 @@ export class ProxyServer {
           message: `failed to connect to target ${server.name}`,
           error,
         });
-        if (this.throwOnError) {
+        if (throwOnError) {
           throw error;
         }
       }

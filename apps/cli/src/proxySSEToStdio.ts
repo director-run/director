@@ -7,7 +7,6 @@ export async function proxySSEToStdio(sseUrl: string) {
     const proxy = new ProxyServer({
       id: "sse2stdio",
       name: "sse2stdio",
-      throwOnError: true,
       targetConfig: [
         {
           name: "director-sse",
@@ -19,7 +18,7 @@ export async function proxySSEToStdio(sseUrl: string) {
       ],
     });
 
-    await proxy.connectTargets();
+    await proxy.connectTargets({ throwOnError: true });
     await proxy.getServer().connect(transport);
 
     process.on("SIGINT", async () => {

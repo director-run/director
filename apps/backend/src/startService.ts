@@ -4,6 +4,7 @@ import express, {} from "express";
 import { PORT } from "./config";
 import { getLogger } from "./helpers/logger";
 import { errorRequestHandler } from "./http/middleware";
+import { controller } from "./http/routers/controller";
 import { sse } from "./http/routers/sse";
 import { createAppRouter } from "./http/routers/trpc";
 import { ProxyServerStore } from "./services/proxy/ProxyServerStore";
@@ -17,6 +18,7 @@ export const startService = async (attribs?: {
   const proxyStore = attribs?.proxyStore ?? (await ProxyServerStore.create());
 
   app.use(cors());
+  app.use("/", controller({ proxyStore }));
   app.use("/", sse({ proxyStore }));
   app.use(
     "/trpc",

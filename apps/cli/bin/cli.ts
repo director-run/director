@@ -203,14 +203,17 @@ type JsonValue =
   | { [key: string]: JsonValue };
 
 function colorizeJson(obj: Record<string, JsonValue>): string {
-  return Object.entries(obj)
+  const entries = Object.entries(obj)
     .map(([key, value]) => {
-      const coloredKey = chalk.blue(key);
+      const coloredKey = chalk.white.bold(`"${key}"`);
       const formattedValue =
-        typeof value === "string" ? value : JSON.stringify(value, null, 2);
-      return `${coloredKey}: ${formattedValue}`;
+        typeof value === "string"
+          ? `"${value}"`
+          : JSON.stringify(value, null, 2);
+      return `  ${coloredKey}: ${formattedValue}`;
     })
-    .join("\n");
+    .join(",\n");
+  return `{\n${entries}\n}`;
 }
 
 program

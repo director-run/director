@@ -5,7 +5,7 @@ import { trpc } from "../trpc";
 
 export function registerProxyCommands(program: Command) {
   program
-    .command("proxy:ls")
+    .command("ls")
     .description("List all proxies")
     .action(
       withErrorHandler(async () => {
@@ -26,8 +26,8 @@ export function registerProxyCommands(program: Command) {
     );
 
   program
-    .command("proxy:get <proxyId>")
-    .description("Get the details of a proxy")
+    .command("get <proxyId>")
+    .description("Show proxy details")
     .action(
       withErrorHandler(async (proxyId: string) => {
         const proxy = await trpc.store.get.query({ proxyId });
@@ -60,8 +60,8 @@ export function registerProxyCommands(program: Command) {
     );
 
   program
-    .command("proxy:create <name>")
-    .description("Create a new proxy server")
+    .command("create <name>")
+    .description("Create a new proxy")
     .action(
       withErrorHandler(async (name: string) => {
         const proxy = await trpc.store.create.mutate({
@@ -74,11 +74,10 @@ export function registerProxyCommands(program: Command) {
     );
 
   program
-    .command("proxy:rm <proxyId>")
-    .description("Create a new proxy server")
+    .command("rm <proxyId>")
+    .description("Delete a proxy")
     .action(
       withErrorHandler(async (proxyId: string) => {
-        // toto
         await trpc.store.delete.mutate({
           proxyId,
         });

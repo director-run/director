@@ -48,13 +48,13 @@ $ npm install -g @working.dev/director
 $ director start -d
 
 # create a new proxy server
-$ director proxy:create <PROXY_NAME>
+$ director create <PROXY_NAME>
 
 # list available servers
 $ director registry:ls
 
 # add a target from the registry 
-$ director proxy:target:create <PROXY_ID> <TARGET_NAME>
+$ director target:add <PROXY_ID> <TARGET_NAME>
 
 # install the proxy server to claude
 $ director claude:install <PROXY_ID>
@@ -96,7 +96,7 @@ Commands:
 Director looks for config files in **`~/.director/`**. If you edit the files manually, you will need to restart director.
 
 ```yaml
-# ~/.director/database.json
+# ~/.director/db.json
 {
   proxies: [{
     ...

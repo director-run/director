@@ -29,6 +29,17 @@ if (config.DEBUG_MODE) {
 }
 
 program
+  .command("config")
+  .description("Print configuration variables")
+  .action(
+    withErrorHandler(async () => {
+      console.log("----------------");
+      console.log(`config:`, config);
+      console.log("----------------");
+    }),
+  );
+
+program
   .command("sse2stdio <sse_url>")
   .description("Proxy a SSE connection to a stdio stream")
   .action(async (sseUrl) => {
@@ -47,7 +58,7 @@ function truncateDescription(
 
 program
   .command("registry:ls")
-  .description("List all available registry items")
+  .description("List all available servers in the registry")
   .action(
     withErrorHandler(async () => {
       const items = await trpc.registry.list.query();

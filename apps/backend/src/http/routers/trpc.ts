@@ -14,7 +14,7 @@ import {
   uninstallFromCursor,
 } from "../../services/installer/cursor";
 import type { ProxyServerStore } from "../../services/proxy/ProxyServerStore";
-import { apps } from "../../services/repository";
+import { getServer, getServers } from "../../services/registry";
 
 const logger = getLogger("http/routers/trpc");
 
@@ -190,22 +190,23 @@ export function createAppRouter({
 
   const repositoryRouter = createTRPCRouter({
     list: loggedProcedure.query(async () => {
-      return apps.map((app) => ({
-        name: app.name,
-        description: app.description.split("\n")[0],
+      const servers = await getServers();
+      return servers.map((server) => ({
+        name: server.name,
+        description: server.description.split("\n")[0],
       }));
     }),
     get: loggedProcedure
       .input(z.object({ name: z.string() }))
       .query(async ({ input }) => {
-        const app = apps.find((app) => app.name === input.name);
-        if (!app) {
+        const server = await getServer(input.name);
+        if (!server) {
           throw new AppError(
             ErrorCode.NOT_FOUND,
             `Repository item ${input.name} not found`,
           );
         }
-        return app;
+        return server;
       }),
   });
 

@@ -7,7 +7,7 @@ import { PORT } from "../../../config";
 import { ProxyServerStore } from "../../../services/proxy/ProxyServerStore";
 import { startService } from "../../../startService";
 
-describe("Repository Router", () => {
+describe("Registry Router", () => {
   let proxyStore: ProxyServerStore;
   let directorService: http.Server | undefined;
   let trpcClient: ReturnType<typeof createTRPCClient<AppRouter>>;
@@ -37,7 +37,8 @@ describe("Repository Router", () => {
   });
 
   it("should list all repository items", async () => {
-    const items = await trpcClient.repository.list.query();
+    const items = await trpcClient.registry.list.query();
+    console.log(items[0]);
     expect(items).toBeDefined();
     expect(items.length).toBeGreaterThan(0);
     expect(items[0]).toHaveProperty("name");
@@ -45,9 +46,9 @@ describe("Repository Router", () => {
   });
 
   it("should get a single repository item", async () => {
-    const items = await trpcClient.repository.list.query();
+    const items = await trpcClient.registry.list.query();
     const firstItem = items[0];
-    const item = await trpcClient.repository.get.query({
+    const item = await trpcClient.registry.get.query({
       name: firstItem.name,
     });
     expect(item).toBeDefined();
@@ -61,7 +62,7 @@ describe("Repository Router", () => {
 
   it("should throw an error for non-existent repository item", async () => {
     await expect(
-      trpcClient.repository.get.query({ name: "non-existent" }),
+      trpcClient.registry.get.query({ name: "non-existent" }),
     ).rejects.toThrow();
   });
 });

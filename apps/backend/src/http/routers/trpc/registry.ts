@@ -4,7 +4,7 @@ import { AppError } from "../../../helpers/error";
 import { getServer, getServers } from "../../../services/registry";
 import { createTRPCRouter, loggedProcedure } from "./middleware";
 
-export function createRepositoryRouter() {
+export function createRegistryRouter() {
   return createTRPCRouter({
     list: loggedProcedure.query(async () => {
       const servers = await getServers();

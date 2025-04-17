@@ -182,7 +182,7 @@ program
   .description("List all available repository items")
   .action(
     withErrorHandler(async () => {
-      const items = await trpc.repository.list.query();
+      const items = await trpc.registry.list.query();
       const table = makeTable(["Name", "Description"]);
       table.push(
         ...items.map((item) => {
@@ -222,7 +222,7 @@ program
   .action(
     withErrorHandler(async (name: string) => {
       try {
-        const item = await trpc.repository.get.query({ name });
+        const item = await trpc.registry.get.query({ name });
         console.log(colorizeJson(item));
       } catch (error) {
         if (error instanceof Error) {

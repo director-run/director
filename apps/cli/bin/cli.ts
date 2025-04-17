@@ -3,12 +3,12 @@ import chalk from "chalk";
 import Table from "cli-table3";
 import { Command } from "commander";
 import { seed } from "../../backend/src/services/db/seed";
+import { startService } from "../../backend/src/startService";
 import packageJson from "../package.json";
 import * as config from "../src/config";
 import { mandatoryOption, withErrorHandler } from "../src/helpers";
 import { proxySSEToStdio } from "../src/proxySSEToStdio";
 import { trpc } from "../src/trpc";
-
 const program = new Command();
 
 program
@@ -81,13 +81,25 @@ program
       console.log(table.toString());
     }),
   );
+function printDirectorAscii(): void {
+  console.log(`
+       _ _               _             
+      | (_)             | |            
+    __| |_ _ __ ___  ___| |_ ___  _ __ 
+   / _' | | '__/ _ \\/ __| __/ _ \\| '__|
+  | (_| | | | |  __/ (__| || (_) | |   
+   \\__,_|_|_|  \\___|\\___|\\__\\___/|_|   
+                                       
+                                       `);
+}
 
 program
   .command("start")
   .description("Start the proxy server for all proxies")
   .action(
     withErrorHandler(async () => {
-      console.log("todo");
+      printDirectorAscii();
+      await startService();
     }),
   );
 

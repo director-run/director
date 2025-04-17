@@ -13,6 +13,8 @@ const logger = getLogger("startService");
 export const startService = async (attribs?: {
   proxyStore?: ProxyServerStore;
 }) => {
+  logger.info(`starting director...`);
+
   const app = express();
   const proxyStore = attribs?.proxyStore ?? (await ProxyServerStore.create());
 
@@ -28,7 +30,7 @@ export const startService = async (attribs?: {
   app.use(errorRequestHandler);
 
   const expressServer = app.listen(PORT, () => {
-    logger.info(`server running at http://localhost:${PORT}`);
+    logger.info(`director running at http://localhost:${PORT}`);
   });
 
   process.on("SIGINT", async () => {

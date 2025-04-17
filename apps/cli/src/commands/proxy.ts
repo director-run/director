@@ -88,6 +88,26 @@ export function registerProxyCommands(program: Command) {
     );
 
   program
+    .command("server:add <proxyId> <server>")
+    .description(
+      "[TODO] Add a server to a proxy. Server can be a registry entry, a url or a command (stdio).",
+    )
+    .action(
+      withErrorHandler(async (proxyId: string, entryId: string) => {
+        throw new Error("not implemented");
+      }),
+    );
+
+  program
+    .command("server:remove <proxyId> <server>")
+    .description("[TODO] Remove a server from a proxy")
+    .action(
+      withErrorHandler(async (proxyId: string, entryId: string) => {
+        throw new Error("not implemented");
+      }),
+    );
+
+  program
     .command("sse2stdio <sse_url>")
     .description("Proxy a SSE connection to a stdio stream")
     .action(async (sseUrl) => {

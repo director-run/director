@@ -24,4 +24,17 @@ if (config.DEBUG_MODE) {
   registerDebugCommands(program);
 }
 
+program.addHelpText(
+  "after",
+  `
+
+Example:
+  $ director create my-proxy
+  $ director server:add my-proxy registry:fetch
+  $ director server:add my-proxy https://mcp.example.com/sse
+  $ director server:add my-proxy "node my-server.js"
+  $ director install my-proxy claude
+`,
+);
+
 program.parse();

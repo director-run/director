@@ -48,17 +48,17 @@ $ npm install -g @working.dev/director
 $ director start -d
 
 # create a new proxy server
-$ director create <PROXY_NAME>
+$ director create <proxyName>
 
 # list available servers
 $ director registry:ls
 
 # add a target from the registry 
-$ director target:add <PROXY_ID> <TARGET_NAME>
+$ server:add <proxyId> <server>
 
 # install the proxy server
-$ director install <PROXY_ID> claude
-$ director install <PROXY_ID> cursor
+$ director install <proxyId> claude
+$ director install <proxyId> cursor
 
 ```
 

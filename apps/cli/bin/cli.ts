@@ -27,7 +27,7 @@ program
         console.log("no proxies configured yet.");
       } else {
         const table = new Table({
-          head: ["id", "name", "sseUrls"],
+          head: ["id", "name", "url"],
           style: {
             head: ["green"],
             border: [],

@@ -166,4 +166,16 @@ program
     }),
   );
 
+program
+  .command("repo:ls")
+  .description("List all available repository items")
+  .action(
+    withErrorHandler(async () => {
+      const items = await trpc.repository.list.query();
+      const table = makeTable(["name", "description"]);
+      table.push(...items.map((item) => [item.name, item.description]));
+      console.log(table.toString());
+    }),
+  );
+
 program.parse();

@@ -14,6 +14,7 @@ import {
   uninstallFromCursor,
 } from "../../services/installer/cursor";
 import type { ProxyServerStore } from "../../services/proxy/ProxyServerStore";
+import { apps } from "../../services/repository";
 
 const logger = getLogger("http/routers/trpc");
 
@@ -187,9 +188,19 @@ export function createAppRouter({
       }),
   });
 
+  const repositoryRouter = createTRPCRouter({
+    list: loggedProcedure.query(async () => {
+      return apps.map((app) => ({
+        name: app.name,
+        description: app.description.split("\n")[0],
+      }));
+    }),
+  });
+
   return createTRPCRouter({
     store: storeRouter,
     installer: installerRouter,
+    repository: repositoryRouter,
   });
 }
 

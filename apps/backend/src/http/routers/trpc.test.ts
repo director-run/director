@@ -97,4 +97,14 @@ describe("TRPC Router", () => {
       expect(await trpcClient.store.getAll.query()).toHaveLength(0);
     });
   });
+
+  describe("repository endpoints", () => {
+    it("should list all repository items", async () => {
+      const items = await trpcClient.repository.list.query();
+      expect(items).toBeDefined();
+      expect(items.length).toBeGreaterThan(0);
+      expect(items[0]).toHaveProperty("name");
+      expect(items[0]).toHaveProperty("description");
+    });
+  });
 });

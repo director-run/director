@@ -4,21 +4,32 @@
 <p align="center"><code>npm i -g @working.dev/director</code>
 
 
+<p align="center">
+  <a href="https://github.com/theworkingcompany/director/actions/workflows/ci.yml">
+    <img src="https://github.com/theworkingcompany/director/actions/workflows/ci.yml/badge.svg" alt="CI">
+  </a>
+  <a href="https://github.com/theworkingcompany/director/actions/workflows/release.yml">
+    <img src="https://github.com/theworkingcompany/director/actions/workflows/release.yml/badge.svg" alt="Release">
+  </a>
 </p>
 
 ---
-[![CI](https://github.com/theworkingcompany/director/actions/workflows/ci.yml/badge.svg)](https://github.com/theworkingcompany/director/actions/workflows/ci.yml)
-[![Release](https://github.com/theworkingcompany/director/actions/workflows/release.yml/badge.svg)](https://github.com/theworkingcompany/director/actions/workflows/release.yml)
+
+</p>
+
 
 ## Why Director?
 
-Director is a MCP Proxy. Instead of connecting your clients manually to many MCP servers (by edinting the config), you can use the director CLI to connect a single server and then add a bunch of proxies to it. In addition, it provies the following benefits:
+Director is a Model Context Protocol (MCP) proxy server that simplifies the management of multiple MCP connections. Instead of manually configuring each client to connect to individual MCP servers, Director acts as a central hub that:
 
-- Discovery
-- Environment
-- Audits
-- Security
-- Config & Secret management
+- 🔌 Unified Connection Management: Single endpoint for all clients with multiple backend MCP servers (`proxy:ls` to view)
+- 🚀 Client Integration: One-command installation to Claude/Cursor (`install <proxyId> -c [claude|cursor]`)
+- 🔍 Registry Discovery: Browse and install MCP servers from GitHub (`registry:ls` to discover, `registry:get` to inspect)
+- 📋 Protocol Compliance: Full MCP spec implementation with SSE and stdio transport support
+- 🛡️ Proxy Isolation: Independent contexts prevent cross-contamination between proxies
+- ⚡ Simplified Setup: One-command proxy creation and configuration (`proxy:create <name>`)
+- 📊 Audit Trails: Configurable logging with request tracking and error handling
+- 🔒 Security: Secure transports, error isolation, and configurable security settings
 
 
 ## Quickstart

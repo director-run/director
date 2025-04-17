@@ -22,51 +22,29 @@
 
 Director is a Model Context Protocol (MCP) proxy server that simplifies the management of multiple MCP connections. Instead of manually configuring each client to connect to individual MCP servers, Director acts as a central hub that:
 
-- 🔌 **Unified Connection Management**
-  Single endpoint for all clients with multiple backend MCP servers (`proxy:ls` to view)
+- 🔌 **Unified Connection Management**  
+  Single endpoint for all clients with multiple backend MCP servers (`proxy:ls` to view) 
 
-- 🚀 **Client Integration** 
-  One-command installation to Claude/Cursor (`install <proxyId> -c [claude|cursor]`)
+- 🚀 **Client Integration**  
+  One-command installation to Claude/Cursor (`install <proxyId> -c [claude|cursor]`) 
 
-- 🔍 **Registry Discovery** 
+- 🔍 **Registry Discovery**  
   Browse and install MCP servers from GitHub (`registry:ls` to discover, `registry:get` to inspect)
 
-- 📋 **Protocol Compliance** 
-  Full MCP spec implementation with SSE and stdio transport support
+- 📋 **Protocol Compliance**  
+  Full MCP spec implementation with SSE and stdio transport support 
 
 - 🛡️ **Proxy Isolation** 
-  Independent contexts prevent cross-contamination between proxies
+  Independent contexts prevent cross-contamination between proxies 
 
-- ⚡ **Simplified Setup** 
-  One-command proxy creation and configuration (`proxy:create <name>`)
+- ⚡ **Simplified Setup**  
+  One-command proxy creation and configuration (`proxy:create <name>`) 
 
-- 📊 **Audit Trails** 
-  Configurable logging with request tracking and error handling
-  
-- 🔒 **Security**
-  Secure transports, error isolation, and configurable security settings
+- 📊 **Audit Trails**  
+  Configurable logging with request tracking and error handling 
 
-
-## Why Mutton?
-
-- 💰 **No expensive hardware needed**  
-  Run the latest open-source models at full speed using cloud GPU instances.  
-
-- 🚀 **Deploy in minutes**  
-  Spend more time building and less time wrestling with DevOps.  
-
-- 🛡️ **Total control**  
-  Keep your data where you want it and decide who can access it.  
-
-- 🏗️ **Flexible & portable**  
-  Avoid vendor lock-in and switch cloud providers easily.  
-
-- ⚙️ **Hassle-free management**  
-  A simple CLI for deploying, starting, stopping, and tearing down models.  
-
-- 🔧 **Terraform under the hood**  
-  Reliable infrastructure-as-code with minimal setup.
-
+- 🔒 **Security**  
+  Secure transports, error isolation, and configurable security settings 
 
 ## Quickstart
 
@@ -74,7 +52,7 @@ Director is a Model Context Protocol (MCP) proxy server that simplifies the mana
 
 ```shell
 # install director
-$ npm install -g @openai/codex
+$ npm install -g @working.dev/director
 
 # start the server (-d deamonizes)
 $ director start -d
@@ -125,25 +103,20 @@ Commands:
 
 ## Configuration
 
-Director looks for config files in **`~/.director/`**.
+Director looks for config files in **`~/.director/`**. If you edit the files manually, you will need to restart director.
 
 ```yaml
-# ~/.codex/config.yaml
-model: o4-mini # Default model
-fullAutoErrorMode: ask-user # or ignore-and-continue
+# ~/.director/database.json
+{
+  proxies: [{
+    ...
+  }]
+}
 ```
 
-You can also define custom instructions:
+You can also set environment variables:
 
 ```yaml
-# ~/.codex/instructions.md
-- Always respond with emojis
-- Only use git commands if I explicitly mention you should
+# ~/.director/config.env
+PORT=4052
 ```
-
-
----
-
-## License
-
-This repository is licensed under the [MIT](LICENSE) licence.

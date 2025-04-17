@@ -1,5 +1,6 @@
 import { Command } from "commander";
 import { startService } from "../../../backend/src/startService";
+import * as config from "../config";
 import { withErrorHandler } from "../helpers";
 
 function printDirectorAscii(): void {
@@ -17,11 +18,22 @@ function printDirectorAscii(): void {
 export function registerServiceCommands(program: Command) {
   program
     .command("start")
-    .description("Start the proxy server for all proxies")
+    .description("Start the director service")
     .action(
       withErrorHandler(async () => {
         printDirectorAscii();
         await startService();
+      }),
+    );
+
+  program
+    .command("config")
+    .description("Print configuration variables")
+    .action(
+      withErrorHandler(async () => {
+        console.log("----------------");
+        console.log(`config:`, config);
+        console.log("----------------");
       }),
     );
 }

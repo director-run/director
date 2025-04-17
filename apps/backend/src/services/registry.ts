@@ -21,15 +21,6 @@ export const ServerSchema = z.object({
     }),
   ),
   setup: z.array(z.never()),
-  icon: z
-    .object({
-      type: z.string(),
-      data: z.string(),
-    })
-    .optional(),
-  category: z.string().optional(),
-  price: z.string().optional(),
-  developer: z.string().optional(),
 });
 
 export type Server = z.infer<typeof ServerSchema>;

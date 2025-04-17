@@ -9,55 +9,14 @@
 ---
 [![CI](https://github.com/theworkingcompany/director/actions/workflows/ci.yml/badge.svg)](https://github.com/theworkingcompany/director/actions/workflows/ci.yml)
 [![Release](https://github.com/theworkingcompany/director/actions/workflows/release.yml/badge.svg)](https://github.com/theworkingcompany/director/actions/workflows/release.yml)
----
 
-<details>
-<summary><strong>Table&nbsp;of&nbsp;Contents</strong></summary>
+## Why Director?
 
-- [Experimental Technology Disclaimer](#experimental-technology-disclaimer)
-- [Quickstart](#quickstart)
-- [Why Codex?](#whycodex)
-- [Security Model \& Permissions](#securitymodelpermissions)
-  - [Platform sandboxing details](#platform-sandboxing-details)
-- [System Requirements](#systemrequirements)
-- [CLI Reference](#clireference)
-- [Memory \& Project Docs](#memoryprojectdocs)
-- [Non‑interactive / CI mode](#noninteractivecimode)
-- [Recipes](#recipes)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [FAQ](#faq)
-- [Funding Opportunity](#funding-opportunity)
-- [Contributing](#contributing)
-  - [Development workflow](#development-workflow)
-  - [Writing high‑impact code changes](#writing-highimpact-code-changes)
-  - [Opening a pull request](#opening-a-pull-request)
-  - [Review process](#review-process)
-  - [Community values](#community-values)
-  - [Getting help](#getting-help)
-  - [Contributor License Agreement (CLA)](#contributor-license-agreement-cla)
-    - [Quick fixes](#quick-fixes)
-  - [Releasing `codex`](#releasing-codex)
-- [Security \& Responsible AI](#securityresponsibleai)
-- [License](#license)
-- [Zero Data Retention (ZDR) Organization Limitation](#zero-data-retention-zdr-organization-limitation)
 
-</details>
-
----
-
-## Experimental Technology Disclaimer
-
-Codex CLI is an experimental project under active development. It is not yet stable, may contain bugs, incomplete features, or undergo breaking changes. We’re building it in the open with the community and welcome:
-
-- Bug reports
-- Feature requests
-- Pull requests
-- Good vibes
-
-Help us improve by filing issues or submitting PRs (see the section below for how to contribute)!
 
 ## Quickstart
+
+*Note: Director is new project under active development and is not yet stable. See CONTRIBUTING.md if you'd like to help.*
 
 Install globally:
 

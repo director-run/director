@@ -1,6 +1,7 @@
 import { Command } from "commander";
 import { withErrorHandler } from "../helpers";
 import { makeTable } from "../helpers";
+import { proxySSEToStdio } from "../proxySSEToStdio";
 import { trpc } from "../trpc";
 
 export function registerProxyCommands(program: Command) {
@@ -85,4 +86,11 @@ export function registerProxyCommands(program: Command) {
         console.log(`proxy ${proxyId} deleted`);
       }),
     );
+
+  program
+    .command("sse2stdio <sse_url>")
+    .description("Proxy a SSE connection to a stdio stream")
+    .action(async (sseUrl) => {
+      await proxySSEToStdio(sseUrl);
+    });
 }

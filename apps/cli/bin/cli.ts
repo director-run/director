@@ -7,7 +7,6 @@ import { registerProxyCommands } from "../src/commands/proxy";
 import { registerRegistryCommands } from "../src/commands/registry";
 import { registerServiceCommands } from "../src/commands/service";
 import * as config from "../src/config";
-import { proxySSEToStdio } from "../src/proxySSEToStdio";
 
 const program = new Command();
 
@@ -24,12 +23,5 @@ registerServiceCommands(program);
 if (config.DEBUG_MODE) {
   registerDebugCommands(program);
 }
-
-program
-  .command("sse2stdio <sse_url>")
-  .description("Proxy a SSE connection to a stdio stream")
-  .action(async (sseUrl) => {
-    await proxySSEToStdio(sseUrl);
-  });
 
 program.parse();

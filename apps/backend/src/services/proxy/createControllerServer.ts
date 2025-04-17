@@ -8,20 +8,20 @@ import { zodToJsonSchema } from "zod-to-json-schema";
 import { VERSION } from "../../config";
 import type { ProxyServer } from "./ProxyServer";
 
-const CreateOrUpdateFileSchema = z.object({
-  owner: z.string().describe("Repository owner (username or organization)"),
-  repo: z.string().describe("Repository name"),
-  path: z.string().describe("Path where to create/update the file"),
-  content: z.string().describe("Content of the file"),
-  message: z.string().describe("Commit message"),
-  branch: z.string().describe("Branch to create/update the file in"),
-  sha: z
-    .string()
-    .optional()
-    .describe(
-      "SHA of the file being replaced (required when updating existing files)",
-    ),
-});
+// const CreateOrUpdateFileSchema = z.object({
+//   owner: z.string().describe("Repository owner (username or organization)"),
+//   repo: z.string().describe("Repository name"),
+//   path: z.string().describe("Path where to create/update the file"),
+//   content: z.string().describe("Content of the file"),
+//   message: z.string().describe("Commit message"),
+//   branch: z.string().describe("Branch to create/update the file in"),
+//   sha: z
+//     .string()
+//     .optional()
+//     .describe(
+//       "SHA of the file being replaced (required when updating existing files)",
+//     ),
+// });
 
 const SearchRepositoriesSchema = z.object({
   query: z.string().describe("Search query (see GitHub search syntax)"),
@@ -68,7 +68,7 @@ export function createControllerServer({ proxy }: { proxy: ProxyServer }) {
 
       switch (request.params.name) {
         case "list_targets": {
-          const args = SearchRepositoriesSchema.parse(request.params.arguments);
+          // const args = SearchRepositoriesSchema.parse(request.params.arguments);
           //   const results = await repository.searchRepositories(
           //     args.query,
           //     args.page,

@@ -72,24 +72,28 @@ Usage: director [options] [command]
 Director CLI
 
 Options:
-  -V, --version                 output the version number
-  -h, --help                    display help for command
+  -V, --version                     output the version number
+  -h, --help                        display help for command
 
 Commands:
-  ls                            List all proxies
-  get <proxyId>                 Show proxy details
-  create <name>                 Create a new proxy
-  rm <proxyId>                  Delete a proxy
-  sse2stdio <sse_url>           Proxy a SSE connection to a stdio stream
-  install <proxyId> <client>    Install a proxy on a client app
-  uninstall <proxyId> <client>  Uninstall an proxy from a client app
-  registry:ls                   List all available servers in the registry
-  registry:get <entryId>        get detailed information about a repository item
-  start                         Start the director service
-  config                        Print configuration variables
-  debug:seed                    Seed the database with test data, for development
-  debug:restart <client>        Restart client
-  help [command]                display help for command
+  ls                                List all proxies
+  get <proxyId>                     Show proxy details
+  create <name>                     Create a new proxy
+  rm <proxyId>                      Delete a proxy
+  server:add <proxyId> <server>     [TODO] Add a server to a proxy. Server can be a registry entry, a url or a command
+                                    (stdio).
+  server:remove <proxyId> <server>  [TODO] Remove a server from a proxy
+  sse2stdio <sse_url>               Proxy a SSE connection to a stdio stream
+  install <proxyId> <client>        Install a proxy on a client app
+  uninstall <proxyId> <client>      Uninstall an proxy from a client app
+  registry:ls                       List all available servers in the registry
+  registry:get <entryId>            get detailed information about a repository item
+  start                             Start the director service
+  config                            Print configuration variables
+  debug:seed                        Seed the database with test data, for development
+  debug:restart <client>            Restart client
+  help [command]                    display help for command
+
 ```
 
 ---

@@ -10,7 +10,7 @@
     "test": "bun run vitest  --fileParallelism=false",
     "cli": "bun run bin/cli.ts",
     "build": "bun build ./bin/cli.ts --compile --outfile ./dist/cli",
-    "check-types": "tsc --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@trpc/client": "^11.0.2",

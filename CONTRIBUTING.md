@@ -9,15 +9,12 @@ This project is under active development and the code will likely change pretty 
 Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/working-dev/working.dev.git
-cd working.dev
+# install dependencies
 bun install
-```
 
-### Running the Development Server
+# run development server
+bun run start
 
-```bash
-bun run dev
 ```
 
 
@@ -28,23 +25,14 @@ bun run dev
 
 ### Development workflow
 
-- Create a _topic branch_ from `main` – e.g. `feat/interactive-prompt`.
+- Create a _topic branch_ from `main` – e.g. `feat/chatgpt-installer`.
 - Keep your changes focused. Multiple unrelated fixes should be opened as separate PRs.
-- Use `npm run test` during development for super‑fast feedback.
-- We use **Vitest** for unit tests, **ESLint** + **Prettier** for style, and **TypeScript** for type‑checking.
-- Before pushing, run the full test/type/lint suite:
-
-### Git Hooks with Husky
-
-This project uses [Husky](https://typicode.github.io/husky/) to enforce code quality checks:
-
-- **Pre-commit hook**: Automatically runs lint-staged to format and lint files before committing
-- **Pre-push hook**: Runs tests and type checking before pushing to the remote
-
-These hooks help maintain code quality and prevent pushing code with failing tests. For more details, see [HUSKY.md](./codex-cli/HUSKY.md).
+- Use `bun run test` during development for instant feedback.
+- We use **Vitest** for unit tests, **Biome** for style, and **TypeScript** for type‑checking.
+- Before pushing, run the full test/type/lint suite: 
 
 ```bash
-npm test && npm run lint && npm run typecheck
+bun run test && bun run lint && bun run typecheck
 ```
 
 ```bash

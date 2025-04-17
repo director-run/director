@@ -12,7 +12,7 @@
     "dev": "bun run --watch bin/backend.ts",
     "build": "bun build ./bin/backend.ts --compile --outfile ./dist/backend",
     "inspector": "npx @modelcontextprotocol/inspector",
-    "check-types": "tsc --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.8.0",

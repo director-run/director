@@ -22,7 +22,7 @@ jobs:
         run: bun install
       - name: Lint
         run: bun run lint
-  type-check:
+  typecheck:
     name: Type Check
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -36,9 +36,9 @@ jobs:
     - name: Install dependencies
       run: bun install
     - name: Check types
-      run: bun run check-types
+      run: bun run typecheck
   test:
-    name: Tests
+    name: Test
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

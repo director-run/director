@@ -1,45 +1,49 @@
 import { z } from "zod";
-import { REGISTRY_URL } from "../../config";
 
-export const RegistryItemSchema = z.object({
-  name: z.string(),
-  description: z.string(),
-  sourceUrl: z.string(),
-  config: z.object({
-    mcpKey: z.string(),
-    runtime: z.string(),
-    args: z.array(z.string()),
-  }),
-  features: z.array(
-    z.object({
-      name: z.string(),
-      description: z.string(),
-      prompt: z.string(),
-    }),
-  ),
-  setup: z.array(z.never()),
-});
+const REGISTRY_URL =
+  "https://gist.githubusercontent.com/barnaby/f8a47505aa8931317cf3010d680506b4/raw/958a4ad714a3810d3575747fb3714e33f363c631/registry.json";
 
-export type RegistryItem = z.infer<typeof RegistryItemSchema>;
-
-export async function fetchRegistry(): Promise<Array<RegistryItem>> {
+export async function fetchRegistry(): Promise<Registry> {
   const response = await fetch(REGISTRY_URL);
   if (!response.ok) {
     throw new Error(`Failed to fetch registry: ${response.statusText}`);
   }
   const data = await response.json();
-  return data;
-  //   return data.map((server: unknown) => RegistryItemSchema.parse(server));
+  return RegistrySchema.parse(data);
 }
 
-export async function getServers(): Promise<RegistryItem[]> {
+export async function fetchEntries(): Promise<RegistryEntry[]> {
   const data = await fetchRegistry();
-  return data;
+  return data.entries;
 }
 
-export async function getServer(
-  name: string,
-): Promise<RegistryItem | undefined> {
-  const servers = await getServers();
-  return servers.find((server) => server.name === name);
+export async function fetchEntry(
+  id: string,
+): Promise<RegistryEntry | undefined> {
+  const servers = await fetchEntries();
+  return servers.find((server) => server.id === id);
 }
+
+export const RegistryEntrySchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+  transport: z.object({
+    type: z.literal("stdio"),
+    command: z.string(),
+    args: z.array(z.string()),
+  }),
+  source: z.object({
+    type: z.literal("github"),
+    url: z.string(),
+  }),
+});
+
+export type RegistryEntry = z.infer<typeof RegistryEntrySchema>;
+
+export const RegistrySchema = z.object({
+  entries: z.array(RegistryEntrySchema),
+  lastUpdatedAt: z.string().datetime(),
+});
+
+export type Registry = z.infer<typeof RegistrySchema>;

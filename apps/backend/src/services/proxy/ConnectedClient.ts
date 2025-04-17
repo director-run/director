@@ -1,9 +1,11 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
-import { PROXY_TARGET_CONNECT_RETRY_INTERVAL, VERSION } from "../../config";
-import { PROXY_TARGET_CONNECT_RETRY_COUNT } from "../../config";
+import { VERSION } from "../../config";
 import { getLogger } from "../../helpers/logger";
 import { sleep } from "../../helpers/util";
+
+export const PROXY_TARGET_CONNECT_RETRY_INTERVAL = 2500;
+export const PROXY_TARGET_CONNECT_RETRY_COUNT = 3;
 
 const logger = getLogger("ConnectedClient");
 

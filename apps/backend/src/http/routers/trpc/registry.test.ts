@@ -49,20 +49,22 @@ describe("Registry Router", () => {
     const items = await trpcClient.registry.list.query();
     const firstItem = items[0];
     const item = await trpcClient.registry.get.query({
-      name: firstItem.name,
+      id: firstItem.id,
     });
     expect(item).toBeDefined();
     expect(item.name).toBe(firstItem.name);
-    expect(item).toHaveProperty("config");
-    expect(item).toHaveProperty("features");
-    expect(item.config).toHaveProperty("mcpKey");
-    expect(item.config).toHaveProperty("runtime");
-    expect(item.config).toHaveProperty("args");
+    expect(item).toHaveProperty("transport");
+    expect(item).toHaveProperty("source");
+    expect(item.transport.type).toBe("stdio");
+    expect(item.transport.command).toBeDefined();
+    expect(item.transport.args).toBeDefined();
+    expect(item.source.type).toBe("github");
+    expect(item.source.url).toBeDefined();
   });
 
   it("should throw an error for non-existent repository item", async () => {
     await expect(
-      trpcClient.registry.get.query({ name: "non-existent" }),
+      trpcClient.registry.get.query({ id: "non-existent" }),
     ).rejects.toThrow();
   });
 });

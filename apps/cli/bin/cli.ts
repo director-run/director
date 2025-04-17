@@ -178,15 +178,15 @@ function truncateDescription(
 }
 
 program
-  .command("repo:ls")
-  .description("List all available repository items")
+  .command("registry:ls")
+  .description("List all available registry items")
   .action(
     withErrorHandler(async () => {
       const items = await trpc.registry.list.query();
-      const table = makeTable(["Name", "Description"]);
+      const table = makeTable(["Id", "Description"]);
       table.push(
         ...items.map((item) => {
-          return [item.name, truncateDescription(item.description)];
+          return [item.id, truncateDescription(item.description)];
         }),
       );
       console.log(table.toString());
@@ -217,12 +217,12 @@ function colorizeJson(obj: Record<string, JsonValue>): string {
 }
 
 program
-  .command("repo:info <name>")
-  .description("Get detailed information about a repository item")
+  .command("registry:get <entryId>")
+  .description("get detailed information about a repository item")
   .action(
-    withErrorHandler(async (name: string) => {
+    withErrorHandler(async (id: string) => {
       try {
-        const item = await trpc.registry.get.query({ name });
+        const item = await trpc.registry.get.query({ id });
         console.log(colorizeJson(item));
       } catch (error) {
         if (error instanceof Error) {

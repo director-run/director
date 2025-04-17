@@ -35,7 +35,7 @@ program
           },
         });
         table.push(
-          ...proxies.map((proxy) => [proxy.id, proxy.name, "some url"]),
+          ...proxies.map((proxy) => [proxy.id, proxy.name, proxy.url]),
         );
 
         console.log(table.toString());

@@ -79,7 +79,7 @@ export class ProxyServer extends Server {
   }
 
   public toPlainObject() {
-    return this.attributes;
+    return { ...this.attributes, url: this.sseUrl };
   }
 
   get id() {

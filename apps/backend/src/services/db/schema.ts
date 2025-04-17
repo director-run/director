@@ -30,6 +30,7 @@ export const proxySchema = z.object({
   id: requiredStringSchema,
   name: requiredStringSchema,
   description: optionalStringSchema,
+  url: optionalStringSchema,
   servers: z.array(McpServerSchema),
 });
 

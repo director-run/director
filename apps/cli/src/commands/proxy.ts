@@ -64,16 +64,26 @@ export function registerProxyCommands(program: Command) {
     .description("Create a new proxy server")
     .action(
       withErrorHandler(async (name: string) => {
-        // toto
+        const proxy = await trpc.store.create.mutate({
+          name,
+          servers: [],
+        });
+
+        console.log(`proxy ${proxy.id} created`);
       }),
     );
 
   program
-    .command("proxy:rm <name>")
+    .command("proxy:rm <proxyId>")
     .description("Create a new proxy server")
     .action(
-      withErrorHandler(async (name: string) => {
+      withErrorHandler(async (proxyId: string) => {
         // toto
+        await trpc.store.delete.mutate({
+          proxyId,
+        });
+
+        console.log(`proxy ${proxyId} deleted`);
       }),
     );
 }

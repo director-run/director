@@ -1,16 +1,8 @@
-<h1 align="center">Director</h1>
-<p align="center">Local first MCP proxy / gateway</p>
-
-<p align="center"><code>npm i -g @working.dev/director</code>
-
----
-
-</p>
-
-
-## Why Director?
+# Director
 
 Director is a Model Context Protocol (MCP) proxy server that simplifies the management of multiple MCP connections. Instead of manually configuring each client to connect to individual MCP servers, Director acts as a central hub that:
+
+## Why?
 
 - 🔌 **Unified Connection Management**  
   Single endpoint for all clients with multiple backend MCP servers (`proxy:ls` to view) 

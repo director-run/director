@@ -1,10 +1,7 @@
-import { join } from "path";
-import { writeFile } from "fs/promises";
 import { z } from "zod";
-import { DATA_DIR, REGISTRY_URL } from "../../config";
-import { readJSONFile } from "../../helpers/json";
+import { REGISTRY_URL } from "../../config";
 
-export const ServerSchema = z.object({
+export const RegistryItemSchema = z.object({
   name: z.string(),
   description: z.string(),
   sourceUrl: z.string(),
@@ -23,26 +20,27 @@ export const ServerSchema = z.object({
   setup: z.array(z.never()),
 });
 
-export type Server = z.infer<typeof ServerSchema>;
+export type RegistryItem = z.infer<typeof RegistryItemSchema>;
 
-const REGISTRY_FILE = join(DATA_DIR, "servers.json");
-
-export async function fetchRegistry(): Promise<void> {
+export async function fetchRegistry(): Promise<Array<RegistryItem>> {
   const response = await fetch(REGISTRY_URL);
   if (!response.ok) {
     throw new Error(`Failed to fetch registry: ${response.statusText}`);
   }
   const data = await response.json();
-  await writeFile(REGISTRY_FILE, JSON.stringify(data, null, 2));
+  return data;
+  //   return data.map((server: unknown) => RegistryItemSchema.parse(server));
 }
 
-export async function getServers(): Promise<Server[]> {
-  const data = await readJSONFile<Server[]>(REGISTRY_FILE);
+export async function getServers(): Promise<RegistryItem[]> {
+  const data = await fetchRegistry();
   return data;
   // return data.map((server: unknown) => ServerSchema.parse(server));
 }
 
-export async function getServer(name: string): Promise<Server | undefined> {
+export async function getServer(
+  name: string,
+): Promise<RegistryItem | undefined> {
   const servers = await getServers();
   return servers.find((server) => server.name === name);
 }

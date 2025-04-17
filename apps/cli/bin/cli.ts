@@ -15,6 +15,18 @@ program
   .description("Director CLI")
   .version(packageJson.version);
 
+function makeTable(head: string[]) {
+  return new Table({
+    head,
+    style: {
+      head: ["blue", "bold"],
+      border: [],
+      compact: true,
+    },
+
+    chars: { mid: "", "left-mid": "", "mid-mid": "", "right-mid": "" },
+  });
+}
 program
   .command("ls")
   .alias("list")
@@ -26,14 +38,8 @@ program
       if (proxies.length === 0) {
         console.log("no proxies configured yet.");
       } else {
-        const table = new Table({
-          head: ["id", "name", "url"],
-          style: {
-            head: ["green"],
-            border: [],
-            compact: true,
-          },
-        });
+        const table = makeTable(["id", "name", "url"]);
+
         table.push(
           ...proxies.map((proxy) => [proxy.id, proxy.name, proxy.url]),
         );
@@ -58,14 +64,7 @@ program
       console.log(`id=${proxy.id}`);
       console.log(`name=${proxy.name}`);
 
-      const table = new Table({
-        head: ["name", "transport", "url/command"],
-        style: {
-          head: ["blue", "bold"],
-          border: [],
-          compact: true,
-        },
-      });
+      const table = makeTable(["name", "transport", "url/command"]);
 
       table.push(
         ...proxy.servers.map((server) => [

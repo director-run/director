@@ -6,7 +6,7 @@ import { trpc } from "../trpc";
 export function registerProxyCommands(program: Command) {
   program
     .command("proxy:ls")
-    .description("List all configured MCP proxies")
+    .description("List all proxies")
     .action(
       withErrorHandler(async () => {
         const proxies = await trpc.store.getAll.query();
@@ -27,7 +27,7 @@ export function registerProxyCommands(program: Command) {
 
   program
     .command("proxy:get <proxyId>")
-    .description("Get the info for a proxy")
+    .description("Get the details of a proxy")
     .action(
       withErrorHandler(async (proxyId: string) => {
         const proxy = await trpc.store.get.query({ proxyId });
@@ -56,6 +56,24 @@ export function registerProxyCommands(program: Command) {
         );
 
         console.log(table.toString());
+      }),
+    );
+
+  program
+    .command("proxy:create <name>")
+    .description("Create a new proxy server")
+    .action(
+      withErrorHandler(async (name: string) => {
+        // toto
+      }),
+    );
+
+  program
+    .command("proxy:rm <name>")
+    .description("Create a new proxy server")
+    .action(
+      withErrorHandler(async (name: string) => {
+        // toto
       }),
     );
 }

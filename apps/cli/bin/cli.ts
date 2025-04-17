@@ -166,6 +166,16 @@ program
     }),
   );
 
+function truncateDescription(
+  description: string,
+  maxWidth: number = 100,
+): string {
+  if (description.length <= maxWidth) {
+    return description;
+  }
+  return description.slice(0, maxWidth - 3) + "...";
+}
+
 program
   .command("repo:ls")
   .description("List all available repository items")
@@ -173,7 +183,11 @@ program
     withErrorHandler(async () => {
       const items = await trpc.repository.list.query();
       const table = makeTable(["name", "description"]);
-      table.push(...items.map((item) => [item.name, item.description]));
+      table.push(
+        ...items.map((item) => {
+          return [item.name, truncateDescription(item.description)];
+        }),
+      );
       console.log(table.toString());
     }),
   );

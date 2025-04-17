@@ -1,63 +1,102 @@
-# Director
+<h1 align="center">Director</h1>
+<p align="center">Local first MCP proxy / gateway</p>
 
-[![Test](https://github.com/theworkingcompany/director/actions/workflows/test.yml/badge.svg)](https://github.com/theworkingcompany/director/actions/workflows/test.yml)
-[![Build](https://github.com/theworkingcompany/director/actions/workflows/build.yml/badge.svg)](https://github.com/theworkingcompany/director/actions/workflows/build.yml)
+<p align="center"><code>npm i -g @working.dev/director</code>
+
+
+</p>
+
+---
+[![CI](https://github.com/theworkingcompany/director/actions/workflows/ci.yml/badge.svg)](https://github.com/theworkingcompany/director/actions/workflows/ci.yml)
 [![Release](https://github.com/theworkingcompany/director/actions/workflows/release.yml/badge.svg)](https://github.com/theworkingcompany/director/actions/workflows/release.yml)
 
-## Getting Started
+## Why Director?
 
-This is a monorepo managed with [Turborepo](https://turbo.build/).
+Director is a MCP Proxy. Instead of connecting your clients manually to many MCP servers (by edinting the config), you can use the director CLI to connect a single server and then add a bunch of proxies to it. In addition, it provies the following benefits:
+
+- Discovery
+- Environment
+- Audits
+- Security
+- Config & Secret management
 
 
-## Folder Structure
+## Quickstart
 
-Find out more about each application and package in their respective `README.md` files
+*Note: Director is new project under active development and is not yet stable. See CONTRIBUTING.md.*
 
-```
-apps/
-├── cli                 # cli application [TODO]
-├── backend             # backend service
-├── desktop             # desktop application
-└── website             # https://director.run
-```
+```shell
+# install director
+$ npm install -g @openai/codex
 
-## Development
+# start the server (-d deamonizes)
+$ director start -d
 
-### Prerequisites
+# create a new proxy server
+$ director proxy:create <PROXY_NAME>
 
-- [Node.js](https://nodejs.org/) 
-- [Bun](https://bun.sh/) 
+# list available servers
+$ director registry:ls
 
-### Installation
+# add a target from the registry 
+$ director proxy:target:create <PROXY_ID> <TARGET_NAME>
 
-Clone the repository and install dependencies:
-
-```bash
-git clone https://github.com/working-dev/working.dev.git
-cd working.dev
-bun install
-```
-
-### Running the Development Server
-
-```bash
-bun run dev
+# install the proxy server to claude
+$ director claude:install <PROXY_ID>
 ```
 
-### Build
+---
 
-## Release Management
+## CLI Reference
 
-We use github tags to manage releases. Right now we package the entire app as a desktop app and release it as a new version. Here's how to release a new version of the application:
-
-```bash
-# Step 1: Make changes on a branch, bump the version
-... # make changes
-bun run desktop:version bump
-... # commit & push version changes
-# Step 2: Merge the branch in github ...
-# Step 3: Release
-git checkout main
-git pull
-bun run desktop:release
 ```
+Usage: director [options] [command]
+
+Director CLI
+
+Options:
+  -V, --version                  output the version number
+  -h, --help                     display help for command
+
+Commands:
+  proxy:ls                       List all configured MCP proxies
+  proxy:get <proxyId>            Get the info for a proxy
+  start                          Start the proxy server for all proxies
+  debug
+  seed
+  sse2stdio <sse_url>            Proxy a SSE connection to a stdio stream
+  install [options] <proxyId>    Install an mcp server to a client app
+  uninstall [options] <proxyId>  Uninstall an mcp server from a client app
+  claude:restart                 Restart Claude
+  registry:ls                    List all available registry items
+  registry:get <entryId>         get detailed information about a
+                                 repository item
+  help [command]                 display help for command
+```
+
+---
+
+## Configuration
+
+Director looks for config files in **`~/.director/`**.
+
+```yaml
+# ~/.codex/config.yaml
+model: o4-mini # Default model
+fullAutoErrorMode: ask-user # or ignore-and-continue
+```
+
+You can also define custom instructions:
+
+```yaml
+# ~/.codex/instructions.md
+- Always respond with emojis
+- Only use git commands if I explicitly mention you should
+```
+
+
+---
+
+## License
+
+This repository is licensed under the [MIT](LICENSE) licence.

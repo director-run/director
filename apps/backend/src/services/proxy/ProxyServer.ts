@@ -161,7 +161,7 @@ export class ProxyServer extends Server {
   }
 }
 
-export function getTransport(targetServer: McpServer): Transport {
+function getTransport(targetServer: McpServer): Transport {
   if (targetServer.transport.type === "sse") {
     return new SSEClientTransport(new URL(targetServer.transport.url));
   } else if (targetServer.transport.type === "stdio") {

@@ -28,7 +28,7 @@ program.addHelpText(
   "after",
   `
 
-Example:
+Examples:
   $ director create my-proxy
   $ director server:add my-proxy registry:fetch
   $ director server:add my-proxy https://mcp.example.com/sse

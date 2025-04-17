@@ -3,16 +3,6 @@
 
 <p align="center"><code>npm i -g @working.dev/director</code>
 
-
-<p align="center">
-  <a href="https://github.com/theworkingcompany/director/actions/workflows/ci.yml">
-    <img src="https://github.com/theworkingcompany/director/actions/workflows/ci.yml/badge.svg" alt="CI">
-  </a>
-  <a href="https://github.com/theworkingcompany/director/actions/workflows/release.yml">
-    <img src="https://github.com/theworkingcompany/director/actions/workflows/release.yml/badge.svg" alt="Release">
-  </a>
-</p>
-
 ---
 
 </p>

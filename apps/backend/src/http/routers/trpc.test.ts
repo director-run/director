@@ -115,6 +115,11 @@ describe("TRPC Router", () => {
       });
       expect(item).toBeDefined();
       expect(item.name).toBe(firstItem.name);
+      expect(item).toHaveProperty("config");
+      expect(item).toHaveProperty("features");
+      expect(item.config).toHaveProperty("mcpKey");
+      expect(item.config).toHaveProperty("runtime");
+      expect(item.config).toHaveProperty("args");
     });
 
     it("should throw an error for non-existent repository item", async () => {

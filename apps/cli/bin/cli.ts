@@ -11,7 +11,7 @@ import * as config from "../src/config";
 const program = new Command();
 
 program
-  .name(packageJson.name)
+  .name("director")
   .description("Director CLI")
   .version(packageJson.version);
 

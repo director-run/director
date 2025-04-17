@@ -56,8 +56,10 @@ $ director registry:ls
 # add a target from the registry 
 $ director target:add <PROXY_ID> <TARGET_NAME>
 
-# install the proxy server to claude
-$ director claude:install <PROXY_ID>
+# install the proxy server
+$ director install <PROXY_ID> claude
+$ director install <PROXY_ID> cursor
+
 ```
 
 ---
@@ -70,23 +72,24 @@ Usage: director [options] [command]
 Director CLI
 
 Options:
-  -V, --version                  output the version number
-  -h, --help                     display help for command
+  -V, --version                 output the version number
+  -h, --help                    display help for command
 
 Commands:
-  proxy:ls                       List all configured MCP proxies
-  proxy:get <proxyId>            Get the info for a proxy
-  start                          Start the proxy server for all proxies
-  debug
-  seed
-  sse2stdio <sse_url>            Proxy a SSE connection to a stdio stream
-  install [options] <proxyId>    Install an mcp server to a client app
-  uninstall [options] <proxyId>  Uninstall an mcp server from a client app
-  claude:restart                 Restart Claude
-  registry:ls                    List all available registry items
-  registry:get <entryId>         get detailed information about a
-                                 repository item
-  help [command]                 display help for command
+  ls                            List all proxies
+  get <proxyId>                 Show proxy details
+  create <name>                 Create a new proxy
+  rm <proxyId>                  Delete a proxy
+  sse2stdio <sse_url>           Proxy a SSE connection to a stdio stream
+  install <proxyId> <client>    Install a proxy on a client app
+  uninstall <proxyId> <client>  Uninstall an proxy from a client app
+  registry:ls                   List all available servers in the registry
+  registry:get <entryId>        get detailed information about a repository item
+  start                         Start the director service
+  config                        Print configuration variables
+  debug:seed                    Seed the database with test data, for development
+  debug:restart <client>        Restart client
+  help [command]                display help for command
 ```
 
 ---

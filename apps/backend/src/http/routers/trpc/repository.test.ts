@@ -2,10 +2,10 @@ import http from "http";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import superjson from "superjson";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { PORT } from "../../config";
-import { ProxyServerStore } from "../../services/proxy/ProxyServerStore";
-import { startService } from "../../startService";
-import type { AppRouter } from "./trpc";
+import type { AppRouter } from ".";
+import { PORT } from "../../../config";
+import { ProxyServerStore } from "../../../services/proxy/ProxyServerStore";
+import { startService } from "../../../startService";
 
 describe("Repository Router", () => {
   let proxyStore: ProxyServerStore;

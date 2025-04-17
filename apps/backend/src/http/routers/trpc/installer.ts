@@ -2,12 +2,12 @@ import { z } from "zod";
 import {
   installToClaude,
   uninstallFromClaude,
-} from "../../services/installer/claude";
+} from "../../../services/installer/claude";
 import {
   installToCursor,
   uninstallFromCursor,
-} from "../../services/installer/cursor";
-import type { ProxyServerStore } from "../../services/proxy/ProxyServerStore";
+} from "../../../services/installer/cursor";
+import type { ProxyServerStore } from "../../../services/proxy/ProxyServerStore";
 import { createTRPCRouter, loggedProcedure } from "./middleware";
 
 export function createInstallerRouter({

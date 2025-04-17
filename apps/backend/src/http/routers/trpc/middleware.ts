@@ -1,6 +1,6 @@
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
-import { getLogger } from "../../helpers/logger";
+import { getLogger } from "../../../helpers/logger";
 
 const logger = getLogger("http/routers/trpc");
 

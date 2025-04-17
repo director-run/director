@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { ErrorCode } from "../../helpers/error";
-import { AppError } from "../../helpers/error";
-import { getServer, getServers } from "../../services/registry";
+import { ErrorCode } from "../../../helpers/error";
+import { AppError } from "../../../helpers/error";
+import { getServer, getServers } from "../../../services/registry";
 import { createTRPCRouter, loggedProcedure } from "./middleware";
 
 export function createRepositoryRouter() {

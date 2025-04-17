@@ -1,10 +1,10 @@
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
-import { getLogger } from "../../helpers/logger";
-import {} from "../../services/installer/claude";
-import {} from "../../services/installer/cursor";
-import type { ProxyServerStore } from "../../services/proxy/ProxyServerStore";
-import {} from "../../services/registry";
+import { getLogger } from "../../../helpers/logger";
+import {} from "../../../services/installer/claude";
+import {} from "../../../services/installer/cursor";
+import type { ProxyServerStore } from "../../../services/proxy/ProxyServerStore";
+import {} from "../../../services/registry";
 import { createInstallerRouter } from "./installer";
 import { createRepositoryRouter } from "./repository";
 import { createStoreRouter } from "./store";

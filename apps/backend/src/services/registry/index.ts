@@ -1,8 +1,8 @@
 import { join } from "path";
 import { writeFile } from "fs/promises";
 import { z } from "zod";
-import { DATA_DIR, REGISTRY_URL } from "../config";
-import { readJSONFile } from "../helpers/json";
+import { DATA_DIR, REGISTRY_URL } from "../../config";
+import { readJSONFile } from "../../helpers/json";
 
 export const ServerSchema = z.object({
   name: z.string(),

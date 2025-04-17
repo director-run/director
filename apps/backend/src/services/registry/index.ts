@@ -35,7 +35,6 @@ export async function fetchRegistry(): Promise<Array<RegistryItem>> {
 export async function getServers(): Promise<RegistryItem[]> {
   const data = await fetchRegistry();
   return data;
-  // return data.map((server: unknown) => ServerSchema.parse(server));
 }
 
 export async function getServer(

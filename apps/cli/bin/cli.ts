@@ -29,8 +29,7 @@ function makeTable(head: string[]) {
   });
 }
 program
-  .command("ls")
-  .alias("list")
+  .command("proxy:ls")
   .description("List all configured MCP proxies")
   .action(
     withErrorHandler(async () => {
@@ -51,7 +50,7 @@ program
   );
 
 program
-  .command("info <proxyId>")
+  .command("proxy:get <proxyId>")
   .description("Get the info for a proxy")
   .action(
     withErrorHandler(async (proxyId: string) => {

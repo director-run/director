@@ -1,4 +1,5 @@
 import {} from "@trpc/client";
+import chalk from "chalk";
 import Table from "cli-table3";
 import { Command } from "commander";
 import { seed } from "../../backend/src/services/db/seed";
@@ -182,13 +183,51 @@ program
   .action(
     withErrorHandler(async () => {
       const items = await trpc.repository.list.query();
-      const table = makeTable(["name", "description"]);
+      const table = makeTable(["Name", "Description"]);
       table.push(
         ...items.map((item) => {
           return [item.name, truncateDescription(item.description)];
         }),
       );
       console.log(table.toString());
+    }),
+  );
+
+type JsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | JsonValue[]
+  | { [key: string]: JsonValue };
+
+function colorizeJson(obj: Record<string, JsonValue>): string {
+  return Object.entries(obj)
+    .map(([key, value]) => {
+      const coloredKey = chalk.blue(key);
+      const formattedValue =
+        typeof value === "string" ? value : JSON.stringify(value, null, 2);
+      return `${coloredKey}: ${formattedValue}`;
+    })
+    .join("\n");
+}
+
+program
+  .command("repo:info <name>")
+  .description("Get detailed information about a repository item")
+  .action(
+    withErrorHandler(async (name: string) => {
+      try {
+        const item = await trpc.repository.get.query({ name });
+        console.log(colorizeJson(item));
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(chalk.red(error.message));
+        } else {
+          console.error(chalk.red("An unknown error occurred"));
+        }
+      }
     }),
   );
 

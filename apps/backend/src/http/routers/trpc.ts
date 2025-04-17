@@ -195,6 +195,18 @@ export function createAppRouter({
         description: app.description.split("\n")[0],
       }));
     }),
+    get: loggedProcedure
+      .input(z.object({ name: z.string() }))
+      .query(async ({ input }) => {
+        const app = apps.find((app) => app.name === input.name);
+        if (!app) {
+          throw new AppError(
+            ErrorCode.NOT_FOUND,
+            `Repository item ${input.name} not found`,
+          );
+        }
+        return app;
+      }),
   });
 
   return createTRPCRouter({

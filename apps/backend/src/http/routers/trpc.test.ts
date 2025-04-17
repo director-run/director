@@ -106,5 +106,21 @@ describe("TRPC Router", () => {
       expect(items[0]).toHaveProperty("name");
       expect(items[0]).toHaveProperty("description");
     });
+
+    it("should get a single repository item", async () => {
+      const items = await trpcClient.repository.list.query();
+      const firstItem = items[0];
+      const item = await trpcClient.repository.get.query({
+        name: firstItem.name,
+      });
+      expect(item).toBeDefined();
+      expect(item.name).toBe(firstItem.name);
+    });
+
+    it("should throw an error for non-existent repository item", async () => {
+      await expect(
+        trpcClient.repository.get.query({ name: "non-existent" }),
+      ).rejects.toThrow();
+    });
   });
 });

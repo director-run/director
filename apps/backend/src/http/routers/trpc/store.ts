@@ -5,7 +5,7 @@ import { proxySchema } from "../../../services/db/schema";
 import type { ProxyServerStore } from "../../../services/proxy/ProxyServerStore";
 import { createTRPCRouter, loggedProcedure } from "./middleware";
 
-export function createStoreRouter({
+export function createProxyStoreRouter({
   proxyStore,
 }: { proxyStore: ProxyServerStore }) {
   return createTRPCRouter({
@@ -87,6 +87,16 @@ export function createStoreRouter({
       )
       .mutation(async ({ input }) => {
         return proxyStore.addServer(input.proxyId, input.server);
+      }),
+    addServerFromRegistry: loggedProcedure
+      .input(
+        z.object({
+          proxyId: z.string(),
+          entryId: z.string(),
+        }),
+      )
+      .mutation(async ({ input }) => {
+        return proxyStore.addServerFromRegistry(input.proxyId, input.entryId);
       }),
     removeServer: loggedProcedure
       .input(

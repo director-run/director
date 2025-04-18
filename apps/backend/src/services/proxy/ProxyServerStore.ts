@@ -118,6 +118,15 @@ export class ProxyServerStore {
     return proxy;
   }
 
+  public async addServerFromRegistry(
+    proxyId: string,
+    entryId: string,
+  ): Promise<ProxyServer> {
+    const proxy = this.get(proxyId);
+    console.log("addServerFromRegistry ------->", { proxyId, entryId });
+    return proxy;
+  }
+
   public async update(
     proxyId: string,
     attributes: Partial<{

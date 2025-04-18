@@ -88,26 +88,28 @@ export function registerProxyCommands(program: Command) {
     );
 
   program
-    .command("server:add <proxyId> <server>")
-    .description(
-      "[TODO] Add a server to a proxy. Server can be a registry entry, a url or a command (stdio).",
-    )
+    .command("server:add <proxyId> <entryId>")
+    .description("Add a server from the registry to a proxy.")
     .action(
-      withErrorHandler(async (proxyId: string, server: string) => {
-        // const proxy = await trpc.store.addServer.mutate({
-        //   proxyId,
-        //   server,
-        // });
-        // console.log(`proxy ${proxy.id} created`);
+      withErrorHandler(async (proxyId: string, entryId: string) => {
+        const proxy = await trpc.store.addServerFromRegistry.mutate({
+          proxyId,
+          entryId,
+        });
+        console.log(`Registry entry ${entryId} added to ${proxy.id}`);
       }),
     );
 
   program
-    .command("server:remove <proxyId> <server>")
-    .description("[TODO] Remove a server from a proxy")
+    .command("server:remove <proxyId> <serverName>")
+    .description("Remove a server from a proxy")
     .action(
-      withErrorHandler(async (proxyId: string, entryId: string) => {
-        throw new Error("not implemented");
+      withErrorHandler(async (proxyId: string, serverName: string) => {
+        const proxy = await trpc.store.removeServer.mutate({
+          proxyId,
+          serverName,
+        });
+        console.log(`Server ${serverName} added to ${proxy.id}`);
       }),
     );
 

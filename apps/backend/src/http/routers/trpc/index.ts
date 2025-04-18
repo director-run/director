@@ -4,13 +4,13 @@ import type { ProxyServerStore } from "../../../services/proxy/ProxyServerStore"
 import { createInstallerRouter } from "./installer";
 import { t } from "./middleware";
 import { createRegistryRouter } from "./registry";
-import { createStoreRouter } from "./store";
+import { createProxyStoreRouter } from "./store";
 
 export function createAppRouter({
   proxyStore,
 }: { proxyStore: ProxyServerStore }) {
   return t.router({
-    store: createStoreRouter({ proxyStore }),
+    store: createProxyStoreRouter({ proxyStore }),
     installer: createInstallerRouter({ proxyStore }),
     registry: createRegistryRouter(),
   });

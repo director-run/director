@@ -30,9 +30,7 @@ program.addHelpText(
 
 Examples:
   $ director create my-proxy
-  $ director server:add my-proxy registry:fetch
-  $ director server:add my-proxy https://mcp.example.com/sse
-  $ director server:add my-proxy "node my-server.js"
+  $ director server:add my-proxy fetch
   $ director install my-proxy claude
 `,
 );

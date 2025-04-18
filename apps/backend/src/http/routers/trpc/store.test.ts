@@ -1,39 +1,23 @@
-import http from "http";
-import { createTRPCClient, httpBatchLink } from "@trpc/client";
-import superjson from "superjson";
+import { createTRPCClient } from "@trpc/client";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { AppRouter } from ".";
 import { PORT } from "../../../config";
+import { setupIntegrationTest } from "../../../helpers/testHelpers";
 import { ProxyServerStore } from "../../../services/proxy/ProxyServerStore";
-import { startService } from "../../../startService";
-
 describe("Store Router", () => {
-  let proxyStore: ProxyServerStore;
-  let directorService: http.Server | undefined;
   let trpcClient: ReturnType<typeof createTRPCClient<AppRouter>>;
+  let close: () => Promise<void>;
+  let proxyStore: ProxyServerStore;
 
   beforeAll(async () => {
-    proxyStore = await ProxyServerStore.create();
-    directorService = await startService({ proxyStore });
-
-    trpcClient = createTRPCClient<AppRouter>({
-      links: [
-        httpBatchLink({
-          url: `http://localhost:${PORT}/trpc`,
-          transformer: superjson,
-        }),
-      ],
-    });
+    const attributes = await setupIntegrationTest(PORT);
+    trpcClient = attributes.trpcClient;
+    close = attributes.close;
+    proxyStore = attributes.proxyStore;
   });
 
   afterAll(async () => {
-    await proxyStore.purge();
-    if (directorService) {
-      await new Promise<void>((resolve) => {
-        directorService?.close(() => resolve());
-      });
-      directorService = undefined;
-    }
+    await close();
   });
 
   it("should get all proxies", async () => {

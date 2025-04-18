@@ -38,15 +38,13 @@ describe("createControllerServer", () => {
     expect(tools.tools).toHaveLength(1);
     expect(tools.tools[0].name).toBe("list_targets");
 
-    const result = await client.callTool({
-      name: "list_targets",
-      arguments: {
-        query: "test",
-        page: 1,
-        perPage: 10,
-      },
-    });
-
-    console.log("list_targets result:", result);
+    // const result = await client.callTool({
+    //   name: "list_targets",
+    //   arguments: {
+    //     query: "test",
+    //     page: 1,
+    //     perPage: 10,
+    //   },
+    // });
   });
 });

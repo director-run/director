@@ -162,22 +162,23 @@ export class ProxyServer extends Server {
 }
 
 function getTransport(targetServer: ProxyTargetAttributes): Transport {
-  if (targetServer.transport.type === "sse") {
-    return new SSEClientTransport(new URL(targetServer.transport.url));
-  } else if (targetServer.transport.type === "stdio") {
-    return new StdioClientTransport({
-      command: targetServer.transport.command,
-      args: targetServer.transport.args,
-      env: targetServer.transport.env
-        ? targetServer.transport.env.reduce(
-            (_, v) => ({
-              [v]: process.env[v] || "",
-            }),
-            {},
-          )
-        : undefined,
-    });
-  } else {
-    throw new Error(`Transport ${targetServer.name} not available.`);
+  switch (targetServer.transport.type) {
+    case "sse":
+      return new SSEClientTransport(new URL(targetServer.transport.url));
+    case "stdio":
+      return new StdioClientTransport({
+        command: targetServer.transport.command,
+        args: targetServer.transport.args,
+        env: targetServer.transport.env
+          ? targetServer.transport.env.reduce(
+              (_, v) => ({
+                [v]: process.env[v] || "",
+              }),
+              {},
+            )
+          : undefined,
+      });
+    default:
+      throw new Error(`Transport ${targetServer.name} not available.`);
   }
 }

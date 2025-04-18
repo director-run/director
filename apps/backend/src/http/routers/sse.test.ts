@@ -6,8 +6,10 @@ import {
   type IntegrationTestVariables,
   TestMCPClient,
   createMCPServer,
+  fetchProxy,
   hackerNewsProxy,
   setupIntegrationTest,
+  sseProxy,
 } from "../../helpers/testHelpers";
 
 describe("SSE Router", () => {
@@ -27,21 +29,8 @@ describe("SSE Router", () => {
       name: "Test Proxy",
       servers: [
         hackerNewsProxy(),
-        {
-          name: "Fetch",
-          transport: {
-            type: "stdio",
-            command: "uvx",
-            args: ["mcp-server-fetch"],
-          },
-        },
-        {
-          name: "test-sse-transport",
-          transport: {
-            type: "sse",
-            url: "http://localhost:4521/sse",
-          },
-        },
+        fetchProxy(),
+        sseProxy("http://localhost:4521/sse"),
       ],
     });
   });

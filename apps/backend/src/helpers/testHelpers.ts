@@ -94,7 +94,7 @@ export class TestMCPClient extends Client {
 export const hackerNewsProxy = () => ({
   name: "Hackernews",
   transport: {
-    type: "stdio",
+    type: "stdio" as const,
     command: "uvx",
     args: ["--from", "git+https://github.com/erithwik/mcp-hn", "mcp-hn"],
   },
@@ -103,7 +103,7 @@ export const hackerNewsProxy = () => ({
 export const fetchProxy = () => ({
   name: "Fetch",
   transport: {
-    type: "stdio",
+    type: "stdio" as const,
     command: "uvx",
     args: ["mcp-server-fetch"],
   },
@@ -112,7 +112,7 @@ export const fetchProxy = () => ({
 export const sseProxy = (url: string) => ({
   name: "SSE",
   transport: {
-    type: "sse",
+    type: "sse" as const,
     url,
   },
 });

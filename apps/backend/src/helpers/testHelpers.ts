@@ -1,3 +1,5 @@
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
@@ -65,3 +67,34 @@ export const setupIntegrationTest =
 
     return { trpcClient, close, proxyStore };
   };
+
+export class TestMCPClient implements Client {
+  constructor(private readonly client: Client) {}
+
+  async connect(transport: SSEClientTransport): Promise<void> {
+    await this.client.connect(transport);
+  }
+}
+
+export const makeTestMCPClient = async (): Promise<Client> => {
+  const client = new Client(
+    {
+      name: "test-client",
+      version: "0.0.0",
+    },
+    {
+      capabilities: {
+        prompts: {},
+        resources: {},
+        tools: {},
+      },
+    },
+  );
+
+  const transport = new SSEClientTransport(
+    new URL(`http://localhost:${PORT}/test-proxy/sse`),
+  );
+  await client.connect(transport);
+
+  return client;
+};

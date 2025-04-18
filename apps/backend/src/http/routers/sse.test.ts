@@ -7,6 +7,7 @@ import { PORT } from "../../config";
 import {
   type IntegrationTestVariables,
   createMCPServer,
+  makeTestMCPClient,
   setupIntegrationTest,
 } from "../../helpers/testHelpers";
 
@@ -87,24 +88,7 @@ describe("SSE Router", () => {
   });
 
   test("should connect and list tools", async () => {
-    const client = new Client(
-      {
-        name: "test-client",
-        version: "0.0.0",
-      },
-      {
-        capabilities: {
-          prompts: {},
-          resources: {},
-          tools: {},
-        },
-      },
-    );
-
-    const transport = new SSEClientTransport(
-      new URL(`http://localhost:${PORT}/test-proxy/sse`),
-    );
-    await client.connect(transport);
+    const client = await makeTestMCPClient();
 
     const toolsResult = await client.listTools();
     const expectedToolNames = [

@@ -100,6 +100,24 @@ export class ProxyServerStore {
     return proxyServer;
   }
 
+  public async addServer(
+    proxyId: string,
+    server: McpServer,
+  ): Promise<ProxyServer> {
+    const proxy = this.get(proxyId);
+    throw new Error("Not implemented");
+    return proxy;
+  }
+
+  public async removeServer(
+    proxyId: string,
+    serverName: string,
+  ): Promise<ProxyServer> {
+    const proxy = this.get(proxyId);
+    throw new Error("Not implemented");
+    return proxy;
+  }
+
   public async update(
     proxyId: string,
     attributes: Partial<{

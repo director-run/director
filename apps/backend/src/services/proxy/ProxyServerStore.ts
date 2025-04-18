@@ -1,7 +1,7 @@
 import { AppError, ErrorCode } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
 import { db } from "../db";
-import type { McpServer } from "../db/schema";
+import type { ProxyTargetAttributes } from "../db/schema";
 import { ProxyServer } from "./ProxyServer";
 
 const logger = getLogger("ProxyServerStore");
@@ -82,7 +82,7 @@ export class ProxyServerStore {
   }: {
     name: string;
     description?: string;
-    servers?: McpServer[];
+    servers?: ProxyTargetAttributes[];
   }): Promise<ProxyServer> {
     const newProxy = await db.addProxy({
       name,
@@ -102,7 +102,7 @@ export class ProxyServerStore {
 
   public async addServer(
     proxyId: string,
-    server: McpServer,
+    server: ProxyTargetAttributes,
   ): Promise<ProxyServer> {
     const proxy = this.get(proxyId);
     throw new Error("Not implemented");
@@ -123,7 +123,7 @@ export class ProxyServerStore {
     attributes: Partial<{
       name: string;
       description: string;
-      servers: McpServer[];
+      servers: ProxyTargetAttributes[];
     }>,
   ): Promise<ProxyServer> {
     const proxy = this.get(proxyId);

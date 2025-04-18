@@ -10,7 +10,7 @@ import { ErrorCode } from "../../helpers/error";
 import { AppError } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
 import { parseMCPMessageBody } from "../../helpers/mcp";
-import type { McpServer, Proxy as ProxyAttributes } from "../db/schema";
+import type { ProxyAttributes, ProxyTargetAttributes } from "../db/schema";
 import { ConnectedClient } from "./ConnectedClient";
 import { ControllerClient } from "./ControllerClient";
 import { setupPromptHandlers } from "./handlers/promptsHandler";
@@ -161,7 +161,7 @@ export class ProxyServer extends Server {
   }
 }
 
-function getTransport(targetServer: McpServer): Transport {
+function getTransport(targetServer: ProxyTargetAttributes): Transport {
   if (targetServer.transport.type === "sse") {
     return new SSEClientTransport(new URL(targetServer.transport.url));
   } else if (targetServer.transport.type === "stdio") {

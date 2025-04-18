@@ -3,38 +3,32 @@ import { z } from "zod";
 const requiredStringSchema = z.string().trim().min(1, "Required");
 const optionalStringSchema = z.string().trim().nullish();
 
-export const StdioTransportSchema = z.object({
-  type: z.literal("stdio"),
-  command: requiredStringSchema,
-  args: z.array(requiredStringSchema).optional(),
-  env: z.array(requiredStringSchema).optional(),
-});
-
-export type StdioTransport = z.infer<typeof StdioTransportSchema>;
-
-export const SseTransportSchema = z.object({
-  type: z.literal("sse"),
-  url: requiredStringSchema,
-});
-
-export type SseTransport = z.infer<typeof SseTransportSchema>;
-
-export const McpServerSchema = z.object({
+export const ProxyTargetSchema = z.object({
   name: requiredStringSchema,
-  transport: z.union([StdioTransportSchema, SseTransportSchema]),
+  transport: z.union([
+    z.object({
+      type: z.literal("stdio"),
+      command: requiredStringSchema,
+      args: z.array(requiredStringSchema).optional(),
+      env: z.array(requiredStringSchema).optional(),
+    }),
+    z.object({
+      type: z.literal("sse"),
+      url: requiredStringSchema,
+    }),
+  ]),
 });
 
-export type McpServer = z.infer<typeof McpServerSchema>;
+export type ProxyTargetAttributes = z.infer<typeof ProxyTargetSchema>;
 
 export const proxySchema = z.object({
   id: requiredStringSchema,
   name: requiredStringSchema,
   description: optionalStringSchema,
-  url: optionalStringSchema,
-  servers: z.array(McpServerSchema),
+  servers: z.array(ProxyTargetSchema),
 });
 
-export type Proxy = z.infer<typeof proxySchema>;
+export type ProxyAttributes = z.infer<typeof proxySchema>;
 
 export const databaseSchema = z.object({
   proxies: z.array(proxySchema),

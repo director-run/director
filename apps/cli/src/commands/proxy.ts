@@ -93,8 +93,12 @@ export function registerProxyCommands(program: Command) {
       "[TODO] Add a server to a proxy. Server can be a registry entry, a url or a command (stdio).",
     )
     .action(
-      withErrorHandler(async (proxyId: string, entryId: string) => {
-        throw new Error("not implemented");
+      withErrorHandler(async (proxyId: string, server: string) => {
+        // const proxy = await trpc.store.addServer.mutate({
+        //   proxyId,
+        //   server,
+        // });
+        // console.log(`proxy ${proxy.id} created`);
       }),
     );
 

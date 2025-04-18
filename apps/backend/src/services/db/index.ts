@@ -2,7 +2,11 @@ import { existsSync } from "node:fs";
 import slugify from "slugify";
 import { DB_FILE_PATH } from "../../config";
 import { readJSONFile, writeJSONFile } from "../../helpers/json";
-import { type DatabaseSchema, type Proxy, databaseSchema } from "./schema";
+import {
+  type DatabaseSchema,
+  type ProxyAttributes,
+  databaseSchema,
+} from "./schema";
 
 async function readDB(filePath: string): Promise<DatabaseSchema> {
   const store = await readJSONFile(filePath);
@@ -32,7 +36,7 @@ class Database {
     return db;
   }
 
-  async addProxy(proxy: Omit<Proxy, "id">): Promise<Proxy> {
+  async addProxy(proxy: Omit<ProxyAttributes, "id">): Promise<ProxyAttributes> {
     const store = await readDB(this.filePath);
 
     const existingProxy = store.proxies.find((p) => p.name === proxy.name);
@@ -51,7 +55,7 @@ class Database {
     return newProxy;
   }
 
-  async getProxy(id: string): Promise<Proxy> {
+  async getProxy(id: string): Promise<ProxyAttributes> {
     const store = await readDB(this.filePath);
     const proxy = store.proxies.find((p) => p.id === id);
 
@@ -74,7 +78,10 @@ class Database {
     await writeDB(this.filePath, store);
   }
 
-  async updateProxy(id: string, attributes: Partial<Proxy>): Promise<Proxy> {
+  async updateProxy(
+    id: string,
+    attributes: Partial<ProxyAttributes>,
+  ): Promise<ProxyAttributes> {
     const store = await readDB(this.filePath);
     const proxy = store.proxies.find((p) => p.id === id);
 
@@ -88,7 +95,7 @@ class Database {
     return proxy;
   }
 
-  async getAll(): Promise<Proxy[]> {
+  async getAll(): Promise<ProxyAttributes[]> {
     const store = await readDB(this.filePath);
     return store.proxies;
   }

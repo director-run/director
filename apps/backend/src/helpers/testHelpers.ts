@@ -36,25 +36,32 @@ export const createMCPServer = async (
   return instance;
 };
 
-export const setupIntegrationTest = async () => {
-  const proxyStore = await ProxyServerStore.create();
-  const directorService = await startService({ proxyStore });
-
-  const trpcClient = createTRPCClient<AppRouter>({
-    links: [
-      httpBatchLink({
-        url: `http://localhost:${PORT}/trpc`,
-        transformer: superjson,
-      }),
-    ],
-  });
-
-  const close = async () => {
-    await proxyStore.purge();
-    await new Promise<void>((resolve) => {
-      directorService.close(() => resolve());
-    });
-  };
-
-  return { trpcClient, close, proxyStore };
+export type IntegrationTestVariables = {
+  trpcClient: ReturnType<typeof createTRPCClient<AppRouter>>;
+  close: () => Promise<void>;
+  proxyStore: ProxyServerStore;
 };
+
+export const setupIntegrationTest =
+  async (): Promise<IntegrationTestVariables> => {
+    const proxyStore = await ProxyServerStore.create();
+    const directorService = await startService({ proxyStore });
+
+    const trpcClient = createTRPCClient<AppRouter>({
+      links: [
+        httpBatchLink({
+          url: `http://localhost:${PORT}/trpc`,
+          transformer: superjson,
+        }),
+      ],
+    });
+
+    const close = async () => {
+      await proxyStore.purge();
+      await new Promise<void>((resolve) => {
+        directorService.close(() => resolve());
+      });
+    };
+
+    return { trpcClient, close, proxyStore };
+  };

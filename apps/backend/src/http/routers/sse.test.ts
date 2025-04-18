@@ -1,22 +1,18 @@
 import type { Server } from "node:http";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
-import { createTRPCClient } from "@trpc/client";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
 import { PORT } from "../../config";
 import {
+  type IntegrationTestVariables,
   createMCPServer,
   setupIntegrationTest,
 } from "../../helpers/testHelpers";
-import { ProxyServerStore } from "../../services/proxy/ProxyServerStore";
-import type { AppRouter } from "./trpc";
 
 describe("SSE Router", () => {
   let proxyTargetServerInstance: Server;
-  let trpcClient: ReturnType<typeof createTRPCClient<AppRouter>>;
-  let close: () => Promise<void>;
-  let proxyStore: ProxyServerStore;
+  let testVariables: IntegrationTestVariables;
 
   beforeAll(async () => {
     proxyTargetServerInstance = await createMCPServer(4521, (server) => {
@@ -25,12 +21,9 @@ describe("SSE Router", () => {
       }));
     });
 
-    const attributes = await setupIntegrationTest();
-    trpcClient = attributes.trpcClient;
-    close = attributes.close;
-    proxyStore = attributes.proxyStore;
-
-    await trpcClient.store.create.mutate({
+    testVariables = await setupIntegrationTest();
+    await testVariables.proxyStore.purge();
+    await testVariables.proxyStore.create({
       name: "Test Proxy",
       servers: [
         {
@@ -65,7 +58,7 @@ describe("SSE Router", () => {
   });
 
   afterAll(async () => {
-    await close();
+    await testVariables.close();
     await proxyTargetServerInstance?.close();
   });
 

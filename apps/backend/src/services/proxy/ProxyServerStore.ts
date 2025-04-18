@@ -105,7 +105,7 @@ export class ProxyServerStore {
     server: ProxyTargetAttributes,
   ): Promise<ProxyServer> {
     const proxy = this.get(proxyId);
-    throw new Error("Not implemented");
+    console.log("addServer ------->", { proxyId, server });
     return proxy;
   }
 
@@ -114,7 +114,7 @@ export class ProxyServerStore {
     serverName: string,
   ): Promise<ProxyServer> {
     const proxy = this.get(proxyId);
-    throw new Error("Not implemented");
+    console.log("removeServer ------->", { proxyId, serverName });
     return proxy;
   }
 

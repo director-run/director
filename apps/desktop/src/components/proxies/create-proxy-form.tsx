@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  type Proxy,
+  type ProxyAttributes,
   proxySchema,
 } from "@director/backend/src/services/db/schema";
 import { useNavigate } from "react-router";
@@ -35,7 +35,7 @@ export function CreateProxyForm() {
 
   const createServerMutation = trpc.store.create.useMutation();
 
-  async function onSubmit(data: Omit<Proxy, "id">) {
+  async function onSubmit(data: Omit<ProxyAttributes, "id">) {
     const res = await createServerMutation.mutateAsync(data);
 
     toast({

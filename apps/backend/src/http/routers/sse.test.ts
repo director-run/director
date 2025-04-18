@@ -24,15 +24,6 @@ describe("SSE Router", () => {
     });
 
     testVariables = await setupIntegrationTest();
-    await testVariables.proxyStore.purge();
-    await testVariables.proxyStore.create({
-      name: "Test Proxy",
-      servers: [
-        hackerNewsProxy(),
-        fetchProxy(),
-        sseProxy("http://localhost:4521/sse"),
-      ],
-    });
   });
 
   afterAll(async () => {
@@ -50,6 +41,16 @@ describe("SSE Router", () => {
   });
 
   test("should connect and list tools", async () => {
+    await testVariables.proxyStore.purge();
+    await testVariables.proxyStore.create({
+      name: "Test Proxy",
+      servers: [
+        hackerNewsProxy(),
+        fetchProxy(),
+        sseProxy("http://localhost:4521/sse"),
+      ],
+    });
+
     const client = new TestMCPClient();
     await client.connectToURL(`http://localhost:${PORT}/test-proxy/sse`);
 

@@ -1,13 +1,12 @@
 import type { Server } from "node:http";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
 import { PORT } from "../../config";
 import {
   type IntegrationTestVariables,
+  TestMCPClient,
   createMCPServer,
-  makeTestMCPClient,
+  hackerNewsProxy,
   setupIntegrationTest,
 } from "../../helpers/testHelpers";
 
@@ -27,18 +26,7 @@ describe("SSE Router", () => {
     await testVariables.proxyStore.create({
       name: "Test Proxy",
       servers: [
-        {
-          name: "Hackernews",
-          transport: {
-            type: "stdio",
-            command: "uvx",
-            args: [
-              "--from",
-              "git+https://github.com/erithwik/mcp-hn",
-              "mcp-hn",
-            ],
-          },
-        },
+        hackerNewsProxy(),
         {
           name: "Fetch",
           transport: {
@@ -64,31 +52,17 @@ describe("SSE Router", () => {
   });
 
   test("should return 404 when proxy not found", async () => {
-    const client = new Client(
-      {
-        name: "test-client",
-        version: "0.0.0",
-      },
-      {
-        capabilities: {
-          prompts: {},
-          resources: {},
-          tools: {},
-        },
-      },
-    );
-
-    const transport = new SSEClientTransport(
-      new URL(`http://localhost:${PORT}/not_existing_proxy/sse`),
-    );
-
-    await expect(client.connect(transport)).rejects.toMatchObject({
+    const client = new TestMCPClient();
+    await expect(
+      client.connectToURL(`http://localhost:${PORT}/not_existing_proxy/sse`),
+    ).rejects.toMatchObject({
       code: 404,
     });
   });
 
   test("should connect and list tools", async () => {
-    const client = await makeTestMCPClient();
+    const client = new TestMCPClient();
+    await client.connectToURL(`http://localhost:${PORT}/test-proxy/sse`);
 
     const toolsResult = await client.listTools();
     const expectedToolNames = [

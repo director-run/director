@@ -68,33 +68,51 @@ export const setupIntegrationTest =
     return { trpcClient, close, proxyStore };
   };
 
-export class TestMCPClient implements Client {
-  constructor(private readonly client: Client) {}
+export class TestMCPClient extends Client {
+  constructor() {
+    super(
+      {
+        name: "test-client",
+        version: "0.0.0",
+      },
+      {
+        capabilities: {
+          prompts: {},
+          resources: {},
+          tools: {},
+        },
+      },
+    );
+  }
 
-  async connect(transport: SSEClientTransport): Promise<void> {
-    await this.client.connect(transport);
+  async connectToURL(url: string): Promise<void> {
+    const transport = new SSEClientTransport(new URL(url));
+    await super.connect(transport);
   }
 }
 
-export const makeTestMCPClient = async (): Promise<Client> => {
-  const client = new Client(
-    {
-      name: "test-client",
-      version: "0.0.0",
-    },
-    {
-      capabilities: {
-        prompts: {},
-        resources: {},
-        tools: {},
-      },
-    },
-  );
+export const hackerNewsProxy = () => ({
+  name: "Hackernews",
+  transport: {
+    type: "stdio",
+    command: "uvx",
+    args: ["--from", "git+https://github.com/erithwik/mcp-hn", "mcp-hn"],
+  },
+});
 
-  const transport = new SSEClientTransport(
-    new URL(`http://localhost:${PORT}/test-proxy/sse`),
-  );
-  await client.connect(transport);
+export const fetchProxy = () => ({
+  name: "Fetch",
+  transport: {
+    type: "stdio",
+    command: "uvx",
+    args: ["mcp-server-fetch"],
+  },
+});
 
-  return client;
-};
+export const sseProxy = (url: string) => ({
+  name: "SSE",
+  transport: {
+    type: "sse",
+    url,
+  },
+});

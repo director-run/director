@@ -36,7 +36,7 @@ export const createMCPServer = async (
   return instance;
 };
 
-export const setupIntegrationTest = async (port: number) => {
+export const setupIntegrationTest = async () => {
   const proxyStore = await ProxyServerStore.create();
   const directorService = await startService({ proxyStore });
 

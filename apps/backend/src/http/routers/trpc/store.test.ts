@@ -1,7 +1,6 @@
 import { createTRPCClient } from "@trpc/client";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { AppRouter } from ".";
-import { PORT } from "../../../config";
 import { setupIntegrationTest } from "../../../helpers/testHelpers";
 import { ProxyServerStore } from "../../../services/proxy/ProxyServerStore";
 describe("Store Router", () => {
@@ -10,7 +9,7 @@ describe("Store Router", () => {
   let proxyStore: ProxyServerStore;
 
   beforeAll(async () => {
-    const attributes = await setupIntegrationTest(PORT);
+    const attributes = await setupIntegrationTest();
     trpcClient = attributes.trpcClient;
     close = attributes.close;
     proxyStore = attributes.proxyStore;

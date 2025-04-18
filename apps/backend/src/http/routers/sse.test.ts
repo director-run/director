@@ -1,22 +1,37 @@
-import http from "http";
 import type { Server } from "node:http";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
+import { createTRPCClient } from "@trpc/client";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
 import { PORT } from "../../config";
-import { createMCPServer } from "../../helpers/testHelpers";
-import { db } from "../../services/db";
-import { startService } from "../../startService";
+import {
+  createMCPServer,
+  setupIntegrationTest,
+} from "../../helpers/testHelpers";
+import { ProxyServerStore } from "../../services/proxy/ProxyServerStore";
+import type { AppRouter } from "./trpc";
 
 describe("SSE Router", () => {
-  let proxyServer: http.Server | undefined;
   let proxyTargetServerInstance: Server;
+  let trpcClient: ReturnType<typeof createTRPCClient<AppRouter>>;
+  let close: () => Promise<void>;
+  let proxyStore: ProxyServerStore;
 
   beforeAll(async () => {
-    await db.purge();
-    await db.addProxy({
-      name: "Test proxy",
+    proxyTargetServerInstance = await createMCPServer(4521, (server) => {
+      server.tool("echo", { message: z.string() }, async ({ message }) => ({
+        content: [{ type: "text", text: `Tool echo: ${message}` }],
+      }));
+    });
+
+    const attributes = await setupIntegrationTest();
+    trpcClient = attributes.trpcClient;
+    close = attributes.close;
+    proxyStore = attributes.proxyStore;
+
+    await trpcClient.store.create.mutate({
+      name: "Test Proxy",
       servers: [
         {
           name: "Hackernews",
@@ -47,25 +62,11 @@ describe("SSE Router", () => {
         },
       ],
     });
-
-    proxyTargetServerInstance = await createMCPServer(4521, (server) => {
-      server.tool("echo", { message: z.string() }, async ({ message }) => ({
-        content: [{ type: "text", text: `Tool echo: ${message}` }],
-      }));
-    });
-
-    proxyServer = await startService();
   });
 
   afterAll(async () => {
-    await db.purge();
-    if (proxyServer) {
-      await new Promise<void>((resolve) => {
-        proxyServer?.close(() => resolve());
-      });
-      proxyServer = undefined;
-    }
-    proxyTargetServerInstance?.close();
+    await close();
+    await proxyTargetServerInstance?.close();
   });
 
   test("should return 404 when proxy not found", async () => {
@@ -106,6 +107,7 @@ describe("SSE Router", () => {
         },
       },
     );
+
     const transport = new SSEClientTransport(
       new URL(`http://localhost:${PORT}/test-proxy/sse`),
     );

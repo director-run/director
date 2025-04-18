@@ -11,7 +11,7 @@ describe("proxySSEToStdio", () => {
   let proxyTargetServerInstance: Server;
 
   beforeAll(async () => {
-    proxyTargetServerInstance = await createMCPServer(4521, (server) => {
+    proxyTargetServerInstance = await createMCPServer(4522, (server) => {
       server.tool("echo", { message: z.string() }, async ({ message }) => ({
         content: [{ type: "text", text: `Tool echo: ${message}` }],
       }));
@@ -32,7 +32,7 @@ describe("proxySSEToStdio", () => {
 
     transport = new StdioClientTransport({
       command: "bun",
-      args: ["cli", "sse2stdio", "http://localhost:4521/sse"],
+      args: ["cli", "sse2stdio", "http://localhost:4522/sse"],
       env: {
         ...process.env,
         LOG_LEVEL: "silent",

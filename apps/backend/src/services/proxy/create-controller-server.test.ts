@@ -1,8 +1,8 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { describe, expect, test } from "vitest";
-import { ProxyServer } from "./ProxyServer";
-import { createControllerServer } from "./createControllerServer";
+import { createControllerServer } from "./create-controller-server";
+import { ProxyServer } from "./proxy-server";
 
 describe("createControllerServer", () => {
   test("should create a controller server", async () => {

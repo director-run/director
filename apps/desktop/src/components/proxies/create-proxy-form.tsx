@@ -3,7 +3,7 @@
 import {
   type ProxyAttributes,
   proxySchema,
-} from "@director/backend/src/services/db/schema";
+} from "@director.run/backend/src/services/db/schema";
 import { useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";

@@ -7,7 +7,7 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
 import { getLogger } from "../../../helpers/logger";
-import type { ConnectedClient } from "../ConnectedClient";
+import type { ConnectedClient } from "../connected-client";
 
 const logger = getLogger("proxy/handlers/resourcesHandler");
 

@@ -1,5 +1,5 @@
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { ProxyServer } from "../../backend/src/services/proxy/ProxyServer";
+import { ProxyServer } from "../../backend/src/services/proxy/proxy-server";
 
 export async function proxySSEToStdio(sseUrl: string) {
   try {
@@ -22,7 +22,7 @@ export async function proxySSEToStdio(sseUrl: string) {
     await proxy.connect(transport);
 
     process.on("SIGINT", async () => {
-      await close();
+      await transport.close();
       await proxy.close();
       process.exit(0);
     });

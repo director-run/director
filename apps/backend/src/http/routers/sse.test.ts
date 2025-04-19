@@ -10,7 +10,7 @@ import {
   hackerNewsProxy,
   setupIntegrationTest,
   sseProxy,
-} from "../../helpers/testHelpers";
+} from "../../helpers/test-helpers";
 
 describe("SSE Router", () => {
   let proxyTargetServerInstance: Server;

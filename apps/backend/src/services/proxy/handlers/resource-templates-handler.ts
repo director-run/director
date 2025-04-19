@@ -4,7 +4,7 @@ import {
   ListResourceTemplatesResultSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { ResourceTemplate } from "@modelcontextprotocol/sdk/types.js";
-import type { ConnectedClient } from "../ConnectedClient";
+import type { ConnectedClient } from "../connected-client";
 
 export function setupResourceTemplateHandlers(
   server: Server,

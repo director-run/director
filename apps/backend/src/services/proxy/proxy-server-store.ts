@@ -2,7 +2,7 @@ import { AppError, ErrorCode } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
 import { db } from "../db";
 import type { ProxyTargetAttributes } from "../db/schema";
-import { ProxyServer } from "./ProxyServer";
+import { ProxyServer } from "./proxy-server";
 
 const logger = getLogger("ProxyServerStore");
 

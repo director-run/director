@@ -5,7 +5,7 @@ const optionalStringSchema = z.string().trim().nullish();
 
 export const ProxyTargetSchema = z.object({
   name: requiredStringSchema,
-  transport: z.union([
+  transport: z.discriminatedUnion("type", [
     z.object({
       type: z.literal("stdio"),
       command: requiredStringSchema,

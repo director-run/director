@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { startService } from "../../../backend/src/startService";
+import { startService } from "../../../backend/src/start-service";
 import * as config from "../config";
 import { withErrorHandler } from "../helpers";
 

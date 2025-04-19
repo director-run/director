@@ -9,7 +9,7 @@ export const trpc = createTRPCClient<AppRouter>({
     httpBatchLink({
       url: config.DIRECTOR_URL,
       transformer: superjson,
-      fetch(url, options) {
+      async fetch(url, options) {
         return fetch(url, options).catch((error) => {
           if (error.code === "ConnectionRefused") {
             throw new Error(

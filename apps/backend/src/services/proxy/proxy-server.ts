@@ -11,12 +11,12 @@ import { AppError } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
 import { parseMCPMessageBody } from "../../helpers/mcp";
 import type { ProxyAttributes, ProxyTargetAttributes } from "../db/schema";
-import { ConnectedClient } from "./ConnectedClient";
-import { ControllerClient } from "./ControllerClient";
-import { setupPromptHandlers } from "./handlers/promptsHandler";
-import { setupResourceTemplateHandlers } from "./handlers/resourceTemplatesHandler";
-import { setupResourceHandlers } from "./handlers/resourcesHandler";
-import { setupToolHandlers } from "./handlers/toolsHandler";
+import { ConnectedClient } from "./connected-client";
+import { ControllerClient } from "./controller-client";
+import { setupPromptHandlers } from "./handlers/prompts-handler";
+import { setupResourceTemplateHandlers } from "./handlers/resource-templates-handler";
+import { setupResourceHandlers } from "./handlers/resources-handler";
+import { setupToolHandlers } from "./handlers/tools-handler";
 
 global.EventSource = eventsource.EventSource;
 

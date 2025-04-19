@@ -1,6 +1,6 @@
 import {} from "../../../services/installer/claude";
 import {} from "../../../services/installer/cursor";
-import type { ProxyServerStore } from "../../../services/proxy/ProxyServerStore";
+import type { ProxyServerStore } from "../../../services/proxy/proxy-server-store";
 import { createInstallerRouter } from "./installer";
 import { t } from "./middleware";
 import { createRegistryRouter } from "./registry";

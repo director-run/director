@@ -6,7 +6,7 @@ import {
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { VERSION } from "../../config";
-import type { ProxyServer } from "./ProxyServer";
+import type { ProxyServer } from "./proxy-server";
 
 // const CreateOrUpdateFileSchema = z.object({
 //   owner: z.string().describe("Repository owner (username or organization)"),

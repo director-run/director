@@ -1,0 +1,23 @@
+{
+  "name": "@director.run/utilities",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1",
+  "exports": {
+    "./is": "./src/is.ts",
+    "./omit": "./src/omit.ts",
+    "./pick": "./src/pick.ts",
+    "./sleep": "./src/sleep.ts"
+  },
+  "scripts": {
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "clean": "rm -rf node_modules .turbo dist/*",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "type-fest": "^4.40.0",
+    "typescript": "^5.8.2"
+  }
+}

@@ -1,4 +1,4 @@
-import { isNumber } from "lodash";
+import { isNumber } from "@director.run/utilities/is";
 
 export type ExpressError = Error & {
   statusCode: number;

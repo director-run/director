@@ -2,7 +2,7 @@ import { z } from "zod";
 import { ErrorCode } from "../../../helpers/error";
 import { AppError } from "../../../helpers/error";
 import { proxySchema } from "../../../services/db/schema";
-import type { ProxyServerStore } from "../../../services/proxy/ProxyServerStore";
+import type { ProxyServerStore } from "../../../services/proxy/proxy-server-store";
 import { createTRPCRouter, loggedProcedure } from "./middleware";
 
 export function createProxyStoreRouter({

@@ -6,7 +6,7 @@ import { getLogger } from "./helpers/logger";
 import { errorRequestHandler } from "./http/middleware";
 import { sse } from "./http/routers/sse";
 import { createAppRouter } from "./http/routers/trpc";
-import { ProxyServerStore } from "./services/proxy/ProxyServerStore";
+import { ProxyServerStore } from "./services/proxy/proxy-server-store";
 
 const logger = getLogger("startService");
 

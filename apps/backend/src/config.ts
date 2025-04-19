@@ -6,6 +6,7 @@ import packageJson from "../package.json";
 if (process.env.NODE_ENV === "test") {
   env.config({ path: "./env/test.env" });
 }
+
 export const VERSION = packageJson.version;
 
 export const DATA_DIR =

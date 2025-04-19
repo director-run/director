@@ -3,7 +3,7 @@ import path from "node:path";
 import { readJSONFile, writeJSONFile } from "../../helpers/json";
 import { getLogger } from "../../helpers/logger";
 import { App, restartApp } from "../../helpers/os";
-import type { ProxyServer } from "../proxy/ProxyServer";
+import type { ProxyServer } from "../proxy/proxy-server";
 
 const CLAUDE_CONFIG_PATH = path.join(
   os.homedir(),

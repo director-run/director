@@ -1,5 +1,5 @@
 {
-  "name": "@director/cli",
+  "name": "@director.run/cli",
   "module": "index.ts",
   "type": "module",
   "version": "0.0.1",
@@ -11,6 +11,9 @@
     "cli": "bun run bin/cli.ts",
     "build": "bun build ./bin/cli.ts --compile --outfile ./dist/cli",
     "typecheck": "tsc --noEmit"
+  },
+  "bin": {
+    "director": "./dist/cli"
   },
   "dependencies": {
     "@trpc/client": "^11.0.2",

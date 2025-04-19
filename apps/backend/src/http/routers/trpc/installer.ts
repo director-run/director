@@ -7,7 +7,7 @@ import {
   installToCursor,
   uninstallFromCursor,
 } from "../../../services/installer/cursor";
-import type { ProxyServerStore } from "../../../services/proxy/ProxyServerStore";
+import type { ProxyServerStore } from "../../../services/proxy/proxy-server-store";
 import { createTRPCRouter, loggedProcedure } from "./middleware";
 
 export function createInstallerRouter({

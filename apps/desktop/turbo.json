@@ -2,10 +2,10 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "dependsOn": ["^@director/backend#build"]
+      "dependsOn": ["^@director.run/backend#build"]
     },
     "dev": {
-      "dependsOn": ["^@director/backend#build"]
+      "dependsOn": ["^@director.run/backend#build"]
     }
   }
 }

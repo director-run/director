@@ -7,8 +7,8 @@ import express from "express";
 import superjson from "superjson";
 import { PORT } from "../config";
 import type { AppRouter } from "../http/routers/trpc";
-import { ProxyServerStore } from "../services/proxy/ProxyServerStore";
-import { startService } from "../startService";
+import { ProxyServerStore } from "../services/proxy/proxy-server-store";
+import { startService } from "../start-service";
 
 export const createMCPServer = async (
   port: number,

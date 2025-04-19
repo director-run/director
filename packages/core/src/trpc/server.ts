@@ -1,19 +1,18 @@
 import { initTRPC } from "@trpc/server";
-import superjson from "superjson";
-import { getLogger } from "../../../helpers/logger";
+import SuperJSON from "superjson";
+import { getLogger } from "../helpers/logger";
 
 const logger = getLogger("http/routers/trpc");
 
-export const createTRPCContext = async (_opts: { headers: Headers }) => {
+const createTRPCContext = async () => {
   return {};
 };
 
-export const t = initTRPC.context<typeof createTRPCContext>().create({
-  transformer: superjson,
+export const trpcBase = initTRPC.context<typeof createTRPCContext>().create({
+  transformer: SuperJSON,
 });
 
-// Create logging middleware
-export const loggingMiddleware = t.middleware(
+const baseProcedure = trpcBase.procedure.use(
   async ({ path, type, next, input }) => {
     const start = Date.now();
     logger.info(
@@ -53,5 +52,8 @@ export const loggingMiddleware = t.middleware(
   },
 );
 
-export const createTRPCRouter = t.router;
-export const loggedProcedure = t.procedure.use(loggingMiddleware);
+export const t = {
+  router: trpcBase.router,
+  procedure: baseProcedure,
+  middleware: trpcBase.middleware,
+};

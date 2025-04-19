@@ -2,19 +2,19 @@ import { z } from "zod";
 import {
   installToClaude,
   uninstallFromClaude,
-} from "../../../services/installer/claude";
+} from "../../services/installer/claude";
 import {
   installToCursor,
   uninstallFromCursor,
-} from "../../../services/installer/cursor";
-import type { ProxyServerStore } from "../../../services/proxy/proxy-server-store";
-import { createTRPCRouter, loggedProcedure } from "./middleware";
+} from "../../services/installer/cursor";
+import type { ProxyServerStore } from "../../services/proxy/proxy-server-store";
+import { t } from "../server";
 
 export function createInstallerRouter({
   proxyStore,
 }: { proxyStore: ProxyServerStore }) {
-  return createTRPCRouter({
-    install: loggedProcedure
+  return t.router({
+    install: t.procedure
       .input(
         z.object({
           proxyId: z.string(),
@@ -23,7 +23,7 @@ export function createInstallerRouter({
       )
       .mutation(async ({ input }) => {
         try {
-          const proxy = await proxyStore.get(input.proxyId);
+          const proxy = proxyStore.get(input.proxyId);
           if (input.client === "claude") {
             await installToClaude({ proxyServer: proxy });
           } else {
@@ -41,7 +41,7 @@ export function createInstallerRouter({
           };
         }
       }),
-    uninstall: loggedProcedure
+    uninstall: t.procedure
       .input(
         z.object({
           proxyId: z.string(),
@@ -50,12 +50,14 @@ export function createInstallerRouter({
       )
       .mutation(async ({ input }) => {
         try {
-          const proxy = await proxyStore.get(input.proxyId);
+          const proxy = proxyStore.get(input.proxyId);
+
           if (input.client === "claude") {
             await uninstallFromClaude({ proxyServer: proxy });
           } else {
             await uninstallFromCursor({ proxyServer: proxy });
           }
+
           return {
             status: "ok" as const,
           };

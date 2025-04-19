@@ -1,7 +1,7 @@
-import type { AppRouter } from "@director.run/core/http/routers/trpc/index";
 import { createTRPCClient } from "@trpc/client";
 import { httpBatchLink } from "@trpc/client/links/httpBatchLink";
 import superjson from "superjson";
+import type { AppRouter } from "./routers/_app-router";
 
 import * as config from "../config";
 

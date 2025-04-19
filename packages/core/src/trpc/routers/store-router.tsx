@@ -1,15 +1,15 @@
 import { z } from "zod";
-import { ErrorCode } from "../../../helpers/error";
-import { AppError } from "../../../helpers/error";
-import { proxySchema } from "../../../services/db/schema";
-import type { ProxyServerStore } from "../../../services/proxy/proxy-server-store";
-import { createTRPCRouter, loggedProcedure } from "./middleware";
+import { ErrorCode } from "../../helpers/error";
+import { AppError } from "../../helpers/error";
+import { proxySchema } from "../../services/db/schema";
+import type { ProxyServerStore } from "../../services/proxy/proxy-server-store";
+import { t } from "../server";
 
 export function createProxyStoreRouter({
   proxyStore,
 }: { proxyStore: ProxyServerStore }) {
-  return createTRPCRouter({
-    getAll: loggedProcedure.query(async () => {
+  return t.router({
+    getAll: t.procedure.query(async () => {
       try {
         return (await proxyStore.getAll()).map((proxy) =>
           proxy.toPlainObject(),
@@ -19,7 +19,7 @@ export function createProxyStoreRouter({
         return [];
       }
     }),
-    get: loggedProcedure
+    get: t.procedure
       .input(z.object({ proxyId: z.string() }))
       .query(async ({ input }) => {
         try {
@@ -31,7 +31,7 @@ export function createProxyStoreRouter({
           throw e;
         }
       }),
-    create: loggedProcedure
+    create: t.procedure
       .input(proxySchema.omit({ id: true }))
       .mutation(async ({ input }) => {
         return (
@@ -42,7 +42,7 @@ export function createProxyStoreRouter({
           })
         ).toPlainObject();
       }),
-    update: loggedProcedure
+    update: t.procedure
       .input(
         z.object({
           proxyId: z.string(),
@@ -58,13 +58,13 @@ export function createProxyStoreRouter({
           })
         ).toPlainObject();
       }),
-    delete: loggedProcedure
+    delete: t.procedure
       .input(z.object({ proxyId: z.string() }))
       .mutation(async ({ input }) => {
         await proxyStore.delete(input.proxyId);
         return { success: true };
       }),
-    addServer: loggedProcedure
+    addServer: t.procedure
       .input(
         z.object({
           proxyId: z.string(),
@@ -88,7 +88,7 @@ export function createProxyStoreRouter({
       .mutation(async ({ input }) => {
         return proxyStore.addServer(input.proxyId, input.server);
       }),
-    addServerFromRegistry: loggedProcedure
+    addServerFromRegistry: t.procedure
       .input(
         z.object({
           proxyId: z.string(),
@@ -98,7 +98,7 @@ export function createProxyStoreRouter({
       .mutation(async ({ input }) => {
         return proxyStore.addServerFromRegistry(input.proxyId, input.entryId);
       }),
-    removeServer: loggedProcedure
+    removeServer: t.procedure
       .input(
         z.object({
           proxyId: z.string(),

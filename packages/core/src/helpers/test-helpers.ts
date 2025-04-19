@@ -6,9 +6,9 @@ import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import express from "express";
 import superjson from "superjson";
 import { PORT } from "../config";
-import type { AppRouter } from "../http/routers/trpc";
 import { ProxyServerStore } from "../services/proxy/proxy-server-store";
 import { startService } from "../start-service";
+import type { AppRouter } from "../trpc/routers/_app-router";
 
 export const createMCPServer = async (
   port: number,

@@ -1,7 +1,7 @@
 import type { Server } from "node:http";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
-import { PORT } from "../../config";
+import { PORT } from "./config";
 import {
   type IntegrationTestVariables,
   TestMCPClient,
@@ -10,7 +10,7 @@ import {
   hackerNewsProxy,
   setupIntegrationTest,
   sseProxy,
-} from "../../helpers/test-helpers";
+} from "./helpers/test-helpers";
 
 describe("SSE Router", () => {
   let proxyTargetServerInstance: Server;

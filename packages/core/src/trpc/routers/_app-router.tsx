@@ -1,8 +1,8 @@
-import type { ProxyServerStore } from "../../../services/proxy/proxy-server-store";
-import { createInstallerRouter } from "./installer";
-import { t } from "./middleware";
-import { createRegistryRouter } from "./registry";
-import { createProxyStoreRouter } from "./store";
+import type { ProxyServerStore } from "../../services/proxy/proxy-server-store";
+import { t } from "../server";
+import { createInstallerRouter } from "./installer-router";
+import { createRegistryRouter } from "./registry-router";
+import { createProxyStoreRouter } from "./store-router";
 
 export function createAppRouter({
   proxyStore,

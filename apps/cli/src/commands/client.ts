@@ -30,6 +30,4 @@ export function registerClientCommands(program: Command) {
     );
 }
 
-interface InstallOptions {
-  client: "claude" | "cursor";
-}
+type InstallOptions = "claude" | "cursor";

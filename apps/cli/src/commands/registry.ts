@@ -1,6 +1,7 @@
 import { trpc } from "@director.run/core/trpc/client";
 import chalk from "chalk";
 import { Command } from "commander";
+import type { JsonValue } from "type-fest";
 import { makeTable } from "../helpers";
 import { withErrorHandler } from "../helpers";
 
@@ -39,15 +40,6 @@ export function registerRegistryCommands(program: Command) {
       }),
     );
 }
-
-type JsonValue =
-  | string
-  | number
-  | boolean
-  | null
-  | undefined
-  | JsonValue[]
-  | { [key: string]: JsonValue };
 
 function colorizeJson(obj: Record<string, JsonValue>): string {
   const entries = Object.entries(obj)

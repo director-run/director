@@ -23,6 +23,9 @@
         "commander": "^13.1.0",
         "superjson": "^2.2.2",
       },
+      "devDependencies": {
+        "type-fest": "^4.40.0",
+      },
       "peerDependencies": {
         "typescript": "^5",
       },

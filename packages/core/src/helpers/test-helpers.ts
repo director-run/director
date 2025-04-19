@@ -5,10 +5,10 @@ import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import express from "express";
 import superjson from "superjson";
-import { PORT } from "../config";
 import { ProxyServerStore } from "../services/proxy/proxy-server-store";
 import { startService } from "../start-service";
 import type { AppRouter } from "../trpc/routers/_app-router";
+import { PORT } from "./env";
 
 export const createMCPServer = async (
   port: number,

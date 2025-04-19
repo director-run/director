@@ -2,7 +2,7 @@ import { omit } from "@director.run/utilities/omit";
 import { pick } from "@director.run/utilities/pick";
 import pino, { type Logger } from "pino";
 import pinoPretty from "pino-pretty";
-import { LOG_ERROR_STACK, LOG_LEVEL, LOG_PRETTY } from "../config";
+import { LOG_ERROR_STACK, LOG_LEVEL, LOG_PRETTY } from "./env";
 import { isAppError } from "./error";
 
 const logger = pino(

@@ -1,7 +1,7 @@
 import os from "node:os";
 import path from "node:path";
 import env from "dotenv";
-import packageJson from "../package.json";
+import packageJson from "../../package.json";
 
 if (process.env.NODE_ENV === "test") {
   env.config({ path: "./env/test.env" });

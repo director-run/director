@@ -1,8 +1,10 @@
 {
   "name": "@director.run/cli",
-  "module": "index.ts",
   "type": "module",
   "version": "0.0.1",
+  "bin": {
+    "director": "./dist/cli"
+  },
   "scripts": {
     "lint": "biome check .",
     "format": "biome format --write .",
@@ -11,9 +13,6 @@
     "cli": "bun run bin/cli.ts",
     "build": "bun build ./bin/cli.ts --compile --outfile ./dist/cli",
     "typecheck": "tsc --noEmit"
-  },
-  "bin": {
-    "director": "./dist/cli"
   },
   "dependencies": {
     "@director.run/core": "workspace:*",
@@ -25,5 +24,7 @@
   "peerDependencies": {
     "typescript": "^5"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "type-fest": "^4.40.0"
+  }
 }

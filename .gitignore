@@ -46,3 +46,6 @@ public/swe-worker*
 
 **/bun.lockb
 **/bun.lock
+
+.env
+db.test.json

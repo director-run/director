@@ -11,7 +11,8 @@
       "dist",
       "**/src-tauri/target/**",
       "**/src-tauri/binaries/**",
-      "**/src-tauri/gen/**"
+      "**/src-tauri/gen/**",
+      "db.test.json"
     ]
   },
   "formatter": {

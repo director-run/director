@@ -1,9 +1,9 @@
 import type { Server } from "node:http";
+import { createMCPServer } from "@director.run/core/helpers/test-helpers";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
-import { createMCPServer } from "../../backend/src/helpers/test-helpers";
 
 describe("proxySSEToStdio", () => {
   let client: Client;

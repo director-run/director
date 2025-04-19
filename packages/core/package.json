@@ -1,6 +1,5 @@
 {
-  "name": "@director.run/backend",
-  "module": "index.ts",
+  "name": "@director.run/core",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
@@ -8,11 +7,10 @@
     "format": "biome format --write .",
     "clean": "rm -rf .turbo dist/*",
     "test": "bun run vitest  --fileParallelism=false",
-    "start": "bun run bin/backend.ts",
-    "dev": "bun run --watch bin/backend.ts",
-    "build": "bun build ./bin/backend.ts --compile --outfile ./dist/backend",
-    "inspector": "npx @modelcontextprotocol/inspector",
     "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    "./*": "./src/*.ts"
   },
   "dependencies": {
     "@director.run/utilities": "workspace:*",

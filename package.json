@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "dev": "turbo run dev",
-    "dev:backend": "turbo run dev --filter=backend",
     "dev:reset": "bun run clean && bun install",
     "build": "turbo run build",
     "start": "turbo run start",
@@ -13,24 +12,18 @@
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
     "clean": "rm -rf .turbo node_modules && turbo run clean",
-    "cli": "turbo run cli",
-    "desktop:version": "bun run apps/desktop/scripts/version.ts",
-    "desktop:version:bump": "bun run apps/desktop/scripts/version.ts bump && bun run format",
-    "desktop:release": "version=$(bun run desktop:version print) && git tag -a \"v${version}\" -m \"Release v${version}\" && git push origin \"v${version}\""
+    "cli": "turbo run cli"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "tailwindcss": "^4.1.2",
     "turbo": "^2.5.0",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.2",
+    "vitest": "^3.1.1"
   },
   "packageManager": "bun@1.2.5",
   "workspaces": ["packages/*", "apps/*"],
   "engines": {
     "node": "~23.10.0",
     "bun": "~1.2.5"
-  },
-  "dependencies": {
-    "vitest": "^3.1.1"
   }
 }

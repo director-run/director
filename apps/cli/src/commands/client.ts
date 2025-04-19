@@ -1,6 +1,7 @@
+import { trpc } from "@director.run/core/trpc/client";
 import { Command } from "commander";
+
 import { withErrorHandler } from "../helpers";
-import { trpc } from "../trpc";
 
 export function registerClientCommands(program: Command) {
   program

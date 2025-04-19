@@ -1,8 +1,8 @@
+import { trpc } from "@director.run/core/trpc/client";
 import { Command } from "commander";
 import { withErrorHandler } from "../helpers";
 import { makeTable } from "../helpers";
 import { proxySSEToStdio } from "../proxy-sse-to-stdio";
-import { trpc } from "../trpc";
 
 export function registerProxyCommands(program: Command) {
   program

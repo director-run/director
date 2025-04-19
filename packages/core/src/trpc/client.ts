@@ -2,7 +2,8 @@ import type { AppRouter } from "@director.run/core/http/routers/trpc/index";
 import { createTRPCClient } from "@trpc/client";
 import { httpBatchLink } from "@trpc/client/links/httpBatchLink";
 import superjson from "superjson";
-import * as config from "./config";
+
+import * as config from "../config";
 
 export const trpc = createTRPCClient<AppRouter>({
   links: [

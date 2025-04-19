@@ -1,5 +1,5 @@
-import {} from "@trpc/client";
 import { Command } from "commander";
+
 import packageJson from "../package.json";
 import { registerClientCommands } from "../src/commands/client";
 import { registerDebugCommands } from "../src/commands/debug";

@@ -20,3 +20,6 @@ export const PORT = Number(process.env.PORT ?? 3000);
 export const LOG_PRETTY = process.env.LOG_PRETTY !== "false";
 export const LOG_LEVEL = process.env.LOG_LEVEL ?? "trace";
 export const LOG_ERROR_STACK = process.env.LOG_ERROR_STACK === "true";
+
+export const DIRECTOR_URL =
+  process.env.DIRECTOR_URL ?? `http://localhost:3000/trpc`;

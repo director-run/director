@@ -16,6 +16,7 @@
     "@director.run/utilities": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.8.0",
     "@trpc/server": "^11.0.2",
+    "@trpc/client": "^11.0.2",
     "content-type": "^1.0.5",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",

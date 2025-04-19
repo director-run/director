@@ -1,8 +1,8 @@
+import { trpc } from "@director.run/core/trpc/client";
 import chalk from "chalk";
 import { Command } from "commander";
 import { makeTable } from "../helpers";
 import { withErrorHandler } from "../helpers";
-import { trpc } from "../trpc";
 
 export function registerRegistryCommands(program: Command) {
   program

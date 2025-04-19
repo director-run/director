@@ -18,7 +18,6 @@
       },
       "dependencies": {
         "@director.run/core": "workspace:*",
-        "@trpc/client": "^11.0.2",
         "chalk": "^5.4.1",
         "cli-table3": "^0.6.5",
         "commander": "^13.1.0",
@@ -34,6 +33,7 @@
       "dependencies": {
         "@director.run/utilities": "workspace:*",
         "@modelcontextprotocol/sdk": "^1.8.0",
+        "@trpc/client": "^11.0.2",
         "@trpc/server": "^11.0.2",
         "content-type": "^1.0.5",
         "cors": "^2.8.5",

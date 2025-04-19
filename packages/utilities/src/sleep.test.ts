@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { sleep } from "@/sleep";
+import { sleep } from "./sleep";
 
 describe("sleep", () => {
   it("should resolve after the specified time", async () => {

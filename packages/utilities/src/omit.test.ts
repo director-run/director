@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { omit } from "@/omit";
+import { omit } from "./omit";
 
 describe("omit", () => {
   it("should omit a single key from an object", () => {

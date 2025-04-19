@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { sleep } from "@/sleep";
 
@@ -29,15 +29,15 @@ describe("sleep", () => {
     const ms = 1000;
     const start = Date.now();
     const promise = sleep(ms);
-    
+
     // Wait for slightly less than the sleep time
     await new Promise((resolve) => setTimeout(resolve, ms - 100));
-    
+
     // The promise should not have resolved yet
     expect(Date.now() - start).toBeLessThan(ms);
-    
+
     // Now wait for the full time
     await promise;
     expect(Date.now() - start).toBeGreaterThanOrEqual(ms);
   });
-}); 
+});

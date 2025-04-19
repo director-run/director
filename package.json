@@ -9,6 +9,7 @@
     "start": "turbo run start",
     "lint": "turbo run lint",
     "format": "turbo run format",
+    "format:fix-imports": "biome check --formatter-enabled=false --linter-enabled=false --organize-imports-enabled=true --write .",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
     "clean": "rm -rf .turbo node_modules && turbo run clean",

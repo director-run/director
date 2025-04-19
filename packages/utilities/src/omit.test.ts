@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { omit } from "@/omit";
 
@@ -44,4 +44,4 @@ describe("omit", () => {
     // @ts-expect-error Testing empty object
     expect(omit(obj, "foo")).toEqual({});
   });
-}); 
+});

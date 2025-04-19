@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { pick } from "@/pick";
 
@@ -44,4 +44,4 @@ describe("pick", () => {
     // @ts-expect-error Testing empty object
     expect(pick(obj, "foo")).toEqual({});
   });
-}); 
+});

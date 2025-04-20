@@ -9,9 +9,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  DB_FILE_PATH: ./db.test.json
-  LOG_LEVEL: silent
-  SERVER_PORT: 3999
+  NODE_ENV: test
 
 jobs:
   lint:

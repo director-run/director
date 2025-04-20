@@ -1,6 +1,6 @@
+import { env } from "@director.run/core/helpers/env";
 import { startService } from "@director.run/core/start-service";
 import { Command } from "commander";
-import * as config from "../config";
 import { withErrorHandler } from "../helpers";
 
 function printDirectorAscii(): void {
@@ -32,7 +32,7 @@ export function registerServiceCommands(program: Command) {
     .action(
       withErrorHandler(() => {
         console.log("----------------");
-        console.log(`config:`, config);
+        console.log(`config:`, env);
         console.log("----------------");
       }),
     );

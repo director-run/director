@@ -1,13 +1,11 @@
-import { trpc } from "@/trpc/client";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
-import { createTRPCClient } from "@trpc/client";
 import express from "express";
 import { ProxyServerStore } from "../services/proxy/proxy-server-store";
 import { startService } from "../start-service";
-import type { AppRouter } from "../trpc/routers/_app-router";
+import { trpc } from "../trpc/client";
 
 export const createMCPServer = (
   port: number,
@@ -38,7 +36,7 @@ export const createMCPServer = (
 };
 
 export type IntegrationTestVariables = {
-  trpcClient: ReturnType<typeof createTRPCClient<AppRouter>>;
+  trpcClient: typeof trpc;
   close: () => Promise<void>;
   proxyStore: ProxyServerStore;
 };

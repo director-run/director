@@ -1,5 +1,5 @@
 import type { ProxyServerStore } from "@/services/proxy/proxy-server-store";
-import { t } from "@/trpc/server";
+import { t } from "../server";
 import { createInstallerRouter } from "./installer-router";
 import { createRegistryRouter } from "./registry-router";
 import { createProxyStoreRouter } from "./store-router";

@@ -5,7 +5,7 @@ import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import * as eventsource from "eventsource";
 import express from "express";
-import { PORT, VERSION } from "../../helpers/env";
+import { env } from "../../helpers/env";
 import { ErrorCode } from "../../helpers/error";
 import { AppError } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
@@ -31,7 +31,7 @@ export class ProxyServer extends Server {
     super(
       {
         name: attributes.name,
-        version: VERSION,
+        version: env.VERSION,
       },
       {
         capabilities: {
@@ -87,7 +87,7 @@ export class ProxyServer extends Server {
   }
 
   get sseUrl() {
-    return `http://localhost:${PORT}/${this.attributes.id}/sse`;
+    return `http://localhost:${env.SERVER_PORT}/${this.attributes.id}/sse`;
   }
 
   async close(): Promise<void> {

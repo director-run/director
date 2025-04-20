@@ -1,7 +1,7 @@
 import * as trpcExpress from "@trpc/server/adapters/express";
 import cors from "cors";
 import express from "express";
-import { PORT } from "./helpers/env";
+import { env } from "./helpers/env";
 import { getLogger } from "./helpers/logger";
 import { asyncHandler, errorRequestHandler } from "./http/middleware";
 import { ProxyServerStore } from "./services/proxy/proxy-server-store";
@@ -46,8 +46,8 @@ export const startService = async (attribs?: {
 
   app.use(errorRequestHandler);
 
-  const expressServer = app.listen(PORT, () => {
-    logger.info(`director running at http://localhost:${PORT}`);
+  const expressServer = app.listen(env.SERVER_PORT, () => {
+    logger.info(`director running at http://localhost:${env.SERVER_PORT}`);
   });
 
   process.on("SIGINT", async () => {

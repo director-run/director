@@ -1,12 +1,12 @@
 import { Command } from "commander";
 
+import { env } from "@director.run/core/helpers/env";
 import packageJson from "../package.json";
 import { registerClientCommands } from "../src/commands/client";
 import { registerDebugCommands } from "../src/commands/debug";
 import { registerProxyCommands } from "../src/commands/proxy";
 import { registerRegistryCommands } from "../src/commands/registry";
 import { registerServiceCommands } from "../src/commands/service";
-import * as config from "../src/config";
 
 const program = new Command();
 
@@ -20,7 +20,7 @@ registerClientCommands(program);
 registerRegistryCommands(program);
 registerServiceCommands(program);
 
-if (config.DEBUG_MODE) {
+if (env.DEBUG) {
   registerDebugCommands(program);
 }
 

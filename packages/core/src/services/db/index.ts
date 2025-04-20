@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import slugify from "slugify";
-import { DB_FILE_PATH } from "../../helpers/env";
+import { env } from "../../helpers/env";
 import { readJSONFile, writeJSONFile } from "../../helpers/json";
 import {
   type DatabaseSchema,
@@ -24,7 +24,7 @@ class Database {
     this.filePath = filePath;
   }
 
-  static async connect(filePath: string = DB_FILE_PATH): Promise<Database> {
+  static async connect(filePath: string = env.DB_FILE_PATH): Promise<Database> {
     const db = new Database(filePath);
 
     if (!existsSync(filePath)) {

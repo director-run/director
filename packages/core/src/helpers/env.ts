@@ -1,25 +1,30 @@
 import os from "node:os";
 import path from "node:path";
-import env from "dotenv";
+import { createEnv } from "@t3-oss/env-core";
+import { config as loadConfig } from "dotenv";
+import { z } from "zod";
 import packageJson from "../../package.json";
 
 if (process.env.NODE_ENV === "test") {
-  env.config({ path: "./env/test.env" });
+  loadConfig({ path: "./env/test.env" });
 }
 
-export const VERSION = packageJson.version;
+const DEFAULT_DATA_DIR = path.join(os.homedir(), ".director");
 
-export const DATA_DIR =
-  process.env.DATA_DIR ?? path.join(os.homedir(), ".director");
-
-export const DB_FILE_PATH =
-  process.env.DB_FILE_PATH ?? path.join(DATA_DIR, "db.json");
-
-export const PORT = Number(process.env.PORT ?? 3000);
-
-export const LOG_PRETTY = process.env.LOG_PRETTY !== "false";
-export const LOG_LEVEL = process.env.LOG_LEVEL ?? "trace";
-export const LOG_ERROR_STACK = process.env.LOG_ERROR_STACK === "true";
-
-export const DIRECTOR_URL =
-  process.env.DIRECTOR_URL ?? `http://localhost:3000/trpc`;
+export const env = createEnv({
+  server: {
+    DEBUG: z.boolean().optional().default(false),
+    VERSION: z.string().optional().default(packageJson.version),
+    DATA_DIR: z.string().optional().default(DEFAULT_DATA_DIR),
+    DB_FILE_PATH: z
+      .string()
+      .optional()
+      .default(path.join(DEFAULT_DATA_DIR, "db.json")),
+    SERVER_PORT: z.number().optional().default(3000),
+    // Logging
+    LOG_PRETTY: z.boolean().optional().default(true),
+    LOG_LEVEL: z.string().optional().default("trace"),
+    LOG_ERROR_STACK: z.boolean().optional().default(true),
+  },
+  runtimeEnv: process.env,
+});

@@ -1,14 +1,13 @@
+import { trpc } from "@/trpc/client";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
-import { createTRPCClient, httpBatchLink } from "@trpc/client";
+import { createTRPCClient } from "@trpc/client";
 import express from "express";
-import superjson from "superjson";
 import { ProxyServerStore } from "../services/proxy/proxy-server-store";
 import { startService } from "../start-service";
 import type { AppRouter } from "../trpc/routers/_app-router";
-import { PORT } from "./env";
 
 export const createMCPServer = (
   port: number,
@@ -49,15 +48,6 @@ export const setupIntegrationTest =
     const proxyStore = await ProxyServerStore.create();
     const directorService = await startService({ proxyStore });
 
-    const trpcClient = createTRPCClient<AppRouter>({
-      links: [
-        httpBatchLink({
-          url: `http://localhost:${PORT}/trpc`,
-          transformer: superjson,
-        }),
-      ],
-    });
-
     const close = async () => {
       await proxyStore.purge();
       await new Promise<void>((resolve) => {
@@ -65,7 +55,7 @@ export const setupIntegrationTest =
       });
     };
 
-    return { trpcClient, close, proxyStore };
+    return { trpcClient: trpc, close, proxyStore };
   };
 
 export class TestMCPClient extends Client {

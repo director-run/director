@@ -1,7 +1,7 @@
 import type { Server } from "node:http";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
-import { PORT } from "./helpers/env";
+import { env } from "./helpers/env";
 import {
   type IntegrationTestVariables,
   TestMCPClient,
@@ -34,7 +34,9 @@ describe("SSE Router", () => {
   test("should return 404 when proxy not found", async () => {
     const client = new TestMCPClient();
     await expect(
-      client.connectToURL(`http://localhost:${PORT}/not_existing_proxy/sse`),
+      client.connectToURL(
+        `http://localhost:${env.SERVER_PORT}/not_existing_proxy/sse`,
+      ),
     ).rejects.toMatchObject({
       code: 404,
     });
@@ -52,7 +54,9 @@ describe("SSE Router", () => {
     });
 
     const client = new TestMCPClient();
-    await client.connectToURL(`http://localhost:${PORT}/test-proxy/sse`);
+    await client.connectToURL(
+      `http://localhost:${env.SERVER_PORT}/test-proxy/sse`,
+    );
 
     const toolsResult = await client.listTools();
     const expectedToolNames = [

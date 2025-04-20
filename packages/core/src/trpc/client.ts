@@ -1,20 +1,19 @@
 import { createTRPCClient } from "@trpc/client";
 import { httpBatchLink } from "@trpc/client/links/httpBatchLink";
 import superjson from "superjson";
+import { env } from "../helpers/env";
 import type { AppRouter } from "./routers/_app-router";
-
-import * as config from "../helpers/env";
 
 export const trpc = createTRPCClient<AppRouter>({
   links: [
     httpBatchLink({
-      url: config.DIRECTOR_URL,
+      url: `http://localhost:${env.SERVER_PORT}/trpc`,
       transformer: superjson,
       async fetch(url, options) {
         return fetch(url, options).catch((error) => {
           if (error.code === "ConnectionRefused") {
             throw new Error(
-              `Could not connect to the service on ${config.DIRECTOR_URL}. Is it running?`,
+              `Could not connect to the service on http://localhost:${env.SERVER_PORT}/trpc. Is it running?`,
             );
           }
           throw error;

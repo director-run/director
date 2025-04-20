@@ -1,11 +1,11 @@
 import { db } from ".";
-import { DB_FILE_PATH } from "../../helpers/env";
+import { env } from "../../helpers/env";
 import { getLogger } from "../../helpers/logger";
 
 const logger = getLogger("config/seed");
 
 export async function seed() {
-  logger.info(`Seeding database at path: ${DB_FILE_PATH}`);
+  logger.info(`Seeding database at path: ${env.DB_FILE_PATH}`);
 
   await db.purge();
   await db.addProxy({

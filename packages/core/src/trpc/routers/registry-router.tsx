@@ -1,7 +1,7 @@
+import { AppError, ErrorCode } from "@/helpers/error";
+import { fetchEntries, fetchEntry } from "@/services/registry";
+import { t } from "@/trpc/server";
 import { z } from "zod";
-import { AppError, ErrorCode } from "../../helpers/error";
-import { fetchEntries, fetchEntry } from "../../services/registry";
-import { t } from "../server";
 
 export function createRegistryRouter() {
   return t.router({

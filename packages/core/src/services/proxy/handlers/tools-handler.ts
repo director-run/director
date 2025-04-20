@@ -1,3 +1,4 @@
+import { getLogger } from "@/helpers/logger";
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import {
   CallToolRequestSchema,
@@ -6,7 +7,6 @@ import {
   ListToolsResultSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
-import { getLogger } from "../../../helpers/logger";
 import type { ConnectedClient } from "../connected-client";
 
 const logger = getLogger("proxy/handlers/toolsHandler");

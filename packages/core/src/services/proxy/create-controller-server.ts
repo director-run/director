@@ -1,3 +1,4 @@
+import { VERSION } from "@/helpers/env";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import {
   CallToolRequestSchema,
@@ -5,7 +6,6 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
-import { VERSION } from "../../helpers/env";
 import type { ProxyServer } from "./proxy-server";
 
 // const CreateOrUpdateFileSchema = z.object({

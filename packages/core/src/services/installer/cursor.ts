@@ -1,8 +1,8 @@
 import os from "node:os";
 import path from "node:path";
-import { readJSONFile, writeJSONFile } from "../../helpers/json";
-import { getLogger } from "../../helpers/logger";
-import type { ProxyServer } from "../proxy/proxy-server";
+import { readJSONFile, writeJSONFile } from "@/helpers/json";
+import { getLogger } from "@/helpers/logger";
+import type { ProxyServer } from "@/services/proxy/proxy-server";
 
 const CURSOR_CONFIG_PATH = path.join(os.homedir(), ".cursor/mcp.json");
 const CURSOR_CONFIG_KEY_PREFIX = "director";

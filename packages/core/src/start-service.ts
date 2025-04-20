@@ -1,11 +1,11 @@
+import { PORT } from "@/helpers/env";
+import { getLogger } from "@/helpers/logger";
+import { asyncHandler, errorRequestHandler } from "@/http/middleware";
+import { ProxyServerStore } from "@/services/proxy/proxy-server-store";
+import { createAppRouter } from "@/trpc/routers/_app-router";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import cors from "cors";
 import express from "express";
-import { PORT } from "./helpers/env";
-import { getLogger } from "./helpers/logger";
-import { asyncHandler, errorRequestHandler } from "./http/middleware";
-import { ProxyServerStore } from "./services/proxy/proxy-server-store";
-import { createAppRouter } from "./trpc/routers/_app-router";
 
 const logger = getLogger("startService");
 

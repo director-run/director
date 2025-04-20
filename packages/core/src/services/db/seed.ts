@@ -1,6 +1,6 @@
+import { DB_FILE_PATH } from "@/helpers/env";
+import { getLogger } from "@/helpers/logger";
 import { db } from ".";
-import { DB_FILE_PATH } from "../../helpers/env";
-import { getLogger } from "../../helpers/logger";
 
 const logger = getLogger("config/seed");
 

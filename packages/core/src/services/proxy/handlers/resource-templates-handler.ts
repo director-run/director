@@ -1,10 +1,10 @@
+import type { ConnectedClient } from "@/services/proxy/connected-client";
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import {
   ListResourceTemplatesRequestSchema,
   ListResourceTemplatesResultSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { ResourceTemplate } from "@modelcontextprotocol/sdk/types.js";
-import type { ConnectedClient } from "../connected-client";
 
 export function setupResourceTemplateHandlers(
   server: Server,

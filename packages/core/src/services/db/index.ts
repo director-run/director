@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
+import { DB_FILE_PATH } from "@/helpers/env";
+import { readJSONFile, writeJSONFile } from "@/helpers/json";
 import slugify from "slugify";
-import { DB_FILE_PATH } from "../../helpers/env";
-import { readJSONFile, writeJSONFile } from "../../helpers/json";
 import {
   type DatabaseSchema,
   type ProxyAttributes,

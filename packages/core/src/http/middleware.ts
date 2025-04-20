@@ -5,13 +5,14 @@ import type {
   RequestHandler,
   Response,
 } from "express";
+
 import {
   AppError,
   ErrorCode,
   isAppError,
   isExpressError,
-} from "../helpers/error";
-import { getLogger } from "../helpers/logger";
+} from "@/helpers/error";
+import { getLogger } from "@/helpers/logger";
 
 const logger = getLogger("http/middleware");
 

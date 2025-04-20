@@ -1,9 +1,9 @@
+import { ErrorCode } from "@/helpers/error";
+import { AppError } from "@/helpers/error";
+import { proxySchema } from "@/services/db/schema";
+import type { ProxyServerStore } from "@/services/proxy/proxy-server-store";
+import { t } from "@/trpc/server";
 import { z } from "zod";
-import { ErrorCode } from "../../helpers/error";
-import { AppError } from "../../helpers/error";
-import { proxySchema } from "../../services/db/schema";
-import type { ProxyServerStore } from "../../services/proxy/proxy-server-store";
-import { t } from "../server";
 
 export function createProxyStoreRouter({
   proxyStore,

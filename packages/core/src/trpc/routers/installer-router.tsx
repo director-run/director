@@ -1,14 +1,14 @@
-import { z } from "zod";
 import {
   installToClaude,
   uninstallFromClaude,
-} from "../../services/installer/claude";
+} from "@/services/installer/claude";
 import {
   installToCursor,
   uninstallFromCursor,
-} from "../../services/installer/cursor";
-import type { ProxyServerStore } from "../../services/proxy/proxy-server-store";
-import { t } from "../server";
+} from "@/services/installer/cursor";
+import type { ProxyServerStore } from "@/services/proxy/proxy-server-store";
+import { t } from "@/trpc/server";
+import { z } from "zod";
 
 export function createInstallerRouter({
   proxyStore,

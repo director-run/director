@@ -3,20 +3,41 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "lint": "biome check .",
-    "format": "biome format --write .",
+    "build": "tsup",
     "clean": "rm -rf .turbo dist/*",
+    "dev": "bun run build --watch",
+    "format": "biome format --write .",
+    "lint": "biome check .",
     "test": "bun run vitest  --fileParallelism=false",
     "typecheck": "tsc --noEmit"
   },
   "exports": {
-    "./*": "./src/*.ts"
+    "./start-service": {
+      "types": "./dist/start-service.d.ts",
+      "import": "./dist/start-service.js"
+    },
+    "./services/*": {
+      "types": "./dist/services/*.d.ts",
+      "import": "./dist/services/*.js"
+    },
+    "./helpers/*": {
+      "types": "./dist/helpers/*.d.ts",
+      "import": "./dist/helpers/*.js"
+    },
+    "./trpc/*": {
+      "types": "./dist/trpc/*.d.ts",
+      "import": "./dist/trpc/*.js"
+    },
+    "./http/*": {
+      "types": "./dist/http/*.d.ts",
+      "import": "./dist/http/*.js"
+    }
   },
   "dependencies": {
     "@director.run/utilities": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.8.0",
-    "@trpc/server": "^11.0.2",
     "@trpc/client": "^11.0.2",
+    "@trpc/server": "^11.0.2",
     "content-type": "^1.0.5",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
@@ -26,6 +47,7 @@
     "raw-body": "^3.0.0",
     "slugify": "^1.6.6",
     "superjson": "^2.2.1",
+    "tsup": "^8.4.0",
     "zod": "^3.24.2"
   },
   "peerDependencies": {

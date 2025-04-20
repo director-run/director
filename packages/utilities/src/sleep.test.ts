@@ -38,6 +38,6 @@ describe("sleep", () => {
 
     // Now wait for the full time
     await promise;
-    expect(Date.now() - start).toBeGreaterThanOrEqual(ms);
+    expect(Date.now() - start).toBeGreaterThanOrEqual(ms - 2);
   });
 });

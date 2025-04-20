@@ -4,10 +4,6 @@
     "build": {
       "dependsOn": ["^build", "@director.run/core#build"],
       "outputs": ["dist/**"]
-    },
-    "test": {
-      "dependsOn": ["@director.run/core#build"],
-      "outputs": ["dist/**"]
     }
   }
 }

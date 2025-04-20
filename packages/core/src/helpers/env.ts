@@ -1,13 +1,13 @@
 import os from "node:os";
 import path from "node:path";
+import { loadEnvConfig } from "@next/env";
 import { createEnv } from "@t3-oss/env-core";
-import { config as loadConfig } from "dotenv";
 import { z } from "zod";
 import packageJson from "../../package.json";
 
-if (process.env.NODE_ENV === "test") {
-  loadConfig({ path: "./env/test.env" });
-}
+// Load env variables from .env, .env.local, .env.development, .env.test,
+// .env.production, etc. from the current working directory
+loadEnvConfig(process.cwd());
 
 const DEFAULT_DATA_DIR = path.join(os.homedir(), ".director");
 
@@ -20,7 +20,7 @@ export const env = createEnv({
       .string()
       .optional()
       .default(path.join(DEFAULT_DATA_DIR, "db.json")),
-    SERVER_PORT: z.number().optional().default(3000),
+    SERVER_PORT: z.number({ coerce: true }).optional().default(3000),
     // Logging
     LOG_PRETTY: z.boolean().optional().default(true),
     LOG_LEVEL: z.string().optional().default("trace"),

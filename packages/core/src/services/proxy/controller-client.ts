@@ -11,8 +11,8 @@ export class ControllerClient extends ConnectedClient {
     this.proxy = proxy;
   }
 
-  async connect(): Promise<void> {
-    const server = await createControllerServer({ proxy: this.proxy });
+  async connect() {
+    const server = createControllerServer({ proxy: this.proxy });
     const [clientTransport, serverTransport] =
       InMemoryTransport.createLinkedPair();
 

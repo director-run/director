@@ -30,7 +30,7 @@ export function registerServiceCommands(program: Command) {
     .command("config")
     .description("Print configuration variables")
     .action(
-      withErrorHandler(async () => {
+      withErrorHandler(() => {
         console.log("----------------");
         console.log(`config:`, config);
         console.log("----------------");

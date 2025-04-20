@@ -47,7 +47,8 @@
         "noExplicitAny": "error",
         "noExtraNonNullAssertion": "error",
         "noMisleadingInstantiator": "error",
-        "noUnsafeDeclarationMerging": "error"
+        "noUnsafeDeclarationMerging": "error",
+        "useAwait": "error"
       },
       "nursery": {
         "useSortedClasses": {

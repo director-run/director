@@ -48,7 +48,7 @@ export function createControllerServer({ proxy }: { proxy: ProxyServer }) {
     },
   );
 
-  server.setRequestHandler(ListToolsRequestSchema, async () => {
+  server.setRequestHandler(ListToolsRequestSchema, () => {
     return {
       tools: [
         {
@@ -60,7 +60,7 @@ export function createControllerServer({ proxy }: { proxy: ProxyServer }) {
     };
   });
 
-  server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  server.setRequestHandler(CallToolRequestSchema, (request) => {
     try {
       if (!request.params.arguments) {
         throw new Error("Arguments are required");

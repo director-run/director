@@ -4,9 +4,7 @@ import { getLogger } from "../helpers/logger";
 
 const logger = getLogger("http/routers/trpc");
 
-const createTRPCContext = async () => {
-  return {};
-};
+const createTRPCContext = () => ({});
 
 export const trpcBase = initTRPC.context<typeof createTRPCContext>().create({
   transformer: SuperJSON,

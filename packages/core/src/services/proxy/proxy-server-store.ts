@@ -38,7 +38,7 @@ export class ProxyServerStore {
     }
   }
 
-  public get(proxyId: string): ProxyServer {
+  public get(proxyId: string) {
     const server = this.proxyServers.get(proxyId);
     if (!server) {
       throw new AppError(
@@ -49,7 +49,7 @@ export class ProxyServerStore {
     return server;
   }
 
-  async delete(proxyId: string): Promise<void> {
+  async delete(proxyId: string) {
     const proxy = this.get(proxyId);
     await proxy.close();
     await db.deleteProxy(proxyId);
@@ -57,13 +57,13 @@ export class ProxyServerStore {
     logger.info(`successfully deleted proxy server configuration: ${proxyId}`);
   }
 
-  async purge(): Promise<void> {
+  async purge() {
     await this.closeAll();
     await db.purge();
     this.proxyServers.clear();
   }
 
-  async closeAll(): Promise<void> {
+  async closeAll() {
     logger.info("cleaning up all proxy servers...");
     await Promise.all(
       Array.from(this.proxyServers.values()).map((proxy) => proxy.close()),
@@ -71,7 +71,7 @@ export class ProxyServerStore {
     logger.info("finished cleaning up all proxy servers.");
   }
 
-  public async getAll(): Promise<ProxyServer[]> {
+  public getAll(): ProxyServer[] {
     return Array.from(this.proxyServers.values());
   }
 
@@ -100,28 +100,19 @@ export class ProxyServerStore {
     return proxyServer;
   }
 
-  public async addServer(
-    proxyId: string,
-    server: ProxyTargetAttributes,
-  ): Promise<ProxyServer> {
+  public addServer(proxyId: string, server: ProxyTargetAttributes) {
     const proxy = this.get(proxyId);
     console.log("addServer ------->", { proxyId, server });
     return proxy;
   }
 
-  public async removeServer(
-    proxyId: string,
-    serverName: string,
-  ): Promise<ProxyServer> {
+  public removeServer(proxyId: string, serverName: string) {
     const proxy = this.get(proxyId);
     console.log("removeServer ------->", { proxyId, serverName });
     return proxy;
   }
 
-  public async addServerFromRegistry(
-    proxyId: string,
-    entryId: string,
-  ): Promise<ProxyServer> {
+  public addServerFromRegistry(proxyId: string, entryId: string) {
     const proxy = this.get(proxyId);
     console.log("addServerFromRegistry ------->", { proxyId, entryId });
     return proxy;
@@ -134,7 +125,7 @@ export class ProxyServerStore {
       description: string;
       servers: ProxyTargetAttributes[];
     }>,
-  ): Promise<ProxyServer> {
+  ) {
     const proxy = this.get(proxyId);
     await proxy.close();
     const updatedProxyEntry = await db.updateProxy(proxyId, attributes);

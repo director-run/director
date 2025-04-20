@@ -10,7 +10,7 @@ import { startService } from "../start-service";
 import type { AppRouter } from "../trpc/routers/_app-router";
 import { PORT } from "./env";
 
-export const createMCPServer = async (
+export const createMCPServer = (
   port: number,
   callback: (server: McpServer) => void,
 ) => {

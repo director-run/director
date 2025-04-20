@@ -16,7 +16,7 @@ export function registerDebugCommands(program: Command) {
     .command("debug:restart <client>")
     .description("Restart client")
     .action(
-      withErrorHandler(async () => {
+      withErrorHandler(() => {
         console.log("todo");
       }),
     );

@@ -29,7 +29,8 @@
       "dependsOn": ["^clean"]
     },
     "test": {
-      "cache": false
+      "cache": false,
+      "dependsOn": ["^test", "^build"]
     },
     "cli": {
       "cache": false

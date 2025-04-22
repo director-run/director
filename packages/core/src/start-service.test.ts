@@ -91,7 +91,7 @@ describe("SSE Router", () => {
     await client.close();
   });
 
-  test("should be able to add proxies on the fly", async () => {
+  test("should be able to add a server to a proxy", async () => {
     await testVariables.proxyStore.purge();
     const testProxy = await testVariables.trpcClient.store.create.mutate({
       name: "Test Proxy",
@@ -123,7 +123,7 @@ describe("SSE Router", () => {
     expect(toolsResult2.tools.map((t) => t.name)).toContain("get_stories");
   });
 
-  test("should be able to remove proxies on the fly", async () => {
+  test("should be able to remove a server from a proxy", async () => {
     await testVariables.proxyStore.purge();
     const testProxy = await testVariables.trpcClient.store.create.mutate({
       name: "Test Proxy",

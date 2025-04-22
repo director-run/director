@@ -44,7 +44,7 @@ describe("SSE Router", () => {
 
   test("should connect and list tools", async () => {
     await testVariables.proxyStore.purge();
-    await testVariables.proxyStore.create({
+    const testProxy = await testVariables.proxyStore.create({
       name: "Test Proxy",
       servers: [
         hackerNewsProxy(),
@@ -53,11 +53,7 @@ describe("SSE Router", () => {
       ],
     });
 
-    const client = new TestMCPClient();
-    await client.connectToURL(
-      `http://localhost:${env.SERVER_PORT}/test-proxy/sse`,
-    );
-
+    const client = await TestMCPClient.connectToProxy(testProxy.id);
     const toolsResult = await client.listTools();
     const expectedToolNames = [
       "get_stories",
@@ -74,19 +70,19 @@ describe("SSE Router", () => {
     }
     expect(
       toolsResult.tools.find((t) => t.name === "get_stories")?.description,
-    ).toContain("[Hackernews]");
+    ).toContain("[hackernews]");
     expect(
       toolsResult.tools.find((t) => t.name === "get_user_info")?.description,
-    ).toContain("[Hackernews]");
+    ).toContain("[hackernews]");
     expect(
       toolsResult.tools.find((t) => t.name === "search_stories")?.description,
-    ).toContain("[Hackernews]");
+    ).toContain("[hackernews]");
     expect(
       toolsResult.tools.find((t) => t.name === "get_story_info")?.description,
-    ).toContain("[Hackernews]");
+    ).toContain("[hackernews]");
     expect(
       toolsResult.tools.find((t) => t.name === "fetch")?.description,
-    ).toContain("[Fetch]");
+    ).toContain("[fetch]");
 
     await client.close();
   });
@@ -98,11 +94,7 @@ describe("SSE Router", () => {
       servers: [fetchProxy()],
     });
 
-    const client = new TestMCPClient();
-    await client.connectToURL(
-      `http://localhost:${env.SERVER_PORT}/test-proxy/sse`,
-    );
-
+    const client = await TestMCPClient.connectToProxy(testProxy.id);
     const toolsResult = await client.listTools();
 
     expect(toolsResult.tools.map((t) => t.name)).toContain("fetch");
@@ -113,11 +105,7 @@ describe("SSE Router", () => {
       server: hackerNewsProxy(),
     });
 
-    const client2 = new TestMCPClient();
-    await client2.connectToURL(
-      `http://localhost:${env.SERVER_PORT}/test-proxy/sse`,
-    );
-
+    const client2 = await TestMCPClient.connectToProxy(testProxy.id);
     const toolsResult2 = await client2.listTools();
     expect(toolsResult2.tools.map((t) => t.name)).toContain("fetch");
     expect(toolsResult2.tools.map((t) => t.name)).toContain("get_stories");
@@ -130,11 +118,7 @@ describe("SSE Router", () => {
       servers: [fetchProxy(), hackerNewsProxy()],
     });
 
-    const client = new TestMCPClient();
-    await client.connectToURL(
-      `http://localhost:${env.SERVER_PORT}/test-proxy/sse`,
-    );
-
+    const client = await TestMCPClient.connectToProxy(testProxy.id);
     const toolsResult = await client.listTools();
 
     expect(toolsResult.tools.map((t) => t.name)).toContain("fetch");
@@ -145,14 +129,8 @@ describe("SSE Router", () => {
       serverName: "hackernews",
     });
 
-    const client2 = new TestMCPClient();
-    await client2.connectToURL(
-      `http://localhost:${env.SERVER_PORT}/test-proxy/sse`,
-    );
-
+    const client2 = await TestMCPClient.connectToProxy(testProxy.id);
     const toolsResult2 = await client2.listTools();
-
-    console.log(toolsResult2.tools.map((t) => t.name));
 
     expect(toolsResult2.tools.map((t) => t.name)).toContain("fetch");
     expect(toolsResult2.tools.map((t) => t.name)).not.toContain("get_stories");

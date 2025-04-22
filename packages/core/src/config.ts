@@ -5,17 +5,21 @@ import dotenv from "dotenv";
 import { z } from "zod";
 import packageJson from "../package.json";
 
-if (process.env.NODE_ENV === "test") {
-  dotenv.config({ path: path.join(__dirname, "../env/.env.test") });
-} else if (process.env.NODE_ENV === "development") {
-  dotenv.config({ path: path.join(__dirname, "../env/.env.development") });
+let DEFAULT_DATA_DIR;
+
+if (process.env.NODE_ENV === "production") {
+  DEFAULT_DATA_DIR = path.join(os.homedir(), `.director`);
+} else {
+  DEFAULT_DATA_DIR = path.join(
+    __dirname,
+    `../.director/${process.env.NODE_ENV || "development"}`,
+  );
 }
 
-const DEFAULT_DATA_DIR = path.join(os.homedir(), ".director");
+dotenv.config({ path: path.join(DEFAULT_DATA_DIR, "./config.env") });
 
-const env = createEnv({
+export const env = createEnv({
   server: {
-    DEBUG: z.boolean().optional().default(false),
     VERSION: z.string().optional().default(packageJson.version),
     DATA_DIR: z.string().optional().default(DEFAULT_DATA_DIR),
     DB_FILE_PATH: z
@@ -23,13 +27,13 @@ const env = createEnv({
       .optional()
       .default(path.join(DEFAULT_DATA_DIR, "db.json")),
     SERVER_PORT: z.number({ coerce: true }).optional().default(3000),
-    // Logging
     LOG_PRETTY: z.boolean().optional().default(true),
     LOG_LEVEL: z.string().optional().default("trace"),
     LOG_ERROR_STACK: z.boolean().optional().default(true),
-    NODE_ENV: z.enum(["test", "development", "production"]).optional(),
+    NODE_ENV: z
+      .enum(["test", "development", "production"])
+      .optional()
+      .default("development"),
   },
   runtimeEnv: process.env,
 });
-
-export { env };

@@ -31,9 +31,7 @@ export function registerServiceCommands(program: Command) {
     .description("Print configuration variables")
     .action(
       withErrorHandler(() => {
-        console.log("----------------");
         console.log(`config:`, env);
-        console.log("----------------");
       }),
     );
 }

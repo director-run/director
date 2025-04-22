@@ -48,4 +48,4 @@ public/swe-worker*
 **/bun.lock
 
 .env
-db.test.json
+db.json

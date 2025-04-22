@@ -2,6 +2,7 @@ import { AppError, ErrorCode } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
 import { db } from "../db";
 import type { ProxyTargetAttributes } from "../db/schema";
+import { fetchEntry } from "../registry";
 import { ProxyServer } from "./proxy-server";
 
 const logger = getLogger("ProxyServerStore");
@@ -100,22 +101,46 @@ export class ProxyServerStore {
     return proxyServer;
   }
 
-  public addServer(proxyId: string, server: ProxyTargetAttributes) {
+  public async addServer(
+    proxyId: string,
+    server: ProxyTargetAttributes,
+  ): Promise<ProxyServer> {
     const proxy = this.get(proxyId);
-    console.log("addServer ------->", { proxyId, server });
-    return proxy;
+    // TODO: don't re-create the proxy server, just update the servers
+    const updatedProxy = await this.update(proxyId, {
+      servers: [...proxy.attributes.servers, server],
+    });
+    return updatedProxy;
   }
 
-  public removeServer(proxyId: string, serverName: string) {
+  public async removeServer(
+    proxyId: string,
+    serverName: string,
+  ): Promise<ProxyServer> {
     const proxy = this.get(proxyId);
-    console.log("removeServer ------->", { proxyId, serverName });
-    return proxy;
+    console.log(
+      "Removinggggg",
+      proxy.attributes.servers,
+      proxy.attributes.servers.filter((s) => s.name !== serverName),
+    );
+    // TODO: don't re-create the proxy server, just update the servers
+    const updatedProxy = await this.update(proxyId, {
+      servers: proxy.attributes.servers.filter(
+        (s) => s.name.toLowerCase() !== serverName.toLowerCase(),
+      ),
+    });
+    return updatedProxy;
   }
 
-  public addServerFromRegistry(proxyId: string, entryId: string) {
-    const proxy = this.get(proxyId);
-    console.log("addServerFromRegistry ------->", { proxyId, entryId });
-    return proxy;
+  public async addServerFromRegistry(
+    proxyId: string,
+    entryId: string,
+  ): Promise<ProxyServer> {
+    const entry = await fetchEntry(entryId);
+    if (!entry) {
+      throw new AppError(ErrorCode.NOT_FOUND, `Entry '${entryId}' not found.`);
+    }
+    return this.addServer(proxyId, entry);
   }
 
   public async update(

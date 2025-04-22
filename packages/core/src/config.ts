@@ -2,7 +2,6 @@ import os from "node:os";
 import path from "node:path";
 import { createEnv } from "@t3-oss/env-core";
 import dotenv from "dotenv";
-import _ from "lodash";
 import { z } from "zod";
 import packageJson from "../package.json";
 
@@ -32,7 +31,5 @@ const env = createEnv({
   },
   runtimeEnv: process.env,
 });
-
-console.log("----", _.omit(env, "runtimeEnv"));
 
 export { env };

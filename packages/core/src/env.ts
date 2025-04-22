@@ -3,7 +3,7 @@ import path from "node:path";
 import { loadEnvConfig } from "@next/env";
 import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
-import packageJson from "../../package.json";
+import packageJson from "../package.json";
 
 // Load env variables from .env, .env.local, .env.development, .env.test,
 // .env.production, etc. from the current working directory

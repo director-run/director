@@ -5,7 +5,7 @@ import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import * as eventsource from "eventsource";
 import express from "express";
-import { env } from "../../helpers/env";
+import { env } from "../../env";
 import { ErrorCode } from "../../helpers/error";
 import { AppError } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";
@@ -24,7 +24,7 @@ const logger = getLogger(`ProxyServer`);
 
 export class ProxyServer extends Server {
   private targets: ConnectedClient[];
-  private attributes: ProxyAttributes & { useController?: boolean };
+  public readonly attributes: ProxyAttributes & { useController?: boolean };
   private transports: Map<string, SSEServerTransport>;
 
   constructor(attributes: ProxyAttributes & { useController?: boolean }) {

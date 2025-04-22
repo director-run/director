@@ -1,7 +1,7 @@
 import { sleep } from "@director.run/utilities/sleep";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
-import { env } from "../../helpers/env";
+import { env } from "../../env";
 import { getLogger } from "../../helpers/logger";
 
 export const PROXY_TARGET_CONNECT_RETRY_INTERVAL = 2500;

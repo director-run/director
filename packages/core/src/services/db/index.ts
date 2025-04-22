@@ -46,6 +46,10 @@ class Database {
 
     const newProxy = {
       ...proxy,
+      servers: (proxy.servers || []).map((s) => ({
+        ...s,
+        name: slugify(s.name, { lower: true, trim: true }),
+      })),
       id: slugify(proxy.name, { lower: true, trim: true }),
     };
 
@@ -89,7 +93,14 @@ class Database {
       throw new Error("Proxy not found");
     }
 
-    Object.assign(proxy, attributes);
+    Object.assign(proxy, {
+      ...attributes,
+      servers: (attributes.servers || []).map((s) => ({
+        ...s,
+        name: slugify(s.name, { lower: true, trim: true }),
+      })),
+    });
+
     await writeDB(this.filePath, store);
 
     return proxy;

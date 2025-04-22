@@ -118,11 +118,6 @@ export class ProxyServerStore {
     serverName: string,
   ): Promise<ProxyServer> {
     const proxy = this.get(proxyId);
-    console.log(
-      "Removinggggg",
-      proxy.attributes.servers,
-      proxy.attributes.servers.filter((s) => s.name !== serverName),
-    );
     // TODO: don't re-create the proxy server, just update the servers
     const updatedProxy = await this.update(proxyId, {
       servers: proxy.attributes.servers.filter(

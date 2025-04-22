@@ -106,7 +106,7 @@ export class ProxyServerStore {
     server: ProxyTargetAttributes,
   ): Promise<ProxyServer> {
     const proxy = this.get(proxyId);
-    // TODO: don't re-create the proxy server, just update the servers
+// TODO: Implement a more efficient update mechanism without recreating the proxy server
     const updatedProxy = await this.update(proxyId, {
       servers: [...proxy.attributes.servers, server],
     });

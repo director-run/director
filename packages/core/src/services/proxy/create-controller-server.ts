@@ -5,7 +5,7 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
-import { env } from "../../helpers/env";
+import { env } from "../../config";
 import type { ProxyServer } from "./proxy-server";
 
 // const CreateOrUpdateFileSchema = z.object({

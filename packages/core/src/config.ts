@@ -1,17 +1,20 @@
 import os from "node:os";
 import path from "node:path";
-import { loadEnvConfig } from "@next/env";
 import { createEnv } from "@t3-oss/env-core";
+import dotenv from "dotenv";
+import _ from "lodash";
 import { z } from "zod";
 import packageJson from "../package.json";
 
-// Load env variables from .env, .env.local, .env.development, .env.test,
-// .env.production, etc. from the current working directory
-loadEnvConfig(process.cwd());
+if (process.env.NODE_ENV === "test") {
+  dotenv.config({ path: path.join(__dirname, "../env/.env.test") });
+} else if (process.env.NODE_ENV === "development") {
+  dotenv.config({ path: path.join(__dirname, "../env/.env.development") });
+}
 
 const DEFAULT_DATA_DIR = path.join(os.homedir(), ".director");
 
-export const env = createEnv({
+const env = createEnv({
   server: {
     DEBUG: z.boolean().optional().default(false),
     VERSION: z.string().optional().default(packageJson.version),
@@ -25,6 +28,11 @@ export const env = createEnv({
     LOG_PRETTY: z.boolean().optional().default(true),
     LOG_LEVEL: z.string().optional().default("trace"),
     LOG_ERROR_STACK: z.boolean().optional().default(true),
+    NODE_ENV: z.enum(["test", "development", "production"]).optional(),
   },
   runtimeEnv: process.env,
 });
+
+console.log("----", _.omit(env, "runtimeEnv"));
+
+export { env };

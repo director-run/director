@@ -1,4 +1,4 @@
-import { env } from "@director.run/core/helpers/env";
+import { env } from "@director.run/core/config";
 import { startService } from "@director.run/core/start-service";
 import { Command } from "commander";
 import { withErrorHandler } from "../helpers";

@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import slugify from "slugify";
-import { env } from "../../helpers/env";
+import { env } from "../../config";
 import { readJSONFile, writeJSONFile } from "../../helpers/json";
 import {
   type DatabaseSchema,

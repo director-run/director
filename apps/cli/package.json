@@ -10,8 +10,7 @@
     "format": "biome format --write .",
     "clean": "rm -rf .turbo dist/*",
     "test": "bun run vitest  --fileParallelism=false",
-    "cli": "bun run bin/cli.ts",
-    "build": "bun build ./bin/cli.ts --compile --outfile ./dist/cli",
+    "cli": "NODE_ENV=development bun run bin/cli.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

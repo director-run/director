@@ -1,7 +1,7 @@
 import type { Server } from "node:http";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
-import { env } from "./helpers/env";
+import { env } from "./config";
 import {
   type IntegrationTestVariables,
   TestMCPClient,

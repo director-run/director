@@ -1,5 +1,5 @@
 import { db } from ".";
-import { env } from "../../helpers/env";
+import { env } from "../../config";
 import { getLogger } from "../../helpers/logger";
 
 const logger = getLogger("config/seed");

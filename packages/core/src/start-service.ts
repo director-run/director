@@ -1,7 +1,7 @@
 import * as trpcExpress from "@trpc/server/adapters/express";
 import cors from "cors";
 import express from "express";
-import { env } from "./helpers/env";
+import { env } from "./config";
 import { getLogger } from "./helpers/logger";
 import { asyncHandler, errorRequestHandler } from "./http/middleware";
 import { ProxyServerStore } from "./services/proxy/proxy-server-store";

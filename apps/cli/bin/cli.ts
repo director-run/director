@@ -20,7 +20,7 @@ registerClientCommands(program);
 registerRegistryCommands(program);
 registerServiceCommands(program);
 
-if (env.DEBUG) {
+if (env.NODE_ENV === "development") {
   registerDebugCommands(program);
 }
 

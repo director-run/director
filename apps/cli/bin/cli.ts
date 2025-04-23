@@ -1,6 +1,5 @@
+import { env } from "@director.run/config/env";
 import { Command } from "commander";
-
-import { env } from "@director.run/core/config";
 import packageJson from "../package.json";
 import { registerClientCommands } from "../src/commands/client";
 import { registerDebugCommands } from "../src/commands/debug";

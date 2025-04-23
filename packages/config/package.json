@@ -1,5 +1,5 @@
 {
-  "name": "@director.run/utilities",
+  "name": "@director.run/config",
   "private": true,
   "type": "module",
   "version": "0.0.1",
@@ -12,9 +12,6 @@
     "clean": "rm -rf node_modules .turbo dist/*",
     "typecheck": "tsc --noEmit",
     "test": "vitest"
-  },
-  "dependencies": {
-    "@director.run/config": "workspace:*"
   },
   "devDependencies": {
     "@types/bun": "latest",

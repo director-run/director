@@ -17,6 +17,7 @@
         "director": "./dist/cli",
       },
       "dependencies": {
+        "@director.run/config": "workspace:*",
         "@director.run/core": "workspace:*",
         "chalk": "^5.4.1",
         "cli-table3": "^0.6.5",
@@ -30,10 +31,21 @@
         "typescript": "^5",
       },
     },
+    "packages/config": {
+      "name": "@director.run/config",
+      "version": "0.0.1",
+      "devDependencies": {
+        "@types/bun": "latest",
+        "type-fest": "^4.40.0",
+        "typescript": "^5.8.2",
+        "vitest": "^3.1.1",
+      },
+    },
     "packages/core": {
       "name": "@director.run/core",
       "version": "0.0.1",
       "dependencies": {
+        "@director.run/config": "workspace:*",
         "@director.run/registry": "workspace:*",
         "@director.run/utilities": "workspace:*",
         "@modelcontextprotocol/sdk": "^1.8.0",
@@ -76,6 +88,9 @@
     "packages/utilities": {
       "name": "@director.run/utilities",
       "version": "0.0.1",
+      "dependencies": {
+        "@director.run/config": "workspace:*",
+      },
       "devDependencies": {
         "@types/bun": "latest",
         "type-fest": "^4.40.0",
@@ -106,6 +121,8 @@
     "@colors/colors": ["@colors/colors@1.5.0", "", {}, "sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ=="],
 
     "@director.run/cli": ["@director.run/cli@workspace:apps/cli"],
+
+    "@director.run/config": ["@director.run/config@workspace:packages/config"],
 
     "@director.run/core": ["@director.run/core@workspace:packages/core"],
 

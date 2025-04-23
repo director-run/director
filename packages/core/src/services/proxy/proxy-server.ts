@@ -1,3 +1,4 @@
+import { env } from "@director.run/config/env";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
@@ -5,7 +6,6 @@ import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import * as eventsource from "eventsource";
 import express from "express";
-import { env } from "../../config";
 import { ErrorCode } from "../../helpers/error";
 import { AppError } from "../../helpers/error";
 import { getLogger } from "../../helpers/logger";

@@ -1,6 +1,6 @@
+import { env } from "@director.run/config/env";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
-import { env } from "../../config";
 import { getLogger } from "../../helpers/logger";
 import { sleep } from "../../helpers/os";
 

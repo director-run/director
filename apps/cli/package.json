@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@director.run/core": "workspace:*",
+    "@director.run/config": "workspace:*",
     "chalk": "^5.4.1",
     "cli-table3": "^0.6.5",
     "commander": "^13.1.0",

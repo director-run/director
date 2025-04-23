@@ -1,7 +1,7 @@
+import { env } from "@director.run/config/env";
 import { omit, pick } from "lodash";
 import pino, { type Logger } from "pino";
 import pinoPretty from "pino-pretty";
-import { env } from "../config";
 import { isAppError } from "./error";
 
 const logger = pino(

@@ -15,6 +15,7 @@
   "dependencies": {
     "@director.run/registry": "workspace:*",
     "@director.run/utilities": "workspace:*",
+    "@director.run/config": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.8.0",
     "@t3-oss/env-core": "^0.12.0",
     "@trpc/client": "^11.0.2",

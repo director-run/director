@@ -1,9 +1,9 @@
+import { env } from "@director.run/config/env";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
-import { env } from "../config";
 import { ProxyServerStore } from "../services/proxy/proxy-server-store";
 import { startService } from "../start-service";
 import { trpc } from "../trpc/client";

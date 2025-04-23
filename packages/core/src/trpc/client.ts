@@ -1,7 +1,7 @@
+import { env } from "@director.run/config/env";
 import { createTRPCClient } from "@trpc/client";
 import { httpBatchLink } from "@trpc/client/links/httpBatchLink";
 import superjson from "superjson";
-import { env } from "../config";
 import type { AppRouter } from "./routers/_app-router";
 
 export const trpc = createTRPCClient<AppRouter>({

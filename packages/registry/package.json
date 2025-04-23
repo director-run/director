@@ -1,24 +1,22 @@
 {
   "name": "@director.run/registry",
+  "private": true,
   "type": "module",
   "version": "0.0.1",
-  "scripts": {
-    "lint": "biome check .",
-    "format": "biome format --write .",
-    "clean": "rm -rf .turbo dist/*",
-    "test": "bun run vitest --fileParallelism=false",
-    "typecheck": "tsc --noEmit"
-  },
   "exports": {
     "./*": "./src/*.ts"
   },
-  "dependencies": {
-    "zod": "^3.24.2"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
+  "scripts": {
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "clean": "rm -rf node_modules .turbo dist/*",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest"
   },
   "devDependencies": {
-    "@types/semver": "^7.7.0"
+    "@types/bun": "latest",
+    "type-fest": "^4.40.0",
+    "typescript": "^5.8.2",
+    "vitest": "^3.1.1"
   }
 }

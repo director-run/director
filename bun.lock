@@ -34,6 +34,7 @@
       "name": "@director.run/core",
       "version": "0.0.1",
       "dependencies": {
+        "@director.run/registry": "workspace:*",
         "@director.run/utilities": "workspace:*",
         "@modelcontextprotocol/sdk": "^1.8.0",
         "@t3-oss/env-core": "^0.12.0",
@@ -48,7 +49,6 @@
         "raw-body": "^3.0.0",
         "slugify": "^1.6.6",
         "superjson": "^2.2.1",
-        "zod": "^3.24.2",
       },
       "devDependencies": {
         "@types/bun": "latest",
@@ -61,6 +61,16 @@
       },
       "peerDependencies": {
         "typescript": "^5",
+      },
+    },
+    "packages/registry": {
+      "name": "@director.run/registry",
+      "version": "0.0.1",
+      "devDependencies": {
+        "@types/bun": "latest",
+        "type-fest": "^4.40.0",
+        "typescript": "^5.8.2",
+        "vitest": "^3.1.1",
       },
     },
     "packages/utilities": {
@@ -98,6 +108,8 @@
     "@director.run/cli": ["@director.run/cli@workspace:apps/cli"],
 
     "@director.run/core": ["@director.run/core@workspace:packages/core"],
+
+    "@director.run/registry": ["@director.run/registry@workspace:packages/registry"],
 
     "@director.run/utilities": ["@director.run/utilities@workspace:packages/utilities"],
 

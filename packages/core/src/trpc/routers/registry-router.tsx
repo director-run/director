@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { AppError, ErrorCode } from "../../helpers/error";
-import { fetchEntries, fetchEntry } from "../../services/registry";
+
+import { fetchEntries, fetchEntry } from "@director.run/registry/client";
 import { t } from "../server";
 
 export function createRegistryRouter() {

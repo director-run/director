@@ -3,7 +3,7 @@ import path from "node:path";
 import { createEnv } from "@t3-oss/env-core";
 import dotenv from "dotenv";
 import { z } from "zod";
-import packageJson from "../../core/package.json";
+import packageJson from "../../service/package.json";
 
 const DATA_DIR = getDataDir();
 

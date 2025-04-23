@@ -1,0 +1,22 @@
+{
+  "name": "@director.run/installer",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1",
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "clean": "rm -rf node_modules .turbo dist/*",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "type-fest": "^4.40.0",
+    "typescript": "^5.8.2",
+    "vitest": "^3.1.1"
+  }
+}

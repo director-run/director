@@ -1,4 +1,8 @@
 import { env } from "@director.run/config/env";
+import type {
+  ProxyAttributes,
+  ProxyTargetAttributes,
+} from "@director.run/service/services/db/schema";
 import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
@@ -10,7 +14,6 @@ import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import * as eventsource from "eventsource";
 import express from "express";
-import type { ProxyAttributes, ProxyTargetAttributes } from "../db/schema";
 import { ConnectedClient } from "./connected-client";
 import { ControllerClient } from "./controller-client";
 import { setupPromptHandlers } from "./handlers/prompts-handler";

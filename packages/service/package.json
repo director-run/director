@@ -1,5 +1,5 @@
 {
-  "name": "@director.run/core",
+  "name": "@director.run/service",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
@@ -16,6 +16,9 @@
     "@director.run/registry": "workspace:*",
     "@director.run/utilities": "workspace:*",
     "@director.run/config": "workspace:*",
+    "@director.run/db": "workspace:*",
+    "@director.run/installer": "workspace:*",
+    "@director.run/mcp": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.8.0",
     "@t3-oss/env-core": "^0.12.0",
     "@trpc/client": "^11.0.2",

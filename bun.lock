@@ -18,7 +18,7 @@
       },
       "dependencies": {
         "@director.run/config": "workspace:*",
-        "@director.run/core": "workspace:*",
+        "@director.run/service": "workspace:*",
         "chalk": "^5.4.1",
         "cli-table3": "^0.6.5",
         "commander": "^13.1.0",
@@ -41,11 +41,54 @@
         "vitest": "^3.1.1",
       },
     },
-    "packages/core": {
-      "name": "@director.run/core",
+    "packages/db": {
+      "name": "@director.run/db",
+      "version": "0.0.1",
+      "devDependencies": {
+        "@types/bun": "latest",
+        "type-fest": "^4.40.0",
+        "typescript": "^5.8.2",
+        "vitest": "^3.1.1",
+      },
+    },
+    "packages/installer": {
+      "name": "@director.run/installer",
+      "version": "0.0.1",
+      "devDependencies": {
+        "@types/bun": "latest",
+        "type-fest": "^4.40.0",
+        "typescript": "^5.8.2",
+        "vitest": "^3.1.1",
+      },
+    },
+    "packages/mcp": {
+      "name": "@director.run/mcp",
+      "version": "0.0.1",
+      "devDependencies": {
+        "@types/bun": "latest",
+        "type-fest": "^4.40.0",
+        "typescript": "^5.8.2",
+        "vitest": "^3.1.1",
+      },
+    },
+    "packages/registry": {
+      "name": "@director.run/registry",
+      "version": "0.0.1",
+      "devDependencies": {
+        "@types/bun": "latest",
+        "type-fest": "^4.40.0",
+        "typescript": "^5.8.2",
+        "vitest": "^3.1.1",
+      },
+    },
+    "packages/service": {
+      "name": "@director.run/service",
       "version": "0.0.1",
       "dependencies": {
         "@director.run/config": "workspace:*",
+        "@director.run/db": "workspace:*",
+        "@director.run/installer": "workspace:*",
+        "@director.run/mcp": "workspace:*",
         "@director.run/registry": "workspace:*",
         "@director.run/utilities": "workspace:*",
         "@modelcontextprotocol/sdk": "^1.8.0",
@@ -73,16 +116,6 @@
       },
       "peerDependencies": {
         "typescript": "^5",
-      },
-    },
-    "packages/registry": {
-      "name": "@director.run/registry",
-      "version": "0.0.1",
-      "devDependencies": {
-        "@types/bun": "latest",
-        "type-fest": "^4.40.0",
-        "typescript": "^5.8.2",
-        "vitest": "^3.1.1",
       },
     },
     "packages/utilities": {
@@ -124,9 +157,15 @@
 
     "@director.run/config": ["@director.run/config@workspace:packages/config"],
 
-    "@director.run/core": ["@director.run/core@workspace:packages/core"],
+    "@director.run/db": ["@director.run/db@workspace:packages/db"],
+
+    "@director.run/installer": ["@director.run/installer@workspace:packages/installer"],
+
+    "@director.run/mcp": ["@director.run/mcp@workspace:packages/mcp"],
 
     "@director.run/registry": ["@director.run/registry@workspace:packages/registry"],
+
+    "@director.run/service": ["@director.run/service@workspace:packages/service"],
 
     "@director.run/utilities": ["@director.run/utilities@workspace:packages/utilities"],
 

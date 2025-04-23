@@ -4,10 +4,7 @@
   "type": "module",
   "version": "0.0.1",
   "exports": {
-    "./is": "./src/is.ts",
-    "./omit": "./src/omit.ts",
-    "./pick": "./src/pick.ts",
-    "./sleep": "./src/sleep.ts"
+    "./*": "./src/*.ts"
   },
   "scripts": {
     "lint": "biome check .",

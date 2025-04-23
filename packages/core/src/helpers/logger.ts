@@ -1,5 +1,4 @@
-import { omit } from "@director.run/utilities/omit";
-import { pick } from "@director.run/utilities/pick";
+import { omit, pick } from "lodash";
 import pino, { type Logger } from "pino";
 import pinoPretty from "pino-pretty";
 import { env } from "../config";

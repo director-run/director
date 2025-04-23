@@ -5,27 +5,24 @@ import dotenv from "dotenv";
 import { z } from "zod";
 import packageJson from "../package.json";
 
-let DEFAULT_DATA_DIR;
+let DATA_DIR;
 
 if (process.env.NODE_ENV === "production") {
-  DEFAULT_DATA_DIR = path.join(os.homedir(), `.director`);
+  DATA_DIR = path.join(os.homedir(), `.director`);
 } else {
-  DEFAULT_DATA_DIR = path.join(
+  DATA_DIR = path.join(
     __dirname,
     `../.director/${process.env.NODE_ENV || "development"}`,
   );
 }
 
-dotenv.config({ path: path.join(DEFAULT_DATA_DIR, "./config.env") });
+dotenv.config({ path: path.join(DATA_DIR, "./config.env") });
 
 export const env = createEnv({
   server: {
     VERSION: z.string().optional().default(packageJson.version),
-    DATA_DIR: z.string().optional().default(DEFAULT_DATA_DIR),
-    DB_FILE_PATH: z
-      .string()
-      .optional()
-      .default(path.join(DEFAULT_DATA_DIR, "db.json")),
+    DATA_DIR: z.string().optional().default(DATA_DIR),
+    DB_FILE_PATH: z.string().optional().default(path.join(DATA_DIR, "db.json")),
     SERVER_PORT: z.number({ coerce: true }).optional().default(3000),
     LOG_PRETTY: z.boolean().optional().default(true),
     LOG_LEVEL: z.string().optional().default("trace"),

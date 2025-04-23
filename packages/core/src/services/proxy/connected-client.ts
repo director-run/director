@@ -1,6 +1,6 @@
-import { sleep } from "@director.run/utilities/sleep";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
+import { sleep } from "bun";
 import { env } from "../../config";
 import { getLogger } from "../../helpers/logger";
 

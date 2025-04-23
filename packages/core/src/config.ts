@@ -5,16 +5,7 @@ import dotenv from "dotenv";
 import { z } from "zod";
 import packageJson from "../package.json";
 
-let DATA_DIR;
-
-if (process.env.NODE_ENV === "production") {
-  DATA_DIR = path.join(os.homedir(), `.director`);
-} else {
-  DATA_DIR = path.join(
-    __dirname,
-    `../.director/${process.env.NODE_ENV || "development"}`,
-  );
-}
+const DATA_DIR = getDataDir();
 
 dotenv.config({ path: path.join(DATA_DIR, "./config.env") });
 
@@ -34,3 +25,14 @@ export const env = createEnv({
   },
   runtimeEnv: process.env,
 });
+
+function getDataDir() {
+  if (process.env.NODE_ENV === "production") {
+    return path.join(os.homedir(), `.director`);
+  } else {
+    return path.join(
+      __dirname,
+      `../.director/${process.env.NODE_ENV || "development"}`,
+    );
+  }
+}

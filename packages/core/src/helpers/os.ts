@@ -1,7 +1,15 @@
 import { exec } from "node:child_process";
 import { promisify } from "node:util";
-import { sleep } from "bun";
 import { getLogger } from "./logger";
+
+/**
+ * Pauses execution for the specified number of milliseconds.
+ * @param ms The number of milliseconds to sleep.
+ * @returns A promise that resolves after the specified time.
+ */
+export function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 const execAsync = promisify(exec);
 

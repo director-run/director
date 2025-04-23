@@ -1,0 +1,24 @@
+{
+  "name": "@director.run/registry",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "clean": "rm -rf .turbo dist/*",
+    "test": "bun run vitest --fileParallelism=false",
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "dependencies": {
+    "zod": "^3.24.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "devDependencies": {
+    "@types/semver": "^7.7.0"
+  }
+}

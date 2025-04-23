@@ -1,5 +1,5 @@
+import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { z } from "zod";
-import { AppError, ErrorCode } from "../../helpers/error";
 
 import { fetchEntries, fetchEntry } from "@director.run/registry/client";
 import { t } from "../server";

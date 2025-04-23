@@ -1,6 +1,6 @@
+import { ErrorCode } from "@director.run/utilities/error";
+import { AppError } from "@director.run/utilities/error";
 import { z } from "zod";
-import { ErrorCode } from "../../helpers/error";
-import { AppError } from "../../helpers/error";
 import { proxySchema } from "../../services/db/schema";
 import { ProxyServerStore } from "../../services/proxy/proxy-server-store";
 import { t } from "../server";

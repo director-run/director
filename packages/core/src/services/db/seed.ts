@@ -1,6 +1,6 @@
 import { env } from "@director.run/config/env";
+import { getLogger } from "@director.run/utilities/logger";
 import { db } from ".";
-import { getLogger } from "../../helpers/logger";
 
 const logger = getLogger("config/seed");
 

@@ -1,3 +1,4 @@
+import { getLogger } from "@director.run/utilities/logger";
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import {
   GetPromptRequestSchema,
@@ -6,7 +7,6 @@ import {
   ListPromptsResultSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
-import { getLogger } from "../../../helpers/logger";
 import type { ConnectedClient } from "../connected-client";
 
 const logger = getLogger("proxy/handlers/promptsHandler");

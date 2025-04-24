@@ -1,7 +1,8 @@
 {
   "name": "@working.dev/director",
   "type": "module",
-  "version": "1.0.0",
+  "version": "2.0.0",
+  "files": ["dist", "README.md"],
   "bin": {
     "director": "./dist/cli.js"
   },
@@ -12,7 +13,10 @@
     "test": "bun run vitest  --fileParallelism=false",
     "cli": "bun run bin/cli.ts",
     "typecheck": "tsc --noEmit",
-    "build": "bun build --target=node bin/cli.ts > dist/cli.js"
+    "build": "bun build --target=node bin/cli.ts > dist/cli.js",
+    "prepare": "bun run build",
+    "pack": "bun pm pack",
+    "pack:dry": "bun pm pack --dry-run"
   },
   "dependencies": {
     "@director.run/service": "workspace:*",

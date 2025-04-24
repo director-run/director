@@ -1,7 +1,7 @@
 {
   "name": "@director.run/cli",
   "type": "module",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "files": ["dist", "README.md"],
   "bin": {
     "director": "./dist/cli.js"
@@ -14,21 +14,21 @@
     "cli": "bun run bin/cli.ts",
     "typecheck": "tsc --noEmit",
     "build": "bun build --production --target=node bin/cli.ts --outdir dist",
-    "release": "bun publish --access public",
+    "release": "bun publish --access public --omit=peer",
     "prepare": "bun run build"
   },
   "dependencies": {
-    "@director.run/service": "workspace:*",
-    "@director.run/config": "workspace:*",
-    "@director.run/db": "workspace:*",
-    "@director.run/mcp": "workspace:*",
     "chalk": "^5.4.1",
     "cli-table3": "^0.6.5",
     "commander": "^13.1.0",
     "superjson": "^2.2.2"
   },
   "peerDependencies": {
-    "typescript": "^5"
+    "typescript": "^5",
+    "@director.run/service": "workspace:*",
+    "@director.run/config": "workspace:*",
+    "@director.run/db": "workspace:*",
+    "@director.run/mcp": "workspace:*"
   },
   "devDependencies": {
     "type-fest": "^4.40.0"

@@ -10,7 +10,7 @@
     "lint": "turbo run lint",
     "format": "turbo run format",
     "format:fix-imports": "biome check --formatter-enabled=false --linter-enabled=false --organize-imports-enabled=true --write .",
-    "test": "bun run vitest",
+    "test": "bun run vitest --fileParallelism=false",
     "typecheck": "turbo run typecheck",
     "clean": "rm -rf .turbo node_modules && turbo run clean",
     "cli": "turbo run cli"

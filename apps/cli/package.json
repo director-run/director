@@ -13,7 +13,7 @@
     "test": "bun run vitest  --fileParallelism=false",
     "cli": "bun run bin/cli.ts",
     "typecheck": "tsc --noEmit",
-    "build": "bun build --production --target=node bin/cli.ts > dist/cli.js",
+    "build": "bun build --production --target=node bin/cli.ts --outdir dist",
     "prepare": "bun run build",
     "pack": "bun pm pack",
     "pack:dry": "bun pm pack --dry-run"

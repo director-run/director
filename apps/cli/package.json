@@ -1,9 +1,9 @@
 {
-  "name": "@director.run/cli",
+  "name": "@working.dev/director",
   "type": "module",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "bin": {
-    "director": "./dist/cli"
+    "director": "./dist/cli.js"
   },
   "scripts": {
     "lint": "biome check .",
@@ -11,12 +11,14 @@
     "clean": "rm -rf .turbo dist/*",
     "test": "bun run vitest  --fileParallelism=false",
     "cli": "bun run bin/cli.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "build": "bun build --target=node bin/cli.ts > dist/cli.js"
   },
   "dependencies": {
     "@director.run/service": "workspace:*",
     "@director.run/config": "workspace:*",
     "@director.run/db": "workspace:*",
+    "@director.run/mcp": "workspace:*",
     "chalk": "^5.4.1",
     "cli-table3": "^0.6.5",
     "commander": "^13.1.0",

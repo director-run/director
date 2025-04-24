@@ -33,6 +33,9 @@
     },
     "cli": {
       "cache": false
+    },
+    "release": {
+      "cache": false
     }
   }
 }

@@ -9,6 +9,7 @@
     "start": "turbo run start",
     "lint": "turbo run lint",
     "format": "turbo run format",
+    "release": "turbo run release --filter=@director.run/cli",
     "format:fix-imports": "biome check --formatter-enabled=false --linter-enabled=false --organize-imports-enabled=true --write .",
     "test": "bun run vitest --fileParallelism=false",
     "typecheck": "turbo run typecheck",

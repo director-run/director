@@ -24,13 +24,13 @@
     "superjson": "^2.2.2"
   },
   "peerDependencies": {
-    "typescript": "^5",
+    "typescript": "^5"
+  },
+  "devDependencies": {
+    "type-fest": "^4.40.0",
     "@director.run/service": "workspace:*",
     "@director.run/config": "workspace:*",
     "@director.run/db": "workspace:*",
     "@director.run/mcp": "workspace:*"
-  },
-  "devDependencies": {
-    "type-fest": "^4.40.0"
   }
 }

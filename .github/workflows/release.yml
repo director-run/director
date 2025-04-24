@@ -21,4 +21,4 @@ jobs:
       - name: Install dependencies
         run: bun install
       - name: Publish
-        run: bun publish --dry-run
+        run: bun publish --access public --dry-run

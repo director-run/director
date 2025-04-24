@@ -15,7 +15,7 @@ const CLAUDE_CONFIG_KEY_PREFIX = "director";
 function sse2stdioConfigValue(sseUrl: string) {
   return {
     args: [
-      path.resolve(__dirname, "../../../../cli/bin/cli.ts"),
+      path.resolve(__dirname, "../../../apps/cli/bin/cli.ts"),
       "sse2stdio",
       sseUrl,
     ],

@@ -18,13 +18,13 @@ export const env = createEnv({
     LOG_PRETTY: z.boolean().optional().default(true),
     LOG_LEVEL: z.string().optional().default("trace"),
     LOG_ERROR_STACK: z.boolean().optional().default(true),
-    NODE_ENV: z
-      .enum(["test", "development", "production"])
-      .optional()
-      .default("development"),
   },
   runtimeEnv: process.env,
 });
+
+export function isDevelopment() {
+  return process.env.NODE_ENV === "development";
+}
 
 function getDataDir() {
   if (process.env.NODE_ENV === "production") {

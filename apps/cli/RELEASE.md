@@ -28,3 +28,10 @@ bun publish --access public
 npm unpublish @director.run/cli --force
 ```
 
+## Release
+
+```bash
+version=$(bun run desktop:version print)
+git tag -a \"v${version}\" -m \"Release v${version}\"
+git push origin \"v${version}\""
+```

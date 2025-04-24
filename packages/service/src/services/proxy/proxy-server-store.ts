@@ -1,8 +1,8 @@
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
+import { db } from "../../../../db/src";
+import type { ProxyTargetAttributes } from "../../../../db/src/schema";
 import { ProxyServer } from "../../../../mcp/src/proxy-server";
-import { db } from "../db";
-import type { ProxyTargetAttributes } from "../db/schema";
 
 import { fetchEntry } from "@director.run/registry/client";
 

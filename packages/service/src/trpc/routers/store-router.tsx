@@ -1,7 +1,7 @@
 import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
 import { z } from "zod";
-import { proxySchema } from "../../services/db/schema";
+import { proxySchema } from "../../../../db/src/schema";
 import { ProxyServerStore } from "../../services/proxy/proxy-server-store";
 import { t } from "../server";
 

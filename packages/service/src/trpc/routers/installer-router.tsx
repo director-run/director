@@ -2,11 +2,11 @@ import { z } from "zod";
 import {
   installToClaude,
   uninstallFromClaude,
-} from "../../services/installer/claude";
+} from "../../../../installer/src/claude";
 import {
   installToCursor,
   uninstallFromCursor,
-} from "../../services/installer/cursor";
+} from "../../../../installer/src/cursor";
 import type { ProxyServerStore } from "../../services/proxy/proxy-server-store";
 import { t } from "../server";
 

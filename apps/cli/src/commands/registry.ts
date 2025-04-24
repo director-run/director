@@ -1,4 +1,4 @@
-import { trpc } from "@director.run/core/trpc/client";
+import { trpc } from "@director.run/service/trpc/client";
 
 import chalk from "chalk";
 import { Command } from "commander";

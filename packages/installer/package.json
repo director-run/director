@@ -6,6 +6,9 @@
   "exports": {
     "./*": "./src/*.ts"
   },
+  "dependencies": {
+    "@director.run/mcp": "workspace:*"
+  },
   "scripts": {
     "lint": "biome check .",
     "format": "biome format --write .",

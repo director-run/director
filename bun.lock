@@ -18,6 +18,7 @@
       },
       "dependencies": {
         "@director.run/config": "workspace:*",
+        "@director.run/db": "workspace:*",
         "@director.run/service": "workspace:*",
         "chalk": "^5.4.1",
         "cli-table3": "^0.6.5",
@@ -54,6 +55,9 @@
     "packages/installer": {
       "name": "@director.run/installer",
       "version": "0.0.1",
+      "dependencies": {
+        "@director.run/mcp": "workspace:*",
+      },
       "devDependencies": {
         "@types/bun": "latest",
         "type-fest": "^4.40.0",

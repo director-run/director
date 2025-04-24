@@ -1,4 +1,4 @@
-import { ProxyServer } from "@director.run/core/services/proxy/proxy-server";
+import { ProxyServer } from "@director.run/mcp/proxy-server";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
 export async function proxySSEToStdio(sseUrl: string) {

@@ -32,7 +32,7 @@ function getDataDir() {
   } else {
     return path.join(
       __dirname,
-      `../.director/${process.env.NODE_ENV || "development"}`,
+      `../../../.director/${process.env.NODE_ENV || "development"}`,
     );
   }
 }

@@ -1,4 +1,4 @@
-import { seed } from "@director.run/core/services/db/seed";
+import { seed } from "@director.run/db/seed";
 import { Command } from "commander";
 import { withErrorHandler } from "../helpers";
 

@@ -5,10 +5,8 @@
 
 ---
 
-
-
-
-## Why Director?
+![ci](https://github.com/theworkingcompany/director/workflows/CI/badge.svg)
+[![npm](https://img.shields.io/npm/v/@director.run/cli.svg)](https://www.npmjs.com/package/@director.run/cli)
 
 Director is a Model Context Protocol (MCP) proxy server that simplifies the management of multiple MCP connections. Instead of manually configuring each client to connect to individual MCP servers, Director acts as a central hub that:
 

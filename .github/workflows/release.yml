@@ -20,5 +20,5 @@ jobs:
           bun-version: latest
       - name: Install dependencies
         run: bun install
-      - name: Publish
-        run: bun publish --access public --dry-run
+      - name: Release
+        run: bun run release

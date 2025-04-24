@@ -1,6 +1,4 @@
-
-
-## Test package locally
+## Install package locally
 
 ### Install
 ```
@@ -18,11 +16,11 @@ npm pack --dry-run
 ## Publish
 ```
 npm login
-npm publish
+bun publish --access public
 ```
 
 ### Unpublish
 ```
-
+npm unpublish @director.run/cli --force
 ```
 

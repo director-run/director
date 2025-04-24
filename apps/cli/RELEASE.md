@@ -12,13 +12,13 @@ npm uninstall -g @working.dev/director
 
 ### Publish Dry Run
 ```
-bun publish --access public --dry-run
+bun run release --dry-run
 ```
 
 ## Publish
 ```
 npm login
-bun publish --access public
+bun run release
 ```
 
 ### Unpublish
@@ -31,7 +31,7 @@ npm unpublish @director.run/cli --force
 ## Release
 
 ```bash
-version=$(bun run desktop:version print)
+version=$(node -p "require('./package.json').version")
 git tag -a \"v${version}\" -m \"Release v${version}\"
 git push origin \"v${version}\""
 ```

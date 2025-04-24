@@ -1,7 +1,7 @@
 {
   "name": "@director.run/cli",
   "type": "module",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "files": ["dist", "README.md"],
   "bin": {
     "director": "./dist/cli.js"
@@ -14,7 +14,7 @@
     "cli": "bun run bin/cli.ts",
     "typecheck": "tsc --noEmit",
     "build": "bun build --production --target=node bin/cli.ts --outdir dist",
-    "release": "bun publish --access public --dry-run"
+    "release": "bun publish --access public"
   },
   "dependencies": {
     "@director.run/service": "workspace:*",

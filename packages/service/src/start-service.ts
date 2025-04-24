@@ -1,9 +1,12 @@
 import { env } from "@director.run/config/env";
 import { getLogger } from "@director.run/utilities/logger";
+import {
+  asyncHandler,
+  errorRequestHandler,
+} from "@director.run/utilities/middleware";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import cors from "cors";
 import express from "express";
-import { asyncHandler, errorRequestHandler } from "./http/middleware";
 import { ProxyServerStore } from "./services/proxy/proxy-server-store";
 import { createAppRouter } from "./trpc/routers/_app-router";
 

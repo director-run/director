@@ -2,12 +2,8 @@ name: 'Release'
 
 on:
   push:
-    branches: [ "bm/npm-publish" ]
-
-# on:
-#   push:
-#     tags:
-#       - 'v*'
+    tags:
+      - 'v*'
 
 jobs:
   release:

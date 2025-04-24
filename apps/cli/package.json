@@ -14,8 +14,7 @@
     "cli": "bun run bin/cli.ts",
     "typecheck": "tsc --noEmit",
     "build": "bun build --production --target=node bin/cli.ts --outdir dist",
-    "release:o": "bun publish --access public --dry-run",
-    "release": "bun run cli config"
+    "release": "bun publish --access public --dry-run"
   },
   "dependencies": {
     "@director.run/service": "workspace:*",

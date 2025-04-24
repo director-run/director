@@ -9,9 +9,6 @@ const DATA_DIR = getDataDir();
 
 dotenv.config({ path: path.join(DATA_DIR, "./config.env") });
 
-console.log("--------------------------------", process.env.NPM_CONFIG_TOKEN);
-console.log("--------------------------------", process.env.HELLO);
-
 export const env = createEnv({
   server: {
     VERSION: z.string().optional().default(packageJson.version),

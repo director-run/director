@@ -22,3 +22,5 @@ jobs:
         run: bun install
       - name: Release
         run: bun run release
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

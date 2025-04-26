@@ -1,26 +1,130 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@plugin "tailwindcss-radix";
+
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-*: initial;
+
+  --color-background: var(--color-sage-1);
+  --color-background-subtle: var(--color-sage-2);
+
+  --color-foreground: var(--color-sage-12);
+  --color-foreground-subtle: var(--color-sage-11);
+  --color-foreground-faint: var(--color-sage-8);
+  --color-foreground-inverse: var(--color-sage-1);
+
+  --color-element: var(--color-sage-4);
+  --color-element-hover: var(--color-sage-6);
+  --color-element-active: var(--color-sage-6);
+
+  --color-primary: var(--color-sage-12);
+  --color-primary-hover: var(--color-sage-11);
+  --color-primary-active: var(--color-sage-10);
+
+  --color-border: var(--color-sage-8);
+  --color-border-subtle: var(--color-sage-5);
+  --color-border-faint: var(--color-sage-4);
+
+  --color-accent-yellow: var(--color-yellow);
+  --color-accent-orange: var(--color-orange);
+  --color-accent-tomato: var(--color-tomato);
+  --color-accent-red: var(--color-red);
+  --color-accent-ruby: var(--color-ruby);
+  --color-accent-crimson: var(--color-crimson);
+  --color-accent-pink: var(--color-pink);
+  --color-accent-plum: var(--color-plum);
+  --color-accent-purple: var(--color-purple);
+  --color-accent-violet: var(--color-violet);
+  --color-accent-iris: var(--color-iris);
+  --color-accent-indigo: var(--color-indigo);
+  --color-accent-blue: var(--color-blue);
+  --color-accent-cyan: var(--color-cyan);
+  --color-accent-teal: var(--color-teal);
+  --color-accent-jade: var(--color-jade);
+  --color-accent-green: var(--color-green);
+  --color-accent-grass: var(--color-grass);
+  --color-accent-lime: var(--color-lime);
+  --color-accent-mint: var(--color-mint);
+  --color-accent-sky: var(--color-sky);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --shadow-popper: var(--shadow-popper);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --color-sage-1: hsl(150, 33%, 99%);
+  --color-sage-2: hsl(150, 14%, 97%);
+  --color-sage-3: hsl(160, 10%, 94%);
+  --color-sage-4: hsl(160, 6%, 91%);
+  --color-sage-5: hsl(140, 5%, 88%);
+  --color-sage-6: hsl(160, 4%, 85%);
+  --color-sage-7: hsl(150, 4%, 80%);
+  --color-sage-8: hsl(150, 3%, 73%);
+  --color-sage-9: hsl(157, 3%, 54%);
+  --color-sage-10: hsl(157, 3%, 50%);
+  --color-sage-11: hsl(160, 3%, 38%);
+  --color-sage-12: hsl(154, 12%, 12%);
+
+  --color-yellow: hsl(53, 100%, 58%);
+  --color-orange: hsl(23, 93%, 53%);
+  --color-tomato: hsl(10, 78%, 54%);
+  --color-red: hsl(358, 75%, 59%);
+  --color-ruby: hsl(348, 75%, 59%);
+  --color-crimson: hsl(336, 80%, 58%);
+  --color-pink: hsl(322, 65%, 55%);
+  --color-plum: hsl(292, 45%, 51%);
+  --color-purple: hsl(272, 51%, 54%);
+  --color-violet: hsl(252, 56%, 57%);
+  --color-iris: hsl(240, 60%, 60%);
+  --color-indigo: hsl(226, 70%, 55%);
+  --color-blue: hsl(206, 100%, 50%);
+  --color-cyan: hsl(191, 100%, 39%);
+  --color-teal: hsl(173, 80%, 36%);
+  --color-jade: hsl(164, 60%, 40%);
+  --color-green: hsl(151, 55%, 42%);
+  --color-grass: hsl(131, 41%, 46%);
+  --color-lime: hsl(81, 80%, 66%);
+  --color-mint: hsl(167, 70%, 72%);
+  --color-sky: hsl(193, 98%, 74%);
+
+  --shadow-popper: 0px 0px 0px 1px var(--color-sage-5), 0px 6px 12px -3px #1b221f14, 0px 6px 18px 0px #1b221f0c;
+}
+
+.dark {
+  --color-sage-1: hsl(150, 6%, 7%);
+  --color-sage-2: hsl(150, 4%, 9%);
+  --color-sage-3: hsl(150, 3%, 13%);
+  --color-sage-4: hsl(160, 4%, 16%);
+  --color-sage-5: hsl(160, 3%, 19%);
+  --color-sage-6: hsl(150, 4%, 22%);
+  --color-sage-7: hsl(156, 4%, 28%);
+  --color-sage-8: hsl(154, 4%, 37%);
+  --color-sage-9: hsl(157, 6%, 41%);
+  --color-sage-10: hsl(160, 5%, 47%);
+  --color-sage-11: hsl(157, 5%, 69%);
+  --color-sage-12: hsl(150, 6%, 97%);
+
+  --shadow-popper: 0px 0px 0px 1px var(--color-sage-5);
+}
+
+
+@layer base {
+  * {
+    @apply box-border border-border selection:bg-transparent;
+  }
+
+  body {
+    @apply font-sans bg-background text-foreground antialiased;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .popover {
+    @apply z-50 bg-primary text-foreground-inverse ring-2 ring-background outline-none;
+  }
 }

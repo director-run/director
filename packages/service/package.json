@@ -10,7 +10,10 @@
     "typecheck": "tsc --noEmit"
   },
   "exports": {
-    "./*": "./src/*.ts"
+    "./*": {
+      "types": "./src/*.ts",
+      "default": "./src/*.ts"
+    }
   },
   "dependencies": {
     "@director.run/registry": "workspace:*",

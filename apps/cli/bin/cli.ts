@@ -28,12 +28,17 @@ if (isDevelopment()) {
 program.addHelpText(
   "after",
   `
-
-Examples:
+  
+  Examples:
   $ director create my-proxy
   $ director server:add my-proxy fetch
   $ director install my-proxy claude
-`,
+  `,
 );
+
+// Show help by default if no command specified
+if (process.argv.length <= 2) {
+  program.help();
+}
 
 program.parse();

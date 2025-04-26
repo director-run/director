@@ -1,0 +1,32 @@
+{
+  "name": "website",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "check-types": "tsc --noEmit",
+    "clean": "rm -rf .next node_modules",
+    "dev": "next dev --turbopack --port 3001",
+    "format": "bun run format:fix-classnames && bun run format:fix-imports && bun run format:fix-all",
+    "format:fix-all": "biome format --write ./src",
+    "format:fix-imports": "biome check --formatter-enabled=false --linter-enabled=false --organize-imports-enabled=true --write ./src",
+    "format:fix-classnames": "biome lint --fix --unsafe --only=lint/nursery/useSortedClasses ./src",
+    "lint": "biome check ./src",
+    "start": "next start",
+    "tools:shadcn": "bunx --bun shadcn@latest"
+  },
+  "dependencies": {
+    "@director.run/service": "workspace:*",
+    "next": "15.3.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@tailwindcss/postcss": "^4",
+    "tailwindcss": "^4"
+  }
+}

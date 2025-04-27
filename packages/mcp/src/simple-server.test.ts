@@ -1,0 +1,161 @@
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
+import { describe, expect, test } from "vitest";
+import { z } from "zod";
+import { SimpleServer } from "./simple-server";
+
+describe("SimpleServer", () => {
+  test("should create a server with a tool", async () => {
+    const server = new SimpleServer();
+
+    // Define a test tool
+    const TestSchema = z.object({
+      name: z.string(),
+      age: z.number(),
+    });
+
+    server
+      .tool("test_tool")
+      .schema(TestSchema)
+      .description("A test tool")
+      .handler(async ({ name, age }) => {
+        return await {
+          status: "success",
+          data: {
+            name,
+            age,
+            message: `Hello ${name}, you are ${age} years old`,
+          },
+        };
+      })
+      .build();
+
+    const [clientTransport, serverTransport] =
+      InMemoryTransport.createLinkedPair();
+
+    const client = new Client(
+      {
+        name: "test client",
+        version: "1.0",
+      },
+      {
+        capabilities: {
+          sampling: {},
+        },
+        enforceStrictCapabilities: true,
+      },
+    );
+
+    await Promise.all([
+      client.connect(clientTransport),
+      server.getServer().connect(serverTransport),
+    ]);
+
+    // Test listing tools
+    const tools = await client.listTools();
+    expect(tools.tools).toHaveLength(1);
+    expect(tools.tools[0].name).toBe("test_tool");
+    expect(tools.tools[0].description).toBe("A test tool");
+
+    // Test calling the tool
+    const result = await client.callTool({
+      name: "test_tool",
+      arguments: {
+        name: "John",
+        age: 30,
+      },
+    });
+
+    expect(JSON.parse(result.content[0].text)).toEqual({
+      status: "success",
+      data: {
+        name: "John",
+        age: 30,
+        message: "Hello John, you are 30 years old",
+      },
+    });
+  });
+
+  test("should handle validation errors", async () => {
+    const server = new SimpleServer();
+
+    const TestSchema = z.object({
+      name: z.string(),
+      age: z.number(),
+    });
+
+    server
+      .tool("test_tool")
+      .schema(TestSchema)
+      .description("A test tool")
+      .handler(() => {
+        return Promise.resolve({ status: "success" });
+      })
+      .build();
+
+    const [clientTransport, serverTransport] =
+      InMemoryTransport.createLinkedPair();
+
+    const client = new Client(
+      {
+        name: "test client",
+        version: "1.0",
+      },
+      {
+        capabilities: {
+          sampling: {},
+        },
+        enforceStrictCapabilities: true,
+      },
+    );
+
+    await Promise.all([
+      client.connect(clientTransport),
+      server.getServer().connect(serverTransport),
+    ]);
+
+    // Test invalid input
+    await expect(
+      client.callTool({
+        name: "test_tool",
+        arguments: {
+          name: "John",
+          age: "not a number", // Invalid type
+        },
+      }),
+    ).rejects.toThrow("Invalid input");
+  });
+
+  test("should handle unknown tools", async () => {
+    const server = new SimpleServer();
+
+    const [clientTransport, serverTransport] =
+      InMemoryTransport.createLinkedPair();
+
+    const client = new Client(
+      {
+        name: "test client",
+        version: "1.0",
+      },
+      {
+        capabilities: {
+          sampling: {},
+        },
+        enforceStrictCapabilities: true,
+      },
+    );
+
+    await Promise.all([
+      client.connect(clientTransport),
+      server.getServer().connect(serverTransport),
+    ]);
+
+    // Test calling non-existent tool
+    await expect(
+      client.callTool({
+        name: "non_existent_tool",
+        arguments: {},
+      }),
+    ).rejects.toThrow("Unknown tool");
+  });
+});

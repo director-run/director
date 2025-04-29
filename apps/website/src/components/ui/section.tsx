@@ -107,9 +107,8 @@ export function SectionDescription({
   );
 }
 
-export const SectionSeparator = ({
-  className,
-  ...props
-}: React.ComponentProps<typeof Separator>) => {
-  return <Separator className={cn("", className)} {...props} />;
+export const SectionSeparator = (
+  props: React.ComponentProps<typeof Separator>,
+) => {
+  return <Separator {...props} />;
 };

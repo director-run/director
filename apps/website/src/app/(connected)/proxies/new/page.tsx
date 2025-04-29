@@ -1,18 +1,17 @@
-"use client";
+import { NewProxyForm } from "@/components/proxies/proxy-form";
 import { Container } from "@/components/ui/container";
-import {} from "@/components/ui/dropdown-menu";
 import {
   Section,
   SectionDescription,
   SectionHeader,
+  SectionSeparator,
   SectionTitle,
 } from "@/components/ui/section";
-import {} from "lucide-react";
 
-export default function NewProxyPage() {
+export default function ProxiesNewPage() {
   return (
-    <Container className="py-12">
-      <div className="flex w-full flex-col gap-y-8">
+    <div className="flex min-h-[55dvh] w-full flex-col justify-center gap-y-8">
+      <Container className="py-12" size="sm">
         <Section>
           <SectionHeader>
             <SectionTitle>New proxy</SectionTitle>
@@ -20,8 +19,10 @@ export default function NewProxyPage() {
               Create a new proxy to start using MCP.
             </SectionDescription>
           </SectionHeader>
+          <SectionSeparator />
+          <NewProxyForm />
         </Section>
-      </div>
-    </Container>
+      </Container>
+    </div>
   );
 }

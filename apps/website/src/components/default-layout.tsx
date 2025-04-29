@@ -38,11 +38,6 @@ export function DefaultLayoutHeader() {
     enabled: !isConnected,
   });
 
-  useHotkeys("s", () => router.push("/search"), {
-    ignoreModifiers: true,
-    enableOnFormTags: false,
-  });
-
   useHotkeys(
     "g",
     () => {
@@ -77,13 +72,6 @@ export function DefaultLayoutHeader() {
             <span className="opacity-70">[g]</span>
             <span>Github</span>
           </a>
-        </Button>
-
-        <Button asChild>
-          <Link href="/search">
-            <span className="opacity-70">[s]</span>
-            <span>Servers</span>
-          </Link>
         </Button>
 
         <ConnectButton />
@@ -136,12 +124,12 @@ export function DefaultLayoutFooter({
   return (
     <footer
       className={cn(
-        "flex cursor-pointer flex-col-reverse justify-between gap-4 px-4 pt-5 pb-3 font-mono text-foreground-subtle text-xs uppercase leading-none tracking-wide sm:flex-row",
+        "flex flex-col-reverse justify-between gap-4 px-4 pt-5 pb-3 font-mono text-foreground-subtle text-xs uppercase leading-none tracking-wide sm:flex-row",
         className,
       )}
       {...props}
     >
-      <div>&copy; 2025 director.run</div>
+      <div>&copy; {new Date().getFullYear()} director.run</div>
       <div className="flex flex-row gap-x-4">
         <FooterItem asChild>
           <Link href="/">Install</Link>

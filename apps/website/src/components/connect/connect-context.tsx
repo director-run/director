@@ -5,7 +5,7 @@ import { createCtx } from "@/lib/create-ctx";
 import { trpc } from "@/trpc/client";
 import { ProxyAttributes } from "@director.run/db/schema";
 import { useParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 type ConnectStatus = "loading" | "ready";
 
@@ -42,18 +42,27 @@ export const ConnectProvider = ({
     }
   }, [data]);
 
-  const selectedProxy = useMemo(() => {
-    if (!proxyId) {
-      return null;
-    }
-    return data?.find((proxy) => proxy.id === proxyId) ?? null;
-  }, [data, proxyId]);
-
   return (
-    <CtxProvider value={{ status, proxies: data ?? [], selectedProxy }}>
+    <CtxProvider
+      value={{
+        status,
+        proxies: data ?? [],
+        selectedProxy: data?.find((proxy) => proxy.id === proxyId) ?? null,
+      }}
+    >
       {children}
     </CtxProvider>
   );
 };
 
 export const useConnectContext = useCtx;
+
+export const useCurrentProxy = () => {
+  const { selectedProxy } = useConnectContext();
+
+  if (!selectedProxy) {
+    throw new Error("No proxy selected");
+  }
+
+  return selectedProxy;
+};

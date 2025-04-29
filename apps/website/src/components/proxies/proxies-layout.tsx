@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 
-import { ProxySelector } from "./manage/proxy-selector";
-import { SimpleLogo } from "./ui/logo";
+import { SimpleLogo } from "../ui/logo";
+import { ProxySelector } from "./proxy-selector";
 
-export function ManageLayoutHeader() {
+export function ProxiesLayoutHeader() {
   return (
     <header className="sticky top-2 z-50 flex justify-between gap-x-0.5">
       <nav className="flex w-full flex-row gap-x-0.5">

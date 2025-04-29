@@ -55,7 +55,7 @@ function McpServerRow({
             <DropdownMenuLabel>Server actions</DropdownMenuLabel>
             <DropdownMenuItem asChild>
               <Link href={`/proxies/${proxy.id}/server/${server.name}`}>
-                View details
+                Inspect
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem>Remove server</DropdownMenuItem>
@@ -72,6 +72,14 @@ interface McpServersTableProps {
 }
 
 export function McpServersTable({ servers, proxy }: McpServersTableProps) {
+  if (servers.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-y-2 bg-element py-4 text-foreground-subtle">
+        <p>No servers configured</p>
+      </div>
+    );
+  }
+
   return (
     <Table>
       <TableHeader>

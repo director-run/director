@@ -5,7 +5,7 @@ import { DefaultFallback } from "@/lib/no-ssr-suspense";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-export function ManageRedirect() {
+export function ProxiesRedirect() {
   const { proxies, status } = useConnectContext();
   const router = useRouter();
 

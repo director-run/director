@@ -15,15 +15,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { Loader } from "../ui/loader";
 
 export function ProxySelector() {
   const router = useRouter();
-  const { proxies, selectedProxy } = useConnectContext();
+  const { proxies, selectedProxy, status } = useConnectContext();
+
+  if (status === "loading") {
+    return (
+      <Button>
+        <Loader />
+      </Button>
+    );
+  }
 
   if (!selectedProxy) {
     return (
       <Button asChild>
-        <Link href="/proxies">Go back</Link>
+        <Link href="/proxies">Cancel</Link>
       </Button>
     );
   }

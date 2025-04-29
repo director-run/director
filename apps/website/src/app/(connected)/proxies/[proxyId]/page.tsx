@@ -1,6 +1,9 @@
 "use client";
 
-import { useConnectContext } from "@/components/connect/connect-context";
+import {
+  useConnectContext,
+  useCurrentProxy,
+} from "@/components/connect/connect-context";
 import { McpServersTable } from "@/components/mcp-servers/mcp-servers-table";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
@@ -21,9 +24,45 @@ import {
   SectionTitle,
 } from "@/components/ui/section";
 import { ChevronDownIcon, Settings } from "lucide-react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
-export default function Manage() {
+function ProxyInstallDropdown() {
+  const proxy = useCurrentProxy();
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button className="self-start">
+          <span>Connect</span>
+          <ChevronDownIcon className="size-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-96">
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>Connect any client</DropdownMenuLabel>
+          <input
+            type="text"
+            id="proxy-url"
+            className="block h-7 w-full border-none bg-background/10 px-2 text-foreground-inverse/80 outline-none"
+            value={`http://localhost:3000/${proxy.id}/sse`}
+            readOnly
+          />
+          <DropdownMenuItem>Copy to clipboard</DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>One-click install</DropdownMenuLabel>
+          <DropdownMenuItem>Claude Desktop</DropdownMenuItem>
+          <DropdownMenuItem>Cursor</DropdownMenuItem>
+          <DropdownMenuItem>Windsurf</DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+export default function ProxyShowPage() {
   const { selectedProxy } = useConnectContext();
 
   if (!selectedProxy) {
@@ -46,36 +85,11 @@ export default function Manage() {
           </SectionHeader>
 
           <div className="flex flex-row gap-x-0.5">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="self-start">
-                  <span>Connect</span>
-                  <ChevronDownIcon className="size-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-96">
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel>Connect any client</DropdownMenuLabel>
-                  <input
-                    type="text"
-                    id="proxy-url"
-                    className="block h-7 w-full border-none bg-background/10 px-2 text-foreground-inverse/80 outline-none"
-                    value={`http://localhost:3000/${selectedProxy.id}/sse`}
-                    readOnly
-                  />
-                  <DropdownMenuItem>Copy to clipboard</DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel>One-click install</DropdownMenuLabel>
-                  <DropdownMenuItem>Claude Desktop</DropdownMenuItem>
-                  <DropdownMenuItem>Cursor</DropdownMenuItem>
-                  <DropdownMenuItem>Windsurf</DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Button variant="ghost" size="icon">
-              <Settings />
+            <ProxyInstallDropdown />
+            <Button variant="ghost" size="icon" asChild>
+              <Link href={`/proxies/${selectedProxy.id}/settings`}>
+                <Settings />
+              </Link>
             </Button>
           </div>
         </Section>

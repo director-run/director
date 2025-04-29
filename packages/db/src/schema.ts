@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-const requiredStringSchema = z.string().trim().min(1, "Required");
-const optionalStringSchema = z.string().trim().nullish();
+export const requiredStringSchema = z.string().trim().min(1, "Required");
+export const optionalStringSchema = z.string().trim().nullish();
 
 export const ProxyTargetSchema = z.object({
   name: requiredStringSchema,

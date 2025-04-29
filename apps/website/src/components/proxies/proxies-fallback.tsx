@@ -8,7 +8,7 @@ import { Button } from "../ui/button";
 import { Loader } from "../ui/loader";
 import { SimpleLogo } from "../ui/logo";
 
-export function ManageFallback() {
+export function ProxiesFallback() {
   return (
     <DefaultLayout>
       <header className="flex justify-between gap-x-0.5">

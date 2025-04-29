@@ -42,7 +42,11 @@ export function ConnectButton() {
 
   return (
     <Button className="ml-auto" asChild>
-      <Link href={`/proxies/${proxies[0].id}`}>
+      <Link
+        href={
+          proxies.length === 0 ? "/proxies/new" : `/proxies/${proxies[0].id}`
+        }
+      >
         <span className="opacity-70">[m]</span>
         <span>Manage</span>
       </Link>

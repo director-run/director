@@ -76,12 +76,7 @@ export function NewProxyForm() {
         await mutation.mutateAsync({ ...values, servers: [] });
       }}
     >
-      <Button
-        className="self-end"
-        size="large"
-        type="submit"
-        disabled={isPending}
-      >
+      <Button className="self-end" type="submit" disabled={isPending}>
         {isPending ? (
           <Loader className="text-foreground-subtle" />
         ) : (
@@ -121,12 +116,7 @@ export function UpdateProxyForm(
         description: props.description,
       }}
     >
-      <Button
-        className="self-start"
-        size="large"
-        type="submit"
-        disabled={isPending}
-      >
+      <Button className="self-start" type="submit" disabled={isPending}>
         {isPending ? (
           <Loader className="text-foreground-subtle" />
         ) : (

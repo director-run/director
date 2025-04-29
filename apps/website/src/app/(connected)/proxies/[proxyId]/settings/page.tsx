@@ -3,8 +3,9 @@
 import { notFound } from "next/navigation";
 
 import { useConnectContext } from "@/components/connect/connect-context";
+import { ProxyDeleteConfirmation } from "@/components/proxies/proxy-delete-confirmation";
 import { UpdateProxyForm } from "@/components/proxies/proxy-form";
-import { Button } from "@/components/ui/button";
+import {} from "@/components/ui/alert-dialog";
 import { Container } from "@/components/ui/container";
 import {
   Section,
@@ -57,9 +58,7 @@ export default function ProxyShowPage() {
             </SectionDescription>
           </SectionHeader>
 
-          <Button size="large" className="self-start">
-            Delete proxy
-          </Button>
+          <ProxyDeleteConfirmation proxyId={selectedProxy.id} />
         </Section>
       </div>
     </Container>

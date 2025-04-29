@@ -30,11 +30,7 @@ export function ProxySelector() {
   }
 
   if (!selectedProxy) {
-    return (
-      <Button asChild>
-        <Link href="/proxies">Cancel</Link>
-      </Button>
-    );
+    return null;
   }
 
   return (

@@ -115,7 +115,7 @@
 
 @layer base {
   * {
-    @apply box-border border-border selection:bg-transparent;
+    @apply box-border border-border selection:bg-primary selection:text-foreground-inverse;
   }
 
   body {

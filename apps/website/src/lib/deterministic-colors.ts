@@ -1,5 +1,3 @@
-import { assertUnreachable } from "./assert-unreachable";
-
 export const deterministicBgClassNames = [
   "bg-accent-yellow",
   "bg-accent-orange",
@@ -48,6 +46,30 @@ export const deterministicFillClassNames = [
   "fill-accent-sky",
 ] as const;
 
+export const deterministicColorName = [
+  "yellow",
+  "orange",
+  "tomato",
+  "red",
+  "ruby",
+  "crimson",
+  "pink",
+  "plum",
+  "purple",
+  "violet",
+  "iris",
+  "indigo",
+  "blue",
+  "cyan",
+  "teal",
+  "jade",
+  "green",
+  "grass",
+  "lime",
+  "mint",
+  "sky",
+] as const;
+
 function hashString(str: string) {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -58,16 +80,8 @@ function hashString(str: string) {
   return hash;
 }
 
-export function getDeterministicColor(str: string, type: "bg" | "fill") {
+export function getDeterministicColor(str: string) {
   const hash = hashString(str);
   const index = Math.abs(hash) % deterministicBgClassNames.length;
-
-  switch (type) {
-    case "bg":
-      return deterministicBgClassNames[index];
-    case "fill":
-      return deterministicFillClassNames[index];
-    default:
-      assertUnreachable(type);
-  }
+  return deterministicColorName[index];
 }

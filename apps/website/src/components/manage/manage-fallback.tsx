@@ -3,8 +3,8 @@ import {
   DefaultLayout,
   DefaultLayoutContent,
   DefaultLayoutFooter,
-  HeaderButton,
 } from "../default-layout";
+import { Button } from "../ui/button";
 import { Loader } from "../ui/loader";
 import { SimpleLogo } from "../ui/logo";
 
@@ -14,9 +14,9 @@ export function ManageFallback() {
       <header className="flex justify-between gap-x-0.5">
         <nav className="flex w-full flex-row gap-x-0.5">
           <SimpleLogo className="size-7 hover:text-primary-hover" />
-          <HeaderButton>
+          <Button>
             <Loader />
-          </HeaderButton>
+          </Button>
         </nav>
       </header>
       <DefaultLayoutContent>

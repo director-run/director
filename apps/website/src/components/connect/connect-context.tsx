@@ -7,8 +7,10 @@ import { ProxyAttributes } from "@director.run/db/schema";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
+type ConnectStatus = "loading" | "ready";
+
 interface ConnectContext {
-  status: "loading" | "ready" | "error";
+  status: ConnectStatus;
   proxies: ProxyAttributes[];
   selectedProxy: ProxyAttributes | null;
 }
@@ -18,16 +20,14 @@ const [useCtx, CtxProvider] = createCtx<ConnectContext>("ConnectContext");
 export const ConnectProvider = ({
   children,
 }: { children: React.ReactNode }) => {
-  const { manageId } = useParams<{ manageId: string }>();
   const isClient = useIsClient();
-  const [status, setStatus] = useState<"loading" | "ready" | "error">(
-    "loading",
-  );
+  const { proxyId } = useParams<{ proxyId: string }>();
+  const [status, setStatus] = useState<ConnectStatus>("loading");
 
   const { data } = trpc.store.getAll.useQuery(undefined, {
     refetchInterval(query) {
       if (query.state.status === "success") {
-        return 60_000;
+        return 10_000;
       }
       return 1_000;
     },
@@ -43,11 +43,11 @@ export const ConnectProvider = ({
   }, [data]);
 
   const selectedProxy = useMemo(() => {
-    if (!manageId) {
+    if (!proxyId) {
       return null;
     }
-    return data?.find((proxy) => proxy.id === manageId) ?? null;
-  }, [data, manageId]);
+    return data?.find((proxy) => proxy.id === proxyId) ?? null;
+  }, [data, proxyId]);
 
   return (
     <CtxProvider value={{ status, proxies: data ?? [], selectedProxy }}>

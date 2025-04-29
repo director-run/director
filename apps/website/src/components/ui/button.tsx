@@ -6,7 +6,8 @@ import { cn } from "@/lib/cn";
 
 const buttonVariants = cva(
   [
-    "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-colors duration-200",
+    "inline-flex shrink-0 cursor-pointer items-center justify-center gap-x-1 whitespace-nowrap transition-colors duration-200",
+    "font-mono text-shadow-sm text-xs uppercase leading-none tracking-wide dark:text-shadow-none",
     "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
     "disabled:cursor-not-allowed disabled:bg-element disabled:text-foreground-faint dark:disabled:text-foreground-faint",
   ],
@@ -17,6 +18,7 @@ const buttonVariants = cva(
           "bg-primary text-background hover:bg-primary-hover active:bg-primary-active",
         secondary:
           "bg-element text-foreground hover:bg-element-hover active:bg-element-active",
+        inverse: "bg-background text-foreground hover:bg-background/50",
         ghost:
           "bg-transparent text-foreground-subtle hover:bg-element-hover hover:text-foreground active:bg-element-active disabled:bg-transparent",
       },

@@ -10,6 +10,7 @@ import { cn } from "@/lib/cn";
 import { ConnectButton } from "./connect/connect-button";
 import { useConnectContext } from "./connect/connect-context";
 import { ConnectDialog, useConnectDialog } from "./connect/connect-dialog";
+import { Button } from "./ui/button";
 import { SimpleLogo } from "./ui/logo";
 
 export function DefaultLayout({ children }: { children: React.ReactNode }) {
@@ -22,29 +23,6 @@ export function DefaultLayout({ children }: { children: React.ReactNode }) {
       </div>
       <ConnectDialog {...dialogProps} />
     </>
-  );
-}
-
-interface HeaderButtonProps extends ComponentProps<"button"> {
-  asChild?: boolean;
-}
-
-export function HeaderButton({
-  className,
-  asChild,
-  ...props
-}: HeaderButtonProps) {
-  const Comp = asChild ? Slot : "button";
-
-  return (
-    <Comp
-      className={cn(
-        "flex h-7 cursor-pointer items-center gap-x-1 bg-primary pr-2.5 pl-2 font-mono text-foreground-inverse text-xs uppercase leading-none tracking-wide",
-        "text-shadow-sm transition-colors duration-200 ease-in-out hover:bg-primary-hover dark:text-shadow-none",
-        className,
-      )}
-      {...props}
-    />
   );
 }
 
@@ -83,14 +61,14 @@ export function DefaultLayoutHeader() {
           <SimpleLogo className="size-7 hover:text-primary-hover" />
         </Link>
 
-        <HeaderButton asChild>
+        <Button asChild>
           <Link href="/">
             <span className="opacity-70">[i]</span>
             <span>Install</span>
           </Link>
-        </HeaderButton>
+        </Button>
 
-        <HeaderButton asChild>
+        <Button asChild>
           <a
             href="https://github.com/theworkingcompany/director"
             rel="noopener noreferrer"
@@ -99,14 +77,14 @@ export function DefaultLayoutHeader() {
             <span className="opacity-70">[g]</span>
             <span>Github</span>
           </a>
-        </HeaderButton>
+        </Button>
 
-        <HeaderButton asChild>
+        <Button asChild>
           <Link href="/search">
             <span className="opacity-70">[s]</span>
             <span>Servers</span>
           </Link>
-        </HeaderButton>
+        </Button>
 
         <ConnectButton />
       </nav>

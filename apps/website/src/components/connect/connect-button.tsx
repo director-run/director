@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
-import { HeaderButton } from "../default-layout";
+import { Button } from "../ui/button";
 import { Loader } from "../ui/loader";
 import { useConnectContext } from "./connect-context";
 import { useConnectDialog } from "./connect-dialog";
@@ -30,22 +30,22 @@ export function ConnectButton() {
 
   if (status === "loading") {
     return (
-      <HeaderButton
+      <Button
         className="ml-auto"
         onClick={() => dialogProps.onOpenChange(true)}
       >
         <Loader />
         <span>Connect</span>
-      </HeaderButton>
+      </Button>
     );
   }
 
   return (
-    <HeaderButton className="ml-auto" asChild>
-      <Link href={`/manage/${proxies[0].id}`}>
+    <Button className="ml-auto" asChild>
+      <Link href={`/proxies/${proxies[0].id}`}>
         <span className="opacity-70">[m]</span>
         <span>Manage</span>
       </Link>
-    </HeaderButton>
+    </Button>
   );
 }

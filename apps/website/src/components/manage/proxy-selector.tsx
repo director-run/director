@@ -2,9 +2,10 @@
 
 import { cn } from "@/lib/cn";
 import { ChevronDownIcon, PlusIcon } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useConnectContext } from "../connect/connect-context";
-import { HeaderButton } from "../default-layout";
+import { Button } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,22 +21,26 @@ export function ProxySelector() {
   const { proxies, selectedProxy } = useConnectContext();
 
   if (!selectedProxy) {
-    return null;
+    return (
+      <Button asChild>
+        <Link href="/proxies">Go back</Link>
+      </Button>
+    );
   }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <HeaderButton className={cn("gap-x-1.5 pr-2 [&>svg]:size-3")}>
+        <Button className={cn("gap-x-1.5 pr-2 [&>svg]:size-3")}>
           <span className="block truncate">{selectedProxy.name}</span>
           <ChevronDownIcon />
-        </HeaderButton>
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuRadioGroup
           value={selectedProxy.id}
           onValueChange={(value) => {
-            router.push(`/manage/${value}`);
+            router.push(`/proxies/${value}`);
           }}
         >
           {proxies.map((proxy) => (
@@ -46,9 +51,11 @@ export function ProxySelector() {
         </DropdownMenuRadioGroup>
 
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <PlusIcon />
-          <span>Create new space</span>
+        <DropdownMenuItem asChild>
+          <Link href="/proxies/new">
+            <PlusIcon />
+            <span>Create new space</span>
+          </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

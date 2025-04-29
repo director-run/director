@@ -15,9 +15,9 @@ export function ManageRedirect() {
     }
 
     if (proxies.length === 0) {
-      router.replace("/manage/create");
+      router.replace("/proxies/new");
     } else {
-      router.replace(`/manage/${proxies[0].id}`);
+      router.replace(`/proxies/${proxies[0].id}`);
     }
   }, [proxies, router, status]);
 

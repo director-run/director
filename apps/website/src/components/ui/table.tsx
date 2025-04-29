@@ -8,7 +8,13 @@ function Table({
 }: React.HTMLAttributes<HTMLTableElement>) {
   return (
     <div className="relative w-full">
-      <table className={cn("w-full caption-bottom", className)} {...props} />
+      <table
+        className={cn(
+          "w-full caption-bottom border border-border-subtle",
+          className,
+        )}
+        {...props}
+      />
     </div>
   );
 }
@@ -31,7 +37,10 @@ function TableBody({
 }: React.HTMLAttributes<HTMLTableSectionElement>) {
   return (
     <tbody
-      className={cn("[&_tr]:hover:bg-background-subtle", className)}
+      className={cn(
+        "[&>tr]:last:border-b-0 [&_tr]:hover:bg-background-subtle",
+        className,
+      )}
       {...props}
     />
   );
@@ -74,7 +83,7 @@ function TableHead({
   return (
     <th
       className={cn(
-        "px-4 py-1.25 text-left align-middle font-normal text-foreground-subtle text-sm tracking-wide",
+        "px-2 py-1.25 text-left align-middle font-normal text-foreground-subtle text-sm tracking-wide",
         "border-border-subtle border-r last:border-r-0",
         className,
       )}
@@ -90,7 +99,7 @@ function TableCell({
   return (
     <td
       className={cn(
-        "text-pretty px-4 py-1.5 align-top",
+        "text-pretty px-2 py-1.5 align-top",
         "border-border-subtle border-r last:border-r-0",
         className,
       )}
@@ -105,7 +114,10 @@ function TableCaption({
 }: React.HTMLAttributes<HTMLTableCaptionElement>) {
   return (
     <caption
-      className={cn("mt-4 text-muted-foreground text-sm", className)}
+      className={cn(
+        "mt-4 font-mono text-foreground-subtle text-xs uppercase tracking-wide",
+        className,
+      )}
       {...props}
     />
   );

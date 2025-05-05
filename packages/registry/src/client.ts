@@ -16,6 +16,10 @@ export const RegistryEntrySchema = z.object({
     type: z.literal("github"),
     url: z.string(),
   }),
+  sourceRegistry: z.object({
+    name: z.string(),
+  }),
+  categories: z.array(z.string()),
 });
 
 export type RegistryEntry = z.infer<typeof RegistryEntrySchema>;

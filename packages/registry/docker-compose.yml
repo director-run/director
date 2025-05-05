@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres
+    container_name: director-registry-postgres
+    environment:
+      - POSTGRES_PASSWORD=travel-china-spend-nothing
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

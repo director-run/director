@@ -29,7 +29,9 @@ const iconMap: Record<string, string> = {
   const rawUrl =
     "https://raw.githubusercontent.com/punkpeye/awesome-mcp-servers/main/README.md";
   const res = await fetch(rawUrl);
-  if (!res.ok) throw new Error(`Failed to fetch README.md: ${res.statusText}`);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch README.md: ${res.statusText}`);
+  }
   const lines = (await res.text()).split("\n");
 
   // 4) Parse into an array of Server
@@ -53,7 +55,9 @@ const iconMap: Record<string, string> = {
     const srvMatch = line.match(
       /^-\s+\[([^\]]+)\]\((https?:\/\/[^\)]+)\)\s*(.*?)\s*-\s*(.+)$/,
     );
-    if (!srvMatch) continue;
+    if (!srvMatch) {
+      continue;
+    }
 
     const [, name, url, iconStr, description] = srvMatch;
     const attributes = iconStr

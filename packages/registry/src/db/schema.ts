@@ -13,4 +13,8 @@ export const entriesTable = pgTable("entries", {
     type: "github";
     url: string;
   }>(),
+  sourceRegistry: jsonb("source_registry").notNull().$type<{
+    name: string;
+  }>(),
+  categories: jsonb("categories").notNull().$type<string[]>(),
 });

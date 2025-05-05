@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
-import { closeDatabase, db } from "./src/db";
-import { entriesTable } from "./src/db/schema";
-import { fetchAwesomeMCPEntries } from "./src/fetchers/awesome-mcp";
+import { closeDatabase, db } from "../src/db";
+import { entriesTable } from "../src/db/schema";
+import { fetchAwesomeMCPEntries } from "../src/importers/awesome-mcp";
 
 export async function insertServersIntoDatabase(
   servers: Awaited<ReturnType<typeof fetchAwesomeMCPEntries>>,
@@ -46,11 +46,10 @@ export async function insertServersIntoDatabase(
   try {
     const servers = await fetchAwesomeMCPEntries();
     await insertServersIntoDatabase(servers);
+    await closeDatabase();
     console.log("Successfully seeded database!");
   } catch (error) {
     console.error("Error seeding database:", error);
-    process.exitCode = 1;
-  } finally {
-    await closeDatabase();
+    process.exit(1);
   }
 })();

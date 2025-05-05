@@ -1,6 +1,6 @@
 import { writeFileSync } from "fs";
-import { closeDatabase, db } from "./src/db";
-import { entriesTable } from "./src/db/schema";
+import { db } from "../src/db";
+import { entriesTable } from "../src/db/schema";
 
 async function dumpToCSV() {
   // Fetch all entries
@@ -64,8 +64,6 @@ async function dumpToCSV() {
     await dumpToCSV();
   } catch (error) {
     console.error("Error creating CSV:", error);
-    process.exitCode = 1;
-  } finally {
-    await closeDatabase();
+    process.exit(1);
   }
 })();

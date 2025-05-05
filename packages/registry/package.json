@@ -11,7 +11,9 @@
     "format": "biome format --write .",
     "clean": "rm -rf node_modules .turbo dist/*",
     "typecheck": "tsc --noEmit",
-    "test": "echo 'test'"
+    "test": "echo 'test'",
+    "seed": "bun run bin/seed.ts",
+    "dump": "bun run bin/dump.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",

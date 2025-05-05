@@ -2,7 +2,7 @@ import { jsonb, pgTable, text, varchar } from "drizzle-orm/pg-core";
 
 export const entriesTable = pgTable("entries", {
   id: text("id").primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
+  name: varchar("name", { length: 255 }).notNull().unique(),
   description: text("description").notNull(),
   transport: jsonb("transport").notNull().$type<{
     type: "stdio";

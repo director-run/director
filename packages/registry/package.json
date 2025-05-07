@@ -13,7 +13,8 @@
     "typecheck": "tsc --noEmit",
     "test": "echo 'test'",
     "seed": "bun run bin/seed.ts",
-    "dump": "bun run bin/dump.ts"
+    "dump": "bun run bin/dump.ts",
+    "dev": "next dev"
   },
   "devDependencies": {
     "@types/bun": "latest",
@@ -25,6 +26,9 @@
   },
   "dependencies": {
     "drizzle-orm": "^0.43.1",
-    "pg": "^8.15.6"
+    "next": "^15.3.2",
+    "pg": "^8.15.6",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   }
 }

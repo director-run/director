@@ -1,7 +1,7 @@
 import Table from "cli-table3";
 import { Option } from "commander";
 
-export function withErrorHandler<Args extends unknown[]>(
+export function actionWithErrorHandler<Args extends unknown[]>(
   handler: (...args: Args) => void | Promise<void>,
 ): (...args: Args) => Promise<void> {
   return async (...args: Args) => {

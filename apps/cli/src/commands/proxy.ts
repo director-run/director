@@ -1,7 +1,7 @@
 import { trpc } from "@director.run/service/trpc/client";
+import { actionWithErrorHandler } from "@director.run/utilities/cli";
+import { makeTable } from "@director.run/utilities/cli";
 import { Command } from "commander";
-import { withErrorHandler } from "../helpers";
-import { makeTable } from "../helpers";
 import { proxySSEToStdio } from "../proxy-sse-to-stdio";
 
 export function registerProxyCommands(program: Command) {
@@ -9,7 +9,7 @@ export function registerProxyCommands(program: Command) {
     .command("ls")
     .description("List all proxies")
     .action(
-      withErrorHandler(async () => {
+      actionWithErrorHandler(async () => {
         const proxies = await trpc.store.getAll.query();
 
         if (proxies.length === 0) {
@@ -30,7 +30,7 @@ export function registerProxyCommands(program: Command) {
     .command("get <proxyId>")
     .description("Show proxy details")
     .action(
-      withErrorHandler(async (proxyId: string) => {
+      actionWithErrorHandler(async (proxyId: string) => {
         const proxy = await trpc.store.get.query({ proxyId });
 
         if (!proxy) {
@@ -64,7 +64,7 @@ export function registerProxyCommands(program: Command) {
     .command("create <name>")
     .description("Create a new proxy")
     .action(
-      withErrorHandler(async (name: string) => {
+      actionWithErrorHandler(async (name: string) => {
         const proxy = await trpc.store.create.mutate({
           name,
           servers: [],
@@ -78,7 +78,7 @@ export function registerProxyCommands(program: Command) {
     .command("rm <proxyId>")
     .description("Delete a proxy")
     .action(
-      withErrorHandler(async (proxyId: string) => {
+      actionWithErrorHandler(async (proxyId: string) => {
         await trpc.store.delete.mutate({
           proxyId,
         });
@@ -91,7 +91,7 @@ export function registerProxyCommands(program: Command) {
     .command("server:add <proxyId> <entryId>")
     .description("Add a server from the registry to a proxy.")
     .action(
-      withErrorHandler(async (proxyId: string, entryId: string) => {
+      actionWithErrorHandler(async (proxyId: string, entryId: string) => {
         const proxy = await trpc.store.addServerFromRegistry.mutate({
           proxyId,
           entryId,
@@ -104,7 +104,7 @@ export function registerProxyCommands(program: Command) {
     .command("server:remove <proxyId> <serverName>")
     .description("Remove a server from a proxy")
     .action(
-      withErrorHandler(async (proxyId: string, serverName: string) => {
+      actionWithErrorHandler(async (proxyId: string, serverName: string) => {
         const proxy = await trpc.store.removeServer.mutate({
           proxyId,
           serverName,

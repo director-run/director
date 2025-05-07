@@ -27,6 +27,7 @@
     "@director.run/config": "workspace:*",
     "@director.run/db": "workspace:*",
     "@director.run/mcp": "workspace:*",
+    "@director.run/utilities": "workspace:*",
     "chalk": "^5.4.1",
     "cli-table3": "^0.6.5",
     "commander": "^13.1.0",

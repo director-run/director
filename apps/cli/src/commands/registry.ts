@@ -1,17 +1,17 @@
 import { trpc } from "@director.run/service/trpc/client";
 
+import { makeTable } from "@director.run/utilities/cli";
+import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import chalk from "chalk";
 import { Command } from "commander";
 import type { JsonValue } from "type-fest";
-import { makeTable } from "../helpers";
-import { withErrorHandler } from "../helpers";
 
 export function registerRegistryCommands(program: Command) {
   program
     .command("registry:ls")
     .description("List all available servers in the registry")
     .action(
-      withErrorHandler(async () => {
+      actionWithErrorHandler(async () => {
         const items = await trpc.registry.list.query();
         const table = makeTable(["Id", "Description"]);
         table.push(
@@ -27,7 +27,7 @@ export function registerRegistryCommands(program: Command) {
     .command("registry:get <entryId>")
     .description("get detailed information about a repository item")
     .action(
-      withErrorHandler(async (id: string) => {
+      actionWithErrorHandler(async (id: string) => {
         try {
           const item = await trpc.registry.get.query({ id });
           console.log(colorizeJson(item));

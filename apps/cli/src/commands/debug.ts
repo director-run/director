@@ -1,13 +1,13 @@
 import { seed } from "@director.run/db/seed";
+import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { Command } from "commander";
-import { withErrorHandler } from "../helpers";
 
 export function registerDebugCommands(program: Command) {
   program
     .command("debug:seed")
     .description("Seed the database with test data, for development")
     .action(
-      withErrorHandler(() => {
+      actionWithErrorHandler(() => {
         seed();
       }),
     );
@@ -16,7 +16,7 @@ export function registerDebugCommands(program: Command) {
     .command("debug:restart <client>")
     .description("Restart client")
     .action(
-      withErrorHandler(() => {
+      actionWithErrorHandler(() => {
         console.log("todo");
       }),
     );

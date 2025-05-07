@@ -6,14 +6,18 @@
   "exports": {
     "./*": "./src/*.ts"
   },
+  "bin": {
+    "registry": "./dist/cli.js"
+  },
   "scripts": {
     "lint": "biome check .",
     "format": "biome format --write .",
     "clean": "rm -rf node_modules .turbo dist/*",
     "typecheck": "tsc --noEmit",
     "test": "echo 'test'",
-    "seed": "bun run bin/seed.ts",
-    "dump": "bun run bin/dump.ts"
+    "cli": "bun run bin/cli.ts",
+    "build": "bun build --production --target=node bin/cli.ts --outdir dist",
+    "prepare": "bun run build"
   },
   "devDependencies": {
     "@types/bun": "latest",
@@ -25,8 +29,11 @@
     "vitest": "^3.1.1"
   },
   "dependencies": {
-    "commander": "^13.1.0",
     "drizzle-orm": "^0.43.1",
-    "pg": "^8.15.6"
+    "next": "^15.3.2",
+    "pg": "^8.15.6",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "commander": "^13.1.0"
   }
 }

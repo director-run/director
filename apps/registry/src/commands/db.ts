@@ -1,4 +1,3 @@
-import { writeFileSync } from "fs";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { Command } from "commander";
 import { eq } from "drizzle-orm";
@@ -57,9 +56,7 @@ export async function dumpToCSV() {
     ...rows.map((row) => row.join(",")),
   ].join("\n");
 
-  // Write to file
-  writeFileSync("entries.csv", csvContent);
-  console.log("Successfully created entries.csv");
+  console.log(csvContent);
 }
 
 export async function purgeDatabase() {

@@ -1,0 +1,23 @@
+{
+  "name": "@director.run/registry-client",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1",
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "clean": "rm -rf node_modules .turbo dist/*",
+    "typecheck": "tsc --noEmit",
+    "test": "echo 'test'"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "vitest": "^3.1.1"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  }
+}

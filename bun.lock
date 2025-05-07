@@ -31,6 +31,26 @@
         "typescript": "^5",
       },
     },
+    "apps/registry": {
+      "name": "@director.run/registry",
+      "version": "0.0.1",
+      "dependencies": {
+        "drizzle-orm": "^0.43.1",
+        "next": "^15.3.2",
+        "pg": "^8.15.6",
+        "react": "^19.1.0",
+        "react-dom": "^19.1.0",
+      },
+      "devDependencies": {
+        "@director.run/registry-client": "workspace:*",
+        "@types/bun": "latest",
+        "@types/pg": "^8.11.14",
+        "drizzle-kit": "^0.31.1",
+        "type-fest": "^4.40.0",
+        "typescript": "^5.8.2",
+        "vitest": "^3.1.1",
+      },
+    },
     "packages/config": {
       "name": "@director.run/config",
       "version": "0.0.1",
@@ -78,22 +98,14 @@
         "vitest": "^3.1.1",
       },
     },
-    "packages/registry": {
-      "name": "@director.run/registry",
+    "packages/registry-client": {
+      "name": "@director.run/registry-client",
       "version": "0.0.1",
       "dependencies": {
-        "drizzle-orm": "^0.43.1",
-        "next": "^15.3.2",
-        "pg": "^8.15.6",
-        "react": "^19.1.0",
-        "react-dom": "^19.1.0",
+        "zod": "^3.23.8",
       },
       "devDependencies": {
         "@types/bun": "latest",
-        "@types/pg": "^8.11.14",
-        "drizzle-kit": "^0.31.1",
-        "type-fest": "^4.40.0",
-        "typescript": "^5.8.2",
         "vitest": "^3.1.1",
       },
     },
@@ -105,7 +117,7 @@
         "@director.run/db": "workspace:*",
         "@director.run/installer": "workspace:*",
         "@director.run/mcp": "workspace:*",
-        "@director.run/registry": "workspace:*",
+        "@director.run/registry-client": "workspace:*",
         "@director.run/utilities": "workspace:*",
         "@modelcontextprotocol/sdk": "^1.8.0",
         "@t3-oss/env-core": "^0.12.0",
@@ -179,7 +191,9 @@
 
     "@director.run/mcp": ["@director.run/mcp@workspace:packages/mcp"],
 
-    "@director.run/registry": ["@director.run/registry@workspace:packages/registry"],
+    "@director.run/registry": ["@director.run/registry@workspace:apps/registry"],
+
+    "@director.run/registry-client": ["@director.run/registry-client@workspace:packages/registry-client"],
 
     "@director.run/service": ["@director.run/service@workspace:packages/service"],
 

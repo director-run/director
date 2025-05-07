@@ -19,6 +19,7 @@
   "devDependencies": {
     "@types/bun": "latest",
     "@types/pg": "^8.11.14",
+    "@director.run/registry-client": "workspace:*",
     "drizzle-kit": "^0.31.1",
     "type-fest": "^4.40.0",
     "typescript": "^5.8.2",

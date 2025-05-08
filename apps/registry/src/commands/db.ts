@@ -86,11 +86,11 @@ export async function insertServersIntoDatabase(
       name: server.name,
       description: server.description,
       verified: false,
-      provider: null,
+      provider: server.provider || null,
       providerVerified: false,
       createdDate: new Date(),
-      runtime: null,
-      license: null,
+      runtime: server.runtime || null,
+      license: server.license || null,
       sourceUrl: server.url,
       transport: {
         type: "stdio",
@@ -105,8 +105,8 @@ export async function insertServersIntoDatabase(
         name: "awesome-mcp-servers",
       },
       categories: [server.category, ...server.attributes],
-      tools: [],
-      parameters: [],
+      tools: server.tools,
+      parameters: server.parameters,
       readme: null,
     });
   }
@@ -146,6 +146,17 @@ export function registerDbCommands(program: Command) {
       actionWithErrorHandler(async () => {
         await seedDatabase();
         await closeDatabase();
+      }),
+    );
+
+  program
+    .command("db:get <name>")
+    .description(
+      "Pretty print (with colours unless it's super verbose) the json object of the entry behind the name",
+    )
+    .action(
+      actionWithErrorHandler(async (name: string) => {
+        console.log("Get", name);
       }),
     );
 }

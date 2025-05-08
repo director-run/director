@@ -1,0 +1,113 @@
+import { env } from "@director.run/config/env";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { db } from "../db";
+import { entriesTable } from "../db/schema";
+import { startServer } from "./server";
+
+describe("HTTP Server", () => {
+  const baseUrl = `http://localhost:${env.SERVER_PORT}`;
+  const TOTAL_ENTRIES = 20;
+  const ENTRIES_PER_PAGE = 5;
+
+  beforeAll(async () => {
+    // Purge existing data
+    await db.delete(entriesTable);
+
+    // Create test entries
+    const entries = Array.from({ length: TOTAL_ENTRIES }, (_, i) => ({
+      id: `test-${i + 1}`,
+      name: `Test Entry ${i + 1}`,
+      description: `Description ${i + 1}`,
+      transport: {
+        type: "stdio" as const,
+        command: "echo",
+        args: [`test${i + 1}`],
+      },
+      source: {
+        type: "github" as const,
+        url: `https://github.com/test${i + 1}`,
+      },
+      sourceRegistry: { name: "test-registry" },
+      categories: ["test"],
+    }));
+
+    await db.insert(entriesTable).values(entries);
+
+    // Start server
+    await startServer();
+  });
+
+  afterAll(async () => {
+    // Clean up test data
+    await db.delete(entriesTable);
+  });
+
+  it("should handle pagination correctly", async () => {
+    // Test first page
+    const response1 = await fetch(
+      `${baseUrl}/entries?page=1&limit=${ENTRIES_PER_PAGE}`,
+    );
+    const data1 = await response1.json();
+
+    expect(data1.data).toHaveLength(ENTRIES_PER_PAGE);
+    expect(data1.pagination).toEqual({
+      page: 1,
+      limit: ENTRIES_PER_PAGE,
+      totalItems: TOTAL_ENTRIES,
+      totalPages: Math.ceil(TOTAL_ENTRIES / ENTRIES_PER_PAGE),
+      hasNextPage: true,
+      hasPreviousPage: false,
+    });
+
+    // Test middle page
+    const response2 = await fetch(
+      `${baseUrl}/entries?page=2&limit=${ENTRIES_PER_PAGE}`,
+    );
+    const data2 = await response2.json();
+
+    expect(data2.data).toHaveLength(ENTRIES_PER_PAGE);
+    expect(data2.pagination).toEqual({
+      page: 2,
+      limit: ENTRIES_PER_PAGE,
+      totalItems: TOTAL_ENTRIES,
+      totalPages: Math.ceil(TOTAL_ENTRIES / ENTRIES_PER_PAGE),
+      hasNextPage: true,
+      hasPreviousPage: true,
+    });
+
+    // Test last page
+    const response3 = await fetch(
+      `${baseUrl}/entries?page=4&limit=${ENTRIES_PER_PAGE}`,
+    );
+    const data3 = await response3.json();
+
+    expect(data3.data).toHaveLength(ENTRIES_PER_PAGE);
+    expect(data3.pagination).toEqual({
+      page: 4,
+      limit: ENTRIES_PER_PAGE,
+      totalItems: TOTAL_ENTRIES,
+      totalPages: Math.ceil(TOTAL_ENTRIES / ENTRIES_PER_PAGE),
+      hasNextPage: false,
+      hasPreviousPage: true,
+    });
+  });
+
+  //   it("should handle default pagination parameters", async () => {
+  //     const response = await fetch(`${baseUrl}/entries`);
+  //     const data = await response.json();
+
+  //     expect(data.pagination).toEqual({
+  //       page: 1,
+  //       limit: 20, // Default limit
+  //       totalItems: TOTAL_ENTRIES,
+  //       totalPages: Math.ceil(TOTAL_ENTRIES / 20),
+  //       hasNextPage: false,
+  //       hasPreviousPage: false,
+  //     });
+  //   });
+
+  //   it("should handle invalid pagination parameters", async () => {
+  //     const response = await fetch(`${baseUrl}/entries?page=0&limit=0`);
+  //     expect(response.status).toBe(400);
+  //   });
+});

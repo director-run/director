@@ -85,6 +85,13 @@ export async function insertServersIntoDatabase(
       id: crypto.randomUUID(),
       name: server.name,
       description: server.description,
+      verified: false,
+      provider: null,
+      providerVerified: false,
+      createdDate: new Date(),
+      runtime: null,
+      license: null,
+      sourceUrl: server.url,
       transport: {
         type: "stdio",
         command: "echo",
@@ -98,6 +105,9 @@ export async function insertServersIntoDatabase(
         name: "awesome-mcp-servers",
       },
       categories: [server.category, ...server.attributes],
+      tools: [],
+      parameters: [],
+      readme: null,
     });
   }
 }

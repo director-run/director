@@ -4,7 +4,7 @@ import { db } from "../../../../db/src";
 import type { ProxyTargetAttributes } from "../../../../db/src/schema";
 import { ProxyServer } from "../../../../mcp/src/proxy-server";
 
-import { fetchEntry } from "@director.run/registry/client";
+import { fetchEntry } from "@director.run/registry-client/client";
 
 const logger = getLogger("ProxyServerStore");
 

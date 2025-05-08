@@ -1,49 +1,12 @@
 import { eq } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { db } from "../db";
+import { getEntryByName } from "../db/queries";
 import { entriesTable } from "../db/schema";
-import { getEntryByName } from "./db";
+import { createTestEntry } from "../test/fixtures/entries";
 
 describe("getEntryByName", () => {
-  const testEntry = {
-    id: "test-id",
-    name: "test-server",
-    description: "A test server",
-    verified: false,
-    provider: "github.com",
-    providerVerified: false,
-    createdDate: new Date(),
-    runtime: "TypeScript",
-    license: "MIT",
-    sourceUrl: "https://github.com/test/test-server",
-    transport: {
-      type: "stdio" as const,
-      command: "echo",
-      args: ["https://github.com/test/test-server"],
-    },
-    source: {
-      type: "github" as const,
-      url: "https://github.com/test/test-server",
-    },
-    sourceRegistry: {
-      name: "test-registry",
-    },
-    categories: ["test", "example"],
-    tools: [
-      {
-        name: "test-tool",
-        description: "A test tool",
-      },
-    ],
-    parameters: [
-      {
-        name: "test_param",
-        description: "A test parameter",
-        required: false,
-      },
-    ],
-    readme: null,
-  };
+  const testEntry = createTestEntry();
 
   beforeAll(async () => {
     // Insert test data

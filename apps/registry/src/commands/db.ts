@@ -1,10 +1,11 @@
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
-import chalk from "chalk";
 import { Command } from "commander";
-import { eq } from "drizzle-orm";
 import { closeDatabase, db } from "../db";
+import { prettyPrint } from "../db/pretty-print";
+import { purgeDatabase } from "../db/purge";
+import { getEntryByName } from "../db/queries";
 import { entriesTable } from "../db/schema";
-import { fetchAwesomeMCPEntries } from "../importers/awesome-mcp";
+import { seedDatabase } from "../db/seed";
 
 export async function dumpToCSV() {
   // Fetch all entries
@@ -54,132 +55,10 @@ export async function dumpToCSV() {
   // Combine headers and rows
   const csvContent = [
     headers.join(","),
-    ...rows.map((row) => row.join(",")),
+    ...rows.map((row: string[]) => row.join(",")),
   ].join("\n");
 
   console.log(csvContent);
-}
-
-export async function purgeDatabase() {
-  await db.delete(entriesTable);
-  console.log("Successfully purged database");
-}
-
-export async function insertServersIntoDatabase(
-  servers: Awaited<ReturnType<typeof fetchAwesomeMCPEntries>>,
-) {
-  for (const server of servers) {
-    // Check if entry already exists
-    const existing = await db
-      .select()
-      .from(entriesTable)
-      .where(eq(entriesTable.name, server.name))
-      .limit(1);
-
-    if (existing.length > 0) {
-      console.log(`Skipping duplicate entry: ${server.name}`);
-      continue;
-    }
-
-    // Insert new entry
-    await db.insert(entriesTable).values({
-      id: crypto.randomUUID(),
-      name: server.name,
-      description: server.description,
-      verified: false,
-      provider: server.provider || null,
-      providerVerified: false,
-      createdDate: new Date(),
-      runtime: server.runtime || null,
-      license: server.license || null,
-      sourceUrl: server.url,
-      transport: {
-        type: "stdio",
-        command: "echo",
-        args: [server.url],
-      },
-      source: {
-        type: "github",
-        url: server.url,
-      },
-      sourceRegistry: {
-        name: "awesome-mcp-servers",
-      },
-      categories: [server.category, ...server.attributes],
-      tools: server.tools,
-      parameters: server.parameters,
-      readme: null,
-    });
-  }
-}
-
-export async function seedDatabase() {
-  const servers = await fetchAwesomeMCPEntries();
-  await insertServersIntoDatabase(servers);
-  console.log("Successfully seeded database!");
-}
-
-function prettyPrint<T extends Record<string, unknown>>(
-  obj: T,
-  options: {
-    indentSize?: number;
-    padding?: number;
-    colorize?: boolean;
-  } = {},
-): string {
-  const { indentSize = 4, padding = 1, colorize = true } = options;
-
-  const indentStr = " ".repeat(indentSize);
-  const paddingStr = "\n".repeat(padding);
-
-  function formatValue(value: unknown, level: number): string {
-    const currentIndent = indentStr.repeat(level);
-    const nextIndent = indentStr.repeat(level + 1);
-
-    if (value === null) {
-      return "null";
-    }
-
-    if (Array.isArray(value)) {
-      if (value.length === 0) {
-        return "[]";
-      }
-      return `[\n${value
-        .map((item) => `${nextIndent}${formatValue(item, level + 1)}`)
-        .join(",\n")}\n${currentIndent}]`;
-    }
-
-    if (typeof value === "object") {
-      const entries = Object.entries(value as Record<string, unknown>);
-      if (entries.length === 0) {
-        return "{}";
-      }
-      return `{\n${entries
-        .map(([key, val]) => {
-          const formattedKey = colorize ? chalk.blue(key) : key;
-          return `${nextIndent}${formattedKey}: ${formatValue(val, level + 1)}`;
-        })
-        .join(",\n")}\n${currentIndent}}`;
-    }
-
-    return JSON.stringify(value);
-  }
-
-  return `${paddingStr}${formatValue(obj, 0)}${paddingStr}`;
-}
-
-export async function getEntryByName(name: string) {
-  const entry = await db
-    .select()
-    .from(entriesTable)
-    .where(eq(entriesTable.name, name))
-    .limit(1);
-
-  if (entry.length === 0) {
-    throw new Error(`No entry found with name: ${name}`);
-  }
-
-  return entry[0];
 }
 
 export function registerDbCommands(program: Command) {

@@ -1,4 +1,4 @@
-import type { EntryCreateParams } from "../../db/types";
+import type { EntryCreateParams } from "../../db/schema";
 import { faker } from '@faker-js/faker';
 
 export function createTestEntry(overrides: Partial<EntryCreateParams> = {}): EntryCreateParams {

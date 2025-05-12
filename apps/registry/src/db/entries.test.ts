@@ -8,7 +8,7 @@ import {
   countEntries,
   deleteAllEntries,
   getEntryByName,
-} from "./queries";
+} from "./entries";
 import { entriesTable } from "./schema";
 
 describe("queries", () => {

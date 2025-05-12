@@ -1,9 +1,9 @@
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { Command } from "commander";
 import { closeDatabase, db } from "../db";
+import { deleteAllEntries } from "../db/entries";
+import { getEntryByName } from "../db/entries";
 import { prettyPrint } from "../db/pretty-print";
-import { deleteAllEntries } from "../db/queries";
-import { getEntryByName } from "../db/queries";
 import { entriesTable } from "../db/schema";
 import { seedDatabase } from "../db/seed";
 

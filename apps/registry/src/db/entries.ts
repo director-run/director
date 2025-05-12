@@ -1,7 +1,6 @@
 import { count, eq, inArray } from "drizzle-orm";
 import { db } from "./index";
-import { entriesTable } from "./schema";
-import type { EntryCreateParams } from "./types";
+import { type EntryCreateParams, entriesTable } from "./schema";
 
 export interface AddEntriesOptions {
   ignoreDuplicates?: boolean;

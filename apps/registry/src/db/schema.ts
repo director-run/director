@@ -1,3 +1,4 @@
+import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import {
   boolean,
   jsonb,
@@ -71,3 +72,6 @@ export const entriesTable = pgTable("entries", {
   >(),
   readme: text("readme"),
 });
+
+export type EntryCreateParams = InferInsertModel<typeof entriesTable>;
+export type EntryGetParams = InferSelectModel<typeof entriesTable>;

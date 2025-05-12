@@ -1,7 +1,11 @@
-import { count, eq } from "drizzle-orm";
+import { count, eq, inArray } from "drizzle-orm";
 import { db } from "./index";
 import { entriesTable } from "./schema";
 import type { EntryCreateParams } from "./types";
+
+export interface AddEntriesOptions {
+  ignoreDuplicates?: boolean;
+}
 
 export async function getEntryByName(name: string) {
   const entry = await db
@@ -27,11 +31,37 @@ export async function addEntry(entries: EntryCreateParams) {
 
 export async function addEntries(
   entries: EntryCreateParams[],
-  options: { ignoreDuplicates?: boolean } = {},
+  options: AddEntriesOptions = {},
 ) {
-  await db.transaction(async (tx) => {
-    await tx.insert(entriesTable).values(entries);
-  });
+  if (options.ignoreDuplicates) {
+    // Get all existing names
+    const existingEntries = await db
+      .select({ name: entriesTable.name })
+      .from(entriesTable)
+      .where(
+        inArray(
+          entriesTable.name,
+          entries.map((entry) => entry.name),
+        ),
+      );
+
+    const existingNames = new Set(existingEntries.map((entry) => entry.name));
+    const newEntries = entries.filter(
+      (entry) => !existingNames.has(entry.name),
+    );
+
+    if (newEntries.length === 0) {
+      return;
+    }
+
+    await db.transaction(async (tx) => {
+      await tx.insert(entriesTable).values(newEntries);
+    });
+  } else {
+    await db.transaction(async (tx) => {
+      await tx.insert(entriesTable).values(entries);
+    });
+  }
 }
 
 export async function countEntries(): Promise<number> {

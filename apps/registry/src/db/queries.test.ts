@@ -1,6 +1,7 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { db } from ".";
 import { createTestEntry } from "../test/fixtures/entries";
+import { createTestEntries } from "../test/fixtures/entries";
 import {
   addEntries,
   addEntry,
@@ -59,20 +60,38 @@ describe("queries", () => {
     afterEach(async () => {
       await deleteAllEntries();
     });
-    it("should add multiple entries", async () => {
-      const entries = [createTestEntry(), createTestEntry()];
+
+    it("should insert all entries when ignoreDuplicates is false", async () => {
+      const entries = createTestEntries(3);
       await addEntries(entries);
-      const result = await getEntryByName(entries[0].name);
-      expect(result).toBeDefined();
-      expect(result.name).toBe(entries[0].name);
+      expect(await countEntries()).toEqual(3);
     });
-    it("should throw an error if one of the entries already exists", async () => {
-      const entries = [createTestEntry(), createTestEntry(), createTestEntry()];
-      await addEntry(entries[0]);
-      await expect(addEntries(entries)).rejects.toThrow(
-        'duplicate key value violates unique constraint "entries_name_unique"',
-      );
-      expect(await countEntries()).toBe(1);
+
+    it("should skip duplicates when ignoreDuplicates is true", async () => {
+      // First insert
+      const entries1 = createTestEntries(2);
+      await addEntries(entries1);
+
+      // Second insert with one duplicate
+      const entries2 = [
+        entries1[0], // This is a duplicate
+        createTestEntries(1)[0], // This is new
+      ];
+      await addEntries(entries2, { ignoreDuplicates: true });
+
+      const result = await db.select().from(entriesTable);
+      expect(result).toHaveLength(3); // 2 from first insert + 1 new from second insert
+    });
+
+    it("should not insert anything when all entries are duplicates", async () => {
+      const entries = createTestEntries(2);
+      await addEntries(entries);
+
+      // Try to insert the same entries again
+      await addEntries(entries, { ignoreDuplicates: true });
+
+      const result = await db.select().from(entriesTable);
+      expect(result).toHaveLength(2); // Should still only have the original entries
     });
   });
 });

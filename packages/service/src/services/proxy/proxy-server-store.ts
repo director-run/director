@@ -136,7 +136,25 @@ export class ProxyServerStore {
     if (!entry) {
       throw new AppError(ErrorCode.NOT_FOUND, `Entry '${entryId}' not found.`);
     }
-    return this.addServer(proxyId, entry);
+    return this.addServer(proxyId, {
+      name: entry.name,
+      transport:
+        entry.transport.type === "stdio"
+          ? {
+              type: "stdio",
+              command: entry.transport.command,
+              args: entry.transport.args,
+              env: entry.transport.env
+                ? Object.entries(entry.transport.env).map(
+                    ([key, value]) => `${key}=${value}`,
+                  )
+                : undefined,
+            }
+          : {
+              type: "sse",
+              url: entry.transport.url,
+            },
+    });
   }
 
   public async update(

@@ -20,6 +20,7 @@
         "@director.run/config": "workspace:*",
         "@director.run/db": "workspace:*",
         "@director.run/mcp": "workspace:*",
+        "@director.run/registry-client": "workspace:*",
         "@director.run/service": "workspace:*",
         "@director.run/utilities": "workspace:*",
         "chalk": "^5.4.1",

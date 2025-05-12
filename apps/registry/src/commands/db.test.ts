@@ -22,8 +22,9 @@ describe("getEntryByName", () => {
     const entry = await getEntryByName("test-server");
     expect(entry).toBeDefined();
     expect(entry.name).toBe("test-server");
+    expect(entry.title).toBe("Test Server");
     expect(entry.description).toBe("A test server");
-    expect(entry.runtime).toBe("TypeScript");
+    expect(entry.isOfficial).toBe(false);
   });
 
   it("should throw an error when entry does not exist", async () => {

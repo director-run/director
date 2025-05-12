@@ -2,6 +2,7 @@ import { env } from "@director.run/config/env";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { db } from "../db";
 import { entriesTable } from "../db/schema";
+import { createTestEntries } from "../test/fixtures/entries";
 import { startServer } from "./server";
 
 describe("HTTP Server", () => {
@@ -14,22 +15,7 @@ describe("HTTP Server", () => {
     await db.delete(entriesTable);
 
     // Create test entries
-    const entries = Array.from({ length: TOTAL_ENTRIES }, (_, i) => ({
-      id: `test-${i + 1}`,
-      name: `Test Entry ${i + 1}`,
-      description: `Description ${i + 1}`,
-      transport: {
-        type: "stdio" as const,
-        command: "echo",
-        args: [`test${i + 1}`],
-      },
-      source: {
-        type: "github" as const,
-        url: `https://github.com/test${i + 1}`,
-      },
-      sourceRegistry: { name: "test-registry" },
-      categories: ["test"],
-    }));
+    const entries = createTestEntries(TOTAL_ENTRIES, "Test Entry");
 
     await db.insert(entriesTable).values(entries);
 

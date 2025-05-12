@@ -3,62 +3,59 @@ import { entriesTable } from "../../db/schema";
 export interface TestEntry {
   id: string;
   name: string;
+  title: string;
   description: string;
-  verified: boolean;
-  provider: string;
-  providerVerified: boolean;
-  createdDate: Date;
-  runtime: string;
-  license: string;
-  sourceUrl: string;
+  isOfficial: boolean;
   transport: {
     type: "stdio";
     command: string;
     args: string[];
-  };
-  source: {
-    type: "github";
+    env?: Record<string, string>;
+  } | {
+    type: "sse";
     url: string;
   };
-  sourceRegistry: {
+  homepage?: string;
+  source_registry: {
     name: string;
+    entryId: string;
   };
   categories: string[];
   tools: Array<{
     name: string;
     description: string;
+    arguments?: string[];
+    inputs?: Array<{
+      name: string;
+      type: string;
+      required?: boolean;
+      description?: string;
+    }>;
   }>;
   parameters: Array<{
     name: string;
     description: string;
     required?: boolean;
   }>;
-  readme: string | null;
+  readme?: string;
 }
 
 export function createTestEntry(overrides: Partial<TestEntry> = {}): TestEntry {
   return {
     id: "test-id",
     name: "test-server",
+    title: "Test Server",
     description: "A test server",
-    verified: false,
-    provider: "github.com",
-    providerVerified: false,
-    createdDate: new Date(),
-    runtime: "TypeScript",
-    license: "MIT",
-    sourceUrl: "https://github.com/test/test-server",
+    isOfficial: false,
     transport: {
       type: "stdio",
       command: "echo",
       args: ["https://github.com/test/test-server"],
     },
-    source: {
-      type: "github",
-      url: "https://github.com/test/test-server",
-    },
-    sourceRegistry: {
+    homepage: "https://github.com/test/test-server",
+    source_registry: {
       name: "test-registry",
+      entryId: "test-registry-id",
     },
     categories: ["test", "example"],
     tools: [
@@ -74,7 +71,7 @@ export function createTestEntry(overrides: Partial<TestEntry> = {}): TestEntry {
         required: false,
       },
     ],
-    readme: null,
+    readme: undefined,
     ...overrides,
   };
 }
@@ -84,16 +81,17 @@ export function createTestEntries(count: number, baseName = "test-server"): Test
     createTestEntry({
       id: `test-id-${i}`,
       name: `${baseName}-${i}`,
+      title: `Test Server ${i}`,
       description: `Test server ${i}`,
-      sourceUrl: `https://github.com/test/${baseName}-${i}`,
       transport: {
         type: "stdio",
         command: "echo",
         args: [`https://github.com/test/${baseName}-${i}`],
       },
-      source: {
-        type: "github",
-        url: `https://github.com/test/${baseName}-${i}`,
+      homepage: `https://github.com/test/${baseName}-${i}`,
+      source_registry: {
+        name: "test-registry",
+        entryId: `test-registry-id-${i}`,
       },
     })
   );

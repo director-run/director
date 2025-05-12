@@ -15,7 +15,7 @@ describe("HTTP Server", () => {
     await db.delete(entriesTable);
 
     // Create test entries
-    const entries = createTestEntries(TOTAL_ENTRIES, "Test Entry");
+    const entries = createTestEntries(TOTAL_ENTRIES);
 
     await db.insert(entriesTable).values(entries);
 

@@ -37,20 +37,31 @@ describe("queries", () => {
   });
 
   describe("addEntry", () => {
-    it("should add a single entry", async () => {
-      const entry = createTestEntry();
-      await addEntry(entry);
-      const result = await getEntryByName(entry.name);
-      expect(result).toBeDefined();
-      expect(result.name).toBe(entry.name);
+    describe("single entry", () => {
+      it("should add a single entry", async () => {
+        const entry = createTestEntry();
+        await addEntry(entry);
+        const result = await getEntryByName(entry.name);
+        expect(result).toBeDefined();
+        expect(result.name).toBe(entry.name);
+      });
     });
 
-    it("should add multiple entries", async () => {
-      const entries = [createTestEntry(), createTestEntry()];
-      await addEntry(entries);
-      const result = await getEntryByName(entries[0].name);
-      expect(result).toBeDefined();
-      expect(result.name).toBe(entries[0].name);
+    describe("multiple entries", () => {
+      it("should add multiple entries", async () => {
+        const entries = [createTestEntry(), createTestEntry()];
+        await addEntry(entries);
+        const result = await getEntryByName(entries[0].name);
+        expect(result).toBeDefined();
+        expect(result.name).toBe(entries[0].name);
+      });
+      it("should throw an error if one of the entries already exists", async () => {
+        const entries = [createTestEntry(), createTestEntry()];
+        await addEntry(entries);
+        await expect(addEntry(entries)).rejects.toThrow(
+          "Entry already exists: test-server",
+        );
+      });
     });
   });
 });

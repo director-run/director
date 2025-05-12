@@ -2,7 +2,7 @@ import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { Command } from "commander";
 import { closeDatabase, db } from "../db";
 import { prettyPrint } from "../db/pretty-print";
-import { purgeDatabase } from "../db/purge";
+import { purgeDatabase } from "../db/queries";
 import { getEntryByName } from "../db/queries";
 import { entriesTable } from "../db/schema";
 import { seedDatabase } from "../db/seed";
@@ -15,14 +15,20 @@ export async function dumpToCSV() {
   const headers = [
     "id",
     "name",
+    "title",
     "description",
+    "is_official",
     "transport_type",
     "transport_command",
     "transport_args",
-    "source_type",
-    "source_url",
+    "transport_env",
+    "homepage",
     "source_registry_name",
+    "source_registry_entry_id",
     "categories",
+    "tools",
+    "parameters",
+    "readme",
   ];
 
   // Convert entries to CSV rows
@@ -30,14 +36,24 @@ export async function dumpToCSV() {
     return [
       entry.id,
       entry.name,
+      entry.title,
       entry.description,
+      entry.isOfficial,
       entry.transport.type,
-      entry.transport.command,
-      JSON.stringify(entry.transport.args),
-      entry.source.type,
-      entry.source.url,
-      entry.sourceRegistry.name,
+      entry.transport.type === "stdio" ? entry.transport.command : "",
+      entry.transport.type === "stdio"
+        ? JSON.stringify(entry.transport.args)
+        : "",
+      entry.transport.type === "stdio"
+        ? JSON.stringify(entry.transport.env || {})
+        : "",
+      entry.homepage || "",
+      entry.source_registry?.name || "",
+      entry.source_registry?.entryId || "",
       JSON.stringify(entry.categories),
+      JSON.stringify(entry.tools),
+      JSON.stringify(entry.parameters),
+      entry.readme || "",
     ].map((value) => {
       // Escape quotes and wrap in quotes if contains comma or newline
       const stringValue = String(value);

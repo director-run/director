@@ -16,6 +16,11 @@ export async function getEntryByName(name: string) {
   return entry[0];
 }
 
+export async function purgeDatabase() {
+  await db.delete(entriesTable);
+  console.log("Successfully purged database");
+}
+
 export async function insertServersIntoDatabase(
   servers: Awaited<
     ReturnType<typeof import("../importers/awesome-mcp").fetchAwesomeMCPEntries>

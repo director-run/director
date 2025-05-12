@@ -1,11 +1,11 @@
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { Command } from "commander";
 import { closeDatabase, db } from "../db";
-import { deleteAllEntries } from "../db/entries";
+import { addEntries, deleteAllEntries } from "../db/entries";
 import { getEntryByName } from "../db/entries";
 import { prettyPrint } from "../db/pretty-print";
 import { entriesTable } from "../db/schema";
-import { seedDatabase } from "../db/seed";
+import { fetchRaycastRegistry } from "../importers/raycast";
 
 export async function dumpToCSV() {
   // Fetch all entries
@@ -103,7 +103,7 @@ export function registerDbCommands(program: Command) {
     .description("Seed the database with entries from awesome-mcp-servers")
     .action(
       actionWithErrorHandler(async () => {
-        await seedDatabase();
+        await addEntries(await fetchRaycastRegistry());
         await closeDatabase();
       }),
     );

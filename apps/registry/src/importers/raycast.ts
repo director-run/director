@@ -1,8 +1,35 @@
-export type RegistryEntry = {
+import { type EntryCreateParams } from "../db/schema";
+
+export async function fetchRaycastRegistry(): Promise<EntryCreateParams[]> {
+  const toEntryParams = (entry: RaycastRegistryEntry): EntryCreateParams => ({
+    name: entry.name,
+    title: entry.title,
+    description: entry.description,
+    homepage: entry.homepage,
+    transport: {
+      type: "stdio",
+      command: entry.configuration.command,
+      args: entry.configuration.args,
+      env: entry.configuration.env,
+    },
+  });
+
+  return [
+    ...OFFICIAL_ENTRIES.map(toEntryParams).map((e) => ({
+      ...e,
+      isOfficial: true,
+    })),
+    ...COMMUNITY_ENTRIES.map(toEntryParams),
+  ];
+}
+
+type RaycastRegistryEntry = {
   name: string;
   title: string;
-  description?: string;
-  icon?: string;
+  description: string;
+  icon?:
+    | string
+    | { source: string | { light: string; dark: string }; tintColor?: string };
   homepage?: string;
   configuration: {
     command: string;
@@ -11,7 +38,16 @@ export type RegistryEntry = {
   };
 };
 
-const OFFICIAL_ENTRIES: RegistryEntry[] = [
+const Color = {
+  PrimaryText: "#000000",
+};
+
+const Icon = {
+  Folder: "https://svgl.app/library/folder.svg",
+  MemoryStick: "",
+};
+
+const OFFICIAL_ENTRIES: RaycastRegistryEntry[] = [
   {
     name: "brave-search",
     title: "Brave Search",
@@ -471,7 +507,7 @@ const OFFICIAL_ENTRIES: RegistryEntry[] = [
   },
 ];
 
-const COMMUNITY_ENTRIES: RegistryEntry[] = [
+const COMMUNITY_ENTRIES: RaycastRegistryEntry[] = [
   {
     name: "talk-to-figma",
     title: "Talk to Figma",

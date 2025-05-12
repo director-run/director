@@ -1,4 +1,3 @@
-import { eq } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { db } from "../db";
 import { getEntryByName } from "../db/queries";
@@ -6,16 +5,14 @@ import { entriesTable } from "../db/schema";
 import { createTestEntry } from "../test/fixtures/entries";
 
 describe("getEntryByName", () => {
-  const testEntry = createTestEntry();
-
   beforeAll(async () => {
     // Insert test data
-    await db.insert(entriesTable).values(testEntry);
+    await db.insert(entriesTable).values(createTestEntry());
   });
 
   afterAll(async () => {
     // Clean up test data
-    await db.delete(entriesTable).where(eq(entriesTable.id, testEntry.id));
+    await db.delete(entriesTable);
   });
 
   it("should return the correct entry when it exists", async () => {

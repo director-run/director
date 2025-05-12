@@ -11,7 +11,9 @@ export const entriesTable = pgTable("entries", {
   // **
   // ** Primary Attributes
   // **
-  id: text("id").primaryKey(),
+  id: varchar("id", { length: 36 })
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   name: varchar("name", { length: 255 }).notNull().unique(),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description").notNull(),

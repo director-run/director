@@ -42,7 +42,7 @@ export interface TestEntry {
 
 export function createTestEntry(overrides: Partial<TestEntry> = {}): TestEntry {
   return {
-    id: "test-id",
+    id: crypto.randomUUID(),
     name: "test-server",
     title: "Test Server",
     description: "A test server",
@@ -79,7 +79,7 @@ export function createTestEntry(overrides: Partial<TestEntry> = {}): TestEntry {
 export function createTestEntries(count: number, baseName = "test-server"): TestEntry[] {
   return Array.from({ length: count }, (_, i) => 
     createTestEntry({
-      id: `test-id-${i}`,
+      id: crypto.randomUUID(),
       name: `${baseName}-${i}`,
       title: `Test Server ${i}`,
       description: `Test server ${i}`,

@@ -6,7 +6,7 @@ import { createTestEntries } from "../test/fixtures/entries";
 import { startServer } from "./server";
 
 describe("HTTP Server", () => {
-  const baseUrl = `http://localhost:${env.SERVER_PORT}`;
+  const baseUrl = `http://localhost:${env.SERVER_PORT}/api/v1`;
   const TOTAL_ENTRIES = 20;
   const ENTRIES_PER_PAGE = 5;
 

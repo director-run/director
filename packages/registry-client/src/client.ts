@@ -1,7 +1,6 @@
 import { z } from "zod";
 
-const REGISTRY_URL =
-  "https://gist.githubusercontent.com/barnaby/f8a47505aa8931317cf3010d680506b4/raw/958a4ad714a3810d3575747fb3714e33f363c631/registry.json";
+const REGISTRY_URL = "http://localhost:3000/api/v1/entries";
 
 export const RegistryEntrySchema = z.object({
   id: z.string(),

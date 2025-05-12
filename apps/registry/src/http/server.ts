@@ -32,7 +32,7 @@ export function startServer() {
 
   // Get all entries endpoint with pagination
   app.get(
-    "/entries",
+    "/api/v1/entries",
     asyncHandler(async (req, res) => {
       // Parse and validate pagination parameters
       const { page, limit } = paginationSchema.parse(req.query);

@@ -19,19 +19,16 @@ export async function getEntryByName(name: string) {
 
 export async function deleteAllEntries() {
   await db.delete(entriesTable);
-  console.log("Successfully purged database");
 }
 
 export async function addEntry(
   entries: EntryCreateParams | EntryCreateParams[],
 ) {
   if (Array.isArray(entries)) {
-    // Use transaction for batch inserts
     await db.transaction(async (tx) => {
       await tx.insert(entriesTable).values(entries);
     });
   } else {
-    // Single insert doesn't need transaction
     await db.insert(entriesTable).values(entries);
   }
 }

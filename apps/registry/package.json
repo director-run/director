@@ -3,9 +3,6 @@
   "private": true,
   "type": "module",
   "version": "0.0.1",
-  "exports": {
-    "./*": "./src/*.ts"
-  },
   "bin": {
     "registry": "./dist/cli.js"
   },
@@ -27,14 +24,15 @@
     "drizzle-kit": "^0.31.1",
     "type-fest": "^4.40.0",
     "typescript": "^5.8.2",
-    "vitest": "^3.1.1"
+    "vitest": "^3.1.1",
+    "@faker-js/faker": "^9.7.0"
   },
   "dependencies": {
+    "commander": "^13.1.0",
     "drizzle-orm": "^0.43.1",
     "next": "^15.3.2",
     "pg": "^8.15.6",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "commander": "^13.1.0"
+    "react-dom": "^19.1.0"
   }
 }

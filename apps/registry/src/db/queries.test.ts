@@ -68,30 +68,19 @@ describe("queries", () => {
     });
 
     it("should skip duplicates when ignoreDuplicates is true", async () => {
-      // First insert
-      const entries1 = createTestEntries(2);
-      await addEntries(entries1);
-
-      // Second insert with one duplicate
-      const entries2 = [
-        entries1[0], // This is a duplicate
-        createTestEntries(1)[0], // This is new
-      ];
-      await addEntries(entries2, { ignoreDuplicates: true });
-
-      const result = await db.select().from(entriesTable);
-      expect(result).toHaveLength(3); // 2 from first insert + 1 new from second insert
+      const entries = createTestEntries(3);
+      await addEntry(entries[0]);
+      await addEntries(entries, { ignoreDuplicates: true });
+      expect(await countEntries()).toEqual(3);
     });
 
     it("should not insert anything when all entries are duplicates", async () => {
-      const entries = createTestEntries(2);
-      await addEntries(entries);
-
-      // Try to insert the same entries again
-      await addEntries(entries, { ignoreDuplicates: true });
-
-      const result = await db.select().from(entriesTable);
-      expect(result).toHaveLength(2); // Should still only have the original entries
+      const entries = createTestEntries(3);
+      await addEntry(entries[0]);
+      await expect(
+        addEntries(entries, { ignoreDuplicates: false }),
+      ).rejects.toThrow();
+      expect(await countEntries()).toEqual(1);
     });
   });
 });

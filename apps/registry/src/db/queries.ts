@@ -34,7 +34,6 @@ export async function addEntries(
   options: AddEntriesOptions = {},
 ) {
   if (options.ignoreDuplicates) {
-    // Get all existing names
     const existingEntries = await db
       .select({ name: entriesTable.name })
       .from(entriesTable)

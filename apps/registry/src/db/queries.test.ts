@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { db } from ".";
 import { createTestEntry } from "../test/fixtures/entries";
-import { getEntryByName, purgeDatabase } from "./queries";
+import { deleteAllEntries, getEntryByName } from "./queries";
 import { entriesTable } from "./schema";
 
 describe("getEntryByName", () => {
@@ -12,7 +12,7 @@ describe("getEntryByName", () => {
 
   afterAll(async () => {
     // Clean up test data
-    await purgeDatabase();
+    await deleteAllEntries();
   });
 
   it("should return the correct entry when it exists", async () => {

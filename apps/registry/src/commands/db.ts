@@ -2,7 +2,7 @@ import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { Command } from "commander";
 import { closeDatabase, db } from "../db";
 import { prettyPrint } from "../db/pretty-print";
-import { purgeDatabase } from "../db/queries";
+import { deleteAllEntries } from "../db/queries";
 import { getEntryByName } from "../db/queries";
 import { entriesTable } from "../db/schema";
 import { seedDatabase } from "../db/seed";
@@ -93,7 +93,7 @@ export function registerDbCommands(program: Command) {
     .description("Delete all entries from the database")
     .action(
       actionWithErrorHandler(async () => {
-        await purgeDatabase();
+        await deleteAllEntries();
         await closeDatabase();
       }),
     );

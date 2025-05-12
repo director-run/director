@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "./index";
 import { entriesTable } from "./schema";
+import type { EntryCreateParams } from "./types";
 
 export async function getEntryByName(name: string) {
   const entry = await db
@@ -16,9 +17,23 @@ export async function getEntryByName(name: string) {
   return entry[0];
 }
 
-export async function purgeDatabase() {
+export async function deleteAllEntries() {
   await db.delete(entriesTable);
   console.log("Successfully purged database");
+}
+
+export async function addEntry(
+  entries: EntryCreateParams | EntryCreateParams[],
+) {
+  if (Array.isArray(entries)) {
+    // Use transaction for batch inserts
+    await db.transaction(async (tx) => {
+      await tx.insert(entriesTable).values(entries);
+    });
+  } else {
+    // Single insert doesn't need transaction
+    await db.insert(entriesTable).values(entries);
+  }
 }
 
 export async function insertServersIntoDatabase(
@@ -26,6 +41,8 @@ export async function insertServersIntoDatabase(
     ReturnType<typeof import("../importers/awesome-mcp").fetchAwesomeMCPEntries>
   >,
 ) {
+  const entries: EntryCreateParams[] = [];
+
   for (const server of servers) {
     // Check if entry already exists
     const existing = await db
@@ -39,34 +56,31 @@ export async function insertServersIntoDatabase(
       continue;
     }
 
-    // Insert new entry
-    await db.insert(entriesTable).values({
-      id: crypto.randomUUID(),
+    // Create entry
+    entries.push({
       name: server.name,
+      title: server.name,
       description: server.description,
-      verified: false,
-      provider: server.provider || null,
-      providerVerified: false,
-      createdDate: new Date(),
-      runtime: server.runtime || null,
-      license: server.license || null,
-      sourceUrl: server.url,
+      isOfficial: false,
       transport: {
         type: "stdio",
         command: "echo",
         args: [server.url],
       },
-      source: {
-        type: "github",
-        url: server.url,
-      },
-      sourceRegistry: {
+      homepage: server.url,
+      source_registry: {
         name: "awesome-mcp-servers",
+        entryId: server.name,
       },
       categories: [server.category, ...server.attributes],
       tools: server.tools,
       parameters: server.parameters,
       readme: null,
     });
+  }
+
+  // Insert all entries in a single transaction
+  if (entries.length > 0) {
+    await insertEntriesIntoDatabase(entries);
   }
 }

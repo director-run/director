@@ -29,6 +29,6 @@
   "dependencies": {
     "commander": "^13.1.0",
     "drizzle-orm": "^0.43.1",
-    "pg": "^8.15.6",
+    "pg": "^8.15.6"
   }
 }

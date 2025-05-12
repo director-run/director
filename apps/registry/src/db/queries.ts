@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import { db } from "./index";
 import { entriesTable } from "./schema";
 import type { EntryCreateParams } from "./types";
@@ -21,16 +21,22 @@ export async function deleteAllEntries() {
   await db.delete(entriesTable);
 }
 
-export async function addEntry(
-  entries: EntryCreateParams | EntryCreateParams[],
+export async function addEntry(entries: EntryCreateParams) {
+  await db.insert(entriesTable).values(entries);
+}
+
+export async function addEntries(
+  entries: EntryCreateParams[],
+  options: { ignoreDuplicates?: boolean } = {},
 ) {
-  if (Array.isArray(entries)) {
-    await db.transaction(async (tx) => {
-      await tx.insert(entriesTable).values(entries);
-    });
-  } else {
-    await db.insert(entriesTable).values(entries);
-  }
+  await db.transaction(async (tx) => {
+    await tx.insert(entriesTable).values(entries);
+  });
+}
+
+export async function countEntries(): Promise<number> {
+  const result = await db.select({ count: count() }).from(entriesTable);
+  return result[0].count;
 }
 
 export async function insertServersIntoDatabase(

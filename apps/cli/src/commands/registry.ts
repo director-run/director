@@ -3,7 +3,6 @@ import { makeTable } from "@director.run/utilities/cli";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import chalk from "chalk";
 import { Command } from "commander";
-import type { JsonValue } from "type-fest";
 
 export function registerRegistryCommands(program: Command) {
   program
@@ -29,7 +28,7 @@ export function registerRegistryCommands(program: Command) {
       actionWithErrorHandler(async (entryName: string) => {
         try {
           const item = await fetchEntry(entryName);
-          console.log(colorizeJson(item));
+          console.log(JSON.stringify(item, null, 2));
         } catch (error) {
           if (error instanceof Error) {
             console.error(chalk.red(error.message));
@@ -39,20 +38,6 @@ export function registerRegistryCommands(program: Command) {
         }
       }),
     );
-}
-
-function colorizeJson(obj: Record<string, JsonValue>): string {
-  const entries = Object.entries(obj)
-    .map(([key, value]) => {
-      const coloredKey = chalk.white.bold(`"${key}"`);
-      const formattedValue =
-        typeof value === "string"
-          ? `"${value}"`
-          : JSON.stringify(value, null, 2);
-      return `  ${coloredKey}: ${formattedValue}`;
-    })
-    .join(",\n");
-  return `{\n${entries}\n}`;
 }
 
 function truncateDescription(

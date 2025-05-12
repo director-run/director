@@ -1,4 +1,4 @@
-import { fetchEntries } from "@director.run/registry-client/client";
+import { fetchEntries, fetchEntry } from "@director.run/registry-client/client";
 import { makeTable } from "@director.run/utilities/cli";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import chalk from "chalk";
@@ -12,10 +12,10 @@ export function registerRegistryCommands(program: Command) {
     .action(
       actionWithErrorHandler(async () => {
         const items = await fetchEntries();
-        const table = makeTable(["Id", "Description"]);
+        const table = makeTable(["Name", "Description"]);
         table.push(
           ...items.map((item) => {
-            return [item.id, truncateDescription(item.description)];
+            return [item.name, truncateDescription(item.description)];
           }),
         );
         console.log(table.toString());
@@ -23,20 +23,20 @@ export function registerRegistryCommands(program: Command) {
     );
 
   program
-    .command("registry:get <entryId>")
+    .command("registry:get <entryName>")
     .description("get detailed information about a repository item")
     .action(
-      actionWithErrorHandler(async (id: string) => {
-        // try {
-        //   const item = await trpc.registry.get.query({ id });
-        //   console.log(colorizeJson(item));
-        // } catch (error) {
-        //   if (error instanceof Error) {
-        //     console.error(chalk.red(error.message));
-        //   } else {
-        //     console.error(chalk.red("An unknown error occurred"));
-        //   }
-        // }
+      actionWithErrorHandler(async (entryName: string) => {
+        try {
+          const item = await fetchEntry(entryName);
+          console.log(colorizeJson(item));
+        } catch (error) {
+          if (error instanceof Error) {
+            console.error(chalk.red(error.message));
+          } else {
+            console.error(chalk.red("An unknown error occurred"));
+          }
+        }
       }),
     );
 }

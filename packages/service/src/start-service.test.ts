@@ -116,28 +116,32 @@ describe("SSE Router", () => {
     expect(toolsResult2.tools.map((t) => t.name)).toContain("echo");
   });
 
-  // test("should be able to remove a server from a proxy", async () => {
-  //   await testVariables.proxyStore.purge();
-  //   const testProxy = await testVariables.trpcClient.store.create.mutate({
-  //     name: "Test Proxy",
-  //     servers: [fetchProxy(), hackerNewsProxy()],
-  //   });
+  test("should be able to remove a server from a proxy", async () => {
+    await testVariables.proxyStore.purge();
+    const testProxy = await testVariables.trpcClient.store.create.mutate({
+      name: "Test Proxy",
+      servers: [echoServerConfig(), fooBarServerConfig()],
+    });
 
-  //   const client = await TestMCPClient.connectToProxy(testProxy.id);
-  //   const toolsResult = await client.listTools();
+    const client = await SimpleClient.createAndConnectToSSE(
+      `http://localhost:${env.SERVER_PORT}/${testProxy.id}/sse`,
+    );
+    const toolsResult = await client.listTools();
 
-  //   expect(toolsResult.tools.map((t) => t.name)).toContain("fetch");
-  //   expect(toolsResult.tools.map((t) => t.name)).toContain("get_stories");
+    expect(toolsResult.tools.map((t) => t.name)).toContain("foo");
+    expect(toolsResult.tools.map((t) => t.name)).toContain("echo");
 
-  //   await testVariables.trpcClient.store.removeServer.mutate({
-  //     proxyId: testProxy.id,
-  //     serverName: "hackernews",
-  //   });
+    await testVariables.trpcClient.store.removeServer.mutate({
+      proxyId: testProxy.id,
+      serverName: "echo",
+    });
 
-  //   const client2 = await TestMCPClient.connectToProxy(testProxy.id);
-  //   const toolsResult2 = await client2.listTools();
+    const client2 = await SimpleClient.createAndConnectToSSE(
+      `http://localhost:${env.SERVER_PORT}/${testProxy.id}/sse`,
+    );
+    const toolsResult2 = await client2.listTools();
 
-  //   expect(toolsResult2.tools.map((t) => t.name)).toContain("fetch");
-  //   expect(toolsResult2.tools.map((t) => t.name)).not.toContain("get_stories");
-  // });
+    expect(toolsResult2.tools.map((t) => t.name)).toContain("foo");
+    expect(toolsResult2.tools.map((t) => t.name)).not.toContain("echo");
+  });
 });

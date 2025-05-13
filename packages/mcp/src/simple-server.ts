@@ -27,12 +27,12 @@ class ToolBuilder<T extends Record<string, unknown>> {
     this.server = server;
   }
 
-  withSchema<S extends z.ZodType>(schema: S): ToolBuilder<z.infer<S>> {
+  schema<S extends z.ZodType>(schema: S): ToolBuilder<z.infer<S>> {
     this.definition.schema = schema;
     return this as unknown as ToolBuilder<z.infer<S>>;
   }
 
-  withDescription(description: string): ToolBuilder<T> {
+  description(description: string): ToolBuilder<T> {
     this.definition.description = description;
     return this;
   }
@@ -74,7 +74,7 @@ export class SimpleServer extends Server {
     this.setupRequestHandlers();
   }
 
-  defineTool<T extends Record<string, unknown>>(name: string): ToolBuilder<T> {
+  tool<T extends Record<string, unknown>>(name: string): ToolBuilder<T> {
     return new ToolBuilder<T>(name, this);
   }
 

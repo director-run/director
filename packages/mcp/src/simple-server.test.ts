@@ -18,11 +18,10 @@ describe("SimpleServer", () => {
       age: z.number(),
     });
 
-    // Type of args is inferred from TestSchema
     server
-      .defineTool("test_tool")
-      .withSchema(TestSchema)
-      .withDescription("A test tool")
+      .tool("test_tool")
+      .schema(TestSchema)
+      .description("A test tool")
       .handle(({ name, age }) => {
         return Promise.resolve({
           status: "success",
@@ -68,22 +67,20 @@ describe("SimpleServer", () => {
       age: z.number(),
     });
 
-    // Type of args is inferred from TestSchema
     server
-      .defineTool("test_tool")
-      .withSchema(TestSchema)
-      .withDescription("A test tool")
+      .tool("test_tool")
+      .schema(TestSchema)
+      .description("A test tool")
       .handle(() => Promise.resolve({ status: "success" }));
 
     const client = await createInMemoryClient(server);
 
-    // Test invalid input
     await expect(
       client.callTool({
         name: "test_tool",
         arguments: {
           name: "John",
-          age: "not a number", // Invalid type
+          age: "not a number",
         },
       }),
     ).rejects.toThrow("Invalid input");
@@ -93,7 +90,6 @@ describe("SimpleServer", () => {
     const server = new SimpleServer();
     const client = await createInMemoryClient(server);
 
-    // Test calling non-existent tool
     await expect(
       client.callTool({
         name: "non_existent_tool",

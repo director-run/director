@@ -1,7 +1,3 @@
-import type {
-  ProxyAttributes,
-  ProxyTargetAttributes,
-} from "@director.run/gateway/db/schema";
 import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
@@ -206,3 +202,25 @@ function createControllerServer({ proxy }: { proxy: ProxyServer }) {
 
   return server;
 }
+
+export type ProxyTargetAttributes = {
+  name: string;
+  transport:
+    | {
+        type: "stdio";
+        command: string;
+        args?: string[];
+        env?: string[];
+      }
+    | {
+        type: "sse";
+        url: string;
+      };
+};
+
+export type ProxyAttributes = {
+  id: string;
+  name: string;
+  description?: string;
+  servers: ProxyTargetAttributes[];
+};

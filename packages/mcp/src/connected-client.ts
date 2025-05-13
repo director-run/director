@@ -9,9 +9,9 @@ import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 const PROXY_TARGET_CONNECT_RETRY_INTERVAL = 2500;
 const PROXY_TARGET_CONNECT_RETRY_COUNT = 3;
 
-const logger = getLogger("ConnectedClient");
+const logger = getLogger("SimpleClient");
 
-export class ConnectedClient extends Client {
+export class SimpleClient extends Client {
   public name: string;
 
   constructor(name: string) {
@@ -39,11 +39,11 @@ export class ConnectedClient extends Client {
 
   public static async createAndConnectToServer(
     server: Server,
-  ): Promise<ConnectedClient> {
+  ): Promise<SimpleClient> {
     const [clientTransport, serverTransport] =
       InMemoryTransport.createLinkedPair();
 
-    const client = new ConnectedClient("test client");
+    const client = new SimpleClient("test client");
 
     await Promise.all([
       client.connect(clientTransport),

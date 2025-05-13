@@ -14,7 +14,7 @@ import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import * as eventsource from "eventsource";
 import express from "express";
-import { ConnectedClient } from "./connected-client";
+import { SimpleClient } from "./connected-client";
 import { ControllerClient } from "./controller-client";
 import { setupPromptHandlers } from "./handlers/prompts-handler";
 import { setupResourceTemplateHandlers } from "./handlers/resource-templates-handler";
@@ -26,7 +26,7 @@ global.EventSource = eventsource.EventSource;
 const logger = getLogger(`ProxyServer`);
 
 export class ProxyServer extends Server {
-  private targets: ConnectedClient[];
+  private targets: SimpleClient[];
   public readonly attributes: ProxyAttributes & { useController?: boolean };
   private transports: Map<string, SSEServerTransport>;
 
@@ -54,7 +54,7 @@ export class ProxyServer extends Server {
   ): Promise<void> {
     for (const server of this.attributes.servers) {
       try {
-        const target = new ConnectedClient(server.name);
+        const target = new SimpleClient(server.name);
         await target.connect(getTransport(server));
         this.targets.push(target);
       } catch (error) {

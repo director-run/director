@@ -7,15 +7,15 @@ import {
   ListPromptsResultSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
-import type { ConnectedClient } from "../connected-client";
+import type { SimpleClient } from "../connected-client";
 
 const logger = getLogger("proxy/handlers/promptsHandler");
 
 export function setupPromptHandlers(
   server: Server,
-  connectedClients: ConnectedClient[],
+  connectedClients: SimpleClient[],
 ) {
-  const promptToClientMap = new Map<string, ConnectedClient>();
+  const promptToClientMap = new Map<string, SimpleClient>();
   // Get Prompt Handler
   server.setRequestHandler(GetPromptRequestSchema, async (request) => {
     const { name } = request.params;

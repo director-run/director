@@ -7,15 +7,15 @@ import {
   ListToolsResultSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
-import type { ConnectedClient } from "../connected-client";
+import type { SimpleClient } from "../connected-client";
 
 const logger = getLogger("proxy/handlers/toolsHandler");
 
 export function setupToolHandlers(
   server: Server,
-  connectedClients: ConnectedClient[],
+  connectedClients: SimpleClient[],
 ) {
-  const toolToClientMap = new Map<string, ConnectedClient>();
+  const toolToClientMap = new Map<string, SimpleClient>();
 
   // List Tools Handler
   server.setRequestHandler(ListToolsRequestSchema, async (request) => {

@@ -7,51 +7,6 @@ import {
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 
-type ToolHandler<T> = (args: T) => Promise<unknown>;
-
-interface ToolDefinition<T> {
-  name: string;
-  schema?: z.ZodType<T>;
-  description: string;
-  handler: ToolHandler<T>;
-}
-
-class ToolBuilder<T extends Record<string, unknown>> {
-  private definition: Partial<ToolDefinition<T>>;
-  private server: SimpleServer;
-
-  constructor(name: string, server: SimpleServer) {
-    this.definition = { name };
-    this.server = server;
-  }
-
-  schema<S extends z.ZodType>(schema: S): ToolBuilder<z.infer<S>> {
-    this.definition.schema = schema;
-    return this as unknown as ToolBuilder<z.infer<S>>;
-  }
-
-  description(description: string): ToolBuilder<T> {
-    this.definition.description = description;
-    return this;
-  }
-
-  handle(handler: ToolHandler<T>): void {
-    if (!this.definition.description) {
-      throw new Error("Description is required");
-    }
-    if (!this.definition.name) {
-      throw new Error("Name is required");
-    }
-    const definition: ToolDefinition<T> = {
-      name: this.definition.name,
-      schema: this.definition.schema,
-      description: this.definition.description,
-      handler,
-    };
-    this.server.registerTool(definition);
-  }
-}
-
 export class SimpleServer extends Server {
   private tools: Map<string, ToolDefinition<Record<string, unknown>>> =
     new Map();
@@ -123,5 +78,50 @@ export class SimpleServer extends Server {
         throw error;
       }
     });
+  }
+}
+
+type ToolHandler<T> = (args: T) => Promise<unknown>;
+
+interface ToolDefinition<T> {
+  name: string;
+  schema?: z.ZodType<T>;
+  description: string;
+  handler: ToolHandler<T>;
+}
+
+class ToolBuilder<T extends Record<string, unknown>> {
+  private definition: Partial<ToolDefinition<T>>;
+  private server: SimpleServer;
+
+  constructor(name: string, server: SimpleServer) {
+    this.definition = { name };
+    this.server = server;
+  }
+
+  schema<S extends z.ZodType>(schema: S): ToolBuilder<z.infer<S>> {
+    this.definition.schema = schema;
+    return this as unknown as ToolBuilder<z.infer<S>>;
+  }
+
+  description(description: string): ToolBuilder<T> {
+    this.definition.description = description;
+    return this;
+  }
+
+  handle(handler: ToolHandler<T>): void {
+    if (!this.definition.description) {
+      throw new Error("Description is required");
+    }
+    if (!this.definition.name) {
+      throw new Error("Name is required");
+    }
+    const definition: ToolDefinition<T> = {
+      name: this.definition.name,
+      schema: this.definition.schema,
+      description: this.definition.description,
+      handler,
+    };
+    this.server.registerTool(definition);
   }
 }

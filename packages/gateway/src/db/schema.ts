@@ -19,9 +19,7 @@ export const ProxyTargetSchema = z.object({
   ]),
 });
 
-export type ProxyTargetAttributes = z.infer<typeof ProxyTargetSchema>;
-
-export const proxySchema = z.object({
+const proxySchema = z.object({
   id: requiredStringSchema,
   name: requiredStringSchema,
   description: optionalStringSchema,

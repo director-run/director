@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import {
   type IntegrationTestVariables,
   setupIntegrationTest,
-} from "../../test/fixtures";
+} from "../../test/integration";
 
 describe("Store Router", () => {
   let testVariables: IntegrationTestVariables;

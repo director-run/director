@@ -4,11 +4,13 @@ import { makeEchoServer } from "@director.run/mcp/test/fixtures";
 import { serveOverSSE } from "@director.run/mcp/transport";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import {
-  type IntegrationTestVariables,
   makeFooBarServerStdioConfig,
   makeSSETargetConfig,
-  setupIntegrationTest,
 } from "./test/fixtures";
+import {
+  type IntegrationTestVariables,
+  setupIntegrationTest,
+} from "./test/integration";
 
 const PROXY_TARGET_PORT = 4521;
 

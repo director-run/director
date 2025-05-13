@@ -11,8 +11,7 @@ import {
   stdioProxy,
 } from "./helpers/test-helpers";
 
-function makeFooBarServer() {
-  const basePath = __dirname;
+function fooBarServerConfig() {
   return stdioProxy({
     name: "Foo",
     command: "bun",
@@ -24,6 +23,13 @@ function makeFooBarServer() {
       serveOverStdio(makeFooBarServer());
     `,
     ],
+  });
+}
+
+function echoServerConfig() {
+  return sseProxy({
+    name: "echo",
+    url: `http://localhost:4521/sse`,
   });
 }
 
@@ -54,32 +60,28 @@ describe("SSE Router", () => {
 
   test("should connect and list tools", async () => {
     await testVariables.proxyStore.purge();
+
     const testProxy = await testVariables.proxyStore.create({
       name: "Test Proxy",
-      servers: [
-        makeFooBarServer(),
-        sseProxy({
-          name: "SSE",
-          url: `http://localhost:4521/sse`,
-        }),
-      ],
+      servers: [fooBarServerConfig(), echoServerConfig()],
     });
-
     const client = await TestMCPClient.connectToProxy(testProxy.id);
     const toolsResult = await client.listTools();
     const expectedToolNames = ["foo", "echo"];
-    console.log(toolsResult.tools);
+
     for (const toolName of expectedToolNames) {
       const tool = toolsResult.tools.find((t) => t.name === toolName);
       expect(tool).toBeDefined();
       expect(tool?.name).toBe(toolName);
     }
+
     expect(
       toolsResult.tools.find((t) => t.name === "foo")?.description,
     ).toContain("[foo]");
     expect(
       toolsResult.tools.find((t) => t.name === "echo")?.description,
-    ).toContain("[sse]");
+    ).toContain("[echo]");
+
     await client.close();
   });
 

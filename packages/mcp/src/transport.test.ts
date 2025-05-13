@@ -1,5 +1,7 @@
+import type { Server } from "http";
 import path from "path";
-import { describe, expect, test } from "vitest";
+import type { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { SimpleClient } from "./simple-client";
 import { makeEchoServer } from "./test/fixtures";
 import { serveOverSSE } from "./transport";
@@ -31,6 +33,40 @@ describe("transport", () => {
       const tools = await client.listTools();
       expect(tools.tools).toHaveLength(1);
       expect(tools.tools[0].name).toBe("echo");
+    });
+  });
+
+  describe("proxySSEToStdio", () => {
+    let client: Client;
+    let proxyTargetServerInstance: Server;
+
+    beforeAll(async () => {
+      proxyTargetServerInstance = await serveOverSSE(makeEchoServer(), 4522);
+      const basePath = __dirname;
+      client = await SimpleClient.createAndConnectToStdio("bun", [
+        "-e",
+        `
+            import { proxySSEToStdio } from '${path.join(basePath, "transport.ts")}'; 
+            proxySSEToStdio("http://localhost:4522/sse");
+        `,
+      ]);
+    }, 30000);
+
+    afterAll(async () => {
+      await client?.close();
+      await proxyTargetServerInstance?.close();
+    });
+
+    test("should proxy an SSE server to stdio", async () => {
+      const toolsResult = await client.listTools();
+
+      const expectedToolNames = ["echo"];
+
+      for (const toolName of expectedToolNames) {
+        const tool = toolsResult.tools.find((t) => t.name === toolName);
+        expect(tool).toBeDefined();
+        expect(tool?.name).toBe(toolName);
+      }
     });
   });
 });

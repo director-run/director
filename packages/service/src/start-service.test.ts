@@ -86,29 +86,35 @@ describe("SSE Router", () => {
     await client.close();
   });
 
-  // test("should be able to add a server to a proxy", async () => {
-  //   await testVariables.proxyStore.purge();
-  //   const testProxy = await testVariables.trpcClient.store.create.mutate({
-  //     name: "Test Proxy",
-  //     servers: [fetchProxy()],
-  //   });
+  test("should be able to add a server to a proxy", async () => {
+    await testVariables.proxyStore.purge();
+    const testProxy = await testVariables.trpcClient.store.create.mutate({
+      name: "Test Proxy",
+      servers: [fooBarServerConfig()],
+    });
 
-  //   const client = await TestMCPClient.connectToProxy(testProxy.id);
-  //   const toolsResult = await client.listTools();
+    const client = await SimpleClient.createAndConnectToSSE(
+      `http://localhost:${env.SERVER_PORT}/${testProxy.id}/sse`,
+    );
 
-  //   expect(toolsResult.tools.map((t) => t.name)).toContain("fetch");
-  //   expect(toolsResult.tools.map((t) => t.name)).not.toContain("get_stories");
+    const toolsResult = await client.listTools();
 
-  //   await testVariables.trpcClient.store.addServer.mutate({
-  //     proxyId: testProxy.id,
-  //     server: hackerNewsProxy(),
-  //   });
+    expect(toolsResult.tools.map((t) => t.name)).toContain("foo");
+    expect(toolsResult.tools.map((t) => t.name)).not.toContain("echo");
 
-  //   const client2 = await TestMCPClient.connectToProxy(testProxy.id);
-  //   const toolsResult2 = await client2.listTools();
-  //   expect(toolsResult2.tools.map((t) => t.name)).toContain("fetch");
-  //   expect(toolsResult2.tools.map((t) => t.name)).toContain("get_stories");
-  // });
+    await testVariables.trpcClient.store.addServer.mutate({
+      proxyId: testProxy.id,
+      server: echoServerConfig(),
+    });
+
+    const client2 = await SimpleClient.createAndConnectToSSE(
+      `http://localhost:${env.SERVER_PORT}/${testProxy.id}/sse`,
+    );
+
+    const toolsResult2 = await client2.listTools();
+    expect(toolsResult2.tools.map((t) => t.name)).toContain("foo");
+    expect(toolsResult2.tools.map((t) => t.name)).toContain("echo");
+  });
 
   // test("should be able to remove a server from a proxy", async () => {
   //   await testVariables.proxyStore.purge();

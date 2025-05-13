@@ -3,7 +3,7 @@
   "include": [
     "src/**/*.ts",
     "test/**/*.ts",
-    "../mcp/src/connected-client.ts",
+    "../mcp/src/simple-client.ts",
     "../mcp/src/controller-client.ts",
     "../mcp/src/proxy-server.ts",
     "../mcp/src/create-controller-server.ts",

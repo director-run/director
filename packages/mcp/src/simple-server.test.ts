@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
-import { SimpleClient } from "./connected-client";
+import { SimpleClient } from "./simple-client";
 import { SimpleServer } from "./simple-server";
 
 interface ToolResponse {

@@ -7,7 +7,7 @@ import {
   ListToolsResultSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
-import type { SimpleClient } from "../connected-client";
+import type { SimpleClient } from "../simple-client";
 
 const logger = getLogger("proxy/handlers/toolsHandler");
 

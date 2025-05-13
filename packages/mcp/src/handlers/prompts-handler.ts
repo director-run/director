@@ -7,7 +7,7 @@ import {
   ListPromptsResultSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { z } from "zod";
-import type { SimpleClient } from "../connected-client";
+import type { SimpleClient } from "../simple-client";
 
 const logger = getLogger("proxy/handlers/promptsHandler");
 

@@ -1,7 +1,7 @@
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
-import { SimpleClient } from "./connected-client";
 import { createControllerServer } from "./create-controller-server";
 import type { ProxyServer } from "./proxy-server";
+import { SimpleClient } from "./simple-client";
 
 export class ControllerClient extends SimpleClient {
   private proxy: ProxyServer;

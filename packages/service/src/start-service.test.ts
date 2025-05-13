@@ -6,13 +6,13 @@ import { serveOverSSE } from "@director.run/mcp/transport";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import {
   type IntegrationTestVariables,
+  makeSSETargetConfig,
+  makeStdioTargetConfig,
   setupIntegrationTest,
-  sseProxy,
-  stdioProxy,
 } from "./helpers/test-helpers";
 
-function fooBarServerConfig() {
-  return stdioProxy({
+function makeFooBarServerStdioConfig() {
+  return makeStdioTargetConfig({
     name: "Foo",
     command: "bun",
     args: [
@@ -26,8 +26,8 @@ function fooBarServerConfig() {
   });
 }
 
-function echoServerConfig() {
-  return sseProxy({
+function makeEchoServerSSEConfig() {
+  return makeSSETargetConfig({
     name: "echo",
     url: `http://localhost:4521/sse`,
   });
@@ -60,7 +60,7 @@ describe("SSE Router", () => {
 
     const testProxy = await testVariables.proxyStore.create({
       name: "Test Proxy",
-      servers: [fooBarServerConfig(), echoServerConfig()],
+      servers: [makeFooBarServerStdioConfig(), makeEchoServerSSEConfig()],
     });
 
     const client = await SimpleClient.createAndConnectToSSE(
@@ -90,7 +90,7 @@ describe("SSE Router", () => {
     await testVariables.proxyStore.purge();
     const testProxy = await testVariables.trpcClient.store.create.mutate({
       name: "Test Proxy",
-      servers: [fooBarServerConfig()],
+      servers: [makeFooBarServerStdioConfig()],
     });
 
     const client = await SimpleClient.createAndConnectToSSE(
@@ -104,7 +104,7 @@ describe("SSE Router", () => {
 
     await testVariables.trpcClient.store.addServer.mutate({
       proxyId: testProxy.id,
-      server: echoServerConfig(),
+      server: makeEchoServerSSEConfig(),
     });
 
     const client2 = await SimpleClient.createAndConnectToSSE(
@@ -120,7 +120,7 @@ describe("SSE Router", () => {
     await testVariables.proxyStore.purge();
     const testProxy = await testVariables.trpcClient.store.create.mutate({
       name: "Test Proxy",
-      servers: [echoServerConfig(), fooBarServerConfig()],
+      servers: [makeEchoServerSSEConfig(), makeFooBarServerStdioConfig()],
     });
 
     const client = await SimpleClient.createAndConnectToSSE(

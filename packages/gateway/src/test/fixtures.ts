@@ -12,21 +12,15 @@ export type IntegrationTestVariables = {
 
 export const setupIntegrationTest =
   async (): Promise<IntegrationTestVariables> => {
-    const proxyStore = await ProxyServerStore.create(
-      await Database.connect(path.join(__dirname, "db.test.json")),
-    );
     const port = 3673;
-    const directorService = await startService({
-      proxyStore,
+    const gateway = await startService({
       port,
       databaseFilePath: path.join(__dirname, "db.test.json"),
     });
 
     const close = async () => {
-      await proxyStore.purge();
-      await new Promise<void>((resolve) => {
-        directorService.close(() => resolve());
-      });
+      await gateway.proxyStore.purge();
+      await gateway.stop();
     };
 
     return {

@@ -2,10 +2,12 @@ import { env } from "@director.run/config/env";
 import { getLogger } from "@director.run/utilities/logger";
 import { sleep } from "@director.run/utilities/os";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
+import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 
-export const PROXY_TARGET_CONNECT_RETRY_INTERVAL = 2500;
-export const PROXY_TARGET_CONNECT_RETRY_COUNT = 3;
+const PROXY_TARGET_CONNECT_RETRY_INTERVAL = 2500;
+const PROXY_TARGET_CONNECT_RETRY_COUNT = 3;
 
 const logger = getLogger("ConnectedClient");
 
@@ -33,6 +35,22 @@ export class ConnectedClient extends Client {
     return {
       name: this.name,
     };
+  }
+
+  public static async createAndConnectToServer(
+    server: Server,
+  ): Promise<ConnectedClient> {
+    const [clientTransport, serverTransport] =
+      InMemoryTransport.createLinkedPair();
+
+    const client = new ConnectedClient("test client");
+
+    await Promise.all([
+      client.connect(clientTransport),
+      server.connect(serverTransport),
+    ]);
+
+    return client;
   }
 
   async connect(transport: Transport) {

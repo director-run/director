@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
-import { SimpleServer, createInMemoryClient } from "./simple-server";
+import { ConnectedClient } from "./connected-client";
+import { SimpleServer } from "./simple-server";
 
 interface ToolResponse {
   content: Array<{
@@ -33,7 +34,7 @@ describe("SimpleServer", () => {
         });
       });
 
-    const client = await createInMemoryClient(server);
+    const client = await ConnectedClient.createAndConnectToServer(server);
     const tools = await client.listTools();
 
     expect(tools.tools).toHaveLength(1);
@@ -73,7 +74,7 @@ describe("SimpleServer", () => {
       .description("A test tool")
       .handle(() => Promise.resolve({ status: "success" }));
 
-    const client = await createInMemoryClient(server);
+    const client = await ConnectedClient.createAndConnectToServer(server);
 
     await expect(
       client.callTool({
@@ -88,7 +89,7 @@ describe("SimpleServer", () => {
 
   test("should handle unknown tools", async () => {
     const server = new SimpleServer();
-    const client = await createInMemoryClient(server);
+    const client = await ConnectedClient.createAndConnectToServer(server);
 
     await expect(
       client.callTool({

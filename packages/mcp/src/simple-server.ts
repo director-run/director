@@ -1,6 +1,4 @@
 import { env } from "@director.run/config/env";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import {
   CallToolRequestSchema,
@@ -126,29 +124,4 @@ export class SimpleServer extends Server {
       }
     });
   }
-}
-
-export async function createInMemoryClient(server: Server): Promise<Client> {
-  const [clientTransport, serverTransport] =
-    InMemoryTransport.createLinkedPair();
-
-  const client = new Client(
-    {
-      name: "test client",
-      version: "1.0",
-    },
-    {
-      capabilities: {
-        sampling: {},
-      },
-      enforceStrictCapabilities: true,
-    },
-  );
-
-  await Promise.all([
-    client.connect(clientTransport),
-    server.connect(serverTransport),
-  ]);
-
-  return client;
 }

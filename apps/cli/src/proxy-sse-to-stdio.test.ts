@@ -1,51 +1,32 @@
 import type { Server } from "node:http";
 import path from "node:path";
-import { createMCPServer } from "@director.run/service/helpers/test-helpers";
+import { SimpleClient } from "@director.run/mcp/simple-client";
+import { makeEchoServer } from "@director.run/mcp/test/fixtures";
+import { serveOverSSE } from "@director.run/mcp/transport";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { z } from "zod";
-
 describe("proxySSEToStdio", () => {
   let client: Client;
   let transport: StdioClientTransport;
   let proxyTargetServerInstance: Server;
 
   beforeAll(async () => {
-    proxyTargetServerInstance = await createMCPServer(4522, (server) => {
-      server.tool("echo", { message: z.string() }, async ({ message }) => ({
-        content: [{ type: "text", text: `Tool echo: ${message}` }],
-      }));
-    });
-    client = new Client(
-      {
-        name: "test-client",
-        version: "0.0.0",
-      },
-      {
-        capabilities: {
-          prompts: {},
-          resources: {},
-          tools: {},
-        },
-      },
-    );
+    proxyTargetServerInstance = await serveOverSSE(makeEchoServer(), 4522);
 
-    transport = new StdioClientTransport({
-      command: "bun",
-      args: [
+    client = await SimpleClient.createAndConnectToStdio(
+      "bun",
+      [
         path.join(__dirname, "../bin/cli"),
         "sse2stdio",
         "http://localhost:4522/sse",
       ],
-      env: {
+      {
         ...process.env,
         LOG_LEVEL: "silent",
         NODE_ENV: "test",
       },
-    });
-
-    await client.connect(transport);
+    );
   }, 30000);
 
   afterAll(async () => {

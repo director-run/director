@@ -1,18 +1,15 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import {
-  type IntegrationTestVariables,
-  setupIntegrationTest,
-} from "../../test/integration";
+import { IntegrationTestHarness } from "../../test/integration";
 
 describe("Store Router", () => {
-  let testVariables: IntegrationTestVariables;
+  let testVariables: IntegrationTestHarness;
 
   beforeAll(async () => {
-    testVariables = await setupIntegrationTest();
+    testVariables = await IntegrationTestHarness.start();
   });
 
   afterAll(async () => {
-    await testVariables.close();
+    await testVariables.stop();
   });
 
   it("should get all proxies", async () => {

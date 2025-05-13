@@ -7,10 +7,7 @@ import {
   makeFooBarServerStdioConfig,
   makeSSETargetConfig,
 } from "./test/fixtures";
-import {
-  type IntegrationTestVariables,
-  setupIntegrationTest,
-} from "./test/integration";
+import { IntegrationTestHarness } from "./test/integration";
 
 const PROXY_TARGET_PORT = 4521;
 
@@ -21,18 +18,18 @@ const echoServerSSEConfig = makeSSETargetConfig({
 
 describe("SSE Router", () => {
   let proxyTargetServerInstance: Server;
-  let testVariables: IntegrationTestVariables;
+  let testVariables: IntegrationTestHarness;
 
   beforeAll(async () => {
     proxyTargetServerInstance = await serveOverSSE(
       makeEchoServer(),
       PROXY_TARGET_PORT,
     );
-    testVariables = await setupIntegrationTest();
+    testVariables = await IntegrationTestHarness.start();
   });
 
   afterAll(async () => {
-    await testVariables.close();
+    await testVariables.stop();
     await proxyTargetServerInstance?.close();
   });
 

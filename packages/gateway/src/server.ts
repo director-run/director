@@ -11,7 +11,7 @@ import { createAppRouter } from "./trpc/routers/_app-router";
 
 const logger = getLogger("startService");
 
-export const startService = async (attribs?: {
+export const startService = async (attribs: {
   proxyStore?: ProxyServerStore;
   port: number;
 }) => {

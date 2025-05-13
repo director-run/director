@@ -19,21 +19,20 @@ describe("SimpleServer", () => {
       age: z.number(),
     });
 
-    server
-      .tool("test_tool")
-      .schema(TestSchema)
-      .description("A test tool")
-      .handler(async ({ name, age }) => {
-        return await {
+    server.registerTool({
+      name: "test_tool",
+      schema: TestSchema,
+      description: "A test tool",
+      handler: ({ name, age }) =>
+        Promise.resolve({
           status: "success",
           data: {
             name,
             age,
             message: `Hello ${name}, you are ${age} years old`,
           },
-        };
-      })
-      .build();
+        }),
+    });
 
     const client = await createInMemoryClient(server);
     const tools = await client.listTools();
@@ -69,14 +68,12 @@ describe("SimpleServer", () => {
       age: z.number(),
     });
 
-    server
-      .tool("test_tool")
-      .schema(TestSchema)
-      .description("A test tool")
-      .handler(() => {
-        return Promise.resolve({ status: "success" });
-      })
-      .build();
+    server.registerTool({
+      name: "test_tool",
+      schema: TestSchema,
+      description: "A test tool",
+      handler: () => Promise.resolve({ status: "success" }),
+    });
 
     const client = await createInMemoryClient(server);
 

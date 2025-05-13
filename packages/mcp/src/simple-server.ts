@@ -41,8 +41,8 @@ export class SimpleServer extends Server {
     this.setupRequestHandlers();
   }
 
-  tool<T extends z.ZodType>(name: string) {
-    return new ToolBuilder<T>(name, this);
+  registerTool<T extends z.ZodType>(definition: ToolDefinition<T>) {
+    this.tools.set(definition.name, definition as unknown as AnyToolDefinition);
   }
 
   private setupRequestHandlers() {
@@ -81,10 +81,6 @@ export class SimpleServer extends Server {
       }
     });
   }
-
-  registerTool<T extends z.ZodType>(definition: ToolDefinition<T>) {
-    this.tools.set(definition.name, definition as unknown as AnyToolDefinition);
-  }
 }
 
 export async function createInMemoryClient(server: Server): Promise<Client> {
@@ -110,51 +106,4 @@ export async function createInMemoryClient(server: Server): Promise<Client> {
   ]);
 
   return client;
-}
-
-class ToolBuilder<T extends z.ZodType> {
-  private name: string;
-  private server: SimpleServer;
-  private toolSchema?: T;
-  private toolDescription?: string;
-  private toolHandler?: ToolHandler<T>;
-
-  constructor(name: string, server: SimpleServer) {
-    this.name = name;
-    this.server = server;
-  }
-
-  schema(schema: T): this {
-    this.toolSchema = schema;
-    return this;
-  }
-
-  description(description: string): this {
-    this.toolDescription = description;
-    return this;
-  }
-
-  handler(handler: ToolHandler<T>): this {
-    this.toolHandler = handler;
-    return this;
-  }
-
-  build(): void {
-    if (!this.toolSchema) {
-      throw new Error("Schema is required");
-    }
-    if (!this.toolDescription) {
-      throw new Error("Description is required");
-    }
-    if (!this.toolHandler) {
-      throw new Error("Handler is required");
-    }
-
-    this.server.registerTool({
-      name: this.name,
-      schema: this.toolSchema,
-      description: this.toolDescription,
-      handler: this.toolHandler,
-    });
-  }
 }

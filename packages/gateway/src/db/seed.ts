@@ -1,11 +1,10 @@
-import { env } from "@director.run/config/env";
 import { getLogger } from "@director.run/utilities/logger";
 import { db } from ".";
 
 const logger = getLogger("config/seed");
 
 export async function seed() {
-  logger.info(`Seeding database at path: ${env.DB_FILE_PATH}`);
+  logger.info(`Seeding database at path: ${db.filePath}`);
 
   await db.purge();
   await db.addProxy({

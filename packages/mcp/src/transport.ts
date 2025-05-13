@@ -22,17 +22,12 @@ export function serveOverSSE(server: Server, port: number) {
 }
 
 export async function serveOverStdio(server: Server) {
-  try {
-    const transport = new StdioServerTransport();
-    await server.connect(transport);
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
 
-    process.on("SIGINT", async () => {
-      await transport.close();
-      await server.close();
-      process.exit(0);
-    });
-  } catch (error) {
-    console.error(error);
-    process.exit(1);
-  }
+  process.on("SIGINT", async () => {
+    await transport.close();
+    await server.close();
+    process.exit(0);
+  });
 }

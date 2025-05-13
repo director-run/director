@@ -6,7 +6,6 @@ import { serveOverSSE } from "@director.run/mcp/transport";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import {
   type IntegrationTestVariables,
-  TestMCPClient,
   setupIntegrationTest,
   sseProxy,
   stdioProxy,
@@ -49,10 +48,14 @@ describe("SSE Router", () => {
   });
 
   test("should return 404 when proxy not found", async () => {
-    const client = new TestMCPClient();
     await expect(
-      client.connectToURL(
-        `http://localhost:${env.SERVER_PORT}/not_existing_proxy/sse`,
+      fetch(`http://localhost:${env.SERVER_PORT}/not_existing_proxy/sse`).then(
+        (res) => {
+          if (!res.ok) {
+            throw { code: res.status };
+          }
+          return res;
+        },
       ),
     ).rejects.toMatchObject({
       code: 404,

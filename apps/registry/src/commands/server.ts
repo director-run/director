@@ -1,5 +1,6 @@
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { Command } from "commander";
+import { env } from "../config";
 import { startServer } from "../http/server";
 
 export function registerServerCommands(program: Command) {
@@ -8,7 +9,7 @@ export function registerServerCommands(program: Command) {
     .description("Start the server")
     .action(
       actionWithErrorHandler(async () => {
-        await startServer();
+        await startServer({ port: env.REGISTRY_PORT });
       }),
     );
 }

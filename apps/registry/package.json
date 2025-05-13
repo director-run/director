@@ -21,6 +21,7 @@
     "@types/bun": "latest",
     "@types/pg": "^8.11.14",
     "@director.run/registry-client": "workspace:*",
+    "@director.run/utilities": "workspace:*",
     "drizzle-kit": "^0.31.1",
     "typescript": "^5.8.2",
     "vitest": "^3.1.1",

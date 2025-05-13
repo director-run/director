@@ -6,8 +6,9 @@ export function createEnv(params: {
   envFilePath?: string;
   envVars: Record<string, z.ZodType>;
 }) {
-  dotenv.config({ path: params.envFilePath });
-
+  if (params.envFilePath) {
+    dotenv.config({ path: params.envFilePath });
+  }
   return t3createEnv({
     server: params.envVars,
     runtimeEnv: process.env,

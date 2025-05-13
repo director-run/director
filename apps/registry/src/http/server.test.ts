@@ -1,12 +1,12 @@
-import { env } from "@director.run/config/env";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { env } from "../config";
 import { db } from "../db";
 import { entriesTable } from "../db/schema";
 import { createTestEntries } from "../test/fixtures/entries";
 import { startServer } from "./server";
 
 describe("HTTP Server", () => {
-  const baseUrl = `http://localhost:${env.SERVER_PORT}/api/v1`;
+  const baseUrl = `http://localhost:${env.REGISTRY_PORT}/api/v1`;
   const TOTAL_ENTRIES = 20;
   const ENTRIES_PER_PAGE = 5;
 
@@ -20,7 +20,7 @@ describe("HTTP Server", () => {
     await db.insert(entriesTable).values(entries);
 
     // Start server
-    await startServer();
+    await startServer({ port: env.REGISTRY_PORT });
   });
 
   afterAll(async () => {
@@ -30,6 +30,7 @@ describe("HTTP Server", () => {
 
   it("should handle pagination correctly", async () => {
     // Test first page
+    console.log(`${baseUrl}/entries?page=1&limit=${ENTRIES_PER_PAGE}`);
     const response1 = await fetch(
       `${baseUrl}/entries?page=1&limit=${ENTRIES_PER_PAGE}`,
     );

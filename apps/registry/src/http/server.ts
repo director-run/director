@@ -1,4 +1,3 @@
-import { env } from "@director.run/config/env";
 import { getLogger } from "@director.run/utilities/logger";
 import {
   asyncHandler,
@@ -21,7 +20,7 @@ const paginationSchema = z.object({
 
 let server: ReturnType<express.Application["listen"]> | null = null;
 
-export function startServer() {
+export function startServer(params: { port: number }) {
   const app = express();
 
   // Enable CORS
@@ -74,10 +73,8 @@ export function startServer() {
   app.use(errorRequestHandler);
 
   // Start the server
-  server = app.listen(env.SERVER_PORT, () => {
-    logger.info(
-      `Registry server running at http://localhost:${env.SERVER_PORT}`,
-    );
+  server = app.listen(params.port, () => {
+    logger.info(`Registry server running at http://localhost:${params.port}`);
   });
 
   // Handle graceful shutdown

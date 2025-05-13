@@ -19,9 +19,9 @@
       "devDependencies": {
         "@director.run/config": "workspace:*",
         "@director.run/db": "workspace:*",
+        "@director.run/gateway": "workspace:*",
         "@director.run/mcp": "workspace:*",
         "@director.run/registry-client": "workspace:*",
-        "@director.run/service": "workspace:*",
         "@director.run/utilities": "workspace:*",
         "chalk": "^5.4.1",
         "cli-table3": "^0.6.5",
@@ -78,42 +78,8 @@
         "vitest": "^3.1.1",
       },
     },
-    "packages/installer": {
-      "name": "@director.run/installer",
-      "version": "0.0.1",
-      "dependencies": {
-        "@director.run/mcp": "workspace:*",
-      },
-      "devDependencies": {
-        "@types/bun": "latest",
-        "type-fest": "^4.40.0",
-        "typescript": "^5.8.2",
-        "vitest": "^3.1.1",
-      },
-    },
-    "packages/mcp": {
-      "name": "@director.run/mcp",
-      "version": "0.0.1",
-      "devDependencies": {
-        "@types/bun": "latest",
-        "type-fest": "^4.40.0",
-        "typescript": "^5.8.2",
-        "vitest": "^3.1.1",
-      },
-    },
-    "packages/registry-client": {
-      "name": "@director.run/registry-client",
-      "version": "0.0.1",
-      "dependencies": {
-        "zod": "^3.23.8",
-      },
-      "devDependencies": {
-        "@types/bun": "latest",
-        "vitest": "^3.1.1",
-      },
-    },
-    "packages/service": {
-      "name": "@director.run/service",
+    "packages/gateway": {
+      "name": "@director.run/gateway",
       "version": "0.0.1",
       "dependencies": {
         "@director.run/config": "workspace:*",
@@ -147,6 +113,40 @@
       },
       "peerDependencies": {
         "typescript": "^5",
+      },
+    },
+    "packages/installer": {
+      "name": "@director.run/installer",
+      "version": "0.0.1",
+      "dependencies": {
+        "@director.run/mcp": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
+        "type-fest": "^4.40.0",
+        "typescript": "^5.8.2",
+        "vitest": "^3.1.1",
+      },
+    },
+    "packages/mcp": {
+      "name": "@director.run/mcp",
+      "version": "0.0.1",
+      "devDependencies": {
+        "@types/bun": "latest",
+        "type-fest": "^4.40.0",
+        "typescript": "^5.8.2",
+        "vitest": "^3.1.1",
+      },
+    },
+    "packages/registry-client": {
+      "name": "@director.run/registry-client",
+      "version": "0.0.1",
+      "dependencies": {
+        "zod": "^3.23.8",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
+        "vitest": "^3.1.1",
       },
     },
     "packages/utilities": {
@@ -190,6 +190,8 @@
 
     "@director.run/db": ["@director.run/db@workspace:packages/db"],
 
+    "@director.run/gateway": ["@director.run/gateway@workspace:packages/gateway"],
+
     "@director.run/installer": ["@director.run/installer@workspace:packages/installer"],
 
     "@director.run/mcp": ["@director.run/mcp@workspace:packages/mcp"],
@@ -197,8 +199,6 @@
     "@director.run/registry": ["@director.run/registry@workspace:apps/registry"],
 
     "@director.run/registry-client": ["@director.run/registry-client@workspace:packages/registry-client"],
-
-    "@director.run/service": ["@director.run/service@workspace:packages/service"],
 
     "@director.run/utilities": ["@director.run/utilities@workspace:packages/utilities"],
 

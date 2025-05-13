@@ -1,5 +1,5 @@
 import { env } from "@director.run/config/env";
-import { startService } from "@director.run/service/server";
+import { startService } from "@director.run/gateway/server";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { Command } from "commander";
 

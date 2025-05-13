@@ -1,5 +1,5 @@
+import { trpc } from "@director.run/gateway/trpc/client";
 import { proxySSEToStdio } from "@director.run/mcp/transport";
-import { trpc } from "@director.run/service/trpc/client";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { makeTable } from "@director.run/utilities/cli";
 import { Command } from "commander";

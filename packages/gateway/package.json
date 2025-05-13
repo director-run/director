@@ -1,5 +1,5 @@
 {
-  "name": "@director.run/service",
+  "name": "@director.run/gateway",
   "type": "module",
   "version": "0.0.1",
   "scripts": {

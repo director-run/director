@@ -1,4 +1,4 @@
-import { trpc } from "@director.run/service/trpc/client";
+import { trpc } from "@director.run/gateway/trpc/client";
 import { Command } from "commander";
 
 import { actionWithErrorHandler } from "@director.run/utilities/cli";

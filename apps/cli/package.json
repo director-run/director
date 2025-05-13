@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "type-fest": "^4.40.0",
-    "@director.run/service": "workspace:*",
+    "@director.run/gateway": "workspace:*",
     "@director.run/config": "workspace:*",
     "@director.run/db": "workspace:*",
     "@director.run/mcp": "workspace:*",

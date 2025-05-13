@@ -1,8 +1,8 @@
+import { db } from "@director.run/db/index";
+import type { ProxyTargetAttributes } from "@director.run/db/schema";
+import { ProxyServer } from "@director.run/mcp/proxy-server";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
-import { db } from "../../../../db/src";
-import type { ProxyTargetAttributes } from "../../../../db/src/schema";
-import { ProxyServer } from "../../../../mcp/src/proxy-server";
 
 import { fetchEntry } from "@director.run/registry-client/client";
 

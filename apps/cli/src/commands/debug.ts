@@ -1,4 +1,4 @@
-import { seed } from "@director.run/db/seed";
+import { seed } from "@director.run/gateway/db/seed";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { Command } from "commander";
 

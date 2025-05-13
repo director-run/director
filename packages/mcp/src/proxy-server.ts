@@ -2,7 +2,7 @@ import { env } from "@director.run/config/env";
 import type {
   ProxyAttributes,
   ProxyTargetAttributes,
-} from "@director.run/db/schema";
+} from "@director.run/gateway/db/schema";
 import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";

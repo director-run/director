@@ -14,13 +14,13 @@ import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import * as eventsource from "eventsource";
 import express from "express";
-import { createControllerServer } from "./create-controller-server";
+import { z } from "zod";
 import { setupPromptHandlers } from "./handlers/prompts-handler";
 import { setupResourceTemplateHandlers } from "./handlers/resource-templates-handler";
 import { setupResourceHandlers } from "./handlers/resources-handler";
 import { setupToolHandlers } from "./handlers/tools-handler";
 import { SimpleClient } from "./simple-client";
-// import { createControllerServer } from "./create-controller-server";
+import { SimpleServer } from "./simple-server";
 
 global.EventSource = eventsource.EventSource;
 
@@ -187,4 +187,26 @@ function getTransport(targetServer: ProxyTargetAttributes): Transport {
     default:
       throw new Error(`Transport ${targetServer.name} not available.`);
   }
+}
+
+function createControllerServer({ proxy }: { proxy: ProxyServer }) {
+  const server = new SimpleServer(`${proxy.id}-controller`);
+  server
+    .tool("list_targets")
+    .schema(z.object({}))
+    .description("List proxy targets")
+    .handle(({}) => {
+      return Promise.resolve({
+        status: "success",
+        data: [
+          {
+            name: "test",
+            description: "test",
+            url: "https://github.com/test",
+          },
+        ],
+      });
+    });
+
+  return server;
 }

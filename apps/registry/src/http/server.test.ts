@@ -29,8 +29,6 @@ describe("HTTP Server", () => {
   });
 
   it("should handle pagination correctly", async () => {
-    // Test first page
-    console.log(`${baseUrl}/entries?page=1&limit=${ENTRIES_PER_PAGE}`);
     const response1 = await fetch(
       `${baseUrl}/entries?page=1&limit=${ENTRIES_PER_PAGE}`,
     );

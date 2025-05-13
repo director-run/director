@@ -1,3 +1,4 @@
+import path from "node:path";
 import { startService } from "@director.run/gateway/server";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { Command } from "commander";
@@ -22,8 +23,10 @@ export function registerServiceCommands(program: Command) {
     .action(
       actionWithErrorHandler(async () => {
         printDirectorAscii();
+
         await startService({
           port: env.GATEWAY_PORT,
+          databaseFilePath: path.join(__dirname, "db.json"),
         });
       }),
     );

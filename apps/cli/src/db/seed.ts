@@ -1,5 +1,5 @@
 import { getLogger } from "@director.run/utilities/logger";
-import { db } from ".";
+import { db } from "./";
 
 const logger = getLogger("config/seed");
 

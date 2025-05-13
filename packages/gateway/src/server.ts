@@ -6,6 +6,7 @@ import {
 import * as trpcExpress from "@trpc/server/adapters/express";
 import cors from "cors";
 import express from "express";
+import { Database } from "./db";
 import { ProxyServerStore } from "./services/proxy/proxy-server-store";
 import { createAppRouter } from "./trpc/routers/_app-router";
 
@@ -14,11 +15,16 @@ const logger = getLogger("startService");
 export const startService = async (attribs: {
   proxyStore?: ProxyServerStore;
   port: number;
+  databaseFilePath: string;
 }) => {
   logger.info(`starting director...`);
 
   const app = express();
-  const proxyStore = attribs?.proxyStore ?? (await ProxyServerStore.create());
+  const proxyStore =
+    attribs?.proxyStore ??
+    (await ProxyServerStore.create(
+      await Database.connect(attribs.databaseFilePath),
+    ));
 
   app.use(cors());
 

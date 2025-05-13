@@ -1,5 +1,4 @@
 import { existsSync } from "node:fs";
-import { env } from "@director.run/config/env";
 import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
 import slugify from "slugify";
 import {
@@ -17,14 +16,14 @@ async function writeDB(filePath: string, data: DatabaseSchema): Promise<void> {
   return await writeJSONFile(filePath, data);
 }
 
-class Database {
+export class Database {
   public readonly filePath: string;
 
-  constructor(filePath: string) {
+  private constructor(filePath: string) {
     this.filePath = filePath;
   }
 
-  static async connect(filePath: string = env.DB_FILE_PATH): Promise<Database> {
+  static async connect(filePath: string): Promise<Database> {
     const db = new Database(filePath);
 
     if (!existsSync(filePath)) {
@@ -117,5 +116,3 @@ class Database {
     });
   }
 }
-
-export const db = await Database.connect();

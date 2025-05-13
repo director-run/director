@@ -1,6 +1,8 @@
 import { ProxyServerStore } from "../services/proxy/proxy-server-store";
 import { startService } from "../server";
 import { createGatewayClient } from "../trpc/client";
+import { Database } from "../db";
+import path from "node:path";
 
 export type IntegrationTestVariables = {
   trpcClient: ReturnType<typeof createGatewayClient>;
@@ -11,9 +13,15 @@ export type IntegrationTestVariables = {
 
 export const setupIntegrationTest =
   async (): Promise<IntegrationTestVariables> => {
-    const proxyStore = await ProxyServerStore.create();
+    const proxyStore = await ProxyServerStore.create(
+      await Database.connect(path.join(__dirname, "db.test.json")),
+    );
     const port = 3673;
-    const directorService = await startService({ proxyStore, port });
+    const directorService = await startService({
+      proxyStore,
+      port,
+      databaseFilePath: path.join(__dirname, "db.test.json"),
+    });
 
     const close = async () => {
       await proxyStore.purge();

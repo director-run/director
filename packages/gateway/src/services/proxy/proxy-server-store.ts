@@ -1,21 +1,25 @@
 import { ProxyServer } from "@director.run/mcp/proxy-server";
+import { fetchEntry } from "@director.run/registry-client/client";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
-import { db } from "../../db/index";
+import type { Database } from "../../db";
 import type { ProxyTargetAttributes } from "../../db/schema";
-
-import { fetchEntry } from "@director.run/registry-client/client";
 
 const logger = getLogger("ProxyServerStore");
 
 export class ProxyServerStore {
   private proxyServers: Map<string, ProxyServer> = new Map();
+  private db: Database;
 
-  private constructor() {}
+  private constructor(params: { db: Database }) {
+    this.db = params.db;
+  }
 
-  public static async create(): Promise<ProxyServerStore> {
+  public static async create(db: Database): Promise<ProxyServerStore> {
     logger.info("Creating and initializing ProxyServerStore...");
-    const store = new ProxyServerStore();
+    const store = new ProxyServerStore({
+      db,
+    });
     await store.initialize();
     logger.info("ProxyServerStore initialization complete.");
     return store;
@@ -23,7 +27,7 @@ export class ProxyServerStore {
 
   private async initialize(): Promise<void> {
     logger.info("Fetching proxy configurations...");
-    let proxies = await db.getAll();
+    let proxies = await this.db.getAll();
 
     for (const proxyConfig of proxies) {
       const proxyId = proxyConfig.id;
@@ -54,14 +58,14 @@ export class ProxyServerStore {
   async delete(proxyId: string) {
     const proxy = this.get(proxyId);
     await proxy.close();
-    await db.deleteProxy(proxyId);
+    await this.db.deleteProxy(proxyId);
     this.proxyServers.delete(proxyId);
     logger.info(`successfully deleted proxy server configuration: ${proxyId}`);
   }
 
   async purge() {
     await this.closeAll();
-    await db.purge();
+    await this.db.purge();
     this.proxyServers.clear();
   }
 
@@ -86,7 +90,7 @@ export class ProxyServerStore {
     description?: string;
     servers?: ProxyTargetAttributes[];
   }): Promise<ProxyServer> {
-    const newProxy = await db.addProxy({
+    const newProxy = await this.db.addProxy({
       name,
       description,
       servers: servers ?? [],
@@ -167,7 +171,7 @@ export class ProxyServerStore {
   ) {
     const proxy = this.get(proxyId);
     await proxy.close();
-    const updatedProxyEntry = await db.updateProxy(proxyId, attributes);
+    const updatedProxyEntry = await this.db.updateProxy(proxyId, attributes);
     const updatedProxy = new ProxyServer({
       id: proxyId,
       name: updatedProxyEntry.name,

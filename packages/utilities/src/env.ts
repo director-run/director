@@ -1,3 +1,19 @@
+import { createEnv as t3createEnv } from "@t3-oss/env-core";
+import dotenv from "dotenv";
+import { z } from "zod";
+
+export function createEnv(params: {
+  envFilePath?: string;
+  schema: z.ZodSchema;
+}) {
+  dotenv.config({ path: params.envFilePath });
+
+  return t3createEnv({
+    server: params.schema,
+    runtimeEnv: process.env,
+  });
+}
+
 export function isDevelopment() {
   return process.env.NODE_ENV === "development";
 }

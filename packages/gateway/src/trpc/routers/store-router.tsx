@@ -2,7 +2,7 @@ import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
 import { z } from "zod";
 import { proxySchema } from "../../db/schema";
-import { getProxyServerUrl } from "../../helpers";
+import { getPathForProxy } from "../../helpers";
 import { ProxyServerStore } from "../../proxy-server-store";
 import { t } from "../server";
 export function createProxyStoreRouter({
@@ -13,7 +13,7 @@ export function createProxyStoreRouter({
       try {
         return (await proxyStore.getAll()).map((proxy) => ({
           ...proxy.toPlainObject(),
-          url: getProxyServerUrl(proxy.id),
+          url: getPathForProxy(proxy.id),
         }));
       } catch (error) {
         console.error(error);
@@ -26,7 +26,7 @@ export function createProxyStoreRouter({
         try {
           return {
             ...proxyStore.get(input.proxyId).toPlainObject(),
-            url: getProxyServerUrl(input.proxyId),
+            url: getPathForProxy(input.proxyId),
           };
         } catch (e) {
           if (e instanceof AppError && e.code === ErrorCode.NOT_FOUND) {

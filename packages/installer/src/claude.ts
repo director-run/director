@@ -1,6 +1,6 @@
 import os from "node:os";
 import path from "node:path";
-import { getProxyServerUrl } from "@director.run/gateway/helpers";
+import { getPathForProxy } from "@director.run/gateway/helpers";
 import type { ProxyServer } from "@director.run/mcp/proxy-server";
 import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
 import { getLogger } from "@director.run/utilities/logger";
@@ -47,7 +47,7 @@ export const installToClaude = async ({
 }) => {
   await addMCPServerToClaude({
     key: `${CLAUDE_CONFIG_KEY_PREFIX}__${proxyServer.id}`,
-    value: sse2stdioConfigValue(getProxyServerUrl(proxyServer.id)),
+    value: sse2stdioConfigValue(getPathForProxy(proxyServer.id)),
   });
 };
 

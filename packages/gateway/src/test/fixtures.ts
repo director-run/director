@@ -7,7 +7,6 @@ import path from "node:path";
 export type IntegrationTestVariables = {
   trpcClient: ReturnType<typeof createGatewayClient>;
   close: () => Promise<void>;
-  proxyStore: ProxyServerStore;
   port: number;
 };
 
@@ -33,7 +32,6 @@ export const setupIntegrationTest =
     return {
       trpcClient: createGatewayClient(`http://localhost:${port}/trpc`),
       close,
-      proxyStore,
       port,
     };
   };

@@ -48,18 +48,11 @@ describe("SSE Router", () => {
   });
 
   test("should return 404 when proxy not found", async () => {
-    await expect(
-      fetch(`http://localhost:${env.SERVER_PORT}/not_existing_proxy/sse`).then(
-        (res) => {
-          if (!res.ok) {
-            throw { code: res.status };
-          }
-          return res;
-        },
-      ),
-    ).rejects.toMatchObject({
-      code: 404,
-    });
+    const res = await fetch(
+      `http://localhost:${env.SERVER_PORT}/not_existing_proxy/sse`,
+    );
+    expect(res.status).toEqual(404);
+    expect(res.ok).toBeFalsy();
   });
 
   test("should connect and list tools", async () => {

@@ -4,11 +4,10 @@ import { SimpleClient } from "@director.run/mcp/simple-client";
 import { makeEchoServer } from "@director.run/mcp/test/fixtures";
 import { serveOverSSE } from "@director.run/mcp/transport";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-describe("proxySSEToStdio", () => {
+
+describe("sse2stdio <sse_url>", () => {
   let client: Client;
-  let transport: StdioClientTransport;
   let proxyTargetServerInstance: Server;
 
   beforeAll(async () => {
@@ -17,7 +16,7 @@ describe("proxySSEToStdio", () => {
     client = await SimpleClient.createAndConnectToStdio(
       "bun",
       [
-        path.join(__dirname, "../bin/cli"),
+        path.join(__dirname, "../../bin/cli"),
         "sse2stdio",
         "http://localhost:4522/sse",
       ],
@@ -34,7 +33,7 @@ describe("proxySSEToStdio", () => {
     await proxyTargetServerInstance?.close();
   });
 
-  test("should connect and list tools", async () => {
+  test("should proxy an SSE server to stdio", async () => {
     const toolsResult = await client.listTools();
 
     const expectedToolNames = ["echo"];

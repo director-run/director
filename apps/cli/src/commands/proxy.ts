@@ -1,8 +1,8 @@
+import { proxySSEToStdio } from "@director.run/mcp/transport";
 import { trpc } from "@director.run/service/trpc/client";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { makeTable } from "@director.run/utilities/cli";
 import { Command } from "commander";
-import { proxySSEToStdio } from "../proxy-sse-to-stdio";
 
 export function registerProxyCommands(program: Command) {
   program

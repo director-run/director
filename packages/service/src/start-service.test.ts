@@ -1,11 +1,11 @@
 import type { Server } from "node:http";
 import { env } from "@director.run/config/env";
+import { makeEchoServer } from "@director.run/mcp/test/fixtures";
+import { serveOverSSE } from "@director.run/mcp/transport";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { z } from "zod";
 import {
   type IntegrationTestVariables,
   TestMCPClient,
-  createMCPServer,
   fetchProxy,
   hackerNewsProxy,
   setupIntegrationTest,
@@ -17,12 +17,7 @@ describe("SSE Router", () => {
   let testVariables: IntegrationTestVariables;
 
   beforeAll(async () => {
-    proxyTargetServerInstance = await createMCPServer(4521, (server) => {
-      server.tool("echo", { message: z.string() }, async ({ message }) => ({
-        content: [{ type: "text", text: `Tool echo: ${message}` }],
-      }));
-    });
-
+    proxyTargetServerInstance = await serveOverSSE(makeEchoServer(), 4521);
     testVariables = await setupIntegrationTest();
   });
 

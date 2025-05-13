@@ -3,7 +3,7 @@ import pino, { type Logger } from "pino";
 import pinoPretty from "pino-pretty";
 import { isAppError } from "./error";
 
-const LOG_LEVEL = "trace";
+const LOG_LEVEL = process.env.LOG_LEVEL || "trace";
 const LOG_PRETTY = true;
 const LOG_ERROR_STACK = true;
 

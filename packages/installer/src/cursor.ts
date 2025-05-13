@@ -1,5 +1,6 @@
 import os from "node:os";
 import path from "node:path";
+import { getProxyServerUrl } from "@director.run/gateway/helpers";
 import type { ProxyServer } from "@director.run/mcp/proxy-server";
 import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
 import { getLogger } from "@director.run/utilities/logger";
@@ -31,7 +32,7 @@ export const installToCursor = async ({
     mcpServers: {
       ...(config.mcpServers ?? {}),
       [`${CURSOR_CONFIG_KEY_PREFIX}__${proxyServer.id}`]: {
-        url: proxyServer.sseUrl,
+        url: getProxyServerUrl(proxyServer.id),
       },
     },
   };

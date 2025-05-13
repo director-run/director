@@ -1,8 +1,6 @@
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
-import { SimpleServer } from "./simple-server";
+import { SimpleServer, createInMemoryClient } from "./simple-server";
 
 describe("SimpleServer", () => {
   test("should create a server with a tool", async () => {
@@ -30,29 +28,9 @@ describe("SimpleServer", () => {
       })
       .build();
 
-    const [clientTransport, serverTransport] =
-      InMemoryTransport.createLinkedPair();
-
-    const client = new Client(
-      {
-        name: "test client",
-        version: "1.0",
-      },
-      {
-        capabilities: {
-          sampling: {},
-        },
-        enforceStrictCapabilities: true,
-      },
-    );
-
-    await Promise.all([
-      client.connect(clientTransport),
-      server.getServer().connect(serverTransport),
-    ]);
-
-    // Test listing tools
+    const client = await createInMemoryClient(server.getServer());
     const tools = await client.listTools();
+
     expect(tools.tools).toHaveLength(1);
     expect(tools.tools[0].name).toBe("test_tool");
     expect(tools.tools[0].description).toBe("A test tool");
@@ -93,26 +71,7 @@ describe("SimpleServer", () => {
       })
       .build();
 
-    const [clientTransport, serverTransport] =
-      InMemoryTransport.createLinkedPair();
-
-    const client = new Client(
-      {
-        name: "test client",
-        version: "1.0",
-      },
-      {
-        capabilities: {
-          sampling: {},
-        },
-        enforceStrictCapabilities: true,
-      },
-    );
-
-    await Promise.all([
-      client.connect(clientTransport),
-      server.getServer().connect(serverTransport),
-    ]);
+    const client = await createInMemoryClient(server.getServer());
 
     // Test invalid input
     await expect(
@@ -128,27 +87,7 @@ describe("SimpleServer", () => {
 
   test("should handle unknown tools", async () => {
     const server = new SimpleServer();
-
-    const [clientTransport, serverTransport] =
-      InMemoryTransport.createLinkedPair();
-
-    const client = new Client(
-      {
-        name: "test client",
-        version: "1.0",
-      },
-      {
-        capabilities: {
-          sampling: {},
-        },
-        enforceStrictCapabilities: true,
-      },
-    );
-
-    await Promise.all([
-      client.connect(clientTransport),
-      server.getServer().connect(serverTransport),
-    ]);
+    const client = await createInMemoryClient(server.getServer());
 
     // Test calling non-existent tool
     await expect(

@@ -18,7 +18,7 @@ async function writeDB(filePath: string, data: DatabaseSchema): Promise<void> {
 }
 
 class Database {
-  private filePath: string;
+  public readonly filePath: string;
 
   constructor(filePath: string) {
     this.filePath = filePath;

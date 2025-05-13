@@ -1,4 +1,3 @@
-import { env } from "@director.run/config/env";
 import { getLogger } from "@director.run/utilities/logger";
 import {
   asyncHandler,
@@ -14,6 +13,7 @@ const logger = getLogger("startService");
 
 export const startService = async (attribs?: {
   proxyStore?: ProxyServerStore;
+  port: number;
 }) => {
   logger.info(`starting director...`);
 
@@ -49,8 +49,10 @@ export const startService = async (attribs?: {
 
   app.use(errorRequestHandler);
 
-  const expressServer = app.listen(env.SERVER_PORT, () => {
-    logger.info(`director running at http://localhost:${env.SERVER_PORT}`);
+  const expressServer = app.listen(attribs?.port, () => {
+    logger.info(
+      `director gateway running at http://localhost:${attribs?.port}`,
+    );
   });
 
   process.on("SIGINT", async () => {

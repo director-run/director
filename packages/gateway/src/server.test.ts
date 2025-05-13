@@ -1,22 +1,31 @@
 import type { Server } from "node:http";
-import { env } from "@director.run/config/env";
 import { SimpleClient } from "@director.run/mcp/simple-client";
 import { makeEchoServer } from "@director.run/mcp/test/fixtures";
 import { serveOverSSE } from "@director.run/mcp/transport";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import {
   type IntegrationTestVariables,
-  makeEchoServerSSEConfig,
   makeFooBarServerStdioConfig,
+  makeSSETargetConfig,
   setupIntegrationTest,
 } from "./test/fixtures";
+
+const PROXY_TARGET_PORT = 4521;
+
+const echoServerSSEConfig = makeSSETargetConfig({
+  name: "echo",
+  url: `http://localhost:${PROXY_TARGET_PORT}/sse`,
+});
 
 describe("SSE Router", () => {
   let proxyTargetServerInstance: Server;
   let testVariables: IntegrationTestVariables;
 
   beforeAll(async () => {
-    proxyTargetServerInstance = await serveOverSSE(makeEchoServer(), 4521);
+    proxyTargetServerInstance = await serveOverSSE(
+      makeEchoServer(),
+      PROXY_TARGET_PORT,
+    );
     testVariables = await setupIntegrationTest();
   });
 
@@ -27,7 +36,7 @@ describe("SSE Router", () => {
 
   test("should return 404 when proxy not found", async () => {
     const res = await fetch(
-      `http://localhost:${env.SERVER_PORT}/not_existing_proxy/sse`,
+      `http://localhost:${testVariables.port}/not_existing_proxy/sse`,
     );
     expect(res.status).toEqual(404);
     expect(res.ok).toBeFalsy();
@@ -38,11 +47,11 @@ describe("SSE Router", () => {
 
     const testProxy = await testVariables.proxyStore.create({
       name: "Test Proxy",
-      servers: [makeFooBarServerStdioConfig(), makeEchoServerSSEConfig()],
+      servers: [makeFooBarServerStdioConfig(), echoServerSSEConfig],
     });
 
     const client = await SimpleClient.createAndConnectToSSE(
-      `http://localhost:${env.SERVER_PORT}/${testProxy.id}/sse`,
+      `http://localhost:${testVariables.port}/${testProxy.id}/sse`,
     );
 
     const toolsResult = await client.listTools();
@@ -72,7 +81,7 @@ describe("SSE Router", () => {
     });
 
     const client = await SimpleClient.createAndConnectToSSE(
-      `http://localhost:${env.SERVER_PORT}/${testProxy.id}/sse`,
+      `http://localhost:${testVariables.port}/${testProxy.id}/sse`,
     );
 
     const toolsResult = await client.listTools();
@@ -82,11 +91,11 @@ describe("SSE Router", () => {
 
     await testVariables.trpcClient.store.addServer.mutate({
       proxyId: testProxy.id,
-      server: makeEchoServerSSEConfig(),
+      server: echoServerSSEConfig,
     });
 
     const client2 = await SimpleClient.createAndConnectToSSE(
-      `http://localhost:${env.SERVER_PORT}/${testProxy.id}/sse`,
+      `http://localhost:${testVariables.port}/${testProxy.id}/sse`,
     );
 
     const toolsResult2 = await client2.listTools();
@@ -98,11 +107,11 @@ describe("SSE Router", () => {
     await testVariables.proxyStore.purge();
     const testProxy = await testVariables.trpcClient.store.create.mutate({
       name: "Test Proxy",
-      servers: [makeEchoServerSSEConfig(), makeFooBarServerStdioConfig()],
+      servers: [echoServerSSEConfig, makeFooBarServerStdioConfig()],
     });
 
     const client = await SimpleClient.createAndConnectToSSE(
-      `http://localhost:${env.SERVER_PORT}/${testProxy.id}/sse`,
+      `http://localhost:${testVariables.port}/${testProxy.id}/sse`,
     );
     const toolsResult = await client.listTools();
 
@@ -115,7 +124,7 @@ describe("SSE Router", () => {
     });
 
     const client2 = await SimpleClient.createAndConnectToSSE(
-      `http://localhost:${env.SERVER_PORT}/${testProxy.id}/sse`,
+      `http://localhost:${testVariables.port}/${testProxy.id}/sse`,
     );
     const toolsResult2 = await client2.listTools();
 

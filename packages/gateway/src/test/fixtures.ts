@@ -1,17 +1,19 @@
 import { ProxyServerStore } from "../services/proxy/proxy-server-store";
 import { startService } from "../server";
-import { trpc } from "../trpc/client";
+import { createGatewayClient } from "../trpc/client";
 
 export type IntegrationTestVariables = {
-  trpcClient: typeof trpc;
+  trpcClient: ReturnType<typeof createGatewayClient>;
   close: () => Promise<void>;
   proxyStore: ProxyServerStore;
+  port: number;
 };
 
 export const setupIntegrationTest =
   async (): Promise<IntegrationTestVariables> => {
     const proxyStore = await ProxyServerStore.create();
-    const directorService = await startService({ proxyStore });
+    const port = 3673;
+    const directorService = await startService({ proxyStore, port });
 
     const close = async () => {
       await proxyStore.purge();
@@ -20,7 +22,12 @@ export const setupIntegrationTest =
       });
     };
 
-    return { trpcClient: trpc, close, proxyStore };
+    return {
+      trpcClient: createGatewayClient(`http://localhost:${port}/trpc`),
+      close,
+      proxyStore,
+      port,
+    };
   };
 
 export const makeSSETargetConfig = (params: { name: string; url: string }) => ({
@@ -59,9 +66,3 @@ export function makeFooBarServerStdioConfig() {
   });
 }
 
-export function makeEchoServerSSEConfig() {
-  return makeSSETargetConfig({
-    name: "echo",
-    url: `http://localhost:4521/sse`,
-  });
-}

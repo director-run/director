@@ -106,10 +106,23 @@ export const fetchProxy = () => ({
   },
 });
 
-export const sseProxy = (url: string) => ({
-  name: "SSE",
+export const sseProxy = (params: { name: string; url: string }) => ({
+  name: params.name,
   transport: {
     type: "sse" as const,
-    url,
+    url: params.url,
+  },
+});
+
+export const stdioProxy = (params: {
+  name: string;
+  command: string;
+  args: string[];
+}) => ({
+  name: params.name,
+  transport: {
+    type: "stdio" as const,
+    command: params.command,
+    args: params.args,
   },
 });

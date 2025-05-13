@@ -1,4 +1,5 @@
 import type { Server } from "node:http";
+import path from "node:path";
 import { env } from "@director.run/config/env";
 import { makeEchoServer } from "@director.run/mcp/test/fixtures";
 import { serveOverSSE } from "@director.run/mcp/transport";
@@ -10,7 +11,26 @@ import {
   hackerNewsProxy,
   setupIntegrationTest,
   sseProxy,
+  stdioProxy,
 } from "./helpers/test-helpers";
+
+function makeFooServer() {
+  const basePath = __dirname;
+  return {
+    command: "bun",
+    args: [
+      "-e",
+
+      `
+      import { makeEchoServer } from "@director.run/mcp/test/fixtures";
+      import { serveOverStdio } from "@director.run/mcp/transport";
+//        import { makeEchoServer } from '${path.join(basePath, "test/fixtures.ts")}'; 
+//        import { serveOverStdio } from '${path.join(basePath, "transport.ts")}'; 
+        serveOverStdio(makeEchoServer());
+    `,
+    ],
+  };
+}
 
 describe("SSE Router", () => {
   let proxyTargetServerInstance: Server;
@@ -42,9 +62,20 @@ describe("SSE Router", () => {
     const testProxy = await testVariables.proxyStore.create({
       name: "Test Proxy",
       servers: [
-        hackerNewsProxy(),
-        fetchProxy(),
-        sseProxy("http://localhost:4521/sse"),
+        stdioProxy({
+          name: "Hackernews",
+          command: "uvx",
+          args: ["--from", "git+https://github.com/erithwik/mcp-hn", "mcp-hn"],
+        }),
+        stdioProxy({
+          name: "Fetch",
+          command: "uvx",
+          args: ["mcp-server-fetch"],
+        }),
+        sseProxy({
+          name: "SSE",
+          url: `http://localhost:4521/sse`,
+        }),
       ],
     });
 

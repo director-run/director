@@ -1,9 +1,9 @@
 import { createGatewayClient } from "@director.run/gateway/trpc/client";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { Command } from "commander";
-import { GATEWAY_URL } from "../config";
+import { env } from "../config";
 
-const trpc = createGatewayClient(GATEWAY_URL);
+const trpc = createGatewayClient(env.GATEWAY_URL);
 
 export function registerClientCommands(program: Command) {
   program

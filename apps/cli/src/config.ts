@@ -1,2 +1,31 @@
-export const GATEWAY_PORT = 3673;
-export const GATEWAY_URL = `http://localhost:${3673}/trpc`;
+import os from "node:os";
+import path from "node:path";
+import { createEnv, isProduction } from "@director.run/utilities/env";
+import { z } from "zod";
+
+export const env = createEnv({
+  envFilePath: path.join(getDataDir(), "./config.env"),
+  envVars: {
+    GATEWAY_PORT: z.number({ coerce: true }).optional().default(3673),
+    GATEWAY_URL: z.string().optional().default(`http://localhost:${3673}/trpc`),
+    DATA_DIR: z.string().optional().default(getDataDir()),
+    DB_FILE_PATH: z
+      .string()
+      .optional()
+      .default(path.join(getDataDir(), "db.json")),
+    // LOG_PRETTY: z.boolean().optional().default(true),
+    // LOG_LEVEL: z.string().optional().default("trace"),
+    // LOG_ERROR_STACK: z.boolean().optional().default(true),
+  },
+});
+
+function getDataDir() {
+  if (isProduction()) {
+    return path.join(os.homedir(), `.director`);
+  } else {
+    return path.join(
+      __dirname,
+      `../../../.director/${process.env.NODE_ENV || "development"}`,
+    );
+  }
+}

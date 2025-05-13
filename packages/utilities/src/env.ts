@@ -4,12 +4,12 @@ import { z } from "zod";
 
 export function createEnv(params: {
   envFilePath?: string;
-  schema: z.ZodSchema;
+  envVars: Record<string, z.ZodType>;
 }) {
   dotenv.config({ path: params.envFilePath });
 
   return t3createEnv({
-    server: params.schema,
+    server: params.envVars,
     runtimeEnv: process.env,
   });
 }

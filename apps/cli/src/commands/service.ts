@@ -1,8 +1,7 @@
-import { env } from "@director.run/config/env";
 import { startService } from "@director.run/gateway/server";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { Command } from "commander";
-import { GATEWAY_PORT } from "../config";
+import { env } from "../config";
 
 function printDirectorAscii(): void {
   console.log(`
@@ -24,7 +23,7 @@ export function registerServiceCommands(program: Command) {
       actionWithErrorHandler(async () => {
         printDirectorAscii();
         await startService({
-          port: GATEWAY_PORT,
+          port: env.GATEWAY_PORT,
         });
       }),
     );

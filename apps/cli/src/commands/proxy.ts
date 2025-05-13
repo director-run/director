@@ -3,9 +3,9 @@ import { proxySSEToStdio } from "@director.run/mcp/transport";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { makeTable } from "@director.run/utilities/cli";
 import { Command } from "commander";
-import { GATEWAY_URL } from "../config";
+import { env } from "../config";
 
-const client = createGatewayClient(GATEWAY_URL);
+const client = createGatewayClient(env.GATEWAY_URL);
 
 export function registerProxyCommands(program: Command) {
   program

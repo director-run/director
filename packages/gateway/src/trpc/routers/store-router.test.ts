@@ -16,11 +16,11 @@ describe("Store Router", () => {
   });
 
   it("should get all proxies", async () => {
-    await testVariables.proxyStore.purge();
-    await testVariables.proxyStore.create({
+    await testVariables.trpcClient.debug?.purge.mutate();
+    await testVariables.trpcClient.store.create.mutate({
       name: "Test proxy",
     });
-    await testVariables.proxyStore.create({
+    await testVariables.trpcClient.store.create.mutate({
       name: "Test proxy 2",
     });
     const proxies = await testVariables.trpcClient.store.getAll.query();
@@ -31,8 +31,8 @@ describe("Store Router", () => {
   });
 
   it("should create a new proxy", async () => {
-    await testVariables.proxyStore.purge();
-    await testVariables.proxyStore.create({
+    await testVariables.trpcClient.debug?.purge.mutate();
+    await testVariables.trpcClient.store.create.mutate({
       name: "Test proxy",
     });
     const proxy = await testVariables.trpcClient.store.get.query({
@@ -44,8 +44,8 @@ describe("Store Router", () => {
   });
 
   it("should update a proxy", async () => {
-    await testVariables.proxyStore.purge();
-    const prox = await testVariables.proxyStore.create({
+    await testVariables.trpcClient.debug?.purge.mutate();
+    const prox = await testVariables.trpcClient.store.create.mutate({
       name: "Test proxy",
       description: "Old description",
     });
@@ -67,8 +67,8 @@ describe("Store Router", () => {
   });
 
   it("should delete a proxy", async () => {
-    await testVariables.proxyStore.purge();
-    await testVariables.proxyStore.create({
+    await testVariables.trpcClient.debug?.purge.mutate();
+    await testVariables.trpcClient.store.create.mutate({
       name: "Test proxy",
     });
     await testVariables.trpcClient.store.delete.mutate({

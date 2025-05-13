@@ -11,10 +11,10 @@ export class SimpleServer extends Server {
   private tools: Map<string, ToolDefinition<Record<string, unknown>>> =
     new Map();
 
-  constructor() {
+  constructor(name?: string) {
     super(
       {
-        name: "simple-server",
+        name: name ?? "simple-server",
         version: env.VERSION,
       },
       {

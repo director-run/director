@@ -5,24 +5,6 @@
     "quickfix.biome": "explicit",
     "source.organizeImports.biome": "explicit"
   },
-  "tailwindCSS.files.exclude": [
-    "!**/*.tsx",
-    "!**/*.css",
-    "**/.git/**",
-    "**/node_modules/**",
-    "**/.hg/**"
-  ],
-  "tailwindCSS.experimental.classRegex": [
-    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
-    ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
-    ["classNames\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
-    ["className\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
-  ],
-  "tailwindCSS.experimental.configFile": "./packages/ui/src/styles/ui.css",
-  "jest.runMode": "on-demand",
-  "[prisma]": {
-    "editor.defaultFormatter": "Prisma.prisma"
-  },
   "[javascript]": {
     "editor.defaultFormatter": "biomejs.biome"
   },

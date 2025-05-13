@@ -22,12 +22,11 @@ type AnyToolDefinition = ToolDefinition<
   z.ZodType<unknown, z.ZodTypeDef, unknown>
 >;
 
-export class SimpleServer {
+export class SimpleServer extends Server {
   private tools: Map<string, AnyToolDefinition> = new Map();
-  private mcpServer: Server;
 
   constructor() {
-    this.mcpServer = new Server(
+    super(
       {
         name: "simple-server",
         version: env.VERSION,
@@ -47,7 +46,7 @@ export class SimpleServer {
   }
 
   private setupRequestHandlers() {
-    this.mcpServer.setRequestHandler(ListToolsRequestSchema, () => {
+    this.setRequestHandler(ListToolsRequestSchema, () => {
       return {
         tools: Array.from(this.tools.values()).map((tool) => ({
           name: tool.name,
@@ -57,7 +56,7 @@ export class SimpleServer {
       };
     });
 
-    this.mcpServer.setRequestHandler(CallToolRequestSchema, async (request) => {
+    this.setRequestHandler(CallToolRequestSchema, async (request) => {
       try {
         if (!request.params.arguments) {
           throw new Error("Arguments are required");
@@ -85,10 +84,6 @@ export class SimpleServer {
 
   registerTool<T extends z.ZodType>(definition: ToolDefinition<T>) {
     this.tools.set(definition.name, definition as unknown as AnyToolDefinition);
-  }
-
-  getServer(): Server {
-    return this.mcpServer;
   }
 }
 

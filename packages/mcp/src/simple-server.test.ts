@@ -2,6 +2,13 @@ import { describe, expect, test } from "vitest";
 import { z } from "zod";
 import { SimpleServer, createInMemoryClient } from "./simple-server";
 
+interface ToolResponse {
+  content: Array<{
+    type: string;
+    text: string;
+  }>;
+}
+
 describe("SimpleServer", () => {
   test("should create a server with a tool", async () => {
     const server = new SimpleServer();
@@ -28,7 +35,7 @@ describe("SimpleServer", () => {
       })
       .build();
 
-    const client = await createInMemoryClient(server.getServer());
+    const client = await createInMemoryClient(server);
     const tools = await client.listTools();
 
     expect(tools.tools).toHaveLength(1);
@@ -36,13 +43,13 @@ describe("SimpleServer", () => {
     expect(tools.tools[0].description).toBe("A test tool");
 
     // Test calling the tool
-    const result = await client.callTool({
+    const result = (await client.callTool({
       name: "test_tool",
       arguments: {
         name: "John",
         age: 30,
       },
-    });
+    })) as ToolResponse;
 
     expect(JSON.parse(result.content[0].text)).toEqual({
       status: "success",
@@ -71,7 +78,7 @@ describe("SimpleServer", () => {
       })
       .build();
 
-    const client = await createInMemoryClient(server.getServer());
+    const client = await createInMemoryClient(server);
 
     // Test invalid input
     await expect(
@@ -87,7 +94,7 @@ describe("SimpleServer", () => {
 
   test("should handle unknown tools", async () => {
     const server = new SimpleServer();
-    const client = await createInMemoryClient(server.getServer());
+    const client = await createInMemoryClient(server);
 
     // Test calling non-existent tool
     await expect(

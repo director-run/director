@@ -60,7 +60,7 @@ describe("SimpleServer", () => {
     });
   });
 
-  test("should handle validation errors", async () => {
+  test("should throw an error if the tool input is invalid", async () => {
     const server = new SimpleServer();
 
     const TestSchema = z.object({
@@ -87,7 +87,7 @@ describe("SimpleServer", () => {
     ).rejects.toThrow("Invalid input");
   });
 
-  test("should handle unknown tools", async () => {
+  test("should throw an error if the tool is not defined", async () => {
     const server = new SimpleServer();
     const client = await SimpleClient.createAndConnectToServer(server);
 

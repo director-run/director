@@ -25,7 +25,6 @@ export const startService = async (attribs: {
 export class Gateway {
   public readonly proxyStore: ProxyServerStore;
   public readonly port: number;
-  private db: Database;
   private expressServer?: Server;
 
   private constructor(attribs: {
@@ -34,7 +33,6 @@ export class Gateway {
     db: Database;
   }) {
     this.port = attribs.port;
-    this.db = attribs.db;
     this.proxyStore = attribs.proxyStore;
   }
 
@@ -87,7 +85,7 @@ export class Gateway {
     app.use(errorRequestHandler);
 
     this.expressServer = app.listen(this.port, () => {
-      logger.info(`director gateway running at http://localhost:${this.port}`);
+      logger.info(`director gateway running on port ${this.port}`);
     });
 
     process.on("SIGINT", async () => {

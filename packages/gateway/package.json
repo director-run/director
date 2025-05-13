@@ -15,7 +15,6 @@
   "dependencies": {
     "@director.run/registry-client": "workspace:*",
     "@director.run/utilities": "workspace:*",
-    "@director.run/config": "workspace:*",
     "@director.run/installer": "workspace:*",
     "@director.run/mcp": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.8.0",

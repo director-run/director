@@ -24,10 +24,12 @@ const logger = getLogger(`ProxyServer`);
 
 export class ProxyServer extends Server {
   private targets: SimpleClient[];
-  public readonly attributes: ProxyAttributes & { useController?: boolean };
+  public readonly attributes: ProxyServerAttributes & {
+    useController?: boolean;
+  };
   private transports: Map<string, SSEServerTransport>;
 
-  constructor(attributes: ProxyAttributes & { useController?: boolean }) {
+  constructor(attributes: ProxyServerAttributes & { useController?: boolean }) {
     super(
       {
         name: attributes.name,
@@ -218,7 +220,7 @@ export type ProxyTargetAttributes = {
       };
 };
 
-export type ProxyAttributes = {
+export type ProxyServerAttributes = {
   id: string;
   name: string;
   description?: string;

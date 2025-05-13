@@ -16,14 +16,14 @@ describe("Store Router", () => {
   });
 
   it("should get all proxies", async () => {
-    await testVariables.trpcClient.debug?.purge.mutate();
-    await testVariables.trpcClient.store.create.mutate({
+    await testVariables.client.debug?.purge.mutate();
+    await testVariables.client.store.create.mutate({
       name: "Test proxy",
     });
-    await testVariables.trpcClient.store.create.mutate({
+    await testVariables.client.store.create.mutate({
       name: "Test proxy 2",
     });
-    const proxies = await testVariables.trpcClient.store.getAll.query();
+    const proxies = await testVariables.client.store.getAll.query();
     expect(proxies).toHaveLength(2);
 
     expect(proxies[0].id).toBe("test-proxy");
@@ -31,11 +31,11 @@ describe("Store Router", () => {
   });
 
   it("should create a new proxy", async () => {
-    await testVariables.trpcClient.debug?.purge.mutate();
-    await testVariables.trpcClient.store.create.mutate({
+    await testVariables.client.debug?.purge.mutate();
+    await testVariables.client.store.create.mutate({
       name: "Test proxy",
     });
-    const proxy = await testVariables.trpcClient.store.get.query({
+    const proxy = await testVariables.client.store.get.query({
       proxyId: "test-proxy",
     });
     expect(proxy).toBeDefined();
@@ -44,15 +44,15 @@ describe("Store Router", () => {
   });
 
   it("should update a proxy", async () => {
-    await testVariables.trpcClient.debug?.purge.mutate();
-    const prox = await testVariables.trpcClient.store.create.mutate({
+    await testVariables.client.debug?.purge.mutate();
+    const prox = await testVariables.client.store.create.mutate({
       name: "Test proxy",
       description: "Old description",
     });
 
     const newDescription = "Updated description";
 
-    const updatedResponse = await testVariables.trpcClient.store.update.mutate({
+    const updatedResponse = await testVariables.client.store.update.mutate({
       proxyId: prox.id,
       attributes: {
         description: newDescription,
@@ -60,24 +60,24 @@ describe("Store Router", () => {
     });
     expect(updatedResponse.description).toBe(newDescription);
 
-    const proxy = await testVariables.trpcClient.store.get.query({
+    const proxy = await testVariables.client.store.get.query({
       proxyId: "test-proxy",
     });
     expect(proxy?.description).toBe(newDescription);
   });
 
   it("should delete a proxy", async () => {
-    await testVariables.trpcClient.debug?.purge.mutate();
-    await testVariables.trpcClient.store.create.mutate({
+    await testVariables.client.debug?.purge.mutate();
+    await testVariables.client.store.create.mutate({
       name: "Test proxy",
     });
-    await testVariables.trpcClient.store.delete.mutate({
+    await testVariables.client.store.delete.mutate({
       proxyId: "test-proxy",
     });
 
     expect(
-      await testVariables.trpcClient.store.get.query({ proxyId: "test-proxy" }),
+      await testVariables.client.store.get.query({ proxyId: "test-proxy" }),
     ).toBeUndefined();
-    expect(await testVariables.trpcClient.store.getAll.query()).toHaveLength(0);
+    expect(await testVariables.client.store.getAll.query()).toHaveLength(0);
   });
 });

@@ -5,7 +5,7 @@ import { Database } from "../db";
 import path from "node:path";
 
 export type IntegrationTestVariables = {
-  trpcClient: ReturnType<typeof createGatewayClient>;
+  client: ReturnType<typeof createGatewayClient>;
   close: () => Promise<void>;
   port: number;
 };
@@ -30,7 +30,7 @@ export const setupIntegrationTest =
     };
 
     return {
-      trpcClient: createGatewayClient(`http://localhost:${port}/trpc`),
+      client: createGatewayClient(`http://localhost:${port}/trpc`),
       close,
       port,
     };

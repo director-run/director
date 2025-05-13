@@ -43,9 +43,9 @@ describe("SSE Router", () => {
   });
 
   test("should connect and list tools", async () => {
-    await testVariables.trpcClient.debug?.purge.mutate();
+    await testVariables.client.debug?.purge.mutate();
 
-    const testProxy = await testVariables.trpcClient.store.create.mutate({
+    const testProxy = await testVariables.client.store.create.mutate({
       name: "Test Proxy",
       servers: [makeFooBarServerStdioConfig(), echoServerSSEConfig],
     });
@@ -74,8 +74,8 @@ describe("SSE Router", () => {
   });
 
   test("should be able to add a server to a proxy", async () => {
-    await testVariables.trpcClient.debug?.purge.mutate();
-    const testProxy = await testVariables.trpcClient.store.create.mutate({
+    await testVariables.client.debug?.purge.mutate();
+    const testProxy = await testVariables.client.store.create.mutate({
       name: "Test Proxy",
       servers: [makeFooBarServerStdioConfig()],
     });
@@ -89,7 +89,7 @@ describe("SSE Router", () => {
     expect(toolsResult.tools.map((t) => t.name)).toContain("foo");
     expect(toolsResult.tools.map((t) => t.name)).not.toContain("echo");
 
-    await testVariables.trpcClient.store.addServer.mutate({
+    await testVariables.client.store.addServer.mutate({
       proxyId: testProxy.id,
       server: echoServerSSEConfig,
     });
@@ -104,8 +104,8 @@ describe("SSE Router", () => {
   });
 
   test("should be able to remove a server from a proxy", async () => {
-    await testVariables.trpcClient.debug?.purge.mutate();
-    const testProxy = await testVariables.trpcClient.store.create.mutate({
+    await testVariables.client.debug?.purge.mutate();
+    const testProxy = await testVariables.client.store.create.mutate({
       name: "Test Proxy",
       servers: [echoServerSSEConfig, makeFooBarServerStdioConfig()],
     });
@@ -118,7 +118,7 @@ describe("SSE Router", () => {
     expect(toolsResult.tools.map((t) => t.name)).toContain("foo");
     expect(toolsResult.tools.map((t) => t.name)).toContain("echo");
 
-    await testVariables.trpcClient.store.removeServer.mutate({
+    await testVariables.client.store.removeServer.mutate({
       proxyId: testProxy.id,
       serverName: "echo",
     });

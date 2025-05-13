@@ -9,10 +9,8 @@
       "public",
       "test",
       "dist",
-      "**/src-tauri/target/**",
-      "**/src-tauri/binaries/**",
-      "**/src-tauri/gen/**",
-      "db.test.json"
+      "db.test.json",
+      "db.json"
     ]
   },
   "formatter": {

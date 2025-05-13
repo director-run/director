@@ -1,9 +1,8 @@
 import { ProxyServer } from "@director.run/mcp/proxy-server";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { serveOverStdio } from "@director.run/mcp/transport";
 
 export async function proxySSEToStdio(sseUrl: string) {
   try {
-    const transport = new StdioServerTransport();
     const proxy = new ProxyServer({
       id: "sse2stdio",
       name: "sse2stdio",
@@ -19,13 +18,7 @@ export async function proxySSEToStdio(sseUrl: string) {
     });
 
     await proxy.connectTargets({ throwOnError: true });
-    await proxy.connect(transport);
-
-    process.on("SIGINT", async () => {
-      await transport.close();
-      await proxy.close();
-      process.exit(0);
-    });
+    await serveOverStdio(proxy);
   } catch (error) {
     console.error(error);
     process.exit(1);

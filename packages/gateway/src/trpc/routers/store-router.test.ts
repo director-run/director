@@ -13,7 +13,7 @@ describe("Store Router", () => {
   });
 
   it("should get all proxies", async () => {
-    await testVariables.client.debug?.purge.mutate();
+    await testVariables.purge();
     await testVariables.client.store.create.mutate({
       name: "Test proxy",
     });
@@ -28,7 +28,7 @@ describe("Store Router", () => {
   });
 
   it("should create a new proxy", async () => {
-    await testVariables.client.debug?.purge.mutate();
+    await testVariables.purge();
     await testVariables.client.store.create.mutate({
       name: "Test proxy",
     });
@@ -41,7 +41,7 @@ describe("Store Router", () => {
   });
 
   it("should update a proxy", async () => {
-    await testVariables.client.debug?.purge.mutate();
+    await testVariables.purge();
     const prox = await testVariables.client.store.create.mutate({
       name: "Test proxy",
       description: "Old description",
@@ -64,7 +64,7 @@ describe("Store Router", () => {
   });
 
   it("should delete a proxy", async () => {
-    await testVariables.client.debug?.purge.mutate();
+    await testVariables.purge();
     await testVariables.client.store.create.mutate({
       name: "Test proxy",
     });

@@ -13,6 +13,11 @@ export class IntegrationTestHarness {
         this.gateway = params.gateway;
         this.client = params.client;
     }
+
+    public async purge() {
+        await this.gateway.proxyStore.purge();
+    }
+
     public static async start() {
         const gateway = await startService({
             port: 3673,
@@ -26,6 +31,7 @@ export class IntegrationTestHarness {
             client,
         });
     }
+
 
     public async stop() {
         await this.gateway.proxyStore.purge();

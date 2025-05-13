@@ -42,7 +42,7 @@ describe("SSE Router", () => {
   });
 
   test("should connect and list tools", async () => {
-    await testVariables.client.debug?.purge.mutate();
+    await testVariables.purge();
 
     const testProxy = await testVariables.client.store.create.mutate({
       name: "Test Proxy",
@@ -73,7 +73,7 @@ describe("SSE Router", () => {
   });
 
   test("should be able to add a server to a proxy", async () => {
-    await testVariables.client.debug?.purge.mutate();
+    await testVariables.purge();
     const testProxy = await testVariables.client.store.create.mutate({
       name: "Test Proxy",
       servers: [makeFooBarServerStdioConfig()],
@@ -103,7 +103,7 @@ describe("SSE Router", () => {
   });
 
   test("should be able to remove a server from a proxy", async () => {
-    await testVariables.client.debug?.purge.mutate();
+    await testVariables.purge();
     const testProxy = await testVariables.client.store.create.mutate({
       name: "Test Proxy",
       servers: [echoServerSSEConfig, makeFooBarServerStdioConfig()],

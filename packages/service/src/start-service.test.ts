@@ -1,5 +1,6 @@
 import type { Server } from "node:http";
 import { env } from "@director.run/config/env";
+import { SimpleClient } from "@director.run/mcp/simple-client";
 import { makeEchoServer } from "@director.run/mcp/test/fixtures";
 import { serveOverSSE } from "@director.run/mcp/transport";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
@@ -65,7 +66,11 @@ describe("SSE Router", () => {
       name: "Test Proxy",
       servers: [fooBarServerConfig(), echoServerConfig()],
     });
-    const client = await TestMCPClient.connectToProxy(testProxy.id);
+
+    const client = await SimpleClient.createAndConnectToSSE(
+      `http://localhost:${env.SERVER_PORT}/${testProxy.id}/sse`,
+    );
+
     const toolsResult = await client.listTools();
     const expectedToolNames = ["foo", "echo"];
 

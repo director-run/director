@@ -14,12 +14,13 @@ import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import * as eventsource from "eventsource";
 import express from "express";
-import { ControllerClient } from "./controller-client";
+import { createControllerServer } from "./create-controller-server";
 import { setupPromptHandlers } from "./handlers/prompts-handler";
 import { setupResourceTemplateHandlers } from "./handlers/resource-templates-handler";
 import { setupResourceHandlers } from "./handlers/resources-handler";
 import { setupToolHandlers } from "./handlers/tools-handler";
 import { SimpleClient } from "./simple-client";
+// import { createControllerServer } from "./create-controller-server";
 
 global.EventSource = eventsource.EventSource;
 
@@ -69,9 +70,11 @@ export class ProxyServer extends Server {
     }
 
     if (this.attributes.useController) {
-      const controller = new ControllerClient({ proxy: this });
-      await controller.connect();
-      this.targets.push(controller);
+      const controllerServer = createControllerServer({ proxy: this });
+      const controllerClient =
+        await SimpleClient.createAndConnectToServer(controllerServer);
+
+      this.targets.push(controllerClient);
     }
 
     // Setup handlers

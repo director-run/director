@@ -1,4 +1,3 @@
-import { env } from "@director.run/config/env";
 import { getLogger } from "@director.run/utilities/logger";
 import { sleep } from "@director.run/utilities/os";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
@@ -7,6 +6,7 @@ import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js"
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
+import packageJson from "../package.json";
 
 const CONNECT_RETRY_INTERVAL = 2500;
 const CONNECT_RETRY_COUNT = 3;
@@ -20,7 +20,7 @@ export class SimpleClient extends Client {
     super(
       {
         name,
-        version: env.VERSION,
+        version: packageJson.version,
       },
       {
         capabilities: {

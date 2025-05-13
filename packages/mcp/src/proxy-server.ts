@@ -1,4 +1,3 @@
-import { env } from "@director.run/config/env";
 import type {
   ProxyAttributes,
   ProxyTargetAttributes,
@@ -15,6 +14,7 @@ import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import * as eventsource from "eventsource";
 import express from "express";
 import { z } from "zod";
+import packageJson from "../package.json";
 import { setupPromptHandlers } from "./handlers/prompts-handler";
 import { setupResourceTemplateHandlers } from "./handlers/resource-templates-handler";
 import { setupResourceHandlers } from "./handlers/resources-handler";
@@ -35,7 +35,7 @@ export class ProxyServer extends Server {
     super(
       {
         name: attributes.name,
-        version: env.VERSION,
+        version: packageJson.version,
       },
       {
         capabilities: {
@@ -85,15 +85,11 @@ export class ProxyServer extends Server {
   }
 
   public toPlainObject() {
-    return { ...this.attributes, url: this.sseUrl };
+    return this.attributes;
   }
 
   get id() {
     return this.attributes.id;
-  }
-
-  get sseUrl() {
-    return `http://localhost:${env.SERVER_PORT}/${this.attributes.id}/sse`;
   }
 
   async close(): Promise<void> {

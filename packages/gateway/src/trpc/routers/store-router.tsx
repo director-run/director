@@ -2,18 +2,19 @@ import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
 import { z } from "zod";
 import { proxySchema } from "../../db/schema";
+import { getProxyServerUrl } from "../../helpers";
 import { ProxyServerStore } from "../../services/proxy/proxy-server-store";
 import { t } from "../server";
-
 export function createProxyStoreRouter({
   proxyStore,
 }: { proxyStore: ProxyServerStore }) {
   return t.router({
     getAll: t.procedure.query(async () => {
       try {
-        return (await proxyStore.getAll()).map((proxy) =>
-          proxy.toPlainObject(),
-        );
+        return (await proxyStore.getAll()).map((proxy) => ({
+          ...proxy.toPlainObject(),
+          url: getProxyServerUrl(proxy.id),
+        }));
       } catch (error) {
         console.error(error);
         return [];
@@ -23,7 +24,10 @@ export function createProxyStoreRouter({
       .input(z.object({ proxyId: z.string() }))
       .query(({ input }) => {
         try {
-          return proxyStore.get(input.proxyId).toPlainObject();
+          return {
+            ...proxyStore.get(input.proxyId).toPlainObject(),
+            url: getProxyServerUrl(input.proxyId),
+          };
         } catch (e) {
           if (e instanceof AppError && e.code === ErrorCode.NOT_FOUND) {
             return undefined;

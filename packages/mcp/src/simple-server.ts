@@ -1,4 +1,3 @@
-import { env } from "@director.run/config/env";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import {
   CallToolRequestSchema,
@@ -6,6 +5,7 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
+import packageJson from "../package.json";
 
 export class SimpleServer extends Server {
   private tools: Map<string, ToolDefinition<Record<string, unknown>>> =
@@ -15,7 +15,7 @@ export class SimpleServer extends Server {
     super(
       {
         name: name ?? "simple-server",
-        version: env.VERSION,
+        version: packageJson.version,
       },
       {
         capabilities: {

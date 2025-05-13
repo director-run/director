@@ -43,9 +43,9 @@ describe("SSE Router", () => {
   });
 
   test("should connect and list tools", async () => {
-    await testVariables.proxyStore.purge();
+    await testVariables.trpcClient.debug?.purge.mutate();
 
-    const testProxy = await testVariables.proxyStore.create({
+    const testProxy = await testVariables.trpcClient.store.create.mutate({
       name: "Test Proxy",
       servers: [makeFooBarServerStdioConfig(), echoServerSSEConfig],
     });
@@ -74,7 +74,7 @@ describe("SSE Router", () => {
   });
 
   test("should be able to add a server to a proxy", async () => {
-    await testVariables.proxyStore.purge();
+    await testVariables.trpcClient.debug?.purge.mutate();
     const testProxy = await testVariables.trpcClient.store.create.mutate({
       name: "Test Proxy",
       servers: [makeFooBarServerStdioConfig()],
@@ -104,7 +104,7 @@ describe("SSE Router", () => {
   });
 
   test("should be able to remove a server from a proxy", async () => {
-    await testVariables.proxyStore.purge();
+    await testVariables.trpcClient.debug?.purge.mutate();
     const testProxy = await testVariables.trpcClient.store.create.mutate({
       name: "Test Proxy",
       servers: [echoServerSSEConfig, makeFooBarServerStdioConfig()],

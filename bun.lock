@@ -17,8 +17,6 @@
         "director": "./dist/cli.js",
       },
       "devDependencies": {
-        "@director.run/config": "workspace:*",
-        "@director.run/db": "workspace:*",
         "@director.run/gateway": "workspace:*",
         "@director.run/mcp": "workspace:*",
         "@director.run/registry-client": "workspace:*",
@@ -64,26 +62,11 @@
         "vitest": "^3.1.1",
       },
     },
-    "packages/db": {
-      "name": "@director.run/db",
-      "version": "0.0.1",
-      "dependencies": {
-        "@types/lodash": "^4.17.16",
-        "lodash": "^4.17.21",
-      },
-      "devDependencies": {
-        "@types/bun": "latest",
-        "type-fest": "^4.40.0",
-        "typescript": "^5.8.2",
-        "vitest": "^3.1.1",
-      },
-    },
     "packages/gateway": {
       "name": "@director.run/gateway",
       "version": "0.0.1",
       "dependencies": {
         "@director.run/config": "workspace:*",
-        "@director.run/db": "workspace:*",
         "@director.run/installer": "workspace:*",
         "@director.run/mcp": "workspace:*",
         "@director.run/registry-client": "workspace:*",
@@ -92,10 +75,12 @@
         "@t3-oss/env-core": "^0.12.0",
         "@trpc/client": "^11.0.2",
         "@trpc/server": "^11.0.2",
+        "@types/lodash": "^4.17.16",
         "content-type": "^1.0.5",
         "cors": "^2.8.5",
         "dotenv": "^16.4.7",
         "express": "^4.21.2",
+        "lodash": "^4.17.21",
         "pino": "^9.6.0",
         "pino-pretty": "^13.0.0",
         "raw-body": "^3.0.0",
@@ -110,6 +95,7 @@
         "@types/raw-body": "^2.3.0",
         "@types/semver": "^7.7.0",
         "type-fest": "^4.40.0",
+        "vitest": "^3.1.1",
       },
       "peerDependencies": {
         "typescript": "^5",
@@ -152,9 +138,6 @@
     "packages/utilities": {
       "name": "@director.run/utilities",
       "version": "0.0.1",
-      "dependencies": {
-        "@director.run/config": "workspace:*",
-      },
       "devDependencies": {
         "@types/bun": "latest",
         "type-fest": "^4.40.0",
@@ -187,8 +170,6 @@
     "@director.run/cli": ["@director.run/cli@workspace:apps/cli"],
 
     "@director.run/config": ["@director.run/config@workspace:packages/config"],
-
-    "@director.run/db": ["@director.run/db@workspace:packages/db"],
 
     "@director.run/gateway": ["@director.run/gateway@workspace:packages/gateway"],
 

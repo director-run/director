@@ -24,7 +24,6 @@
   "devDependencies": {
     "type-fest": "^4.40.0",
     "@director.run/gateway": "workspace:*",
-    "@director.run/config": "workspace:*",
     "@director.run/mcp": "workspace:*",
     "@director.run/utilities": "workspace:*",
     "@director.run/registry-client": "workspace:*",

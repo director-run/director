@@ -1,5 +1,6 @@
 import os from "node:os";
 import path from "node:path";
+import { isProduction } from "@director.run/utilities/env";
 import { createEnv } from "@t3-oss/env-core";
 import dotenv from "dotenv";
 import { z } from "zod";
@@ -13,19 +14,15 @@ export const env = createEnv({
     DATA_DIR: z.string().optional().default(DATA_DIR),
     DB_FILE_PATH: z.string().optional().default(path.join(DATA_DIR, "db.json")),
     SERVER_PORT: z.number({ coerce: true }).optional().default(3000),
-    LOG_PRETTY: z.boolean().optional().default(true),
-    LOG_LEVEL: z.string().optional().default("trace"),
-    LOG_ERROR_STACK: z.boolean().optional().default(true),
+    // LOG_PRETTY: z.boolean().optional().default(true),
+    // LOG_LEVEL: z.string().optional().default("trace"),
+    // LOG_ERROR_STACK: z.boolean().optional().default(true),
   },
   runtimeEnv: process.env,
 });
 
-export function isDevelopment() {
-  return process.env.NODE_ENV === "development";
-}
-
 function getDataDir() {
-  if (process.env.NODE_ENV === "production") {
+  if (isProduction()) {
     return path.join(os.homedir(), `.director`);
   } else {
     return path.join(

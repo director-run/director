@@ -1,6 +1,6 @@
 #!/usr/bin/env -S node --no-warnings --enable-source-maps
 
-import { isDevelopment } from "@director.run/config/env";
+import { isDevelopment } from "@director.run/utilities/env";
 import { Command } from "commander";
 import packageJson from "../package.json";
 import { registerClientCommands } from "../src/commands/client";

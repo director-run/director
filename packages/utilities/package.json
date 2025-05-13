@@ -13,9 +13,6 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest"
   },
-  "dependencies": {
-    "@director.run/config": "workspace:*"
-  },
   "devDependencies": {
     "@types/bun": "latest",
     "type-fest": "^4.40.0",

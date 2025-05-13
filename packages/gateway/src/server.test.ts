@@ -18,39 +18,39 @@ const echoServerSSEConfig = makeSSETargetConfig({
 
 describe("SSE Router", () => {
   let proxyTargetServerInstance: Server;
-  let testVariables: IntegrationTestHarness;
+  let harness: IntegrationTestHarness;
 
   beforeAll(async () => {
     proxyTargetServerInstance = await serveOverSSE(
       makeEchoServer(),
       PROXY_TARGET_PORT,
     );
-    testVariables = await IntegrationTestHarness.start();
+    harness = await IntegrationTestHarness.start();
   });
 
   afterAll(async () => {
-    await testVariables.stop();
+    await harness.stop();
     await proxyTargetServerInstance?.close();
   });
 
   test("should return 404 when proxy not found", async () => {
     const res = await fetch(
-      `http://localhost:${testVariables.gateway.port}/not_existing_proxy/sse`,
+      `http://localhost:${harness.gateway.port}/not_existing_proxy/sse`,
     );
     expect(res.status).toEqual(404);
     expect(res.ok).toBeFalsy();
   });
 
   test("should connect and list tools", async () => {
-    await testVariables.purge();
+    await harness.purge();
 
-    const testProxy = await testVariables.client.store.create.mutate({
+    const testProxy = await harness.client.store.create.mutate({
       name: "Test Proxy",
       servers: [makeFooBarServerStdioConfig(), echoServerSSEConfig],
     });
 
     const client = await SimpleClient.createAndConnectToSSE(
-      `http://localhost:${testVariables.gateway.port}/${testProxy.id}/sse`,
+      `http://localhost:${harness.gateway.port}/${testProxy.id}/sse`,
     );
 
     const toolsResult = await client.listTools();
@@ -73,14 +73,14 @@ describe("SSE Router", () => {
   });
 
   test("should be able to add a server to a proxy", async () => {
-    await testVariables.purge();
-    const testProxy = await testVariables.client.store.create.mutate({
+    await harness.purge();
+    const testProxy = await harness.client.store.create.mutate({
       name: "Test Proxy",
       servers: [makeFooBarServerStdioConfig()],
     });
 
     const client = await SimpleClient.createAndConnectToSSE(
-      `http://localhost:${testVariables.gateway.port}/${testProxy.id}/sse`,
+      `http://localhost:${harness.gateway.port}/${testProxy.id}/sse`,
     );
 
     const toolsResult = await client.listTools();
@@ -88,13 +88,13 @@ describe("SSE Router", () => {
     expect(toolsResult.tools.map((t) => t.name)).toContain("foo");
     expect(toolsResult.tools.map((t) => t.name)).not.toContain("echo");
 
-    await testVariables.client.store.addServer.mutate({
+    await harness.client.store.addServer.mutate({
       proxyId: testProxy.id,
       server: echoServerSSEConfig,
     });
 
     const client2 = await SimpleClient.createAndConnectToSSE(
-      `http://localhost:${testVariables.gateway.port}/${testProxy.id}/sse`,
+      `http://localhost:${harness.gateway.port}/${testProxy.id}/sse`,
     );
 
     const toolsResult2 = await client2.listTools();
@@ -103,27 +103,27 @@ describe("SSE Router", () => {
   });
 
   test("should be able to remove a server from a proxy", async () => {
-    await testVariables.purge();
-    const testProxy = await testVariables.client.store.create.mutate({
+    await harness.purge();
+    const testProxy = await harness.client.store.create.mutate({
       name: "Test Proxy",
       servers: [echoServerSSEConfig, makeFooBarServerStdioConfig()],
     });
 
     const client = await SimpleClient.createAndConnectToSSE(
-      `http://localhost:${testVariables.gateway.port}/${testProxy.id}/sse`,
+      `http://localhost:${harness.gateway.port}/${testProxy.id}/sse`,
     );
     const toolsResult = await client.listTools();
 
     expect(toolsResult.tools.map((t) => t.name)).toContain("foo");
     expect(toolsResult.tools.map((t) => t.name)).toContain("echo");
 
-    await testVariables.client.store.removeServer.mutate({
+    await harness.client.store.removeServer.mutate({
       proxyId: testProxy.id,
       serverName: "echo",
     });
 
     const client2 = await SimpleClient.createAndConnectToSSE(
-      `http://localhost:${testVariables.gateway.port}/${testProxy.id}/sse`,
+      `http://localhost:${harness.gateway.port}/${testProxy.id}/sse`,
     );
     const toolsResult2 = await client2.listTools();
 

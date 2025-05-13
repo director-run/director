@@ -2,25 +2,25 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { IntegrationTestHarness } from "../../test/integration";
 
 describe("Store Router", () => {
-  let testVariables: IntegrationTestHarness;
+  let harness: IntegrationTestHarness;
 
   beforeAll(async () => {
-    testVariables = await IntegrationTestHarness.start();
+    harness = await IntegrationTestHarness.start();
   });
 
   afterAll(async () => {
-    await testVariables.stop();
+    await harness.stop();
   });
 
   it("should get all proxies", async () => {
-    await testVariables.purge();
-    await testVariables.client.store.create.mutate({
+    await harness.purge();
+    await harness.client.store.create.mutate({
       name: "Test proxy",
     });
-    await testVariables.client.store.create.mutate({
+    await harness.client.store.create.mutate({
       name: "Test proxy 2",
     });
-    const proxies = await testVariables.client.store.getAll.query();
+    const proxies = await harness.client.store.getAll.query();
     expect(proxies).toHaveLength(2);
 
     expect(proxies[0].id).toBe("test-proxy");
@@ -28,11 +28,11 @@ describe("Store Router", () => {
   });
 
   it("should create a new proxy", async () => {
-    await testVariables.purge();
-    await testVariables.client.store.create.mutate({
+    await harness.purge();
+    await harness.client.store.create.mutate({
       name: "Test proxy",
     });
-    const proxy = await testVariables.client.store.get.query({
+    const proxy = await harness.client.store.get.query({
       proxyId: "test-proxy",
     });
     expect(proxy).toBeDefined();
@@ -41,15 +41,15 @@ describe("Store Router", () => {
   });
 
   it("should update a proxy", async () => {
-    await testVariables.purge();
-    const prox = await testVariables.client.store.create.mutate({
+    await harness.purge();
+    const prox = await harness.client.store.create.mutate({
       name: "Test proxy",
       description: "Old description",
     });
 
     const newDescription = "Updated description";
 
-    const updatedResponse = await testVariables.client.store.update.mutate({
+    const updatedResponse = await harness.client.store.update.mutate({
       proxyId: prox.id,
       attributes: {
         description: newDescription,
@@ -57,24 +57,24 @@ describe("Store Router", () => {
     });
     expect(updatedResponse.description).toBe(newDescription);
 
-    const proxy = await testVariables.client.store.get.query({
+    const proxy = await harness.client.store.get.query({
       proxyId: "test-proxy",
     });
     expect(proxy?.description).toBe(newDescription);
   });
 
   it("should delete a proxy", async () => {
-    await testVariables.purge();
-    await testVariables.client.store.create.mutate({
+    await harness.purge();
+    await harness.client.store.create.mutate({
       name: "Test proxy",
     });
-    await testVariables.client.store.delete.mutate({
+    await harness.client.store.delete.mutate({
       proxyId: "test-proxy",
     });
 
     expect(
-      await testVariables.client.store.get.query({ proxyId: "test-proxy" }),
+      await harness.client.store.get.query({ proxyId: "test-proxy" }),
     ).toBeUndefined();
-    expect(await testVariables.client.store.getAll.query()).toHaveLength(0);
+    expect(await harness.client.store.getAll.query()).toHaveLength(0);
   });
 });

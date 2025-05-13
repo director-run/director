@@ -9,7 +9,7 @@ import {
   makeEchoServerSSEConfig,
   makeFooBarServerStdioConfig,
   setupIntegrationTest,
-} from "./helpers/test-helpers";
+} from "./test/fixtures";
 
 describe("SSE Router", () => {
   let proxyTargetServerInstance: Server;

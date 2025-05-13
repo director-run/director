@@ -6,8 +6,8 @@ import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 
-const PROXY_TARGET_CONNECT_RETRY_INTERVAL = 2500;
-const PROXY_TARGET_CONNECT_RETRY_COUNT = 3;
+const CONNECT_RETRY_INTERVAL = 2500;
+const CONNECT_RETRY_COUNT = 3;
 
 const logger = getLogger("SimpleClient");
 
@@ -65,17 +65,17 @@ export class SimpleClient extends Client {
         logger.error({
           message: `error while connecting to server "${this.name}"`,
           name: this.name,
-          retriesRemaining: PROXY_TARGET_CONNECT_RETRY_COUNT - count,
+          retriesRemaining: CONNECT_RETRY_COUNT - count,
           error: error,
         });
 
         count++;
-        retry = count < PROXY_TARGET_CONNECT_RETRY_COUNT;
+        retry = count < CONNECT_RETRY_COUNT;
         if (retry) {
           try {
             await this.close();
           } catch {}
-          await sleep(PROXY_TARGET_CONNECT_RETRY_INTERVAL);
+          await sleep(CONNECT_RETRY_INTERVAL);
         } else {
           try {
             await this.close();

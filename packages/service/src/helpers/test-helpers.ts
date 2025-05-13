@@ -43,3 +43,25 @@ export const makeStdioTargetConfig = (params: {
     args: params.args,
   },
 });
+
+export function makeFooBarServerStdioConfig() {
+  return makeStdioTargetConfig({
+    name: "Foo",
+    command: "bun",
+    args: [
+      "-e",
+      `
+      import { makeFooBarServer } from "@director.run/mcp/test/fixtures";
+      import { serveOverStdio } from "@director.run/mcp/transport";
+      serveOverStdio(makeFooBarServer());
+    `,
+    ],
+  });
+}
+
+export function makeEchoServerSSEConfig() {
+  return makeSSETargetConfig({
+    name: "echo",
+    url: `http://localhost:4521/sse`,
+  });
+}

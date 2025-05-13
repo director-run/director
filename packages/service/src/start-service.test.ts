@@ -6,32 +6,10 @@ import { serveOverSSE } from "@director.run/mcp/transport";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import {
   type IntegrationTestVariables,
-  makeSSETargetConfig,
-  makeStdioTargetConfig,
+  makeEchoServerSSEConfig,
+  makeFooBarServerStdioConfig,
   setupIntegrationTest,
 } from "./helpers/test-helpers";
-
-function makeFooBarServerStdioConfig() {
-  return makeStdioTargetConfig({
-    name: "Foo",
-    command: "bun",
-    args: [
-      "-e",
-      `
-      import { makeFooBarServer } from "@director.run/mcp/test/fixtures";
-      import { serveOverStdio } from "@director.run/mcp/transport";
-      serveOverStdio(makeFooBarServer());
-    `,
-    ],
-  });
-}
-
-function makeEchoServerSSEConfig() {
-  return makeSSETargetConfig({
-    name: "echo",
-    url: `http://localhost:4521/sse`,
-  });
-}
 
 describe("SSE Router", () => {
   let proxyTargetServerInstance: Server;

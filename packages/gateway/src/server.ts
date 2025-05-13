@@ -7,7 +7,7 @@ import * as trpcExpress from "@trpc/server/adapters/express";
 import cors from "cors";
 import express from "express";
 import { Database } from "./db";
-import { ProxyServerStore } from "./services/proxy/proxy-server-store";
+import { ProxyServerStore } from "./proxy-server-store";
 import { createAppRouter } from "./trpc/routers/_app-router";
 
 const logger = getLogger("startService");

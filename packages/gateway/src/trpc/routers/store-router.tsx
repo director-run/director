@@ -3,7 +3,7 @@ import { AppError } from "@director.run/utilities/error";
 import { z } from "zod";
 import { proxySchema } from "../../db/schema";
 import { getProxyServerUrl } from "../../helpers";
-import { ProxyServerStore } from "../../services/proxy/proxy-server-store";
+import { ProxyServerStore } from "../../proxy-server-store";
 import { t } from "../server";
 export function createProxyStoreRouter({
   proxyStore,

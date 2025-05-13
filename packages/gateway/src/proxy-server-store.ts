@@ -2,8 +2,8 @@ import { ProxyServer } from "@director.run/mcp/proxy-server";
 import { fetchEntry } from "@director.run/registry-client/client";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
-import type { Database } from "../../db";
-import type { ProxyTargetAttributes } from "../../db/schema";
+import type { Database } from "./db";
+import type { ProxyTargetAttributes } from "./db/schema";
 
 const logger = getLogger("ProxyServerStore");
 

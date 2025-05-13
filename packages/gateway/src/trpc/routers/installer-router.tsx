@@ -7,7 +7,7 @@ import {
   uninstallFromCursor,
 } from "@director.run/installer/cursor";
 import { z } from "zod";
-import type { ProxyServerStore } from "../../services/proxy/proxy-server-store";
+import type { ProxyServerStore } from "../../proxy-server-store";
 import { t } from "../server";
 
 export function createInstallerRouter({

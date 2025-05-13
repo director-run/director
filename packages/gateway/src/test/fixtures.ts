@@ -1,4 +1,4 @@
-import { ProxyServerStore } from "../services/proxy/proxy-server-store";
+import { ProxyServerStore } from "../proxy-server-store";
 import { startService } from "../server";
 import { createGatewayClient } from "../trpc/client";
 import { Database } from "../db";

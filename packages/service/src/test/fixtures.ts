@@ -1,5 +1,5 @@
 import { ProxyServerStore } from "../services/proxy/proxy-server-store";
-import { startService } from "../start-service";
+import { startService } from "../server";
 import { trpc } from "../trpc/client";
 
 export type IntegrationTestVariables = {

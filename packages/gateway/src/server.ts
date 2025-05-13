@@ -17,12 +17,12 @@ export const startService = async (attribs: {
   port: number;
   databaseFilePath: string;
 }) => {
-  const gateway = await GatewayService.create(attribs);
+  const gateway = await Gateway.create(attribs);
   await gateway.start();
   return gateway;
 };
 
-class GatewayService {
+export class Gateway {
   public readonly proxyStore: ProxyServerStore;
   public readonly port: number;
   private db: Database;
@@ -45,7 +45,7 @@ class GatewayService {
     const db = await Database.connect(attribs.databaseFilePath);
     const proxyStore = await ProxyServerStore.create(db);
 
-    return new GatewayService({
+    return new Gateway({
       port: attribs.port,
       db,
       proxyStore,

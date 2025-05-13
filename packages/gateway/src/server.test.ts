@@ -36,7 +36,7 @@ describe("SSE Router", () => {
 
   test("should return 404 when proxy not found", async () => {
     const res = await fetch(
-      `http://localhost:${testVariables.port}/not_existing_proxy/sse`,
+      `http://localhost:${testVariables.gateway.port}/not_existing_proxy/sse`,
     );
     expect(res.status).toEqual(404);
     expect(res.ok).toBeFalsy();
@@ -51,7 +51,7 @@ describe("SSE Router", () => {
     });
 
     const client = await SimpleClient.createAndConnectToSSE(
-      `http://localhost:${testVariables.port}/${testProxy.id}/sse`,
+      `http://localhost:${testVariables.gateway.port}/${testProxy.id}/sse`,
     );
 
     const toolsResult = await client.listTools();
@@ -81,7 +81,7 @@ describe("SSE Router", () => {
     });
 
     const client = await SimpleClient.createAndConnectToSSE(
-      `http://localhost:${testVariables.port}/${testProxy.id}/sse`,
+      `http://localhost:${testVariables.gateway.port}/${testProxy.id}/sse`,
     );
 
     const toolsResult = await client.listTools();
@@ -95,7 +95,7 @@ describe("SSE Router", () => {
     });
 
     const client2 = await SimpleClient.createAndConnectToSSE(
-      `http://localhost:${testVariables.port}/${testProxy.id}/sse`,
+      `http://localhost:${testVariables.gateway.port}/${testProxy.id}/sse`,
     );
 
     const toolsResult2 = await client2.listTools();
@@ -111,7 +111,7 @@ describe("SSE Router", () => {
     });
 
     const client = await SimpleClient.createAndConnectToSSE(
-      `http://localhost:${testVariables.port}/${testProxy.id}/sse`,
+      `http://localhost:${testVariables.gateway.port}/${testProxy.id}/sse`,
     );
     const toolsResult = await client.listTools();
 
@@ -124,7 +124,7 @@ describe("SSE Router", () => {
     });
 
     const client2 = await SimpleClient.createAndConnectToSSE(
-      `http://localhost:${testVariables.port}/${testProxy.id}/sse`,
+      `http://localhost:${testVariables.gateway.port}/${testProxy.id}/sse`,
     );
     const toolsResult2 = await client2.listTools();
 

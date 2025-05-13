@@ -1,20 +1,17 @@
-import { ProxyServerStore } from "../proxy-server-store";
-import { startService } from "../server";
+import { startService, Gateway } from "../server";
 import { createGatewayClient } from "../trpc/client";
-import { Database } from "../db";
 import path from "node:path";
 
 export type IntegrationTestVariables = {
   client: ReturnType<typeof createGatewayClient>;
   close: () => Promise<void>;
-  port: number;
+  gateway: Gateway;
 };
 
 export const setupIntegrationTest =
   async (): Promise<IntegrationTestVariables> => {
-    const port = 3673;
     const gateway = await startService({
-      port,
+      port: 3673,
       databaseFilePath: path.join(__dirname, "db.test.json"),
     });
 
@@ -24,9 +21,9 @@ export const setupIntegrationTest =
     };
 
     return {
-      client: createGatewayClient(`http://localhost:${port}/trpc`),
+      client: createGatewayClient(`http://localhost:${gateway.port}/trpc`),
       close,
-      port,
+      gateway,
     };
   };
 

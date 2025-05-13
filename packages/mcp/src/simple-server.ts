@@ -9,21 +9,54 @@ import {
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 
-type ToolHandler<T extends z.ZodType> = (args: z.infer<T>) => Promise<unknown>;
+type ToolHandler<T> = (args: T) => Promise<unknown>;
 
-interface ToolDefinition<T extends z.ZodType> {
+interface ToolDefinition<T> {
   name: string;
-  schema: T;
+  schema?: z.ZodType<T>;
   description: string;
   handler: ToolHandler<T>;
 }
 
-type AnyToolDefinition = ToolDefinition<
-  z.ZodType<unknown, z.ZodTypeDef, unknown>
->;
+class ToolBuilder<T extends Record<string, unknown>> {
+  private definition: Partial<ToolDefinition<T>>;
+  private server: SimpleServer;
+
+  constructor(name: string, server: SimpleServer) {
+    this.definition = { name };
+    this.server = server;
+  }
+
+  withSchema<S extends z.ZodType>(schema: S): ToolBuilder<z.infer<S>> {
+    this.definition.schema = schema;
+    return this as unknown as ToolBuilder<z.infer<S>>;
+  }
+
+  withDescription(description: string): ToolBuilder<T> {
+    this.definition.description = description;
+    return this;
+  }
+
+  handle(handler: ToolHandler<T>): void {
+    if (!this.definition.description) {
+      throw new Error("Description is required");
+    }
+    if (!this.definition.name) {
+      throw new Error("Name is required");
+    }
+    const definition: ToolDefinition<T> = {
+      name: this.definition.name,
+      schema: this.definition.schema,
+      description: this.definition.description,
+      handler,
+    };
+    this.server.registerTool(definition);
+  }
+}
 
 export class SimpleServer extends Server {
-  private tools: Map<string, AnyToolDefinition> = new Map();
+  private tools: Map<string, ToolDefinition<Record<string, unknown>>> =
+    new Map();
 
   constructor() {
     super(
@@ -41,8 +74,17 @@ export class SimpleServer extends Server {
     this.setupRequestHandlers();
   }
 
-  registerTool<T extends z.ZodType>(definition: ToolDefinition<T>) {
-    this.tools.set(definition.name, definition as unknown as AnyToolDefinition);
+  defineTool<T extends Record<string, unknown>>(name: string): ToolBuilder<T> {
+    return new ToolBuilder<T>(name, this);
+  }
+
+  registerTool<T extends Record<string, unknown>>(
+    definition: ToolDefinition<T>,
+  ) {
+    this.tools.set(
+      definition.name,
+      definition as ToolDefinition<Record<string, unknown>>,
+    );
   }
 
   private setupRequestHandlers() {
@@ -51,7 +93,7 @@ export class SimpleServer extends Server {
         tools: Array.from(this.tools.values()).map((tool) => ({
           name: tool.name,
           description: tool.description,
-          inputSchema: zodToJsonSchema(tool.schema),
+          inputSchema: tool.schema ? zodToJsonSchema(tool.schema) : undefined,
         })),
       };
     });
@@ -67,7 +109,10 @@ export class SimpleServer extends Server {
           throw new Error(`Unknown tool: ${request.params.name}`);
         }
 
-        const args = tool.schema.parse(request.params.arguments);
+        let args = request.params.arguments as Record<string, unknown>;
+        if (tool.schema) {
+          args = tool.schema.parse(request.params.arguments);
+        }
         const result = await tool.handler(args);
 
         return {

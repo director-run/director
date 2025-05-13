@@ -13,26 +13,26 @@ describe("SimpleServer", () => {
   test("should create a server with a tool", async () => {
     const server = new SimpleServer();
 
-    // Define a test tool
     const TestSchema = z.object({
       name: z.string(),
       age: z.number(),
     });
 
-    server.registerTool({
-      name: "test_tool",
-      schema: TestSchema,
-      description: "A test tool",
-      handler: ({ name, age }) =>
-        Promise.resolve({
+    // Type of args is inferred from TestSchema
+    server
+      .defineTool("test_tool")
+      .withSchema(TestSchema)
+      .withDescription("A test tool")
+      .handle(({ name, age }) => {
+        return Promise.resolve({
           status: "success",
           data: {
             name,
             age,
             message: `Hello ${name}, you are ${age} years old`,
           },
-        }),
-    });
+        });
+      });
 
     const client = await createInMemoryClient(server);
     const tools = await client.listTools();
@@ -68,12 +68,12 @@ describe("SimpleServer", () => {
       age: z.number(),
     });
 
-    server.registerTool({
-      name: "test_tool",
-      schema: TestSchema,
-      description: "A test tool",
-      handler: () => Promise.resolve({ status: "success" }),
-    });
+    // Type of args is inferred from TestSchema
+    server
+      .defineTool("test_tool")
+      .withSchema(TestSchema)
+      .withDescription("A test tool")
+      .handle(() => Promise.resolve({ status: "success" }));
 
     const client = await createInMemoryClient(server);
 

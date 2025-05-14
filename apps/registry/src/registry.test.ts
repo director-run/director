@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { env } from "./config";
 import { db } from "./db";
 import { entriesTable } from "./db/schema";
-import { Registry } from "./server";
+import { Registry } from "./registry";
 import { createTestEntries } from "./test/fixtures/entries";
 
 describe("HTTP Server", () => {

@@ -33,7 +33,7 @@ Director is a Model Context Protocol (MCP) proxy server that simplifies the mana
 
 *Note: Director is new project under active development and is not yet stable. See CONTRIBUTING.md.*
 
-```shell
+```bash
 # install director
 $ npm install -g @working.dev/director
 

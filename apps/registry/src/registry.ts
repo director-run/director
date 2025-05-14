@@ -8,7 +8,7 @@ import cors from "cors";
 import { count } from "drizzle-orm";
 import express from "express";
 import { z } from "zod";
-import { db } from "./db";
+import { closeDatabase, db } from "./db";
 import { entriesTable } from "./db/schema";
 
 const logger = getLogger("registry/server");
@@ -103,6 +103,7 @@ export class Registry {
   }
 
   async stop() {
+    await closeDatabase();
     await new Promise<void>((resolve) => {
       this.server.close(() => resolve());
     });

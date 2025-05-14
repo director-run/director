@@ -6,12 +6,11 @@ import { getLogger } from "@director.run/utilities/logger";
 import { App, restartApp } from "@director.run/utilities/os";
 import { z } from "zod";
 
-const CLAUDE_CONFIG_PATH = path.join(
+export const CLAUDE_CONFIG_PATH = path.join(
   os.homedir(),
   "Library/Application Support/Claude/claude_desktop_config.json",
 );
-
-const CLAUDE_CONFIG_KEY_PREFIX = "director__";
+export const CLAUDE_CONFIG_KEY_PREFIX = "director__";
 
 const logger = getLogger("installer/claude");
 

@@ -2,13 +2,11 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { writeJSONFile } from "@director.run/utilities/json";
 import { afterAll, beforeEach, describe, expect, test } from "vitest";
-import { ClaudeInstaller } from "./claude";
+import { CLAUDE_CONFIG_KEY_PREFIX, ClaudeInstaller } from "./claude";
 import {
   createClaudeConfig,
   createClaudeServerEntry,
 } from "./test/fixtures/claude";
-
-const CLAUDE_CONFIG_KEY_PREFIX = "director__";
 
 describe("claude installer", () => {
   const configFilePath = path.join(__dirname, "test/claude.config.test.json");

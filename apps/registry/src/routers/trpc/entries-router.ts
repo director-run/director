@@ -1,8 +1,10 @@
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
-import { getEntries } from "../../db/entries";
+import type { DatabaseConnection } from "../../db";
+import { EntryStore } from "../../db/entries";
 
-export function createEntriesRouter() {
+export function createEntriesRouter({ db }: { db: DatabaseConnection }) {
+  const entryStore = EntryStore.create(db);
   return t.router({
     getEntries: t.procedure
       .input(
@@ -12,7 +14,7 @@ export function createEntriesRouter() {
         }),
       )
       .query(async ({ input }) => {
-        const entries = await getEntries(input);
+        const entries = await entryStore.getEntries(input);
         return entries;
       }),
   });

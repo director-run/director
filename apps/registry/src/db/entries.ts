@@ -1,88 +1,98 @@
 import { count, eq, inArray } from "drizzle-orm";
-import { db } from "./index";
+import { DatabaseConnection } from "./index";
 import { type EntryCreateParams, entriesTable } from "./schema";
 
 export interface AddEntriesOptions {
   ignoreDuplicates?: boolean;
 }
 
-export async function getEntryByName(name: string) {
-  const entry = await db
-    .select()
-    .from(entriesTable)
-    .where(eq(entriesTable.name, name))
-    .limit(1);
+export class EntryStore {
+  private constructor(private readonly db: DatabaseConnection) {}
 
-  if (entry.length === 0) {
-    throw new Error(`No entry found with name: ${name}`);
+  public static create(db: DatabaseConnection): EntryStore {
+    return new EntryStore(db);
   }
 
-  return entry[0];
-}
-
-export async function deleteAllEntries() {
-  await db.delete(entriesTable);
-}
-
-export async function getAllEntries() {
-  return await db.select().from(entriesTable);
-}
-
-export async function addEntry(entries: EntryCreateParams) {
-  await db.insert(entriesTable).values(entries);
-}
-
-export async function getEntries(params: {
-  page: number;
-  limit: number;
-}) {
-  const { page, limit } = params;
-  const offset = (page - 1) * limit;
-
-  const entries = await db
-    .select()
-    .from(entriesTable)
-    .limit(limit)
-    .offset(offset);
-
-  return entries;
-}
-
-export async function addEntries(
-  entries: EntryCreateParams[],
-  options: AddEntriesOptions = {},
-) {
-  if (options.ignoreDuplicates) {
-    const existingEntries = await db
-      .select({ name: entriesTable.name })
+  public async getEntryByName(name: string) {
+    const entry = await this.db.db
+      .select()
       .from(entriesTable)
-      .where(
-        inArray(
-          entriesTable.name,
-          entries.map((entry) => entry.name),
-        ),
-      );
+      .where(eq(entriesTable.name, name))
+      .limit(1);
 
-    const existingNames = new Set(existingEntries.map((entry) => entry.name));
-    const newEntries = entries.filter(
-      (entry) => !existingNames.has(entry.name),
-    );
-
-    if (newEntries.length === 0) {
-      return;
+    if (entry.length === 0) {
+      throw new Error(`No entry found with name: ${name}`);
     }
 
-    await db.transaction(async (tx) => {
-      await tx.insert(entriesTable).values(newEntries);
-    });
-  } else {
-    await db.transaction(async (tx) => {
-      await tx.insert(entriesTable).values(entries);
-    });
+    return entry[0];
   }
-}
 
-export async function countEntries(): Promise<number> {
-  const result = await db.select({ count: count() }).from(entriesTable);
-  return result[0].count;
+  public async deleteAllEntries(): Promise<void> {
+    await this.db.db.delete(entriesTable);
+  }
+
+  public async getAllEntries() {
+    return await this.db.db.select().from(entriesTable);
+  }
+
+  public async addEntry(entry: EntryCreateParams) {
+    await this.db.db.insert(entriesTable).values(entry);
+  }
+
+  public async getEntries(params: {
+    page: number;
+    limit: number;
+  }) {
+    const { page, limit } = params;
+    const offset = (page - 1) * limit;
+
+    const entries = await this.db.db
+      .select()
+      .from(entriesTable)
+      .limit(limit)
+      .offset(offset);
+
+    return entries;
+  }
+
+  public async addEntries(
+    entries: EntryCreateParams[],
+    options: AddEntriesOptions = {},
+  ) {
+    if (options.ignoreDuplicates) {
+      const existingEntries = await this.db.db
+        .select({ name: entriesTable.name })
+        .from(entriesTable)
+        .where(
+          inArray(
+            entriesTable.name,
+            entries.map((entry) => entry.name),
+          ),
+        );
+
+      const existingNames = new Set(existingEntries.map((entry) => entry.name));
+      const newEntries = entries.filter(
+        (entry) => !existingNames.has(entry.name),
+      );
+
+      if (newEntries.length === 0) {
+        return;
+      }
+
+      await this.db.db.transaction(async (tx) => {
+        await tx.insert(entriesTable).values(newEntries);
+      });
+    } else {
+      await this.db.db.transaction(async (tx) => {
+        await tx.insert(entriesTable).values(entries);
+      });
+    }
+  }
+
+  public async countEntries(): Promise<number> {
+    const result = await this.db.db
+      .select({ count: count() })
+      .from(entriesTable);
+    return result[0].count;
+  }
 }

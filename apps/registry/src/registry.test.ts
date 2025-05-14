@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { env } from "./config";
-import { db } from "./db";
+import { DatabaseConnection } from "./db";
+// import { db } from "./db";
 import { entriesTable } from "./db/schema";
 import { Registry } from "./registry";
 import { createTestEntries } from "./test/fixtures/entries";
@@ -9,15 +10,16 @@ describe("HTTP Server", () => {
   const baseUrl = `http://localhost:${env.REGISTRY_PORT}/api/v1`;
   const TOTAL_ENTRIES = 20;
   const ENTRIES_PER_PAGE = 5;
+  const db = DatabaseConnection.create(env.DATABASE_URL);
 
   beforeAll(async () => {
     // Purge existing data
-    await db.delete(entriesTable);
+    await db.db.delete(entriesTable);
 
     // Create test entries
     const entries = createTestEntries(TOTAL_ENTRIES);
 
-    await db.insert(entriesTable).values(entries);
+    await db.db.insert(entriesTable).values(entries);
 
     // Start server
     await Registry.start({ port: env.REGISTRY_PORT });
@@ -25,7 +27,7 @@ describe("HTTP Server", () => {
 
   afterAll(async () => {
     // Clean up test data
-    await db.delete(entriesTable);
+    await db.db.delete(entriesTable);
   });
 
   it("should handle pagination correctly", async () => {

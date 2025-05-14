@@ -1,15 +1,15 @@
 import { Server } from "http";
 import { getLogger } from "@director.run/utilities/logger";
 import {
-  asyncHandler,
+  // asyncHandler,
   errorRequestHandler,
 } from "@director.run/utilities/middleware";
 import cors from "cors";
-import { count } from "drizzle-orm";
+// import { count } from "drizzle-orm";
 import express from "express";
 import { z } from "zod";
-import { closeDatabase, db } from "./db";
-import { entriesTable } from "./db/schema";
+import { DatabaseConnection } from "./db";
+// import { entriesTable } from "./db/schema";
 
 const logger = getLogger("registry/server");
 
@@ -22,13 +22,16 @@ const paginationSchema = z.object({
 export class Registry {
   public readonly port: number;
   private server: Server;
+  private db: DatabaseConnection;
 
   private constructor(attribs: {
     port: number;
     server: Server;
+    db: DatabaseConnection;
   }) {
     this.port = attribs.port;
     this.server = attribs.server;
+    this.db = attribs.db;
   }
 
   public static async start(attribs: {
@@ -37,49 +40,50 @@ export class Registry {
     logger.info(`starting registry...`);
 
     const app = express();
+    const db = DatabaseConnection.create();
 
     app.use(cors());
     app.use(express.json());
 
     // Get all entries endpoint with pagination
-    app.get(
-      "/api/v1/entries",
-      asyncHandler(async (req, res) => {
-        // Parse and validate pagination parameters
-        const { page, limit } = paginationSchema.parse(req.query);
+    // app.get(
+    //   "/api/v1/entries",
+    //   asyncHandler(async (req, res) => {
+    //     // Parse and validate pagination parameters
+    //     const { page, limit } = paginationSchema.parse(req.query);
 
-        // Calculate offset
-        const offset = (page - 1) * limit;
+    //     // Calculate offset
+    //     const offset = (page - 1) * limit;
 
-        // Get total count for pagination metadata
-        const [{ value: totalCount }] = await db
-          .select({ value: count() })
-          .from(entriesTable);
+    //     // Get total count for pagination metadata
+    //     const [{ value: totalCount }] = await db
+    //       .select({ value: count() })
+    //       .from(entriesTable);
 
-        // Get paginated entries
-        const entries = await db
-          .select()
-          .from(entriesTable)
-          .limit(limit)
-          .offset(offset);
+    //     // Get paginated entries
+    //     const entries = await db
+    //       .select()
+    //       .from(entriesTable)
+    //       .limit(limit)
+    //       .offset(offset);
 
-        // Calculate total pages
-        const totalPages = Math.ceil(totalCount / limit);
+    //     // Calculate total pages
+    //     const totalPages = Math.ceil(totalCount / limit);
 
-        // Return paginated response
-        res.json({
-          data: entries,
-          pagination: {
-            page,
-            limit,
-            totalItems: totalCount,
-            totalPages,
-            hasNextPage: page < totalPages,
-            hasPreviousPage: page > 1,
-          },
-        });
-      }),
-    );
+    //     // Return paginated response
+    //     res.json({
+    //       data: entries,
+    //       pagination: {
+    //         page,
+    //         limit,
+    //         totalItems: totalCount,
+    //         totalPages,
+    //         hasNextPage: page < totalPages,
+    //         hasPreviousPage: page > 1,
+    //       },
+    //     });
+    //   }),
+    // );
 
     // Error handling middleware
     app.use(errorRequestHandler);
@@ -91,6 +95,7 @@ export class Registry {
     const registry = new Registry({
       port: attribs.port,
       server,
+      db,
     });
 
     process.on("SIGINT", async () => {
@@ -103,7 +108,7 @@ export class Registry {
   }
 
   async stop() {
-    await closeDatabase();
+    await this.db.close();
     await new Promise<void>((resolve) => {
       this.server.close(() => resolve());
     });

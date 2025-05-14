@@ -1,15 +1,16 @@
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { Command } from "commander";
-import { closeDatabase, db } from "../db";
-import { addEntries, deleteAllEntries } from "../db/entries";
-import { getEntryByName } from "../db/entries";
+import { DatabaseConnection } from "../db";
+import { EntryStore } from "../db/entries";
 import { prettyPrint } from "../db/pretty-print";
-import { entriesTable } from "../db/schema";
 import { fetchRaycastRegistry } from "../importers/raycast";
 
 export async function dumpToCSV() {
+  const db = DatabaseConnection.create();
+  const entryStore = EntryStore.create(db);
+
   // Fetch all entries
-  const entries = await db.select().from(entriesTable);
+  const entries = await entryStore.getAllEntries();
 
   // Define CSV headers
   const headers = [
@@ -75,6 +76,7 @@ export async function dumpToCSV() {
   ].join("\n");
 
   console.log(csvContent);
+  await db.close();
 }
 
 export function registerDbCommands(program: Command) {
@@ -83,8 +85,10 @@ export function registerDbCommands(program: Command) {
     .description("Delete all entries from the database")
     .action(
       actionWithErrorHandler(async () => {
-        await deleteAllEntries();
-        await closeDatabase();
+        const db = DatabaseConnection.create();
+        const entryStore = EntryStore.create(db);
+        await entryStore.deleteAllEntries();
+        await db.close();
       }),
     );
 
@@ -93,8 +97,10 @@ export function registerDbCommands(program: Command) {
     .description("Seed the database with entries from awesome-mcp-servers")
     .action(
       actionWithErrorHandler(async () => {
-        await addEntries(await fetchRaycastRegistry());
-        await closeDatabase();
+        const db = DatabaseConnection.create();
+        const entryStore = EntryStore.create(db);
+        await entryStore.addEntries(await fetchRaycastRegistry());
+        await db.close();
       }),
     );
 
@@ -105,9 +111,11 @@ export function registerDbCommands(program: Command) {
     )
     .action(
       actionWithErrorHandler(async (name: string) => {
-        const entry = await getEntryByName(name);
+        const db = DatabaseConnection.create();
+        const entryStore = EntryStore.create(db);
+        const entry = await entryStore.getEntryByName(name);
         console.log(prettyPrint(entry, { indentSize: 2, padding: 1 }));
-        await closeDatabase();
+        await db.close();
       }),
     );
 }

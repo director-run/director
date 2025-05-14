@@ -21,7 +21,7 @@ export function createProxyStoreRouter({
       try {
         return (await proxyStore.getAll()).map((proxy) => ({
           ...proxy.toPlainObject(),
-          url: getPathForProxy(proxy.id),
+          path: getPathForProxy(proxy.id),
         }));
       } catch (error) {
         console.error(error);
@@ -34,7 +34,7 @@ export function createProxyStoreRouter({
         try {
           return {
             ...proxyStore.get(input.proxyId).toPlainObject(),
-            url: getPathForProxy(input.proxyId),
+            path: getPathForProxy(input.proxyId),
           };
         } catch (e) {
           if (e instanceof AppError && e.code === ErrorCode.NOT_FOUND) {

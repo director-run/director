@@ -1,8 +1,10 @@
 import { proxySSEToStdio } from "@director.run/mcp/transport";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { makeTable } from "@director.run/utilities/cli";
+import { joinURL } from "@director.run/utilities/url";
 import { Command } from "commander";
 import { gatewayClient } from "../client";
+import { env } from "../config";
 
 export function registerProxyCommands(program: Command) {
   program
@@ -15,10 +17,14 @@ export function registerProxyCommands(program: Command) {
         if (proxies.length === 0) {
           console.log("no proxies configured yet.");
         } else {
-          const table = makeTable(["id", "name", "url"]);
+          const table = makeTable(["id", "name", "path"]);
 
           table.push(
-            ...proxies.map((proxy) => [proxy.id, proxy.name, proxy.url]),
+            ...proxies.map((proxy) => [
+              proxy.id,
+              proxy.name,
+              joinURL(env.GATEWAY_URL, proxy.path),
+            ]),
           );
 
           console.log(table.toString());

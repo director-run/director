@@ -52,7 +52,12 @@ export class EntryStore {
       .limit(limit)
       .offset(offset);
 
-    return entries;
+    return {
+      entries,
+      page,
+      limit,
+      total: await this.countEntries(),
+    };
   }
 
   public async addEntries(

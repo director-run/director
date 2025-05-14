@@ -59,7 +59,7 @@ export class Registry {
         // Get total count for pagination metadata
         const totalCount = await entryStore.countEntries();
         // Get paginated entries
-        const entries = await entryStore.getEntries({ page, limit });
+        const { entries } = await entryStore.getEntries({ page, limit });
 
         // Calculate total pages
         const totalPages = Math.ceil(totalCount / limit);

@@ -32,6 +32,22 @@ export async function addEntry(entries: EntryCreateParams) {
   await db.insert(entriesTable).values(entries);
 }
 
+export async function getEntries(params: {
+  page: number;
+  limit: number;
+}) {
+  const { page, limit } = params;
+  const offset = (page - 1) * limit;
+
+  const entries = await db
+    .select()
+    .from(entriesTable)
+    .limit(limit)
+    .offset(offset);
+
+  return entries;
+}
+
 export async function addEntries(
   entries: EntryCreateParams[],
   options: AddEntriesOptions = {},

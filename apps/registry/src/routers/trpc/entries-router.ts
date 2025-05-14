@@ -1,11 +1,19 @@
 import { t } from "@director.run/utilities/trpc";
-import { getAllEntries } from "../../db/entries";
+import { z } from "zod";
+import { getEntries } from "../../db/entries";
 
 export function createEntriesRouter() {
   return t.router({
-    getEntries: t.procedure.query(async () => {
-      const entries = await getAllEntries();
-      return entries;
-    }),
+    getEntries: t.procedure
+      .input(
+        z.object({
+          page: z.number().min(1),
+          limit: z.number().min(1),
+        }),
+      )
+      .query(async ({ input }) => {
+        const entries = await getEntries(input);
+        return entries;
+      }),
   });
 }

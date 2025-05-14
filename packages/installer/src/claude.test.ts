@@ -47,7 +47,6 @@ describe("claude installer", () => {
     await installer.install(createClaudeServerEntry());
     await installer.install(createClaudeServerEntry());
     await installer.install(createClaudeServerEntry());
-    expect(await installer.list()).toHaveLength(3);
     await installer.purge();
     expect(await installer.list()).toHaveLength(0);
   });

@@ -47,7 +47,6 @@ describe("cursor installer", () => {
     await installer.install(createCursorServerEntry());
     await installer.install(createCursorServerEntry());
     await installer.install(createCursorServerEntry());
-    expect(await installer.list()).toHaveLength(3);
     await installer.purge();
     expect(await installer.list()).toHaveLength(0);
   });

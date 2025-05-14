@@ -2,7 +2,7 @@ import { joinURL } from "@director.run/utilities/url";
 import { createTRPCClient } from "@trpc/client";
 import { httpBatchLink } from "@trpc/client/links/httpBatchLink";
 import superjson from "superjson";
-import type { AppRouter } from "./routers/_app-router";
+import type { AppRouter } from "./trpc/routers/_app-router";
 
 export function createGatewayClient(baseURL: string) {
   const url = joinURL(baseURL, "/trpc");

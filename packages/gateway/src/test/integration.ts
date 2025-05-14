@@ -1,5 +1,5 @@
 import { startService, Gateway } from "../server";
-import { createGatewayClient } from "../trpc/client";
+import { createGatewayClient } from "../client";
 import path from "node:path";
 
 export class IntegrationTestHarness {

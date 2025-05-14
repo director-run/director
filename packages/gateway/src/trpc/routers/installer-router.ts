@@ -1,5 +1,6 @@
 import { ClaudeInstaller } from "@director.run/installer/claude";
 import { CursorInstaller } from "@director.run/installer/cursor";
+import { isProduction } from "@director.run/utilities/env";
 import { joinURL } from "@director.run/utilities/url";
 import { z } from "zod";
 import { getPathForProxy } from "../../helpers";
@@ -21,18 +22,26 @@ export function createInstallerRouter({
         )
         .mutation(async ({ input }) => {
           const proxy = proxyStore.get(input.proxyId);
+          const proxySSEUrl = joinURL(input.baseUrl, getPathForProxy(proxy.id));
           const installer = await ClaudeInstaller.create();
-          await installer.install({
-            name: proxy.id,
-            transport: {
-              command: "bun",
-              args: [
-                input.cliPath,
-                "sse2stdio",
-                joinURL(input.baseUrl, getPathForProxy(proxy.id)),
-              ],
-            },
-          });
+          if (isProduction()) {
+            // In production, we don't use bun as the CLI is compiled to a binary
+            await installer.install({
+              name: proxy.id,
+              transport: {
+                command: input.cliPath,
+                args: ["sse2stdio", proxySSEUrl],
+              },
+            });
+          } else {
+            await installer.install({
+              name: proxy.id,
+              transport: {
+                command: "bun",
+                args: [input.cliPath, "sse2stdio", proxySSEUrl],
+              },
+            });
+          }
         }),
       uninstall: t.procedure
         .input(z.object({ proxyId: z.string() }))

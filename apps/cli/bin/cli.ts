@@ -4,6 +4,7 @@ import { isDevelopment } from "@director.run/utilities/env";
 import { Command } from "commander";
 import packageJson from "../package.json";
 import { registerClaudeCommands } from "../src/commands/claude";
+import { registerCursorCommands } from "../src/commands/cursor";
 import { registerDebugCommands } from "../src/commands/debug";
 import { registerProxyCommands } from "../src/commands/proxy";
 import { registerRegistryCommands } from "../src/commands/registry";
@@ -18,6 +19,7 @@ program
 
 registerProxyCommands(program);
 registerClaudeCommands(program);
+registerCursorCommands(program);
 registerRegistryCommands(program);
 registerServiceCommands(program);
 

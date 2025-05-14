@@ -32,12 +32,14 @@ export class ClaudeInstaller {
   }
 
   public async uninstall(name: string) {
+    logger.info(`uninstalling ${name}`);
     const newConfig = { ...this.config };
     delete newConfig.mcpServers[createKey(name)];
     await this.updateConfig(newConfig);
   }
 
   public async install(entry: ClaudeServerEntry) {
+    logger.info(`installing ${entry.name}`);
     const newConfig = { ...this.config };
     newConfig.mcpServers[createKey(entry.name)] = entry.transport;
     await this.updateConfig(newConfig);
@@ -61,6 +63,7 @@ export class ClaudeInstaller {
 
   private async updateConfig(newConfig: ClaudeConfig) {
     this.config = ClaudeConfigSchema.parse(newConfig);
+    logger.info(`writing config to ${this.configPath}`);
     await writeJSONFile(this.configPath, this.config);
     await this.restartClaude();
   }

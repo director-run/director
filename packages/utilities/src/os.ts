@@ -17,6 +17,7 @@ const logger = getLogger("restartApp");
 
 export enum App {
   CLAUDE = "Claude",
+  CURSOR = "Cursor",
 }
 
 export async function restartApp(app: App): Promise<void> {

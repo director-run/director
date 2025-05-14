@@ -1,5 +1,6 @@
 import os from "node:os";
 import path from "node:path";
+import { isTest } from "@director.run/utilities/env";
 import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
 import { getLogger } from "@director.run/utilities/logger";
 import { App, restartApp } from "@director.run/utilities/os";
@@ -51,13 +52,18 @@ export class ClaudeInstaller {
   }
 
   public async restartClaude() {
-    logger.info("restarting claude");
-    await restartApp(App.CLAUDE);
+    if (!isTest()) {
+      logger.info("restarting claude");
+      await restartApp(App.CLAUDE);
+    } else {
+      logger.warn("skipping restart of claude in test environment");
+    }
   }
 
   private async updateConfig(newConfig: ClaudeConfig) {
     this.config = ClaudeConfigSchema.parse(newConfig);
     await writeJSONFile(this.configPath, this.config);
+    await this.restartClaude();
   }
 }
 

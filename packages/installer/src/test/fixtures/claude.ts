@@ -1,5 +1,6 @@
 import { type ClaudeConfig, type ClaudeMCPServer, type ClaudeServerEntry } from "../../claude";
 import { faker } from '@faker-js/faker';
+import slugify from "slugify";
 
 export function createClaudeConfig(entries: ClaudeServerEntry[]): ClaudeConfig {
   return {
@@ -11,7 +12,7 @@ export function createClaudeConfig(entries: ClaudeServerEntry[]): ClaudeConfig {
 }
 
 export function createClaudeServerEntry(params?: {name?: string, transport?: ClaudeMCPServer}): ClaudeServerEntry {
- const name = params?.name ?? faker.hacker.noun();
+ const name = slugify(params?.name ?? faker.hacker.noun());
   return {
     name,
     transport: params?.transport ?? {

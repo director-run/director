@@ -1,4 +1,4 @@
-import { startService } from "@director.run/gateway/server";
+import { Gateway } from "@director.run/gateway/server";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { Command } from "commander";
 import { env } from "../config";
@@ -23,7 +23,7 @@ export function registerServiceCommands(program: Command) {
       actionWithErrorHandler(async () => {
         printDirectorAscii();
 
-        await startService({
+        await Gateway.start({
           port: env.GATEWAY_PORT,
           databaseFilePath: env.DB_FILE_PATH,
         });

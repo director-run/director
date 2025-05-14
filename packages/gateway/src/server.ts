@@ -8,15 +8,7 @@ import { ProxyServerStore } from "./proxy-server-store";
 import { createMCPRouter } from "./routers/mcp";
 import { createTRPCExpressMiddleware } from "./routers/trpc";
 
-const logger = getLogger("startService");
-
-export const startService = async (attribs: {
-  port: number;
-  databaseFilePath: string;
-}) => {
-  const gateway = await Gateway.start(attribs);
-  return gateway;
-};
+const logger = getLogger("Gateway");
 
 export class Gateway {
   public readonly proxyStore: ProxyServerStore;

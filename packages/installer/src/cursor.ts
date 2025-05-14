@@ -20,6 +20,7 @@ export class CursorInstaller {
   }
 
   public static async create(configPath: string = CURSOR_CONFIG_PATH) {
+    logger.info(`reading config from ${configPath}`);
     const config = await readJSONFile<CursorConfig>(configPath);
     return new CursorInstaller({
       configPath,
@@ -42,10 +43,18 @@ export class CursorInstaller {
   }
 
   public async list() {
+    logger.info("listing servers");
     return Object.entries(this.config.mcpServers).map(([name, transport]) => ({
       name,
       url: transport.url,
     }));
+  }
+
+  public async purge() {
+    logger.info("purging cursor config");
+    const newConfig = { ...this.config };
+    newConfig.mcpServers = {};
+    await this.updateConfig(newConfig);
   }
 
   private async updateConfig(newConfig: CursorConfig) {

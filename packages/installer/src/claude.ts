@@ -24,6 +24,7 @@ export class ClaudeInstaller {
   }
 
   public static async create(configPath: string = CLAUDE_CONFIG_PATH) {
+    logger.info(`reading config from ${configPath}`);
     const config = await readJSONFile<ClaudeConfig>(configPath);
     return new ClaudeInstaller({
       configPath,
@@ -45,7 +46,15 @@ export class ClaudeInstaller {
     await this.updateConfig(newConfig);
   }
 
+  public async purge() {
+    logger.info("purging claude config");
+    const newConfig = { ...this.config };
+    newConfig.mcpServers = {};
+    await this.updateConfig(newConfig);
+  }
+
   public async list() {
+    logger.info("listing servers");
     return Object.entries(this.config.mcpServers).map(([name, transport]) => ({
       name,
       transport,

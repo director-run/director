@@ -42,4 +42,13 @@ describe("claude installer", () => {
     await installer.uninstall(entry.name);
     expect(await installer.list()).toHaveLength(0);
   });
+
+  test("should be able to purge all servers", async () => {
+    await installer.install(createClaudeServerEntry());
+    await installer.install(createClaudeServerEntry());
+    await installer.install(createClaudeServerEntry());
+    expect(await installer.list()).toHaveLength(3);
+    await installer.purge();
+    expect(await installer.list()).toHaveLength(0);
+  });
 });

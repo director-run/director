@@ -4,7 +4,7 @@ import { gatewayClient } from "../client";
 
 export function registerClaudeCommands(program: Command) {
   program
-    .command("claude ls")
+    .command("claude:ls")
     .description("List claude MCP servers")
     .action(
       actionWithErrorHandler(async (proxyId: string) => {
@@ -14,7 +14,7 @@ export function registerClaudeCommands(program: Command) {
     );
 
   program
-    .command("claude install <proxyId>")
+    .command("claude:install <proxyId>")
     .description("Install a proxy on a client app")
     .action(
       actionWithErrorHandler(async (proxyId: string) => {
@@ -26,7 +26,7 @@ export function registerClaudeCommands(program: Command) {
     );
 
   program
-    .command("claude uninstall <proxyId>")
+    .command("claude:uninstall <proxyId>")
     .description("Uninstall an proxy from a client app")
     .action(
       actionWithErrorHandler(async (proxyId: string) => {

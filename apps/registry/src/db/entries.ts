@@ -39,7 +39,7 @@ export class EntryStore {
     await this.db.db.insert(entriesTable).values(entry);
   }
 
-  public async getEntries(params: {
+  public async paginateEntries(params: {
     page: number;
     limit: number;
   }) {

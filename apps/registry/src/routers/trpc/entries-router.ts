@@ -14,7 +14,7 @@ export function createEntriesRouter({ db }: { db: DatabaseConnection }) {
         }),
       )
       .query(async ({ input }) => {
-        const entries = await entryStore.getEntries(input);
+        const entries = await entryStore.paginateEntries(input);
         return entries;
       }),
   });

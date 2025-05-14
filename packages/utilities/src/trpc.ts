@@ -1,4 +1,6 @@
 import type { AnyTRPCMiddlewareFunction } from "@trpc/server";
+import { initTRPC } from "@trpc/server";
+import SuperJSON from "superjson";
 import { getLogger } from "./logger";
 
 const logger = getLogger("trpc");
@@ -44,4 +46,16 @@ export const logTRPCRequest: AnyTRPCMiddlewareFunction = async ({
     );
     throw error;
   }
+};
+
+export const trpcBase = initTRPC.context().create({
+  transformer: SuperJSON,
+});
+
+const baseProcedure = trpcBase.procedure.use(logTRPCRequest);
+
+export const t = {
+  router: trpcBase.router,
+  procedure: baseProcedure,
+  middleware: trpcBase.middleware,
 };

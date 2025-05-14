@@ -9,7 +9,7 @@ import cors from "cors";
 import express from "express";
 import { Database } from "./db";
 import { ProxyServerStore } from "./proxy-server-store";
-import { createAppRouter } from "./trpc/routers/_app-router";
+import { createAppRouter } from "./trpc/routers";
 
 const logger = getLogger("startService");
 

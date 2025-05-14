@@ -1,9 +1,9 @@
 import { AppError, ErrorCode } from "@director.run/utilities/error";
+import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
 import { ProxyTargetSchema } from "../../db/schema";
 import { getPathForProxy } from "../../helpers";
 import { ProxyServerStore } from "../../proxy-server-store";
-import { t } from "../server";
 
 const ProxyCreateSchema = z.object({
   name: z.string(),

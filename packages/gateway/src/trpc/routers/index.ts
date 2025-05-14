@@ -1,5 +1,5 @@
+import { t } from "@director.run/utilities/trpc";
 import { ProxyServerStore } from "../../proxy-server-store";
-import { t } from "../server";
 import { createInstallerRouter } from "./installer-router";
 import { createProxyStoreRouter } from "./store-router";
 

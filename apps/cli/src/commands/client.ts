@@ -4,6 +4,22 @@ import { gatewayClient } from "../client";
 
 export function registerClientCommands(program: Command) {
   program
+    .command("client claude ls")
+    .description("List claude MCP servers")
+    .action(
+      actionWithErrorHandler(
+        async (proxyId: string, client: InstallOptions) => {
+          await console.log("listing claude MCP servers");
+          // const result = await gatewayClient.installer.install.mutate({
+          //   proxyId,
+          //   client,
+          // });
+          // console.log(result);
+        },
+      ),
+    );
+
+  program
     .command("install <proxyId> <client>")
     .description("Install a proxy on a client app")
     .action(

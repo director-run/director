@@ -1,121 +1,83 @@
 import os from "node:os";
 import path from "node:path";
-import { getPathForProxy } from "@director.run/gateway/helpers";
-import type { ProxyServer } from "@director.run/mcp/proxy-server";
 import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
 import { getLogger } from "@director.run/utilities/logger";
 import { App, restartApp } from "@director.run/utilities/os";
+import { z } from "zod";
 
 const CLAUDE_CONFIG_PATH = path.join(
   os.homedir(),
   "Library/Application Support/Claude/claude_desktop_config.json",
 );
 
-const CLAUDE_CONFIG_KEY_PREFIX = "director";
-
-function sse2stdioConfigValue(sseUrl: string) {
-  return {
-    args: [
-      path.resolve(__dirname, "../../../apps/cli/bin/cli.ts"),
-      "sse2stdio",
-      sseUrl,
-    ],
-    command: "bun",
-    env: {
-      LOG_LEVEL: "silent",
-      PROXY_TARGET_CONNECT_RETRY_COUNT: "0",
-    },
-  };
-}
+const CLAUDE_CONFIG_KEY_PREFIX = "director__";
 
 const logger = getLogger("installer/claude");
 
-type ClaudeConfig = {
-  mcpServers: Record<
-    string,
-    {
-      args: string[];
-      command: string;
-    }
-  >;
-};
+export class ClaudeInstaller {
+  private config: ClaudeConfig;
+  public readonly configPath: string;
 
-export const installToClaude = async ({
-  proxyServer,
-}: {
-  proxyServer: ProxyServer;
-}) => {
-  await addMCPServerToClaude({
-    key: `${CLAUDE_CONFIG_KEY_PREFIX}__${proxyServer.id}`,
-    value: sse2stdioConfigValue(getPathForProxy(proxyServer.id)),
-  });
-};
-
-export const uninstallFromClaude = async ({
-  proxyServer,
-}: {
-  proxyServer: ProxyServer;
-}) => {
-  await removeMCPServerFromClaude({
-    key: `${CLAUDE_CONFIG_KEY_PREFIX}__${proxyServer.id}`,
-  });
-};
-
-export const addMCPServerToClaude = async ({
-  key,
-  value,
-}: {
-  key: string;
-  value: {
-    args: string[];
-    command: string;
-    env?: Record<string, string>;
-  };
-}) => {
-  logger.info(`updating to Claude configuration in ${CLAUDE_CONFIG_PATH}`);
-
-  const claudeConfig = await readJSONFile<ClaudeConfig>(CLAUDE_CONFIG_PATH);
-
-  const updatedConfig = {
-    ...claudeConfig,
-    mcpServers: {
-      ...(claudeConfig.mcpServers ?? {}),
-      [key]: value,
-    },
-  };
-
-  await writeJSONFile(CLAUDE_CONFIG_PATH, updatedConfig);
-
-  logger.info(`${key} successfully written to Claude config`);
-
-  await restartApp(App.CLAUDE);
-};
-
-export const removeMCPServerFromClaude = async ({
-  key,
-}: {
-  key: string;
-}) => {
-  logger.info(
-    `uninstalling from Claude configuration in ${CLAUDE_CONFIG_PATH}`,
-  );
-  const claudeConfig = await readJSONFile<ClaudeConfig>(CLAUDE_CONFIG_PATH);
-
-  if (!claudeConfig?.mcpServers[key]) {
-    logger.info(
-      `Server "${key}" not found in Claude config, nothing to uninstall`,
-    );
-    return;
+  private constructor(params: { configPath: string; config: ClaudeConfig }) {
+    this.configPath = params.configPath;
+    this.config = params.config;
   }
 
-  const { [key]: removed, ...remainingServers } = claudeConfig.mcpServers;
+  public static async create(configPath: string = CLAUDE_CONFIG_PATH) {
+    const config = await readJSONFile<ClaudeConfig>(configPath);
+    return new ClaudeInstaller({
+      configPath,
+      config: ClaudeConfigSchema.parse(config),
+    });
+  }
 
-  const updatedConfig = {
-    ...claudeConfig,
-    mcpServers: remainingServers,
-  };
+  public async uninstall(name: string) {
+    const newConfig = { ...this.config };
+    delete newConfig.mcpServers[createKey(name)];
+    await this.updateConfig(newConfig);
+  }
 
-  await writeJSONFile(CLAUDE_CONFIG_PATH, updatedConfig);
-  logger.info(`${key} successfully removed from Claude config`);
-  await restartApp(App.CLAUDE);
+  public async install(entry: ClaudeServerEntry) {
+    const newConfig = { ...this.config };
+    newConfig.mcpServers[createKey(entry.name)] = entry.transport;
+    await this.updateConfig(newConfig);
+  }
+
+  public async list() {
+    return Object.entries(this.config.mcpServers).map(([name, transport]) => ({
+      name,
+      transport,
+    }));
+  }
+
+  public async restartClaude() {
+    logger.info("restarting claude");
+    await restartApp(App.CLAUDE);
+  }
+
+  private async updateConfig(newConfig: ClaudeConfig) {
+    this.config = ClaudeConfigSchema.parse(newConfig);
+    await writeJSONFile(this.configPath, this.config);
+  }
+}
+
+const createKey = (name: string) => `${CLAUDE_CONFIG_KEY_PREFIX}${name}`;
+
+export const ClaudeMCPServerSchema = z.object({
+  command: z.string().describe('The command to execute (e.g., "bun", "node")'),
+  args: z.array(z.string()).describe("Command line arguments"),
+  env: z.record(z.string()).optional().describe("Environment variables"),
+});
+
+export const ClaudeConfigSchema = z.object({
+  mcpServers: z
+    .record(z.string(), ClaudeMCPServerSchema)
+    .describe("Map of MCP server configurations"),
+});
+
+export type ClaudeMCPServer = z.infer<typeof ClaudeMCPServerSchema>;
+export type ClaudeConfig = z.infer<typeof ClaudeConfigSchema>;
+export type ClaudeServerEntry = {
+  name: string;
+  transport: ClaudeMCPServer;
 };

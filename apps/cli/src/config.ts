@@ -7,7 +7,7 @@ export const env = createEnv({
   envFilePath: path.join(getDataDir(), "./config.env"),
   envVars: {
     GATEWAY_PORT: z.number({ coerce: true }).optional().default(3673),
-    GATEWAY_URL: z.string().optional().default(`http://localhost:3673/trpc`),
+    GATEWAY_URL: z.string().optional().default(`http://localhost:3673`),
     DATA_DIR: z.string().optional().default(getDataDir()),
     DB_FILE_PATH: z
       .string()

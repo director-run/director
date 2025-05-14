@@ -24,7 +24,7 @@ export class IntegrationTestHarness {
             databaseFilePath: path.join(__dirname, "db.test.json"),
         });
 
-        const client = createGatewayClient(`http://localhost:${gateway.port}/trpc`);
+        const client = createGatewayClient(`http://localhost:${gateway.port}`);
 
         return new IntegrationTestHarness({
             gateway,

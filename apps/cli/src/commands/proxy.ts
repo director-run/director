@@ -1,11 +1,8 @@
-import { createGatewayClient } from "@director.run/gateway/trpc/client";
 import { proxySSEToStdio } from "@director.run/mcp/transport";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { makeTable } from "@director.run/utilities/cli";
 import { Command } from "commander";
-import { env } from "../config";
-
-const client = createGatewayClient(env.GATEWAY_URL);
+import { gatewayClient } from "../client";
 
 export function registerProxyCommands(program: Command) {
   program
@@ -13,7 +10,7 @@ export function registerProxyCommands(program: Command) {
     .description("List all proxies")
     .action(
       actionWithErrorHandler(async () => {
-        const proxies = await client.store.getAll.query();
+        const proxies = await gatewayClient.store.getAll.query();
 
         if (proxies.length === 0) {
           console.log("no proxies configured yet.");
@@ -34,7 +31,7 @@ export function registerProxyCommands(program: Command) {
     .description("Show proxy details")
     .action(
       actionWithErrorHandler(async (proxyId: string) => {
-        const proxy = await client.store.get.query({ proxyId });
+        const proxy = await gatewayClient.store.get.query({ proxyId });
 
         if (!proxy) {
           console.error(`proxy ${proxyId} not found`);
@@ -68,7 +65,7 @@ export function registerProxyCommands(program: Command) {
     .description("Create a new proxy")
     .action(
       actionWithErrorHandler(async (name: string) => {
-        const proxy = await client.store.create.mutate({
+        const proxy = await gatewayClient.store.create.mutate({
           name,
           servers: [],
         });
@@ -82,7 +79,7 @@ export function registerProxyCommands(program: Command) {
     .description("Delete a proxy")
     .action(
       actionWithErrorHandler(async (proxyId: string) => {
-        await client.store.delete.mutate({
+        await gatewayClient.store.delete.mutate({
           proxyId,
         });
 
@@ -95,7 +92,7 @@ export function registerProxyCommands(program: Command) {
     .description("Add a server from the registry to a proxy.")
     .action(
       actionWithErrorHandler(async (proxyId: string, entryId: string) => {
-        const proxy = await client.store.addServerFromRegistry.mutate({
+        const proxy = await gatewayClient.store.addServerFromRegistry.mutate({
           proxyId,
           entryId,
         });
@@ -108,7 +105,7 @@ export function registerProxyCommands(program: Command) {
     .description("Remove a server from a proxy")
     .action(
       actionWithErrorHandler(async (proxyId: string, serverName: string) => {
-        const proxy = await client.store.removeServer.mutate({
+        const proxy = await gatewayClient.store.removeServer.mutate({
           proxyId,
           serverName,
         });

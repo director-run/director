@@ -1,9 +1,6 @@
-import { createGatewayClient } from "@director.run/gateway/trpc/client";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { Command } from "commander";
-import { env } from "../config";
-
-const trpc = createGatewayClient(env.GATEWAY_URL);
+import { gatewayClient } from "../client";
 
 export function registerClientCommands(program: Command) {
   program
@@ -12,7 +9,7 @@ export function registerClientCommands(program: Command) {
     .action(
       actionWithErrorHandler(
         async (proxyId: string, client: InstallOptions) => {
-          const result = await trpc.installer.install.mutate({
+          const result = await gatewayClient.installer.install.mutate({
             proxyId,
             client,
           });
@@ -27,7 +24,7 @@ export function registerClientCommands(program: Command) {
     .action(
       actionWithErrorHandler(
         async (proxyId: string, client: InstallOptions) => {
-          const result = await trpc.installer.uninstall.mutate({
+          const result = await gatewayClient.installer.uninstall.mutate({
             proxyId,
             client,
           });

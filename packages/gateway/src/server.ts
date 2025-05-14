@@ -4,12 +4,11 @@ import {
   asyncHandler,
   errorRequestHandler,
 } from "@director.run/utilities/middleware";
-import * as trpcExpress from "@trpc/server/adapters/express";
 import cors from "cors";
 import express from "express";
 import { Database } from "./db";
 import { ProxyServerStore } from "./proxy-server-store";
-import { createAppRouter } from "./routers/trpc";
+import { createTRPCExpressMiddleware } from "./routers/trpc";
 
 const logger = getLogger("startService");
 
@@ -77,9 +76,7 @@ export class Gateway {
 
     app.use(
       "/trpc",
-      trpcExpress.createExpressMiddleware({
-        router: createAppRouter({ proxyStore: this.proxyStore }),
-      }),
+      createTRPCExpressMiddleware({ proxyStore: this.proxyStore }),
     );
 
     app.use(errorRequestHandler);

@@ -59,7 +59,7 @@ $ director install <proxyId> cursor
 
 ## CLI Reference
 
-```
+```bash
 Usage: director [options] [command]
 
 Director CLI

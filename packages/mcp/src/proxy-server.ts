@@ -17,6 +17,7 @@ import { setupResourceHandlers } from "./handlers/resources-handler";
 import { setupToolHandlers } from "./handlers/tools-handler";
 import { SimpleClient } from "./simple-client";
 import { SimpleServer } from "./simple-server";
+import type { ProxyServerAttributes, ProxyTargetAttributes } from "./types";
 
 global.EventSource = eventsource.EventSource;
 
@@ -204,25 +205,3 @@ function createControllerServer({ proxy }: { proxy: ProxyServer }) {
 
   return server;
 }
-
-export type ProxyTargetAttributes = {
-  name: string;
-  transport:
-    | {
-        type: "stdio";
-        command: string;
-        args?: string[];
-        env?: string[];
-      }
-    | {
-        type: "sse";
-        url: string;
-      };
-};
-
-export type ProxyServerAttributes = {
-  id: string;
-  name: string;
-  description?: string;
-  servers: ProxyTargetAttributes[];
-};

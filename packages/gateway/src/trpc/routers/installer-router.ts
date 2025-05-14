@@ -1,11 +1,6 @@
-import {
-  installToClaude,
-  uninstallFromClaude,
-} from "@director.run/installer/claude";
-import {
-  installToCursor,
-  uninstallFromCursor,
-} from "@director.run/installer/cursor";
+import path from "node:path";
+import { ClaudeInstaller } from "@director.run/installer/claude";
+import { CursorInstaller } from "@director.run/installer/cursor";
 import { z } from "zod";
 import type { ProxyServerStore } from "../../proxy-server-store";
 import { t } from "../server";
@@ -25,16 +20,23 @@ export function createInstallerRouter({
         try {
           const proxy = proxyStore.get(input.proxyId);
           if (input.client === "claude") {
-            await installToClaude({ proxyServer: proxy });
+            const installer = await ClaudeInstaller.create();
+            await installer.install({
+              name: proxy.attributes.name,
+              transport: {
+                command: path.join(__dirname, "../../../bin/proxy.js"),
+                args: ["run", "proxy", proxy.id],
+              },
+            });
           } else {
-            await installToCursor({ proxyServer: proxy });
+            // await installToCursor({ proxyServer: proxy });
           }
           return {
-            status: "ok" as const,
+            status: "ok",
           };
         } catch (error) {
           return {
-            status: "fail" as const,
+            status: "fail",
             configPath: "",
             errorMessage:
               error instanceof Error ? error.message : "Unknown error",
@@ -53,17 +55,19 @@ export function createInstallerRouter({
           const proxy = proxyStore.get(input.proxyId);
 
           if (input.client === "claude") {
-            await uninstallFromClaude({ proxyServer: proxy });
+            const installer = await ClaudeInstaller.create();
+            await installer.uninstall(proxy.attributes.name);
           } else {
-            await uninstallFromCursor({ proxyServer: proxy });
+            const installer = await CursorInstaller.create();
+            await installer.uninstall(proxy.attributes.name);
           }
 
           return {
-            status: "ok" as const,
+            status: "ok",
           };
         } catch (error) {
           return {
-            status: "fail" as const,
+            status: "fail",
             configPath: "",
             errorMessage:
               error instanceof Error ? error.message : "Unknown error",

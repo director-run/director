@@ -15,15 +15,6 @@ export function registerDebugCommands(program: Command) {
         seed();
       }),
     );
-
-  program
-    .command("debug:restart <client>")
-    .description("Restart client")
-    .action(
-      actionWithErrorHandler(() => {
-        console.log("todo");
-      }),
-    );
 }
 
 export async function seed() {

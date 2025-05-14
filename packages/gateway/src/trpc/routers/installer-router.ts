@@ -1,7 +1,8 @@
-import path from "node:path";
 import { ClaudeInstaller } from "@director.run/installer/claude";
 import { CursorInstaller } from "@director.run/installer/cursor";
+import { joinURL } from "@director.run/utilities/url";
 import { z } from "zod";
+import { getPathForProxy } from "../../helpers";
 import type { ProxyServerStore } from "../../proxy-server-store";
 import { t } from "../server";
 
@@ -11,15 +12,25 @@ export function createInstallerRouter({
   return t.router({
     claude: t.router({
       install: t.procedure
-        .input(z.object({ proxyId: z.string() }))
+        .input(
+          z.object({
+            proxyId: z.string(),
+            baseUrl: z.string(),
+            cliPath: z.string(),
+          }),
+        )
         .mutation(async ({ input }) => {
           const proxy = proxyStore.get(input.proxyId);
           const installer = await ClaudeInstaller.create();
           await installer.install({
-            name: proxy.attributes.name,
+            name: proxy.id,
             transport: {
-              command: path.join(__dirname, "../../../bin/proxy.js"),
-              args: ["run", "proxy", proxy.id],
+              command: "bun",
+              args: [
+                input.cliPath,
+                "sse2stdio",
+                joinURL(input.baseUrl, getPathForProxy(proxy.id)),
+              ],
             },
           });
         }),
@@ -28,26 +39,30 @@ export function createInstallerRouter({
         .mutation(async ({ input }) => {
           const proxy = proxyStore.get(input.proxyId);
           const installer = await ClaudeInstaller.create();
-          await installer.uninstall(proxy.attributes.name);
+          await installer.uninstall(proxy.id);
         }),
       list: t.procedure.query(async () => {
         const installer = await ClaudeInstaller.create();
         return installer.list();
       }),
-      restart: t.procedure.query(async () => {
+      restart: t.procedure.mutation(async () => {
         const installer = await ClaudeInstaller.create();
         await installer.restartClaude();
+      }),
+      purge: t.procedure.mutation(async () => {
+        const installer = await ClaudeInstaller.create();
+        await installer.purge();
       }),
     }),
     cursor: t.router({
       install: t.procedure
-        .input(z.object({ proxyId: z.string() }))
+        .input(z.object({ proxyId: z.string(), baseUrl: z.string() }))
         .mutation(async ({ input }) => {
           const proxy = proxyStore.get(input.proxyId);
           const installer = await CursorInstaller.create();
           await installer.install({
-            name: proxy.attributes.name,
-            url: "https://some-url.com",
+            name: proxy.id,
+            url: joinURL(input.baseUrl, getPathForProxy(proxy.id)),
           });
         }),
       uninstall: t.procedure
@@ -55,8 +70,16 @@ export function createInstallerRouter({
         .mutation(async ({ input }) => {
           const proxy = proxyStore.get(input.proxyId);
           const installer = await CursorInstaller.create();
-          await installer.uninstall(proxy.attributes.name);
+          await installer.uninstall(proxy.id);
         }),
+      list: t.procedure.query(async () => {
+        const installer = await CursorInstaller.create();
+        return installer.list();
+      }),
+      purge: t.procedure.mutation(async () => {
+        const installer = await CursorInstaller.create();
+        await installer.purge();
+      }),
     }),
   });
 }

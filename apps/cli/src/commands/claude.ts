@@ -1,6 +1,9 @@
+import path from "node:path";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
+import { isDevelopment } from "@director.run/utilities/env";
 import { Command } from "commander";
 import { gatewayClient } from "../client";
+import { env } from "../config";
 
 export function registerClaudeCommands(program: Command) {
   program
@@ -20,6 +23,8 @@ export function registerClaudeCommands(program: Command) {
       actionWithErrorHandler(async (proxyId: string) => {
         const result = await gatewayClient.installer.claude.install.mutate({
           proxyId,
+          baseUrl: env.GATEWAY_URL,
+          cliPath: path.join(__dirname, "../../bin/cli.ts"),
         });
         console.log(result);
       }),
@@ -36,4 +41,26 @@ export function registerClaudeCommands(program: Command) {
         console.log(result);
       }),
     );
+
+  if (isDevelopment()) {
+    program
+      .command("claude:restart")
+      .description("Restart the claude MCP server")
+      .action(
+        actionWithErrorHandler(async () => {
+          const result = await gatewayClient.installer.claude.restart.mutate();
+          console.log(result);
+        }),
+      );
+
+    program
+      .command("claude:purge")
+      .description("Purge all claude MCP servers")
+      .action(
+        actionWithErrorHandler(async () => {
+          const result = await gatewayClient.installer.claude.purge.mutate();
+          console.log(result);
+        }),
+      );
+  }
 }

@@ -7,8 +7,8 @@ import cors from "cors";
 import { count } from "drizzle-orm";
 import express from "express";
 import { z } from "zod";
-import { db } from "../db";
-import { entriesTable } from "../db/schema";
+import { db } from "./db";
+import { entriesTable } from "./db/schema";
 
 const logger = getLogger("registry/server");
 
@@ -23,10 +23,7 @@ let server: ReturnType<express.Application["listen"]> | null = null;
 export function startServer(params: { port: number }) {
   const app = express();
 
-  // Enable CORS
   app.use(cors());
-
-  // Add JSON body parsing
   app.use(express.json());
 
   // Get all entries endpoint with pagination

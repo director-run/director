@@ -79,16 +79,6 @@ export async function dumpToCSV() {
 
 export function registerDbCommands(program: Command) {
   program
-    .command("db:dump")
-    .description("Dump all registry entries to a CSV file")
-    .action(
-      actionWithErrorHandler(async () => {
-        await dumpToCSV();
-        await closeDatabase();
-      }),
-    );
-
-  program
     .command("db:purge")
     .description("Delete all entries from the database")
     .action(

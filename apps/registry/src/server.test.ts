@@ -1,9 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { env } from "../config";
-import { db } from "../db";
-import { entriesTable } from "../db/schema";
-import { createTestEntries } from "../test/fixtures/entries";
+import { env } from "./config";
+import { db } from "./db";
+import { entriesTable } from "./db/schema";
 import { startServer } from "./server";
+import { createTestEntries } from "./test/fixtures/entries";
 
 describe("HTTP Server", () => {
   const baseUrl = `http://localhost:${env.REGISTRY_PORT}/api/v1`;

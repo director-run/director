@@ -24,6 +24,10 @@ export async function deleteAllEntries() {
   await db.delete(entriesTable);
 }
 
+export async function getAllEntries() {
+  return await db.select().from(entriesTable);
+}
+
 export async function addEntry(entries: EntryCreateParams) {
   await db.insert(entriesTable).values(entries);
 }

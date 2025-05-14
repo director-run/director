@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { env } from "./config";
 import { db } from "./db";
 import { entriesTable } from "./db/schema";
-import { startServer } from "./server";
+import { Registry } from "./server";
 import { createTestEntries } from "./test/fixtures/entries";
 
 describe("HTTP Server", () => {
@@ -20,7 +20,7 @@ describe("HTTP Server", () => {
     await db.insert(entriesTable).values(entries);
 
     // Start server
-    await startServer({ port: env.REGISTRY_PORT });
+    await Registry.start({ port: env.REGISTRY_PORT });
   });
 
   afterAll(async () => {

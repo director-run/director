@@ -1,3 +1,4 @@
+import { Server } from "http";
 import { getLogger } from "@director.run/utilities/logger";
 import {
   asyncHandler,
@@ -18,69 +19,92 @@ const paginationSchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(20),
 });
 
-let server: ReturnType<express.Application["listen"]> | null = null;
+export class Registry {
+  public readonly port: number;
+  private server: Server;
 
-export function startServer(params: { port: number }) {
-  const app = express();
+  private constructor(attribs: {
+    port: number;
+    server: Server;
+  }) {
+    this.port = attribs.port;
+    this.server = attribs.server;
+  }
 
-  app.use(cors());
-  app.use(express.json());
+  public static async start(attribs: {
+    port: number;
+  }) {
+    logger.info(`starting registry...`);
 
-  // Get all entries endpoint with pagination
-  app.get(
-    "/api/v1/entries",
-    asyncHandler(async (req, res) => {
-      // Parse and validate pagination parameters
-      const { page, limit } = paginationSchema.parse(req.query);
+    const app = express();
 
-      // Calculate offset
-      const offset = (page - 1) * limit;
+    app.use(cors());
+    app.use(express.json());
 
-      // Get total count for pagination metadata
-      const [{ value: totalCount }] = await db
-        .select({ value: count() })
-        .from(entriesTable);
+    // Get all entries endpoint with pagination
+    app.get(
+      "/api/v1/entries",
+      asyncHandler(async (req, res) => {
+        // Parse and validate pagination parameters
+        const { page, limit } = paginationSchema.parse(req.query);
 
-      // Get paginated entries
-      const entries = await db
-        .select()
-        .from(entriesTable)
-        .limit(limit)
-        .offset(offset);
+        // Calculate offset
+        const offset = (page - 1) * limit;
 
-      // Calculate total pages
-      const totalPages = Math.ceil(totalCount / limit);
+        // Get total count for pagination metadata
+        const [{ value: totalCount }] = await db
+          .select({ value: count() })
+          .from(entriesTable);
 
-      // Return paginated response
-      res.json({
-        data: entries,
-        pagination: {
-          page,
-          limit,
-          totalItems: totalCount,
-          totalPages,
-          hasNextPage: page < totalPages,
-          hasPreviousPage: page > 1,
-        },
-      });
-    }),
-  );
+        // Get paginated entries
+        const entries = await db
+          .select()
+          .from(entriesTable)
+          .limit(limit)
+          .offset(offset);
 
-  // Error handling middleware
-  app.use(errorRequestHandler);
+        // Calculate total pages
+        const totalPages = Math.ceil(totalCount / limit);
 
-  // Start the server
-  server = app.listen(params.port, () => {
-    logger.info(`Registry server running at http://localhost:${params.port}`);
-  });
+        // Return paginated response
+        res.json({
+          data: entries,
+          pagination: {
+            page,
+            limit,
+            totalItems: totalCount,
+            totalPages,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+          },
+        });
+      }),
+    );
 
-  // Handle graceful shutdown
-  process.on("SIGINT", () => {
-    logger.info("Received SIGINT, shutting down server...");
-    server?.close(() => {
+    // Error handling middleware
+    app.use(errorRequestHandler);
+
+    const server = app.listen(attribs.port, () => {
+      logger.info(`registry running on port ${attribs.port}`);
+    });
+
+    const registry = new Registry({
+      port: attribs.port,
+      server,
+    });
+
+    process.on("SIGINT", async () => {
+      logger.info("received SIGINT, shutting down registry...");
+      await registry.stop();
       process.exit(0);
     });
-  });
 
-  return server;
+    return registry;
+  }
+
+  async stop() {
+    await new Promise<void>((resolve) => {
+      this.server.close(() => resolve());
+    });
+  }
 }

@@ -19,7 +19,7 @@ export const ProxyTargetSchema = z.object({
   ]),
 });
 
-const proxySchema = z.object({
+export const proxySchema = z.object({
   id: requiredStringSchema,
   name: requiredStringSchema,
   description: optionalStringSchema,

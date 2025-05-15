@@ -49,3 +49,4 @@ public/swe-worker*
 
 .env
 db.json
+db.test.json

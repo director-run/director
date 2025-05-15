@@ -1,8 +1,3 @@
-import { env } from "@director.run/config/env";
-import type {
-  ProxyAttributes,
-  ProxyTargetAttributes,
-} from "@director.run/db/schema";
 import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
@@ -14,27 +9,32 @@ import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import * as eventsource from "eventsource";
 import express from "express";
-import { ConnectedClient } from "./connected-client";
-import { ControllerClient } from "./controller-client";
+import { z } from "zod";
+import packageJson from "../package.json";
 import { setupPromptHandlers } from "./handlers/prompts-handler";
 import { setupResourceTemplateHandlers } from "./handlers/resource-templates-handler";
 import { setupResourceHandlers } from "./handlers/resources-handler";
 import { setupToolHandlers } from "./handlers/tools-handler";
+import { SimpleClient } from "./simple-client";
+import { SimpleServer } from "./simple-server";
+import type { ProxyServerAttributes, ProxyTargetAttributes } from "./types";
 
 global.EventSource = eventsource.EventSource;
 
 const logger = getLogger(`ProxyServer`);
 
 export class ProxyServer extends Server {
-  private targets: ConnectedClient[];
-  public readonly attributes: ProxyAttributes & { useController?: boolean };
+  private targets: SimpleClient[];
+  public readonly attributes: ProxyServerAttributes & {
+    useController?: boolean;
+  };
   private transports: Map<string, SSEServerTransport>;
 
-  constructor(attributes: ProxyAttributes & { useController?: boolean }) {
+  constructor(attributes: ProxyServerAttributes & { useController?: boolean }) {
     super(
       {
         name: attributes.name,
-        version: env.VERSION,
+        version: packageJson.version,
       },
       {
         capabilities: {
@@ -54,7 +54,7 @@ export class ProxyServer extends Server {
   ): Promise<void> {
     for (const server of this.attributes.servers) {
       try {
-        const target = new ConnectedClient(server.name);
+        const target = new SimpleClient(server.name);
         await target.connect(getTransport(server));
         this.targets.push(target);
       } catch (error) {
@@ -69,9 +69,11 @@ export class ProxyServer extends Server {
     }
 
     if (this.attributes.useController) {
-      const controller = new ControllerClient({ proxy: this });
-      await controller.connect();
-      this.targets.push(controller);
+      const controllerServer = createControllerServer({ proxy: this });
+      const controllerClient =
+        await SimpleClient.createAndConnectToServer(controllerServer);
+
+      this.targets.push(controllerClient);
     }
 
     // Setup handlers
@@ -82,15 +84,11 @@ export class ProxyServer extends Server {
   }
 
   public toPlainObject() {
-    return { ...this.attributes, url: this.sseUrl };
+    return this.attributes;
   }
 
   get id() {
     return this.attributes.id;
-  }
-
-  get sseUrl() {
-    return `http://localhost:${env.SERVER_PORT}/${this.attributes.id}/sse`;
   }
 
   async close(): Promise<void> {
@@ -184,4 +182,26 @@ function getTransport(targetServer: ProxyTargetAttributes): Transport {
     default:
       throw new Error(`Transport ${targetServer.name} not available.`);
   }
+}
+
+function createControllerServer({ proxy }: { proxy: ProxyServer }) {
+  const server = new SimpleServer(`${proxy.id}-controller`);
+  server
+    .tool("list_targets")
+    .schema(z.object({}))
+    .description("List proxy targets")
+    .handle(({}) => {
+      return Promise.resolve({
+        status: "success",
+        data: [
+          {
+            name: "test",
+            description: "test",
+            url: "https://github.com/test",
+          },
+        ],
+      });
+    });
+
+  return server;
 }

@@ -1,22 +1,26 @@
-import { trpc } from "@director.run/service/trpc/client";
-
+import { createRegistryClient } from "@director.run/registry/client";
+import { makeTable } from "@director.run/utilities/cli";
+import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import chalk from "chalk";
 import { Command } from "commander";
-import type { JsonValue } from "type-fest";
-import { makeTable } from "../helpers";
-import { withErrorHandler } from "../helpers";
+import { env } from "../config";
+
+const client = createRegistryClient(env.REGISTRY_URL);
 
 export function registerRegistryCommands(program: Command) {
   program
     .command("registry:ls")
     .description("List all available servers in the registry")
     .action(
-      withErrorHandler(async () => {
-        const items = await trpc.registry.list.query();
-        const table = makeTable(["Id", "Description"]);
+      actionWithErrorHandler(async () => {
+        const items = await client.entries.getEntries.query({
+          pageIndex: 0,
+          pageSize: 100,
+        });
+        const table = makeTable(["Name", "Description"]);
         table.push(
-          ...items.map((item) => {
-            return [item.id, truncateDescription(item.description)];
+          ...items.entries.map((item) => {
+            return [item.name, truncateDescription(item.description)];
           }),
         );
         console.log(table.toString());
@@ -24,13 +28,15 @@ export function registerRegistryCommands(program: Command) {
     );
 
   program
-    .command("registry:get <entryId>")
+    .command("registry:get <entryName>")
     .description("get detailed information about a repository item")
     .action(
-      withErrorHandler(async (id: string) => {
+      actionWithErrorHandler(async (entryName: string) => {
         try {
-          const item = await trpc.registry.get.query({ id });
-          console.log(colorizeJson(item));
+          const item = await client.entries.getEntryByName.query({
+            name: entryName,
+          });
+          console.log(JSON.stringify(item, null, 2));
         } catch (error) {
           if (error instanceof Error) {
             console.error(chalk.red(error.message));
@@ -40,20 +46,6 @@ export function registerRegistryCommands(program: Command) {
         }
       }),
     );
-}
-
-function colorizeJson(obj: Record<string, JsonValue>): string {
-  const entries = Object.entries(obj)
-    .map(([key, value]) => {
-      const coloredKey = chalk.white.bold(`"${key}"`);
-      const formattedValue =
-        typeof value === "string"
-          ? `"${value}"`
-          : JSON.stringify(value, null, 2);
-      return `  ${coloredKey}: ${formattedValue}`;
-    })
-    .join(",\n");
-  return `{\n${entries}\n}`;
 }
 
 function truncateDescription(

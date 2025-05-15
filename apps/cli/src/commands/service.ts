@@ -1,7 +1,7 @@
-import { env } from "@director.run/config/env";
-import { startService } from "@director.run/service/start-service";
+import { Gateway } from "@director.run/gateway/server";
+import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { Command } from "commander";
-import { withErrorHandler } from "../helpers";
+import { env } from "../config";
 
 function printDirectorAscii(): void {
   console.log(`
@@ -20,9 +20,13 @@ export function registerServiceCommands(program: Command) {
     .command("start")
     .description("Start the director service")
     .action(
-      withErrorHandler(async () => {
+      actionWithErrorHandler(async () => {
         printDirectorAscii();
-        await startService();
+
+        await Gateway.start({
+          port: env.GATEWAY_PORT,
+          databaseFilePath: env.DB_FILE_PATH,
+        });
       }),
     );
 
@@ -30,7 +34,7 @@ export function registerServiceCommands(program: Command) {
     .command("config")
     .description("Print configuration variables")
     .action(
-      withErrorHandler(() => {
+      actionWithErrorHandler(() => {
         console.log(`config:`, env);
       }),
     );

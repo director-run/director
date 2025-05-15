@@ -1,0 +1,52 @@
+{
+  "name": "@director.run/gateway",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "clean": "rm -rf .turbo dist/*",
+    "test": "bun run vitest  --fileParallelism=false",
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    "./*": {
+      "types": "./src/*.ts",
+      "default": "./src/*.ts"
+    }
+  },
+  "dependencies": {
+    "@director.run/registry": "workspace:*",
+    "@director.run/utilities": "workspace:*",
+    "@director.run/installer": "workspace:*",
+    "@director.run/mcp": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.8.0",
+    "@t3-oss/env-core": "^0.12.0",
+    "@trpc/client": "^11.0.2",
+    "@trpc/server": "^11.0.2",
+    "content-type": "^1.0.5",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "pino": "^9.6.0",
+    "pino-pretty": "^13.0.0",
+    "raw-body": "^3.0.0",
+    "slugify": "^1.6.6",
+    "superjson": "^2.2.1",
+    "@types/lodash": "^4.17.16",
+    "lodash": "^4.17.21"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/content-type": "^1.1.8",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/raw-body": "^2.3.0",
+    "@types/semver": "^7.7.0",
+    "type-fest": "^4.40.0",
+    "vitest": "^3.1.1"
+  }
+}

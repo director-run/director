@@ -1,9 +1,10 @@
 #!/usr/bin/env -S node --no-warnings --enable-source-maps
 
-import { isDevelopment } from "@director.run/config/env";
+import { isDevelopment } from "@director.run/utilities/env";
 import { Command } from "commander";
 import packageJson from "../package.json";
-import { registerClientCommands } from "../src/commands/client";
+import { registerClaudeCommands } from "../src/commands/claude";
+import { registerCursorCommands } from "../src/commands/cursor";
 import { registerDebugCommands } from "../src/commands/debug";
 import { registerProxyCommands } from "../src/commands/proxy";
 import { registerRegistryCommands } from "../src/commands/registry";
@@ -17,7 +18,8 @@ program
   .version(packageJson.version);
 
 registerProxyCommands(program);
-registerClientCommands(program);
+registerClaudeCommands(program);
+registerCursorCommands(program);
 registerRegistryCommands(program);
 registerServiceCommands(program);
 

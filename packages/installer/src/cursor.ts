@@ -1,73 +1,84 @@
 import os from "node:os";
 import path from "node:path";
-import type { ProxyServer } from "@director.run/mcp/proxy-server";
 import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
 import { getLogger } from "@director.run/utilities/logger";
+import { z } from "zod";
 
 const CURSOR_CONFIG_PATH = path.join(os.homedir(), ".cursor/mcp.json");
-const CURSOR_CONFIG_KEY_PREFIX = "director";
+
+export const CURSOR_CONFIG_KEY_PREFIX = "director__";
 
 const logger = getLogger("installer/cursor");
 
-type CursorConfig = {
-  mcpServers: Record<
-    string,
-    {
-      url: string;
-    }
-  >;
-};
+export class CursorInstaller {
+  private config: CursorConfig;
+  public readonly configPath: string;
 
-export const installToCursor = async ({
-  proxyServer,
-}: {
-  proxyServer: ProxyServer;
-}) => {
-  logger.info(`updating Cursor configuration in ${CURSOR_CONFIG_PATH}`);
-  const config = await readJSONFile<CursorConfig>(CURSOR_CONFIG_PATH);
-
-  const updatedConfig = {
-    ...config,
-    mcpServers: {
-      ...(config.mcpServers ?? {}),
-      [`${CURSOR_CONFIG_KEY_PREFIX}__${proxyServer.id}`]: {
-        url: proxyServer.sseUrl,
-      },
-    },
-  };
-
-  await writeJSONFile(CURSOR_CONFIG_PATH, updatedConfig);
-  logger.info(`${proxyServer.id} successfully written to Cursor config`);
-};
-
-export const uninstallFromCursor = async ({
-  proxyServer,
-}: {
-  proxyServer: ProxyServer;
-}) => {
-  logger.info(
-    `uninstalling from Cursor configuration in ${CURSOR_CONFIG_PATH}`,
-  );
-  const config = await readJSONFile<CursorConfig>(CURSOR_CONFIG_PATH);
-
-  // Create a new config object without the entry to be removed
-  const serverKey = `${CURSOR_CONFIG_KEY_PREFIX}__${proxyServer.id}`;
-
-  if (!config?.mcpServers[serverKey]) {
-    logger.info(
-      `Server "${proxyServer.id}" not found in Cursor config, nothing to uninstall`,
-    );
-    return;
+  private constructor(params: { configPath: string; config: CursorConfig }) {
+    this.configPath = params.configPath;
+    this.config = params.config;
   }
 
-  // Remove the entry
-  const { [serverKey]: removed, ...remainingServers } = config.mcpServers;
+  public static async create(configPath: string = CURSOR_CONFIG_PATH) {
+    logger.info(`reading config from ${configPath}`);
+    const config = await readJSONFile<CursorConfig>(configPath);
+    return new CursorInstaller({
+      configPath,
+      config: CursorConfigSchema.parse(config),
+    });
+  }
 
-  const updatedConfig = {
-    ...config,
-    mcpServers: remainingServers,
-  };
+  public async uninstall(name: string) {
+    logger.info(`uninstalling ${name}`);
+    const newConfig = { ...this.config };
+    delete newConfig.mcpServers[createKey(name)];
+    await this.updateConfig(newConfig);
+  }
 
-  await writeJSONFile(CURSOR_CONFIG_PATH, updatedConfig);
-  logger.info(`${proxyServer.id} successfully removed from Cursor config`);
+  public async install(entry: CursorServerEntry) {
+    logger.info(`installing ${entry.name}`);
+    const newConfig = { ...this.config };
+    newConfig.mcpServers[createKey(entry.name)] = { url: entry.url };
+    await this.updateConfig(newConfig);
+  }
+
+  public async list() {
+    logger.info("listing servers");
+    return Object.entries(this.config.mcpServers).map(([name, transport]) => ({
+      name,
+      url: transport.url,
+    }));
+  }
+
+  public async purge() {
+    logger.info("purging cursor config");
+    const newConfig = { ...this.config };
+    newConfig.mcpServers = {};
+    await this.updateConfig(newConfig);
+  }
+
+  private async updateConfig(newConfig: CursorConfig) {
+    this.config = CursorConfigSchema.parse(newConfig);
+    logger.info(`writing config to ${this.configPath}`);
+    await writeJSONFile(this.configPath, this.config);
+  }
+}
+
+const createKey = (name: string) => `${CURSOR_CONFIG_KEY_PREFIX}${name}`;
+
+export const CursorMCPServerSchema = z.object({
+  url: z.string().url().describe("The SSE endpoint URL for the MCP server"),
+});
+
+export const CursorConfigSchema = z.object({
+  mcpServers: z
+    .record(z.string(), CursorMCPServerSchema)
+    .describe("Map of MCP server configurations"),
+});
+
+export type CursorMCPServer = z.infer<typeof CursorMCPServerSchema>;
+export type CursorConfig = z.infer<typeof CursorConfigSchema>;
+export type CursorServerEntry = {
+  name: string;
+  url: string;
 };

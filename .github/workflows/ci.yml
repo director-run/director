@@ -44,6 +44,22 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
     steps:
     - uses: actions/checkout@v4
     - name: Install uv
@@ -53,6 +69,8 @@ jobs:
         bun-version: latest
     - name: Install dependencies
       run: bun install
+    - name: Create Registry test DB
+      run: cd apps/registry && bun run db:push
     - name: Test
       run: bun run test
   build:

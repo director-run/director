@@ -1,12 +1,16 @@
-import { env } from "@director.run/config/env";
 import { omit, pick } from "lodash";
 import pino, { type Logger } from "pino";
 import pinoPretty from "pino-pretty";
+import { isTest } from "./env";
 import { isAppError } from "./error";
+
+const LOG_LEVEL = isTest() ? "silent" : "trace";
+const LOG_PRETTY = true;
+const LOG_ERROR_STACK = true;
 
 const logger = pino(
   {
-    level: env.LOG_LEVEL.toLowerCase(),
+    level: LOG_LEVEL.toLowerCase(),
     messageKey: "message",
     timestamp: true,
     serializers: {
@@ -23,11 +27,11 @@ const logger = pino(
           };
         }
         const serialized = pino.stdSerializers.errWithCause(error);
-        return env.LOG_ERROR_STACK ? serialized : omit(serialized, "stack");
+        return LOG_ERROR_STACK ? serialized : omit(serialized, "stack");
       },
     },
   },
-  env.LOG_PRETTY
+  LOG_PRETTY
     ? pinoPretty({
         colorize: true,
         translateTime: "HH:MM:ss",

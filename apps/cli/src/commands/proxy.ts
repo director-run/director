@@ -1,24 +1,30 @@
-import { trpc } from "@director.run/service/trpc/client";
+import { proxySSEToStdio } from "@director.run/mcp/transport";
+import { actionWithErrorHandler } from "@director.run/utilities/cli";
+import { makeTable } from "@director.run/utilities/cli";
+import { joinURL } from "@director.run/utilities/url";
 import { Command } from "commander";
-import { withErrorHandler } from "../helpers";
-import { makeTable } from "../helpers";
-import { proxySSEToStdio } from "../proxy-sse-to-stdio";
+import { gatewayClient } from "../client";
+import { env } from "../config";
 
 export function registerProxyCommands(program: Command) {
   program
     .command("ls")
     .description("List all proxies")
     .action(
-      withErrorHandler(async () => {
-        const proxies = await trpc.store.getAll.query();
+      actionWithErrorHandler(async () => {
+        const proxies = await gatewayClient.store.getAll.query();
 
         if (proxies.length === 0) {
           console.log("no proxies configured yet.");
         } else {
-          const table = makeTable(["id", "name", "url"]);
+          const table = makeTable(["id", "name", "path"]);
 
           table.push(
-            ...proxies.map((proxy) => [proxy.id, proxy.name, proxy.url]),
+            ...proxies.map((proxy) => [
+              proxy.id,
+              proxy.name,
+              joinURL(env.GATEWAY_URL, proxy.path),
+            ]),
           );
 
           console.log(table.toString());
@@ -30,8 +36,8 @@ export function registerProxyCommands(program: Command) {
     .command("get <proxyId>")
     .description("Show proxy details")
     .action(
-      withErrorHandler(async (proxyId: string) => {
-        const proxy = await trpc.store.get.query({ proxyId });
+      actionWithErrorHandler(async (proxyId: string) => {
+        const proxy = await gatewayClient.store.get.query({ proxyId });
 
         if (!proxy) {
           console.error(`proxy ${proxyId} not found`);
@@ -64,8 +70,8 @@ export function registerProxyCommands(program: Command) {
     .command("create <name>")
     .description("Create a new proxy")
     .action(
-      withErrorHandler(async (name: string) => {
-        const proxy = await trpc.store.create.mutate({
+      actionWithErrorHandler(async (name: string) => {
+        const proxy = await gatewayClient.store.create.mutate({
           name,
           servers: [],
         });
@@ -78,8 +84,8 @@ export function registerProxyCommands(program: Command) {
     .command("rm <proxyId>")
     .description("Delete a proxy")
     .action(
-      withErrorHandler(async (proxyId: string) => {
-        await trpc.store.delete.mutate({
+      actionWithErrorHandler(async (proxyId: string) => {
+        await gatewayClient.store.delete.mutate({
           proxyId,
         });
 
@@ -88,15 +94,16 @@ export function registerProxyCommands(program: Command) {
     );
 
   program
-    .command("server:add <proxyId> <entryId>")
+    .command("server:add <proxyId> <entryName>")
     .description("Add a server from the registry to a proxy.")
     .action(
-      withErrorHandler(async (proxyId: string, entryId: string) => {
-        const proxy = await trpc.store.addServerFromRegistry.mutate({
+      actionWithErrorHandler(async (proxyId: string, entryName: string) => {
+        const proxy = await gatewayClient.store.addServerFromRegistry.mutate({
           proxyId,
-          entryId,
+          entryName,
+          registryUrl: env.REGISTRY_URL,
         });
-        console.log(`Registry entry ${entryId} added to ${proxy.id}`);
+        console.log(`Registry entry ${entryName} added to ${proxy.id}`);
       }),
     );
 
@@ -104,8 +111,8 @@ export function registerProxyCommands(program: Command) {
     .command("server:remove <proxyId> <serverName>")
     .description("Remove a server from a proxy")
     .action(
-      withErrorHandler(async (proxyId: string, serverName: string) => {
-        const proxy = await trpc.store.removeServer.mutate({
+      actionWithErrorHandler(async (proxyId: string, serverName: string) => {
+        const proxy = await gatewayClient.store.removeServer.mutate({
           proxyId,
           serverName,
         });

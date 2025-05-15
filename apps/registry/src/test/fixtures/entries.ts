@@ -1,7 +1,7 @@
 import type { EntryCreateParams } from "../../db/schema";
 import { faker } from '@faker-js/faker';
 
-const makeEntryName = () => faker.hacker.noun() + Math.random();
+const makeEntryName = () => faker.hacker.noun() + '_' + faker.string.uuid();
 
 export function makeTestEntry(overrides: Partial<EntryCreateParams> = {}): EntryCreateParams {
   const name = makeEntryName();

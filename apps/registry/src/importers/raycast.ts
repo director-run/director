@@ -12,6 +12,10 @@ export async function fetchRaycastRegistry(): Promise<EntryCreateParams[]> {
       args: entry.configuration.args,
       env: entry.configuration.env,
     },
+    source_registry: {
+      name: "RAYCAST",
+      entryId: entry.name,
+    },
   });
 
   return [

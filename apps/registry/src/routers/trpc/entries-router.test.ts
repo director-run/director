@@ -25,7 +25,8 @@ describe("Entries Router", () => {
   describe("getEntries", () => {
     it("should handle pagination correctly", async () => {
       const totalEntries = 100;
-      await registry.store.entries.addEntries(makeTestEntries(totalEntries));
+      const entries = makeTestEntries(totalEntries);
+      await registry.store.entries.addEntries(entries);
       const result = await client.entries.getEntries.query({
         page: 1,
         limit: 10,

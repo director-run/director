@@ -11,9 +11,6 @@ export function createEntriesRouter({ store }: { store: Store }) {
           limit: z.number().min(1),
         }),
       )
-      .query(async ({ input }) => {
-        const entries = await store.entries.paginateEntries(input);
-        return entries;
-      }),
+      .query(({ input }) => store.entries.paginateEntries(input)),
   });
 }

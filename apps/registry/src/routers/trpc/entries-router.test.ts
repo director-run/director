@@ -29,13 +29,13 @@ describe("Entries Router", () => {
     it("should handle pagination correctly", async () => {
       // Test first page
       const result1 = await client.entries.getEntries.query({
-        page: 1,
-        limit: ENTRIES_PER_PAGE,
+        pageIndex: 1,
+        pageSize: ENTRIES_PER_PAGE,
       });
       expect(result1.entries).toHaveLength(ENTRIES_PER_PAGE);
       expect(result1.pagination).toEqual({
-        page: 1,
-        limit: ENTRIES_PER_PAGE,
+        pageIndex: 1,
+        pageSize: ENTRIES_PER_PAGE,
         totalItems: TOTAL_ENTRIES,
         totalPages: Math.ceil(TOTAL_ENTRIES / ENTRIES_PER_PAGE),
         hasNextPage: true,
@@ -44,13 +44,13 @@ describe("Entries Router", () => {
 
       // Test middle page
       const result2 = await client.entries.getEntries.query({
-        page: 2,
-        limit: ENTRIES_PER_PAGE,
+        pageIndex: 2,
+        pageSize: ENTRIES_PER_PAGE,
       });
       expect(result2.entries).toHaveLength(ENTRIES_PER_PAGE);
       expect(result2.pagination).toEqual({
-        page: 2,
-        limit: ENTRIES_PER_PAGE,
+        pageIndex: 2,
+        pageSize: ENTRIES_PER_PAGE,
         totalItems: TOTAL_ENTRIES,
         totalPages: Math.ceil(TOTAL_ENTRIES / ENTRIES_PER_PAGE),
         hasNextPage: true,
@@ -59,13 +59,13 @@ describe("Entries Router", () => {
 
       // Test last page
       const result3 = await client.entries.getEntries.query({
-        page: 4,
-        limit: ENTRIES_PER_PAGE,
+        pageIndex: 4,
+        pageSize: ENTRIES_PER_PAGE,
       });
       expect(result3.entries).toHaveLength(ENTRIES_PER_PAGE);
       expect(result3.pagination).toEqual({
-        page: 4,
-        limit: ENTRIES_PER_PAGE,
+        pageIndex: 4,
+        pageSize: ENTRIES_PER_PAGE,
         totalItems: TOTAL_ENTRIES,
         totalPages: Math.ceil(TOTAL_ENTRIES / ENTRIES_PER_PAGE),
         hasNextPage: false,

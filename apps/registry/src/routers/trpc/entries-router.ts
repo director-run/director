@@ -7,8 +7,8 @@ export function createEntriesRouter({ store }: { store: Store }) {
     getEntries: t.procedure
       .input(
         z.object({
-          page: z.number().min(1),
-          limit: z.number().min(1),
+          pageIndex: z.number().min(1),
+          pageSize: z.number().min(1),
         }),
       )
       .query(({ input }) => store.entries.paginateEntries(input)),

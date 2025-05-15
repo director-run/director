@@ -36,31 +36,31 @@ export class EntryStore {
   }
 
   public async paginateEntries(params: {
-    page: number;
-    limit: number;
+    pageIndex: number;
+    pageSize: number;
   }) {
-    const { page, limit } = params;
-    const offset = (page - 1) * limit;
+    const { pageIndex, pageSize } = params;
+    const offset = (pageIndex - 1) * pageSize;
 
     const [entries, totalCount] = await Promise.all([
-      this.db.db.select().from(entriesTable).limit(limit).offset(offset),
+      this.db.db.select().from(entriesTable).limit(pageSize).offset(offset),
       this.db.db
         .select({ count: count() })
         .from(entriesTable)
         .then((result) => result[0].count),
     ]);
 
-    const totalPages = Math.ceil(totalCount / limit);
+    const totalPages = Math.ceil(totalCount / pageSize);
 
     return {
       entries,
       pagination: {
-        page,
-        limit,
+        pageIndex,
+        pageSize,
         totalItems: totalCount,
         totalPages,
-        hasNextPage: page < totalPages,
-        hasPreviousPage: page > 1,
+        hasNextPage: pageIndex < totalPages,
+        hasPreviousPage: pageIndex > 1,
       },
     };
   }

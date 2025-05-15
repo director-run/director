@@ -60,8 +60,8 @@ export class Registry {
         const totalCount = await store.entries.countEntries();
         // Get paginated entries
         const { entries } = await store.entries.paginateEntries({
-          page,
-          limit,
+          pageIndex: page,
+          pageSize: limit,
         });
 
         // Calculate total pages

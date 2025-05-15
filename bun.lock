@@ -19,7 +19,7 @@
       "devDependencies": {
         "@director.run/gateway": "workspace:*",
         "@director.run/mcp": "workspace:*",
-        "@director.run/registry-client": "workspace:*",
+        "@director.run/registry": "workspace:*",
         "@director.run/utilities": "workspace:*",
         "chalk": "^5.4.1",
         "cli-table3": "^0.6.5",
@@ -43,7 +43,7 @@
         "pg": "^8.15.6",
       },
       "devDependencies": {
-        "@director.run/registry-client": "workspace:*",
+        "@director.run/utilities": "workspace:*",
         "@faker-js/faker": "^9.7.0",
         "@types/bun": "latest",
         "@types/pg": "^8.11.14",
@@ -52,24 +52,13 @@
         "vitest": "^3.1.1",
       },
     },
-    "packages/config": {
-      "name": "@director.run/config",
-      "version": "0.0.1",
-      "devDependencies": {
-        "@types/bun": "latest",
-        "type-fest": "^4.40.0",
-        "typescript": "^5.8.2",
-        "vitest": "^3.1.1",
-      },
-    },
     "packages/gateway": {
       "name": "@director.run/gateway",
       "version": "0.0.1",
       "dependencies": {
-        "@director.run/config": "workspace:*",
         "@director.run/installer": "workspace:*",
         "@director.run/mcp": "workspace:*",
-        "@director.run/registry-client": "workspace:*",
+        "@director.run/registry": "workspace:*",
         "@director.run/utilities": "workspace:*",
         "@modelcontextprotocol/sdk": "^1.8.0",
         "@t3-oss/env-core": "^0.12.0",
@@ -124,17 +113,6 @@
         "vitest": "^3.1.1",
       },
     },
-    "packages/registry-client": {
-      "name": "@director.run/registry-client",
-      "version": "0.0.1",
-      "dependencies": {
-        "zod": "^3.23.8",
-      },
-      "devDependencies": {
-        "@types/bun": "latest",
-        "vitest": "^3.1.1",
-      },
-    },
     "packages/utilities": {
       "name": "@director.run/utilities",
       "version": "0.0.1",
@@ -169,8 +147,6 @@
 
     "@director.run/cli": ["@director.run/cli@workspace:apps/cli"],
 
-    "@director.run/config": ["@director.run/config@workspace:packages/config"],
-
     "@director.run/gateway": ["@director.run/gateway@workspace:packages/gateway"],
 
     "@director.run/installer": ["@director.run/installer@workspace:packages/installer"],
@@ -178,8 +154,6 @@
     "@director.run/mcp": ["@director.run/mcp@workspace:packages/mcp"],
 
     "@director.run/registry": ["@director.run/registry@workspace:apps/registry"],
-
-    "@director.run/registry-client": ["@director.run/registry-client@workspace:packages/registry-client"],
 
     "@director.run/utilities": ["@director.run/utilities@workspace:packages/utilities"],
 

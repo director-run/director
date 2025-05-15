@@ -102,11 +102,16 @@ export function createProxyStoreRouter({
       .input(
         z.object({
           proxyId: z.string(),
-          entryId: z.string(),
+          entryName: z.string(),
+          registryUrl: z.string().url(),
         }),
       )
       .mutation(({ input }) => {
-        return proxyStore.addServerFromRegistry(input.proxyId, input.entryId);
+        return proxyStore.addServerFromRegistry(
+          input.proxyId,
+          input.entryName,
+          input.registryUrl,
+        );
       }),
     removeServer: t.procedure
       .input(

@@ -26,7 +26,7 @@
     "@director.run/gateway": "workspace:*",
     "@director.run/mcp": "workspace:*",
     "@director.run/utilities": "workspace:*",
-    "@director.run/registry-client": "workspace:*",
+    "@director.run/registry": "workspace:*",
     "chalk": "^5.4.1",
     "cli-table3": "^0.6.5",
     "commander": "^13.1.0",

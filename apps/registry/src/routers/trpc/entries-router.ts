@@ -12,5 +12,8 @@ export function createEntriesRouter({ store }: { store: Store }) {
         }),
       )
       .query(({ input }) => store.entries.paginateEntries(input)),
+    getEntryByName: t.procedure
+      .input(z.object({ name: z.string() }))
+      .query(({ input }) => store.entries.getEntryByName(input.name)),
   });
 }

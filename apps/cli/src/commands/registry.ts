@@ -1,8 +1,11 @@
-import { fetchEntries, fetchEntry } from "@director.run/registry-client/client";
+import { createRegistryClient } from "@director.run/registry/client";
 import { makeTable } from "@director.run/utilities/cli";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import chalk from "chalk";
 import { Command } from "commander";
+import { env } from "../config";
+
+const client = createRegistryClient(env.REGISTRY_URL);
 
 export function registerRegistryCommands(program: Command) {
   program
@@ -10,10 +13,13 @@ export function registerRegistryCommands(program: Command) {
     .description("List all available servers in the registry")
     .action(
       actionWithErrorHandler(async () => {
-        const items = await fetchEntries();
+        const items = await client.entries.getEntries.query({
+          pageIndex: 0,
+          pageSize: 100,
+        });
         const table = makeTable(["Name", "Description"]);
         table.push(
-          ...items.map((item) => {
+          ...items.entries.map((item) => {
             return [item.name, truncateDescription(item.description)];
           }),
         );
@@ -27,7 +33,9 @@ export function registerRegistryCommands(program: Command) {
     .action(
       actionWithErrorHandler(async (entryName: string) => {
         try {
-          const item = await fetchEntry(entryName);
+          const item = await client.entries.getEntryByName.query({
+            name: entryName,
+          });
           console.log(JSON.stringify(item, null, 2));
         } catch (error) {
           if (error instanceof Error) {

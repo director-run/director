@@ -94,15 +94,16 @@ export function registerProxyCommands(program: Command) {
     );
 
   program
-    .command("server:add <proxyId> <entryId>")
+    .command("server:add <proxyId> <entryName>")
     .description("Add a server from the registry to a proxy.")
     .action(
-      actionWithErrorHandler(async (proxyId: string, entryId: string) => {
+      actionWithErrorHandler(async (proxyId: string, entryName: string) => {
         const proxy = await gatewayClient.store.addServerFromRegistry.mutate({
           proxyId,
-          entryId,
+          entryName,
+          registryUrl: env.REGISTRY_URL,
         });
-        console.log(`Registry entry ${entryId} added to ${proxy.id}`);
+        console.log(`Registry entry ${entryName} added to ${proxy.id}`);
       }),
     );
 

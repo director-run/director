@@ -12,7 +12,7 @@ describe("Entries Router", () => {
 
   beforeAll(async () => {
     registry = await Registry.start({ port: env.REGISTRY_PORT });
-    client = createRegistryClient(env.REGISTRY_URL);
+    client = createRegistryClient(`http://localhost:${env.REGISTRY_PORT}`);
     await registry.store.purge();
   });
 

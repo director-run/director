@@ -13,7 +13,7 @@
     "./*": "./src/*.ts"
   },
   "dependencies": {
-    "@director.run/registry-client": "workspace:*",
+    "@director.run/registry": "workspace:*",
     "@director.run/utilities": "workspace:*",
     "@director.run/installer": "workspace:*",
     "@director.run/mcp": "workspace:*",

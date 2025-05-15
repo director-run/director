@@ -8,6 +8,7 @@ export const env = createEnv({
   envVars: {
     GATEWAY_PORT: z.number({ coerce: true }).optional().default(3673),
     GATEWAY_URL: z.string().optional().default(`http://localhost:3673`),
+    REGISTRY_URL: z.string().optional().default(`http://localhost:3080`),
     DB_FILE_PATH: z
       .string()
       .optional()

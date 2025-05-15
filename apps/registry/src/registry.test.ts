@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { env } from "./config";
 import { Registry } from "./registry";
-import { createTestEntries } from "./test/fixtures/entries";
+import { makeTestEntries } from "./test/fixtures/entries";
 
 describe("HTTP Server", () => {
   const baseUrl = `http://localhost:${env.REGISTRY_PORT}/api/v1`;
@@ -13,7 +13,7 @@ describe("HTTP Server", () => {
     // Purge existing data
     registry = await Registry.start({ port: env.REGISTRY_PORT });
     await registry.store.purge();
-    await registry.store.entries.addEntries(createTestEntries(TOTAL_ENTRIES));
+    await registry.store.entries.addEntries(makeTestEntries(TOTAL_ENTRIES));
   });
 
   it("should handle pagination correctly", async () => {

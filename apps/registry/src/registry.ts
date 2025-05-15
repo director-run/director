@@ -8,6 +8,7 @@ import cors from "cors";
 import express from "express";
 import { z } from "zod";
 import { type Store, makeStore } from "./db/store";
+import { createTRPCExpressMiddleware } from "./routers/trpc";
 // import { entriesTable } from "./db/schema";
 
 const logger = getLogger("registry/server");
@@ -81,7 +82,7 @@ export class Registry {
       }),
     );
 
-    // Error handling middleware
+    app.use("/trpc", createTRPCExpressMiddleware({ store }));
     app.use(errorRequestHandler);
 
     const server = app.listen(attribs.port, () => {

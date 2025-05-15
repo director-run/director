@@ -1,10 +1,13 @@
 import type { EntryCreateParams } from "../../db/schema";
 import { faker } from '@faker-js/faker';
 
-export function createTestEntry(overrides: Partial<EntryCreateParams> = {}): EntryCreateParams {
+const makeEntryName = () => faker.hacker.noun() + Math.random();
+
+export function makeTestEntry(overrides: Partial<EntryCreateParams> = {}): EntryCreateParams {
+  const name = makeEntryName();
   return {
-    name: faker.company.name(),
-    title: faker.company.name(),
+    name,
+    title: name,
     description: faker.company.catchPhrase(),
     transport: {
       type: "stdio",
@@ -15,8 +18,8 @@ export function createTestEntry(overrides: Partial<EntryCreateParams> = {}): Ent
   };
 }
 
-export function createTestEntries(count: number): EntryCreateParams[] {
+export function makeTestEntries(count: number): EntryCreateParams[] {
   return Array.from({ length: count }, (_, i) => 
-    createTestEntry()
+    makeTestEntry()
   );
 } 

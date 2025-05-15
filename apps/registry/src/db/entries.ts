@@ -36,7 +36,7 @@ export class EntryStore {
     pageSize: number;
   }) {
     const { pageIndex, pageSize } = params;
-    const offset = (pageIndex - 1) * pageSize;
+    const offset = pageIndex * pageSize;
 
     const [entries, totalCount] = await Promise.all([
       this.db.db.select().from(entriesTable).limit(pageSize).offset(offset),
@@ -55,8 +55,8 @@ export class EntryStore {
         pageSize,
         totalItems: totalCount,
         totalPages,
-        hasNextPage: pageIndex < totalPages,
-        hasPreviousPage: pageIndex > 1,
+        hasNextPage: pageIndex < totalPages - 1,
+        hasPreviousPage: pageIndex > 0,
       },
     };
   }

@@ -1,7 +1,7 @@
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { Command } from "commander";
-import { prettyPrint } from "../db/pretty-print";
 import { makeStore } from "../db/store";
+import { prettyPrint } from "../helpers/pretty-print";
 import { fetchRaycastRegistry } from "../importers/raycast";
 
 export async function dumpToCSV() {

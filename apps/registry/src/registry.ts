@@ -1,23 +1,12 @@
 import { Server } from "http";
 import { getLogger } from "@director.run/utilities/logger";
-import {
-  asyncHandler,
-  errorRequestHandler,
-} from "@director.run/utilities/middleware";
+import { errorRequestHandler } from "@director.run/utilities/middleware";
 import cors from "cors";
 import express from "express";
-import { z } from "zod";
 import { type Store, makeStore } from "./db/store";
 import { createTRPCExpressMiddleware } from "./routers/trpc";
-// import { entriesTable } from "./db/schema";
 
-const logger = getLogger("registry/server");
-
-// Pagination schema
-const paginationSchema = z.object({
-  page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(100).default(20),
-});
+const logger = getLogger("registry");
 
 export class Registry {
   public readonly port: number;
@@ -45,43 +34,6 @@ export class Registry {
 
     app.use(cors());
     app.use(express.json());
-
-    // Get all entries endpoint with pagination
-    app.get(
-      "/api/v1/entries",
-      asyncHandler(async (req, res) => {
-        // Parse and validate pagination parameters
-        const { page, limit } = paginationSchema.parse(req.query);
-
-        // Calculate offset
-        const offset = (page - 1) * limit;
-
-        // Get total count for pagination metadata
-        const totalCount = await store.entries.countEntries();
-        // Get paginated entries
-        const { entries } = await store.entries.paginateEntries({
-          pageIndex: page,
-          pageSize: limit,
-        });
-
-        // Calculate total pages
-        const totalPages = Math.ceil(totalCount / limit);
-
-        // Return paginated response
-        res.json({
-          data: entries,
-          pagination: {
-            page,
-            limit,
-            totalItems: totalCount,
-            totalPages,
-            hasNextPage: page < totalPages,
-            hasPreviousPage: page > 1,
-          },
-        });
-      }),
-    );
-
     app.use("/trpc", createTRPCExpressMiddleware({ store }));
     app.use(errorRequestHandler);
 

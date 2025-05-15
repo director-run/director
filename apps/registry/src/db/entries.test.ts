@@ -2,10 +2,10 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 
 import { makeTestEntry } from "../test/fixtures/entries";
 import { makeTestEntries } from "../test/fixtures/entries";
-import { makeStore } from "./store";
+import { createStore } from "./store";
 
 describe("queries", () => {
-  const store = makeStore();
+  const store = createStore();
 
   describe("getEntryByName", () => {
     beforeAll(async () => {

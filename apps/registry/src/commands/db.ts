@@ -1,11 +1,11 @@
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { Command } from "commander";
-import { makeStore } from "../db/store";
+import { createStore } from "../db/store";
 import { prettyPrint } from "../helpers/pretty-print";
 import { fetchRaycastRegistry } from "../importers/raycast";
 
 export async function dumpToCSV() {
-  const store = makeStore();
+  const store = createStore();
 
   // Fetch all entries
   const entries = await store.entries.getAllEntries();
@@ -83,7 +83,7 @@ export function registerDbCommands(program: Command) {
     .description("Delete all entries from the database")
     .action(
       actionWithErrorHandler(async () => {
-        const store = makeStore();
+        const store = createStore();
         await store.entries.deleteAllEntries();
         await store.close();
       }),
@@ -94,7 +94,7 @@ export function registerDbCommands(program: Command) {
     .description("Seed the database with entries from awesome-mcp-servers")
     .action(
       actionWithErrorHandler(async () => {
-        const store = makeStore();
+        const store = createStore();
         await store.entries.addEntries(await fetchRaycastRegistry());
         await store.close();
       }),
@@ -107,7 +107,7 @@ export function registerDbCommands(program: Command) {
     )
     .action(
       actionWithErrorHandler(async (name: string) => {
-        const store = makeStore();
+        const store = createStore();
         const entry = await store.entries.getEntryByName(name);
         console.log(prettyPrint(entry, { indentSize: 2, padding: 1 }));
         await store.close();

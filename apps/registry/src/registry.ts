@@ -3,7 +3,7 @@ import { getLogger } from "@director.run/utilities/logger";
 import { errorRequestHandler } from "@director.run/utilities/middleware";
 import cors from "cors";
 import express from "express";
-import { type Store, makeStore } from "./db/store";
+import { type Store, createStore } from "./db/store";
 import { createTRPCExpressMiddleware } from "./routers/trpc";
 
 const logger = getLogger("registry");
@@ -30,7 +30,7 @@ export class Registry {
     logger.info(`starting registry...`);
 
     const app = express();
-    const store = makeStore();
+    const store = createStore();
 
     app.use(cors());
     app.use(express.json());

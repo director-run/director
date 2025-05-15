@@ -2,7 +2,7 @@ import { env } from "../config";
 import { EntryStore } from "./entries";
 import { DatabaseConnection } from "./index";
 
-export function makeStore(
+export function createStore(
   params: {
     connectionString: string;
   } = { connectionString: env.DATABASE_URL },
@@ -16,4 +16,4 @@ export function makeStore(
   };
 }
 
-export type Store = ReturnType<typeof makeStore>;
+export type Store = ReturnType<typeof createStore>;

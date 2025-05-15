@@ -1,8 +1,5 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { env } from "./config";
-import { DatabaseConnection } from "./db";
-// import { db } from "./db";
-import { entriesTable } from "./db/schema";
 import { Registry } from "./registry";
 import { createTestEntries } from "./test/fixtures/entries";
 
@@ -10,24 +7,13 @@ describe("HTTP Server", () => {
   const baseUrl = `http://localhost:${env.REGISTRY_PORT}/api/v1`;
   const TOTAL_ENTRIES = 20;
   const ENTRIES_PER_PAGE = 5;
-  const db = DatabaseConnection.create(env.DATABASE_URL);
+  let registry: Registry;
 
   beforeAll(async () => {
     // Purge existing data
-    await db.db.delete(entriesTable);
-
-    // Create test entries
-    const entries = createTestEntries(TOTAL_ENTRIES);
-
-    await db.db.insert(entriesTable).values(entries);
-
-    // Start server
-    await Registry.start({ port: env.REGISTRY_PORT });
-  });
-
-  afterAll(async () => {
-    // Clean up test data
-    await db.db.delete(entriesTable);
+    registry = await Registry.start({ port: env.REGISTRY_PORT });
+    await registry.store.purge();
+    await registry.store.entries.addEntries(createTestEntries(TOTAL_ENTRIES));
   });
 
   it("should handle pagination correctly", async () => {
@@ -78,23 +64,4 @@ describe("HTTP Server", () => {
       hasPreviousPage: true,
     });
   });
-
-  //   it("should handle default pagination parameters", async () => {
-  //     const response = await fetch(`${baseUrl}/entries`);
-  //     const data = await response.json();
-
-  //     expect(data.pagination).toEqual({
-  //       page: 1,
-  //       limit: 20, // Default limit
-  //       totalItems: TOTAL_ENTRIES,
-  //       totalPages: Math.ceil(TOTAL_ENTRIES / 20),
-  //       hasNextPage: false,
-  //       hasPreviousPage: false,
-  //     });
-  //   });
-
-  //   it("should handle invalid pagination parameters", async () => {
-  //     const response = await fetch(`${baseUrl}/entries?page=0&limit=0`);
-  //     expect(response.status).toBe(400);
-  //   });
 });

@@ -21,7 +21,7 @@ const paginationSchema = z.object({
 export class Registry {
   public readonly port: number;
   private server: Server;
-  private store: Store;
+  public readonly store: Store;
 
   private constructor(attribs: {
     port: number;
@@ -35,6 +35,7 @@ export class Registry {
 
   public static async start(attribs: {
     port: number;
+    connectionString?: string;
   }) {
     logger.info(`starting registry...`);
 

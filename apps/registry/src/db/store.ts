@@ -8,9 +8,11 @@ export function makeStore(
   } = { connectionString: env.DATABASE_URL },
 ) {
   const db = DatabaseConnection.create(params.connectionString);
+  const entries = new EntryStore(db);
   return {
-    entries: new EntryStore(db),
+    entries,
     close: () => db.close(),
+    purge: () => entries.deleteAllEntries(),
   };
 }
 

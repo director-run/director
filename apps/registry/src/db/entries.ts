@@ -2,10 +2,6 @@ import { count, eq, inArray } from "drizzle-orm";
 import { DatabaseConnection } from "./index";
 import { type EntryCreateParams, entriesTable } from "./schema";
 
-export interface AddEntriesOptions {
-  ignoreDuplicates?: boolean;
-}
-
 export class EntryStore {
   constructor(private readonly db: DatabaseConnection) {}
 
@@ -105,4 +101,8 @@ export class EntryStore {
       .from(entriesTable);
     return result[0].count;
   }
+}
+
+interface AddEntriesOptions {
+  ignoreDuplicates?: boolean;
 }

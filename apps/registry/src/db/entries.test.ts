@@ -1,18 +1,15 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
-import { DatabaseConnection } from ".";
-import { env } from "../config";
+
 import { createTestEntry } from "../test/fixtures/entries";
 import { createTestEntries } from "../test/fixtures/entries";
-import { EntryStore } from "./entries";
-import { entriesTable } from "./schema";
+import { makeStore } from "./store";
 
 describe("queries", () => {
-  const db = DatabaseConnection.create(env.DATABASE_URL);
-  const entryStore = EntryStore.create(db);
+  const store = makeStore();
 
   describe("getEntryByName", () => {
     beforeAll(async () => {
-      await db.db.insert(entriesTable).values(
+      await store.entries.addEntry(
         createTestEntry({
           name: "test-server",
           title: "Test Server",
@@ -22,11 +19,11 @@ describe("queries", () => {
     });
 
     afterAll(async () => {
-      await entryStore.deleteAllEntries();
+      await store.entries.deleteAllEntries();
     });
 
     it("should return the correct entry when it exists", async () => {
-      const entry = await entryStore.getEntryByName("test-server");
+      const entry = await store.entries.getEntryByName("test-server");
       expect(entry).toBeDefined();
       expect(entry.name).toBe("test-server");
       expect(entry.title).toBe("Test Server");
@@ -36,19 +33,19 @@ describe("queries", () => {
 
     it("should throw an error when entry does not exist", async () => {
       await expect(
-        entryStore.getEntryByName("non-existent-server"),
+        store.entries.getEntryByName("non-existent-server"),
       ).rejects.toThrow("No entry found with name: non-existent-server");
     });
   });
 
   describe("addEntry", () => {
     afterAll(async () => {
-      await entryStore.deleteAllEntries();
+      await store.entries.deleteAllEntries();
     });
     it("should add a single entry", async () => {
       const entry = createTestEntry();
-      await entryStore.addEntry(entry);
-      const result = await entryStore.getEntryByName(entry.name);
+      await store.entries.addEntry(entry);
+      const result = await store.entries.getEntryByName(entry.name);
       expect(result).toBeDefined();
       expect(result.name).toBe(entry.name);
     });
@@ -56,29 +53,29 @@ describe("queries", () => {
 
   describe("addEntries", () => {
     afterEach(async () => {
-      await entryStore.deleteAllEntries();
+      await store.entries.deleteAllEntries();
     });
 
     it("should insert all entries when ignoreDuplicates is false", async () => {
       const entries = createTestEntries(3);
-      await entryStore.addEntries(entries);
-      expect(await entryStore.countEntries()).toEqual(3);
+      await store.entries.addEntries(entries);
+      expect(await store.entries.countEntries()).toEqual(3);
     });
 
     it("should skip duplicates when ignoreDuplicates is true", async () => {
       const entries = createTestEntries(3);
-      await entryStore.addEntry(entries[0]);
-      await entryStore.addEntries(entries, { ignoreDuplicates: true });
-      expect(await entryStore.countEntries()).toEqual(3);
+      await store.entries.addEntry(entries[0]);
+      await store.entries.addEntries(entries, { ignoreDuplicates: true });
+      expect(await store.entries.countEntries()).toEqual(3);
     });
 
     it("should not insert anything when all entries are duplicates", async () => {
       const entries = createTestEntries(3);
-      await entryStore.addEntry(entries[0]);
+      await store.entries.addEntry(entries[0]);
       await expect(
-        entryStore.addEntries(entries, { ignoreDuplicates: false }),
+        store.entries.addEntries(entries, { ignoreDuplicates: false }),
       ).rejects.toThrow();
-      expect(await entryStore.countEntries()).toEqual(1);
+      expect(await store.entries.countEntries()).toEqual(1);
     });
   });
 });

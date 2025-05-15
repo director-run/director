@@ -1,17 +1,14 @@
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { Command } from "commander";
-import { DatabaseConnection } from "../db";
-import { EntryStore } from "../db/entries";
 import { prettyPrint } from "../db/pretty-print";
 import { makeStore } from "../db/store";
 import { fetchRaycastRegistry } from "../importers/raycast";
 
 export async function dumpToCSV() {
-  const db = DatabaseConnection.create();
-  const entryStore = EntryStore.create(db);
+  const store = makeStore();
 
   // Fetch all entries
-  const entries = await entryStore.getAllEntries();
+  const entries = await store.entries.getAllEntries();
 
   // Define CSV headers
   const headers = [
@@ -77,7 +74,7 @@ export async function dumpToCSV() {
   ].join("\n");
 
   console.log(csvContent);
-  await db.close();
+  await store.close();
 }
 
 export function registerDbCommands(program: Command) {

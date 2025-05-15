@@ -9,7 +9,9 @@ export function makeStore(
 ) {
   const db = DatabaseConnection.create(params.connectionString);
   return {
-    entries: EntryStore.create(db),
+    entries: new EntryStore(db),
     close: () => db.close(),
   };
 }
+
+export type Store = ReturnType<typeof makeStore>;

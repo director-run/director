@@ -7,11 +7,7 @@ export interface AddEntriesOptions {
 }
 
 export class EntryStore {
-  private constructor(private readonly db: DatabaseConnection) {}
-
-  public static create(db: DatabaseConnection): EntryStore {
-    return new EntryStore(db);
-  }
+  constructor(private readonly db: DatabaseConnection) {}
 
   public async getEntryByName(name: string) {
     const entry = await this.db.db

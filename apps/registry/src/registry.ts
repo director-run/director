@@ -7,8 +7,7 @@ import {
 import cors from "cors";
 import express from "express";
 import { z } from "zod";
-import { DatabaseConnection } from "./db";
-import { EntryStore } from "./db/entries";
+import { type Store, makeStore } from "./db/store";
 // import { entriesTable } from "./db/schema";
 
 const logger = getLogger("registry/server");
@@ -22,16 +21,16 @@ const paginationSchema = z.object({
 export class Registry {
   public readonly port: number;
   private server: Server;
-  private db: DatabaseConnection;
+  private store: Store;
 
   private constructor(attribs: {
     port: number;
     server: Server;
-    db: DatabaseConnection;
+    store: Store;
   }) {
     this.port = attribs.port;
     this.server = attribs.server;
-    this.db = attribs.db;
+    this.store = attribs.store;
   }
 
   public static async start(attribs: {
@@ -40,8 +39,7 @@ export class Registry {
     logger.info(`starting registry...`);
 
     const app = express();
-    const db = DatabaseConnection.create();
-    const entryStore = EntryStore.create(db);
+    const store = makeStore();
 
     app.use(cors());
     app.use(express.json());
@@ -57,9 +55,12 @@ export class Registry {
         const offset = (page - 1) * limit;
 
         // Get total count for pagination metadata
-        const totalCount = await entryStore.countEntries();
+        const totalCount = await store.entries.countEntries();
         // Get paginated entries
-        const { entries } = await entryStore.paginateEntries({ page, limit });
+        const { entries } = await store.entries.paginateEntries({
+          page,
+          limit,
+        });
 
         // Calculate total pages
         const totalPages = Math.ceil(totalCount / limit);
@@ -89,7 +90,7 @@ export class Registry {
     const registry = new Registry({
       port: attribs.port,
       server,
-      db,
+      store,
     });
 
     process.on("SIGINT", async () => {
@@ -102,7 +103,7 @@ export class Registry {
   }
 
   async stop() {
-    await this.db.close();
+    await this.store.close();
     await new Promise<void>((resolve) => {
       this.server.close(() => resolve());
     });

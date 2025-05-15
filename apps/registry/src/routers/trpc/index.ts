@@ -1,19 +1,17 @@
 import { t } from "@director.run/utilities/trpc";
 import * as trpcExpress from "@trpc/server/adapters/express";
-import type { DatabaseConnection } from "../../db";
+import type { Store } from "../../db/store";
 import { createEntriesRouter } from "./entries-router";
 
-export function createAppRouter({ db }: { db: DatabaseConnection }) {
+export function createAppRouter({ store }: { store: Store }) {
   return t.router({
-    entries: createEntriesRouter({ db }),
+    entries: createEntriesRouter({ store }),
   });
 }
 
-export function createTRPCExpressMiddleware({
-  db,
-}: { db: DatabaseConnection }) {
+export function createTRPCExpressMiddleware({ store }: { store: Store }) {
   return trpcExpress.createExpressMiddleware({
-    router: createAppRouter({ db }),
+    router: createAppRouter({ store }),
   });
 }
 

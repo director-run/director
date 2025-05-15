@@ -7,6 +7,8 @@ import { makeTestEntries } from "../../test/fixtures/entries";
 describe("Entries Router", () => {
   let registry: Registry;
   let client: RegistryClient;
+  const TOTAL_ENTRIES = 20;
+  const ENTRIES_PER_PAGE = 5;
 
   beforeAll(async () => {
     registry = await Registry.start({ port: env.REGISTRY_PORT });
@@ -20,19 +22,55 @@ describe("Entries Router", () => {
 
   beforeEach(async () => {
     await registry.store.purge();
+    await registry.store.entries.addEntries(makeTestEntries(TOTAL_ENTRIES));
   });
 
   describe("getEntries", () => {
     it("should handle pagination correctly", async () => {
-      const totalEntries = 100;
-      const entries = makeTestEntries(totalEntries);
-      await registry.store.entries.addEntries(entries);
-      const result = await client.entries.getEntries.query({
+      // Test first page
+      const result1 = await client.entries.getEntries.query({
         page: 1,
-        limit: 10,
+        limit: ENTRIES_PER_PAGE,
       });
-      expect(result.entries.length).toBe(10);
-      expect(result.total).toBe(totalEntries);
+      expect(result1.entries).toHaveLength(ENTRIES_PER_PAGE);
+      expect(result1.pagination).toEqual({
+        page: 1,
+        limit: ENTRIES_PER_PAGE,
+        totalItems: TOTAL_ENTRIES,
+        totalPages: Math.ceil(TOTAL_ENTRIES / ENTRIES_PER_PAGE),
+        hasNextPage: true,
+        hasPreviousPage: false,
+      });
+
+      // Test middle page
+      const result2 = await client.entries.getEntries.query({
+        page: 2,
+        limit: ENTRIES_PER_PAGE,
+      });
+      expect(result2.entries).toHaveLength(ENTRIES_PER_PAGE);
+      expect(result2.pagination).toEqual({
+        page: 2,
+        limit: ENTRIES_PER_PAGE,
+        totalItems: TOTAL_ENTRIES,
+        totalPages: Math.ceil(TOTAL_ENTRIES / ENTRIES_PER_PAGE),
+        hasNextPage: true,
+        hasPreviousPage: true,
+      });
+
+      // Test last page
+      const result3 = await client.entries.getEntries.query({
+        page: 4,
+        limit: ENTRIES_PER_PAGE,
+      });
+      expect(result3.entries).toHaveLength(ENTRIES_PER_PAGE);
+      expect(result3.pagination).toEqual({
+        page: 4,
+        limit: ENTRIES_PER_PAGE,
+        totalItems: TOTAL_ENTRIES,
+        totalPages: Math.ceil(TOTAL_ENTRIES / ENTRIES_PER_PAGE),
+        hasNextPage: false,
+        hasPreviousPage: true,
+      });
     });
   });
 });

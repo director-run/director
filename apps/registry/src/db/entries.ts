@@ -42,24 +42,26 @@ export class EntryStore {
     const { page, limit } = params;
     const offset = (page - 1) * limit;
 
-    const entries = await this.db.db
-      .select()
-      .from(entriesTable)
-      .limit(limit)
-      .offset(offset);
+    const [entries, totalCount] = await Promise.all([
+      this.db.db.select().from(entriesTable).limit(limit).offset(offset),
+      this.db.db
+        .select({ count: count() })
+        .from(entriesTable)
+        .then((result) => result[0].count),
+    ]);
 
-    // currentPage: number;   // Current active page (1-based)
-    // pageSize: number;      // Number of items per page
-    // totalItems: number;    // Total number of items across all pages
-    // totalPages: number;    // Total number of pages
-    // hasNextPage: boolean;  // Whether there is a next page
-    // hasPreviousPage: boolean; // Whether there is a previous page
+    const totalPages = Math.ceil(totalCount / limit);
 
     return {
       entries,
-      page,
-      limit,
-      total: await this.countEntries(),
+      pagination: {
+        page,
+        limit,
+        totalItems: totalCount,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
     };
   }
 

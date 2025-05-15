@@ -2,6 +2,8 @@ import { Gateway } from "../server";
 import { createGatewayClient } from "../client";
 import path from "node:path";
 
+const TEST_PORT = 4673;
+
 export class IntegrationTestHarness {
     public readonly gateway: Gateway;
     public readonly client: ReturnType<typeof createGatewayClient>;
@@ -20,7 +22,7 @@ export class IntegrationTestHarness {
 
     public static async start() {
         const gateway = await Gateway.start({
-            port: 4673,
+            port: TEST_PORT,
             databaseFilePath: path.join(__dirname, "db.test.json"),
         });
 

@@ -14,11 +14,14 @@ docker compose down -v
 psql 'postgresql://postgres:travel-china-spend-nothing@localhost:5432/'
 
 # Create DB
-createdb -h localhost -p 5432 -U postgres director-registry
+createdb -h localhost -p 5432 -U postgres director-registry-test
+createdb -h localhost -p 5432 -U postgres director-registry-dev
 
 # Drop DB
-dropdb -h localhost -p 5432 -U postgres director-registry
+dropdb -h localhost -p 5432 -U postgres director-registry-test
+dropdb -h localhost -p 5432 -U postgres director-registry-dev
 
 # Push DB Changes
-bun run drizzle-kit push
+bun run db:push # dev
+NODE_ENV=test bun run db:push # test
 ```

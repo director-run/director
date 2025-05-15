@@ -1,6 +1,9 @@
+import { createTRPCClient } from "@trpc/client";
+import { httpBatchLink } from "@trpc/client/links/httpBatchLink";
 import type { AnyTRPCMiddlewareFunction } from "@trpc/server";
 import { initTRPC } from "@trpc/server";
-import SuperJSON from "superjson";
+import type { AnyRouter } from "@trpc/server";
+import superjson from "superjson";
 import { getLogger } from "./logger";
 
 const logger = getLogger("trpc");
@@ -49,7 +52,7 @@ export const logTRPCRequest: AnyTRPCMiddlewareFunction = async ({
 };
 
 export const trpcBase = initTRPC.context().create({
-  transformer: SuperJSON,
+  transformer: superjson,
 });
 
 const baseProcedure = trpcBase.procedure.use(logTRPCRequest);
@@ -59,3 +62,25 @@ export const t = {
   procedure: baseProcedure,
   middleware: trpcBase.middleware,
 };
+
+export function createClient<TRouter extends AnyRouter>(url: string) {
+  return createTRPCClient<TRouter>({
+    links: [
+      httpBatchLink({
+        url,
+        transformer:
+          superjson as TRouter["_def"]["_config"]["$types"]["transformer"],
+        async fetch(url, options) {
+          return fetch(url, options).catch((error) => {
+            if (error.code === "ConnectionRefused") {
+              throw new Error(
+                `Could not connect to the service on ${url}. Is it running?`,
+              );
+            }
+            throw error;
+          });
+        },
+      }),
+    ],
+  });
+}

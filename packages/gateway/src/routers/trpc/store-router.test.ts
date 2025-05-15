@@ -16,9 +16,11 @@ describe("Store Router", () => {
     await harness.purge();
     await harness.client.store.create.mutate({
       name: "Test proxy",
+      servers: [],
     });
     await harness.client.store.create.mutate({
       name: "Test proxy 2",
+      servers: [],
     });
     const proxies = await harness.client.store.getAll.query();
     expect(proxies).toHaveLength(2);
@@ -31,6 +33,7 @@ describe("Store Router", () => {
     await harness.purge();
     await harness.client.store.create.mutate({
       name: "Test proxy",
+      servers: [],
     });
     const proxy = await harness.client.store.get.query({
       proxyId: "test-proxy",
@@ -45,6 +48,7 @@ describe("Store Router", () => {
     const prox = await harness.client.store.create.mutate({
       name: "Test proxy",
       description: "Old description",
+      servers: [],
     });
 
     const newDescription = "Updated description";
@@ -67,6 +71,7 @@ describe("Store Router", () => {
     await harness.purge();
     await harness.client.store.create.mutate({
       name: "Test proxy",
+      servers: [],
     });
     await harness.client.store.delete.mutate({
       proxyId: "test-proxy",

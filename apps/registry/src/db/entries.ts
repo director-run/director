@@ -48,6 +48,13 @@ export class EntryStore {
       .limit(limit)
       .offset(offset);
 
+    // currentPage: number;   // Current active page (1-based)
+    // pageSize: number;      // Number of items per page
+    // totalItems: number;    // Total number of items across all pages
+    // totalPages: number;    // Total number of pages
+    // hasNextPage: boolean;  // Whether there is a next page
+    // hasPreviousPage: boolean; // Whether there is a previous page
+
     return {
       entries,
       page,

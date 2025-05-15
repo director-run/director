@@ -6,7 +6,7 @@ import {
   ProxyAttributes,
   optionalStringSchema,
   requiredStringSchema,
-} from "@director.run/db/schema";
+} from "@director.run/gateway/db/schema";
 import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
 import { z } from "zod";

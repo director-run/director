@@ -16,8 +16,9 @@
     "tools:shadcn": "bunx --bun shadcn@latest"
   },
   "dependencies": {
-    "@director.run/db": "workspace:*",
-    "@director.run/service": "workspace:*",
+    "@director.run/gateway": "workspace:*",
+    "@director.run/mcp": "workspace:*",
+    "@director.run/registry": "workspace:*",
     "@hookform/resolvers": "^5.0.1",
     "@radix-ui/react-alert-dialog": "^1.1.11",
     "@radix-ui/react-dialog": "^1.1.11",

@@ -5,7 +5,6 @@ import { notFound } from "next/navigation";
 import { useConnectContext } from "@/components/connect/connect-context";
 import { ProxyDeleteConfirmation } from "@/components/proxies/proxy-delete-confirmation";
 import { UpdateProxyForm } from "@/components/proxies/proxy-form";
-import {} from "@/components/ui/alert-dialog";
 import { Container } from "@/components/ui/container";
 import {
   Section,

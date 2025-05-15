@@ -16,10 +16,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getDeterministicColor } from "@/lib/deterministic-colors";
-import type {
-  ProxyAttributes,
-  ProxyTargetAttributes,
-} from "@director.run/db/schema";
+import { ProxyAttributes } from "@director.run/gateway/db/schema";
+import { ProxyTargetAttributes } from "@director.run/mcp/types";
 import { EllipsisVerticalIcon } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "../ui/badge";

@@ -3,7 +3,7 @@
 import { useIsClient } from "@/hooks/use-is-client";
 import { createCtx } from "@/lib/create-ctx";
 import { trpc } from "@/trpc/client";
-import { ProxyAttributes } from "@director.run/db/schema";
+import { ProxyAttributes } from "@director.run/gateway/db/schema";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 

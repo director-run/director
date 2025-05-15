@@ -1,13 +1,17 @@
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
-import { ProxyTargetSchema } from "../../db/schema";
+import {
+  ProxyTargetSchema,
+  optionalStringSchema,
+  requiredStringSchema,
+} from "../../db/schema";
 import { getPathForProxy } from "../../helpers";
 import { ProxyServerStore } from "../../proxy-server-store";
 
 const ProxyCreateSchema = z.object({
-  name: z.string(),
-  description: z.string().optional(),
+  name: requiredStringSchema,
+  description: optionalStringSchema,
   servers: z.array(ProxyTargetSchema).optional(),
 });
 

@@ -25,3 +25,24 @@ export function createGatewayClient(baseURL: string) {
     ],
   });
 }
+
+export function createClient<TRouter>(url: string) {
+  return createTRPCClient<TRouter>({
+    links: [
+      httpBatchLink({
+        url,
+        transformer: superjson,
+        async fetch(url, options) {
+          return fetch(url, options).catch((error) => {
+            if (error.code === "ConnectionRefused") {
+              throw new Error(
+                `Could not connect to the service on ${url}. Is it running?`,
+              );
+            }
+            throw error;
+          });
+        },
+      }),
+    ],
+  });
+}

@@ -3,6 +3,7 @@ import { Command } from "commander";
 import { DatabaseConnection } from "../db";
 import { EntryStore } from "../db/entries";
 import { prettyPrint } from "../db/pretty-print";
+import { makeStore } from "../db/store";
 import { fetchRaycastRegistry } from "../importers/raycast";
 
 export async function dumpToCSV() {
@@ -85,10 +86,9 @@ export function registerDbCommands(program: Command) {
     .description("Delete all entries from the database")
     .action(
       actionWithErrorHandler(async () => {
-        const db = DatabaseConnection.create();
-        const entryStore = EntryStore.create(db);
-        await entryStore.deleteAllEntries();
-        await db.close();
+        const store = makeStore();
+        await store.entries.deleteAllEntries();
+        await store.close();
       }),
     );
 
@@ -97,10 +97,9 @@ export function registerDbCommands(program: Command) {
     .description("Seed the database with entries from awesome-mcp-servers")
     .action(
       actionWithErrorHandler(async () => {
-        const db = DatabaseConnection.create();
-        const entryStore = EntryStore.create(db);
-        await entryStore.addEntries(await fetchRaycastRegistry());
-        await db.close();
+        const store = makeStore();
+        await store.entries.addEntries(await fetchRaycastRegistry());
+        await store.close();
       }),
     );
 
@@ -111,11 +110,10 @@ export function registerDbCommands(program: Command) {
     )
     .action(
       actionWithErrorHandler(async (name: string) => {
-        const db = DatabaseConnection.create();
-        const entryStore = EntryStore.create(db);
-        const entry = await entryStore.getEntryByName(name);
+        const store = makeStore();
+        const entry = await store.entries.getEntryByName(name);
         console.log(prettyPrint(entry, { indentSize: 2, padding: 1 }));
-        await db.close();
+        await store.close();
       }),
     );
 }

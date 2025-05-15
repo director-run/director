@@ -27,10 +27,33 @@ if (isDevelopment()) {
   registerDebugCommands(program);
 }
 
+/// Group commands by their type and build help text
+const commandGroups = new Map<string, string[]>();
+
+program.commands.forEach((cmd) => {
+  // Extract the command type from the command name (e.g., "proxy:create" -> "proxy")
+  const type = cmd.name().split(":")[0] || "general";
+
+  if (!commandGroups.has(type)) {
+    commandGroups.set(type, []);
+  }
+
+  const description = cmd.description() || "No description available";
+  commandGroups.get(type)?.push(`  ${cmd.name().padEnd(20)} ${description}`);
+});
+
+// Build the grouped help text
+let groupedHelpText = "\nCommands by category:\n";
+commandGroups.forEach((commands, type) => {
+  groupedHelpText += `\n${type.charAt(0).toUpperCase() + type.slice(1)} Commands:\n`;
+  groupedHelpText += commands.join("\n");
+  groupedHelpText += "\n";
+});
+
 program.addHelpText(
   "after",
-  `
-
+  groupedHelpText +
+    `
 Examples:
   $ director create my-proxy
   $ director server:add my-proxy fetch

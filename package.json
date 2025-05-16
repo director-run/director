@@ -12,7 +12,7 @@
     "format:fix-imports": "biome check --formatter-enabled=false --linter-enabled=false --organize-imports-enabled=true --write .",
     "test": "bun run vitest --fileParallelism=false",
     "typecheck": "turbo run typecheck",
-    "clean": "rm -rf .turbo node_modules && turbo run clean",
+    "clean": "turbo run clean && rm -rf .turbo node_modules",
     "cli": "NODE_ENV=development bun run ./apps/cli/bin/cli.ts"
   },
   "devDependencies": {

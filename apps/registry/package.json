@@ -21,17 +21,17 @@
     "./*": "./src/*.ts"
   },
   "devDependencies": {
-    "@types/bun": "latest",
-    "@types/pg": "^8.11.14",
+    "@types/bun": "^1.2.13",
+    "@types/pg": "^8.15.2",
     "@director.run/utilities": "workspace:*",
     "drizzle-kit": "^0.31.1",
-    "typescript": "^5.8.2",
-    "vitest": "^3.1.1",
-    "@faker-js/faker": "^9.7.0"
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.3",
+    "@faker-js/faker": "^9.8.0"
   },
   "dependencies": {
     "commander": "^13.1.0",
     "drizzle-orm": "^0.43.1",
-    "pg": "^8.15.6"
+    "pg": "^8.16.0"
   }
 }

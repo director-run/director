@@ -31,6 +31,7 @@ describe("Store Router", () => {
     await harness.purge();
     await harness.client.store.create.mutate({
       name: "Test proxy",
+      description: "Test description",
     });
     const proxy = await harness.client.store.get.query({
       proxyId: "test-proxy",
@@ -38,6 +39,7 @@ describe("Store Router", () => {
     expect(proxy).toBeDefined();
     expect(proxy?.id).toBe("test-proxy");
     expect(proxy?.name).toBe("Test proxy");
+    expect(proxy?.description).toBe("Test description");
   });
 
   it("should update a proxy", async () => {

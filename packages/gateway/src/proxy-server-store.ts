@@ -99,6 +99,7 @@ export class ProxyServerStore {
       name: name,
       id: newProxy.id,
       servers: newProxy.servers,
+      description: newProxy.description ?? undefined,
     });
     await proxyServer.connectTargets();
     this.proxyServers.set(newProxy.id, proxyServer);

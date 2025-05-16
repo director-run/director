@@ -15,7 +15,7 @@ export class CustomCommand extends Command {
 }
 
 function makeHelpText(program: Command) {
-  const required = (t: string) => [chalk.red("<"), t, chalk.red(">")].join("");
+  const required = (t: string) => ["<", t, ">"].join("");
   const optional = (t: string) => ["[", t, "]"].join("");
   const concat = (a: string[]) => a.join(" ");
 
@@ -34,6 +34,7 @@ function makeHelpText(program: Command) {
       .map((arg) =>
         arg.required ? required(arg.name()) : optional(arg.name()),
       )
+      .filter((arg) => arg !== "")
       .join(" ");
 
     const usage = concat([
@@ -43,7 +44,9 @@ function makeHelpText(program: Command) {
     ]);
 
     const padding = " ".repeat(Math.max(0, 40 - usage.length));
-    return `${usage}${padding} ** ${cmd.description()}`;
+
+    // const padding = " ".repeat(Math.max(0, 40 - usage.length));
+    return `${usage}${padding}${cmd.description() || chalk.red("TODO")}`;
   };
 
   program.commands

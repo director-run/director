@@ -6,15 +6,19 @@ import { env } from "../config";
 
 const logger = getLogger("debug");
 
-export function registerDebugCommands(program: Command) {
-  program
-    .command("debug:seed")
+export function createDebugCommands() {
+  const command = new Command("debug");
+
+  command
+    .command("seed")
     .description("Seed the database with test data, for development")
     .action(
       actionWithErrorHandler(() => {
         seed();
       }),
     );
+
+  return command;
 }
 
 export async function seed() {

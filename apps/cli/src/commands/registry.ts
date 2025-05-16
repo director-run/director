@@ -7,9 +7,11 @@ import { env } from "../config";
 
 const client = createRegistryClient(env.REGISTRY_URL);
 
-export function registerRegistryCommands(program: Command) {
-  program
-    .command("registry:ls")
+export function createRegistryCommands() {
+  const command = new Command("registry");
+
+  command
+    .command("ls")
     .description("List all available servers in the registry")
     .action(
       actionWithErrorHandler(async () => {
@@ -27,8 +29,8 @@ export function registerRegistryCommands(program: Command) {
       }),
     );
 
-  program
-    .command("registry:get <entryName>")
+  command
+    .command("get <entryName>")
     .description("get detailed information about a repository item")
     .action(
       actionWithErrorHandler(async (entryName: string) => {
@@ -46,6 +48,8 @@ export function registerRegistryCommands(program: Command) {
         }
       }),
     );
+
+  return command;
 }
 
 function truncateDescription(

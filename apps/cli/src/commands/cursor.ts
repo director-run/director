@@ -4,9 +4,11 @@ import { Command } from "commander";
 import { gatewayClient } from "../client";
 import { env } from "../config";
 
-export function registerCursorCommands(program: Command) {
-  program
-    .command("cursor:ls")
+export function createCursorCommands() {
+  const command = new Command("cursor");
+
+  command
+    .command("ls")
     .description("List cursor MCP servers")
     .action(
       actionWithErrorHandler(async (proxyId: string) => {
@@ -15,8 +17,8 @@ export function registerCursorCommands(program: Command) {
       }),
     );
 
-  program
-    .command("cursor:install <proxyId>")
+  command
+    .command("install <proxyId>")
     .description("Install a proxy to cursor")
     .action(
       actionWithErrorHandler(async (proxyId: string) => {
@@ -28,8 +30,8 @@ export function registerCursorCommands(program: Command) {
       }),
     );
 
-  program
-    .command("cursor:uninstall <proxyId>")
+  command
+    .command("uninstall <proxyId>")
     .description("Uninstall a proxy from cursor")
     .action(
       actionWithErrorHandler(async (proxyId: string) => {
@@ -41,8 +43,8 @@ export function registerCursorCommands(program: Command) {
     );
 
   if (isDevelopment()) {
-    program
-      .command("cursor:purge")
+    command
+      .command("purge")
       .description("Purge all cursor MCP servers")
       .action(
         actionWithErrorHandler(async () => {
@@ -51,4 +53,6 @@ export function registerCursorCommands(program: Command) {
         }),
       );
   }
+
+  return command;
 }

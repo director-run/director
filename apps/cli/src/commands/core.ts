@@ -6,7 +6,7 @@ import { Command } from "commander";
 import { gatewayClient } from "../client";
 import { env } from "../config";
 
-export function registerProxyCommands(program: Command) {
+export function registerCoreCommands(program: Command) {
   program
     .command("ls")
     .description("List all proxies")

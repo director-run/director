@@ -15,8 +15,10 @@ function printDirectorAscii(): void {
                                          `);
 }
 
-export function registerServiceCommands(program: Command) {
-  program
+export function createServiceCommands() {
+  const command = new Command("service");
+
+  command
     .command("start")
     .description("Start the director service")
     .action(
@@ -30,7 +32,7 @@ export function registerServiceCommands(program: Command) {
       }),
     );
 
-  program
+  command
     .command("config")
     .description("Print configuration variables")
     .action(
@@ -38,4 +40,6 @@ export function registerServiceCommands(program: Command) {
         console.log(`config:`, env);
       }),
     );
+
+  return command;
 }

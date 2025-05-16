@@ -14,31 +14,35 @@ export class Gateway {
   public readonly proxyStore: ProxyServerStore;
   public readonly port: number;
   private server: Server;
-
+  private registryURL: string;
   private constructor(attribs: {
     proxyStore: ProxyServerStore;
     port: number;
     db: Database;
     server: Server;
+    registryURL: string;
   }) {
     this.port = attribs.port;
     this.proxyStore = attribs.proxyStore;
     this.server = attribs.server;
+    this.registryURL = attribs.registryURL;
   }
 
   public static async start(attribs: {
     port: number;
     databaseFilePath: string;
+    registryURL: string;
   }) {
     logger.info(`starting director...`);
 
     const db = await Database.connect(attribs.databaseFilePath);
     const proxyStore = await ProxyServerStore.create(db);
     const app = express();
+    const registryURL = attribs.registryURL;
 
     app.use(cors());
     app.use("/", createMCPRouter({ proxyStore }));
-    app.use("/trpc", createTRPCExpressMiddleware({ proxyStore }));
+    app.use("/trpc", createTRPCExpressMiddleware({ proxyStore, registryURL }));
     app.use(errorRequestHandler);
 
     const server = app.listen(attribs.port, () => {
@@ -50,6 +54,7 @@ export class Gateway {
       db,
       proxyStore,
       server,
+      registryURL: attribs.registryURL,
     });
 
     process.on("SIGINT", async () => {

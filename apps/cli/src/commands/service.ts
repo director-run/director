@@ -28,6 +28,7 @@ export function createServiceCommands() {
         await Gateway.start({
           port: env.GATEWAY_PORT,
           databaseFilePath: env.DB_FILE_PATH,
+          registryURL: env.REGISTRY_URL,
         });
       }),
     );

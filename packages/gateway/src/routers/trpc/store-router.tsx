@@ -15,7 +15,8 @@ const ProxyUpdateSchema = ProxyCreateSchema.partial();
 
 export function createProxyStoreRouter({
   proxyStore,
-}: { proxyStore: ProxyServerStore }) {
+  registryURL,
+}: { proxyStore: ProxyServerStore; registryURL: string }) {
   return t.router({
     getAll: t.procedure.query(async () => {
       try {
@@ -103,14 +104,13 @@ export function createProxyStoreRouter({
         z.object({
           proxyId: z.string(),
           entryName: z.string(),
-          registryUrl: z.string().url(),
         }),
       )
       .mutation(({ input }) => {
         return proxyStore.addServerFromRegistry(
           input.proxyId,
           input.entryName,
-          input.registryUrl,
+          registryURL,
         );
       }),
     removeServer: t.procedure

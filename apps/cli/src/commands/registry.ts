@@ -58,7 +58,6 @@ export function createRegistryCommands() {
         const proxy = await gatewayClient.store.addServerFromRegistry.mutate({
           proxyId,
           entryName,
-          registryUrl: env.REGISTRY_URL,
         });
         console.log(`Registry entry ${entryName} added to ${proxy.id}`);
       }),

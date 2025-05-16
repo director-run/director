@@ -1,19 +1,18 @@
 
-## Contributing
+# Contributing
 
 Hello! We welcome any and all contributions and we'd be more than happy to help you get started with the codebase. 
 
 **Note: This project is under active development and the code will likely change pretty significantly. We'll update this message once that's complete!**
 
-### Prerequisites
+## Prerequisites
 
-- [Node.js](https://nodejs.org/) 
 - [Bun](https://bun.sh/) 
 - [Docker](https://docker.com)
 
-### Development workflow
+## Development workflow
 
-#### Setup Environment
+### Setup Environment
 
 ```bash 
 # clone the repo
@@ -36,10 +35,13 @@ $ bun run cli db:seed # populate the development database with server entries
 
 # Setup the director gateway
 $ cd apps/cli
-$ bun run cli debug seed # seed the gateway with test config (if the gateway is running, it'll need to be restarted for changes to take effect)
+
+# seed the gateway with test config (if the gateway is running, 
+# it'll need to be restarted for changes to take effect)
+$ bun run cli debug seed 
 ```
 
-#### Running in Development 
+### Running in Development 
 
 ```bash
 # start the registry
@@ -53,12 +55,13 @@ $ bun run cli service start
 
 # list the proxies and install one to claude
 $ bun run cli ls # list all proxies
-$ bun run cli claude install claude-proxy # this will install claude-proxy to claude and restart it (from the seed file)
+$ bun run cli claude install claude-proxy # install sample proxy to claude and restart it
 
-# now you should see a list of mcp servers in claude, try this prompt: "give me the front page of hackernews"
+# now you should see a list of mcp servers in claude
+# try this prompt: "give me the front page of hackernews"
 ```
 
-#### Running Tests
+### Running Tests
 
 ```bash
 # from project root
@@ -70,7 +73,7 @@ $ bun run test
 $ bun run format
 ```
 
-### Writing code changes
+## Writing code changes
 
 When you make code changes, please remember 
 
@@ -78,14 +81,14 @@ When you make code changes, please remember
 2. **Document behaviour.** If your change affects user‑facing behaviour, update the README or relevant documentation.
 3. **Keep commits atomic.** Each commit should compile and the tests should pass. This makes reviews and potential rollbacks easier.
 
-### Opening a pull request
+## Opening a pull request
 
 - Fill in the PR template (or include similar information) – **What? Why? How?**
 - Run **all** checks locally (`bun run test && bun run lint && bun run check-types`). CI failures that could have been caught locally slow down the process.
 - Make sure your branch is up‑to‑date with `main` and that you have resolved merge conflicts.
 - Mark the PR as **Ready for review** only when you believe it is in a merge‑able state.
 
-### Releasing `director`
+## Releasing `director`
 
 Release workflow is handled by a github action that is triggered when a version tag is created
 

@@ -17,7 +17,7 @@
     "@director.run/utilities": "workspace:*",
     "@director.run/installer": "workspace:*",
     "@director.run/mcp": "workspace:*",
-    "@modelcontextprotocol/sdk": "^1.8.0",
+    "@modelcontextprotocol/sdk": "1.8.0",
     "@t3-oss/env-core": "^0.12.0",
     "@trpc/client": "^11.0.2",
     "@trpc/server": "^11.0.2",

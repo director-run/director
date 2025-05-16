@@ -18,7 +18,7 @@ export class CustomCommand extends Command {
 function makeHelpText(program: Command) {
   const required = (t: string) => ["<", t, ">"].join("");
   const optional = (t: string) => ["[", t, "]"].join("");
-  const concat = (a: string[]) => a.join(" ");
+  const concat = (a: (string | undefined)[]) => a.filter(Boolean).join(" ");
 
   const lines = [];
 
@@ -38,7 +38,7 @@ function makeHelpText(program: Command) {
       .join(" ");
 
     const usage = concat([
-      cmd.name(),
+      concat([cmd.parent?.name(), cmd.name()]),
       args,
       cmd.options.length ? optional("options") : "",
     ]);

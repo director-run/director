@@ -1,4 +1,4 @@
-import { Gateway } from "../server";
+import { Gateway } from "../gateway";
 import { createGatewayClient } from "../client";
 import path from "node:path";
 

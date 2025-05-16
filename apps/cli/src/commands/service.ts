@@ -1,4 +1,4 @@
-import { Gateway } from "@director.run/gateway/server";
+import { Gateway } from "@director.run/gateway/gateway";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { Command } from "commander";
 import { env } from "../config";

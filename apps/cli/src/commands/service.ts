@@ -33,14 +33,5 @@ export function createServiceCommands() {
       }),
     );
 
-  command
-    .command("config")
-    .description("Print configuration variables")
-    .action(
-      actionWithErrorHandler(() => {
-        console.log(`config:`, env);
-      }),
-    );
-
   return command;
 }

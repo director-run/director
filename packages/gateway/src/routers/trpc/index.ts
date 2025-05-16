@@ -2,6 +2,7 @@ import { t } from "@director.run/utilities/trpc";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { ProxyServerStore } from "../../proxy-server-store";
 import { createInstallerRouter } from "./installer-router";
+import { createRegistryRouter } from "./registry-router";
 import { createProxyStoreRouter } from "./store-router";
 
 export function createAppRouter({
@@ -14,6 +15,7 @@ export function createAppRouter({
   return t.router({
     store: createProxyStoreRouter({ proxyStore, registryURL }),
     installer: createInstallerRouter({ proxyStore }),
+    registry: createRegistryRouter({ registryURL }),
   });
 }
 

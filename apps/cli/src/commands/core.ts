@@ -99,4 +99,13 @@ export function registerCoreCommands(program: Command) {
     .action(async (sseUrl) => {
       await proxySSEToStdio(sseUrl);
     });
+
+  program
+    .command("config")
+    .description("Print configuration variables")
+    .action(
+      actionWithErrorHandler(() => {
+        console.log(`config:`, env);
+      }),
+    );
 }

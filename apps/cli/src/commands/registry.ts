@@ -1,12 +1,8 @@
-import { createRegistryClient } from "@director.run/registry/client";
 import { makeTable } from "@director.run/utilities/cli";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import chalk from "chalk";
 import { Command } from "commander";
 import { gatewayClient } from "../client";
-import { env } from "../config";
-
-const client = createRegistryClient(env.REGISTRY_URL);
 
 export function createRegistryCommands() {
   const command = new Command("registry");
@@ -16,7 +12,7 @@ export function createRegistryCommands() {
     .description("List all available servers in the registry")
     .action(
       actionWithErrorHandler(async () => {
-        const items = await client.entries.getEntries.query({
+        const items = await gatewayClient.registry.getEntries.query({
           pageIndex: 0,
           pageSize: 100,
         });
@@ -36,7 +32,7 @@ export function createRegistryCommands() {
     .action(
       actionWithErrorHandler(async (entryName: string) => {
         try {
-          const item = await client.entries.getEntryByName.query({
+          const item = await gatewayClient.registry.getEntryByName.query({
             name: entryName,
           });
           console.log(JSON.stringify(item, null, 2));

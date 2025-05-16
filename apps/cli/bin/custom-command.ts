@@ -20,14 +20,13 @@ function makeHelpText(program: Command) {
   const concat = (a: string[]) => a.join(" ");
 
   const lines = [];
-  lines.push("");
 
   lines.push(program.description());
   lines.push("");
-  lines.push(chalk.white.bold(`USAGE\n`));
-  lines.push(`director ${required("command")} [subcommand] [flags]`);
+  lines.push(chalk.white.bold(`USAGE`));
+  lines.push(`  director ${required("command")} [subcommand] [flags]`);
   lines.push("");
-  lines.push(chalk.white.bold(`CORE COMMANDS\n`));
+  lines.push(chalk.white.bold(`CORE COMMANDS`));
 
   const makeLine = (cmd: Command) => {
     const args = cmd.registeredArguments
@@ -46,7 +45,7 @@ function makeHelpText(program: Command) {
     const padding = " ".repeat(Math.max(0, 40 - usage.length));
 
     // const padding = " ".repeat(Math.max(0, 40 - usage.length));
-    return `${usage}${padding}${cmd.description() || chalk.red("TODO")}`;
+    return `  ${usage}${padding}${cmd.description() || chalk.red("TODO")}`;
   };
 
   program.commands
@@ -57,7 +56,6 @@ function makeHelpText(program: Command) {
       if (cmd.commands.length) {
         lines.push("");
         lines.push(chalk.white.bold(cmd.name().toUpperCase()));
-        lines.push("");
 
         cmd.commands.forEach((subcommand) => {
           lines.push(makeLine(subcommand));

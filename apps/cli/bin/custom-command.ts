@@ -4,8 +4,8 @@ import chalk from "chalk";
 import { Command, type HelpContext } from "commander";
 
 export class CustomCommand extends Command {
-  constructor() {
-    super();
+  constructor(name?: string) {
+    super(name);
     this.helpCommand(false);
   }
 

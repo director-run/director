@@ -6,7 +6,9 @@ import { gatewayClient } from "../client";
 import { env } from "../config";
 
 export function createClaudeCommand() {
-  const command = new Command("claude");
+  const command = new Command("claude").description(
+    "Manage claude MCP servers",
+  );
 
   command
     .command("ls")

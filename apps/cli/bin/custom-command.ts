@@ -38,14 +38,16 @@ function makeHelpText(program: Command) {
       .join(" ");
 
     const usage = concat([
-      concat([cmd.parent?.name(), cmd.name()]),
+      concat([
+        cmd.parent && cmd.parent.parent ? cmd.parent?.name() : undefined,
+        cmd.name(),
+      ]),
       args,
       cmd.options.length ? optional("options") : "",
     ]);
 
-    const padding = " ".repeat(Math.max(0, 40 - usage.length));
+    const padding = " ".repeat(Math.max(0, 45 - usage.length));
 
-    // const padding = " ".repeat(Math.max(0, 40 - usage.length));
     return `  ${usage}${padding}${cmd.description() || chalk.red("TODO")}`;
   };
 

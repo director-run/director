@@ -94,33 +94,6 @@ export function registerCoreCommands(program: Command) {
     );
 
   program
-    .command("server:add <proxyId> <entryName>")
-    .description("Add a server from the registry to a proxy.")
-    .action(
-      actionWithErrorHandler(async (proxyId: string, entryName: string) => {
-        const proxy = await gatewayClient.store.addServerFromRegistry.mutate({
-          proxyId,
-          entryName,
-          registryUrl: env.REGISTRY_URL,
-        });
-        console.log(`Registry entry ${entryName} added to ${proxy.id}`);
-      }),
-    );
-
-  program
-    .command("server:remove <proxyId> <serverName>")
-    .description("Remove a server from a proxy")
-    .action(
-      actionWithErrorHandler(async (proxyId: string, serverName: string) => {
-        const proxy = await gatewayClient.store.removeServer.mutate({
-          proxyId,
-          serverName,
-        });
-        console.log(`Server ${serverName} added to ${proxy.id}`);
-      }),
-    );
-
-  program
     .command("sse2stdio <sse_url>")
     .description("Proxy a SSE connection to a stdio stream")
     .action(async (sseUrl) => {

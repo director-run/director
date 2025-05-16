@@ -3,6 +3,7 @@ import { makeTable } from "@director.run/utilities/cli";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import chalk from "chalk";
 import { Command } from "commander";
+import { gatewayClient } from "../client";
 import { env } from "../config";
 
 const client = createRegistryClient(env.REGISTRY_URL);
@@ -46,6 +47,33 @@ export function createRegistryCommands() {
             console.error(chalk.red("An unknown error occurred"));
           }
         }
+      }),
+    );
+
+  command
+    .command("install <proxyId> <entryName>")
+    .description("Add a server from the registry to a proxy.")
+    .action(
+      actionWithErrorHandler(async (proxyId: string, entryName: string) => {
+        const proxy = await gatewayClient.store.addServerFromRegistry.mutate({
+          proxyId,
+          entryName,
+          registryUrl: env.REGISTRY_URL,
+        });
+        console.log(`Registry entry ${entryName} added to ${proxy.id}`);
+      }),
+    );
+
+  command
+    .command("uninstall <proxyId> <serverName>")
+    .description("Remove a server from a proxy")
+    .action(
+      actionWithErrorHandler(async (proxyId: string, serverName: string) => {
+        const proxy = await gatewayClient.store.removeServer.mutate({
+          proxyId,
+          serverName,
+        });
+        console.log(`Server ${serverName} added to ${proxy.id}`);
       }),
     );
 

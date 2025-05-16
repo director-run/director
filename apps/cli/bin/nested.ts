@@ -1,26 +1,13 @@
 #!/usr/bin/env node
 
-import chalk from "chalk";
-import { Command, type HelpContext } from "commander";
+import { Command } from "commander";
 import packageJson from "../package.json";
+import { CustomCommand } from "./custom-command";
 
-process.exit = ((code?: number) => {
-  //   console.log(`Exit called with code ${code}, but ignored`);
-  return undefined as never;
-}) as typeof process.exit;
-
-class CustomCommand extends Command {
-  constructor() {
-    super();
-  }
-
-  helpInformation(context?: HelpContext): string {
-    // console.log(context);
-    // return "THIS IS JAHHHH";
-    // return super.helpInformation(context);
-    return "\n";
-  }
-}
+// process.exit = ((code?: number) => {
+//   //   console.log(`Exit called with code ${code}, but ignored`);
+//   return undefined as never;
+// }) as typeof process.exit;
 
 const program = new CustomCommand();
 
@@ -78,54 +65,5 @@ function createClaudeCommands() {
 
 program.addCommand(createClaudeCommands());
 program.addCommand(createCursorCommands());
-
-function makeHelpText(program: Command) {
-  const required = (t: string) => [chalk.red("<"), t, chalk.red(">")].join("");
-  const optional = (t: string) =>
-    [chalk.green("["), t, chalk.green("]")].join("");
-  const concat = (a: string[]) => a.join(" ");
-
-  const lines = [];
-  lines.push(program.description());
-  lines.push("");
-  lines.push(chalk.white.bold(`USAGE\n`));
-  lines.push(`director <command> <subcommand> [flags]`);
-  lines.push("");
-  lines.push(chalk.white.bold(`CORE COMMANDS\n`));
-
-  const makeLine = (cmd: Command) => {
-    const args = cmd.registeredArguments
-      .map((arg) =>
-        arg.required ? required(arg.name()) : optional(arg.name()),
-      )
-      .join(" ");
-
-    return concat([
-      concat([cmd.name(), args, cmd.options.length ? optional("options") : ""]),
-      "   ->   ",
-      cmd.description(),
-    ]);
-  };
-
-  program.commands.forEach((cmd) => {
-    lines.push(makeLine(cmd));
-
-    if (cmd.commands.length) {
-      lines.push(chalk.bgBlue(cmd.name()));
-      cmd.commands.forEach((subcommand) => {
-        lines.push(makeLine(subcommand));
-      });
-    }
-  });
-
-  lines.push("");
-  lines.push(chalk.white.bold(`FLAGS`));
-  lines.push(`  --help      Show help for command`);
-  lines.push(`  --version   Show director version`);
-
-  return lines.join("\n");
-}
-
-console.log(makeHelpText(program));
 
 program.parse(process.argv);

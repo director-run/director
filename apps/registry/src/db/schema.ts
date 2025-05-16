@@ -40,7 +40,7 @@ export const entriesTable = pgTable("entries", {
   // **
   // ** Metadata
   // **
-  homepage: varchar("homepage", { length: 255 }),
+  homepage: varchar("homepage", { length: 255 }).notNull(),
   source_registry: jsonb("source_registry").$type<{
     name: string;
     entryId: string;

@@ -36,11 +36,14 @@ function makeHelpText(program: Command) {
       )
       .join(" ");
 
-    return concat([
-      concat([cmd.name(), args, cmd.options.length ? optional("options") : ""]),
-      "   ->   ",
-      cmd.description(),
+    const usage = concat([
+      cmd.name(),
+      args,
+      cmd.options.length ? optional("options") : "",
     ]);
+
+    const padding = " ".repeat(Math.max(0, 40 - usage.length));
+    return `${usage}${padding} ** ${cmd.description()}`;
   };
 
   program.commands

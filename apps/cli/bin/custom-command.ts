@@ -6,6 +6,7 @@ import { Command, type HelpContext } from "commander";
 export class CustomCommand extends Command {
   constructor() {
     super();
+    this.helpCommand(false);
   }
 
   helpInformation(context?: HelpContext): string {

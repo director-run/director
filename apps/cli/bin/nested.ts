@@ -4,18 +4,17 @@ import { Command } from "commander";
 import packageJson from "../package.json";
 import { CustomCommand } from "./custom-command";
 
-// process.exit = ((code?: number) => {
-//   //   console.log(`Exit called with code ${code}, but ignored`);
-//   return undefined as never;
-// }) as typeof process.exit;
+process.exit = ((code?: number) => {
+  //   console.log(`Exit called with code ${code}, but ignored`);
+  return undefined as never;
+}) as typeof process.exit;
 
 const program = new CustomCommand();
 
 program
   .name("director")
   .description("Manage MCP servers seamlessly from the command line.")
-  .version(packageJson.version)
-  .helpCommand(false);
+  .version(packageJson.version);
 
 program
   .command("start <port>")

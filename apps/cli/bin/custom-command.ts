@@ -9,11 +9,8 @@ export class CustomCommand extends Command {
   }
 
   helpInformation(context?: HelpContext): string {
-    // console.log(context);
-    // return "THIS IS JAHHHH";
     // return super.helpInformation(context);
     return makeHelpText(this);
-    // return "\n";
   }
 }
 

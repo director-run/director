@@ -4,37 +4,46 @@ Director is a Model Context Protocol (MCP) proxy server that simplifies the mana
 
 ## CLI Reference
 
-```
-Usage: director [options] [command]
+```bash
+Manage MCP servers seamlessly from the command line.
 
-Director CLI
+USAGE
+  director <command> [subcommand] [flags]
 
-Options:
-  -V, --version                         output the version number
-  -h, --help                            display help for command
+CORE COMMANDS
+  ls                                           List all proxies
+  get <proxyId>                                Show proxy details
+  create <name>                                Create a new proxy
+  rm <proxyId>                                 Delete a proxy
+  sse2stdio <sse_url>                          Proxy a SSE connection to a stdio stream
+  config                                       Print configuration variables
 
-Commands:
-  ls                                    List all proxies
-  get <proxyId>                         Show proxy details
-  create <name>                         Create a new proxy
-  rm <proxyId>                          Delete a proxy
-  server:add <proxyId> <entryId>        Add a server from the registry to a proxy.
-  server:remove <proxyId> <serverName>  Remove a server from a proxy
-  sse2stdio <sse_url>                   Proxy a SSE connection to a stdio stream
-  install <proxyId> <client>            Install a proxy on a client app
-  uninstall <proxyId> <client>          Uninstall an proxy from a client app
-  registry:ls                           List all available servers in the registry
-  registry:get <entryId>                get detailed information about a repository item
-  start                                 Start the director service
-  config                                Print configuration variables
-  debug:seed                            Seed the database with test data, for
-                                        development
-  debug:restart <client>                Restart client
-  help [command]                        display help for command
+CLAUDE
+  claude ls                                    List claude MCP servers
+  claude install <proxyId>                     Install a proxy on a client app
+  claude uninstall <proxyId>                   Uninstall an proxy from a client app
+  claude restart                               Restart the claude MCP server
+  claude purge                                 Purge all claude MCP servers
 
+CURSOR
+  cursor ls                                    List cursor MCP servers
+  cursor install <proxyId>                     Install a proxy to cursor
+  cursor uninstall <proxyId>                   Uninstall a proxy from cursor
+  cursor purge                                 Purge all cursor MCP servers
 
-Examples:
-  $ director create my-proxy
-  $ director server:add my-proxy fetch
-  $ director install my-proxy claude
+REGISTRY
+  registry ls                                  List all available servers in the registry
+  registry get <entryName>                     get detailed information about a repository item
+  registry install <proxyId> <entryName>       Add a server from the registry to a proxy.
+  registry uninstall <proxyId> <serverName>    Remove a server from a proxy
+
+SERVICE
+  service start                                Start the director service
+
+DEBUG
+  debug seed                                   Seed the database with test data, for development
+
+FLAGS
+  --help      Show help for command
+  --version   Show director version
 ```

@@ -73,6 +73,12 @@ function makeHelpText(program: Command) {
   lines.push(`  --help      Show help for command`);
   lines.push(`  --version   Show director version`);
   lines.push("");
+
+  lines.push(chalk.white.bold(`EXAMPLES`));
+  lines.push(`  $ director create my-proxy`);
+  lines.push(`  $ director registry install my-proxy iterm`);
+  lines.push(`  $ director claude install my-proxy`);
+  lines.push("");
   lines.push("");
 
   return lines.join("\n");

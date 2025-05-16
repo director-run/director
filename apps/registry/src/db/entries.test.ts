@@ -78,4 +78,41 @@ describe("queries", () => {
       expect(await store.entries.countEntries()).toEqual(1);
     });
   });
+
+  describe("deleteEntry", () => {
+    afterEach(async () => {
+      await store.entries.deleteAllEntries();
+    });
+
+    it("should delete an entry by id", async () => {
+      const entry = makeTestEntry();
+      await store.entries.addEntry(entry);
+      const addedEntry = await store.entries.getEntryByName(entry.name);
+
+      await store.entries.deleteEntry(addedEntry.id);
+
+      await expect(store.entries.getEntryByName(entry.name)).rejects.toThrow(
+        `No entry found with name: ${entry.name}`,
+      );
+    });
+  });
+
+  describe("updateEntry", () => {
+    afterEach(async () => {
+      await store.entries.deleteAllEntries();
+    });
+
+    it("should update an entry's fields", async () => {
+      const entry = makeTestEntry();
+      await store.entries.addEntry(entry);
+      const addedEntry = await store.entries.getEntryByName(entry.name);
+
+      await store.entries.updateEntry(addedEntry.id, {
+        title: "new",
+      });
+
+      const updatedEntry = await store.entries.getEntryByName(entry.name);
+      expect(updatedEntry.title).toBe("new");
+    });
+  });
 });

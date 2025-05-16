@@ -31,6 +31,17 @@ export class EntryStore {
     await this.db.db.insert(entriesTable).values(entry);
   }
 
+  public async deleteEntry(id: string) {
+    await this.db.db.delete(entriesTable).where(eq(entriesTable.id, id));
+  }
+
+  public async updateEntry(id: string, entry: Partial<EntryCreateParams>) {
+    await this.db.db
+      .update(entriesTable)
+      .set(entry)
+      .where(eq(entriesTable.id, id));
+  }
+
   public async paginateEntries(params: {
     pageIndex: number;
     pageSize: number;

@@ -31,7 +31,8 @@ $ createdb -h localhost -p 5432 -U postgres director-registry-dev # create devel
   password: travel-china-spend-nothing
 $ bun run db:push # push schema to development db
 $ NODE_ENV=test bun run db:push # push schema to test db
-$ bun run cli db:seed # populate the development database with server entries
+$ bun run cli entries import # populate the development database with server entries
+$ bun run cli entries enrich # populate the development database with server entries
 
 # Setup the director gateway
 $ cd apps/cli
@@ -47,7 +48,7 @@ $ bun run cli debug seed
 # start the registry
 $ cd apps/registry
 $ docker-compose up -d # make sure postgres is running
-$ bun run cli server:start # start the registry server
+$ bun run cli service start # start the registry server
 
 # start the director gateway
 $ cd apps/cli

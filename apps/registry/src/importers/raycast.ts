@@ -5,7 +5,7 @@ export async function fetchRaycastRegistry(): Promise<EntryCreateParams[]> {
     name: entry.name,
     title: entry.title,
     description: entry.description,
-    homepage: entry.homepage,
+    homepage: entry.homepage || "",
     transport: {
       type: "stdio",
       command: entry.configuration.command,

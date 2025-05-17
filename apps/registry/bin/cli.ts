@@ -18,4 +18,12 @@ const store = createStore();
 program.addCommand(registerEntriesCommands(store));
 program.addCommand(registerServerCommands());
 
+program.hook("postAction", async () => {
+  await store.close();
+});
+
+process.on("exit", async () => {
+  await store.close();
+});
+
 program.parse();

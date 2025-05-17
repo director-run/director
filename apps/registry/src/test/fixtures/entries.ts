@@ -1,3 +1,4 @@
+import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import type { EntryCreateParams } from "../../db/schema";
 import { faker } from '@faker-js/faker';
 
@@ -15,6 +16,23 @@ export function makeTestEntry(overrides: Partial<EntryCreateParams> = {}): Entry
       command: "echo",
       args: ["https://github.com/test/test-server"],
     },
+    ...overrides,
+  };
+}
+
+
+type MakeStdioTransportOptions = {
+  command?: string;
+  args?: string[];
+  type?: "stdio";
+  env?: Record<string, string>;
+}
+
+export function makeStdioTransport(overrides: MakeStdioTransportOptions = {}) {
+  return {
+    type: "stdio",
+    command: "echo",
+    args: ["https://github.com/test/test-server"],
     ...overrides,
   };
 }

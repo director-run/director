@@ -1,11 +1,32 @@
 import { type EntryGetParams } from "../db/schema";
 
+type Parameter = {
+  name: string;
+  description: string;
+  required: boolean;
+  scope: "env" | "args";
+};
+
 export function parseParameters(entry: EntryGetParams) {
-  const parameters = [];
+  const parameters: Array<Parameter> = [];
   if (entry.transport.type === "stdio") {
-    for (const arg of entry.transport.args) {
-      parameters.push(...extractUppercaseWithUnderscores(arg));
-    }
+    parameters.push(...parseArgumentParameters(entry.transport.args));
+  }
+  return parameters;
+}
+
+function parseArgumentParameters(args: string[]) {
+  const parameters: Array<Parameter> = [];
+
+  for (const arg of args) {
+    parameters.push(
+      ...extractUppercaseWithUnderscores(arg).map((name) => ({
+        name,
+        description: "",
+        required: true,
+        scope: "args" as const,
+      })),
+    );
   }
   return parameters;
 }

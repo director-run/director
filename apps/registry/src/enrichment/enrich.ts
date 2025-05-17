@@ -4,7 +4,7 @@ import { type Store } from "../db/store";
 import { isGithubRepo } from "./github";
 import { getRepoReadme } from "./github";
 import { parseGithubUrl } from "./github";
-
+import { parseParameters } from "./parseParameters";
 const logger = getLogger("enrich");
 
 export async function enrichEntries(store: Store) {
@@ -26,10 +26,12 @@ async function enrichEntry(entry: EntryGetParams): Promise<EntryGetParams> {
 
   const { team, repo } = parseGithubUrl(entry.homepage);
   const readme = await getRepoReadme(team, repo);
+  const parameters = parseParameters(entry);
 
   return {
     ...entry,
     readme,
     isEnriched: true,
+    parameters,
   };
 }

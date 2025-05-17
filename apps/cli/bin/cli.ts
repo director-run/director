@@ -1,5 +1,6 @@
 #!/usr/bin/env -S node --no-warnings --enable-source-maps
 
+import { DirectorCommand } from "@director.run/utilities/cli";
 import { isDevelopment } from "@director.run/utilities/env";
 import packageJson from "../package.json";
 import { createClaudeCommand } from "../src/commands/claude";
@@ -8,8 +9,8 @@ import { createCursorCommands } from "../src/commands/cursor";
 import { createDebugCommands } from "../src/commands/debug";
 import { createRegistryCommands } from "../src/commands/registry";
 import { createServiceCommands } from "../src/commands/service";
-import { CustomCommand } from "./custom-command";
-const program = new CustomCommand();
+
+const program = new DirectorCommand();
 
 // process.exit = ((code?: number) => {
 //   //   console.log(`Exit called with code ${code}, but ignored`);

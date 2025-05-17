@@ -1,5 +1,5 @@
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
-import type { EntryCreateParams } from "../../db/schema";
+import type { EntryCreateParams, EntryGetParams } from "../../db/schema";
 import { faker } from '@faker-js/faker';
 
 const makeEntryName = () => faker.hacker.noun() + '_' + faker.string.uuid();

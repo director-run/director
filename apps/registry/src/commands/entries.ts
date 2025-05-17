@@ -51,17 +51,28 @@ export function registerEntriesCommands(store: Store) {
     .action(
       actionWithErrorHandler(async () => {
         const entries = await store.entries.getAllEntries();
-        const table = makeTable(["Name", "Command", "Env"]);
+        const table = makeTable(["Name", "Command", "hasReadme", "parameters"]);
         for (const entry of entries) {
           if (entry.transport.type === "stdio") {
             table.push([
               entry.name,
               [entry.transport.command, ...entry.transport.args].join(" "),
-              Object.keys(entry.transport.env || {}).join(", "),
+              !!entry.readme,
+              entry.parameters?.map((p) => p.name).join(", "),
             ]);
           }
         }
         console.log(table.toString());
+      }),
+    );
+
+  command
+    .command("readme <name>")
+    .description("show the readme of the entry behind the name")
+    .action(
+      actionWithErrorHandler(async (name: string) => {
+        const entry = await store.entries.getEntryByName(name);
+        console.log(entry.readme);
       }),
     );
 

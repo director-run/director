@@ -18,7 +18,7 @@ export function registerEntriesCommands(program: Command) {
     );
 
   program
-    .command("entries:seed")
+    .command("entries:import")
     .description("Seed the database with entries from awesome-mcp-servers")
     .action(
       actionWithErrorHandler(async () => {

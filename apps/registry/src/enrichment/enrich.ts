@@ -11,9 +11,8 @@ export async function enrichEntries(store: Store) {
   const entries = await store.entries.getAllEntries();
   for (const entry of entries) {
     if (!isGithubRepo(entry.homepage)) {
-      logger.info(`deleting ${entry.name}: not a github repo`);
-      await store.entries.deleteEntry(entry.id);
-    } else if (isEnriched(entry)) {
+      logger.info(`skipping ${entry.name}: not a github repo`);
+    } else if (entry.isEnriched) {
       logger.info(`skipping ${entry.name}: already enriched`);
     } else {
       const enriched = await enrichEntry(entry);
@@ -31,9 +30,6 @@ async function enrichEntry(entry: EntryGetParams): Promise<EntryGetParams> {
   return {
     ...entry,
     readme,
+    isEnriched: true,
   };
-}
-
-export function isEnriched(entry: EntryGetParams) {
-  return !!entry.readme;
 }

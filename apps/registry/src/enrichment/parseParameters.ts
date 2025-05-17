@@ -1,6 +1,6 @@
 import { type EntryGetParams } from "../db/schema";
 
-export function populateParameters(entry: EntryGetParams) {
+export function parseParameters(entry: EntryGetParams) {
   const parameters = [];
   if (entry.transport.type === "stdio") {
     for (const arg of entry.transport.args) {

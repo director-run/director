@@ -1,5 +1,4 @@
 import { count, eq, inArray } from "drizzle-orm";
-import { isEnriched } from "../enrichment/enrich";
 import { isGithubRepo } from "../enrichment/github";
 import { DatabaseConnection } from "./index";
 import { type EntryCreateParams, entriesTable } from "./schema";
@@ -46,8 +45,8 @@ export class EntryStore {
 
   public async getStatistics() {
     const entries = await this.getAllEntries();
-    const enriched = entries.filter(isEnriched);
-    const notEnriched = entries.filter((e) => !isEnriched(e));
+    const enriched = entries.filter((e) => e.isEnriched);
+    const notEnriched = entries.filter((e) => !e.isEnriched);
     const notGithub = entries.filter((e) => !isGithubRepo(e.homepage));
 
     return {

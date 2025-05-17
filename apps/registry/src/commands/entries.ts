@@ -1,4 +1,4 @@
-import { actionWithErrorHandler } from "@director.run/utilities/cli";
+import { actionWithErrorHandler, makeTable } from "@director.run/utilities/cli";
 import { Command } from "commander";
 import { type Store } from "../db/store";
 import { enrichEntries } from "../enrichment/enrich";
@@ -42,6 +42,26 @@ export function registerEntriesCommands(store: Store) {
     .action(
       actionWithErrorHandler(async () => {
         console.log(await store.entries.getStatistics());
+      }),
+    );
+
+  command
+    .command("ls")
+    .description("List all entries")
+    .action(
+      actionWithErrorHandler(async () => {
+        const entries = await store.entries.getAllEntries();
+        const table = makeTable(["Name", "Command", "Env"]);
+        for (const entry of entries) {
+          if (entry.transport.type === "stdio") {
+            table.push([
+              entry.name,
+              [entry.transport.command, ...entry.transport.args].join(" "),
+              Object.keys(entry.transport.env || {}).join(", "),
+            ]);
+          }
+        }
+        console.log(table.toString());
       }),
     );
 

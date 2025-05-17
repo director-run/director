@@ -2,7 +2,7 @@
 
 import { Command } from "commander";
 import packageJson from "../package.json";
-import { registerDbCommands } from "../src/commands/db";
+import { registerEntriesCommands } from "../src/commands/entries";
 import { registerServerCommands } from "../src/commands/server";
 
 const program = new Command();
@@ -12,7 +12,7 @@ program
   .description("Registry CLI")
   .version(packageJson.version);
 
-registerDbCommands(program);
+registerEntriesCommands(program);
 registerServerCommands(program);
 
 program.parse();

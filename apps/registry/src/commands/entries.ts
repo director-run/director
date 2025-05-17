@@ -1,11 +1,11 @@
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { Command } from "commander";
 import { createStore } from "../db/store";
+import { enrichEntries } from "../enrichment/enrich";
 import { prettyPrint } from "../helpers/pretty-print";
 import { fetchRaycastRegistry } from "../importers/raycast";
-import { enrichEntries, getStatistics } from "./enrich";
 
-export function registerDbCommands(program: Command) {
+export function registerEntriesCommands(program: Command) {
   program
     .command("entries:purge")
     .description("Delete all entries from the database")
@@ -46,7 +46,7 @@ export function registerDbCommands(program: Command) {
     .action(
       actionWithErrorHandler(async () => {
         const store = createStore();
-        console.log(await getStatistics(store));
+        console.log(await store.entries.getStatistics());
         await store.close();
       }),
     );

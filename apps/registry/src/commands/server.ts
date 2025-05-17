@@ -3,13 +3,17 @@ import { Command } from "commander";
 import { env } from "../config";
 import { Registry } from "../registry";
 
-export function registerServerCommands(program: Command) {
-  program
-    .command("server:start")
-    .description("Start the server")
+export function registerServerCommands() {
+  const command = new Command("service");
+
+  command
+    .command("start")
+    .description("Start the registry")
     .action(
       actionWithErrorHandler(async () => {
         await Registry.start({ port: env.REGISTRY_PORT });
       }),
     );
+
+  return command;
 }

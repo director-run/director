@@ -4,6 +4,7 @@ import { Command } from "commander";
 import packageJson from "../package.json";
 import { registerEntriesCommands } from "../src/commands/entries";
 import { registerServerCommands } from "../src/commands/server";
+import { createStore } from "../src/db/store";
 
 const program = new Command();
 
@@ -12,7 +13,9 @@ program
   .description("Registry CLI")
   .version(packageJson.version);
 
-registerEntriesCommands(program);
-registerServerCommands(program);
+const store = createStore();
+
+program.addCommand(registerEntriesCommands(store));
+program.addCommand(registerServerCommands());
 
 program.parse();

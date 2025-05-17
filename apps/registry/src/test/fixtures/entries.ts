@@ -30,7 +30,7 @@ type MakeStdioTransportOptions = {
 
 export function makeStdioTransport(overrides: MakeStdioTransportOptions = {}) {
   return {
-    type: "stdio",
+    type: "stdio" as const,
     command: "echo",
     args: ["https://github.com/test/test-server"],
     ...overrides,

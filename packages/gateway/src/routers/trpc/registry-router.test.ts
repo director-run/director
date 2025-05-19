@@ -3,10 +3,7 @@ import { makeEchoServer } from "@director.run/mcp/test/fixtures";
 import { serveOverSSE } from "@director.run/mcp/transport";
 import type { ProxyServerAttributes } from "@director.run/mcp/types";
 import type { EntryParameters } from "@director.run/registry/db/schema";
-import {
-  requiredStringSchema,
-  serializeZodSchema,
-} from "@director.run/utilities/schema";
+
 import {
   afterAll,
   beforeAll,
@@ -31,7 +28,8 @@ function makeParameters(): EntryParameters {
       name: "first-parameter",
       description: "Echo server",
       scope: "env",
-      schema: serializeZodSchema(requiredStringSchema),
+      required: true,
+      type: "string",
     },
   ];
 }

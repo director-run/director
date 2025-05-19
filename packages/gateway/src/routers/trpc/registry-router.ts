@@ -36,6 +36,12 @@ export function createRegistryRouter({
           name: input.entryName,
         });
 
+        // entry.parameters?.forEach((parameter) => {
+        //   const schema = unserializeZodSchema(parameter.schema);
+        //   console.log("--->", schema);
+        //   // schema.parse(input.parameters?.[parameter.name]);
+        // });
+
         return (
           await proxyStore.addServer(input.proxyId, {
             name: `registry:${entry.name}`,

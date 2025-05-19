@@ -69,7 +69,8 @@ export const entriesTable = pgTable("entries", {
       name: string;
       description: string;
       scope: "env" | "args";
-      schema: object; // serialized zod schema
+      required: boolean;
+      type: "string";
     }>
   >(),
   readme: text("readme"),

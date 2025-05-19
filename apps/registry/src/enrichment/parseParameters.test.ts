@@ -1,7 +1,3 @@
-import {
-  requiredStringSchema,
-  serializeZodSchema,
-} from "@director.run/utilities/schema";
 import { describe, expect, it } from "vitest";
 import type { EntryGetParams } from "../db/schema";
 import { makeStdioTransport, makeTestEntry } from "../test/fixtures/entries";
@@ -48,26 +44,30 @@ describe("parseParameters", () => {
       name: "YOUR_ACCESS_TOKEN_HERE",
       description: "",
       scope: "args",
-      schema: serializeZodSchema(requiredStringSchema),
+      type: "string",
+      required: true,
     });
     expect(parameters1).toContainEqual({
       name: "GITHUB_PERSONAL_ACCESS_TOKEN",
       description: "<YOUR_TOKEN>",
-      schema: serializeZodSchema(requiredStringSchema),
       scope: "env",
+      type: "string",
+      required: true,
     });
     expect(parameters2.length).toEqual(2);
     expect(parameters2).toContainEqual({
       name: "PADDLE_API_KEY",
       description: "",
-      schema: serializeZodSchema(requiredStringSchema),
       scope: "args",
+      type: "string",
+      required: true,
     });
     expect(parameters2).toContainEqual({
       name: "GITHUB_PERSONAL_ACCESS_TOKEN",
       description: "<YOUR_TOKEN>",
-      schema: serializeZodSchema(requiredStringSchema),
       scope: "env",
+      type: "string",
+      required: true,
     });
   });
 });

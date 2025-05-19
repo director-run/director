@@ -1,14 +1,11 @@
-import {
-  requiredStringSchema,
-  serializeZodSchema,
-} from "@director.run/utilities/schema";
 import { type EntryGetParams } from "../db/schema";
 
 type Parameter = {
   name: string;
   description: string;
   scope: "env" | "args";
-  schema: object;
+  type: "string";
+  required: boolean;
 };
 
 export function parseParameters(entry: EntryGetParams): Array<Parameter> {
@@ -29,7 +26,8 @@ function parseArgumentParameters(args: string[]) {
         name,
         description: "",
         scope: "args" as const,
-        schema: serializeZodSchema(requiredStringSchema),
+        type: "string" as const,
+        required: true,
       })),
     );
   }
@@ -44,7 +42,8 @@ function parseEnvParameters(env: Record<string, string>) {
       name: key,
       description: value,
       scope: "env" as const,
-      schema: serializeZodSchema(requiredStringSchema),
+      type: "string" as const,
+      required: true,
     });
   }
   return parameters;

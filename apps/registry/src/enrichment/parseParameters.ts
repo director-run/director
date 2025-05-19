@@ -1,17 +1,19 @@
+import { z } from "zod";
+import { zodToJsonSchema } from "zod-to-json-schema";
 import { type EntryGetParams } from "../db/schema";
-
 type Parameter = {
   name: string;
   description: string;
-  required: boolean;
   scope: "env" | "args";
+  schema: object;
 };
 
-export function parseParameters(entry: EntryGetParams) {
+const requiredStringSchema = z.string().trim().min(1, "Required");
+
+export function parseParameters(entry: EntryGetParams): Array<Parameter> {
   const parameters: Array<Parameter> = [];
   if (entry.transport.type === "stdio") {
     parameters.push(...parseArgumentParameters(entry.transport.args));
-    // TODO: parse env parameters
     parameters.push(...parseEnvParameters(entry.transport.env ?? {}));
   }
   return parameters;
@@ -25,8 +27,8 @@ function parseArgumentParameters(args: string[]) {
       ...extractUppercaseWithUnderscores(arg).map((name) => ({
         name,
         description: "",
-        required: true,
         scope: "args" as const,
+        schema: zodToJsonSchema(requiredStringSchema),
       })),
     );
   }
@@ -40,8 +42,8 @@ function parseEnvParameters(env: Record<string, string>) {
     parameters.push({
       name: key,
       description: value,
-      required: true,
       scope: "env" as const,
+      schema: zodToJsonSchema(requiredStringSchema),
     });
   }
   return parameters;

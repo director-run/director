@@ -39,7 +39,9 @@
       "dependencies": {
         "commander": "^13.1.0",
         "drizzle-orm": "^0.43.1",
+        "json-schema-to-zod": "^2.6.1",
         "pg": "^8.15.6",
+        "zod-to-json-schema": "^3.24.5",
       },
       "devDependencies": {
         "@director.run/utilities": "workspace:*",
@@ -756,6 +758,8 @@
     "jiti": ["jiti@1.21.7", "", { "bin": { "jiti": "bin/jiti.js" } }, "sha512-/imKNG4EbWNrVjoNC/1H5/9GFy+tqjGBHCaSsN+P2RnPqjsLmv6UD3Ej+Kj8nBWaRAwyk7kK5ZUc+OEatnTR3A=="],
 
     "joycon": ["joycon@3.1.1", "", {}, "sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw=="],
+
+    "json-schema-to-zod": ["json-schema-to-zod@2.6.1", "", { "bin": { "json-schema-to-zod": "dist/cjs/cli.js" } }, "sha512-uiHmWH21h9FjKJkRBntfVGTLpYlCZ1n98D0izIlByqQLqpmkQpNTBtfbdP04Na6+43lgsvrShFh2uWLkQDKJuQ=="],
 
     "json-schema-traverse": ["json-schema-traverse@1.0.0", "", {}, "sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug=="],
 

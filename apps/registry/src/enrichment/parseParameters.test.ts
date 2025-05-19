@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
+import { z } from "zod";
+import { zodToJsonSchema } from "zod-to-json-schema";
 import type { EntryGetParams } from "../db/schema";
 import { makeStdioTransport, makeTestEntry } from "../test/fixtures/entries";
 import { parseParameters } from "./parseParameters";
+const requiredStringSchema = z.string().trim().min(1, "Required");
 
 describe("parseParameters", () => {
   it("should parse parameters from arguments correctly", () => {
@@ -43,26 +46,26 @@ describe("parseParameters", () => {
     expect(parameters1).toContainEqual({
       name: "YOUR_ACCESS_TOKEN_HERE",
       description: "",
-      required: true,
       scope: "args",
+      schema: zodToJsonSchema(requiredStringSchema),
     });
     expect(parameters1).toContainEqual({
       name: "GITHUB_PERSONAL_ACCESS_TOKEN",
       description: "<YOUR_TOKEN>",
-      required: true,
+      schema: zodToJsonSchema(requiredStringSchema),
       scope: "env",
     });
     expect(parameters2.length).toEqual(2);
     expect(parameters2).toContainEqual({
       name: "PADDLE_API_KEY",
       description: "",
-      required: true,
+      schema: zodToJsonSchema(requiredStringSchema),
       scope: "args",
     });
     expect(parameters2).toContainEqual({
       name: "GITHUB_PERSONAL_ACCESS_TOKEN",
       description: "<YOUR_TOKEN>",
-      required: true,
+      schema: zodToJsonSchema(requiredStringSchema),
       scope: "env",
     });
   });

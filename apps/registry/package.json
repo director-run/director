@@ -32,6 +32,8 @@
   "dependencies": {
     "commander": "^13.1.0",
     "drizzle-orm": "^0.43.1",
-    "pg": "^8.15.6"
+    "json-schema-to-zod": "^2.6.1",
+    "pg": "^8.15.6",
+    "zod-to-json-schema": "^3.24.5"
   }
 }

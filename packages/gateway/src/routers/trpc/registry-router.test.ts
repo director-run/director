@@ -4,6 +4,10 @@ import { serveOverSSE } from "@director.run/mcp/transport";
 import type { ProxyServerAttributes } from "@director.run/mcp/types";
 import type { EntryParameters } from "@director.run/registry/db/schema";
 import {
+  requiredStringSchema,
+  serializeZodSchema,
+} from "@director.run/utilities/schema";
+import {
   afterAll,
   beforeAll,
   beforeEach,
@@ -14,7 +18,6 @@ import {
 } from "vitest";
 import { makeSSETargetConfig } from "../../test/fixtures";
 import { IntegrationTestHarness } from "../../test/integration";
-
 const PROXY_TARGET_PORT = 4521;
 
 const echoServerSSEConfig = makeSSETargetConfig({
@@ -27,9 +30,8 @@ function makeParameters(): EntryParameters {
     {
       name: "first-parameter",
       description: "Echo server",
-      type: "string",
-      required: true,
       scope: "env",
+      schema: serializeZodSchema(requiredStringSchema),
     },
   ];
 }

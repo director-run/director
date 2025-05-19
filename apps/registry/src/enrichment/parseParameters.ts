@@ -1,14 +1,15 @@
-import { z } from "zod";
-import { zodToJsonSchema } from "zod-to-json-schema";
+import {
+  requiredStringSchema,
+  serializeZodSchema,
+} from "@director.run/utilities/schema";
 import { type EntryGetParams } from "../db/schema";
+
 type Parameter = {
   name: string;
   description: string;
   scope: "env" | "args";
   schema: object;
 };
-
-const requiredStringSchema = z.string().trim().min(1, "Required");
 
 export function parseParameters(entry: EntryGetParams): Array<Parameter> {
   const parameters: Array<Parameter> = [];
@@ -28,7 +29,7 @@ function parseArgumentParameters(args: string[]) {
         name,
         description: "",
         scope: "args" as const,
-        schema: zodToJsonSchema(requiredStringSchema),
+        schema: serializeZodSchema(requiredStringSchema),
       })),
     );
   }
@@ -43,7 +44,7 @@ function parseEnvParameters(env: Record<string, string>) {
       name: key,
       description: value,
       scope: "env" as const,
-      schema: zodToJsonSchema(requiredStringSchema),
+      schema: serializeZodSchema(requiredStringSchema),
     });
   }
   return parameters;

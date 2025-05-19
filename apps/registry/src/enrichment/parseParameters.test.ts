@@ -1,10 +1,11 @@
+import {
+  requiredStringSchema,
+  serializeZodSchema,
+} from "@director.run/utilities/schema";
 import { describe, expect, it } from "vitest";
-import { z } from "zod";
-import { zodToJsonSchema } from "zod-to-json-schema";
 import type { EntryGetParams } from "../db/schema";
 import { makeStdioTransport, makeTestEntry } from "../test/fixtures/entries";
 import { parseParameters } from "./parseParameters";
-const requiredStringSchema = z.string().trim().min(1, "Required");
 
 describe("parseParameters", () => {
   it("should parse parameters from arguments correctly", () => {
@@ -47,25 +48,25 @@ describe("parseParameters", () => {
       name: "YOUR_ACCESS_TOKEN_HERE",
       description: "",
       scope: "args",
-      schema: zodToJsonSchema(requiredStringSchema),
+      schema: serializeZodSchema(requiredStringSchema),
     });
     expect(parameters1).toContainEqual({
       name: "GITHUB_PERSONAL_ACCESS_TOKEN",
       description: "<YOUR_TOKEN>",
-      schema: zodToJsonSchema(requiredStringSchema),
+      schema: serializeZodSchema(requiredStringSchema),
       scope: "env",
     });
     expect(parameters2.length).toEqual(2);
     expect(parameters2).toContainEqual({
       name: "PADDLE_API_KEY",
       description: "",
-      schema: zodToJsonSchema(requiredStringSchema),
+      schema: serializeZodSchema(requiredStringSchema),
       scope: "args",
     });
     expect(parameters2).toContainEqual({
       name: "GITHUB_PERSONAL_ACCESS_TOKEN",
       description: "<YOUR_TOKEN>",
-      schema: zodToJsonSchema(requiredStringSchema),
+      schema: serializeZodSchema(requiredStringSchema),
       scope: "env",
     });
   });

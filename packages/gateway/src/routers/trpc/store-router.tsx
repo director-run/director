@@ -1,4 +1,3 @@
-import {} from "@director.run/utilities/error";
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
 import { ProxyTargetSchema } from "../../db/schema";
@@ -15,8 +14,7 @@ const ProxyUpdateSchema = ProxyCreateSchema.partial();
 
 export function createProxyStoreRouter({
   proxyStore,
-  registryURL,
-}: { proxyStore: ProxyServerStore; registryURL: string }) {
+}: { proxyStore: ProxyServerStore }) {
   return t.router({
     getAll: t.procedure.query(async () => {
       return (await proxyStore.getAll()).map((proxy) => ({
@@ -86,20 +84,6 @@ export function createProxyStoreRouter({
       )
       .mutation(({ input }) => {
         return proxyStore.addServer(input.proxyId, input.server);
-      }),
-    addServerFromRegistry: t.procedure
-      .input(
-        z.object({
-          proxyId: z.string(),
-          entryName: z.string(),
-        }),
-      )
-      .mutation(({ input }) => {
-        return proxyStore.addServerFromRegistry(
-          input.proxyId,
-          input.entryName,
-          registryURL,
-        );
       }),
     removeServer: t.procedure
       .input(

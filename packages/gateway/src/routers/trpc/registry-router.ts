@@ -1,9 +1,14 @@
 import { createRegistryClient } from "@director.run/registry/client";
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
+import type { ProxyServerStore } from "../../proxy-server-store";
 
-export function createRegistryRouter({ registryURL }: { registryURL: string }) {
+export function createRegistryRouter({
+  registryURL,
+  proxyStore,
+}: { proxyStore: ProxyServerStore; registryURL: string }) {
   const registryClient = createRegistryClient(registryURL);
+
   return t.router({
     getEntries: t.procedure
       .input(
@@ -13,8 +18,42 @@ export function createRegistryRouter({ registryURL }: { registryURL: string }) {
         }),
       )
       .query(({ input }) => registryClient.entries.getEntries.query(input)),
+
     getEntryByName: t.procedure
       .input(z.object({ name: z.string() }))
       .query(({ input }) => registryClient.entries.getEntryByName.query(input)),
+
+    addServerFromRegistry: t.procedure
+      .input(
+        z.object({
+          proxyId: z.string(),
+          entryName: z.string(),
+        }),
+      )
+      .mutation(async ({ input }) => {
+        const entry = await registryClient.entries.getEntryByName.query({
+          name: input.entryName,
+        });
+
+        return proxyStore.addServer(input.proxyId, {
+          name: `registry:${entry.name}`,
+          transport:
+            entry.transport.type === "stdio"
+              ? {
+                  type: "stdio",
+                  command: entry.transport.command,
+                  args: entry.transport.args,
+                  env: entry.transport.env
+                    ? Object.entries(entry.transport.env).map(
+                        ([key, value]) => `${key}=${value}`,
+                      )
+                    : undefined,
+                }
+              : {
+                  type: "sse",
+                  url: entry.transport.url,
+                },
+        });
+      }),
   });
 }

@@ -51,10 +51,12 @@ export function createRegistryCommands() {
     .description("Add a server from the registry to a proxy.")
     .action(
       actionWithErrorHandler(async (proxyId: string, entryName: string) => {
-        const proxy = await gatewayClient.store.addServerFromRegistry.mutate({
-          proxyId,
-          entryName,
-        });
+        const proxy = await gatewayClient.registry.addServerFromRegistry.mutate(
+          {
+            proxyId,
+            entryName,
+          },
+        );
         console.log(`Registry entry ${entryName} added to ${proxy.id}`);
       }),
     );

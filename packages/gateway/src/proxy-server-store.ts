@@ -1,6 +1,5 @@
 import { ProxyServer } from "@director.run/mcp/proxy-server";
 import type { ProxyTargetAttributes } from "@director.run/mcp/types";
-import { createRegistryClient } from "@director.run/registry/client";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import type { Database } from "./db";
@@ -131,42 +130,6 @@ export class ProxyServerStore {
       ),
     });
     return updatedProxy;
-  }
-
-  public async addServerFromRegistry(
-    proxyId: string,
-    entryName: string,
-    registryUrl: string,
-  ): Promise<ProxyServer> {
-    const client = createRegistryClient(registryUrl);
-    const entry = await client.entries.getEntryByName.query({
-      name: entryName,
-    });
-    if (!entry) {
-      throw new AppError(
-        ErrorCode.NOT_FOUND,
-        `Entry '${entryName}' not found.`,
-      );
-    }
-    return this.addServer(proxyId, {
-      name: entry.name,
-      transport:
-        entry.transport.type === "stdio"
-          ? {
-              type: "stdio",
-              command: entry.transport.command,
-              args: entry.transport.args,
-              env: entry.transport.env
-                ? Object.entries(entry.transport.env).map(
-                    ([key, value]) => `${key}=${value}`,
-                  )
-                : undefined,
-            }
-          : {
-              type: "sse",
-              url: entry.transport.url,
-            },
-    });
   }
 
   public async update(

@@ -36,14 +36,16 @@ function makeParameters(): EntryParameters {
   ];
 }
 
-// Mock the registry client
 vi.mock("@director.run/registry/client", () => ({
   createRegistryClient: vi.fn(() => ({
     entries: {
       getEntryByName: {
-        query: vi
-          .fn()
-          .mockImplementation(() => Promise.resolve(echoServerSSEConfig)),
+        query: vi.fn().mockImplementation(() =>
+          Promise.resolve({
+            parameters: makeParameters(),
+            ...echoServerSSEConfig,
+          }),
+        ),
       },
     },
   })),

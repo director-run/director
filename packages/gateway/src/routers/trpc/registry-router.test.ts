@@ -2,7 +2,7 @@ import type { Server } from "node:http";
 import { makeEchoServer } from "@director.run/mcp/test/fixtures";
 import { serveOverSSE } from "@director.run/mcp/transport";
 import type { ProxyServerAttributes } from "@director.run/mcp/types";
-import type { EntryParameters } from "@director.run/registry/db/schema";
+import type { EntryParameter } from "@director.run/registry/db/schema";
 
 import {
   afterAll,
@@ -22,7 +22,7 @@ const echoServerSSEConfig = makeSSETargetConfig({
   url: `http://localhost:${PROXY_TARGET_PORT}/sse`,
 });
 
-function makeParameters(): EntryParameters {
+function makeParameters(): EntryParameter[] {
   return [
     {
       name: "first-parameter",
@@ -81,10 +81,22 @@ describe("Registry Router", () => {
         await harness.client.registry.addServerFromRegistry.mutate({
           proxyId: proxy.id,
           entryName: "echo",
+          parameters: {
+            "first-parameter": "test",
+          },
         });
 
       expect(updatedProxy.servers).toHaveLength(1);
       expect(updatedProxy.servers[0].name).toBe("registry:echo");
+    });
+
+    test("should throw an error if a required parameter is missing", async () => {
+      await expect(
+        harness.client.registry.addServerFromRegistry.mutate({
+          proxyId: proxy.id,
+          entryName: "echo",
+        }),
+      ).rejects.toThrow();
     });
   });
 });

@@ -1,15 +1,7 @@
-import { type EntryGetParams } from "../db/schema";
+import { type EntryGetParams, type EntryParameter } from "../db/schema";
 
-type Parameter = {
-  name: string;
-  description: string;
-  scope: "env" | "args";
-  type: "string";
-  required: boolean;
-};
-
-export function parseParameters(entry: EntryGetParams): Array<Parameter> {
-  const parameters: Array<Parameter> = [];
+export function parseParameters(entry: EntryGetParams): Array<EntryParameter> {
+  const parameters: Array<EntryParameter> = [];
   if (entry.transport.type === "stdio") {
     parameters.push(...parseArgumentParameters(entry.transport.args));
     parameters.push(...parseEnvParameters(entry.transport.env ?? {}));
@@ -18,7 +10,7 @@ export function parseParameters(entry: EntryGetParams): Array<Parameter> {
 }
 
 function parseArgumentParameters(args: string[]) {
-  const parameters: Array<Parameter> = [];
+  const parameters: Array<EntryParameter> = [];
 
   for (const arg of args) {
     parameters.push(
@@ -35,7 +27,7 @@ function parseArgumentParameters(args: string[]) {
 }
 
 function parseEnvParameters(env: Record<string, string>) {
-  const parameters: Array<Parameter> = [];
+  const parameters: Array<EntryParameter> = [];
 
   for (const [key, value] of Object.entries(env)) {
     parameters.push({

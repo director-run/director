@@ -1,7 +1,20 @@
 import { createRegistryClient } from "@director.run/registry/client";
+import type { EntryParameter } from "@director.run/registry/db/schema";
+import {
+  optionalStringSchema,
+  requiredStringSchema,
+} from "@director.run/utilities/schema";
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
 import type { ProxyServerStore } from "../../proxy-server-store";
+
+const parameterToZodSchema = (parameter: EntryParameter) => {
+  if (parameter.type === "string") {
+    return parameter.required ? requiredStringSchema : optionalStringSchema;
+  } else {
+    throw new Error(`Unsupported parameter type: ${parameter.type}`);
+  }
+};
 
 export function createRegistryRouter({
   registryURL,
@@ -36,11 +49,14 @@ export function createRegistryRouter({
           name: input.entryName,
         });
 
-        // entry.parameters?.forEach((parameter) => {
-        //   const schema = unserializeZodSchema(parameter.schema);
-        //   console.log("--->", schema);
-        //   // schema.parse(input.parameters?.[parameter.name]);
-        // });
+        entry.parameters?.forEach((parameter) => {
+          const inputValue = input.parameters?.[parameter.name];
+          const schema = parameterToZodSchema(parameter);
+
+          schema.parse(inputValue);
+
+          // TODO: Substitute the parameter into the transport command
+        });
 
         return (
           await proxyStore.addServer(input.proxyId, {

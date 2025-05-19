@@ -1,3 +1,4 @@
+import { TRPCClientError } from "@trpc/client";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { IntegrationTestHarness } from "../../test/integration";
 
@@ -74,9 +75,10 @@ describe("Store Router", () => {
       proxyId: "test-proxy",
     });
 
-    expect(
-      await harness.client.store.get.query({ proxyId: "test-proxy" }),
-    ).toBeUndefined();
+    await expect(
+      harness.client.store.get.query({ proxyId: "test-proxy" }),
+    ).rejects.toThrowError(TRPCClientError);
+
     expect(await harness.client.store.getAll.query()).toHaveLength(0);
   });
 });

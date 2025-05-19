@@ -35,25 +35,27 @@ export function createRegistryRouter({
           name: input.entryName,
         });
 
-        return proxyStore.addServer(input.proxyId, {
-          name: `registry:${entry.name}`,
-          transport:
-            entry.transport.type === "stdio"
-              ? {
-                  type: "stdio",
-                  command: entry.transport.command,
-                  args: entry.transport.args,
-                  env: entry.transport.env
-                    ? Object.entries(entry.transport.env).map(
-                        ([key, value]) => `${key}=${value}`,
-                      )
-                    : undefined,
-                }
-              : {
-                  type: "sse",
-                  url: entry.transport.url,
-                },
-        });
+        return (
+          await proxyStore.addServer(input.proxyId, {
+            name: `registry:${entry.name}`,
+            transport:
+              entry.transport.type === "stdio"
+                ? {
+                    type: "stdio",
+                    command: entry.transport.command,
+                    args: entry.transport.args,
+                    env: entry.transport.env
+                      ? Object.entries(entry.transport.env).map(
+                          ([key, value]) => `${key}=${value}`,
+                        )
+                      : undefined,
+                  }
+                : {
+                    type: "sse",
+                    url: entry.transport.url,
+                  },
+          })
+        ).toPlainObject();
       }),
   });
 }

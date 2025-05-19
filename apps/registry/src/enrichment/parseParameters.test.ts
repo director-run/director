@@ -39,23 +39,31 @@ describe("parseParameters", () => {
 
     const parameters1 = parseParameters(entry1 as EntryGetParams);
     const parameters2 = parseParameters(entry2 as EntryGetParams);
-
-    expect(parameters1).toEqual([
-      {
-        name: "YOUR_ACCESS_TOKEN_HERE",
-        description: "",
-        required: true,
-        scope: "args",
-      },
-    ]);
-
-    expect(parameters2).toEqual([
-      {
-        name: "PADDLE_API_KEY",
-        description: "",
-        required: true,
-        scope: "args",
-      },
-    ]);
+    expect(parameters2.length).toEqual(2);
+    expect(parameters1).toContainEqual({
+      name: "YOUR_ACCESS_TOKEN_HERE",
+      description: "",
+      required: true,
+      scope: "args",
+    });
+    expect(parameters1).toContainEqual({
+      name: "GITHUB_PERSONAL_ACCESS_TOKEN",
+      description: "<YOUR_TOKEN>",
+      required: true,
+      scope: "env",
+    });
+    expect(parameters2.length).toEqual(2);
+    expect(parameters2).toContainEqual({
+      name: "PADDLE_API_KEY",
+      description: "",
+      required: true,
+      scope: "args",
+    });
+    expect(parameters2).toContainEqual({
+      name: "GITHUB_PERSONAL_ACCESS_TOKEN",
+      description: "<YOUR_TOKEN>",
+      required: true,
+      scope: "env",
+    });
   });
 });

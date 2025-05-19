@@ -12,7 +12,7 @@ export function parseParameters(entry: EntryGetParams) {
   if (entry.transport.type === "stdio") {
     parameters.push(...parseArgumentParameters(entry.transport.args));
     // TODO: parse env parameters
-    // parameters.push(...parseEnvParameters(entry.transport.env ?? {}));
+    parameters.push(...parseEnvParameters(entry.transport.env ?? {}));
   }
   return parameters;
 }

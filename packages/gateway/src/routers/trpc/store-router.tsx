@@ -30,6 +30,7 @@ export function createProxyStoreRouter({
           path: getPathForProxy(input.proxyId),
         };
       }),
+
     create: t.procedure.input(ProxyCreateSchema).mutation(async ({ input }) => {
       return (
         await proxyStore.create({
@@ -39,6 +40,7 @@ export function createProxyStoreRouter({
         })
       ).toPlainObject();
     }),
+
     update: t.procedure
       .input(
         z.object({
@@ -82,8 +84,10 @@ export function createProxyStoreRouter({
           }),
         }),
       )
-      .mutation(({ input }) => {
-        return proxyStore.addServer(input.proxyId, input.server);
+      .mutation(async ({ input }) => {
+        return (
+          await proxyStore.addServer(input.proxyId, input.server)
+        ).toPlainObject();
       }),
     removeServer: t.procedure
       .input(
@@ -92,8 +96,10 @@ export function createProxyStoreRouter({
           serverName: z.string(),
         }),
       )
-      .mutation(({ input }) => {
-        return proxyStore.removeServer(input.proxyId, input.serverName);
+      .mutation(async ({ input }) => {
+        return (
+          await proxyStore.removeServer(input.proxyId, input.serverName)
+        ).toPlainObject();
       }),
   });
 }

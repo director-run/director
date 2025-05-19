@@ -50,11 +50,10 @@ describe("Registry Router", () => {
         name: "Test proxy",
       });
 
-      // Add a server from registry
       const updatedProxy =
         await harness.client.registry.addServerFromRegistry.mutate({
           proxyId: proxy.id,
-          entryName: "test-entry",
+          entryName: "echo",
         });
 
       expect(updatedProxy.servers).toHaveLength(1);

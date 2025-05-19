@@ -28,6 +28,7 @@ export function createRegistryRouter({
         z.object({
           proxyId: z.string(),
           entryName: z.string(),
+          parameters: z.record(z.string(), z.string()).optional(),
         }),
       )
       .mutation(async ({ input }) => {

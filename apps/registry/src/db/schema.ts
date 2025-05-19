@@ -68,6 +68,7 @@ export const entriesTable = pgTable("entries", {
     Array<{
       name: string;
       description: string;
+      type: "string" | "number" | "boolean";
       required?: boolean;
       scope: "env" | "args";
     }>
@@ -77,3 +78,6 @@ export const entriesTable = pgTable("entries", {
 
 export type EntryCreateParams = InferInsertModel<typeof entriesTable>;
 export type EntryGetParams = InferSelectModel<typeof entriesTable>;
+export type EntryParameters = InferSelectModel<
+  typeof entriesTable
+>["parameters"];

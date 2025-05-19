@@ -1,7 +1,17 @@
 import type { Server } from "node:http";
 import { makeEchoServer } from "@director.run/mcp/test/fixtures";
 import { serveOverSSE } from "@director.run/mcp/transport";
-import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
+import type { ProxyServerAttributes } from "@director.run/mcp/types";
+import type { EntryParameters } from "@director.run/registry/db/schema";
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  test,
+  vi,
+} from "vitest";
 import { makeSSETargetConfig } from "../../test/fixtures";
 import { IntegrationTestHarness } from "../../test/integration";
 
@@ -11,6 +21,18 @@ const echoServerSSEConfig = makeSSETargetConfig({
   name: "echo",
   url: `http://localhost:${PROXY_TARGET_PORT}/sse`,
 });
+
+function makeParameters(): EntryParameters {
+  return [
+    {
+      name: "first-parameter",
+      description: "Echo server",
+      type: "string",
+      required: true,
+      scope: "env",
+    },
+  ];
+}
 
 // Mock the registry client
 vi.mock("@director.run/registry/client", () => ({
@@ -43,13 +65,16 @@ describe("Registry Router", () => {
   });
 
   describe("addServerFromRegistry", () => {
-    test("should add the registry: prefix to the server name", async () => {
-      await harness.purge();
+    let proxy: ProxyServerAttributes;
 
-      const proxy = await harness.client.store.create.mutate({
+    beforeEach(async () => {
+      await harness.purge();
+      proxy = await harness.client.store.create.mutate({
         name: "Test proxy",
       });
+    });
 
+    test("should add a 'registry:' prefix to the server name", async () => {
       const updatedProxy =
         await harness.client.registry.addServerFromRegistry.mutate({
           proxyId: proxy.id,

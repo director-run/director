@@ -37,6 +37,10 @@ export class Registry {
     app.use("/trpc", createTRPCExpressMiddleware({ store }));
     app.use(errorRequestHandler);
 
+    app.get("/hello", (req, res) => {
+      res.send("Hello, world!");
+    });
+
     const server = app.listen(attribs.port, () => {
       logger.info(`registry running on port ${attribs.port}`);
     });

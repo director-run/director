@@ -3,9 +3,8 @@
   "private": true,
   "type": "module",
   "version": "0.0.1",
-  "bin": {
-    "registry": "./dist/cli.js"
-  },
+  "main": "bin/api.ts",
+
   "scripts": {
     "lint": "biome check .",
     "format": "biome format --write .",
@@ -16,7 +15,7 @@
     "build": "bun build --production --target=node bin/cli.ts --outdir dist",
     "prepare": "bun run build",
     "db:push": "drizzle-kit push",
-    "start": "bun run bin/cli.ts service start"
+    "start": "bun run bin/api.ts"
   },
   "exports": {
     "./*": "./src/*.ts"

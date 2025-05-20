@@ -1,5 +1,5 @@
 import type { Server } from "node:http";
-import { afterAll, beforeAll, describe, test } from "vitest";
+import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { SimpleClient } from "./simple-client";
 import { SimpleServer } from "./simple-server";
 import { serveOverStreamable } from "./streamable";
@@ -24,6 +24,8 @@ describe("SimpleServer", () => {
       "http://localhost:3000/mcp",
     );
 
-    console.log(await client.listTools());
+    const tools = await client.listTools();
+    expect(tools.tools).toHaveLength(1);
+    expect(tools.tools[0].name).toBe("echo");
   });
 });

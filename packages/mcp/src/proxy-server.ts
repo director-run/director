@@ -170,14 +170,10 @@ function getTransport(targetServer: ProxyTargetAttributes): Transport {
       return new StdioClientTransport({
         command: targetServer.transport.command,
         args: targetServer.transport.args,
-        env: targetServer.transport.env
-          ? targetServer.transport.env.reduce(
-              (_, v) => ({
-                [v]: process.env[v] || "",
-              }),
-              {},
-            )
-          : undefined,
+        env: {
+          ...(process.env as Record<string, string>),
+          ...(targetServer.transport?.env || {}),
+        },
       });
     default:
       throw new Error(`Transport ${targetServer.name} not available.`);

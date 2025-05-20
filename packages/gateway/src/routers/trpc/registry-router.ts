@@ -1,3 +1,4 @@
+import type { ProxyTransport } from "@director.run/mcp/types";
 import { createRegistryClient } from "@director.run/registry/client";
 import type { EntryParameter } from "@director.run/registry/db/schema";
 import {
@@ -49,7 +50,11 @@ export function createRegistryRouter({
           name: input.entryName,
         });
 
+        let transport: ProxyTransport;
+
         if (entry.transport.type === "stdio") {
+          const env: Record<string, string> = {};
+          let args: string[] = [...entry.transport.args];
           // only stdio transports have parameters
           entry.parameters?.forEach((parameter) => {
             const inputValue = input.parameters?.[parameter.name];
@@ -58,32 +63,35 @@ export function createRegistryRouter({
             schema.parse(inputValue);
 
             if (!inputValue) {
+              // Not a required parameter, so we can skip it
               return;
             }
 
-            // TODO: Substitute the parameter into the transport command
+            // Substitute the parameter into the transport command
+            if (parameter.scope === "env") {
+              env[parameter.name] = inputValue;
+            } else if (parameter.scope === "args") {
+              args = args.map((arg) => arg.replace(parameter.name, inputValue));
+            }
           });
+
+          transport = {
+            env,
+            args,
+            type: "stdio",
+            command: entry.transport.command,
+          };
+        } else {
+          transport = {
+            type: "sse",
+            url: entry.transport.url,
+          };
         }
 
         return (
           await proxyStore.addServer(input.proxyId, {
             name: `registry:${entry.name}`,
-            transport:
-              entry.transport.type === "stdio"
-                ? {
-                    type: "stdio",
-                    command: entry.transport.command,
-                    args: entry.transport.args,
-                    env: entry.transport.env
-                      ? Object.entries(entry.transport.env).map(
-                          ([key, value]) => `${key}=${value}`,
-                        )
-                      : undefined,
-                  }
-                : {
-                    type: "sse",
-                    url: entry.transport.url,
-                  },
+            transport,
           })
         ).toPlainObject();
       }),

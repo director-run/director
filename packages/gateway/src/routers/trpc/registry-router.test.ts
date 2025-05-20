@@ -1,5 +1,4 @@
 import type { ProxyServerAttributes } from "@director.run/mcp/types";
-import type { EntryParameter } from "@director.run/registry/db/schema";
 
 import {
   afterAll,
@@ -15,26 +14,33 @@ import { IntegrationTestHarness } from "../../test/integration";
 
 const testServerStdioConfig = makeFooBarServerStdioConfig();
 
-function makeParameters(): EntryParameter[] {
-  return [
-    {
-      name: "first-parameter",
-      description: "Echo server",
-      scope: "env",
-      required: true,
-      type: "string",
-    },
-  ];
-}
-
 vi.mock("@director.run/registry/client", () => ({
   createRegistryClient: vi.fn(() => ({
     entries: {
       getEntryByName: {
         query: vi.fn().mockImplementation(() =>
           Promise.resolve({
-            parameters: makeParameters(),
-            ...testServerStdioConfig,
+            name: testServerStdioConfig.name,
+            transport: { ...testServerStdioConfig.transport },
+            parameters: [
+              {
+                name: "FIRST_PARAMETER",
+                description: "some parameter",
+                scope: "env",
+                required: true,
+                type: "string",
+              },
+              {
+                name: "SECOND_PARAMETER",
+                description: "some parameter",
+                scope: "args",
+                required: false,
+                type: "string",
+              },
+            ],
+            env: {
+              FIRST_PARAMETER: "<PLACEHOLDER>",
+            },
           }),
         ),
       },
@@ -69,7 +75,7 @@ describe("Registry Router", () => {
           proxyId: proxy.id,
           entryName: "foo",
           parameters: {
-            "first-parameter": "test",
+            FIRST_PARAMETER: "test",
           },
         });
 
@@ -84,6 +90,21 @@ describe("Registry Router", () => {
           entryName: "echo",
         }),
       ).rejects.toThrow();
+    });
+
+    test("should substitute the parameter into the transport command", async () => {
+      const updatedProxy =
+        await harness.client.registry.addServerFromRegistry.mutate({
+          proxyId: proxy.id,
+          entryName: "foo",
+          parameters: {
+            FIRST_PARAMETER: "test",
+          },
+        });
+
+      expect(updatedProxy.servers[0].transport?.env).toEqual({
+        FIRST_PARAMETER: "test",
+      });
     });
   });
 });

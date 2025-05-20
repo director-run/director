@@ -10,7 +10,7 @@ export const ProxyTargetSchema = z.object({
       type: z.literal("stdio"),
       command: requiredStringSchema,
       args: z.array(requiredStringSchema).optional(),
-      env: z.array(requiredStringSchema).optional(),
+      env: z.record(requiredStringSchema, requiredStringSchema).optional(),
     }),
     z.object({
       type: z.literal("sse"),

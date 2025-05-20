@@ -70,10 +70,12 @@ export const entriesTable = pgTable("entries", {
 
 export type EntryCreateParams = InferInsertModel<typeof entriesTable>;
 export type EntryGetParams = InferSelectModel<typeof entriesTable>;
+
+// Only a very specific type of parameter is supported for now
 export type EntryParameter = {
   name: string;
   description: string;
   scope: "env" | "args";
-  required: boolean;
+  required: true;
   type: "string";
 };

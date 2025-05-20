@@ -68,6 +68,21 @@ export class SimpleClient extends Client {
     return client;
   }
 
+  // TODO: test
+  // public static async createAndConnectToHTTP(url: string) {
+  //   const client = new SimpleClient("test streamable client");
+
+  //   try {
+  //     // Try to connect over streamable
+  //     await client.connect(new StreamableHTTPClientTransport(new URL(url)));
+  //   } catch (e) {
+  //     // If that fails, try over SSE
+  //     await client.connect(new SSEClientTransport(new URL(url)));
+  //   }
+
+  //   return client;
+  // }
+
   public static async createAndConnectToStdio(
     command: string,
     args: string[],

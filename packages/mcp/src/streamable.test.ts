@@ -1,18 +1,25 @@
 import type { Server } from "node:http";
-import { beforeAll, describe, test } from "vitest";
+import { afterAll, beforeAll, describe, test } from "vitest";
 import { SimpleClient } from "./simple-client";
+import { SimpleServer } from "./simple-server";
 import { serveOverStreamable } from "./streamable";
 import { makeEchoServer } from "./test/fixtures";
 
 describe("SimpleServer", () => {
-  let server: Server;
+  let httpServer: Server;
+  let mcpServer: SimpleServer;
 
   beforeAll(async () => {
-    server = await serveOverStreamable(makeEchoServer(), 3000);
+    mcpServer = makeEchoServer();
+    httpServer = await serveOverStreamable(mcpServer, 3000);
+  });
+
+  afterAll(async () => {
+    await httpServer.close();
+    await mcpServer.close();
   });
 
   test("should create a server with a tool", async () => {
-    // const server = new SimpleServer();
     const client = await SimpleClient.createAndConnectToStreamable(
       "http://localhost:3000/mcp",
     );

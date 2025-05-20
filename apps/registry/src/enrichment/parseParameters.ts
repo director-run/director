@@ -9,7 +9,7 @@ export function parseParameters(entry: EntryGetParams): Array<EntryParameter> {
   return parameters;
 }
 
-function parseArgumentParameters(args: string[]) {
+function parseArgumentParameters(args: string[]): Array<EntryParameter> {
   const parameters: Array<EntryParameter> = [];
 
   for (const arg of args) {
@@ -19,14 +19,16 @@ function parseArgumentParameters(args: string[]) {
         description: "",
         scope: "args" as const,
         type: "string" as const,
-        required: true,
+        required: true as const,
       })),
     );
   }
   return parameters;
 }
 
-function parseEnvParameters(env: Record<string, string>) {
+function parseEnvParameters(
+  env: Record<string, string>,
+): Array<EntryParameter> {
   const parameters: Array<EntryParameter> = [];
 
   for (const [key, value] of Object.entries(env)) {

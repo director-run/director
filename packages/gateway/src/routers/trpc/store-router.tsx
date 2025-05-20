@@ -74,7 +74,7 @@ export function createProxyStoreRouter({
                 type: z.literal("stdio"),
                 command: z.string(),
                 args: z.array(z.string()).optional(),
-                env: z.array(z.string()).optional(),
+                env: z.record(z.string(), z.string()).optional(),
               }),
               z.object({
                 type: z.literal("sse"),

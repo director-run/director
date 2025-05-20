@@ -1,4 +1,7 @@
-import type { ProxyServerAttributes } from "@director.run/mcp/types";
+import type {
+  ProxyServerAttributes,
+  STDIOTransport,
+} from "@director.run/mcp/types";
 
 import {
   afterAll,
@@ -101,8 +104,8 @@ describe("Registry Router", () => {
             FIRST_PARAMETER: "test",
           },
         });
-
-      expect(updatedProxy.servers[0].transport?.env).toEqual({
+      const transport = updatedProxy.servers[0].transport as STDIOTransport;
+      expect(transport.env).toEqual({
         FIRST_PARAMETER: "test",
       });
     });

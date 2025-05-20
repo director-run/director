@@ -1,6 +1,3 @@
-import type { Server } from "node:http";
-import { makeEchoServer } from "@director.run/mcp/test/fixtures";
-import { serveOverSSE } from "@director.run/mcp/transport";
 import type { ProxyServerAttributes } from "@director.run/mcp/types";
 import type { EntryParameter } from "@director.run/registry/db/schema";
 
@@ -13,14 +10,10 @@ import {
   test,
   vi,
 } from "vitest";
-import { makeSSETargetConfig } from "../../test/fixtures";
+import { makeFooBarServerStdioConfig } from "../../test/fixtures";
 import { IntegrationTestHarness } from "../../test/integration";
-const PROXY_TARGET_PORT = 4521;
 
-const echoServerSSEConfig = makeSSETargetConfig({
-  name: "echo",
-  url: `http://localhost:${PROXY_TARGET_PORT}/sse`,
-});
+const testServerStdioConfig = makeFooBarServerStdioConfig();
 
 function makeParameters(): EntryParameter[] {
   return [
@@ -41,7 +34,7 @@ vi.mock("@director.run/registry/client", () => ({
         query: vi.fn().mockImplementation(() =>
           Promise.resolve({
             parameters: makeParameters(),
-            ...echoServerSSEConfig,
+            ...testServerStdioConfig,
           }),
         ),
       },
@@ -51,19 +44,13 @@ vi.mock("@director.run/registry/client", () => ({
 
 describe("Registry Router", () => {
   let harness: IntegrationTestHarness;
-  let proxyTargetServerInstance: Server;
 
   beforeAll(async () => {
-    proxyTargetServerInstance = await serveOverSSE(
-      makeEchoServer(),
-      PROXY_TARGET_PORT,
-    );
     harness = await IntegrationTestHarness.start();
   });
 
   afterAll(async () => {
     await harness.stop();
-    await proxyTargetServerInstance?.close();
   });
 
   describe("addServerFromRegistry", () => {
@@ -80,14 +67,14 @@ describe("Registry Router", () => {
       const updatedProxy =
         await harness.client.registry.addServerFromRegistry.mutate({
           proxyId: proxy.id,
-          entryName: "echo",
+          entryName: "foo",
           parameters: {
             "first-parameter": "test",
           },
         });
 
       expect(updatedProxy.servers).toHaveLength(1);
-      expect(updatedProxy.servers[0].name).toBe("registry:echo");
+      expect(updatedProxy.servers[0].name).toBe("registry:foo");
     });
 
     test("should throw an error if a required parameter is missing", async () => {

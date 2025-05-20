@@ -49,14 +49,21 @@ export function createRegistryRouter({
           name: input.entryName,
         });
 
-        entry.parameters?.forEach((parameter) => {
-          const inputValue = input.parameters?.[parameter.name];
-          const schema = parameterToZodSchema(parameter);
+        if (entry.transport.type === "stdio") {
+          // only stdio transports have parameters
+          entry.parameters?.forEach((parameter) => {
+            const inputValue = input.parameters?.[parameter.name];
+            const schema = parameterToZodSchema(parameter);
 
-          schema.parse(inputValue);
+            schema.parse(inputValue);
 
-          // TODO: Substitute the parameter into the transport command
-        });
+            if (!inputValue) {
+              return;
+            }
+
+            // TODO: Substitute the parameter into the transport command
+          });
+        }
 
         return (
           await proxyStore.addServer(input.proxyId, {

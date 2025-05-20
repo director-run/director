@@ -19,7 +19,8 @@ function AlertDialogOverlay({
   return (
     <AlertDialogPrimitive.Overlay
       className={cn(
-        "radix-state-[closed]:fade-out-0 radix-state-[open]:fade-in-0 fixed inset-0 z-50 radix-state-[closed]:animate-out radix-state-[open]:animate-in bg-background/50 backdrop-blur-sm",
+        "radix-state-[closed]:fade-out-0 radix-state-[open]:fade-in-0 fixed inset-0 z-50 radix-state-[closed]:animate-out radix-state-[open]:animate-in bg-foreground/90 backdrop-blur-sm",
+        "dark:bg-background/50",
         className,
       )}
       {...props}
@@ -36,8 +37,9 @@ function AlertDialogContent({
       <AlertDialogOverlay />
       <AlertDialogPrimitive.Content
         className={cn(
-          "popover background fixed top-[25%] left-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] gap-4 p-6 duration-200",
+          "fixed top-[25%] left-[50%] z-50 grid w-full max-w-[90%] translate-x-[-50%] gap-4 rounded-2xl bg-background p-6 text-foreground outline-none duration-200 sm:max-w-lg",
           "radix-state-[closed]:fade-out-0 radix-state-[open]:fade-in-0 radix-state-[closed]:zoom-out-95 radix-state-[open]:zoom-in-95 radix-state-[closed]:slide-out-to-top-[48%] radix-state-[open]:slide-in-from-top-[48%] radix-state-[closed]:animate-out radix-state-[open]:animate-in",
+          "dark:bg-element",
           className,
         )}
         {...props}
@@ -80,7 +82,7 @@ function AlertDialogTitle({
   return (
     <AlertDialogPrimitive.Title
       className={cn(
-        "font-normal text-foreground-inverse text-xl leading-none tracking-tight",
+        "font-normal text-foreground text-xl leading-none tracking-tight",
         className,
       )}
       {...props}
@@ -94,7 +96,7 @@ function AlertDialogDescription({
 }: React.ComponentProps<typeof AlertDialogPrimitive.Description>) {
   return (
     <AlertDialogPrimitive.Description
-      className={cn("text-base text-foreground-inverse/75", className)}
+      className={cn("text-base text-foreground-subtle", className)}
       {...props}
     />
   );

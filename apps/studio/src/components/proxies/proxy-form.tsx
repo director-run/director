@@ -6,15 +6,19 @@ import { ProxyAttributes } from "@director.run/gateway/db/schema";
 import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
 import { z } from "zod";
-import { InputField } from "../form/input-field";
-import { TextareaField } from "../form/textarea-field";
 import { Button } from "../ui/button";
 import { Form } from "../ui/form";
+import { InputField } from "../ui/form/input-field";
+import { TextareaField } from "../ui/form/textarea-field";
 import { Loader } from "../ui/loader";
 
 const proxySchema = z.object({
   name: z.string().trim().min(1, "Required"),
-  description: z.string().trim().optional(),
+  description: z
+    .string()
+    .trim()
+    .optional()
+    .transform((val) => (val === "" ? undefined : val)),
 });
 
 interface ProxyFormProps {
@@ -72,7 +76,12 @@ export function NewProxyForm() {
         await mutation.mutateAsync({ ...values, servers: [] });
       }}
     >
-      <Button className="self-end" type="submit" disabled={isPending}>
+      <Button
+        size="lg"
+        className="self-start"
+        type="submit"
+        disabled={isPending}
+      >
         {isPending ? (
           <Loader className="text-foreground-subtle" />
         ) : (
@@ -91,6 +100,7 @@ export function UpdateProxyForm(
   const utils = trpc.useUtils();
   const mutation = trpc.store.update.useMutation({
     onSuccess: async () => {
+      await utils.store.getAll.invalidate();
       await utils.store.get.invalidate({ proxyId: props.id });
       router.refresh();
     },

@@ -20,7 +20,7 @@ import { cn } from "@/lib/cn";
 interface FormProps<T extends FieldValues> {
   form: UseZodFormReturn<T>;
   className?: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   onSubmit: SubmitHandler<T>;
 }
 

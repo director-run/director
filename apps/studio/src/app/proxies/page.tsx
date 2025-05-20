@@ -1,52 +1,40 @@
 "use client";
 
+import { PlusIcon } from "lucide-react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
+import { ProxyCardList } from "@/components/proxies/proxy-card-list";
 import { Button } from "@/components/ui/button";
-import { Container } from "@/components/ui/container";
+import { Logo } from "@/components/ui/logo";
 import {
   Section,
   SectionDescription,
   SectionHeader,
   SectionTitle,
 } from "@/components/ui/section";
-import { DefaultFallback } from "@/lib/no-ssr-suspense";
-import { trpc } from "@/trpc/client";
 
 export default function ProxiesPage() {
-  const { data, isLoading } = trpc.store.getAll.useQuery();
-
-  if (isLoading || !data) {
-    return <DefaultFallback />;
-  }
-
-  if (data.length === 0) {
-    return redirect("/proxies/new");
-  }
-
   return (
-    <Container size="sm" className="py-12">
-      <Section>
+    <div className="flex min-h-screen w-full flex-col justify-between gap-y-12 p-8">
+      <Logo className="size-10" />
+
+      <Section className="max-w-lg grow">
         <SectionHeader>
           <SectionTitle>Your proxies</SectionTitle>
           <SectionDescription>
             Create and manage your proxies.
           </SectionDescription>
         </SectionHeader>
-        <div className="flex flex-col gap-y-2">
-          {data.map((proxy) => (
-            <Link key={proxy.id} href={`/proxies/${proxy.id}`}>
-              <div>{proxy.name}</div>
-              {proxy.description && <div>{proxy.description}</div>}
-            </Link>
-          ))}
 
-          <Button asChild>
-            <Link href="/proxies/new">Create new proxy</Link>
-          </Button>
-        </div>
+        <ProxyCardList />
       </Section>
-    </Container>
+
+      <Button size="lg" className="-rotate-4 w-fit" asChild>
+        <Link href="/proxies/new">
+          <PlusIcon />
+          <span>Add proxy</span>
+        </Link>
+      </Button>
+    </div>
   );
 }

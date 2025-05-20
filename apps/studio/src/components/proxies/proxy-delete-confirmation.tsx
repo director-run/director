@@ -1,29 +1,18 @@
 "use client";
 
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { trpc } from "@/trpc/client";
 import { useRouter } from "next/navigation";
 import { ReactNode, useState } from "react";
-import { Loader } from "../ui/loader";
 
 interface ProxyDeleteConfirmationProps {
   proxyId: string;
-  children?: ReactNode;
+  children: ReactNode;
 }
 
 export function ProxyDeleteConfirmation({
-  children,
   proxyId,
+  children,
 }: ProxyDeleteConfirmationProps) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -39,41 +28,14 @@ export function ProxyDeleteConfirmation({
   });
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-      <AlertDialogTrigger asChild>
-        {children ?? <Button className="self-start">Delete proxy</Button>}
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel
-            className="text-foreground-inverse"
-            disabled={mutation.isPending}
-          >
-            Cancel
-          </AlertDialogCancel>
-
-          <Button
-            type="button"
-            variant="inverse"
-            onClick={async (event) => {
-              event.preventDefault();
-              await mutation.mutateAsync({ proxyId });
-            }}
-          >
-            {mutation.isPending ? (
-              <Loader className="text-foreground-subtle" />
-            ) : (
-              "Delete"
-            )}
-          </Button>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <ConfirmDialog
+      title="Are you sure?"
+      description="This action cannot be undone."
+      open={isOpen}
+      onOpenChange={setIsOpen}
+      onConfirm={() => mutation.mutateAsync({ proxyId })}
+    >
+      {children}
+    </ConfirmDialog>
   );
 }

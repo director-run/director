@@ -1,32 +1,48 @@
-import { assertUnreachable } from "@/lib/assert-unreachable";
-import { getDeterministicColor } from "@/lib/deterministic-colors";
 import { HTTPTransport, STDIOTransport } from "@director.run/mcp/types";
-import { Badge } from "../ui/badge";
+import { ComponentProps } from "react";
+
+import { Badge } from "@/components/ui/badge";
 import {
   DescriptionDetail,
   DescriptionList,
   DescriptionTerm,
-} from "../ui/description-list";
+} from "@/components/ui/description-list";
+import { assertUnreachable } from "@/lib/assert-unreachable";
+import { getDeterministicColor } from "@/lib/deterministic-colors";
+
+interface McpDescriptionListProps
+  extends ComponentProps<typeof DescriptionList> {
+  transport: HTTPTransport | STDIOTransport;
+}
 
 export function McpDescriptionList({
   transport,
-}: { transport: HTTPTransport | STDIOTransport }) {
+  ...props
+}: McpDescriptionListProps) {
   switch (transport.type) {
     case "http":
-      return <McpSseDescriptionList transport={transport} />;
+      return <McpSseDescriptionList transport={transport} {...props} />;
     case "stdio":
-      return <McpStdioDescriptionList transport={transport} />;
+      return <McpStdioDescriptionList transport={transport} {...props} />;
     default:
       assertUnreachable(transport);
   }
 }
 
-function McpStdioDescriptionList({ transport }: { transport: STDIOTransport }) {
+interface McpStdioDescriptionListProps
+  extends ComponentProps<typeof DescriptionList> {
+  transport: STDIOTransport;
+}
+
+function McpStdioDescriptionList({
+  transport,
+  ...props
+}: McpStdioDescriptionListProps) {
   const args = transport.args ?? [];
   const env = transport.env ?? [];
 
   return (
-    <DescriptionList>
+    <DescriptionList {...props}>
       <DescriptionTerm>Type</DescriptionTerm>
       <DescriptionDetail>
         <Badge variant={getDeterministicColor("stdio")}>STDIO</Badge>
@@ -69,12 +85,22 @@ function McpStdioDescriptionList({ transport }: { transport: STDIOTransport }) {
   );
 }
 
-function McpSseDescriptionList({ transport }: { transport: HTTPTransport }) {
+interface McpSseDescriptionListProps
+  extends ComponentProps<typeof DescriptionList> {
+  transport: HTTPTransport;
+}
+
+function McpSseDescriptionList({
+  transport,
+  ...props
+}: McpSseDescriptionListProps) {
   return (
-    <DescriptionList>
+    <DescriptionList {...props}>
       <DescriptionTerm>Type</DescriptionTerm>
       <DescriptionDetail>
-        <Badge variant={getDeterministicColor("sse")}>SSE</Badge>
+        <Badge variant={getDeterministicColor(transport.type)}>
+          {transport.type}
+        </Badge>
       </DescriptionDetail>
       <DescriptionTerm>URL</DescriptionTerm>
       <DescriptionDetail>{transport.url}</DescriptionDetail>

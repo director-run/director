@@ -5,6 +5,7 @@
     "quickfix.biome": "explicit",
     "source.organizeImports.biome": "explicit"
   },
+  "tailwindCSS.experimental.configFile": "apps/studio/src/app/globals.css",
   "[javascript]": {
     "editor.defaultFormatter": "biomejs.biome"
   },

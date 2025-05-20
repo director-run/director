@@ -10,7 +10,6 @@ import {
   SectionSeparator,
   SectionTitle,
 } from "@/components/ui/section";
-import {} from "@/components/ui/table";
 import { getDeterministicColor } from "@/lib/deterministic-colors";
 import { trpc } from "@/trpc/client";
 import { GlobeIcon } from "lucide-react";

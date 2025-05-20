@@ -125,6 +125,6 @@
 
 @layer components {
   .popover {
-    @apply z-50 bg-primary text-foreground-inverse ring-2 ring-background outline-none;
+    @apply z-50 bg-background text-foreground outline-none;
   }
 }

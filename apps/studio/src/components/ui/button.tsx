@@ -7,7 +7,7 @@ import { cn } from "@/lib/cn";
 const buttonVariants = cva(
   [
     "inline-flex shrink-0 cursor-pointer items-center justify-center gap-x-2 whitespace-nowrap transition-colors duration-200",
-    "font-mono text-xs uppercase leading-none tracking-wide",
+    "font-sans text-sm tracking-[0.01em]",
     "[&_svg]:pointer-events-none [&_svg]:size-3.5 [&_svg]:shrink-0",
     "disabled:cursor-not-allowed disabled:bg-element disabled:text-foreground-faint dark:disabled:text-foreground-faint",
   ],
@@ -23,9 +23,9 @@ const buttonVariants = cva(
           "bg-transparent text-foreground-subtle hover:bg-element-hover hover:text-foreground active:bg-element-active disabled:bg-transparent",
       },
       size: {
-        default: "h-7 px-2.5",
-        large: "h-9 px-4",
-        icon: "size-7",
+        default: "h-8 rounded-lg px-3 pb-0.25",
+        lg: "h-10 rounded-lg px-4 pb-0.25 text-base",
+        icon: "size-8 rounded-lg [&_svg]:size-4",
       },
     },
     defaultVariants: {

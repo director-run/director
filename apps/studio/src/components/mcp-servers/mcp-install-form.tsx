@@ -5,9 +5,9 @@ import { trpc } from "@/trpc/client";
 import { EntryGetParams } from "@director.run/registry/db/schema";
 import { useRouter } from "next/navigation";
 import z from "zod";
-import { InputField } from "../form/input-field";
 import { Button } from "../ui/button";
 import { Form } from "../ui/form";
+import { InputField } from "../ui/form/input-field";
 
 interface McpInstallFormProps {
   entry: EntryGetParams;

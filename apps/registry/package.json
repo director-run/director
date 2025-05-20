@@ -1,7 +1,6 @@
 {
   "name": "@director.run/registry",
   "private": true,
-  "type": "module",
   "version": "0.0.1",
   "scripts": {
     "lint": "biome check .",

@@ -3,7 +3,6 @@
   "private": true,
   "type": "module",
   "version": "0.0.1",
-  "main": "bin/api.ts",
 
   "scripts": {
     "lint": "biome check .",
@@ -12,10 +11,8 @@
     "typecheck": "tsc --noEmit",
     "test": "bun run vitest",
     "cli": "bun run bin/cli.ts",
-    "build": "bun build --production --target=node bin/api.ts --outdir public",
     "prepare": "bun run build",
-    "db:push": "drizzle-kit push",
-    "start": "bun run bin/api.ts"
+    "db:push": "drizzle-kit push"
   },
   "exports": {
     "./*": "./src/*.ts"

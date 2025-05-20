@@ -3,6 +3,7 @@ import { sleep } from "@director.run/utilities/os";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
@@ -58,6 +59,12 @@ export class SimpleClient extends Client {
   public static async createAndConnectToSSE(url: string) {
     const client = new SimpleClient("test client");
     await client.connect(new SSEClientTransport(new URL(url)));
+    return client;
+  }
+
+  public static async createAndConnectToStreamable(url: string) {
+    const client = new SimpleClient("test streamable client");
+    await client.connect(new StreamableHTTPClientTransport(new URL(url)));
     return client;
   }
 

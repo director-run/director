@@ -24,7 +24,18 @@ vi.mock("@director.run/registry/client", () => ({
         query: vi.fn().mockImplementation(() =>
           Promise.resolve({
             name: testServerStdioConfig.name,
-            transport: { ...testServerStdioConfig.transport },
+            transport: {
+              type: "stdio",
+              command: testServerStdioConfig.transport.command,
+              args: [
+                ...testServerStdioConfig.transport.args,
+                "--noop",
+                "SECOND_PARAMETER",
+              ],
+              env: {
+                FIRST_PARAMETER: "<PLACEHOLDER>",
+              },
+            },
             parameters: [
               {
                 name: "FIRST_PARAMETER",
@@ -37,13 +48,10 @@ vi.mock("@director.run/registry/client", () => ({
                 name: "SECOND_PARAMETER",
                 description: "some parameter",
                 scope: "args",
-                required: false,
+                required: true,
                 type: "string",
               },
             ],
-            env: {
-              FIRST_PARAMETER: "<PLACEHOLDER>",
-            },
           }),
         ),
       },
@@ -79,6 +87,7 @@ describe("Registry Router", () => {
           entryName: "foo",
           parameters: {
             FIRST_PARAMETER: "test",
+            SECOND_PARAMETER: "test2",
           },
         });
 
@@ -91,6 +100,18 @@ describe("Registry Router", () => {
         harness.client.registry.addServerFromRegistry.mutate({
           proxyId: proxy.id,
           entryName: "echo",
+          parameters: {
+            FIRST_PARAMETER: "test",
+          },
+        }),
+      ).rejects.toThrow();
+      await expect(
+        harness.client.registry.addServerFromRegistry.mutate({
+          proxyId: proxy.id,
+          entryName: "echo",
+          parameters: {
+            SECOND_PARAMETER: "test",
+          },
         }),
       ).rejects.toThrow();
     });
@@ -102,12 +123,18 @@ describe("Registry Router", () => {
           entryName: "foo",
           parameters: {
             FIRST_PARAMETER: "test",
+            SECOND_PARAMETER: "test2",
           },
         });
       const transport = updatedProxy.servers[0].transport as STDIOTransport;
       expect(transport.env).toEqual({
         FIRST_PARAMETER: "test",
       });
+      expect(transport.args).toEqual([
+        ...testServerStdioConfig.transport.args,
+        "--noop",
+        "test2",
+      ]);
     });
   });
 });

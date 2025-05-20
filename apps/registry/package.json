@@ -12,6 +12,8 @@
     "typecheck": "tsc --noEmit",
     "test": "bun run vitest",
     "cli": "bun run bin/cli.ts",
+    "build": "bun build --production --target=node bin/api.ts --outdir public",
+    "prepare": "bun run build",
     "db:push": "drizzle-kit push",
     "start": "bun run bin/api.ts"
   },

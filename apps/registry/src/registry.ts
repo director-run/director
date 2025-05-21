@@ -39,7 +39,7 @@ export class Registry {
     app.use(cors());
     app.use(express.json());
     app.use("/trpc", createTRPCExpressMiddleware({ store }));
-    app.get("*", notFoundHandler);
+    app.get("*", (req, res) => res.redirect("https://director.run"));
     app.post("*", notFoundHandler);
     app.use(errorRequestHandler);
 

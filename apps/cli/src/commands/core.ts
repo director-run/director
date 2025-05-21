@@ -1,4 +1,4 @@
-import { proxySSEToStdio } from "@director.run/mcp/transport";
+import { proxyHTTPToStdio } from "@director.run/mcp/transport";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { makeTable } from "@director.run/utilities/cli";
 import { joinURL } from "@director.run/utilities/url";
@@ -94,10 +94,10 @@ export function registerCoreCommands(program: Command) {
     );
 
   program
-    .command("sse2stdio <url>")
-    .description("Proxy an SSE connection to a stdio stream")
+    .command("http2stdio <url>")
+    .description("Proxy an HTTP connection to a stdio stream")
     .action(async (url) => {
-      await proxySSEToStdio(url);
+      await proxyHTTPToStdio(url);
     });
 
   program

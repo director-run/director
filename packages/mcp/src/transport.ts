@@ -37,17 +37,17 @@ export async function serveOverStdio(server: Server) {
   });
 }
 
-export async function proxySSEToStdio(sseUrl: string) {
+export async function proxyHTTPToStdio(url: string) {
   try {
     const proxy = new ProxyServer({
-      id: "sse2stdio",
-      name: "sse2stdio",
+      id: "http2stdio",
+      name: "http2stdio",
       servers: [
         {
-          name: "director-sse",
+          name: "director-http",
           transport: {
             type: "http",
-            url: sseUrl,
+            url: url,
           },
         },
       ],

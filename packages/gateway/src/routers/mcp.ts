@@ -16,12 +16,13 @@ export const createMCPRouter = ({
 }) => {
   const router = express.Router();
   const transports: Map<string, StreamableHTTPServerTransport> = new Map();
-
+  router.use(express.json());
   router.post(
     "/:proxy_id/mcp",
     asyncHandler(async (req, res) => {
       const proxyId = req.params.proxy_id;
-      const proxy = proxyStore.get(proxyId);
+      const proxy = await proxyStore.get(proxyId);
+
       const sessionId = req.headers["mcp-session-id"] as string | undefined;
       let transport: StreamableHTTPServerTransport;
 
@@ -71,28 +72,27 @@ export const createMCPRouter = ({
   );
 
   // Reusable handler for GET and DELETE requests
-  const handleSessionRequest = async (
-    req: express.Request,
-    res: express.Response,
-  ) => {
-    const proxyId = req.params.proxy_id;
-    const proxy = proxyStore.get(proxyId);
-    const sessionId = req.headers["mcp-session-id"] as string | undefined;
+  const handleSessionRequest = asyncHandler(
+    async (req: express.Request, res: express.Response) => {
+      const proxyId = req.params.proxy_id;
+      const proxy = proxyStore.get(proxyId);
+      const sessionId = req.headers["mcp-session-id"] as string | undefined;
 
-    if (!sessionId || !transports.has(sessionId)) {
-      throw new AppError(
-        ErrorCode.BAD_REQUEST,
-        "Invalid or missing session ID",
-      );
-    }
+      if (!sessionId || !transports.has(sessionId)) {
+        throw new AppError(
+          ErrorCode.BAD_REQUEST,
+          "Invalid or missing session ID",
+        );
+      }
 
-    const existingTransport = transports.get(sessionId);
-    if (!existingTransport) {
-      throw new AppError(ErrorCode.NOT_FOUND, "Transport not found");
-    }
-    const transport = existingTransport;
-    await transport.handleRequest(req, res);
-  };
+      const existingTransport = transports.get(sessionId);
+      if (!existingTransport) {
+        throw new AppError(ErrorCode.NOT_FOUND, "Transport not found");
+      }
+      const transport = existingTransport;
+      await transport.handleRequest(req, res);
+    },
+  );
 
   // Handle GET requests for server-to-client notifications
   router.get("/:proxy_id/mcp", handleSessionRequest);

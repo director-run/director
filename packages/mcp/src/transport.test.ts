@@ -63,7 +63,7 @@ describe("transport", () => {
     });
   });
 
-  describe("proxySSEToStdio", () => {
+  describe("proxyHTTPToStdio", () => {
     let client: Client;
     let proxyTargetServerInstance: Server;
 
@@ -73,8 +73,8 @@ describe("transport", () => {
       client = await SimpleClient.createAndConnectToStdio("bun", [
         "-e",
         `
-            import { proxySSEToStdio } from '${path.join(basePath, "transport.ts")}'; 
-            proxySSEToStdio("http://localhost:4522/sse");
+            import { proxyHTTPToStdio } from '${path.join(basePath, "transport.ts")}'; 
+            proxyHTTPToStdio("http://localhost:4522/sse");
         `,
       ]);
     }, 30000);

@@ -20,8 +20,6 @@ export enum ErrorCode {
   NOT_FOUND = "NOT_FOUND",
   BAD_REQUEST = "BAD_REQUEST",
   CONNECTION_REFUSED = "CONNECTION_REFUSED",
-  CONNECTION_TIMEOUT = "CONNECTION_TIMEOUT",
-  INVALID_URL = "INVALID_URL",
 }
 
 export function isAppError(error: unknown): error is AppError {

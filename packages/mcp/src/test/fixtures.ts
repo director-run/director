@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { SimpleServer } from "../simple-server";
-
+import { type ProxyTargetAttributes } from "../types";
 export function makeEchoServer() {
   const server = new SimpleServer("echo-server");
   server
@@ -24,3 +24,14 @@ export function makeFooBarServer() {
     });
   return server;
 }
+
+export function makeHTTPTargetConfig(params: { name: string; url: string }): ProxyTargetAttributes {
+  return {
+    name: params.name,
+    transport: {
+      type: "http",
+      url: params.url,
+    },
+  };
+}
+

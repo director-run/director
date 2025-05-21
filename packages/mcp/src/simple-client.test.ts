@@ -1,5 +1,5 @@
 import { ErrorCode } from "@director.run/utilities/error";
-import { AppError } from "@director.run/utilities/error";
+import { expectToThrowAppError } from "@director.run/utilities/test";
 import { describe, expect, test } from "vitest";
 import { SimpleClient } from "./simple-client";
 import { makeEchoServer } from "./test/fixtures";
@@ -34,16 +34,15 @@ describe("SimpleClient", () => {
       });
     });
     test("should fail properly", async () => {
-      const error = await SimpleClient.createAndConnectToHTTP(
-        "http://localhost/mcp",
-      ).catch((e) => e);
-      expect(error).toBeInstanceOf(AppError);
-      expect(error).toMatchObject({
-        code: ErrorCode.CONNECTION_REFUSED,
-        props: {
-          url: "http://localhost/mcp",
+      await expectToThrowAppError(
+        () => SimpleClient.createAndConnectToHTTP("http://localhost/mcp"),
+        {
+          code: ErrorCode.CONNECTION_REFUSED,
+          props: {
+            url: "http://localhost/mcp",
+          },
         },
-      });
+      );
     });
   });
 });

@@ -26,7 +26,7 @@ export class Registry {
     this.app = attribs.app;
   }
 
-  public static async start(attribs: {
+  public static start(attribs: {
     port: number;
     connectionString?: string;
   }) {

@@ -12,5 +12,5 @@ import { Registry } from "../src/registry";
 
 // module.exports = app;
 const PORT = 3000;
-const registry = await Registry.start({ port: PORT });
+const registry = Registry.start({ port: PORT });
 module.exports = registry.app;

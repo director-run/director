@@ -1,4 +1,11 @@
-import { env } from "../src/config";
-import { Registry } from "../src/registry";
+import express from "express";
 
-await Registry.start({ port: env.REGISTRY_PORT });
+const app = express();
+
+app.get("/", (req, res) => {
+  res.send("A sample Registry API on Vercel");
+});
+
+app.listen(3000, () => console.log("Server ready on port 3000."));
+
+module.exports = app;

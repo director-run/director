@@ -101,6 +101,7 @@ export class SimpleClient extends Client {
     return client;
   }
 
+  // TODO: not sure we need retry logic?
   // async connect(transport: Transport) {
   //   let count = 0;
   //   let retry = true;

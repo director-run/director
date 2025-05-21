@@ -1,11 +1,16 @@
-import express from "express";
+// import express from "express";
 
-const app = express();
+import { Registry } from "../src/registry";
 
-app.get("/", (req, res) => {
-  res.send("Function: api/index.ts");
-});
+// const app = express();
 
-app.listen(3000, () => console.log("Server ready on port 3000."));
+// app.get("/", (req, res) => {
+//   res.send("Function: api/index.ts");
+// });
 
-module.exports = app;
+// app.listen(3000, () => console.log("Server ready on port 3000."));
+
+// module.exports = app;
+const PORT = 3000;
+const registry = await Registry.start({ port: PORT });
+module.exports = registry.app;

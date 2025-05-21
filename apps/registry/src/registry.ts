@@ -2,7 +2,7 @@ import { Server } from "http";
 import { getLogger } from "@director.run/utilities/logger";
 import { errorRequestHandler } from "@director.run/utilities/middleware";
 import cors from "cors";
-import express from "express";
+import express, { type Express } from "express";
 import { type Store, createStore } from "./db/store";
 import { createTRPCExpressMiddleware } from "./routers/trpc";
 
@@ -12,15 +12,18 @@ export class Registry {
   public readonly port: number;
   private server: Server;
   public readonly store: Store;
+  public readonly app: Express;
 
   private constructor(attribs: {
     port: number;
     server: Server;
+    app: Express;
     store: Store;
   }) {
     this.port = attribs.port;
     this.server = attribs.server;
     this.store = attribs.store;
+    this.app = attribs.app;
   }
 
   public static async start(attribs: {
@@ -34,12 +37,11 @@ export class Registry {
 
     app.use(cors());
     app.use(express.json());
-    app.use("/trpc", createTRPCExpressMiddleware({ store }));
-    app.use(errorRequestHandler);
-
-    app.get("/hello", (req, res) => {
+    app.get("/", (req, res) => {
       res.send("Hello, world!");
     });
+    app.use("/trpc", createTRPCExpressMiddleware({ store }));
+    app.use(errorRequestHandler);
 
     const server = app.listen(attribs.port, () => {
       logger.info(`registry running on port ${attribs.port}`);
@@ -49,6 +51,7 @@ export class Registry {
       port: attribs.port,
       server,
       store,
+      app,
     });
 
     process.on("SIGINT", async () => {

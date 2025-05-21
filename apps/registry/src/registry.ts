@@ -37,9 +37,6 @@ export class Registry {
 
     app.use(cors());
     app.use(express.json());
-    app.get("/", (req, res) => {
-      res.send("Hello, world!");
-    });
     app.use("/trpc", createTRPCExpressMiddleware({ store }));
     app.use(errorRequestHandler);
 

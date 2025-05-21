@@ -2,7 +2,7 @@ import { makeTable } from "@director.run/utilities/cli";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import chalk from "chalk";
 import { Command } from "commander";
-import { gatewayClient } from "../client";
+import { gatewayClient, registryClient } from "../client";
 
 export function createRegistryCommands() {
   const command = new Command("registry");
@@ -13,7 +13,7 @@ export function createRegistryCommands() {
     .action(
       actionWithErrorHandler(async () => {
         // TODO: add loader like npx create-turbo@latest
-        const items = await gatewayClient.registry.getEntries.query({
+        const items = await registryClient.entries.getEntries.query({
           pageIndex: 0,
           pageSize: 100,
         });
@@ -33,7 +33,7 @@ export function createRegistryCommands() {
     .action(
       actionWithErrorHandler(async (entryName: string) => {
         try {
-          const item = await gatewayClient.registry.getEntryByName.query({
+          const item = await registryClient.entries.getEntryByName.query({
             name: entryName,
           });
           console.log(JSON.stringify(item, null, 2));

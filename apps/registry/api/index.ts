@@ -3,7 +3,7 @@ import express from "express";
 const app = express();
 
 app.get("/", (req, res) => {
-  res.send("Registry API on Vercel");
+  res.send("A sample Registry API on Vercel");
 });
 
 app.listen(3000, () => console.log("Server ready on port 3000."));

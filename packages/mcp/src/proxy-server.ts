@@ -31,7 +31,7 @@ export class ProxyServer extends Server {
         capabilities: {
           prompts: {},
           resources: { subscribe: true },
-          tools: {},
+          tools: { listChanged: true },
         },
       },
     );

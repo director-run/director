@@ -42,9 +42,10 @@ export class Registry {
     app.use("/trpc", createTRPCExpressMiddleware({ store }));
 
     if (isProduction()) {
-      app.get("*", (req, res) => res.redirect("https://director.run"));
+      app.get("/", (req, res) => res.redirect("https://director.run"));
     }
 
+    app.get("*", notFoundHandler);
     app.post("*", notFoundHandler);
     app.use(errorRequestHandler);
 

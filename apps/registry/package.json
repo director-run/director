@@ -2,6 +2,7 @@
   "name": "@director.run/registry",
   "private": true,
   "version": "0.0.1",
+  "type": "module",
 
   "scripts": {
     "lint": "biome check .",
@@ -10,7 +11,7 @@
     "typecheck": "tsc --noEmit",
     "test": "bun run vitest",
     "cli": "bun run bin/cli.ts",
-    "build": "bun build --production --target=bun bin/*.ts --outdir dist",
+    "build": "bun build --production --target=node bin/*.ts --outdir dist",
     "prepare": "bun run build",
     "db:push": "drizzle-kit push"
   },

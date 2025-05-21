@@ -69,6 +69,10 @@ function appErrorToHttpResponse(error: AppError) {
   };
 }
 
+export function notFoundHandler() {
+  throw new AppError(ErrorCode.NOT_FOUND, "There's nothing here");
+}
+
 /**
  * Wraps an async Express route handler to properly catch and forward errors
  * @param fn Async Express route handler

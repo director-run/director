@@ -1,7 +1,9 @@
 import { Server } from "http";
-import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
-import { errorRequestHandler } from "@director.run/utilities/middleware";
+import {
+  errorRequestHandler,
+  notFoundHandler,
+} from "@director.run/utilities/middleware";
 import cors from "cors";
 import express from "express";
 import { Database } from "./db";
@@ -45,12 +47,8 @@ export class Gateway {
     app.use("/", createSSERouter({ proxyStore }));
     app.use("/", createStreamableRouter({ proxyStore }));
     app.use("/trpc", createTRPCExpressMiddleware({ proxyStore, registryURL }));
-    app.get("*", (req, res) => {
-      throw new AppError(ErrorCode.NOT_FOUND, "There's nothing here");
-    });
-    app.post("*", (req, res) => {
-      throw new AppError(ErrorCode.NOT_FOUND, "There's nothing here");
-    });
+    app.get("*", notFoundHandler);
+    app.post("*", notFoundHandler);
     app.use(errorRequestHandler);
 
     const server = app.listen(attribs.port, () => {

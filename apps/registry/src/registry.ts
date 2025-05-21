@@ -1,6 +1,7 @@
 import { Server } from "http";
 import { getLogger } from "@director.run/utilities/logger";
 import { errorRequestHandler } from "@director.run/utilities/middleware";
+import { notFoundHandler } from "@director.run/utilities/middleware";
 import cors from "cors";
 import express, { type Express } from "express";
 import { type Store, createStore } from "./db/store";
@@ -38,6 +39,8 @@ export class Registry {
     app.use(cors());
     app.use(express.json());
     app.use("/trpc", createTRPCExpressMiddleware({ store }));
+    app.get("*", notFoundHandler);
+    app.post("*", notFoundHandler);
     app.use(errorRequestHandler);
 
     const server = app.listen(attribs.port, () => {

@@ -12,6 +12,7 @@ export function createRegistryCommands() {
     .description("List all available servers in the registry")
     .action(
       actionWithErrorHandler(async () => {
+        // TODO: add loader like npx create-turbo@latest
         const items = await gatewayClient.registry.getEntries.query({
           pageIndex: 0,
           pageSize: 100,

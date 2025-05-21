@@ -5,7 +5,7 @@ import { z } from "zod";
 export const env = createEnv({
   envFilePath: getEnvFilePath(),
   envVars: {
-    REGISTRY_PORT: z.number({ coerce: true }),
+    PORT: z.number({ coerce: true }),
     DATABASE_URL: z.string(),
   },
 });

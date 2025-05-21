@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit",
     "test": "bun run vitest",
     "cli": "bun run bin/cli.ts",
-    "build": "bun build --production --target=node bin/*.ts --outdir dist",
+    "build": "bun build --production bin/*.ts --outdir dist",
     "prepare": "bun run build",
     "db:push": "drizzle-kit push"
   },

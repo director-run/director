@@ -19,7 +19,7 @@ export class SimpleServer extends Server {
       },
       {
         capabilities: {
-          tools: {},
+          tools: { listChanged: true },
         },
       },
     );

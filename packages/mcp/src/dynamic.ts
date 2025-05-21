@@ -1,10 +1,21 @@
 import { randomUUID } from "node:crypto";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
+import { getLogger } from "@director.run/utilities/logger";
+import { asyncHandler } from "@director.run/utilities/middleware";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 import express from "express";
+import type { NextFunction, Request, Response } from "express";
 import z from "zod";
 import { SimpleServer } from "./simple-server";
+
+const logger = getLogger("request-logger");
+
+function requestLogger(req: Request, res: Response, next: NextFunction) {
+  const timestamp = new Date().toISOString();
+  logger.info(`${timestamp} ${req.method} ${req.path}`);
+  next();
+}
 
 function start() {
   const server = new SimpleServer();
@@ -18,22 +29,36 @@ function start() {
 
 start();
 
-export function serveOverStreamable(server: SimpleServer, port: number) {
+function serveOverStreamable(server: SimpleServer, port: number) {
   const app = express();
   app.use(express.json());
 
   // Map to store transports by session ID
   const transports: { [sessionId: string]: StreamableHTTPServerTransport } = {};
+  app.use(requestLogger);
+  app.get(
+    "/change",
+    asyncHandler(async (req, res) => {
+      server
+        .tool("morris")
+        .description("Morris the cat")
+        .schema(z.object({ message: z.string() }))
+        .handle(({ message }) => Promise.resolve({ message }));
 
-  app.get("/change", (req, res) => {
-    server
-      .tool("morris")
-      .description("Morris the cat")
-      .schema(z.object({ message: z.string() }))
-      .handle(({ message }) => Promise.resolve({ message }));
-    server.sendToolListChanged();
-    res.send("Hello, world!");
-  });
+      console.log("sending tool list changed");
+
+      await server.sendToolListChanged();
+      // await server.sendPromptListChanged();
+      // await server.sendResourceListChanged();
+      // await server.sendResourceUpdated({
+      //   uri: "https://example.com",
+      //   name: "Example",
+      //   type: "file",
+      // });
+
+      res.send("Hello, world!");
+    }),
+  );
   // Handle POST requests for client-to-server communication
   app.post("/mcp", async (req, res) => {
     // Check for existing session ID
@@ -103,7 +128,9 @@ export function serveOverStreamable(server: SimpleServer, port: number) {
   // Handle DELETE requests for session termination
   app.delete("/mcp", handleSessionRequest);
 
-  const instance = app.listen(port);
+  const instance = app.listen(port, () => {
+    logger.info(`Server is running on port ${port}`);
+  });
 
   return instance;
 }

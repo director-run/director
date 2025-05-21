@@ -85,7 +85,7 @@ export function createRegistryRouter({
           };
         } else {
           transport = {
-            type: "sse",
+            type: "http",
             url: entry.transport.url,
           };
         }

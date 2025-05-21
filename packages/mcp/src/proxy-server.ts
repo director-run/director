@@ -46,7 +46,7 @@ export class ProxyServer extends Server {
       try {
         const client = new SimpleClient(server.name);
 
-        if (server.transport.type === "sse") {
+        if (server.transport.type === "http") {
           await client.connectToHTTP(server.transport.url);
         } else {
           await client.connectToStdio(

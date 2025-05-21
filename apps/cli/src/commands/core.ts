@@ -53,7 +53,7 @@ export function registerCoreCommands(program: Command) {
           ...proxy.servers.map((server) => [
             server.name,
             server.transport.type,
-            server.transport.type === "sse"
+            server.transport.type === "http"
               ? server.transport.url
               : [
                   server.transport.command,

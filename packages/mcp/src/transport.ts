@@ -46,7 +46,7 @@ export async function proxySSEToStdio(sseUrl: string) {
         {
           name: "director-sse",
           transport: {
-            type: "sse",
+            type: "http",
             url: sseUrl,
           },
         },

@@ -5,13 +5,13 @@ import { serveOverSSE } from "@director.run/mcp/transport";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import {
   makeFooBarServerStdioConfig,
-  makeSSETargetConfig,
+  makeHTTPTargetConfig,
 } from "../test/fixtures";
 import { IntegrationTestHarness } from "../test/integration";
 
 const PROXY_TARGET_PORT = 4521;
 
-const echoServerSSEConfig = makeSSETargetConfig({
+const echoServerSSEConfig = makeHTTPTargetConfig({
   name: "echo",
   url: `http://localhost:${PROXY_TARGET_PORT}/sse`,
 });

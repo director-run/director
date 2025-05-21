@@ -5,6 +5,7 @@ import cors from "cors";
 import express from "express";
 import { Database } from "./db";
 import { ProxyServerStore } from "./proxy-server-store";
+import { createMCPRouter } from "./routers/mcp";
 import { createSSERouter } from "./routers/sse";
 import { createTRPCExpressMiddleware } from "./routers/trpc";
 
@@ -42,6 +43,7 @@ export class Gateway {
 
     app.use(cors());
     app.use("/", createSSERouter({ proxyStore }));
+    app.use("/", createMCPRouter({ proxyStore }));
     app.use("/trpc", createTRPCExpressMiddleware({ proxyStore, registryURL }));
     app.use(errorRequestHandler);
 

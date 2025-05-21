@@ -1,85 +1,104 @@
-import { randomUUID } from "node:crypto";
-import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { ErrorCode } from "@director.run/utilities/error";
+import { AppError } from "@director.run/utilities/error";
+import { getLogger } from "@director.run/utilities/logger";
+import { asyncHandler } from "@director.run/utilities/middleware";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 import express from "express";
+import type { ProxyServerStore } from "../proxy-server-store";
 
-export function serveOverStreamable(server: Server, port: number) {
-  const app = express();
-  app.use(express.json());
+const logger = getLogger("mcp");
 
-  // Map to store transports by session ID
-  const transports: { [sessionId: string]: StreamableHTTPServerTransport } = {};
+export const createMCPRouter = ({
+  proxyStore,
+}: {
+  proxyStore: ProxyServerStore;
+}) => {
+  const router = express.Router();
+  const transports: Map<string, StreamableHTTPServerTransport> = new Map();
 
-  // Handle POST requests for client-to-server communication
-  app.post("/mcp", async (req, res) => {
-    // Check for existing session ID
-    const sessionId = req.headers["mcp-session-id"] as string | undefined;
-    let transport: StreamableHTTPServerTransport;
+  router.post(
+    "/:proxy_id/mcp",
+    asyncHandler(async (req, res) => {
+      const proxyId = req.params.proxy_id;
+      const proxy = proxyStore.get(proxyId);
+      const sessionId = req.headers["mcp-session-id"] as string | undefined;
+      let transport: StreamableHTTPServerTransport;
 
-    if (sessionId && transports[sessionId]) {
-      // Reuse existing transport
-      transport = transports[sessionId];
-    } else if (!sessionId && isInitializeRequest(req.body)) {
-      // New initialization request
-      transport = new StreamableHTTPServerTransport({
-        sessionIdGenerator: () => randomUUID(),
-        onsessioninitialized: (sessionId) => {
-          // Store the transport by session ID
-          transports[sessionId] = transport;
-        },
-      });
-
-      // Clean up transport when closed
-      transport.onclose = () => {
-        if (transport.sessionId) {
-          delete transports[transport.sessionId];
+      if (sessionId && transports.has(sessionId)) {
+        // Reuse existing transport
+        const existingTransport = transports.get(sessionId);
+        if (!existingTransport) {
+          throw new AppError(ErrorCode.NOT_FOUND, "Transport not found");
         }
-      };
+        transport = existingTransport;
+      } else if (!sessionId && isInitializeRequest(req.body)) {
+        // New initialization request
+        transport = new StreamableHTTPServerTransport({
+          sessionIdGenerator: () => crypto.randomUUID(),
+          onsessioninitialized: (sessionId) => {
+            // Store the transport by session ID
+            transports.set(sessionId, transport);
+          },
+        });
 
-      // Connect to the MCP server
-      await server.connect(transport);
-    } else {
-      // Invalid request
-      res.status(400).json({
-        jsonrpc: "2.0",
-        error: {
-          code: -32000,
-          message: "Bad Request: No valid session ID provided",
-        },
-        id: null,
+        // Clean up transport when closed
+        transport.onclose = () => {
+          if (transport.sessionId) {
+            transports.delete(transport.sessionId);
+          }
+        };
+
+        // Connect to the proxy server
+        await proxy.connect(transport);
+      } else {
+        throw new AppError(
+          ErrorCode.BAD_REQUEST,
+          "No valid session ID provided",
+        );
+      }
+
+      logger.info({
+        message: "MCP message received",
+        proxyId: proxy.id,
+        sessionId: transport.sessionId,
+        method: req.body.method,
       });
-      return;
-    }
 
-    // Handle the request
-    await transport.handleRequest(req, res, req.body);
-  });
+      // Handle the request
+      await transport.handleRequest(req, res, req.body);
+    }),
+  );
 
   // Reusable handler for GET and DELETE requests
   const handleSessionRequest = async (
     req: express.Request,
     res: express.Response,
   ) => {
+    const proxyId = req.params.proxy_id;
+    const proxy = proxyStore.get(proxyId);
     const sessionId = req.headers["mcp-session-id"] as string | undefined;
-    if (!sessionId || !transports[sessionId]) {
-      res.status(400).send("Invalid or missing session ID");
-      return;
+
+    if (!sessionId || !transports.has(sessionId)) {
+      throw new AppError(
+        ErrorCode.BAD_REQUEST,
+        "Invalid or missing session ID",
+      );
     }
 
-    const transport = transports[sessionId];
+    const existingTransport = transports.get(sessionId);
+    if (!existingTransport) {
+      throw new AppError(ErrorCode.NOT_FOUND, "Transport not found");
+    }
+    const transport = existingTransport;
     await transport.handleRequest(req, res);
   };
 
-  // Handle GET requests for server-to-client notifications via SSE
-  app.get("/mcp", handleSessionRequest);
+  // Handle GET requests for server-to-client notifications
+  router.get("/:proxy_id/mcp", handleSessionRequest);
 
   // Handle DELETE requests for session termination
-  app.delete("/mcp", handleSessionRequest);
+  router.delete("/:proxy_id/mcp", handleSessionRequest);
 
-  const instance = app.listen(port, () => {
-    console.log("Server is running on port 3000");
-  });
-
-  return instance;
-}
+  return router;
+};

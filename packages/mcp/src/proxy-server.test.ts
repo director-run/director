@@ -54,5 +54,8 @@ describe("ProxyServer", () => {
     expect(tools.tools).toHaveLength(2);
     expect(tools.tools.some((tool) => tool.name === "echo")).toBe(true);
     expect(tools.tools.some((tool) => tool.name === "foo")).toBe(true);
+
+    await streamableServerInstance.close();
+    await sseServerInstance.close();
   });
 });

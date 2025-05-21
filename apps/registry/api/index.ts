@@ -1,1 +1,1 @@
-export default require("../dist/api.js");
+module.exports = require("../dist/api.js");

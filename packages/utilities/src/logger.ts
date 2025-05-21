@@ -1,9 +1,10 @@
 import { omit, pick } from "lodash";
 import pino, { type Logger } from "pino";
 import pinoPretty from "pino-pretty";
+import { isTest } from "./env";
 import { isAppError } from "./error";
 
-const LOG_LEVEL = "trace"; //;process.env.LOG_LEVEL ?? (isTest() ? "silent" : "trace");
+const LOG_LEVEL = process.env.LOG_LEVEL ?? (isTest() ? "silent" : "trace");
 const LOG_PRETTY = true;
 const LOG_ERROR_STACK = true;
 

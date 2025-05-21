@@ -25,3 +25,9 @@ dropdb -h localhost -p 5432 -U postgres director-registry-dev
 bun run db:push # dev
 NODE_ENV=test bun run db:push # test
 ```
+
+### Deployment
+- It deploys using vercel
+- It's accessible at `https://registry.director.run`
+- It exports one function: `api/index.js`
+- To run scripts/commands (e.g: `bun run db:migrate`), set local environment variables to the ones on vercel and run locally

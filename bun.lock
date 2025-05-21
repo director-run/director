@@ -33,9 +33,6 @@
     "apps/registry": {
       "name": "@director.run/registry",
       "version": "0.0.1",
-      "bin": {
-        "registry": "./dist/cli.js",
-      },
       "dependencies": {
         "commander": "^13.1.0",
         "drizzle-orm": "^0.43.1",

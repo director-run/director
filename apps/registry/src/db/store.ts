@@ -1,12 +1,9 @@
-import { env } from "../config";
 import { EntryStore } from "./entries";
 import { DatabaseConnection } from "./index";
 
-export function createStore(
-  params: {
-    connectionString: string;
-  } = { connectionString: env.DATABASE_URL },
-) {
+export function createStore(params: {
+  connectionString: string;
+}) {
   const db = DatabaseConnection.create(params.connectionString);
   const entries = new EntryStore(db);
   return {

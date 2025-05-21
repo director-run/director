@@ -5,7 +5,7 @@ import { isTest } from "./env";
 import { isAppError } from "./error";
 
 const LOG_LEVEL = process.env.LOG_LEVEL ?? (isTest() ? "silent" : "trace");
-const LOG_PRETTY = true;
+const LOG_PRETTY = process.env.LOG_PRETTY !== "false";
 const LOG_ERROR_STACK = true;
 
 const logger = pino(

@@ -1,4 +1,4 @@
-import { AppError } from "@director.run/utilities/error";
+import { ErrorCode } from "@director.run/utilities/error";
 import { describe, expect, test } from "vitest";
 import { SimpleClient } from "./simple-client";
 import { makeEchoServer } from "./test/fixtures";
@@ -35,7 +35,12 @@ describe("SimpleClient", () => {
     test("should fail properly", async () => {
       await expect(
         SimpleClient.createAndConnectToHTTP("http://localhost/mcp"),
-      ).rejects.toThrow(AppError);
+      ).rejects.toMatchObject({
+        code: ErrorCode.CONNECTION_REFUSED,
+        props: {
+          url: "http://localhost/mcp",
+        },
+      });
     });
   });
 });

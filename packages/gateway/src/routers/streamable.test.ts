@@ -5,18 +5,18 @@ import { serveOverSSE } from "@director.run/mcp/transport";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import {
   makeFooBarServerStdioConfig,
-  makeSSETargetConfig,
-} from "./test/fixtures";
-import { IntegrationTestHarness } from "./test/integration";
+  makeHTTPTargetConfig,
+} from "../test/fixtures";
+import { IntegrationTestHarness } from "../test/integration";
 
 const PROXY_TARGET_PORT = 4521;
 
-const echoServerSSEConfig = makeSSETargetConfig({
+const echoServerSSEConfig = makeHTTPTargetConfig({
   name: "echo",
   url: `http://localhost:${PROXY_TARGET_PORT}/sse`,
 });
 
-describe("SSE Router", () => {
+describe("Streamable Router", () => {
   let proxyTargetServerInstance: Server;
   let harness: IntegrationTestHarness;
 
@@ -35,7 +35,7 @@ describe("SSE Router", () => {
 
   test("should return 404 when proxy not found", async () => {
     const res = await fetch(
-      `http://localhost:${harness.gateway.port}/not_existing_proxy/sse`,
+      `http://localhost:${harness.gateway.port}/not_existing_proxy/mcp`,
     );
     expect(res.status).toEqual(404);
     expect(res.ok).toBeFalsy();
@@ -49,8 +49,8 @@ describe("SSE Router", () => {
       servers: [makeFooBarServerStdioConfig(), echoServerSSEConfig],
     });
 
-    const client = await SimpleClient.createAndConnectToSSE(
-      `http://localhost:${harness.gateway.port}/${testProxy.id}/sse`,
+    const client = await SimpleClient.createAndConnectToHTTP(
+      `http://localhost:${harness.gateway.port}/${testProxy.id}/mcp`,
     );
 
     const toolsResult = await client.listTools();
@@ -79,8 +79,8 @@ describe("SSE Router", () => {
       servers: [makeFooBarServerStdioConfig()],
     });
 
-    const client = await SimpleClient.createAndConnectToSSE(
-      `http://localhost:${harness.gateway.port}/${testProxy.id}/sse`,
+    const client = await SimpleClient.createAndConnectToHTTP(
+      `http://localhost:${harness.gateway.port}/${testProxy.id}/mcp`,
     );
 
     const toolsResult = await client.listTools();
@@ -93,8 +93,8 @@ describe("SSE Router", () => {
       server: echoServerSSEConfig,
     });
 
-    const client2 = await SimpleClient.createAndConnectToSSE(
-      `http://localhost:${harness.gateway.port}/${testProxy.id}/sse`,
+    const client2 = await SimpleClient.createAndConnectToHTTP(
+      `http://localhost:${harness.gateway.port}/${testProxy.id}/mcp`,
     );
 
     const toolsResult2 = await client2.listTools();
@@ -109,8 +109,8 @@ describe("SSE Router", () => {
       servers: [echoServerSSEConfig, makeFooBarServerStdioConfig()],
     });
 
-    const client = await SimpleClient.createAndConnectToSSE(
-      `http://localhost:${harness.gateway.port}/${testProxy.id}/sse`,
+    const client = await SimpleClient.createAndConnectToHTTP(
+      `http://localhost:${harness.gateway.port}/${testProxy.id}/mcp`,
     );
     const toolsResult = await client.listTools();
 
@@ -122,8 +122,8 @@ describe("SSE Router", () => {
       serverName: "echo",
     });
 
-    const client2 = await SimpleClient.createAndConnectToSSE(
-      `http://localhost:${harness.gateway.port}/${testProxy.id}/sse`,
+    const client2 = await SimpleClient.createAndConnectToHTTP(
+      `http://localhost:${harness.gateway.port}/${testProxy.id}/mcp`,
     );
     const toolsResult2 = await client2.listTools();
 

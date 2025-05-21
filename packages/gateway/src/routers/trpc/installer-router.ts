@@ -22,7 +22,7 @@ export function createInstallerRouter({
         )
         .mutation(async ({ input }) => {
           const proxy = proxyStore.get(input.proxyId);
-          const proxySSEUrl = joinURL(input.baseUrl, getPathForProxy(proxy.id));
+          const proxyUrl = joinURL(input.baseUrl, getPathForProxy(proxy.id));
           const installer = await ClaudeInstaller.create();
           if (isProduction()) {
             // In production, we don't use bun as the CLI is compiled to a binary
@@ -30,7 +30,7 @@ export function createInstallerRouter({
               name: proxy.id,
               transport: {
                 command: input.cliPath,
-                args: ["sse2stdio", proxySSEUrl],
+                args: ["http2stdio", proxyUrl],
                 env: {
                   LOG_LEVEL: "silent",
                 },
@@ -41,7 +41,7 @@ export function createInstallerRouter({
               name: proxy.id,
               transport: {
                 command: "bun",
-                args: [input.cliPath, "sse2stdio", proxySSEUrl],
+                args: [input.cliPath, "http2stdio", proxyUrl],
                 env: {
                   LOG_LEVEL: "silent",
                 },

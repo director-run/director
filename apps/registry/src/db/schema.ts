@@ -33,7 +33,7 @@ export const entriesTable = pgTable("entries", {
         env?: Record<string, string>;
       }
     | {
-        type: "sse";
+        type: "http";
         url: string;
       }
   >(),

@@ -1,6 +1,6 @@
 import { assertUnreachable } from "@/lib/assert-unreachable";
 import { getDeterministicColor } from "@/lib/deterministic-colors";
-import { SSETransport, STDIOTransport } from "@director.run/mcp/types";
+import { HTTPTransport, STDIOTransport } from "@director.run/mcp/types";
 import { Badge } from "../ui/badge";
 import {
   DescriptionDetail,
@@ -10,9 +10,9 @@ import {
 
 export function McpDescriptionList({
   transport,
-}: { transport: SSETransport | STDIOTransport }) {
+}: { transport: HTTPTransport | STDIOTransport }) {
   switch (transport.type) {
-    case "sse":
+    case "http":
       return <McpSseDescriptionList transport={transport} />;
     case "stdio":
       return <McpStdioDescriptionList transport={transport} />;
@@ -69,7 +69,7 @@ function McpStdioDescriptionList({ transport }: { transport: STDIOTransport }) {
   );
 }
 
-function McpSseDescriptionList({ transport }: { transport: SSETransport }) {
+function McpSseDescriptionList({ transport }: { transport: HTTPTransport }) {
   return (
     <DescriptionList>
       <DescriptionTerm>Type</DescriptionTerm>

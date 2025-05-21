@@ -17,7 +17,7 @@ describe("sse2stdio <sse_url>", () => {
       "bun",
       [
         path.join(__dirname, "../../bin/cli"),
-        "sse2stdio",
+        "http2stdio",
         "http://localhost:4522/sse",
       ],
       {

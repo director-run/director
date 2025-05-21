@@ -9,6 +9,8 @@ import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
 import type { ProxyServerStore } from "../../proxy-server-store";
 
+const REGISTRY_ENTRY_NAME_PREFIX = "registry__";
+
 const parameterToZodSchema = (parameter: EntryParameter) => {
   if (parameter.type === "string") {
     return parameter.required ? requiredStringSchema : optionalStringSchema;
@@ -83,14 +85,14 @@ export function createRegistryRouter({
           };
         } else {
           transport = {
-            type: "sse",
+            type: "http",
             url: entry.transport.url,
           };
         }
 
         return (
           await proxyStore.addServer(input.proxyId, {
-            name: `registry:${entry.name}`,
+            name: `${REGISTRY_ENTRY_NAME_PREFIX}${entry.name}`,
             transport,
           })
         ).toPlainObject();

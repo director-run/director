@@ -1,7 +1,7 @@
-export const makeSSETargetConfig = (params: { name: string; url: string }) => ({
+export const makeHTTPTargetConfig = (params: { name: string; url: string }) => ({
   name: params.name,
   transport: {
-    type: "sse" as const,
+    type: "http" as const,
     url: params.url,
   },
 });

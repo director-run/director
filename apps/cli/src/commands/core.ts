@@ -1,4 +1,4 @@
-import { proxySSEToStdio } from "@director.run/mcp/transport";
+import { proxyHTTPToStdio } from "@director.run/mcp/transport";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { makeTable } from "@director.run/utilities/cli";
 import { joinURL } from "@director.run/utilities/url";
@@ -53,7 +53,7 @@ export function registerCoreCommands(program: Command) {
           ...proxy.servers.map((server) => [
             server.name,
             server.transport.type,
-            server.transport.type === "sse"
+            server.transport.type === "http"
               ? server.transport.url
               : [
                   server.transport.command,
@@ -94,10 +94,10 @@ export function registerCoreCommands(program: Command) {
     );
 
   program
-    .command("sse2stdio <sse_url>")
-    .description("Proxy a SSE connection to a stdio stream")
-    .action(async (sseUrl) => {
-      await proxySSEToStdio(sseUrl);
+    .command("http2stdio <url>")
+    .description("Proxy an HTTP connection to a stdio stream")
+    .action(async (url) => {
+      await proxyHTTPToStdio(url);
     });
 
   program

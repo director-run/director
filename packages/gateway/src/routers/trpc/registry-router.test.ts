@@ -80,7 +80,7 @@ describe("Registry Router", () => {
       });
     });
 
-    test("should add a 'registry:' prefix to the server name", async () => {
+    test("should add a 'registry__' prefix to the server name", async () => {
       const updatedProxy =
         await harness.client.registry.addServerFromRegistry.mutate({
           proxyId: proxy.id,
@@ -92,7 +92,7 @@ describe("Registry Router", () => {
         });
 
       expect(updatedProxy.servers).toHaveLength(1);
-      expect(updatedProxy.servers[0].name).toBe("registry:foo");
+      expect(updatedProxy.servers[0].name).toBe("registry__foo");
     });
 
     test("should throw an error if a required parameter is missing", async () => {

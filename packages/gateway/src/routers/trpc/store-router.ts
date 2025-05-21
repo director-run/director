@@ -77,7 +77,7 @@ export function createProxyStoreRouter({
                 env: z.record(z.string(), z.string()).optional(),
               }),
               z.object({
-                type: z.literal("sse"),
+                type: z.literal("http"),
                 url: z.string().url(),
               }),
             ]),

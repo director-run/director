@@ -1,5 +1,5 @@
-export type SSETransport = {
-  type: "sse";
+export type HTTPTransport = {
+  type: "http";
   url: string;
 };
 
@@ -10,7 +10,7 @@ export type STDIOTransport = {
   env?: Record<string, string>;
 };
 
-export type ProxyTransport = SSETransport | STDIOTransport;
+export type ProxyTransport = HTTPTransport | STDIOTransport;
 
 export type ProxyTargetAttributes = {
   name: string;

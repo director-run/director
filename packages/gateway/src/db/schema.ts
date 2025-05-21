@@ -13,7 +13,7 @@ export const ProxyTargetSchema = z.object({
       env: z.record(requiredStringSchema, requiredStringSchema).optional(),
     }),
     z.object({
-      type: z.literal("sse"),
+      type: z.literal("http"),
       url: requiredStringSchema,
     }),
   ]),

@@ -1,13 +1,14 @@
 import { Server } from "http";
+import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { errorRequestHandler } from "@director.run/utilities/middleware";
 import cors from "cors";
 import express from "express";
 import { Database } from "./db";
 import { ProxyServerStore } from "./proxy-server-store";
-import { createMCPRouter } from "./routers/mcp";
+import { createSSERouter } from "./routers/sse";
+import { createStreamableRouter } from "./routers/streamable";
 import { createTRPCExpressMiddleware } from "./routers/trpc";
-
 const logger = getLogger("Gateway");
 
 export class Gateway {
@@ -41,8 +42,15 @@ export class Gateway {
     const registryURL = attribs.registryURL;
 
     app.use(cors());
-    app.use("/", createMCPRouter({ proxyStore }));
+    app.use("/", createSSERouter({ proxyStore }));
+    app.use("/", createStreamableRouter({ proxyStore }));
     app.use("/trpc", createTRPCExpressMiddleware({ proxyStore, registryURL }));
+    app.get("*", (req, res) => {
+      throw new AppError(ErrorCode.NOT_FOUND, "There's nothing here");
+    });
+    app.post("*", (req, res) => {
+      throw new AppError(ErrorCode.NOT_FOUND, "There's nothing here");
+    });
     app.use(errorRequestHandler);
 
     const server = app.listen(attribs.port, () => {

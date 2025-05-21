@@ -21,13 +21,13 @@ export const errorRequestHandler: ErrorRequestHandler = (
   res,
   _next,
 ) => {
-  const { status, message } = errorToHttpResponse(error);
+  const { status, message, code } = errorToHttpResponse(error);
 
   logger.error({
     message: `HTTP request failed: ${message}`,
   });
 
-  res.status(status).send(message);
+  res.status(status).json({ message, code });
 };
 
 export function errorToHttpResponse(error: unknown): {
@@ -65,6 +65,7 @@ function appErrorToHttpResponse(error: AppError) {
   return {
     status,
     message: error.message,
+    code: error.code,
   };
 }
 

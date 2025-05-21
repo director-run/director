@@ -15,7 +15,8 @@
     "typecheck": "tsc --noEmit",
     "build": "bun build --production --target=node bin/cli.ts --outdir dist",
     "release": "bun publish --access public --omit=peer",
-    "prepare": "bun run build"
+    "prepare": "bun run build",
+    "dev": "bun --watch bin/cli.ts"
   },
   "dependencies": {},
   "peerDependencies": {

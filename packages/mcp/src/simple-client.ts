@@ -1,3 +1,4 @@
+import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 // import { sleep } from "@director.run/utilities/os";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
@@ -75,8 +76,59 @@ export class SimpleClient extends Client {
       // Try to connect over streamable
       await client.connect(new StreamableHTTPClientTransport(new URL(url)));
     } catch (e) {
+      if (e instanceof Error) {
+        // Handle specific connection errors
+        if (e.message.includes("ECONNREFUSED")) {
+          throw new AppError(
+            ErrorCode.CONNECTION_REFUSED,
+            "Connection refused",
+            { url },
+          );
+        }
+        if (e.message.includes("ETIMEDOUT") || e.message.includes("timeout")) {
+          throw new AppError(
+            ErrorCode.CONNECTION_TIMEOUT,
+            "Connection timed out",
+            { url },
+          );
+        }
+        if (e.message.includes("Invalid URL")) {
+          throw new AppError(ErrorCode.INVALID_URL, "Invalid URL provided", {
+            url,
+          });
+        }
+      }
       // If that fails, try over SSE
-      await client.connect(new SSEClientTransport(new URL(url)));
+      try {
+        await client.connect(new SSEClientTransport(new URL(url)));
+      } catch (sseError) {
+        if (sseError instanceof Error) {
+          if (sseError.message.includes("ECONNREFUSED")) {
+            throw new AppError(
+              ErrorCode.CONNECTION_REFUSED,
+              "Connection refused",
+              { url },
+            );
+          }
+          if (
+            sseError.message.includes("ETIMEDOUT") ||
+            sseError.message.includes("timeout")
+          ) {
+            throw new AppError(
+              ErrorCode.CONNECTION_TIMEOUT,
+              "Connection timed out",
+              { url },
+            );
+          }
+          if (sseError.message.includes("Invalid URL")) {
+            throw new AppError(ErrorCode.INVALID_URL, "Invalid URL provided", {
+              url,
+            });
+          }
+        }
+        // If we can't identify the error type, rethrow the original error
+        throw e;
+      }
     }
 
     return client;

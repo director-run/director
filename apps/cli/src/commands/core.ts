@@ -94,10 +94,10 @@ export function registerCoreCommands(program: Command) {
     );
 
   program
-    .command("sse2stdio <sse_url>")
-    .description("Proxy a SSE connection to a stdio stream")
-    .action(async (sseUrl) => {
-      await proxySSEToStdio(sseUrl);
+    .command("sse2stdio <url>")
+    .description("Proxy an SSE connection to a stdio stream")
+    .action(async (url) => {
+      await proxySSEToStdio(url);
     });
 
   program

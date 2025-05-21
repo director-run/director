@@ -64,36 +64,74 @@ describe("transport", () => {
   });
 
   describe("proxyHTTPToStdio", () => {
-    let client: Client;
-    let proxyTargetServerInstance: Server;
+    describe("SSE", () => {
+      let client: Client;
+      let proxyTargetServerInstance: Server;
 
-    beforeAll(async () => {
-      proxyTargetServerInstance = await serveOverSSE(makeEchoServer(), 4522);
-      const basePath = __dirname;
-      client = await SimpleClient.createAndConnectToStdio("bun", [
-        "-e",
-        `
+      beforeAll(async () => {
+        proxyTargetServerInstance = await serveOverSSE(makeEchoServer(), 4522);
+        const basePath = __dirname;
+        client = await SimpleClient.createAndConnectToStdio("bun", [
+          "-e",
+          `
             import { proxyHTTPToStdio } from '${path.join(basePath, "transport.ts")}'; 
             proxyHTTPToStdio("http://localhost:4522/sse");
         `,
-      ]);
-    }, 30000);
+        ]);
+      }, 30000);
 
-    afterAll(async () => {
-      await client?.close();
-      await proxyTargetServerInstance?.close();
+      afterAll(async () => {
+        await client?.close();
+        await proxyTargetServerInstance?.close();
+      });
+
+      test("should proxy an SSE server to stdio", async () => {
+        const toolsResult = await client.listTools();
+
+        const expectedToolNames = ["echo"];
+
+        for (const toolName of expectedToolNames) {
+          const tool = toolsResult.tools.find((t) => t.name === toolName);
+          expect(tool).toBeDefined();
+          expect(tool?.name).toBe(toolName);
+        }
+      });
     });
+    describe("Streamable", () => {
+      let client: Client;
+      let proxyTargetServerInstance: Server;
 
-    test("should proxy an SSE server to stdio", async () => {
-      const toolsResult = await client.listTools();
+      beforeAll(async () => {
+        proxyTargetServerInstance = await serveOverStreamable(
+          makeEchoServer(),
+          4522,
+        );
+        const basePath = __dirname;
+        client = await SimpleClient.createAndConnectToStdio("bun", [
+          "-e",
+          `
+            import { proxyHTTPToStdio } from '${path.join(basePath, "transport.ts")}'; 
+            proxyHTTPToStdio("http://localhost:4522/mcp");
+        `,
+        ]);
+      }, 30000);
 
-      const expectedToolNames = ["echo"];
+      afterAll(async () => {
+        await client?.close();
+        await proxyTargetServerInstance?.close();
+      });
 
-      for (const toolName of expectedToolNames) {
-        const tool = toolsResult.tools.find((t) => t.name === toolName);
-        expect(tool).toBeDefined();
-        expect(tool?.name).toBe(toolName);
-      }
+      test("should proxy an Streamable server to stdio", async () => {
+        const toolsResult = await client.listTools();
+
+        const expectedToolNames = ["echo"];
+
+        for (const toolName of expectedToolNames) {
+          const tool = toolsResult.tools.find((t) => t.name === toolName);
+          expect(tool).toBeDefined();
+          expect(tool?.name).toBe(toolName);
+        }
+      });
     });
   });
 });

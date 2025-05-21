@@ -34,12 +34,12 @@
       "name": "@director.run/registry",
       "version": "0.0.1",
       "dependencies": {
-        "@director.run/utilities": "workspace:*",
         "commander": "^13.1.0",
         "drizzle-orm": "^0.43.1",
         "pg": "^8.15.6",
       },
       "devDependencies": {
+        "@director.run/utilities": "workspace:*",
         "@faker-js/faker": "^9.7.0",
         "@types/bun": "latest",
         "@types/pg": "^8.11.14",

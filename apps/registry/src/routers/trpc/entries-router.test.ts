@@ -11,8 +11,11 @@ describe("Entries Router", () => {
   const ENTRIES_PER_PAGE = 5;
 
   beforeAll(async () => {
-    registry = await Registry.start({ port: env.REGISTRY_PORT });
-    client = createRegistryClient(`http://localhost:${env.REGISTRY_PORT}`);
+    registry = await Registry.start({
+      port: env.PORT,
+      connectionString: env.DATABASE_URL,
+    });
+    client = createRegistryClient(`http://localhost:${env.PORT}`);
     await registry.store.purge();
   });
 

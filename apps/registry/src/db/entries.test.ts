@@ -1,11 +1,11 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
-
+import { env } from "../config";
 import { makeTestEntry } from "../test/fixtures/entries";
 import { makeTestEntries } from "../test/fixtures/entries";
 import { createStore } from "./store";
 
 describe("queries", () => {
-  const store = createStore();
+  const store = createStore({ connectionString: env.DATABASE_URL });
 
   describe("getEntryByName", () => {
     beforeAll(async () => {

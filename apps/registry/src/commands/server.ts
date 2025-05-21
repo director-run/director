@@ -11,7 +11,10 @@ export function registerServerCommands() {
     .description("Start the registry")
     .action(
       actionWithErrorHandler(async () => {
-        await Registry.start({ port: env.REGISTRY_PORT });
+        await Registry.start({
+          port: env.PORT,
+          connectionString: env.DATABASE_URL,
+        });
       }),
     );
 

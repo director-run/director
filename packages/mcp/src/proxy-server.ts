@@ -1,8 +1,5 @@
 import { getLogger } from "@director.run/utilities/logger";
-import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
-import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import * as eventsource from "eventsource";
 import { z } from "zod";
 import packageJson from "../package.json";
@@ -12,7 +9,7 @@ import { setupResourceHandlers } from "./handlers/resources-handler";
 import { setupToolHandlers } from "./handlers/tools-handler";
 import { SimpleClient } from "./simple-client";
 import { SimpleServer } from "./simple-server";
-import type { ProxyServerAttributes, ProxyTargetAttributes } from "./types";
+import type { ProxyServerAttributes } from "./types";
 
 global.EventSource = eventsource.EventSource;
 
@@ -47,9 +44,22 @@ export class ProxyServer extends Server {
   ): Promise<void> {
     for (const server of this.attributes.servers) {
       try {
-        const target = new SimpleClient(server.name);
-        await target.connect(getTransport(server));
-        this.targets.push(target);
+        const client = new SimpleClient(server.name);
+
+        if (server.transport.type === "sse") {
+          await client.connectToHTTP(server.transport.url);
+        } else {
+          await client.connectToStdio(
+            server.transport.command,
+            server.transport.args ?? [],
+            {
+              ...(process.env as Record<string, string>),
+              ...(server.transport?.env || {}),
+            },
+          );
+        }
+
+        this.targets.push(client);
       } catch (error) {
         logger.error({
           message: `failed to connect to target ${server.name}`,
@@ -89,24 +99,6 @@ export class ProxyServer extends Server {
 
     await Promise.all(this.targets.map((target) => target.close()));
     await super.close();
-  }
-}
-
-function getTransport(targetServer: ProxyTargetAttributes): Transport {
-  switch (targetServer.transport.type) {
-    case "sse":
-      return new SSEClientTransport(new URL(targetServer.transport.url));
-    case "stdio":
-      return new StdioClientTransport({
-        command: targetServer.transport.command,
-        args: targetServer.transport.args,
-        env: {
-          ...(process.env as Record<string, string>),
-          ...(targetServer.transport?.env || {}),
-        },
-      });
-    default:
-      throw new Error(`Transport ${targetServer.name} not available.`);
   }
 }
 

@@ -41,6 +41,32 @@ export class SimpleClient extends Client {
     };
   }
 
+  public async connectToHTTP(url: string) {
+    try {
+      await this.connect(new StreamableHTTPClientTransport(new URL(url)));
+    } catch (e) {
+      try {
+        await this.connect(new SSEClientTransport(new URL(url)));
+      } catch (e) {
+        throw new AppError(
+          ErrorCode.CONNECTION_REFUSED,
+          "Failed to connect to server",
+          {
+            url,
+          },
+        );
+      }
+    }
+  }
+
+  public async connectToStdio(
+    command: string,
+    args: string[],
+    env?: Record<string, string>,
+  ) {
+    await this.connect(new StdioClientTransport({ command, args, env }));
+  }
+
   public static async createAndConnectToServer(
     server: Server,
   ): Promise<SimpleClient> {
@@ -59,23 +85,7 @@ export class SimpleClient extends Client {
 
   public static async createAndConnectToHTTP(url: string) {
     const client = new SimpleClient("test streamable client");
-
-    try {
-      await client.connect(new StreamableHTTPClientTransport(new URL(url)));
-    } catch (e) {
-      try {
-        await client.connect(new SSEClientTransport(new URL(url)));
-      } catch (e) {
-        throw new AppError(
-          ErrorCode.CONNECTION_REFUSED,
-          "Failed to connect to server",
-          {
-            url,
-          },
-        );
-      }
-    }
-
+    await client.connectToHTTP(url);
     return client;
   }
 
@@ -85,7 +95,7 @@ export class SimpleClient extends Client {
     env?: Record<string, string>,
   ) {
     const client = new SimpleClient("test client");
-    await client.connect(new StdioClientTransport({ command, args, env }));
+    await client.connectToStdio(command, args, env);
     return client;
   }
 

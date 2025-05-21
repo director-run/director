@@ -23,7 +23,7 @@ describe("transport", () => {
     });
 
     test("should create a server with a tool", async () => {
-      const client = await SimpleClient.createAndConnectToStreamable(
+      const client = await SimpleClient.createAndConnectToHTTP(
         "http://localhost:2345/mcp",
       );
 
@@ -54,7 +54,7 @@ describe("transport", () => {
     test("should expose a server over stdio", async () => {
       const server = makeEchoServer();
       const app = serveOverSSE(server, 3000);
-      const client = await SimpleClient.createAndConnectToSSE(
+      const client = await SimpleClient.createAndConnectToHTTP(
         `http://localhost:3000/sse`,
       );
       const tools = await client.listTools();

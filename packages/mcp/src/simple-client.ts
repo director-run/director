@@ -57,18 +57,6 @@ export class SimpleClient extends Client {
     return client;
   }
 
-  public static async createAndConnectToSSE(url: string) {
-    const client = new SimpleClient("test client");
-    await client.connect(new SSEClientTransport(new URL(url)));
-    return client;
-  }
-
-  public static async createAndConnectToStreamable(url: string) {
-    const client = new SimpleClient("test streamable client");
-    await client.connect(new StreamableHTTPClientTransport(new URL(url)));
-    return client;
-  }
-
   public static async createAndConnectToHTTP(url: string) {
     const client = new SimpleClient("test streamable client");
 

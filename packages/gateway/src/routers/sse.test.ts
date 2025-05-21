@@ -6,8 +6,8 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import {
   makeFooBarServerStdioConfig,
   makeSSETargetConfig,
-} from "./test/fixtures";
-import { IntegrationTestHarness } from "./test/integration";
+} from "../test/fixtures";
+import { IntegrationTestHarness } from "../test/integration";
 
 const PROXY_TARGET_PORT = 4521;
 

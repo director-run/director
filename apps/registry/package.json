@@ -2,6 +2,7 @@
   "name": "@director.run/registry",
   "private": true,
   "version": "0.0.1",
+  "type": "module",
   "scripts": {
     "lint": "biome check .",
     "format": "biome format --write .",

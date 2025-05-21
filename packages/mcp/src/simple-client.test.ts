@@ -3,7 +3,8 @@ import { expectToThrowAppError } from "@director.run/utilities/test";
 import { describe, expect, test } from "vitest";
 import { SimpleClient } from "./simple-client";
 import { makeEchoServer } from "./test/fixtures";
-import { serveOverSSE, serveOverStreamable } from "./transport";
+import { serveOverSSE } from "./transport";
+import { serveOverStreamable } from "./transport";
 
 describe("SimpleClient", () => {
   describe("createAndConnectToHTTP", () => {

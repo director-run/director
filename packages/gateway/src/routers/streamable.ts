@@ -9,7 +9,7 @@ import type { ProxyServerStore } from "../proxy-server-store";
 
 const logger = getLogger("mcp");
 
-export const createMCPRouter = ({
+export const createStreamableRouter = ({
   proxyStore,
 }: {
   proxyStore: ProxyServerStore;

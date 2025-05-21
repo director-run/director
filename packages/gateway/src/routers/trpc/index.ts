@@ -13,6 +13,9 @@ export function createAppRouter({
   registryURL: string;
 }) {
   return t.router({
+    health: t.procedure.query(() => ({
+      status: "ok",
+    })),
     store: createProxyStoreRouter({ proxyStore }),
     installer: createInstallerRouter({ proxyStore }),
     registry: createRegistryRouter({ registryURL, proxyStore }),

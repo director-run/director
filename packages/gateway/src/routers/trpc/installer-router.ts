@@ -31,6 +31,9 @@ export function createInstallerRouter({
               transport: {
                 command: input.cliPath,
                 args: ["sse2stdio", proxySSEUrl],
+                env: {
+                  LOG_LEVEL: "silent",
+                },
               },
             });
           } else {
@@ -39,6 +42,9 @@ export function createInstallerRouter({
               transport: {
                 command: "bun",
                 args: [input.cliPath, "sse2stdio", proxySSEUrl],
+                env: {
+                  LOG_LEVEL: "silent",
+                },
               },
             });
           }

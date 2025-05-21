@@ -65,7 +65,25 @@ export class EntryStore {
     const offset = pageIndex * pageSize;
 
     const [entries, totalCount] = await Promise.all([
-      this.db.db.select().from(entriesTable).limit(pageSize).offset(offset),
+      this.db.db
+        .select({
+          id: entriesTable.id,
+          name: entriesTable.name,
+          title: entriesTable.title,
+          description: entriesTable.description,
+          createdAt: entriesTable.createdAt,
+          isOfficial: entriesTable.isOfficial,
+          isEnriched: entriesTable.isEnriched,
+          transport: entriesTable.transport,
+          homepage: entriesTable.homepage,
+          source_registry: entriesTable.source_registry,
+          categories: entriesTable.categories,
+          tools: entriesTable.tools,
+          parameters: entriesTable.parameters,
+        })
+        .from(entriesTable)
+        .limit(pageSize)
+        .offset(offset),
       this.db.db
         .select({ count: count() })
         .from(entriesTable)

@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { AppError, ErrorCode } from "@director.run/utilities/error";
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
@@ -41,6 +42,7 @@ export function serveOverStreamable(server: Server, port: number) {
       await server.connect(transport);
     } else {
       // Invalid request
+      // TODO: is this format used by the MCP client?
       res.status(400).json({
         jsonrpc: "2.0",
         error: {
@@ -63,8 +65,10 @@ export function serveOverStreamable(server: Server, port: number) {
   ) => {
     const sessionId = req.headers["mcp-session-id"] as string | undefined;
     if (!sessionId || !transports[sessionId]) {
-      res.status(400).send("Invalid or missing session ID");
-      return;
+      throw new AppError(
+        ErrorCode.BAD_REQUEST,
+        "Invalid or missing session ID",
+      );
     }
 
     const transport = transports[sessionId];
@@ -77,9 +81,7 @@ export function serveOverStreamable(server: Server, port: number) {
   // Handle DELETE requests for session termination
   app.delete("/mcp", handleSessionRequest);
 
-  const instance = app.listen(port, () => {
-    console.log("Server is running on port 3000");
-  });
+  const instance = app.listen(port);
 
   return instance;
 }

@@ -1,16 +1,16 @@
 import { getLogger } from "@director.run/utilities/logger";
-import { sleep } from "@director.run/utilities/os";
+// import { sleep } from "@director.run/utilities/os";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
+// import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import packageJson from "../package.json";
 
-const CONNECT_RETRY_INTERVAL = 2500;
-const CONNECT_RETRY_COUNT = 3;
+// const CONNECT_RETRY_INTERVAL = 2500;
+// const CONNECT_RETRY_COUNT = 3;
 
 const logger = getLogger("SimpleClient");
 
@@ -93,36 +93,36 @@ export class SimpleClient extends Client {
     return client;
   }
 
-  async connect(transport: Transport) {
-    let count = 0;
-    let retry = true;
+  // async connect(transport: Transport) {
+  //   let count = 0;
+  //   let retry = true;
 
-    while (retry) {
-      try {
-        await super.connect(transport);
-        break;
-      } catch (error) {
-        logger.error({
-          message: `error while connecting to server "${this.name}"`,
-          name: this.name,
-          retriesRemaining: CONNECT_RETRY_COUNT - count,
-          error: error,
-        });
+  //   while (retry) {
+  //     try {
+  //       await super.connect(transport);
+  //       break;
+  //     } catch (error) {
+  //       logger.error({
+  //         message: `error while connecting to server "${this.name}"`,
+  //         name: this.name,
+  //         retriesRemaining: CONNECT_RETRY_COUNT - count,
+  //         error: error,
+  //       });
 
-        count++;
-        retry = count < CONNECT_RETRY_COUNT;
-        if (retry) {
-          try {
-            await this.close();
-          } catch {}
-          await sleep(CONNECT_RETRY_INTERVAL);
-        } else {
-          try {
-            await this.close();
-          } catch {}
-          throw error;
-        }
-      }
-    }
-  }
+  //       count++;
+  //       retry = count < CONNECT_RETRY_COUNT;
+  //       if (retry) {
+  //         try {
+  //           await this.close();
+  //         } catch {}
+  //         await sleep(CONNECT_RETRY_INTERVAL);
+  //       } else {
+  //         try {
+  //           await this.close();
+  //         } catch {}
+  //         throw error;
+  //       }
+  //     }
+  //   }
+  // }
 }

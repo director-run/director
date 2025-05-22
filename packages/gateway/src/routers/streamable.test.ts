@@ -72,34 +72,52 @@ describe("Streamable Router", () => {
     await client.close();
   });
 
-  test("should be able to add a server to a proxy", async () => {
-    await harness.purge();
-    const testProxy = await harness.client.store.create.mutate({
-      name: "Test Proxy",
-      servers: [makeFooBarServerStdioConfig()],
+  describe("addServer", () => {
+    test("should be able to add a server to a proxy", async () => {
+      await harness.purge();
+      const testProxy = await harness.client.store.create.mutate({
+        name: "Test Proxy",
+        servers: [makeFooBarServerStdioConfig()],
+      });
+
+      const client = await SimpleClient.createAndConnectToHTTP(
+        `http://localhost:${harness.gateway.port}/${testProxy.id}/mcp`,
+      );
+
+      const toolsResult = await client.listTools();
+
+      expect(toolsResult.tools.map((t) => t.name)).toContain("foo");
+      expect(toolsResult.tools.map((t) => t.name)).not.toContain("echo");
+
+      await harness.client.store.addServer.mutate({
+        proxyId: testProxy.id,
+        server: echoServerSSEConfig,
+      });
+
+      const client2 = await SimpleClient.createAndConnectToHTTP(
+        `http://localhost:${harness.gateway.port}/${testProxy.id}/mcp`,
+      );
+
+      const toolsResult2 = await client2.listTools();
+      expect(toolsResult2.tools.map((t) => t.name)).toContain("foo");
+      expect(toolsResult2.tools.map((t) => t.name)).toContain("echo");
     });
 
-    const client = await SimpleClient.createAndConnectToHTTP(
-      `http://localhost:${harness.gateway.port}/${testProxy.id}/mcp`,
-    );
+    test("should fail if server already exists", async () => {
+      await harness.purge();
+      const testServerConfig = makeFooBarServerStdioConfig();
+      const testProxy = await harness.client.store.create.mutate({
+        name: "Test Proxy",
+        servers: [testServerConfig],
+      });
 
-    const toolsResult = await client.listTools();
-
-    expect(toolsResult.tools.map((t) => t.name)).toContain("foo");
-    expect(toolsResult.tools.map((t) => t.name)).not.toContain("echo");
-
-    await harness.client.store.addServer.mutate({
-      proxyId: testProxy.id,
-      server: echoServerSSEConfig,
+      await expect(
+        harness.client.store.addServer.mutate({
+          proxyId: testProxy.id,
+          server: testServerConfig,
+        }),
+      ).rejects.toThrow();
     });
-
-    const client2 = await SimpleClient.createAndConnectToHTTP(
-      `http://localhost:${harness.gateway.port}/${testProxy.id}/mcp`,
-    );
-
-    const toolsResult2 = await client2.listTools();
-    expect(toolsResult2.tools.map((t) => t.name)).toContain("foo");
-    expect(toolsResult2.tools.map((t) => t.name)).toContain("echo");
   });
 
   test("should be able to remove a server from a proxy", async () => {

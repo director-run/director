@@ -115,6 +115,18 @@ export class ProxyServerStore {
     //   - Do not recreate the proxy server, just update the server
     //   - After updating, call proxy.sendToolListChanged(); (also add necessary capability to server definition)
     //   - At the moment (22/05/2025), neither Claude nor Cursor seem to support this so leaving it like this for now
+
+    if (
+      proxy.attributes.servers.some(
+        (s) => s.name.toLocaleLowerCase() === server.name.toLocaleLowerCase(),
+      )
+    ) {
+      throw new AppError(
+        ErrorCode.BAD_REQUEST,
+        `Server '${server.name}' already exists in proxy '${proxyId}'`,
+      );
+    }
+
     const updatedProxy = await this.update(proxyId, {
       servers: [...proxy.attributes.servers, server],
     });

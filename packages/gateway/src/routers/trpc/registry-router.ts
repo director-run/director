@@ -128,5 +128,11 @@ async function restartConnectedClients(proxy: ProxyServer) {
   }
   if (isCursorInstalled()) {
     logger.info(`cursor is installed`);
+    const cursorInstaller = await ClaudeInstaller.create();
+    if (cursorInstaller.isInstalled(serverName)) {
+      logger.info(`${proxy.id} is intalled in cursor`);
+    } else {
+      logger.info(`${proxy.id} is not installed in cursor`);
+    }
   }
 }

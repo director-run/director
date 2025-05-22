@@ -138,7 +138,18 @@ export class ProxyServerStore {
     serverName: string,
   ): Promise<ProxyServer> {
     const proxy = this.get(proxyId);
-    // TODO: don't re-create the proxy server, just update the servers
+    // TODO: don't re-create the proxy server, just update the servers - same as addServer
+    if (
+      !proxy.attributes.servers.some(
+        (s) => s.name.toLowerCase() === serverName.toLowerCase(),
+      )
+    ) {
+      throw new AppError(
+        ErrorCode.BAD_REQUEST,
+        `Server '${serverName}' not found in proxy '${proxyId}'`,
+      );
+    }
+
     const updatedProxy = await this.update(proxyId, {
       servers: proxy.attributes.servers.filter(
         (s) => s.name.toLowerCase() !== serverName.toLowerCase(),

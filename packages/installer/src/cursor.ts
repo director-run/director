@@ -8,6 +8,7 @@ import {
   App,
   isAppInstalled,
   isFilePresent,
+  openFileInCode,
   sleep,
 } from "@director.run/utilities/os";
 import { z } from "zod";
@@ -80,11 +81,12 @@ export class CursorInstaller {
   }
 
   public async reload(name: string) {
+    // TODO: this is segfaulting, something is weird with it
     logger.info(`reloading ${name}`);
 
     const url = this.config.mcpServers[createKey(name)].url;
     await this.uninstall(name);
-    await sleep(10);
+    await sleep(1000);
     await this.install({ name, url });
   }
 
@@ -94,6 +96,11 @@ export class CursorInstaller {
       name,
       url: transport.url,
     }));
+  }
+
+  public async openConfig() {
+    logger.info("opening cursor config");
+    await openFileInCode(this.configPath);
   }
 
   public async purge() {

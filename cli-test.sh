@@ -33,3 +33,4 @@ echo "PROXY DETAILS:"
 echo
 bun cli get my-proxy
 
+# TODO: cursor seems to be segfaulting, something is weird with it

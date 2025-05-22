@@ -52,6 +52,15 @@ export function createCursorCommands() {
           console.log(result);
         }),
       );
+
+    command
+      .command("config")
+      .description("Open the cursor config file")
+      .action(
+        actionWithErrorHandler(() => {
+          gatewayClient.installer.cursor.config.query();
+        }),
+      );
   }
 
   return command;

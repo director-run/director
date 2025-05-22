@@ -99,6 +99,10 @@ export function createInstallerRouter({
         const installer = await CursorInstaller.create();
         await installer.purge();
       }),
+      config: t.procedure.query(async () => {
+        const installer = await CursorInstaller.create();
+        return installer.openConfig();
+      }),
     }),
   });
 }

@@ -44,6 +44,10 @@ export class CursorInstaller {
     });
   }
 
+  public isInstalled(name: string) {
+    return this.config.mcpServers[createKey(name)] !== undefined;
+  }
+
   public async uninstall(name: string) {
     logger.info(`uninstalling ${name}`);
     const newConfig = { ...this.config };

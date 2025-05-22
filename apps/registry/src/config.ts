@@ -1,5 +1,5 @@
 import path from "path";
-import { createEnv, isProduction, isTest } from "@director.run/utilities/env";
+import { createEnv, isTest } from "@director.run/utilities/env";
 import { isFilePresent } from "@director.run/utilities/os";
 import { z } from "zod";
 
@@ -12,12 +12,10 @@ export const env = createEnv({
 });
 
 function getEnvFilePath() {
-  if (isFilePresent(path.join(__dirname, "../.env.local"))) {
-    return path.join(__dirname, "../.env.local");
-  } else if (isTest()) {
+  if (isTest()) {
     return path.join(__dirname, "../env/.env.test");
-  } else if (isProduction()) {
-    return path.join(__dirname, "../env/.env");
+  } else if (isFilePresent(path.join(__dirname, "../.env.local"))) {
+    return path.join(__dirname, "../.env.local");
   } else {
     return path.join(__dirname, "../env/.env.dev");
   }

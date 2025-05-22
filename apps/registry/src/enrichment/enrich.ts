@@ -1,8 +1,7 @@
 import { getLogger } from "@director.run/utilities/logger";
 import { type EntryGetParams } from "../db/schema";
 import { type Store } from "../db/store";
-import { getRepoReadme, isGithubRepo } from "./github";
-import { parseGithubUrl } from "./github";
+import { getGithubRawReadmeUrl, isGithubRepo } from "./github";
 import { parseParameters } from "./parseParameters";
 const logger = getLogger("enrich");
 
@@ -24,8 +23,8 @@ async function enrichEntry(entry: EntryGetParams): Promise<EntryGetParams> {
   let readme = null;
 
   if (isGithubRepo(entry.homepage)) {
-    const { team, repo } = parseGithubUrl(entry.homepage);
-    readme = await getRepoReadme(team, repo);
+    const response = await fetch(getGithubRawReadmeUrl(entry.homepage));
+    readme = await response.text();
   }
 
   const parameters = parseParameters(entry);

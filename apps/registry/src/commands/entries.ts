@@ -4,7 +4,7 @@ import { type Store } from "../db/store";
 import { enrichEntries } from "../enrichment/enrich";
 import { prettyPrint } from "../helpers/pretty-print";
 import { fetchRaycastRegistry } from "../importers/raycast";
-
+import { getSeedEntries } from "../importers/seed";
 export function registerEntriesCommands(store: Store) {
   const command = new Command("entries");
 
@@ -18,51 +18,13 @@ export function registerEntriesCommands(store: Store) {
     );
 
   command
-    .command("seed")
-    .description("seed a couple of entries")
-    .action(
-      actionWithErrorHandler(async () => {
-        await store.entries.addEntries([
-          {
-            name: "fetch",
-            title: "Fetch",
-            description:
-              "A Model Context Protocol server that provides web content fetching capabilities. This server enables LLMs to retrieve and process content from web pages, converting HTML to markdown for easier consumption.",
-            homepage:
-              "https://github.com/modelcontextprotocol/servers/tree/main/src/fetch",
-            transport: {
-              type: "stdio",
-              command: "uvx",
-              args: ["mcp-server-fetch"],
-            },
-          },
-          {
-            name: "hackernews",
-            title: "Hackernews",
-            description:
-              "A Model Context Protocol (MCP) server that provides tools for fetching information from Hacker News.",
-            homepage: "https://github.com/erithwik/mcp-hn",
-            transport: {
-              type: "stdio",
-              command: "uvx",
-              args: [
-                "--from",
-                "git+https://github.com/erithwik/mcp-hn",
-                "mcp-hn",
-              ],
-            },
-          },
-        ]);
-      }),
-    );
-
-  command
     .command("import")
     .description("Seed the database with entries from awesome-mcp-servers")
     .action(
       actionWithErrorHandler(async () => {
         await store.entries.deleteAllEntries();
         await store.entries.addEntries(await fetchRaycastRegistry());
+        await store.entries.addEntries(getSeedEntries());
       }),
     );
 

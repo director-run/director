@@ -75,7 +75,7 @@ export class EntryStore {
           // isOfficial: entriesTable.isOfficial,
           // isEnriched: entriesTable.isEnriched,
           // transport: entriesTable.transport,
-          // homepage: entriesTable.homepage,
+          homepage: entriesTable.homepage,
           // source_registry: entriesTable.source_registry,
           // categories: entriesTable.categories,
           // tools: entriesTable.tools,

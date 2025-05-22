@@ -1,6 +1,8 @@
+import { existsSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { isTest } from "@director.run/utilities/env";
+import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
 import { getLogger } from "@director.run/utilities/logger";
 import { App, openFileInCode, restartApp } from "@director.run/utilities/os";
@@ -8,7 +10,7 @@ import { z } from "zod";
 
 export const CLAUDE_CONFIG_PATH = path.join(
   os.homedir(),
-  "Library/Application Support/Claude/claude_desktop_config.json",
+  "Library/Application Support/Claude/claude_desktp_config.json",
 );
 export const CLAUDE_CONFIG_KEY_PREFIX = "director__";
 
@@ -25,6 +27,11 @@ export class ClaudeInstaller {
 
   public static async create(configPath: string = CLAUDE_CONFIG_PATH) {
     logger.info(`reading config from ${configPath}`);
+    if (!existsSync(configPath)) {
+      throw new AppError(ErrorCode.NOT_FOUND, "Claude config file not found", {
+        configPath,
+      });
+    }
     const config = await readJSONFile<ClaudeConfig>(configPath);
     return new ClaudeInstaller({
       configPath,

@@ -4,7 +4,12 @@ import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
 import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
 import { getLogger } from "@director.run/utilities/logger";
-import { App, isAppInstalled, isFilePresent } from "@director.run/utilities/os";
+import {
+  App,
+  isAppInstalled,
+  isFilePresent,
+  sleep,
+} from "@director.run/utilities/os";
 import { z } from "zod";
 
 const CURSOR_COMMAND = "cursor";
@@ -49,6 +54,12 @@ export class CursorInstaller {
   }
 
   public async uninstall(name: string) {
+    if (!this.isInstalled(name)) {
+      throw new AppError(
+        ErrorCode.NOT_FOUND,
+        `server '${name}' is not installed`,
+      );
+    }
     logger.info(`uninstalling ${name}`);
     const newConfig = { ...this.config };
     delete newConfig.mcpServers[createKey(name)];
@@ -56,10 +67,25 @@ export class CursorInstaller {
   }
 
   public async install(entry: CursorServerEntry) {
+    if (this.isInstalled(entry.name)) {
+      throw new AppError(
+        ErrorCode.BAD_REQUEST,
+        `server '${entry.name}' is already installed`,
+      );
+    }
     logger.info(`installing ${entry.name}`);
     const newConfig = { ...this.config };
     newConfig.mcpServers[createKey(entry.name)] = { url: entry.url };
     await this.updateConfig(newConfig);
+  }
+
+  public async reload(name: string) {
+    logger.info(`reloading ${name}`);
+
+    const url = this.config.mcpServers[createKey(name)].url;
+    await this.uninstall(name);
+    await sleep(10);
+    await this.install({ name, url });
   }
 
   public async list() {

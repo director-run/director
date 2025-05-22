@@ -57,6 +57,12 @@ export class ClaudeInstaller {
   }
 
   public async uninstall(name: string) {
+    if (!this.isInstalled(name)) {
+      throw new AppError(
+        ErrorCode.NOT_FOUND,
+        `server '${name}' is not installed`,
+      );
+    }
     logger.info(`uninstalling ${name}`);
     const newConfig = { ...this.config };
     delete newConfig.mcpServers[createKey(name)];
@@ -64,6 +70,12 @@ export class ClaudeInstaller {
   }
 
   public async install(entry: ClaudeServerEntry) {
+    if (this.isInstalled(entry.name)) {
+      throw new AppError(
+        ErrorCode.BAD_REQUEST,
+        `server '${entry.name}' is already installed`,
+      );
+    }
     logger.info(`installing ${entry.name}`);
     const newConfig = { ...this.config };
     newConfig.mcpServers[createKey(entry.name)] = entry.transport;

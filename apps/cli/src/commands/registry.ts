@@ -75,7 +75,7 @@ export function createRegistryCommands() {
           proxyId,
           serverName,
         });
-        console.log(`Server ${serverName} added to ${proxy.id}`);
+        console.log(`Server ${serverName} removed from ${proxy.id}`);
       }),
     );
 

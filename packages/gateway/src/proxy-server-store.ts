@@ -111,7 +111,10 @@ export class ProxyServerStore {
     server: ProxyTargetAttributes,
   ): Promise<ProxyServer> {
     const proxy = this.get(proxyId);
-    // TODO: Implement a more efficient update mechanism without recreating the proxy server
+    // TODO:
+    //   - Do not recreate the proxy server, just update the server
+    //   - After updating, call proxy.sendToolListChanged(); (also add necessary capability to server definition)
+    //   - At the moment (22/05/2025), neither Claude nor Cursor seem to support this so leaving it like this for now
     const updatedProxy = await this.update(proxyId, {
       servers: [...proxy.attributes.servers, server],
     });

@@ -1,7 +1,12 @@
+vi.mock("@director.run/utilities/os", () => ({
+  isCommandInstalled: vi.fn(() => true),
+  isFilePresent: vi.fn(() => true),
+}));
+
 import fs from "node:fs/promises";
 import path from "node:path";
 import { writeJSONFile } from "@director.run/utilities/json";
-import { afterAll, beforeEach, describe, expect, test } from "vitest";
+import { afterAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { CURSOR_CONFIG_KEY_PREFIX, CursorInstaller } from "./cursor";
 import {
   createCursorConfig,

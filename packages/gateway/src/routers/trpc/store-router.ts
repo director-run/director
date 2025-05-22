@@ -1,7 +1,7 @@
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
 import { ProxyTargetSchema } from "../../db/schema";
-import { getPathForProxy } from "../../helpers";
+import { getPathForProxy, restartConnectedClients } from "../../helpers";
 import { ProxyServerStore } from "../../proxy-server-store";
 
 const ProxyCreateSchema = z.object({
@@ -86,9 +86,9 @@ export function createProxyStoreRouter({
         }),
       )
       .mutation(async ({ input }) => {
-        return (
-          await proxyStore.addServer(input.proxyId, input.server)
-        ).toPlainObject();
+        const proxy = await proxyStore.addServer(input.proxyId, input.server);
+        await restartConnectedClients(proxy);
+        return proxy.toPlainObject();
       }),
 
     purge: t.procedure.mutation(() => proxyStore.purge()),
@@ -101,9 +101,12 @@ export function createProxyStoreRouter({
         }),
       )
       .mutation(async ({ input }) => {
-        return (
-          await proxyStore.removeServer(input.proxyId, input.serverName)
-        ).toPlainObject();
+        const proxy = await proxyStore.removeServer(
+          input.proxyId,
+          input.serverName,
+        );
+        await restartConnectedClients(proxy);
+        return proxy.toPlainObject();
       }),
   });
 }

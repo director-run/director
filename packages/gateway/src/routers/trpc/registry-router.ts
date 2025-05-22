@@ -1,3 +1,4 @@
+import {} from "@director.run/installer/claude";
 import type { ProxyTransport } from "@director.run/mcp/types";
 import { createRegistryClient } from "@director.run/registry/client";
 import type { EntryParameter } from "@director.run/registry/db/schema";
@@ -7,17 +8,9 @@ import {
 } from "@director.run/utilities/schema";
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
+import { REGISTRY_ENTRY_NAME_PREFIX } from "../../config";
+import { restartConnectedClients } from "../../helpers";
 import type { ProxyServerStore } from "../../proxy-server-store";
-const REGISTRY_ENTRY_NAME_PREFIX = "registry__";
-import {
-  ClaudeInstaller,
-  isClaudeInstalled,
-} from "@director.run/installer/claude";
-import { isCursorInstalled } from "@director.run/installer/cursor";
-import type { ProxyServer } from "@director.run/mcp/proxy-server";
-import { getLogger } from "@director.run/utilities/logger";
-
-const logger = getLogger("registry-router");
 
 const parameterToZodSchema = (parameter: EntryParameter) => {
   if (parameter.type === "string") {
@@ -108,32 +101,4 @@ export function createRegistryRouter({
         return newProxy.toPlainObject();
       }),
   });
-}
-
-async function restartConnectedClients(proxy: ProxyServer) {
-  logger.info(`restarting connected clients for ${proxy.id}`);
-
-  const serverName = proxy.id.startsWith(REGISTRY_ENTRY_NAME_PREFIX)
-    ? proxy.id.slice(REGISTRY_ENTRY_NAME_PREFIX.length)
-    : proxy.id;
-
-  if (isClaudeInstalled()) {
-    logger.info(`claude is installed`);
-    const claudeInstaller = await ClaudeInstaller.create();
-    if (claudeInstaller.isInstalled(serverName)) {
-      logger.info(`${proxy.id} is intalled in claude, restarting...`);
-      await claudeInstaller.restartClaude();
-    } else {
-      logger.info(`${proxy.id} is not installed in claude`);
-    }
-  }
-  if (isCursorInstalled()) {
-    logger.info(`cursor is installed`);
-    const cursorInstaller = await ClaudeInstaller.create();
-    if (cursorInstaller.isInstalled(serverName)) {
-      logger.info(`${proxy.id} is intalled in cursor`);
-    } else {
-      logger.info(`${proxy.id} is not installed in cursor`);
-    }
-  }
 }

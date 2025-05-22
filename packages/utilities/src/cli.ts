@@ -1,7 +1,11 @@
+import { TRPCClientError } from "@trpc/client";
 import chalk from "chalk";
 import Table from "cli-table3";
 import { Option } from "commander";
 import { Command, type HelpContext } from "commander";
+import { getLogger } from "./logger";
+
+const logger = getLogger("cli");
 
 export function actionWithErrorHandler<Args extends unknown[]>(
   handler: (...args: Args) => void | Promise<void>,
@@ -10,10 +14,12 @@ export function actionWithErrorHandler<Args extends unknown[]>(
     try {
       await handler(...args);
     } catch (error) {
-      if (error instanceof Error) {
-        console.error(`Error: ${error.message}`);
+      if (error instanceof TRPCClientError) {
+        logger.error({ message: `TRPCClientError ${error.message}` });
+      } else if (error instanceof Error) {
+        logger.error({ error, message: `${error.message}` });
       } else {
-        console.error("Error: An unexpected error occurred");
+        logger.error("Unexpected error:", error);
       }
     }
   };

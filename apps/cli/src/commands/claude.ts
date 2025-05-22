@@ -71,8 +71,8 @@ export function createClaudeCommand() {
       .command("config")
       .description("Open claude config file")
       .action(
-        actionWithErrorHandler(async () => {
-          const result = await gatewayClient.installer.claude.config.query();
+        actionWithErrorHandler(() => {
+          gatewayClient.installer.claude.config.query();
         }),
       );
   }

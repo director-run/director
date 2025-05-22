@@ -1,4 +1,4 @@
-import { exec } from "node:child_process";
+import { exec, execSync } from "node:child_process";
 import { promisify } from "node:util";
 import { getLogger } from "./logger";
 
@@ -30,4 +30,24 @@ export async function restartApp(app: App): Promise<void> {
 export async function openFileInCode(filePath: string): Promise<void> {
   logger.info(`opening ${filePath}`);
   await execAsync(`code "${filePath}"`);
+}
+
+/**
+ * Checks if a command/application is installed by using the 'which' command
+ * @param commandName - The name of the command to check
+ * @returns boolean - true if the command is installed, false otherwise
+ */
+export function isCommandInstalled(commandName: string): boolean {
+  try {
+    const isWindows = process.platform === "win32";
+    const command = isWindows ? `where ${commandName}` : `which ${commandName}`;
+
+    execSync(command, {
+      stdio: "pipe",
+      encoding: "utf8",
+    });
+    return true;
+  } catch (error) {
+    return false;
+  }
 }

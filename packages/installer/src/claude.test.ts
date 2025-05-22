@@ -26,6 +26,15 @@ describe("claude installer", () => {
     await fs.unlink(configFilePath);
   });
 
+  test("should correctly check if a server is installed", async () => {
+    const entry = createClaudeServerEntry();
+    expect(installer.isInstalled(entry.name)).toBe(false);
+    await installer.install(entry);
+    expect(installer.isInstalled(entry.name)).toBe(true);
+    await installer.uninstall(entry.name);
+    expect(installer.isInstalled(entry.name)).toBe(false);
+  });
+
   test("should be able to install a server", async () => {
     const entry = createClaudeServerEntry();
     await installer.install(entry);

@@ -13,7 +13,8 @@
     "test": "bun run vitest --fileParallelism=false",
     "typecheck": "turbo run typecheck",
     "clean": "turbo run clean && rm -rf .turbo node_modules",
-    "cli": "NODE_ENV=development bun run ./apps/cli/bin/cli.ts"
+    "cli": "NODE_ENV=development bun run ./apps/cli/bin/cli.ts",
+    "cli:dev": "NODE_ENV=development bun --watch ./apps/cli/bin/cli.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

@@ -5,6 +5,7 @@ import {
   actionWithErrorHandler,
   printDirectorAscii,
 } from "@director.run/utilities/cli";
+import { isDevelopment } from "@director.run/utilities/env";
 import { joinURL } from "@director.run/utilities/url";
 import { Command } from "commander";
 import { gatewayClient } from "../client";
@@ -127,4 +128,15 @@ export function registerCoreCommands(program: Command) {
         console.log(`config:`, env);
       }),
     );
+
+  if (isDevelopment()) {
+    program
+      .command("reset")
+      .description("Reset everything")
+      .action(
+        actionWithErrorHandler(async () => {
+          await gatewayClient.store.purge.mutate();
+        }),
+      );
+  }
 }

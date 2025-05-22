@@ -22,6 +22,7 @@ export function createProxyStoreRouter({
         path: getPathForProxy(proxy.id),
       }));
     }),
+
     get: t.procedure
       .input(z.object({ proxyId: z.string() }))
       .query(({ input }) => {
@@ -89,6 +90,9 @@ export function createProxyStoreRouter({
           await proxyStore.addServer(input.proxyId, input.server)
         ).toPlainObject();
       }),
+
+    purge: t.procedure.mutation(() => proxyStore.purge()),
+
     removeServer: t.procedure
       .input(
         z.object({

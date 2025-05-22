@@ -8,7 +8,6 @@ import {
 } from "@director.run/utilities/schema";
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
-import { REGISTRY_ENTRY_NAME_PREFIX } from "../../config";
 import { restartConnectedClients } from "../../helpers";
 import type { ProxyServerStore } from "../../proxy-server-store";
 
@@ -92,7 +91,7 @@ export function createRegistryRouter({
         }
 
         const newProxy = await proxyStore.addServer(input.proxyId, {
-          name: `${REGISTRY_ENTRY_NAME_PREFIX}${entry.name}`,
+          name: entry.name,
           transport,
           source: {
             name: "registry",

@@ -12,7 +12,7 @@ export function createClaudeConfig(entries: ClaudeServerEntry[]): ClaudeConfig {
 }
 
 export function createClaudeServerEntry(params?: {name?: string, transport?: ClaudeMCPServer}): ClaudeServerEntry {
- const name = slugify(params?.name ?? faker.hacker.noun());
+ const name = slugify(params?.name ?? faker.hacker.noun() + ' ' + faker.hacker.noun());
   return {
     name,
     transport: params?.transport ?? {

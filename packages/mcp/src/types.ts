@@ -15,6 +15,11 @@ export type ProxyTransport = HTTPTransport | STDIOTransport;
 export type ProxyTargetAttributes = {
   name: string;
   transport: ProxyTransport;
+  source?: {
+    name: "registry";
+    entryId: string;
+    entryData: unknown;
+  };
 };
 
 export type ProxyServerAttributes = {

@@ -94,6 +94,11 @@ export function createRegistryRouter({
         const newProxy = await proxyStore.addServer(input.proxyId, {
           name: `${REGISTRY_ENTRY_NAME_PREFIX}${entry.name}`,
           transport,
+          source: {
+            name: "registry",
+            entryId: entry.id,
+            entryData: entry,
+          },
         });
 
         await restartConnectedClients(newProxy);

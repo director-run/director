@@ -17,43 +17,44 @@ import { IntegrationTestHarness } from "../../test/integration";
 
 const testServerStdioConfig = makeFooBarServerStdioConfig();
 
+const registryEntry = {
+  id: testServerStdioConfig.name,
+  name: testServerStdioConfig.name,
+  transport: {
+    type: "stdio",
+    command: testServerStdioConfig.transport.command,
+    args: [
+      ...testServerStdioConfig.transport.args,
+      "--noop",
+      "SECOND_PARAMETER",
+    ],
+    env: {
+      FIRST_PARAMETER: "<PLACEHOLDER>",
+    },
+  },
+  parameters: [
+    {
+      name: "FIRST_PARAMETER",
+      description: "some parameter",
+      scope: "env",
+      required: true,
+      type: "string",
+    },
+    {
+      name: "SECOND_PARAMETER",
+      description: "some parameter",
+      scope: "args",
+      required: true,
+      type: "string",
+    },
+  ],
+};
+
 vi.mock("@director.run/registry/client", () => ({
   createRegistryClient: vi.fn(() => ({
     entries: {
       getEntryByName: {
-        query: vi.fn().mockImplementation(() =>
-          Promise.resolve({
-            name: testServerStdioConfig.name,
-            transport: {
-              type: "stdio",
-              command: testServerStdioConfig.transport.command,
-              args: [
-                ...testServerStdioConfig.transport.args,
-                "--noop",
-                "SECOND_PARAMETER",
-              ],
-              env: {
-                FIRST_PARAMETER: "<PLACEHOLDER>",
-              },
-            },
-            parameters: [
-              {
-                name: "FIRST_PARAMETER",
-                description: "some parameter",
-                scope: "env",
-                required: true,
-                type: "string",
-              },
-              {
-                name: "SECOND_PARAMETER",
-                description: "some parameter",
-                scope: "args",
-                required: true,
-                type: "string",
-              },
-            ],
-          }),
-        ),
+        query: vi.fn().mockImplementation(() => Promise.resolve(registryEntry)),
       },
     },
   })),
@@ -93,6 +94,23 @@ describe("Registry Router", () => {
 
       expect(updatedProxy.servers).toHaveLength(1);
       expect(updatedProxy.servers[0].name).toBe("registry__foo");
+    });
+
+    test("should add store the registry entry in the server attributes", async () => {
+      const updatedProxy =
+        await harness.client.registry.addServerFromRegistry.mutate({
+          proxyId: proxy.id,
+          entryName: "foo",
+          parameters: {
+            FIRST_PARAMETER: "test",
+            SECOND_PARAMETER: "test2",
+          },
+        });
+
+      expect(updatedProxy.servers).toHaveLength(1);
+      expect(updatedProxy.servers[0].source?.name).toEqual("registry");
+      expect(updatedProxy.servers[0].source?.entryId).toEqual(registryEntry.id);
+      expect(updatedProxy.servers[0].source?.entryData).toEqual(registryEntry);
     });
 
     test("should throw an error if a required parameter is missing", async () => {

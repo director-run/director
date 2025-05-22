@@ -84,10 +84,19 @@ export class ProxyServerStore {
     name,
     description,
     servers,
+    source,
   }: {
     name: string;
     description?: string;
     servers?: ProxyTargetAttributes[];
+    source?: {
+      type: "registry";
+      entry: {
+        id: string;
+        name: string;
+        title: string;
+      };
+    };
   }): Promise<ProxyServer> {
     const newProxy = await this.db.addProxy({
       name,

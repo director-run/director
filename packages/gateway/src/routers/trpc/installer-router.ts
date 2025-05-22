@@ -68,6 +68,10 @@ export function createInstallerRouter({
         const installer = await ClaudeInstaller.create();
         await installer.purge();
       }),
+      config: t.procedure.query(async () => {
+        const installer = await ClaudeInstaller.create();
+        return installer.openConfig();
+      }),
     }),
     cursor: t.router({
       install: t.procedure

@@ -66,6 +66,15 @@ export function createClaudeCommand() {
           console.log(result);
         }),
       );
+
+    command
+      .command("config")
+      .description("Open claude config file")
+      .action(
+        actionWithErrorHandler(async () => {
+          const result = await gatewayClient.installer.claude.config.query();
+        }),
+      );
   }
 
   return command;

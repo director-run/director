@@ -26,3 +26,8 @@ export async function restartApp(app: App): Promise<void> {
   await execAsync(`open -a ${app}`);
   logger.info(`${app} has been restarted`);
 }
+
+export async function openFileInCode(filePath: string): Promise<void> {
+  logger.info(`opening ${filePath}`);
+  await execAsync(`code "${filePath}"`);
+}

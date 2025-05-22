@@ -3,7 +3,7 @@ import path from "node:path";
 import { isTest } from "@director.run/utilities/env";
 import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
 import { getLogger } from "@director.run/utilities/logger";
-import { App, restartApp } from "@director.run/utilities/os";
+import { App, openFileInCode, restartApp } from "@director.run/utilities/os";
 import { z } from "zod";
 
 export const CLAUDE_CONFIG_PATH = path.join(
@@ -59,6 +59,11 @@ export class ClaudeInstaller {
       name,
       transport,
     }));
+  }
+
+  public async openConfig() {
+    logger.info("opening claude config");
+    await openFileInCode(this.configPath);
   }
 
   public async restartClaude() {

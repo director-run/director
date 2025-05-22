@@ -70,7 +70,7 @@ export default function InstallPage() {
               {registry.data?.entries
                 .filter((entry) => {
                   const server = data.servers.find((server) => {
-                    return server.name === `registry:${entry.name}`;
+                    return server.name === `registry__${entry.name}`;
                   });
                   return !server;
                 })

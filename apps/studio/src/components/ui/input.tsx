@@ -7,9 +7,9 @@ function Input({ className, type, ...props }: ComponentProps<"input">) {
     <input
       type={type}
       className={cn(
-        "flex h-9 w-full border border-border-subtle bg-background-subtle px-2.5 py-1 text-foreground text-sm transition-colors",
+        "flex w-full rounded-lg bg-element px-2.5 py-2 text-foreground text-sm transition-colors",
         "file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm",
-        "placeholder:text-foreground-faint focus-visible:border-foreground focus-visible:bg-background focus-visible:outline-none",
+        "placeholder:text-foreground-subtle/70 focus-visible:bg-element-hover focus-visible:outline-none",
         "disabled:cursor-not-allowed disabled:opacity-50",
         className,
       )}

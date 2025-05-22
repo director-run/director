@@ -3,7 +3,7 @@ import { cva } from "class-variance-authority";
 export const textVariants = cva("", {
   variants: {
     variant: {
-      h1: "text-balance font-normal font-sans text-3xl leading-tight",
+      h1: "text-balance font-normal font-sans text-3xl leading-10",
       h2: "text-balance font-normal font-sans text-2xl leading-tight",
       h3: "text-balance font-normal font-sans text-lg leading-tight",
       h4: "text-balance font-normal font-sans text-base leading-tight",

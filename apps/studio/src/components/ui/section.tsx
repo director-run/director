@@ -5,7 +5,6 @@ import { Separator } from "./separator";
 import { textVariants } from "./typography";
 
 interface SectionProps extends React.ComponentProps<"section"> {
-  name?: string;
   asChild?: boolean;
 }
 
@@ -13,26 +12,14 @@ export function Section({
   children,
   className,
   asChild,
-  name,
   ...props
 }: SectionProps) {
   const Comp = asChild ? Slot : "section";
 
   return (
     <Comp
-      data-name={name}
       data-slot="section"
-      id={name?.toLowerCase().replace(/ /g, "-")}
-      className={cn(
-        "relative flex scroll-m-20 flex-col gap-y-8",
-        "before:font-mono after:font-mono",
-        name && "py-10",
-        name &&
-          "before:absolute before:top-0 before:block before:h-4 before:text-foreground-faint before:text-xs before:uppercase before:tracking-widest before:content-['<<<'attr(data-name)'>>>']",
-        name &&
-          "after:absolute after:bottom-0 after:block after:h-4 after:text-foreground-faint after:text-xs after:uppercase after:tracking-widest after:content-['<<</'attr(data-name)'>>>']",
-        className,
-      )}
+      className={cn("relative flex scroll-m-20 flex-col gap-y-8", className)}
       {...props}
     >
       {children}
@@ -46,7 +33,11 @@ export function SectionHeader({
   ...props
 }: React.ComponentProps<"header">) {
   return (
-    <header className={cn("flex flex-col gap-3", className)} {...props}>
+    <header
+      data-slot="section-header"
+      className={cn("flex flex-col gap-2", className)}
+      {...props}
+    >
       {children}
     </header>
   );
@@ -70,6 +61,7 @@ export function SectionTitle({
 
   return (
     <Comp
+      data-slot="section-title"
       className={cn(textVariants({ variant, invisibles }), className)}
       {...props}
     >
@@ -95,6 +87,7 @@ export function SectionDescription({
 
   return (
     <Comp
+      data-slot="section-description"
       className={cn(
         textVariants({ variant: "p", invisibles }),
         "text-foreground-subtle",
@@ -110,5 +103,5 @@ export function SectionDescription({
 export const SectionSeparator = (
   props: React.ComponentProps<typeof Separator>,
 ) => {
-  return <Separator {...props} />;
+  return <Separator data-slot="section-separator" {...props} />;
 };

@@ -6,23 +6,23 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import type { ComponentPropsWithoutRef } from "react";
 import { useFormContext } from "react-hook-form";
-import { Label } from "../ui/label";
-import { Textarea } from "../ui/textarea";
+import { Label } from "../label";
 import { CommonFieldProps } from "./types";
 
-type TextareaFieldProps = CommonFieldProps &
-  ComponentPropsWithoutRef<typeof Textarea>;
+type InputFieldProps = CommonFieldProps &
+  ComponentPropsWithoutRef<typeof Input>;
 
-export function TextareaField({
+export function InputField({
   description,
   label,
   name,
   helperLabel,
   hideErrors = false,
   ...props
-}: TextareaFieldProps) {
+}: InputFieldProps) {
   const form = useFormContext();
 
   return (
@@ -43,7 +43,7 @@ export function TextareaField({
               </div>
             )}
             <FormControl>
-              <Textarea {...props} {...field} />
+              <Input {...props} {...field} />
             </FormControl>
             {description && <FormDescription>{description}</FormDescription>}
             {!hideErrors && <FormMessage />}

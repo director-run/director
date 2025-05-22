@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
+import { Logo } from "../ui/logo";
 
 export function ConnectionStatusDialog() {
   const isClient = useIsClient();
@@ -46,11 +47,10 @@ export function ConnectionStatusDialog() {
       open={(data === undefined && isFetchedAfterMount) || isRefetchError}
     >
       <DialogContent dismissable={false}>
-        <DialogHeader>
+        <Logo />
+        <DialogHeader className="pt-3">
           <DialogTitle>Director is connecting…</DialogTitle>
-          <DialogDescription>
-            This may take a few seconds. Please don't close this window.
-          </DialogDescription>
+          <DialogDescription>This may take a few seconds.</DialogDescription>
         </DialogHeader>
       </DialogContent>
     </Dialog>

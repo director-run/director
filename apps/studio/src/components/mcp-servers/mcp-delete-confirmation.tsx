@@ -1,29 +1,18 @@
 "use client";
 
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/trpc/client";
+import { Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { ReactNode, useState } from "react";
-import { Loader } from "../ui/loader";
+import { useState } from "react";
+import { ConfirmDialog } from "../ui/confirm-dialog";
 
 interface McpDeleteConfirmationProps {
   proxyId: string;
   serverId: string;
-  children?: ReactNode;
 }
 
 export function McpDeleteConfirmation({
-  children,
   proxyId,
   serverId,
 }: McpDeleteConfirmationProps) {
@@ -40,41 +29,17 @@ export function McpDeleteConfirmation({
   });
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-      <AlertDialogTrigger asChild>
-        {children ?? <Button className="self-start">Delete server</Button>}
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel
-            className="text-foreground-inverse"
-            disabled={mutation.isPending}
-          >
-            Cancel
-          </AlertDialogCancel>
-
-          <Button
-            type="button"
-            variant="inverse"
-            onClick={async (event) => {
-              event.preventDefault();
-              await mutation.mutateAsync({ proxyId, serverName: serverId });
-            }}
-          >
-            {mutation.isPending ? (
-              <Loader className="text-foreground-subtle" />
-            ) : (
-              "Delete"
-            )}
-          </Button>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <ConfirmDialog
+      title="Delete this server"
+      description="Are you sure you want to delete this server? This action cannot be undone."
+      open={isOpen}
+      onOpenChange={setIsOpen}
+      onConfirm={() => mutation.mutateAsync({ proxyId, serverName: serverId })}
+    >
+      <Button size="icon" className="self-start">
+        <Trash2Icon />
+        <span className="sr-only">Delete server</span>
+      </Button>
+    </ConfirmDialog>
   );
 }

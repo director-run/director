@@ -47,9 +47,9 @@ export class Database {
       ...proxy,
       servers: (proxy.servers || []).map((s) => ({
         ...s,
-        name: slugify(s.name, { lower: true, trim: true }),
+        name: slugify(s.name, { lower: true, strict: true, trim: true }),
       })),
-      id: slugify(proxy.name, { lower: true, trim: true }),
+      id: slugify(proxy.name, { lower: true, strict: true, trim: true }),
     };
 
     store.proxies.push(newProxy);
@@ -94,7 +94,7 @@ export class Database {
 
     Object.assign(proxy, {
       ...attributes,
-      servers: (attributes.servers || []).map((s) => ({
+      servers: (attributes.servers || proxy.servers || []).map((s) => ({
         ...s,
         name: slugify(s.name, { lower: true, trim: true }),
       })),

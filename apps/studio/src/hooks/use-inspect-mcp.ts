@@ -57,6 +57,7 @@ export function useInspectMcp(proxyId: string, serverId?: string) {
         }),
       ]).then(() => {
         setIsLoading(false);
+        client.close();
       });
     });
 

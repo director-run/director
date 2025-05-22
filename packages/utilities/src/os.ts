@@ -1,4 +1,5 @@
 import { exec, execSync } from "node:child_process";
+import { existsSync } from "node:fs";
 import { promisify } from "node:util";
 import { getLogger } from "./logger";
 
@@ -50,4 +51,8 @@ export function isCommandInstalled(commandName: string): boolean {
   } catch (error) {
     return false;
   }
+}
+
+export function isFilePresent(filePath: string): boolean {
+  return existsSync(filePath);
 }

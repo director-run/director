@@ -1,16 +1,22 @@
-import { existsSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { isTest } from "@director.run/utilities/env";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
 import { getLogger } from "@director.run/utilities/logger";
-import { App, openFileInCode, restartApp } from "@director.run/utilities/os";
+import {
+  App,
+  isCommandInstalled,
+  isFilePresent,
+  openFileInCode,
+  restartApp,
+} from "@director.run/utilities/os";
 import { z } from "zod";
 
+export const CLAUDE_COMMAND = "claude";
 export const CLAUDE_CONFIG_PATH = path.join(
   os.homedir(),
-  "Library/Application Support/Claude/claude_desktp_config.json",
+  "Library/Application Support/Claude/claude_desktop_config.json",
 );
 export const CLAUDE_CONFIG_KEY_PREFIX = "director__";
 
@@ -27,10 +33,17 @@ export class ClaudeInstaller {
 
   public static async create(configPath: string = CLAUDE_CONFIG_PATH) {
     logger.info(`reading config from ${configPath}`);
-    if (!existsSync(configPath)) {
-      throw new AppError(ErrorCode.NOT_FOUND, "Claude config file not found", {
-        configPath,
-      });
+    if (!isClaudeInstalled()) {
+      throw new AppError(
+        ErrorCode.NOT_FOUND,
+        `Claude desktop app is not installed command: ${CLAUDE_COMMAND}`,
+      );
+    }
+    if (!isClaudeConfigPresent()) {
+      throw new AppError(
+        ErrorCode.NOT_FOUND,
+        `Claude config file not found at ${configPath}`,
+      );
     }
     const config = await readJSONFile<ClaudeConfig>(configPath);
     return new ClaudeInstaller({
@@ -110,3 +123,11 @@ export type ClaudeServerEntry = {
   name: string;
   transport: ClaudeMCPServer;
 };
+
+export function isClaudeInstalled(): boolean {
+  return isCommandInstalled(CLAUDE_COMMAND);
+}
+
+export function isClaudeConfigPresent(): boolean {
+  return isFilePresent(CLAUDE_CONFIG_PATH);
+}

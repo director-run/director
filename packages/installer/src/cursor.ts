@@ -7,8 +7,8 @@ import { getLogger } from "@director.run/utilities/logger";
 import { isCommandInstalled, isFilePresent } from "@director.run/utilities/os";
 import { z } from "zod";
 
-const CURSOR_COMMAND = "curor";
-const CURSOR_CONFIG_PATH = path.join(os.homedir(), ".cursor/mp.json");
+const CURSOR_COMMAND = "cursor";
+const CURSOR_CONFIG_PATH = path.join(os.homedir(), ".cursor/mcp.json");
 
 export const CURSOR_CONFIG_KEY_PREFIX = "director__";
 

@@ -81,21 +81,6 @@ describe("Registry Router", () => {
       });
     });
 
-    test("should add a 'registry__' prefix to the server name", async () => {
-      const updatedProxy =
-        await harness.client.registry.addServerFromRegistry.mutate({
-          proxyId: proxy.id,
-          entryName: "foo",
-          parameters: {
-            FIRST_PARAMETER: "test",
-            SECOND_PARAMETER: "test2",
-          },
-        });
-
-      expect(updatedProxy.servers).toHaveLength(1);
-      expect(updatedProxy.servers[0].name).toBe("registry__foo");
-    });
-
     test("should add store the registry entry in the server attributes", async () => {
       const updatedProxy =
         await harness.client.registry.addServerFromRegistry.mutate({
@@ -108,8 +93,9 @@ describe("Registry Router", () => {
         });
 
       expect(updatedProxy.servers).toHaveLength(1);
+      expect(updatedProxy.servers[0].name).toBe("foo");
       expect(updatedProxy.servers[0].source?.name).toEqual("registry");
-      expect(updatedProxy.servers[0].source?.entryId).toEqual(registryEntry.id);
+      expect(updatedProxy.servers[0].source?.entryId).toEqual("foo");
       expect(updatedProxy.servers[0].source?.entryData).toEqual(registryEntry);
     });
 

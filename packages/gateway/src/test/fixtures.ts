@@ -21,7 +21,7 @@ export const makeStdioTargetConfig = (params: {
 
 export function makeFooBarServerStdioConfig() {
   return makeStdioTargetConfig({
-    name: "Foo",
+    name: "foo",
     command: "bun",
     args: [
       "-e",

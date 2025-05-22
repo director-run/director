@@ -12,7 +12,7 @@ export function createCursorConfig(entries: CursorServerEntry[]): CursorConfig {
 }
 
 export function createCursorServerEntry(params?: {name?: string, url?: string}): CursorServerEntry {
-  const name = slugify(params?.name ?? faker.hacker.noun());
+  const name = slugify(params?.name ?? `${faker.hacker.noun()} ${faker.hacker.noun()}`);
   return {
     name,
     url: faker.internet.url(),

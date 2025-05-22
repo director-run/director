@@ -8,9 +8,17 @@ import { cn } from "@/lib/cn";
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
 const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
-const DropdownMenuGroup = DropdownMenuPrimitive.Group;
 const DropdownMenuPortal = DropdownMenuPrimitive.Portal;
 const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
+
+const DropdownMenuGroup = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Group>) => {
+  return (
+    <DropdownMenuPrimitive.Group className={cn("p-1", className)} {...props} />
+  );
+};
 
 const DropdownMenuContent = ({
   className,
@@ -25,7 +33,7 @@ const DropdownMenuContent = ({
       side={side}
       align={align}
       className={cn(
-        "popover overflow-y-auto overflow-x-hidden font-mono text-xs uppercase leading-none tracking-wide",
+        "overflow-y-auto overflow-x-hidden rounded-xl bg-element text-sm tracking-wide",
         "max-h-[var(--radix-dropdown-menu-content-available-height)] min-w-48 max-w-72",
         "radix-state-[closed]:fade-out-0 radix-state-[open]:fade-in-0 radix-state-[closed]:zoom-out-95 radix-state-[open]:zoom-in-95 radix-state-[closed]:animate-out radix-state-[open]:animate-in",
         "radix-side-[bottom]:slide-in-from-top-2 radix-side-[left]:slide-in-from-right-2 radix-side-[right]:slide-in-from-left-2 radix-side-[top]:slide-in-from-bottom-2 origin-[--radix-dropdown-menu-content-transform-origin]",
@@ -45,8 +53,8 @@ const DropdownMenuItem = ({
 }) => (
   <DropdownMenuPrimitive.Item
     className={cn(
-      "group relative flex h-7 cursor-default select-none items-center gap-2 px-2 outline-none transition-colors",
-      "focus:bg-background/25 focus:text-foreground-inverse data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "group relative flex h-7 cursor-default select-none items-center gap-2 rounded-lg px-2 outline-none transition-colors",
+      "focus:bg-element-active focus:text-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       "[&>svg]:size-4 [&>svg]:shrink-0",
       inset && "pl-8",
       className,
@@ -108,7 +116,7 @@ const DropdownMenuLabel = ({
 }) => (
   <DropdownMenuPrimitive.Label
     className={cn(
-      "select-none px-2 py-1.5 text-[11px] text-foreground-inverse/50 uppercase",
+      "select-none px-2 py-1.5 font-medium text-[10px] text-foreground-subtle uppercase tracking-wider",
       inset && "pl-8",
       className,
     )}

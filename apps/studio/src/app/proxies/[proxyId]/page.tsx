@@ -1,13 +1,8 @@
 "use client";
 
-import { ProxyTargetAttributes } from "@director.run/mcp/types";
-import { SettingsIcon } from "lucide-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
-
-import { CursorInstaller } from "@/components/installers/cursor-installer";
 import { McpServerSheet } from "@/components/mcp-servers/mcp-server-sheet";
 import { McpToolsTable } from "@/components/mcp-servers/mcp-tools-table";
+import { ProxyInstallers } from "@/components/proxies/proxy-installers";
 import { ProxySettingsSheet } from "@/components/proxies/proxy-settings-sheet";
 import { RegistryDialog } from "@/components/registry/registry-dialog";
 import { RegistryEntryDialog } from "@/components/registry/registry-entry-dialog";
@@ -30,6 +25,10 @@ import {} from "@/components/ui/sheet";
 import { useProxy } from "@/hooks/use-proxy";
 import { proxyQuerySerializer } from "@/hooks/use-proxy-query";
 import { getDeterministicColor } from "@/lib/deterministic-colors";
+import { ProxyTargetAttributes } from "@director.run/mcp/types";
+import { SettingsIcon } from "lucide-react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 
 function ServerListItem({
   server,
@@ -139,12 +138,10 @@ export default function ProxyPage() {
             <h3>Usage</h3>
           </SectionTitle>
           <SectionDescription>
-            Start using your proxy with your favourite tools.
+            Easily add your proxy to your favourite tools.
           </SectionDescription>
         </SectionHeader>
-        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-          <CursorInstaller installed={installers.cursor} proxyId={proxy.id} />
-        </div>
+        <ProxyInstallers proxyId={proxy.id} />
       </Section>
 
       <SectionSeparator />

@@ -1,12 +1,31 @@
+import { Gateway } from "@director.run/gateway/gateway";
 import { proxyHTTPToStdio } from "@director.run/mcp/transport";
-import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { makeTable } from "@director.run/utilities/cli";
+import {
+  actionWithErrorHandler,
+  printDirectorAscii,
+} from "@director.run/utilities/cli";
 import { joinURL } from "@director.run/utilities/url";
 import { Command } from "commander";
 import { gatewayClient } from "../client";
 import { env } from "../config";
 
 export function registerCoreCommands(program: Command) {
+  program
+    .command("serve")
+    .description("Start the director service")
+    .action(
+      actionWithErrorHandler(async () => {
+        printDirectorAscii();
+
+        await Gateway.start({
+          port: env.GATEWAY_PORT,
+          databaseFilePath: env.DB_FILE_PATH,
+          registryURL: env.REGISTRY_URL,
+        });
+      }),
+    );
+
   program
     .command("ls")
     .description("List all proxies")

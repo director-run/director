@@ -8,7 +8,6 @@ import { registerCoreCommands } from "../src/commands/core";
 import { createCursorCommands } from "../src/commands/cursor";
 import { createDebugCommands } from "../src/commands/debug";
 import { createRegistryCommands } from "../src/commands/registry";
-import { createServiceCommands } from "../src/commands/service";
 
 const program = new DirectorCommand();
 
@@ -27,7 +26,6 @@ registerCoreCommands(program);
 program.addCommand(createClaudeCommand());
 program.addCommand(createCursorCommands());
 program.addCommand(createRegistryCommands());
-program.addCommand(createServiceCommands());
 
 if (isDevelopment()) {
   program.addCommand(createDebugCommands());

@@ -18,10 +18,15 @@ const logger = getLogger("restartApp");
 
 export enum App {
   CLAUDE = "Claude",
+  CURSOR = "Cursor",
 }
 
 export async function restartApp(app: App): Promise<void> {
   logger.info(`restarting ${app}...`);
+  if (!isAppRunning(app)) {
+    logger.info(`${app} is not running, skipping restart`);
+    return;
+  }
   await execAsync(`osascript -e 'tell application "${app}" to quit'`);
   await sleep(2000);
   await execAsync(`open -a ${app}`);
@@ -38,10 +43,10 @@ export async function openFileInCode(filePath: string): Promise<void> {
  * @param commandName - The name of the command to check
  * @returns boolean - true if the command is installed, false otherwise
  */
-export function isCommandInstalled(commandName: string): boolean {
+export function isAppInstalled(app: App): boolean {
   try {
     const isWindows = process.platform === "win32";
-    const command = isWindows ? `where ${commandName}` : `which ${commandName}`;
+    const command = isWindows ? `where ${app}` : `which ${app}`;
 
     execSync(command, {
       stdio: "pipe",
@@ -55,4 +60,20 @@ export function isCommandInstalled(commandName: string): boolean {
 
 export function isFilePresent(filePath: string): boolean {
   return existsSync(filePath);
+}
+
+/**
+ * Checks if an application is running on macOS
+ * @param appName - The exact name of the application process
+ * @returns Promise<boolean> - true if the application is running, false otherwise
+ */
+export function isAppRunning(app: App): boolean {
+  try {
+    // Use pgrep -x for exact process name matching
+    execSync(`pgrep -x "${app}"`, { stdio: "pipe" });
+    return true;
+  } catch (error) {
+    // pgrep returns exit code 1 when no processes are found
+    return false;
+  }
 }

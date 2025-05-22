@@ -121,7 +121,8 @@ async function restartConnectedClients(proxy: ProxyServer) {
     logger.info(`claude is installed`);
     const claudeInstaller = await ClaudeInstaller.create();
     if (claudeInstaller.isInstalled(serverName)) {
-      logger.info(`${proxy.id} is intalled in claude`);
+      logger.info(`${proxy.id} is intalled in claude, restarting...`);
+      await claudeInstaller.restartClaude();
     } else {
       logger.info(`${proxy.id} is not installed in claude`);
     }

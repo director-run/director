@@ -4,7 +4,7 @@ import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
 import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
 import { getLogger } from "@director.run/utilities/logger";
-import { isCommandInstalled, isFilePresent } from "@director.run/utilities/os";
+import { App, isAppInstalled, isFilePresent } from "@director.run/utilities/os";
 import { z } from "zod";
 
 const CURSOR_COMMAND = "cursor";
@@ -104,7 +104,7 @@ export type CursorServerEntry = {
 };
 
 export function isCursorInstalled(): boolean {
-  return isCommandInstalled(CURSOR_COMMAND);
+  return isAppInstalled(App.CURSOR);
 }
 
 export function isCursorConfigPresent(): boolean {

@@ -1,6 +1,9 @@
 vi.mock("@director.run/utilities/os", () => ({
-  isCommandInstalled: vi.fn(() => true),
+  isAppInstalled: vi.fn(() => true),
   isFilePresent: vi.fn(() => true),
+  App: {
+    CLAUDE: "Claude",
+  },
 }));
 
 import fs from "node:fs/promises";

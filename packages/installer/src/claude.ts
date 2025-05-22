@@ -6,7 +6,7 @@ import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
 import { getLogger } from "@director.run/utilities/logger";
 import {
   App,
-  isCommandInstalled,
+  isAppInstalled,
   isFilePresent,
   openFileInCode,
   restartApp,
@@ -129,7 +129,7 @@ export type ClaudeServerEntry = {
 };
 
 export function isClaudeInstalled(): boolean {
-  return isCommandInstalled(CLAUDE_COMMAND);
+  return isAppInstalled(App.CLAUDE);
 }
 
 export function isClaudeConfigPresent(): boolean {

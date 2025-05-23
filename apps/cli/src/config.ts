@@ -12,7 +12,7 @@ export const env = createEnv({
       .string()
       .optional()
       .default(`https://registry.director.run`),
-    REGISTRY_API_WRITE_KEY: z.string().optional().default(""),
+    REGISTRY_API_KEY: z.string().optional().default(""),
     DB_FILE_PATH: z
       .string()
       .optional()

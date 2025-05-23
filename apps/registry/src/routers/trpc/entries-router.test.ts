@@ -19,7 +19,7 @@ describe("Entries Router", () => {
     });
     client = createRegistryClient(`http://localhost:${env.PORT}`);
     authenticatedClient = createRegistryClient(`http://localhost:${env.PORT}`, {
-      apiKey: env.API_WRITE_KEY,
+      apiKey: env.API_KEY,
     });
     await registry.store.purge();
   });

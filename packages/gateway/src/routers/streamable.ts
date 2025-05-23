@@ -16,29 +16,29 @@ export const createStreamableRouter = ({
 }) => {
   const router = express.Router();
   const transports: Map<string, StreamableHTTPServerTransport> = new Map();
-  router.get(
-    "/status",
-    asyncHandler((req, res) => {
-      // iterate over all transports and get the status of each transport
-      // console.log("--------------------------------");
-      // console.log("--------------------------------");
-      // console.log("--------------------------------");
+  // router.get(
+  //   "/status",
+  //   asyncHandler((req, res) => {
+  //     // iterate over all transports and get the status of each transport
+  //     // console.log("--------------------------------");
+  //     // console.log("--------------------------------");
+  //     // console.log("--------------------------------");
 
-      // console.log("Transports:");
-      // for (const sessionId of transports.keys()) {
-      //   const transport = transports.get(sessionId);
-      //   console.log(sessionId);
-      // }
-      // console.log("--------------------------------");
-      // console.log("--------------------------------");
-      // console.log("--------------------------------");
+  //     // console.log("Transports:");
+  //     // for (const sessionId of transports.keys()) {
+  //     //   const transport = transports.get(sessionId);
+  //     //   console.log(sessionId);
+  //     // }
+  //     // console.log("--------------------------------");
+  //     // console.log("--------------------------------");
+  //     // console.log("--------------------------------");
 
-      res.json({
-        status: "ok",
-        transports: Array.from(transports.keys()),
-      });
-    }),
-  );
+  //     res.json({
+  //       status: "ok",
+  //       transports: Array.from(transports.keys()),
+  //     });
+  //   }),
+  // );
 
   router.use(express.json());
   router.post(

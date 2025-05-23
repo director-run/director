@@ -1,11 +1,12 @@
-import { actionWithErrorHandler } from "@director.run/utilities/cli";
-import { isDevelopment } from "@director.run/utilities/env";
-import { Command } from "commander";
+import {
+  DirectorCommand,
+  actionWithErrorHandler,
+} from "@director.run/utilities/cli";
 import { gatewayClient } from "../client";
 import { env } from "../config";
 
 export function createCursorCommands() {
-  const command = new Command("cursor");
+  const command = new DirectorCommand("cursor");
 
   command
     .command("ls")
@@ -43,7 +44,7 @@ export function createCursorCommands() {
     );
 
   command
-    .command("restart")
+    .debugCommand("restart")
     .description("Restart cursor")
     .action(
       actionWithErrorHandler(async () => {
@@ -52,26 +53,24 @@ export function createCursorCommands() {
       }),
     );
 
-  if (isDevelopment()) {
-    command
-      .command("purge")
-      .description("Purge all cursor MCP servers")
-      .action(
-        actionWithErrorHandler(async () => {
-          const result = await gatewayClient.installer.cursor.purge.mutate();
-          console.log(result);
-        }),
-      );
+  command
+    .debugCommand("purge")
+    .description("Purge all cursor MCP servers")
+    .action(
+      actionWithErrorHandler(async () => {
+        const result = await gatewayClient.installer.cursor.purge.mutate();
+        console.log(result);
+      }),
+    );
 
-    command
-      .command("config")
-      .description("Open the cursor config file")
-      .action(
-        actionWithErrorHandler(() => {
-          gatewayClient.installer.cursor.config.query();
-        }),
-      );
-  }
+  command
+    .debugCommand("config")
+    .description("Open the cursor config file")
+    .action(
+      actionWithErrorHandler(() => {
+        gatewayClient.installer.cursor.config.query();
+      }),
+    );
 
   return command;
 }

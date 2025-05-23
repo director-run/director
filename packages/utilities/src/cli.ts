@@ -47,7 +47,8 @@ export function makeTable(head: string[]) {
 
 declare module "commander" {
   interface Command {
-    _debug?: boolean; // or whatever type _hidden should be
+    _debug?: boolean; // is it a debug command?
+    _helpOption?: Option;
   }
 }
 
@@ -125,16 +126,30 @@ function makeHelpText(program: DirectorCommand) {
     });
 
   lines.push("");
-  lines.push(makeHeader(`flags`));
-  lines.push(leftPadding + `--help      Show help for command`);
-  lines.push(leftPadding + `--version   Show director version`);
-  lines.push("");
+  const opts: Option[] = [program._helpOption, ...program.options].filter(
+    (opt) => opt !== undefined,
+  );
+
+  if (opts.length) {
+    lines.push(makeHeader(`flags`));
+    opts.forEach((opt) => {
+      lines.push(
+        concat([
+          leftPadding,
+          opt.flags,
+          alignRight(opt.description, opt.flags.length),
+        ]),
+      );
+    });
+    lines.push("");
+  }
 
   if (program.examples) {
     lines.push(makeHeader(`examples`));
     lines.push("  " + program.examples.trim());
     lines.push("");
   }
+  lines.push("");
 
   return lines.join("\n");
 }
@@ -161,7 +176,7 @@ const makeLine = (cmd: Command) => {
     .filter((arg) => arg !== "")
     .join(" ");
 
-  const usage = concat([
+  const leftSide = concat([
     concat([
       cmd.parent && cmd.parent.parent ? cmd.parent?.name() : undefined,
       cmd.name(),
@@ -170,10 +185,18 @@ const makeLine = (cmd: Command) => {
     cmd.options.length ? optional("options") : "",
   ]);
 
-  const padding = " ".repeat(Math.max(0, 45 - usage.length));
+  const rightSide = cmd.description() || chalk.red("TODO");
 
-  const text = `${leftPadding}${usage}${padding}${cmd.description() || chalk.red("TODO")}`;
+  const text = concat([
+    leftPadding,
+    leftSide,
+    alignRight(rightSide, leftSide.length),
+  ]);
   return cmd._debug ? chalk.yellow(text) : text;
+};
+
+const alignRight = (t: string, xIndex: number) => {
+  return " ".repeat(Math.max(0, 45 - xIndex)) + t;
 };
 
 const required = (t: string) => ["<", t, ">"].join("");

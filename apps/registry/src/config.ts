@@ -8,6 +8,7 @@ export const env = createEnv({
   envVars: {
     PORT: z.number({ coerce: true }),
     DATABASE_URL: z.string(),
+    API_WRITE_KEY: z.string(),
   },
 });
 

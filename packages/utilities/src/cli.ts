@@ -82,12 +82,29 @@ function makeHelpText(program: DirectorCommand) {
 
   const lines = [];
 
-  lines.push(program.description());
+  lines.push(program.description().trim());
   lines.push("");
   lines.push(chalk.white.bold(`USAGE`));
-  lines.push(`  director ${required("command")} [subcommand] [flags]`);
+  lines.push(
+    `  ` +
+      [
+        program.parent ? program.parent.name() : "",
+        program.name(),
+        required("command"),
+        "[subcommand]",
+        "[flags]",
+      ].join(" "),
+  );
   lines.push("");
-  lines.push(chalk.white.bold(`CORE COMMANDS`));
+
+  if (program.parent) {
+    lines.push(
+      chalk.white.bold(`${program.name().toLocaleUpperCase()} COMMANDS`),
+    );
+  } else {
+    // only root commands have core commands
+    lines.push(chalk.white.bold(`CORE COMMANDS`));
+  }
 
   const makeLine = (cmd: Command) => {
     const args = cmd.registeredArguments
@@ -108,7 +125,8 @@ function makeHelpText(program: DirectorCommand) {
 
     const padding = " ".repeat(Math.max(0, 45 - usage.length));
 
-    return `  ${usage}${padding}${cmd.description() || chalk.red("TODO")}`;
+    const text = `  ${usage}${padding}${cmd.description() || chalk.red("TODO")}`;
+    return cmd._debug ? chalk.yellow(text) : text;
   };
 
   program.commands
@@ -118,15 +136,10 @@ function makeHelpText(program: DirectorCommand) {
     .forEach((cmd) => {
       if (cmd.commands.length) {
         lines.push("");
-        lines.push(chalk.white.bold(cmd.name().toUpperCase()));
+        lines.push(chalk.white.bold(cmd.name().toLocaleUpperCase()));
 
         cmd.commands.forEach((subcommand) => {
-          const isDebug = subcommand._debug;
-          if (isDebug) {
-            lines.push(chalk.yellow(makeLine(subcommand)));
-          } else {
-            lines.push(makeLine(subcommand));
-          }
+          lines.push(makeLine(subcommand));
         });
       } else {
         lines.push(makeLine(cmd));

@@ -18,14 +18,10 @@ export function createRegistryCommands() {
           pageIndex: 0,
           pageSize: 100,
         });
-        const table = makeTable(["Name", "Homepage", "Description"]);
+        const table = makeTable(["Name", "Description"]);
         table.push(
           ...items.entries.map((item) => {
-            return [
-              item.name,
-              item.homepage,
-              truncateDescription(item.description),
-            ];
+            return [item.name, truncateDescription(item.description)];
           }),
         );
         console.log(table.toString());

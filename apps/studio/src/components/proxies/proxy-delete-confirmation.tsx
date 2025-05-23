@@ -1,10 +1,10 @@
 "use client";
 
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { toast } from "@/components/ui/toast";
 import { trpc } from "@/trpc/client";
 import { useRouter } from "next/navigation";
 import { ReactNode, useState } from "react";
-import { toast } from "../ui/toast";
 
 interface ProxyDeleteConfirmationProps {
   proxyId: string;

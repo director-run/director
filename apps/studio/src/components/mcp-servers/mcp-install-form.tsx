@@ -7,9 +7,9 @@ import z from "zod";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { InputField } from "@/components/ui/form/input-field";
+import { toast } from "@/components/ui/toast";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { trpc } from "@/trpc/client";
-import { toast } from "../ui/toast";
 
 interface McpInstallFormProps {
   entry: EntryGetParams;

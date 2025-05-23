@@ -2,11 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { toast } from "@/components/ui/toast";
 import { trpc } from "@/trpc/client";
 import { Trash2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "../ui/toast";
 
 interface McpDeleteConfirmationProps {
   proxyId: string;

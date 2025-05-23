@@ -5,13 +5,13 @@ import { Form } from "@/components/ui/form";
 import { InputField } from "@/components/ui/form/input-field";
 import { TextareaField } from "@/components/ui/form/textarea-field";
 import { Loader } from "@/components/ui/loader";
+import { toast } from "@/components/ui/toast";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { trpc } from "@/trpc/client";
 import { ProxyAttributes } from "@director.run/gateway/db/schema";
 import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
 import { z } from "zod";
-import { toast } from "../ui/toast";
 
 const proxySchema = z.object({
   name: z.string().trim().min(1, "Required"),

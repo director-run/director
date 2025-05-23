@@ -1,3 +1,5 @@
+#!/usr/bin/env -S node --no-warnings --enable-source-maps
+
 import { env } from "../src/config";
 import { Registry } from "../src/registry";
 
@@ -6,4 +8,6 @@ const registry = Registry.start({
   connectionString: env.DATABASE_URL,
 });
 
-module.exports = registry.app;
+// biome-ignore lint/style/noDefaultExport: required for vercel functions
+export default registry.app;
+// module.exports = registry.app;

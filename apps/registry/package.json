@@ -13,7 +13,8 @@
     "cli": "bun run bin/cli.ts",
     "build": "bun build --production --target=node bin/*.ts --outdir dist",
     "prepare": "bun run build",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "dev": "bun --watch bin/api.ts"
   },
   "exports": {
     "./*": "./src/*.ts"

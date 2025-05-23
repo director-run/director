@@ -51,7 +51,10 @@ export class Gateway {
     app.use(logRequests());
     app.use("/", createSSERouter({ proxyStore }));
     app.use("/", createStreamableRouter({ proxyStore }));
-    app.use("/trpc", createTRPCExpressMiddleware({ proxyStore, registryURL }));
+    app.use(
+      "/trpc",
+      createTRPCExpressMiddleware({ proxyStore, registryURL, cliPath }),
+    );
     app.all("*", notFoundHandler);
     app.use(errorRequestHandler);
 

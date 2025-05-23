@@ -1,3 +1,4 @@
+import path from "node:path";
 import { Gateway } from "@director.run/gateway/gateway";
 import { proxyHTTPToStdio } from "@director.run/mcp/transport";
 import { makeTable } from "@director.run/utilities/cli";
@@ -24,6 +25,7 @@ export function registerCoreCommands(program: Command) {
             port: env.GATEWAY_PORT,
             databaseFilePath: env.DB_FILE_PATH,
             registryURL: env.REGISTRY_URL,
+            cliPath: path.join(__dirname, "../../bin/cli.ts"),
           });
         } catch (error) {
           console.error("Fatal error starting gateway", error);

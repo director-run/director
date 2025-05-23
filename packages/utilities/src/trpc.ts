@@ -63,18 +63,24 @@ export const t = {
   middleware: trpcBase.middleware,
 };
 
-export function createClient<TRouter extends AnyRouter>(url: string) {
+export function createClient<TRouter extends AnyRouter>(
+  baseUrl: string,
+  baseOptions?: { headers?: Record<string, string> },
+) {
   return createTRPCClient<TRouter>({
     links: [
       httpBatchLink({
-        url,
+        url: baseUrl,
         transformer:
           superjson as TRouter["_def"]["_config"]["$types"]["transformer"],
         async fetch(url, options) {
-          return fetch(url, options).catch((error) => {
+          return fetch(url, {
+            ...options,
+            headers: { ...baseOptions?.headers, ...options?.headers },
+          }).catch((error) => {
             if (error.code === "ConnectionRefused") {
               throw new Error(
-                `Could not connect to the service on ${url}. Is it running?`,
+                `Could not connect to the service on ${baseUrl}. Is it running?`,
               );
             }
             throw error;

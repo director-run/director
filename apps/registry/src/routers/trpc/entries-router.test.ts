@@ -16,6 +16,9 @@ describe("Entries Router", () => {
       connectionString: env.DATABASE_URL,
     });
     client = createRegistryClient(`http://localhost:${env.PORT}`);
+    autorizedClient = createRegistryClient(`http://localhost:${env.PORT}`, {
+      apiKey: env.API_WRITE_KEY,
+    });
     await registry.store.purge();
   });
 
@@ -26,6 +29,16 @@ describe("Entries Router", () => {
   beforeEach(async () => {
     await registry.store.purge();
     await registry.store.entries.addEntries(makeTestEntries(TOTAL_ENTRIES));
+  });
+
+  describe("getSecretEntryByName", () => {
+    it("should be protected", async () => {
+      await expect(
+        client.entries.getSecretEntryByName.query({
+          name: "secret",
+        }),
+      ).rejects.toThrow();
+    });
   });
 
   describe("getEntries", () => {

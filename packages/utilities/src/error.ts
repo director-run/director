@@ -20,6 +20,7 @@ export enum ErrorCode {
   NOT_FOUND = "NOT_FOUND",
   BAD_REQUEST = "BAD_REQUEST",
   CONNECTION_REFUSED = "CONNECTION_REFUSED",
+  UNAUTHORIZED = "UNAUTHORIZED",
 }
 
 export function isAppError(error: unknown): error is AppError {

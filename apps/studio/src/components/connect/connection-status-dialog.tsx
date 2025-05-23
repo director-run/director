@@ -1,16 +1,16 @@
 "use client";
 
-import { useIsClient } from "@/hooks/use-is-client";
-import { trpc } from "@/trpc/client";
-import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "../ui/dialog";
-import { Logo } from "../ui/logo";
+} from "@/components/ui/dialog";
+import { Logo } from "@/components/ui/logo";
+import { useIsClient } from "@/hooks/use-is-client";
+import { trpc } from "@/trpc/client";
+import { useEffect, useState } from "react";
 
 export function ConnectionStatusDialog() {
   const isClient = useIsClient();

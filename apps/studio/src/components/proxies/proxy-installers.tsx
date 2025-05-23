@@ -21,6 +21,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { toast } from "@/components/ui/toast";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { useProxy } from "@/hooks/use-proxy";
 import { getDeterministicColor } from "@/lib/deterministic-colors";
@@ -118,6 +119,10 @@ function CursorMenuItem({ proxyId }: ProxyInstallersProps) {
   const utils = trpc.useUtils();
   const onSuccessHandler = () => {
     utils.installer.cursor.list.invalidate();
+    toast({
+      title: "Proxy installed",
+      description: "This proxy was successfully installed in Cursor.",
+    });
   };
   const installMutation = trpc.installer.cursor.install.useMutation({
     onSuccess: onSuccessHandler,
@@ -138,6 +143,10 @@ function ClaudeMenuItem({ proxyId }: ProxyInstallersProps) {
   const utils = trpc.useUtils();
   const onSuccessHandler = () => {
     utils.installer.claude.list.invalidate();
+    toast({
+      title: "Proxy installed",
+      description: "This proxy was successfully installed in Claude.",
+    });
   };
   const installMutation = trpc.installer.claude.install.useMutation({
     onSuccess: onSuccessHandler,
@@ -161,6 +170,10 @@ function CursorBadgeButton({ proxyId }: ProxyInstallersProps) {
   const utils = trpc.useUtils();
   const onSuccessHandler = () => {
     utils.installer.cursor.list.invalidate();
+    toast({
+      title: "Proxy uninstalled",
+      description: "This proxy was successfully uninstalled from Cursor.",
+    });
   };
   const uninstallMutation = trpc.installer.cursor.uninstall.useMutation({
     onSuccess: onSuccessHandler,
@@ -189,6 +202,10 @@ function ClaudeBadgeButton({ proxyId }: ProxyInstallersProps) {
   const utils = trpc.useUtils();
   const onSuccessHandler = () => {
     utils.installer.claude.list.invalidate();
+    toast({
+      title: "Proxy uninstalled",
+      description: "This proxy was successfully uninstalled from Claude.",
+    });
   };
   const uninstallMutation = trpc.installer.claude.uninstall.useMutation({
     onSuccess: onSuccessHandler,

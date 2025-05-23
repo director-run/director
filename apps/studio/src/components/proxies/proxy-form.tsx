@@ -1,16 +1,17 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import { InputField } from "@/components/ui/form/input-field";
+import { TextareaField } from "@/components/ui/form/textarea-field";
+import { Loader } from "@/components/ui/loader";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { trpc } from "@/trpc/client";
 import { ProxyAttributes } from "@director.run/gateway/db/schema";
 import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
 import { z } from "zod";
-import { Button } from "../ui/button";
-import { Form } from "../ui/form";
-import { InputField } from "../ui/form/input-field";
-import { TextareaField } from "../ui/form/textarea-field";
-import { Loader } from "../ui/loader";
+import { toast } from "../ui/toast";
 
 const proxySchema = z.object({
   name: z.string().trim().min(1, "Required"),
@@ -64,6 +65,10 @@ export function NewProxyForm() {
   const mutation = trpc.store.create.useMutation({
     onSuccess: async (response) => {
       await utils.store.getAll.refetch();
+      toast({
+        title: "Proxy created",
+        description: "This proxy was successfully created.",
+      });
       router.push(`/proxies/${response.id}`);
     },
   });
@@ -102,6 +107,10 @@ export function UpdateProxyForm(
     onSuccess: async () => {
       await utils.store.getAll.invalidate();
       await utils.store.get.invalidate({ proxyId: props.id });
+      toast({
+        title: "Proxy updated",
+        description: "This proxy was successfully updated.",
+      });
       router.refresh();
     },
   });

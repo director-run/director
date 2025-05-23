@@ -1,5 +1,12 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
+import {
+  Section,
+  SectionHeader,
+  SectionSeparator,
+  SectionTitle,
+} from "@/components/ui/section";
 import {
   Sheet,
   SheetActions,
@@ -10,13 +17,6 @@ import {
 } from "@/components/ui/sheet";
 import { useProxy } from "@/hooks/use-proxy";
 import { useProxyQuery } from "@/hooks/use-proxy-query";
-import { Badge } from "../ui/badge";
-import {
-  Section,
-  SectionHeader,
-  SectionSeparator,
-  SectionTitle,
-} from "../ui/section";
 import { McpDeleteConfirmation } from "./mcp-delete-confirmation";
 import { McpDescriptionList } from "./mcp-description-list";
 import { McpToolsTable } from "./mcp-tools-table";

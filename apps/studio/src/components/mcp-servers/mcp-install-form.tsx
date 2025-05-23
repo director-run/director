@@ -1,13 +1,15 @@
 "use client";
 
-import { useZodForm } from "@/hooks/use-zod-form";
-import { trpc } from "@/trpc/client";
 import { EntryGetParams } from "@director.run/registry/db/schema";
 import { useRouter } from "next/navigation";
 import z from "zod";
-import { Button } from "../ui/button";
-import { Form } from "../ui/form";
-import { InputField } from "../ui/form/input-field";
+
+import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import { InputField } from "@/components/ui/form/input-field";
+import { useZodForm } from "@/hooks/use-zod-form";
+import { trpc } from "@/trpc/client";
+import { toast } from "../ui/toast";
 
 interface McpInstallFormProps {
   entry: EntryGetParams;
@@ -23,6 +25,10 @@ export function McpInstallForm({ entry, proxyId }: McpInstallFormProps) {
   const installMutation = trpc.registry.addServerFromRegistry.useMutation({
     onSuccess: () => {
       utils.store.get.invalidate({ proxyId });
+      toast({
+        title: "Proxy installed",
+        description: "This proxy was successfully installed.",
+      });
       router.push(`/proxies/${proxyId}`);
     },
   });

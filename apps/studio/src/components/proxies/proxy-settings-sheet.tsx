@@ -1,5 +1,7 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetActions,
@@ -13,8 +15,6 @@ import { useProxy } from "@/hooks/use-proxy";
 import { ProxyAttributes } from "@director.run/gateway/db/schema";
 import { TrashIcon } from "lucide-react";
 import { ReactNode, useState } from "react";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
 import { ProxyDeleteConfirmation } from "./proxy-delete-confirmation";
 import { UpdateProxyForm } from "./proxy-form";
 

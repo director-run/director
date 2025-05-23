@@ -1,20 +1,20 @@
 "use client";
 
-import { useInspectMcp } from "@/hooks/use-inspect-mcp";
-import Markdown from "react-markdown";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "../ui/accordion";
-import { Badge } from "../ui/badge";
-import {} from "../ui/description-list";
+} from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
+import {} from "@/components/ui/description-list";
 import {
   EmptyState,
   EmptyStateDescription,
   EmptyStateTitle,
-} from "../ui/empty-state";
+} from "@/components/ui/empty-state";
+import { useInspectMcp } from "@/hooks/use-inspect-mcp";
+import Markdown from "react-markdown";
 
 interface McpToolTableProps {
   proxyId: string;

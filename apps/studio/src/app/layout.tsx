@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { TRPCProvider } from "@/trpc/client";
 
 import "./globals.css";
+import { Toaster } from "@/components/ui/toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,6 +43,7 @@ export default function RootLayout({
           <TRPCProvider>
             <NuqsAdapter>{children}</NuqsAdapter>
             <ConnectionStatusDialog />
+            <Toaster />
           </TRPCProvider>
         </ThemeProvider>
       </body>

@@ -2,7 +2,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { type RegistryClient, createRegistryClient } from "../../client";
 import { env } from "../../config";
 import { Registry } from "../../registry";
-import { makeTestEntries, makeTestEntry } from "../../test/fixtures/entries";
+import { makeTestEntries } from "../../test/fixtures/entries";
 
 describe("Entries Router", () => {
   let registry: Registry;
@@ -38,20 +38,21 @@ describe("Entries Router", () => {
     });
 
     it("should be protected", async () => {
-      await registry.store.entries.addEntry({
-        ...makeTestEntry(),
-        name: "secret",
-      });
+      await registry.store.purge();
+      expectToThrowUnauthorized(unauthenticatedClient.entries.purge.mutate({}));
       expectToThrowUnauthorized(
-        unauthenticatedClient.entries.getSecretEntryByName.query({
-          name: "secret",
-        }),
+        unauthenticatedClient.entries.enrich.mutate({}),
       );
-      expect(
-        await authenticatedClient.entries.getSecretEntryByName.query({
-          name: "secret",
-        }),
-      ).toHaveProperty("name", "secret");
+      expectToThrowUnauthorized(
+        unauthenticatedClient.entries.import.mutate({}),
+      );
+      expectToThrowUnauthorized(unauthenticatedClient.entries.stats.query({}));
+      expect(await authenticatedClient.entries.stats.query({})).toEqual({
+        enriched: 0,
+        notEnriched: 0,
+        notGithub: 0,
+        total: 0,
+      });
     });
   });
 

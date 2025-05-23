@@ -2,6 +2,9 @@ import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
 import { protectedProcedure } from ".";
 import type { Store } from "../../db/store";
+import { enrichEntries } from "../../enrichment/enrich";
+import { fetchRaycastRegistry } from "../../importers/raycast";
+import { getSeedEntries } from "../../importers/seed";
 
 export function createEntriesRouter({ store }: { store: Store }) {
   return t.router({
@@ -13,12 +16,27 @@ export function createEntriesRouter({ store }: { store: Store }) {
         }),
       )
       .query(({ input }) => store.entries.paginateEntries(input)),
+
     getEntryByName: t.procedure
       .input(z.object({ name: z.string() }))
       .query(({ input }) => store.entries.getEntryByName(input.name)),
 
-    getSecretEntryByName: protectedProcedure
-      .input(z.object({ name: z.string() }))
-      .query(({ input }) => store.entries.getEntryByName(input.name)),
+    purge: protectedProcedure.input(z.object({})).mutation(async () => {
+      await store.entries.deleteAllEntries();
+    }),
+
+    import: protectedProcedure.input(z.object({})).mutation(async () => {
+      await store.entries.deleteAllEntries();
+      await store.entries.addEntries(await fetchRaycastRegistry());
+      await store.entries.addEntries(getSeedEntries());
+    }),
+
+    enrich: protectedProcedure.input(z.object({})).mutation(async () => {
+      await enrichEntries(store);
+    }),
+
+    stats: protectedProcedure.input(z.object({})).query(async () => {
+      return await store.entries.getStatistics();
+    }),
   });
 }

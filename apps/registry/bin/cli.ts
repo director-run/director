@@ -3,7 +3,6 @@
 import { Command } from "commander";
 import packageJson from "../package.json";
 import { registerEntriesCommands } from "../src/commands/entries";
-import { registerServerCommands } from "../src/commands/server";
 import { env } from "../src/config";
 import { createStore } from "../src/db/store";
 
@@ -17,7 +16,6 @@ program
 const store = createStore({ connectionString: env.DATABASE_URL });
 
 program.addCommand(registerEntriesCommands(store));
-program.addCommand(registerServerCommands());
 
 program.hook("postAction", async () => {
   await store.close();

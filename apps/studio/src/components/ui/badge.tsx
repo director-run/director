@@ -1,12 +1,15 @@
+"use client";
+
 import { type VariantProps, cva } from "class-variance-authority";
 import * as React from "react";
 
 import { cn } from "@/lib/cn";
+import { Slot } from "@radix-ui/react-slot";
 
 const badgeVariants = cva(
   [
-    "inline-flex shrink-0 items-center justify-center gap-x-1 whitespace-nowrap rounded-md px-2 transition-colors duration-200",
-    "h-6 font-mono text-xs uppercase leading-4 tracking-wide",
+    "inline-flex shrink-0 items-center justify-center gap-x-1 whitespace-nowrap rounded-md transition-colors duration-200",
+    "font-mono uppercase tracking-wide",
   ],
   {
     variants: {
@@ -45,17 +48,31 @@ const badgeVariants = cva(
         mint: "bg-accent-mint/15 text-accent-mint dark:bg-accent-mint/70 dark:text-foreground",
         sky: "bg-accent-sky/15 text-accent-sky dark:bg-accent-sky/70 dark:text-foreground",
       },
+      size: {
+        default: "h-6 px-2 text-xs leading-4",
+        lg: "h-8 px-3 font-medium text-xs leading-5 tracking-wider",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
     },
   },
 );
 
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeVariants> {}
+    VariantProps<typeof badgeVariants> {
+  asChild?: boolean;
+}
 
-function Badge({ className, variant, ...props }: BadgeProps) {
+function Badge({ className, variant, size, asChild, ...props }: BadgeProps) {
+  const Comp = asChild ? Slot : "div";
   return (
-    <div className={cn(badgeVariants({ variant }), className)} {...props} />
+    <Comp
+      className={cn(badgeVariants({ variant, size }), className)}
+      {...props}
+    />
   );
 }
 

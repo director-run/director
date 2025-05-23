@@ -21,6 +21,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/toast";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { useProxy } from "@/hooks/use-proxy";
@@ -45,7 +46,9 @@ export function ProxyInstallers({ proxyId }: ProxyInstallersProps) {
     (key) => !installers[key as keyof typeof installers],
   );
 
-  const endpoint = `http://localhost:3673${proxy?.path}`;
+  const endpoint = `http://localhost:3673/${proxy?.id}/mcp`;
+  const sseEndpoint = `http://localhost:3673/${proxy?.id}/sse`;
+  const stdioCommand = `director http2stdio ${sseEndpoint}`;
 
   return (
     <div className="flex flex-row gap-x-2">
@@ -91,23 +94,86 @@ export function ProxyInstallers({ proxyId }: ProxyInstallersProps) {
             <DialogTitle>Connect manually</DialogTitle>
             <DialogDescription>
               Director works with any MCP enabled product. Below you'll find
-              this proxy's endpoint to use via HTTP or SSE.
+              endpoints for both Streamable HTTP and SSE, as well as STDIO via
+              our CLI.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex w-full flex-row items-center gap-x-2 rounded-xl bg-element py-1 pr-1 pl-3">
-            <span className="block truncate font-mono text-sm">{endpoint}</span>
-            <Button
-              className="ml-auto"
-              size="icon"
-              variant="secondary"
-              onClick={async () => {
-                await copy(endpoint);
-              }}
-            >
-              <CopyIcon />
-              <span className="sr-only">Copy to clipboard</span>
-            </Button>
+          <div className="flex flex-col gap-y-6 overflow-hidden pt-2">
+            <div className="flex flex-col gap-y-2">
+              <Label>Streamable</Label>
+              <div className="flex w-full flex-row items-center gap-x-2 rounded-xl bg-element py-1 pr-1 pl-3">
+                <span className="block truncate font-mono text-sm">
+                  {endpoint}
+                </span>
+                <Button
+                  className="ml-auto"
+                  size="icon"
+                  variant="secondary"
+                  onClick={async () => {
+                    await copy(endpoint);
+                    toast({
+                      title: "Copied to clipboard",
+                      description:
+                        "The endpoint has been copied to your clipboard.",
+                    });
+                  }}
+                >
+                  <CopyIcon />
+                  <span className="sr-only">Copy to clipboard</span>
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-y-2">
+              <Label>SSE</Label>
+              <div className="flex w-full flex-row items-center gap-x-2 rounded-xl bg-element py-1 pr-1 pl-3">
+                <span className="block truncate font-mono text-sm">
+                  {sseEndpoint}
+                </span>
+                <Button
+                  className="ml-auto"
+                  size="icon"
+                  variant="secondary"
+                  onClick={async () => {
+                    await copy(sseEndpoint);
+                    toast({
+                      title: "Copied to clipboard",
+                      description:
+                        "The endpoint has been copied to your clipboard.",
+                    });
+                  }}
+                >
+                  <CopyIcon />
+                  <span className="sr-only">Copy to clipboard</span>
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-y-2 overflow-hidden">
+              <Label>STDIO</Label>
+              <div className="flex w-full flex-row items-center gap-x-2 overflow-hidden rounded-xl bg-element py-1 pr-1 pl-3">
+                <span className="block truncate font-mono text-sm">
+                  {stdioCommand}
+                </span>
+                <Button
+                  className="ml-auto"
+                  size="icon"
+                  variant="secondary"
+                  onClick={async () => {
+                    await copy(stdioCommand);
+                    toast({
+                      title: "Copied to clipboard",
+                      description:
+                        "The command has been copied to your clipboard.",
+                    });
+                  }}
+                >
+                  <CopyIcon />
+                  <span className="sr-only">Copy to clipboard</span>
+                </Button>
+              </div>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

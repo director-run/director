@@ -33,28 +33,6 @@ export function useInspectMcp(proxyId: string, serverId?: string) {
             }),
           );
         }),
-        client.listPrompts().then(({ prompts }) => {
-          setPrompts(
-            prompts.filter((prompt) => {
-              if (serverId) {
-                return prompt.description?.startsWith(`[${serverId}]`);
-              }
-
-              return true;
-            }),
-          );
-        }),
-        client.listResources().then(({ resources }) => {
-          setResources(
-            resources.filter((resource) => {
-              if (serverId) {
-                return resource.description?.startsWith(`[${serverId}]`);
-              }
-
-              return true;
-            }),
-          );
-        }),
       ]).then(() => {
         setIsLoading(false);
         client.close();

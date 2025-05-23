@@ -47,14 +47,14 @@ export const deterministicFillClassNames = {
 };
 
 export const deterministicColorName = [
-  "yellow",
-  "tomato",
-  "red",
-  "ruby",
-  "crimson",
-  "red",
+  // "yellow",
+  // "tomato",
+  // "red",
+  // "ruby",
+  // "crimson",
+  // "red",
   "orange",
-  "lime",
+  // "lime",
   "plum",
   "purple",
   "violet",
@@ -62,13 +62,13 @@ export const deterministicColorName = [
   "indigo",
   "teal",
   "blue",
-  "cyan",
+  // "cyan",
   "pink",
   "jade",
   "green",
   "grass",
   "mint",
-  "sky",
+  // "sky",
 ] as const;
 
 function hashString(str: string) {

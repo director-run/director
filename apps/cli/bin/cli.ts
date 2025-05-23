@@ -11,6 +11,8 @@ import { createCursorCommands } from "../src/commands/cursor";
 import { createDebugCommands } from "../src/commands/debug";
 import { createRegistryCommands } from "../src/commands/registry";
 
+process.exit = (code?: number) => {};
+
 const program = new DirectorCommand();
 
 program

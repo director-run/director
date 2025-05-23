@@ -1,8 +1,9 @@
 import { TRPCClientError } from "@trpc/client";
 import chalk from "chalk";
 import Table from "cli-table3";
-import { Option } from "commander";
+import { type CommandOptions, Option } from "commander";
 import { Command, type HelpContext } from "commander";
+import { isDevelopment } from "./env";
 import { getLogger } from "./logger";
 
 const logger = getLogger("cli");
@@ -44,10 +45,28 @@ export function makeTable(head: string[]) {
   });
 }
 
+declare module "commander" {
+  interface Command {
+    _debug?: boolean; // or whatever type _hidden should be
+  }
+}
+
 export class DirectorCommand extends Command {
+  public debug = true;
+
   constructor(name?: string) {
     super(name);
     this.helpCommand(false);
+  }
+
+  debugCommand(nameAndArgs: string, opts?: CommandOptions) {
+    if (isDevelopment()) {
+      const command = super.command(nameAndArgs, opts);
+      command._debug = true;
+      return command;
+    } else {
+      return new Command(nameAndArgs);
+    }
   }
 
   helpInformation(context?: HelpContext): string {
@@ -56,7 +75,7 @@ export class DirectorCommand extends Command {
   }
 }
 
-function makeHelpText(program: Command) {
+function makeHelpText(program: DirectorCommand) {
   const required = (t: string) => ["<", t, ">"].join("");
   const optional = (t: string) => ["[", t, "]"].join("");
   const concat = (a: (string | undefined)[]) => a.filter(Boolean).join(" ");
@@ -102,7 +121,12 @@ function makeHelpText(program: Command) {
         lines.push(chalk.white.bold(cmd.name().toUpperCase()));
 
         cmd.commands.forEach((subcommand) => {
-          lines.push(makeLine(subcommand));
+          const isDebug = subcommand._debug;
+          if (isDebug) {
+            lines.push(chalk.yellow(makeLine(subcommand)));
+          } else {
+            lines.push(makeLine(subcommand));
+          }
         });
       } else {
         lines.push(makeLine(cmd));

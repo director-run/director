@@ -10,7 +10,7 @@ import { createCursorCommands } from "../src/commands/cursor";
 import { createRegistryCommands } from "../src/commands/registry";
 
 // add this to prevent the program from exiting (useful for working on help text in live reload)
-// process.exit = (code?: number) => {};
+process.exit = (code?: number) => {};
 
 const program = new DirectorCommand();
 
@@ -24,5 +24,11 @@ registerCoreCommands(program);
 program.addCommand(createClaudeCommand());
 program.addCommand(createCursorCommands());
 program.addCommand(createRegistryCommands());
+
+program.addExamples(`
+  $ director create my-proxy
+  $ director registry install my-proxy iterm
+  $ director claude install my-proxy
+`);
 
 program.parse();

@@ -51,8 +51,11 @@ declare module "commander" {
   }
 }
 
+const leftPadding = " ".repeat(2);
+
 export class DirectorCommand extends Command {
   public debug = true;
+  public examples = "";
 
   constructor(name?: string) {
     super(name);
@@ -73,61 +76,36 @@ export class DirectorCommand extends Command {
     // return super.helpInformation(context);
     return makeHelpText(this);
   }
+
+  addExamples(examples: string) {
+    this.examples = examples;
+  }
 }
 
 function makeHelpText(program: DirectorCommand) {
-  const required = (t: string) => ["<", t, ">"].join("");
-  const optional = (t: string) => ["[", t, "]"].join("");
-  const concat = (a: (string | undefined)[]) => a.filter(Boolean).join(" ");
-
   const lines = [];
 
   lines.push(program.description().trim());
   lines.push("");
   lines.push(chalk.white.bold(`USAGE`));
   lines.push(
-    `  ` +
-      [
+    leftPadding +
+      concat([
         program.parent ? program.parent.name() : "",
         program.name(),
         required("command"),
         "[subcommand]",
         "[flags]",
-      ].join(" "),
+      ]),
   );
   lines.push("");
 
   if (program.parent) {
-    lines.push(
-      chalk.white.bold(`${program.name().toLocaleUpperCase()} COMMANDS`),
-    );
+    lines.push(makeHeader(`${program.name()} commands`));
   } else {
     // only root commands have core commands
-    lines.push(chalk.white.bold(`CORE COMMANDS`));
+    lines.push(makeHeader(`core commands`));
   }
-
-  const makeLine = (cmd: Command) => {
-    const args = cmd.registeredArguments
-      .map((arg) =>
-        arg.required ? required(arg.name()) : optional(arg.name()),
-      )
-      .filter((arg) => arg !== "")
-      .join(" ");
-
-    const usage = concat([
-      concat([
-        cmd.parent && cmd.parent.parent ? cmd.parent?.name() : undefined,
-        cmd.name(),
-      ]),
-      args,
-      cmd.options.length ? optional("options") : "",
-    ]);
-
-    const padding = " ".repeat(Math.max(0, 45 - usage.length));
-
-    const text = `  ${usage}${padding}${cmd.description() || chalk.red("TODO")}`;
-    return cmd._debug ? chalk.yellow(text) : text;
-  };
 
   program.commands
     .toSorted(
@@ -136,7 +114,7 @@ function makeHelpText(program: DirectorCommand) {
     .forEach((cmd) => {
       if (cmd.commands.length) {
         lines.push("");
-        lines.push(chalk.white.bold(cmd.name().toLocaleUpperCase()));
+        lines.push(makeHeader(cmd.name()));
 
         cmd.commands.forEach((subcommand) => {
           lines.push(makeLine(subcommand));
@@ -147,17 +125,16 @@ function makeHelpText(program: DirectorCommand) {
     });
 
   lines.push("");
-  lines.push(chalk.white.bold(`FLAGS`));
-  lines.push(`  --help      Show help for command`);
-  lines.push(`  --version   Show director version`);
+  lines.push(makeHeader(`flags`));
+  lines.push(leftPadding + `--help      Show help for command`);
+  lines.push(leftPadding + `--version   Show director version`);
   lines.push("");
 
-  lines.push(chalk.white.bold(`EXAMPLES`));
-  lines.push(`  $ director create my-proxy`);
-  lines.push(`  $ director registry install my-proxy iterm`);
-  lines.push(`  $ director claude install my-proxy`);
-  lines.push("");
-  lines.push("");
+  if (program.examples) {
+    lines.push(makeHeader(`examples`));
+    lines.push("  " + program.examples.trim());
+    lines.push("");
+  }
 
   return lines.join("\n");
 }
@@ -173,3 +150,32 @@ export function printDirectorAscii(): void {
                                          
                                          `);
 }
+
+const makeHeader = (text: string) => {
+  return chalk.white.bold(text.toLocaleUpperCase());
+};
+
+const makeLine = (cmd: Command) => {
+  const args = cmd.registeredArguments
+    .map((arg) => (arg.required ? required(arg.name()) : optional(arg.name())))
+    .filter((arg) => arg !== "")
+    .join(" ");
+
+  const usage = concat([
+    concat([
+      cmd.parent && cmd.parent.parent ? cmd.parent?.name() : undefined,
+      cmd.name(),
+    ]),
+    args,
+    cmd.options.length ? optional("options") : "",
+  ]);
+
+  const padding = " ".repeat(Math.max(0, 45 - usage.length));
+
+  const text = `${leftPadding}${usage}${padding}${cmd.description() || chalk.red("TODO")}`;
+  return cmd._debug ? chalk.yellow(text) : text;
+};
+
+const required = (t: string) => ["<", t, ">"].join("");
+const optional = (t: string) => ["[", t, "]"].join("");
+const concat = (a: (string | undefined)[]) => a.filter(Boolean).join(" ");

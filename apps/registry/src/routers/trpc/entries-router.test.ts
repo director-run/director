@@ -39,11 +39,11 @@ describe("Entries Router", () => {
         ...makeTestEntry(),
         name: "secret",
       });
-      await expect(
+      expectToThrowUnauthorized(
         client.entries.getSecretEntryByName.query({
           name: "secret",
         }),
-      ).rejects.toThrow("Unauthorized");
+      );
       expect(
         await authenticatedClient.entries.getSecretEntryByName.query({
           name: "secret",
@@ -101,3 +101,7 @@ describe("Entries Router", () => {
     });
   });
 });
+
+async function expectToThrowUnauthorized(p: Promise<unknown>) {
+  await expect(p).rejects.toThrow("Unauthorized");
+}

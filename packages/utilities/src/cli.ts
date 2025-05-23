@@ -5,6 +5,8 @@ import { type CommandOptions, Option } from "commander";
 import { Command, type HelpContext } from "commander";
 import { isDevelopment } from "./env";
 import { getLogger } from "./logger";
+import ora from "ora";
+import { turboBlue, turboRed } from "./cli/colors";
 
 const logger = getLogger("cli");
 
@@ -177,6 +179,14 @@ export function printDirectorAscii(): void {
 const makeHeader = (text: string) => {
   return chalk.white.bold(text.toLocaleUpperCase());
 };
+
+export const turboLoader = (text: string) =>
+  ora({
+    text,
+    spinner: {
+      frames: ["   ", turboBlue(">  "), turboBlue(">> "), turboBlue(">>>")],
+    },
+  });
 
 const makeLine = (cmd: Command) => {
   const args = cmd.registeredArguments

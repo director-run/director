@@ -74,7 +74,6 @@ export class DirectorCommand extends Command {
   }
 
   helpInformation(context?: HelpContext): string {
-    // return super.helpInformation(context);
     return makeHelpText(this);
   }
 

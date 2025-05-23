@@ -47,8 +47,6 @@ export class Gateway {
     const registryURL = attribs.registryURL;
     const cliPath = attribs.cliPath;
 
-    console.log("registryURL", registryURL);
-
     app.use(cors());
     app.use(logRequests());
     app.use("/", createSSERouter({ proxyStore }));

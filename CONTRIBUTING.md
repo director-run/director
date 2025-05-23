@@ -91,10 +91,5 @@ When you make code changes, please remember
 
 ## Releasing `director`
 
-Release workflow is handled by a github action that is triggered when a version tag is created
-
-```bash
-$ version=$(bun run desktop:version print) 
-$ git tag -a "v${version}" -m "Release v${version}" 
-$ git push origin "v${version}"
-```
+- See apps/cli/RELEASE.md
+- Registry & studio deploy automatically

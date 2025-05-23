@@ -6,8 +6,7 @@ import { makeTestEntries, makeTestEntry } from "../../test/fixtures/entries";
 
 describe("Entries Router", () => {
   let registry: Registry;
-  let client: RegistryClient;
-  let authenticatedClient: RegistryClient;
+  let unauthenticatedClient: RegistryClient;
 
   const TOTAL_ENTRIES = 20;
   const ENTRIES_PER_PAGE = 5;
@@ -17,10 +16,9 @@ describe("Entries Router", () => {
       port: env.PORT,
       connectionString: env.DATABASE_URL,
     });
-    client = createRegistryClient(`http://localhost:${env.PORT}`);
-    authenticatedClient = createRegistryClient(`http://localhost:${env.PORT}`, {
-      apiKey: env.API_KEY,
-    });
+    unauthenticatedClient = createRegistryClient(
+      `http://localhost:${env.PORT}`,
+    );
     await registry.store.purge();
   });
 
@@ -28,19 +26,24 @@ describe("Entries Router", () => {
     await registry.stop();
   });
 
-  beforeEach(async () => {
-    await registry.store.purge();
-    await registry.store.entries.addEntries(makeTestEntries(TOTAL_ENTRIES));
-  });
+  describe("private endpoints", () => {
+    let authenticatedClient: RegistryClient;
+    beforeAll(() => {
+      authenticatedClient = createRegistryClient(
+        `http://localhost:${env.PORT}`,
+        {
+          apiKey: env.API_KEY,
+        },
+      );
+    });
 
-  describe("getSecretEntryByName", () => {
     it("should be protected", async () => {
       await registry.store.entries.addEntry({
         ...makeTestEntry(),
         name: "secret",
       });
       expectToThrowUnauthorized(
-        client.entries.getSecretEntryByName.query({
+        unauthenticatedClient.entries.getSecretEntryByName.query({
           name: "secret",
         }),
       );
@@ -52,51 +55,57 @@ describe("Entries Router", () => {
     });
   });
 
-  describe("getEntries", () => {
-    it("should handle pagination correctly", async () => {
-      // Test first page
-      const result1 = await client.entries.getEntries.query({
-        pageIndex: 0,
-        pageSize: ENTRIES_PER_PAGE,
-      });
-      expect(result1.entries).toHaveLength(ENTRIES_PER_PAGE);
-      expect(result1.pagination).toEqual({
-        pageIndex: 0,
-        pageSize: ENTRIES_PER_PAGE,
-        totalItems: TOTAL_ENTRIES,
-        totalPages: Math.ceil(TOTAL_ENTRIES / ENTRIES_PER_PAGE),
-        hasNextPage: true,
-        hasPreviousPage: false,
-      });
+  describe("public endpoints", () => {
+    beforeEach(async () => {
+      await registry.store.purge();
+      await registry.store.entries.addEntries(makeTestEntries(TOTAL_ENTRIES));
+    });
+    describe("getEntries", () => {
+      it("should handle pagination correctly", async () => {
+        // Test first page
+        const result1 = await unauthenticatedClient.entries.getEntries.query({
+          pageIndex: 0,
+          pageSize: ENTRIES_PER_PAGE,
+        });
+        expect(result1.entries).toHaveLength(ENTRIES_PER_PAGE);
+        expect(result1.pagination).toEqual({
+          pageIndex: 0,
+          pageSize: ENTRIES_PER_PAGE,
+          totalItems: TOTAL_ENTRIES,
+          totalPages: Math.ceil(TOTAL_ENTRIES / ENTRIES_PER_PAGE),
+          hasNextPage: true,
+          hasPreviousPage: false,
+        });
 
-      // Test middle page
-      const result2 = await client.entries.getEntries.query({
-        pageIndex: 1,
-        pageSize: ENTRIES_PER_PAGE,
-      });
-      expect(result2.entries).toHaveLength(ENTRIES_PER_PAGE);
-      expect(result2.pagination).toEqual({
-        pageIndex: 1,
-        pageSize: ENTRIES_PER_PAGE,
-        totalItems: TOTAL_ENTRIES,
-        totalPages: Math.ceil(TOTAL_ENTRIES / ENTRIES_PER_PAGE),
-        hasNextPage: true,
-        hasPreviousPage: true,
-      });
+        // Test middle page
+        const result2 = await unauthenticatedClient.entries.getEntries.query({
+          pageIndex: 1,
+          pageSize: ENTRIES_PER_PAGE,
+        });
+        expect(result2.entries).toHaveLength(ENTRIES_PER_PAGE);
+        expect(result2.pagination).toEqual({
+          pageIndex: 1,
+          pageSize: ENTRIES_PER_PAGE,
+          totalItems: TOTAL_ENTRIES,
+          totalPages: Math.ceil(TOTAL_ENTRIES / ENTRIES_PER_PAGE),
+          hasNextPage: true,
+          hasPreviousPage: true,
+        });
 
-      // Test last page
-      const result3 = await client.entries.getEntries.query({
-        pageIndex: 3,
-        pageSize: ENTRIES_PER_PAGE,
-      });
-      expect(result3.entries).toHaveLength(ENTRIES_PER_PAGE);
-      expect(result3.pagination).toEqual({
-        pageIndex: 3,
-        pageSize: ENTRIES_PER_PAGE,
-        totalItems: TOTAL_ENTRIES,
-        totalPages: Math.ceil(TOTAL_ENTRIES / ENTRIES_PER_PAGE),
-        hasNextPage: false,
-        hasPreviousPage: true,
+        // Test last page
+        const result3 = await unauthenticatedClient.entries.getEntries.query({
+          pageIndex: 3,
+          pageSize: ENTRIES_PER_PAGE,
+        });
+        expect(result3.entries).toHaveLength(ENTRIES_PER_PAGE);
+        expect(result3.pagination).toEqual({
+          pageIndex: 3,
+          pageSize: ENTRIES_PER_PAGE,
+          totalItems: TOTAL_ENTRIES,
+          totalPages: Math.ceil(TOTAL_ENTRIES / ENTRIES_PER_PAGE),
+          hasNextPage: false,
+          hasPreviousPage: true,
+        });
       });
     });
   });

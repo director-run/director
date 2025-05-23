@@ -1,5 +1,6 @@
-import { DirectorCommand, makeTable } from "@director.run/utilities/cli";
+import { makeTable } from "@director.run/utilities/cli";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
+import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import chalk from "chalk";
 import { gatewayClient, registryClient } from "../client";
 

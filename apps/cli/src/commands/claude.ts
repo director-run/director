@@ -1,7 +1,7 @@
 import {
-  DirectorCommand,
   actionWithErrorHandler,
 } from "@director.run/utilities/cli";
+import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import {} from "commander";
 import { gatewayClient } from "../client";
 import { env } from "../config";

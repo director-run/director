@@ -9,8 +9,12 @@ import { getLogger } from "@director.run/utilities/logger";
 
 const logger = getLogger("gateway/helpers");
 
-export function getPathForProxy(proxyId: string) {
+export function getStreamablePathForProxy(proxyId: string) {
   return `/${proxyId}/mcp`;
+}
+
+export function getSSEPathForProxy(proxyId: string) {
+  return `/${proxyId}/sse`;
 }
 
 export async function restartConnectedClients(proxy: ProxyServer) {

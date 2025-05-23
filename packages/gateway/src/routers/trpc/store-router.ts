@@ -1,7 +1,10 @@
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
 import { ProxyTargetSchema } from "../../db/schema";
-import { getPathForProxy, restartConnectedClients } from "../../helpers";
+import {
+  getStreamablePathForProxy,
+  restartConnectedClients,
+} from "../../helpers";
 import { ProxyServerStore } from "../../proxy-server-store";
 
 const ProxyCreateSchema = z.object({
@@ -19,7 +22,7 @@ export function createProxyStoreRouter({
     getAll: t.procedure.query(async () => {
       return (await proxyStore.getAll()).map((proxy) => ({
         ...proxy.toPlainObject(),
-        path: getPathForProxy(proxy.id),
+        path: getStreamablePathForProxy(proxy.id),
       }));
     }),
 
@@ -28,7 +31,7 @@ export function createProxyStoreRouter({
       .query(({ input }) => {
         return {
           ...proxyStore.get(input.proxyId).toPlainObject(),
-          path: getPathForProxy(input.proxyId),
+          path: getStreamablePathForProxy(input.proxyId),
         };
       }),
 

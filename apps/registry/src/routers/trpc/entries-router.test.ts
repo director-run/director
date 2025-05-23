@@ -2,7 +2,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { type RegistryClient, createRegistryClient } from "../../client";
 import { env } from "../../config";
 import { Registry } from "../../registry";
-import { makeTestEntries } from "../../test/fixtures/entries";
+import { makeTestEntries, makeTestEntry } from "../../test/fixtures/entries";
 
 describe("Entries Router", () => {
   let registry: Registry;
@@ -35,16 +35,20 @@ describe("Entries Router", () => {
 
   describe("getSecretEntryByName", () => {
     it("should be protected", async () => {
+      await registry.store.entries.addEntry({
+        ...makeTestEntry(),
+        name: "secret",
+      });
       await expect(
         client.entries.getSecretEntryByName.query({
           name: "secret",
         }),
       ).rejects.toThrow("Unauthorized");
-      await expect(
-        authenticatedClient.entries.getSecretEntryByName.query({
+      expect(
+        await authenticatedClient.entries.getSecretEntryByName.query({
           name: "secret",
         }),
-      ).rejects.not.toThrow();
+      ).toHaveProperty("name", "secret");
     });
   });
 

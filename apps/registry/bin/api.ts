@@ -10,4 +10,3 @@ const registry = Registry.start({
 
 // biome-ignore lint/style/noDefaultExport: required for vercel functions
 export default registry.app;
-// module.exports = registry.app;

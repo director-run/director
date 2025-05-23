@@ -26,14 +26,14 @@ interface McpServerSheetProps {
 }
 
 export function McpServerSheet({ proxyId }: McpServerSheetProps) {
-  const { serverId, setProxyQuery } = useProxyQuery();
+  const { serverId, toolId, setProxyQuery } = useProxyQuery();
   const { proxy } = useProxy(proxyId);
 
   const server = proxy?.servers.find((server) => server.name === serverId);
 
   return (
     <Sheet
-      open={serverId !== null && !!server}
+      open={serverId !== null && toolId === null && !!server}
       onOpenChange={() => setProxyQuery({ serverId: null })}
     >
       <SheetContent>
@@ -47,7 +47,7 @@ export function McpServerSheet({ proxyId }: McpServerSheetProps) {
             </SheetActions>
 
             <SheetHeader className="pt-6">
-              <SheetTitle>{server?.name.replace("registry__", "")}</SheetTitle>
+              <SheetTitle>{server?.name}</SheetTitle>
               <SheetDescription>
                 Installed on{" "}
                 <span className="text-foreground">{proxy?.name}</span>

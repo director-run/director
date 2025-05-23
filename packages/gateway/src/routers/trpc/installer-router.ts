@@ -4,7 +4,7 @@ import { isProduction } from "@director.run/utilities/env";
 import { t } from "@director.run/utilities/trpc";
 import { joinURL } from "@director.run/utilities/url";
 import { z } from "zod";
-import { getStreamablePathForProxy } from "../../helpers";
+import { getSSEPathForProxy, getStreamablePathForProxy } from "../../helpers";
 import type { ProxyServerStore } from "../../proxy-server-store";
 
 export function createInstallerRouter({
@@ -86,7 +86,7 @@ export function createInstallerRouter({
           const installer = await CursorInstaller.create();
           await installer.install({
             name: proxy.id,
-            url: joinURL(input.baseUrl, getStreamablePathForProxy(proxy.id)),
+            url: joinURL(input.baseUrl, getSSEPathForProxy(proxy.id)),
           });
         }),
       restart: t.procedure.mutation(async () => {

@@ -1,20 +1,16 @@
 "use client";
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import Link from "next/link";
+
 import { Badge } from "@/components/ui/badge";
-import {} from "@/components/ui/description-list";
 import {
   EmptyState,
   EmptyStateDescription,
   EmptyStateTitle,
 } from "@/components/ui/empty-state";
 import { useInspectMcp } from "@/hooks/use-inspect-mcp";
-import Markdown from "react-markdown";
+import { proxyQuerySerializer } from "@/hooks/use-proxy-query";
+import { getDeterministicColor } from "@/lib/deterministic-colors";
 
 interface McpToolTableProps {
   proxyId: string;
@@ -47,32 +43,30 @@ export function McpToolsTable({ proxyId, serverId }: McpToolTableProps) {
   }
 
   return (
-    <Accordion className="flex flex-col gap-y-1" type="multiple">
+    <div className="flex flex-row flex-wrap gap-2.5">
       {tools.map((tool) => {
         const server = tool.description?.match(/\[([^\]]+)\]/)?.[1];
 
         return (
-          <AccordionItem key={tool.name} value={tool.name}>
-            <AccordionTrigger>
-              <div className="flex flex-row items-center gap-x-2">
-                {!serverId && (
-                  <Badge variant="inverse">
-                    {server?.replace("registry__", "")}
-                  </Badge>
-                )}
-                <span className="whitespace-pre font-mono text-sm leading-6">
-                  {tool.name}
-                </span>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent>
-              <Markdown>
-                {tool.description?.replace(`[${server}] `, "")}
-              </Markdown>
-            </AccordionContent>
-          </AccordionItem>
+          <Badge
+            variant={server ? getDeterministicColor(server) : "secondary"}
+            key={tool.name}
+            size="lg"
+            asChild
+          >
+            <Link
+              href={`/proxies/${proxyId}${proxyQuerySerializer({
+                toolId: tool.name,
+                serverId: server,
+              })}`}
+              scroll={false}
+            >
+              <span className="">{tool.name}</span>
+              {!serverId && <span className="opacity-80">({server})</span>}
+            </Link>
+          </Badge>
         );
       })}
-    </Accordion>
+    </div>
   );
 }

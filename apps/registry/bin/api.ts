@@ -3,12 +3,6 @@
 import { env } from "../src/config";
 import { Registry } from "../src/registry";
 
-console.log("FUNCTION CALL");
-console.log({
-  port: env.PORT,
-  connectionString: env.DATABASE_URL,
-});
-
 const registry = Registry.start({
   port: env.PORT,
   connectionString: env.DATABASE_URL,

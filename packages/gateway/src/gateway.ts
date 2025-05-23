@@ -37,6 +37,7 @@ export class Gateway {
     port: number;
     databaseFilePath: string;
     registryURL: string;
+    cliPath: string;
   }) {
     logger.info(`starting director gateway`);
 
@@ -44,6 +45,7 @@ export class Gateway {
     const proxyStore = await ProxyServerStore.create(db);
     const app = express();
     const registryURL = attribs.registryURL;
+    const cliPath = attribs.cliPath;
 
     app.use(cors());
     app.use(logRequests());

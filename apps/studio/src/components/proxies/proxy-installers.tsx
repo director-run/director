@@ -148,9 +148,7 @@ function ClaudeMenuItem({ proxyId }: ProxyInstallersProps) {
       onSelect={() =>
         installMutation.mutate({
           proxyId,
-          baseUrl: "http://localhost:3673",
-          // TODO: FIX THIS
-          cliPath: "claude",
+          baseUrl: "http://localhost:3673", // TODO: This is the gateway URL (get it from wherever it's stored...)
         })
       }
     >

@@ -8,16 +8,18 @@ import { createProxyStoreRouter } from "./store-router";
 export function createAppRouter({
   proxyStore,
   registryURL,
+  cliPath,
 }: {
   proxyStore: ProxyServerStore;
   registryURL: string;
+  cliPath: string;
 }) {
   return t.router({
     health: t.procedure.query(() => ({
       status: "ok",
     })),
     store: createProxyStoreRouter({ proxyStore }),
-    installer: createInstallerRouter({ proxyStore }),
+    installer: createInstallerRouter({ proxyStore, cliPath }),
     registry: createRegistryRouter({ registryURL, proxyStore }),
   });
 }
@@ -25,12 +27,14 @@ export function createAppRouter({
 export function createTRPCExpressMiddleware({
   proxyStore,
   registryURL,
+  cliPath,
 }: {
   proxyStore: ProxyServerStore;
   registryURL: string;
+  cliPath: string;
 }) {
   return trpcExpress.createExpressMiddleware({
-    router: createAppRouter({ proxyStore, registryURL }),
+    router: createAppRouter({ proxyStore, registryURL, cliPath }),
   });
 }
 

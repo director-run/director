@@ -25,6 +25,7 @@ export class IntegrationTestHarness {
             port: TEST_PORT,
             databaseFilePath: path.join(__dirname, "db.test.json"),
             registryURL: "http://localhost:3000",
+            cliPath: "this/cli/path/is/not/used/in/tests",
         });
 
         const client = createGatewayClient(`http://localhost:${gateway.port}`);

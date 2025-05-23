@@ -1,7 +1,7 @@
 import picocolors from "picocolors";
 
-export const turboBlue = hex("#0099F7");
-export const turboRed = hex("#F11712");
+export const blue = hex("#0099F7");
+export const red = hex("#F11712");
 export const yellow = hex("#FFFF00");
 
 function hex (color: string): ((text: string) => string) {

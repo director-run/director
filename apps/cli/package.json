@@ -16,7 +16,7 @@
     "build": "bun build --production --target=node bin/cli.ts --outdir dist",
     "release": "bun publish --access public --omit=peer",
     "prepare": "bun run build",
-    "cli:dev": "bun --watch bin/cli.ts"
+    "dev": "bun --watch bin/api.ts"
   },
   "dependencies": {},
   "peerDependencies": {

@@ -76,6 +76,42 @@ export function createRegistryCommands() {
       }),
     );
 
+  command
+    .debugCommand("purge")
+    .description("Delete all entries from the database")
+    .action(
+      actionWithErrorHandler(async () => {
+        await registryClient.entries.purge.mutate({});
+      }),
+    );
+
+  command
+    .debugCommand("import")
+    .description("Seed the database with entries from awesome-mcp-servers")
+    .action(
+      actionWithErrorHandler(async () => {
+        await registryClient.entries.import.mutate({});
+      }),
+    );
+
+  command
+    .debugCommand("enrich")
+    .description("enrich entries")
+    .action(
+      actionWithErrorHandler(async () => {
+        await registryClient.entries.enrich.mutate({});
+      }),
+    );
+
+  command
+    .debugCommand("stats")
+    .description("get counts")
+    .action(
+      actionWithErrorHandler(async () => {
+        console.log(await registryClient.entries.stats.query({}));
+      }),
+    );
+
   return command;
 }
 

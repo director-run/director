@@ -86,6 +86,15 @@ export class DirectorCommand extends Command {
 function makeHelpText(program: DirectorCommand) {
   const lines = [];
 
+  if (isDevelopment()) {
+    lines.push(
+      chalk.yellow(
+        "🚧 running in development mode, debug commands in yellow 🚧",
+      ),
+    );
+    lines.push("");
+  }
+
   lines.push(program.description().trim());
   lines.push("");
   lines.push(chalk.white.bold(`USAGE`));

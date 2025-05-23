@@ -1,11 +1,6 @@
-import { TRPCClientError } from "@trpc/client";
-import chalk from "chalk";
-import Table from "cli-table3";
-import { type CommandOptions, Option } from "commander";
+import { type CommandOptions } from "commander";
 import { Command, type HelpContext } from "commander";
 import { isDevelopment } from "../env";
-import ora from "ora";
-import { blue, red } from "./colors";
 import { makeHelpText } from "./help";
 
 

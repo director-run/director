@@ -1,11 +1,8 @@
-import { TRPCClientError } from "@trpc/client";
+
 import chalk from "chalk";
-import Table from "cli-table3";
-import { type CommandOptions, Option } from "commander";
-import { Command, type HelpContext } from "commander";
+import {  Option } from "commander";
+import { Command } from "commander";
 import { isDevelopment } from "../env";
-import ora from "ora";
-import { blue, red } from "./colors";
 import { DirectorCommand } from "./director-command";
 
 const LEFT_PADDING = " ".repeat(2);

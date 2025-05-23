@@ -1,4 +1,6 @@
 #!/usr/bin/env -S node --no-warnings --enable-source-maps
+// This needs to run before anything else so that the environment variables are set before the logger is initialized
+import "../src/config";
 
 import { DirectorCommand } from "@director.run/utilities/cli";
 import { isDevelopment } from "@director.run/utilities/env";
@@ -10,11 +12,6 @@ import { createDebugCommands } from "../src/commands/debug";
 import { createRegistryCommands } from "../src/commands/registry";
 
 const program = new DirectorCommand();
-
-// process.exit = ((code?: number) => {
-//   //   console.log(`Exit called with code ${code}, but ignored`);
-//   return undefined as never;
-// }) as typeof process.exit;
 
 program
   .name("director")

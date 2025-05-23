@@ -15,7 +15,7 @@ export const logTRPCRequest: AnyTRPCMiddlewareFunction = async ({
   input,
 }) => {
   const start = Date.now();
-  logger.info(
+  logger.trace(
     {
       path,
       type,
@@ -27,7 +27,7 @@ export const logTRPCRequest: AnyTRPCMiddlewareFunction = async ({
   try {
     const result = await next();
     const duration = Date.now() - start;
-    logger.info(
+    logger.trace(
       {
         path,
         type,

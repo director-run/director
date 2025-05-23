@@ -4,6 +4,7 @@ import {
   errorRequestHandler,
   notFoundHandler,
 } from "@director.run/utilities/middleware";
+import { logRequests } from "@director.run/utilities/middleware";
 import cors from "cors";
 import express from "express";
 import { Database } from "./db";
@@ -11,6 +12,7 @@ import { ProxyServerStore } from "./proxy-server-store";
 import { createSSERouter } from "./routers/sse";
 import { createStreamableRouter } from "./routers/streamable";
 import { createTRPCExpressMiddleware } from "./routers/trpc";
+
 const logger = getLogger("Gateway");
 
 export class Gateway {
@@ -37,7 +39,7 @@ export class Gateway {
     registryURL: string;
     cliPath: string;
   }) {
-    logger.info(`starting director...`);
+    logger.info(`starting director gateway`);
 
     const db = await Database.connect(attribs.databaseFilePath);
     const proxyStore = await ProxyServerStore.create(db);
@@ -46,14 +48,14 @@ export class Gateway {
     const cliPath = attribs.cliPath;
 
     app.use(cors());
+    app.use(logRequests());
     app.use("/", createSSERouter({ proxyStore }));
     app.use("/", createStreamableRouter({ proxyStore }));
     app.use(
       "/trpc",
       createTRPCExpressMiddleware({ proxyStore, registryURL, cliPath }),
     );
-    app.get("*", notFoundHandler);
-    app.post("*", notFoundHandler);
+    app.all("*", notFoundHandler);
     app.use(errorRequestHandler);
 
     const server = app.listen(attribs.port, () => {

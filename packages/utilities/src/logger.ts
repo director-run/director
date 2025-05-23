@@ -6,7 +6,7 @@ import { isAppError } from "./error";
 
 const LOG_LEVEL = process.env.LOG_LEVEL ?? (isTest() ? "silent" : "trace");
 const LOG_PRETTY = process.env.LOG_PRETTY !== "false";
-const LOG_ERROR_STACK = true;
+const LOG_ERROR_STACK = process.env.LOG_ERROR_STACK === "true";
 
 const logger = pino(
   {
@@ -36,6 +36,8 @@ const logger = pino(
         colorize: true,
         translateTime: "HH:MM:ss",
         ignore: "pid,hostname",
+        // hide json objects for any level other than trace or debug
+        hideObject: !["trace", "debug"].includes(LOG_LEVEL.toLowerCase()),
       })
     : undefined,
 );

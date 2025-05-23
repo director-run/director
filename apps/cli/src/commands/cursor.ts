@@ -42,6 +42,16 @@ export function createCursorCommands() {
       }),
     );
 
+  command
+    .command("restart")
+    .description("Restart cursor")
+    .action(
+      actionWithErrorHandler(async () => {
+        const result = await gatewayClient.installer.cursor.restart.mutate();
+        console.log(result);
+      }),
+    );
+
   if (isDevelopment()) {
     command
       .command("purge")

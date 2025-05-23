@@ -12,6 +12,7 @@ import type {
   RequestHandler,
   Response,
 } from "express";
+import pinoHttp from "pino-http";
 
 const logger = getLogger("http/middleware");
 
@@ -24,7 +25,8 @@ export const errorRequestHandler: ErrorRequestHandler = (
   const { status, message, code } = errorToHttpResponse(error);
 
   logger.error({
-    message: `HTTP request failed: ${message}`,
+    message: `${req.method} ${req.originalUrl} failed: ${message}`,
+    code,
   });
 
   res.status(status).json({ message, code });
@@ -70,7 +72,7 @@ function appErrorToHttpResponse(error: AppError) {
 }
 
 export function notFoundHandler() {
-  throw new AppError(ErrorCode.NOT_FOUND, "There's nothing here");
+  throw new AppError(ErrorCode.NOT_FOUND, "there's nothing here");
 }
 
 /**
@@ -82,4 +84,34 @@ export function asyncHandler(fn: RequestHandler): RequestHandler {
   return (req: Request, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
+}
+
+export function logRequests() {
+  return pinoHttp({
+    logger,
+    useLevel: "trace",
+    // Ignore TRPC requests
+    autoLogging: {
+      ignore: (req) => (req as Request).originalUrl?.startsWith("/trpc"),
+    },
+    serializers: {
+      req: (req) => ({
+        id: req.id,
+        ip: req.ip || req.connection?.remoteAddress,
+        userAgent: req.headers["user-agent"],
+      }),
+      res: (res) => ({
+        status: res.statusCode,
+      }),
+    },
+    customReceivedMessage: (req) =>
+      `→ ${req.method} ${(req as Request).originalUrl}`,
+    customSuccessMessage: (req, res) => {
+      const status = res.statusCode;
+      const statusEmoji = status >= 500 ? "🔴" : status >= 400 ? "🟡" : "🟢";
+      return `← ${req.method} ${(req as Request).originalUrl} ${statusEmoji} ${status}`;
+    },
+    customErrorMessage: (req, res) =>
+      `← ${req.method} ${(req as Request).originalUrl} 🔴 ${res.statusCode}`,
+  });
 }

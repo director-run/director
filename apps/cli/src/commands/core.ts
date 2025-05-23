@@ -18,14 +18,19 @@ export function registerCoreCommands(program: Command) {
     .description("Start the director service")
     .action(
       actionWithErrorHandler(async () => {
-        printDirectorAscii();
+        try {
+          printDirectorAscii();
 
-        await Gateway.start({
-          port: env.GATEWAY_PORT,
-          databaseFilePath: env.DB_FILE_PATH,
-          registryURL: env.REGISTRY_URL,
-          cliPath: path.join(__dirname, "../../bin/cli.ts"),
-        });
+          await Gateway.start({
+            port: env.GATEWAY_PORT,
+            databaseFilePath: env.DB_FILE_PATH,
+            registryURL: env.REGISTRY_URL,
+            cliPath: path.join(__dirname, "../../bin/cli.ts"),
+          });
+        } catch (error) {
+          console.error("Fatal error starting gateway", error);
+          process.exit(1);
+        }
       }),
     );
 

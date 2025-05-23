@@ -24,7 +24,7 @@ export function registerCoreCommands(program: Command) {
           await Gateway.start({
             port: env.GATEWAY_PORT,
             databaseFilePath: env.DB_FILE_PATH,
-            registryURL: env.REGISTRY_URL,
+            registryURL: env.REGISTRY_API_URL,
             cliPath: path.join(__dirname, "../../bin/cli.ts"),
           });
         } catch (error) {

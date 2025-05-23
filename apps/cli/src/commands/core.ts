@@ -1,18 +1,16 @@
 import path from "node:path";
 import { Gateway } from "@director.run/gateway/gateway";
 import { proxyHTTPToStdio } from "@director.run/mcp/transport";
-import { makeTable } from "@director.run/utilities/cli";
+import { DirectorCommand, makeTable } from "@director.run/utilities/cli";
 import {
   actionWithErrorHandler,
   printDirectorAscii,
 } from "@director.run/utilities/cli";
-import { isDevelopment } from "@director.run/utilities/env";
 import { joinURL } from "@director.run/utilities/url";
-import { Command } from "commander";
 import { gatewayClient } from "../client";
 import { env } from "../config";
 
-export function registerCoreCommands(program: Command) {
+export function registerCoreCommands(program: DirectorCommand) {
   program
     .command("serve")
     .description("Start the director service")
@@ -136,14 +134,12 @@ export function registerCoreCommands(program: Command) {
       }),
     );
 
-  if (isDevelopment()) {
-    program
-      .command("reset")
-      .description("Reset everything")
-      .action(
-        actionWithErrorHandler(async () => {
-          await gatewayClient.store.purge.mutate();
-        }),
-      );
-  }
+  program
+    .debugCommand("reset")
+    .description("Reset everything")
+    .action(
+      actionWithErrorHandler(async () => {
+        await gatewayClient.store.purge.mutate();
+      }),
+    );
 }

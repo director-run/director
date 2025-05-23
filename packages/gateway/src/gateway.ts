@@ -4,6 +4,7 @@ import {
   errorRequestHandler,
   notFoundHandler,
 } from "@director.run/utilities/middleware";
+import { logRequests } from "@director.run/utilities/middleware";
 import cors from "cors";
 import express from "express";
 import { Database } from "./db";
@@ -11,6 +12,7 @@ import { ProxyServerStore } from "./proxy-server-store";
 import { createSSERouter } from "./routers/sse";
 import { createStreamableRouter } from "./routers/streamable";
 import { createTRPCExpressMiddleware } from "./routers/trpc";
+
 const logger = getLogger("Gateway");
 
 export class Gateway {
@@ -44,6 +46,7 @@ export class Gateway {
     const registryURL = attribs.registryURL;
 
     app.use(cors());
+    app.use(logRequests());
     app.use("/", createSSERouter({ proxyStore }));
     app.use("/", createStreamableRouter({ proxyStore }));
     app.use("/trpc", createTRPCExpressMiddleware({ proxyStore, registryURL }));

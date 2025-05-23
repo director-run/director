@@ -12,6 +12,7 @@ import type {
   RequestHandler,
   Response,
 } from "express";
+import pinoHttp from "pino-http";
 
 const logger = getLogger("http/middleware");
 
@@ -82,4 +83,49 @@ export function asyncHandler(fn: RequestHandler): RequestHandler {
   return (req: Request, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
+}
+
+// export function logRequests() {
+//   return pinoHttp({
+//     logger,
+//     serializers: {
+//       req: (req) => ({
+//         id: req.id,
+//         headers: req.headers,
+//       }),
+//     },
+//     customReceivedMessage: (req) =>
+//       `request ${req.method} ${(req as Request).originalUrl}`,
+//     customSuccessMessage: (req, res) =>
+//       `response ${req.method} ${(req as Request).originalUrl}`,
+//   });
+//   // return (req: Request, res: Response, next: NextFunction) => {
+//   //   logger.info({ message: `${req.method} ${req.path}` });
+//   //   next();
+//   // };
+// }
+export function logRequests() {
+  return pinoHttp({
+    logger,
+    serializers: {
+      req: (req) => ({
+        id: req.id,
+        ip: req.ip || req.connection?.remoteAddress,
+        userAgent: req.headers["user-agent"],
+      }),
+      res: (res) => ({
+        status: res.statusCode,
+        // size: res.get("content-length") || 0,
+      }),
+    },
+    customReceivedMessage: (req) =>
+      `→ ${req.method} ${(req as Request).originalUrl}`,
+    customSuccessMessage: (req, res) => {
+      const status = res.statusCode;
+      const statusEmoji = status >= 500 ? "🔴" : status >= 400 ? "🟡" : "🟢";
+      return `← ${req.method} ${(req as Request).originalUrl} ${statusEmoji} ${status}`;
+    },
+    customErrorMessage: (req, res) =>
+      `← ${req.method} ${(req as Request).originalUrl} 🔴 ${res.statusCode}`,
+  });
 }

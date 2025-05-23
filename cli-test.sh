@@ -14,8 +14,8 @@ echo
 
 bun cli create my-proxy
 bun cli registry install my-proxy fetch
-bun cli claude install my-proxy
-bun cli cursor install my-proxy
+# bun cli claude install my-proxy
+# bun cli cursor install my-proxy
 
 echo
 echo "----------------------------------------"

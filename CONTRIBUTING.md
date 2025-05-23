@@ -7,7 +7,7 @@ Hello! We welcome any and all contributions and we'd be more than happy to help 
 
 ## Prerequisites
 
-- [Bun](https://bun.sh/) 
+- [Bun](https://bun.sh/) (tested on 1.2.14+)
 - [Docker](https://docker.com)
 
 ## Development workflow

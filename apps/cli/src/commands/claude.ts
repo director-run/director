@@ -1,4 +1,3 @@
-import path from "node:path";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { isDevelopment } from "@director.run/utilities/env";
 import { Command } from "commander";
@@ -28,7 +27,6 @@ export function createClaudeCommand() {
         const result = await gatewayClient.installer.claude.install.mutate({
           proxyId,
           baseUrl: env.GATEWAY_URL,
-          cliPath: path.join(__dirname, "../../bin/cli.ts"),
         });
         console.log(result);
       }),

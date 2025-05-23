@@ -9,7 +9,8 @@ import type { ProxyServerStore } from "../../proxy-server-store";
 
 export function createInstallerRouter({
   proxyStore,
-}: { proxyStore: ProxyServerStore }) {
+  cliPath,
+}: { proxyStore: ProxyServerStore; cliPath: string }) {
   return t.router({
     claude: t.router({
       install: t.procedure
@@ -17,7 +18,6 @@ export function createInstallerRouter({
           z.object({
             proxyId: z.string(),
             baseUrl: z.string(),
-            cliPath: z.string(),
           }),
         )
         .mutation(async ({ input }) => {
@@ -29,7 +29,7 @@ export function createInstallerRouter({
             await installer.install({
               name: proxy.id,
               transport: {
-                command: input.cliPath,
+                command: cliPath,
                 args: ["http2stdio", proxyUrl],
                 env: {
                   LOG_LEVEL: "silent",
@@ -41,7 +41,7 @@ export function createInstallerRouter({
               name: proxy.id,
               transport: {
                 command: "bun",
-                args: [input.cliPath, "http2stdio", proxyUrl],
+                args: [cliPath, "http2stdio", proxyUrl],
                 env: {
                   LOG_LEVEL: "silent",
                 },

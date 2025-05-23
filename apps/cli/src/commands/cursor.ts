@@ -6,7 +6,9 @@ import { gatewayClient } from "../client";
 import { env } from "../config";
 
 export function createCursorCommands() {
-  const command = new DirectorCommand("cursor");
+  const command = new DirectorCommand("cursor").description(
+    "Manage cursor MCP server configuration",
+  );
 
   command
     .command("ls")

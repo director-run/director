@@ -8,7 +8,7 @@ import { env } from "../config";
 
 export function createClaudeCommand() {
   const command = new DirectorCommand("claude").description(
-    "Manage claude MCP servers",
+    "Manage claude MCP server configuration",
   );
 
   command

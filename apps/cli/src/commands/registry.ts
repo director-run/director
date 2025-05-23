@@ -1,11 +1,12 @@
-import { makeTable } from "@director.run/utilities/cli";
+import { DirectorCommand, makeTable } from "@director.run/utilities/cli";
 import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import chalk from "chalk";
-import { Command } from "commander";
 import { gatewayClient, registryClient } from "../client";
 
 export function createRegistryCommands() {
-  const command = new Command("registry");
+  const command = new DirectorCommand("registry").description(
+    "MCP server registry commands",
+  );
 
   command
     .command("ls")

@@ -15,22 +15,22 @@ export class ProxyServerStore {
   }
 
   public static async create(db: Database): Promise<ProxyServerStore> {
-    logger.info("Creating and initializing ProxyServerStore...");
+    logger.debug("Creating and initializing ProxyServerStore...");
     const store = new ProxyServerStore({
       db,
     });
     await store.initialize();
-    logger.info("ProxyServerStore initialization complete.");
+    logger.debug("proxyServerStore initialization complete.");
     return store;
   }
 
   private async initialize(): Promise<void> {
-    logger.info("Fetching proxy configurations...");
+    logger.debug("fetching proxy configurations...");
     let proxies = await this.db.getAll();
 
     for (const proxyConfig of proxies) {
       const proxyId = proxyConfig.id;
-      logger.info({ message: `Initializing proxy`, proxyId });
+      logger.debug({ message: `initializing proxy`, proxyId });
 
       const proxyServer = new ProxyServer({
         id: proxyId,
@@ -48,7 +48,7 @@ export class ProxyServerStore {
     if (!server) {
       throw new AppError(
         ErrorCode.NOT_FOUND,
-        `Proxy server '${proxyId}' not found or failed to initialize.`,
+        `proxy server '${proxyId}' not found or failed to initialize.`,
       );
     }
     return server;

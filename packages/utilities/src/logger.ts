@@ -36,6 +36,7 @@ const logger = pino(
         colorize: true,
         translateTime: "HH:MM:ss",
         ignore: "pid,hostname",
+        // hideObject: true,
       })
     : undefined,
 );

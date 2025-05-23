@@ -1,5 +1,6 @@
 import os from "node:os";
 import path from "node:path";
+import { isTest } from "@director.run/utilities/env";
 import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
 import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
@@ -11,6 +12,7 @@ import {
   openFileInCode,
   sleep,
 } from "@director.run/utilities/os";
+import { restartApp } from "@director.run/utilities/os";
 import { z } from "zod";
 
 const CURSOR_COMMAND = "cursor";
@@ -78,6 +80,15 @@ export class CursorInstaller {
     const newConfig = { ...this.config };
     newConfig.mcpServers[createKey(entry.name)] = { url: entry.url };
     await this.updateConfig(newConfig);
+  }
+
+  public async restart() {
+    if (!isTest()) {
+      logger.info("restarting cursor");
+      await restartApp(App.CURSOR);
+    } else {
+      logger.warn("skipping restart of cursor in test environment");
+    }
   }
 
   public async reload(name: string) {

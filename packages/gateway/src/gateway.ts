@@ -38,7 +38,7 @@ export class Gateway {
     databaseFilePath: string;
     registryURL: string;
   }) {
-    logger.info(`starting director...`);
+    logger.info(`starting director gateway`);
 
     const db = await Database.connect(attribs.databaseFilePath);
     const proxyStore = await ProxyServerStore.create(db);
@@ -50,8 +50,7 @@ export class Gateway {
     app.use("/", createSSERouter({ proxyStore }));
     app.use("/", createStreamableRouter({ proxyStore }));
     app.use("/trpc", createTRPCExpressMiddleware({ proxyStore, registryURL }));
-    app.get("*", notFoundHandler);
-    app.post("*", notFoundHandler);
+    app.all("*", notFoundHandler);
     app.use(errorRequestHandler);
 
     const server = app.listen(attribs.port, () => {

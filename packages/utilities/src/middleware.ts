@@ -25,7 +25,8 @@ export const errorRequestHandler: ErrorRequestHandler = (
   const { status, message, code } = errorToHttpResponse(error);
 
   logger.error({
-    message: `HTTP request failed: ${message}`,
+    message: `${req.method} ${req.originalUrl} failed: ${message}`,
+    code,
   });
 
   res.status(status).json({ message, code });
@@ -71,7 +72,7 @@ function appErrorToHttpResponse(error: AppError) {
 }
 
 export function notFoundHandler() {
-  throw new AppError(ErrorCode.NOT_FOUND, "There's nothing here");
+  throw new AppError(ErrorCode.NOT_FOUND, "there's nothing here");
 }
 
 /**
@@ -85,28 +86,14 @@ export function asyncHandler(fn: RequestHandler): RequestHandler {
   };
 }
 
-// export function logRequests() {
-//   return pinoHttp({
-//     logger,
-//     serializers: {
-//       req: (req) => ({
-//         id: req.id,
-//         headers: req.headers,
-//       }),
-//     },
-//     customReceivedMessage: (req) =>
-//       `request ${req.method} ${(req as Request).originalUrl}`,
-//     customSuccessMessage: (req, res) =>
-//       `response ${req.method} ${(req as Request).originalUrl}`,
-//   });
-//   // return (req: Request, res: Response, next: NextFunction) => {
-//   //   logger.info({ message: `${req.method} ${req.path}` });
-//   //   next();
-//   // };
-// }
 export function logRequests() {
   return pinoHttp({
     logger,
+    useLevel: "trace",
+    // Ignore TRPC requests
+    autoLogging: {
+      ignore: (req) => (req as Request).originalUrl?.startsWith("/trpc"),
+    },
     serializers: {
       req: (req) => ({
         id: req.id,
@@ -115,7 +102,6 @@ export function logRequests() {
       }),
       res: (res) => ({
         status: res.statusCode,
-        // size: res.get("content-length") || 0,
       }),
     },
     customReceivedMessage: (req) =>

@@ -89,6 +89,10 @@ export function createInstallerRouter({
             url: joinURL(input.baseUrl, getStreamablePathForProxy(proxy.id)),
           });
         }),
+      restart: t.procedure.mutation(async () => {
+        const installer = await CursorInstaller.create();
+        await installer.restart();
+      }),
       uninstall: t.procedure
         .input(z.object({ proxyId: z.string() }))
         .mutation(async ({ input }) => {

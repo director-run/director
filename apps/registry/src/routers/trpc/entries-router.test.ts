@@ -7,6 +7,8 @@ import { makeTestEntries } from "../../test/fixtures/entries";
 describe("Entries Router", () => {
   let registry: Registry;
   let client: RegistryClient;
+  let authenticatedClient: RegistryClient;
+
   const TOTAL_ENTRIES = 20;
   const ENTRIES_PER_PAGE = 5;
 
@@ -16,7 +18,7 @@ describe("Entries Router", () => {
       connectionString: env.DATABASE_URL,
     });
     client = createRegistryClient(`http://localhost:${env.PORT}`);
-    autorizedClient = createRegistryClient(`http://localhost:${env.PORT}`, {
+    authenticatedClient = createRegistryClient(`http://localhost:${env.PORT}`, {
       apiKey: env.API_WRITE_KEY,
     });
     await registry.store.purge();
@@ -37,7 +39,12 @@ describe("Entries Router", () => {
         client.entries.getSecretEntryByName.query({
           name: "secret",
         }),
-      ).rejects.toThrow();
+      ).rejects.toThrow("Unauthorized");
+      await expect(
+        authenticatedClient.entries.getSecretEntryByName.query({
+          name: "secret",
+        }),
+      ).rejects.not.toThrow();
     });
   });
 

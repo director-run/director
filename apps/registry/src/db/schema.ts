@@ -7,6 +7,7 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
+import { z } from "zod";
 
 export const entriesTable = pgTable("entries", {
   // **
@@ -54,26 +55,7 @@ export const entriesTable = pgTable("entries", {
   // ** Documentation
   // **
   categories: jsonb("categories").default([]).$type<string[]>(),
-  tools: jsonb("tools").default([]).$type<
-    Array<{
-      name: string;
-      description: string;
-      inputSchema: {
-        type: string;
-        required: string[];
-        properties: Record<
-          string,
-          {
-            type: string;
-            description?: string;
-            default?: unknown;
-            title?: string;
-            anyOf?: unknown;
-          }
-        >;
-      };
-    }>
-  >(),
+  tools: jsonb("tools").default([]).$type<Array<Tool>>(),
   parameters: jsonb("parameters").default([]).$type<Array<EntryParameter>>(),
   readme: text("readme"),
 });
@@ -89,3 +71,43 @@ export type EntryParameter = {
   required: true;
   type: "string";
 };
+
+// export type Tool = {
+//   name: string;
+//   description: string;
+//   inputSchema: {
+//     type: string;
+//     required: string[];
+//     properties: Record<
+//       string,
+//       {
+//         type: string;
+//         description?: string;
+//         default?: unknown;
+//         title?: string;
+//         anyOf?: unknown;
+//       }
+//     >;
+//   };
+// };
+
+export const toolSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  inputSchema: z.object({
+    type: z.string(),
+    required: z.array(z.string()),
+    properties: z.record(
+      z.string(),
+      z.object({
+        type: z.string(),
+        description: z.string().optional(),
+        default: z.unknown().optional(),
+        title: z.string().optional(),
+        anyOf: z.unknown().optional(),
+      }),
+    ),
+  }),
+});
+
+export type Tool = z.infer<typeof toolSchema>;

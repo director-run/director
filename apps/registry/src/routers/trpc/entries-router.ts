@@ -1,6 +1,7 @@
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
 import { protectedProcedure } from ".";
+import { toolSchema } from "../../db/schema";
 import type { Store } from "../../db/store";
 import { enrichEntries } from "../../enrichment/enrich";
 import { fetchRaycastRegistry } from "../../importers/raycast";
@@ -32,15 +33,7 @@ export function createEntriesRouter({ store }: { store: Store }) {
           isConnectable: z.boolean().optional(),
           lastConnectionAttemptedAt: z.date().optional(),
           lastConnectionError: z.string().optional(),
-          tools: z
-            .array(
-              z.object({
-                name: z.string(),
-                description: z.string(),
-                inputSchema: z.unknown(),
-              }),
-            )
-            .optional(),
+          tools: z.array(toolSchema).optional(),
         }),
       )
       .mutation(async ({ input }) => {
@@ -48,10 +41,7 @@ export function createEntriesRouter({ store }: { store: Store }) {
           isConnectable: input.isConnectable,
           lastConnectionAttemptedAt: input.lastConnectionAttemptedAt,
           lastConnectionError: input.lastConnectionError,
-          tools: (input.tools ?? []).map((tool) => ({
-            ...tool,
-            inputSchema: tool.inputSchema ?? {},
-          })),
+          tools: input.tools,
         });
       }),
 

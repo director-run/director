@@ -23,9 +23,9 @@ export async function enrichTools() {
         tools,
       });
     } catch (error) {
-      logger.error(`error enriching ${entry.name}: ${errorMessage}`);
       const errorMessage =
         error instanceof Error ? error.message : String(error);
+      logger.error(`error enriching ${entry.name}: ${errorMessage}`);
       await registryClient.entries.updateEntry.mutate({
         id: entry.id,
         isConnectable: false,

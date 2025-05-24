@@ -48,7 +48,10 @@ export function createEntriesRouter({ store }: { store: Store }) {
           isConnectable: input.isConnectable,
           lastConnectionAttemptedAt: input.lastConnectionAttemptedAt,
           lastConnectionError: input.lastConnectionError,
-          tools: input.tools,
+          tools: (input.tools ?? []).map((tool) => ({
+            ...tool,
+            inputSchema: tool.inputSchema ?? {},
+          })),
         });
       }),
 

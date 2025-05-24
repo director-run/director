@@ -10,6 +10,8 @@ import {
 import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../client";
 import { env } from "../config";
+import { openUrl } from "@director.run/utilities/os";
+import { loader } from "@director.run/utilities/cli/loader";
 
 export function registerCoreCommands(program: DirectorCommand) {
   program
@@ -39,9 +41,20 @@ export function registerCoreCommands(program: DirectorCommand) {
     .description("open the director studio")
     .action(
       actionWithErrorHandler(async () => {
-
-          printDirectorAscii();
-
+        const spinner = loader();
+        spinner.start("opening studio...");
+        try {
+          await gatewayClient.health.query();
+        } catch (error) {
+          spinner.fail("Failed to connect to gateway. Have you ran `director serve`?");
+          process.exit(1);
+        }
+        try {
+          await openUrl(env.STUDIO_URL);
+        } catch (error) {
+          spinner.fail(`failed to open ${env.STUDIO_URL}, try manually`);
+        }
+        spinner.stop();
       }),
     );
 

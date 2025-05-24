@@ -3,6 +3,8 @@ import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import { gatewayClient, registryClient } from "../client";
 import { loader } from "@director.run/utilities/cli/loader";
+import type { EntryGetParams } from "@director.run/registry/db/schema";
+import { printReistryEntry } from "./print-registry-entry";
 
 export function createRegistryCommands() {
   const command = new DirectorCommand("registry").description(
@@ -47,7 +49,7 @@ export function createRegistryCommands() {
             name: entryName,
           });
           spinner.stop();
-          console.log(JSON.stringify(item, null, 2));
+          printReistryEntry(item);
         } catch (error) {
           spinner.fail(error instanceof Error ? error.message : "unknown error");
         }
@@ -171,3 +173,4 @@ function truncateDescription(
   }
   return description.slice(0, maxWidth - 3) + "...";
 }
+

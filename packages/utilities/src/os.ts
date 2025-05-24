@@ -77,3 +77,44 @@ export function isAppRunning(app: App): boolean {
     return false;
   }
 }
+
+/**
+ * Opens a URL in the default browser across different operating systems
+ * @param url - The URL to open
+ * @returns Promise that resolves when the command is executed
+ */
+export async function openUrl(url: string): Promise<void> {
+  // Validate URL format
+  if (!url || typeof url !== 'string') {
+    throw new Error('Invalid URL provided');
+  }
+
+  // Add protocol if missing
+  const formattedUrl = url.startsWith('http://') || url.startsWith('https://') 
+    ? url 
+    : `https://${url}`;
+
+  const platform = process.platform;
+  let command: string;
+
+  switch (platform) {
+    case 'darwin': // macOS
+      command = `open "${formattedUrl}"`;
+      break;
+    case 'win32': // Windows
+      command = `start "" "${formattedUrl}"`;
+      break;
+    case 'linux': // Linux
+      command = `xdg-open "${formattedUrl}"`;
+      break;
+    default:
+      throw new Error(`Unsupported platform: ${platform}`);
+  }
+
+  try {
+    await execAsync(command);
+  } catch (error) {
+    throw new Error(`Failed to open URL: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+}
+

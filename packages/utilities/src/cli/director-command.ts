@@ -1,4 +1,4 @@
-import { Option, type CommandOptions } from "commander";
+import { type CommandOptions, Option } from "commander";
 import { Command, type HelpContext } from "commander";
 import { isDevelopment } from "../env";
 import { makeHelpText } from "./help";

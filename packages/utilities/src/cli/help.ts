@@ -1,8 +1,8 @@
 import { Option } from "commander";
 import { Command } from "commander";
 import { isDevelopment } from "../env";
+import { red, whiteBold, yellow } from "./colors";
 import { DirectorCommand } from "./director-command";
-import { red, yellow, whiteBold } from "./colors";
 
 const LEFT_PADDING = " ".repeat(2);
 

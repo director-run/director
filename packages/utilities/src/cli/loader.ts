@@ -1,6 +1,6 @@
-import { blue } from "./colors";
-import ora from "ora";
 import _ from "lodash";
+import ora from "ora";
+import { blue } from "./colors";
 
 export const loader = (text?: string) =>
   ora({

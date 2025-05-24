@@ -1,25 +1,56 @@
 import { blue } from "./colors";
 import ora from "ora";
+import _ from "lodash";
 
 export const loader = (text?: string) =>
     ora({
-      text: text ?? "Hang on...",
+      text: text ?? _.sample(loaderStrings),
       spinner: {
         frames: ["   ", blue(">  "), blue(">> "), blue(">>>")],
       },
     }); 
 
 
-
     const loaderStrings = [
         "Hang on...",
-        "Just a moment...",
-        "Almost there...",
-        "One last thing...",
-        "One last thing...",
         "Sit tight...",
-        "Almost done...",
         "Just a sec...",
-        "One sec...",
-        "One sec...",
-    ]
+        "Brewing some magic...",
+        "Dusting pixels...",
+        "Loading unicorns...",
+        "Spinning the hamster wheel...",
+        "Counting to infinity...",
+        "Sharpening crayons...",
+        "Training AI hamsters...",
+        "Waking up the elves...",
+        "Charging flux capacitor...",
+        "Polishing the bits...",
+        "Assembling Lego bricks...",
+        "Mixing secret sauce...",
+        "Feeding the loading monster...",
+        "Convincing electrons...",
+        "Summoning digital wizards...",
+        "Reticulating splines...",
+        "Inflating balloons...",
+        "Taming wild data...",
+        "Cooking your request...",
+        "Adjusting reality...",
+        "Aligning planets...",
+        "Unpacking virtual boxes...",
+        "Fueling rocket boosters...",
+        "Rounding up bytes...",
+        "Stretching pixels...",
+        "Firing lasers...",
+        "Dancing with servers...",
+        "Tuning frequencies...",
+        "Hunting for lost bits...",
+        "Fluffing clouds...",
+        "Drawing pretty circles...",
+        "Building sandcastles...",
+        "Tickling the circuits...",
+        "Tightening screws...",
+        "Magic happening...",
+        "Making it awesome...",
+        "Catching fireflies...",
+      ];
+      

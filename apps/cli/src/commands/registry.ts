@@ -1,4 +1,3 @@
-import type { EntryGetParams } from "@director.run/registry/db/schema";
 import { green, red } from "@director.run/utilities/cli/colors";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import { makeTable } from "@director.run/utilities/cli/index";
@@ -13,7 +12,11 @@ export function createRegistryCommands() {
     "MCP server registry commands",
   );
 
-  function listEntries(items: EntryGetParams[]) {
+  type Entries = Awaited<
+    ReturnType<typeof registryClient.entries.getEntries.query>
+  >["entries"];
+
+  function listEntries(items: Entries) {
     const table = makeTable(["Name", "Description", "Is Connectable"]);
     table.push(
       ...items.map((item) => {
@@ -27,9 +30,7 @@ export function createRegistryCommands() {
     console.log(table.toString());
   }
 
-  function listDevEntries(
-    items: ReturnType<typeof registryClient.entries.getEntries.query>,
-  ) {
+  function listDevEntries(items: Entries) {
     const table = makeTable(["Name", "Is Connectable", "hasTools?"]);
     table.push(
       ...items.map((item) => {

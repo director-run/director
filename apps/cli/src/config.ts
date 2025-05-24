@@ -1,18 +1,21 @@
+import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { createEnv, isProduction, isTest } from "@director.run/utilities/env";
+import { red } from "@director.run/utilities/cli/colors";
+import {
+  createEnv,
+  isDevelopment,
+  isProduction,
+  isTest,
+} from "@director.run/utilities/env";
 import { z } from "zod";
 
 export const env = createEnv({
-  envFilePath: path.join(getDataDir(), "./config.env"),
+  envFilePath: getEnvFilePath(),
   envVars: {
     GATEWAY_PORT: z.number({ coerce: true }).optional().default(3673),
     GATEWAY_URL: z.string().optional().default(`http://localhost:3673`),
-    STUDIO_URL: z
-    .string()
-    .optional()
-    .default(`https://studio.director.run`),
-
+    STUDIO_URL: z.string().optional().default(`https://studio.director.run`),
     REGISTRY_API_URL: z
       .string()
       .optional()
@@ -22,11 +25,22 @@ export const env = createEnv({
       .string()
       .optional()
       .default(path.join(getDataDir(), "db.json")),
-    // LOG_PRETTY: z.boolean().optional().default(true),
-    // LOG_LEVEL: z.string().optional().default("trace"),
-    // LOG_ERROR_STACK: z.boolean().optional().default(true),
   },
 });
+
+function getEnvFilePath() {
+  const localEnvPath = path.join(process.cwd(), "./.env.local");
+  if (fs.existsSync(localEnvPath) && isDevelopment()) {
+    // In development, we want to use the local env file if it exists in the current working directory
+    console.log(red(`**********`));
+    console.log(red(`* Using local env file: ${localEnvPath}`));
+    console.log(red(`**********`));
+
+    return localEnvPath;
+  } else {
+    return path.join(getDataDir(), "./config.env");
+  }
+}
 
 function getDataDir() {
   if (isProduction()) {

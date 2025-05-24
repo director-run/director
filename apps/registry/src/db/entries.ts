@@ -29,7 +29,7 @@ export class EntryStore {
   }
 
   public async addEntry(entry: EntryCreateParams) {
-    await this.db.db.insert(entriesTable).values(entry);
+    return (await this.db.db.insert(entriesTable).values(entry).returning())[0];
   }
 
   public async deleteEntry(id: string) {

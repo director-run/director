@@ -23,6 +23,7 @@ export const entriesTable = pgTable("entries", {
   isEnriched: boolean("is_enriched").default(false), // Has the entry been enriched?
   isConnectable: boolean("is_connectable").default(false), // Has the entry been enriched?
   lastConnectionAt: timestamp("last_connection_at"),
+  lastConnectionError: text("last_connection_error"),
 
   // **
   // ** Transport

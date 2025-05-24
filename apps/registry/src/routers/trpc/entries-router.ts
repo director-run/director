@@ -25,6 +25,23 @@ export function createEntriesRouter({ store }: { store: Store }) {
       await store.entries.deleteAllEntries();
     }),
 
+    updateEntry: protectedProcedure
+      .input(
+        z.object({
+          id: z.string(),
+          isConnectable: z.boolean().optional(),
+          lastConnectionAt: z.date().optional(),
+          lastConnectionError: z.string().optional(),
+        }),
+      )
+      .mutation(async ({ input }) => {
+        await store.entries.updateEntry(input.id, {
+          isConnectable: input.isConnectable,
+          lastConnectionAt: input.lastConnectionAt,
+          lastConnectionError: input.lastConnectionError,
+        });
+      }),
+
     populate: protectedProcedure.input(z.object({})).mutation(async () => {
       await store.entries.deleteAllEntries();
       await store.entries.addEntries(await fetchRaycastRegistry());

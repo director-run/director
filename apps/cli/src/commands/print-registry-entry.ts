@@ -10,6 +10,7 @@ ${chalk.white.underline("homepage:")} ${makeClickableUrl(entry.homepage)}
 ${chalk.white.underline("created:")} ${entry.createdAt?.toLocaleString()}
 ${chalk.white.underline("official:")} ${entry.isOfficial ? "yes" : "no"}
 ${chalk.white.underline("readme:")} ${entry.readme ? "yes" : "no"}
+${chalk.white.underline("enriched:")} ${entry.isEnriched ? "yes" : "no"}
 
 
 ${chalk.white.bold("TRANSPORT")}

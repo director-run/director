@@ -4,6 +4,7 @@ import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import chalk from "chalk";
 import { gatewayClient, registryClient } from "../client";
 import { loader } from "@director.run/utilities/cli/loader";
+import { red } from "@director.run/utilities/cli/colors";
 
 export function createRegistryCommands() {
   const command = new DirectorCommand("registry").description(
@@ -37,18 +38,19 @@ export function createRegistryCommands() {
     .description("get detailed information about a repository item")
     .action(
       actionWithErrorHandler(async (entryName: string) => {
-        try {
-          const item = await registryClient.entries.getEntryByName.query({
-            name: entryName,
-          });
-          console.log(JSON.stringify(item, null, 2));
-        } catch (error) {
-          if (error instanceof Error) {
-            console.error(chalk.red(error.message));
-          } else {
-            console.error(chalk.red("An unknown error occurred"));
+        
+          const spinner = loader();
+          spinner.start();
+          try {
+            const item = await registryClient.entries.getEntryByName.query({
+              name: entryName,
+            });
+            spinner.succeed();
+            console.log(JSON.stringify(item, null, 2));
+          } catch (error) {
+            spinner.fail(error instanceof Error ? error.message : "unknown error");
+            
           }
-        }
       }),
     );
 
@@ -57,12 +59,15 @@ export function createRegistryCommands() {
     .description("Add a server from the registry to a proxy.")
     .action(
       actionWithErrorHandler(async (proxyId: string, entryName: string) => {
+        const spinner = loader();
+        spinner.start();
         const proxy = await gatewayClient.registry.addServerFromRegistry.mutate(
           {
             proxyId,
             entryName,
           },
         );
+        spinner.succeed();
         console.log(`Registry entry ${entryName} added to ${proxy.id}`);
       }),
     );
@@ -72,11 +77,13 @@ export function createRegistryCommands() {
     .description("Remove a server from a proxy")
     .action(
       actionWithErrorHandler(async (proxyId: string, serverName: string) => {
+        const spinner = loader();
+        spinner.start();
         const proxy = await gatewayClient.store.removeServer.mutate({
           proxyId,
           serverName,
         });
-        console.log(`Server ${serverName} removed from ${proxy.id}`);
+        spinner.succeed(`server ${serverName} removed from ${proxy.id}`);
       }),
     );
 
@@ -85,7 +92,10 @@ export function createRegistryCommands() {
     .description("Delete all entries from the database")
     .action(
       actionWithErrorHandler(async () => {
+        const spinner = loader();
+        spinner.start();
         await registryClient.entries.purge.mutate({});
+        spinner.succeed();
       }),
     );
 
@@ -94,7 +104,10 @@ export function createRegistryCommands() {
     .description("Seed the database with entries from awesome-mcp-servers")
     .action(
       actionWithErrorHandler(async () => {
+        const spinner = loader();
+        spinner.start();
         await registryClient.entries.import.mutate({});
+        spinner.succeed();
       }),
     );
 
@@ -103,7 +116,10 @@ export function createRegistryCommands() {
     .description("enrich entries")
     .action(
       actionWithErrorHandler(async () => {
+        const spinner = loader();
+        spinner.start();
         await registryClient.entries.enrich.mutate({});
+        spinner.succeed();
       }),
     );
 
@@ -112,7 +128,11 @@ export function createRegistryCommands() {
     .description("get counts")
     .action(
       actionWithErrorHandler(async () => {
-        console.log(await registryClient.entries.stats.query({}));
+        const spinner = loader();
+        spinner.start();
+        const stats = await registryClient.entries.stats.query({});
+        spinner.succeed();
+        console.log(stats);
       }),
     );
 

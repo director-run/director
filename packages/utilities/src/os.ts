@@ -85,26 +85,27 @@ export function isAppRunning(app: App): boolean {
  */
 export async function openUrl(url: string): Promise<void> {
   // Validate URL format
-  if (!url || typeof url !== 'string') {
-    throw new Error('Invalid URL provided');
+  if (!url || typeof url !== "string") {
+    throw new Error("Invalid URL provided");
   }
 
   // Add protocol if missing
-  const formattedUrl = url.startsWith('http://') || url.startsWith('https://') 
-    ? url 
-    : `https://${url}`;
+  const formattedUrl =
+    url.startsWith("http://") || url.startsWith("https://")
+      ? url
+      : `https://${url}`;
 
   const platform = process.platform;
   let command: string;
 
   switch (platform) {
-    case 'darwin': // macOS
+    case "darwin": // macOS
       command = `open "${formattedUrl}"`;
       break;
-    case 'win32': // Windows
+    case "win32": // Windows
       command = `start "" "${formattedUrl}"`;
       break;
-    case 'linux': // Linux
+    case "linux": // Linux
       command = `xdg-open "${formattedUrl}"`;
       break;
     default:
@@ -114,7 +115,8 @@ export async function openUrl(url: string): Promise<void> {
   try {
     await execAsync(command);
   } catch (error) {
-    throw new Error(`Failed to open URL: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new Error(
+      `Failed to open URL: ${error instanceof Error ? error.message : "Unknown error"}`,
+    );
   }
 }
-

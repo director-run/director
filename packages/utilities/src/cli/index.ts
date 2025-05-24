@@ -42,9 +42,6 @@ export function makeTable(head: string[]) {
   });
 }
 
-
-
-
 export function printDirectorAscii(): void {
   console.log(`
          _ _               _             

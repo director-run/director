@@ -1,9 +1,8 @@
+import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import { makeTable } from "@director.run/utilities/cli/index";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
-import { DirectorCommand } from "@director.run/utilities/cli/director-command";
-import { gatewayClient, registryClient } from "../client";
 import { loader } from "@director.run/utilities/cli/loader";
-import type { EntryGetParams } from "@director.run/registry/db/schema";
+import { gatewayClient, registryClient } from "../client";
 import { printReistryEntry } from "./print-registry-entry";
 
 export function createRegistryCommands() {
@@ -32,7 +31,9 @@ export function createRegistryCommands() {
           );
           console.log(table.toString());
         } catch (error) {
-          spinner.fail(error instanceof Error ? error.message : "unknown error");
+          spinner.fail(
+            error instanceof Error ? error.message : "unknown error",
+          );
         }
       }),
     );
@@ -51,7 +52,9 @@ export function createRegistryCommands() {
           spinner.stop();
           printReistryEntry(item);
         } catch (error) {
-          spinner.fail(error instanceof Error ? error.message : "unknown error");
+          spinner.fail(
+            error instanceof Error ? error.message : "unknown error",
+          );
         }
       }),
     );
@@ -64,15 +67,16 @@ export function createRegistryCommands() {
         const spinner = loader();
         spinner.start("adding server...");
         try {
-          const proxy = await gatewayClient.registry.addServerFromRegistry.mutate(
-            {
+          const proxy =
+            await gatewayClient.registry.addServerFromRegistry.mutate({
               proxyId,
               entryName,
-            },
-          );
+            });
           spinner.succeed(`Registry entry ${entryName} added to ${proxy.id}`);
         } catch (error) {
-          spinner.fail(error instanceof Error ? error.message : "unknown error");
+          spinner.fail(
+            error instanceof Error ? error.message : "unknown error",
+          );
         }
       }),
     );
@@ -91,7 +95,9 @@ export function createRegistryCommands() {
           });
           spinner.succeed(`Server ${serverName} removed from ${proxy.id}`);
         } catch (error) {
-          spinner.fail(error instanceof Error ? error.message : "unknown error");
+          spinner.fail(
+            error instanceof Error ? error.message : "unknown error",
+          );
         }
       }),
     );
@@ -107,7 +113,9 @@ export function createRegistryCommands() {
           await registryClient.entries.purge.mutate({});
           spinner.succeed("registry successfully purged");
         } catch (error) {
-          spinner.fail(error instanceof Error ? error.message : "unknown error");
+          spinner.fail(
+            error instanceof Error ? error.message : "unknown error",
+          );
         }
       }),
     );
@@ -123,7 +131,9 @@ export function createRegistryCommands() {
           await registryClient.entries.populate.mutate({});
           spinner.succeed("entries successfully imported");
         } catch (error) {
-          spinner.fail(error instanceof Error ? error.message : "unknown error");
+          spinner.fail(
+            error instanceof Error ? error.message : "unknown error",
+          );
         }
       }),
     );
@@ -139,7 +149,9 @@ export function createRegistryCommands() {
           await registryClient.entries.enrich.mutate({});
           spinner.succeed("entries successfully enriched");
         } catch (error) {
-          spinner.fail(error instanceof Error ? error.message : "unknown error");
+          spinner.fail(
+            error instanceof Error ? error.message : "unknown error",
+          );
         }
       }),
     );
@@ -156,7 +168,9 @@ export function createRegistryCommands() {
           spinner.stop();
           console.log(stats);
         } catch (error) {
-          spinner.fail(error instanceof Error ? error.message : "unknown error");
+          spinner.fail(
+            error instanceof Error ? error.message : "unknown error",
+          );
         }
       }),
     );
@@ -173,4 +187,3 @@ function truncateDescription(
   }
   return description.slice(0, maxWidth - 3) + "...";
 }
-

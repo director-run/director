@@ -30,15 +30,26 @@ export function createEntriesRouter({ store }: { store: Store }) {
         z.object({
           id: z.string(),
           isConnectable: z.boolean().optional(),
-          lastConnectionAt: z.date().optional(),
+          lastConnectionAttemptedAt: z.date().optional(),
           lastConnectionError: z.string().optional(),
+          tools: z
+            .array(
+              z.object({
+                name: z.string(),
+                description: z.string(),
+                inputSchema: z.object({}),
+              }),
+            )
+            .optional(),
         }),
       )
       .mutation(async ({ input }) => {
+        console.log("input", input);
         await store.entries.updateEntry(input.id, {
           isConnectable: input.isConnectable,
-          lastConnectionAt: input.lastConnectionAt,
+          lastConnectionAttemptedAt: input.lastConnectionAttemptedAt,
           lastConnectionError: input.lastConnectionError,
+          tools: input.tools,
         });
       }),
 

@@ -58,7 +58,7 @@ describe("Entries Router", () => {
           unauthenticatedClient.entries.updateEntry.mutate({
             id: entry.id,
             isConnectable: true,
-            lastConnectionAt: new Date(),
+            lastConnectionAttemptedAt: new Date(),
             lastConnectionError: "test",
           }),
         );
@@ -68,8 +68,15 @@ describe("Entries Router", () => {
         await authenticatedClient.entries.updateEntry.mutate({
           id: entry.id,
           isConnectable: true,
-          lastConnectionAt: new Date(),
+          lastConnectionAttemptedAt: new Date(),
           lastConnectionError: "test",
+          tools: [
+            {
+              name: "test",
+              description: "test",
+              inputSchema: { foo: "bar" },
+            },
+          ],
         });
 
         const updatedEntry = await registry.store.entries.getEntryByName(
@@ -78,6 +85,13 @@ describe("Entries Router", () => {
         expect(updatedEntry.isConnectable).toBe(true);
         expect(updatedEntry.lastConnectionAttemptedAt).toBeDefined();
         expect(updatedEntry.lastConnectionError).toBe("test");
+        expect(updatedEntry.tools).toEqual([
+          {
+            name: "test",
+            description: "test",
+            inputSchema: { foo: "bar" },
+          },
+        ]);
       });
     });
 

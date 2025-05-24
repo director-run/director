@@ -14,9 +14,24 @@ export async function enrichTools() {
 
   for (const entry of entries.entries) {
     try {
-      await fetchToolsForEntry(entry);
+      const tools = await fetchToolsForEntry(entry);
+      await registryClient.entries.updateEntry.mutate({
+        id: entry.id,
+        isConnectable: true,
+        lastConnectionAttemptedAt: new Date(),
+        lastConnectionError: undefined,
+        tools,
+      });
     } catch (error) {
-      logger.error(`error enriching ${entry.name}: ${error}`);
+      logger.error(`error enriching ${entry.name}: ${errorMessage}`);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      await registryClient.entries.updateEntry.mutate({
+        id: entry.id,
+        isConnectable: false,
+        lastConnectionAttemptedAt: new Date(),
+        lastConnectionError: errorMessage,
+      });
     }
   }
 }
@@ -24,9 +39,9 @@ export async function enrichTools() {
 async function fetchToolsForEntry(entry: EntryGetParams) {
   const transport = entry.transport;
   const client = new SimpleClient(`${entry.name}-client`);
-  logger.info(`processing ${entry.name}...`);
 
   if (transport.type === "stdio") {
+    logger.info(`processing ${entry.name}...`);
     await client.connectToStdio(transport.command, transport.args, {
       ...process.env,
       ...transport.env,

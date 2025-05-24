@@ -22,7 +22,7 @@ export function createRegistryCommands() {
           pageIndex: 0,
           pageSize: 100,
         });
-        spinner.succeed();
+        spinner.stop();
         const table = makeTable(["Name", "Description"]);
         table.push(
           ...items.entries.map((item) => {
@@ -45,7 +45,7 @@ export function createRegistryCommands() {
             const item = await registryClient.entries.getEntryByName.query({
               name: entryName,
             });
-            spinner.succeed();
+            spinner.stop();
             console.log(JSON.stringify(item, null, 2));
           } catch (error) {
             spinner.fail(error instanceof Error ? error.message : "unknown error");
@@ -60,15 +60,14 @@ export function createRegistryCommands() {
     .action(
       actionWithErrorHandler(async (proxyId: string, entryName: string) => {
         const spinner = loader();
-        spinner.start();
+        spinner.start("adding server...");
         const proxy = await gatewayClient.registry.addServerFromRegistry.mutate(
           {
             proxyId,
             entryName,
           },
         );
-        spinner.succeed();
-        console.log(`Registry entry ${entryName} added to ${proxy.id}`);
+        spinner.succeed(`Registry entry ${entryName} added to ${proxy.id}`);
       }),
     );
 
@@ -78,7 +77,7 @@ export function createRegistryCommands() {
     .action(
       actionWithErrorHandler(async (proxyId: string, serverName: string) => {
         const spinner = loader();
-        spinner.start();
+        spinner.start("removing server...");
         const proxy = await gatewayClient.store.removeServer.mutate({
           proxyId,
           serverName,
@@ -93,9 +92,9 @@ export function createRegistryCommands() {
     .action(
       actionWithErrorHandler(async () => {
         const spinner = loader();
-        spinner.start();
+        spinner.start("purging registry...");
         await registryClient.entries.purge.mutate({});
-        spinner.succeed();
+        spinner.succeed("registry successfully purged");
       }),
     );
 
@@ -105,9 +104,9 @@ export function createRegistryCommands() {
     .action(
       actionWithErrorHandler(async () => {
         const spinner = loader();
-        spinner.start();
+        spinner.start("importing entries...");
         await registryClient.entries.import.mutate({});
-        spinner.succeed();
+        spinner.succeed("entires successfully imported");
       }),
     );
 
@@ -117,9 +116,9 @@ export function createRegistryCommands() {
     .action(
       actionWithErrorHandler(async () => {
         const spinner = loader();
-        spinner.start();
+        spinner.start("enriching entries...");
         await registryClient.entries.enrich.mutate({});
-        spinner.succeed();
+        spinner.succeed("entries successfully enriched");
       }),
     );
 
@@ -129,9 +128,9 @@ export function createRegistryCommands() {
     .action(
       actionWithErrorHandler(async () => {
         const spinner = loader();
-        spinner.start();
+        spinner.start("getting stats...");
         const stats = await registryClient.entries.stats.query({});
-        spinner.succeed();
+        spinner.stop();
         console.log(stats);
       }),
     );

@@ -13,6 +13,10 @@ export async function enrichTools() {
   });
 
   for (const entry of entries.entries) {
+    if (entry.lastConnectionAttemptedAt) {
+      logger.info(`skipping ${entry.name}, already processed`);
+      continue;
+    }
     try {
       const tools = await fetchToolsForEntry(entry);
       await registryClient.entries.updateEntry.mutate({
@@ -43,7 +47,7 @@ async function fetchToolsForEntry(entry: EntryGetParams) {
   if (transport.type === "stdio") {
     logger.info(`processing ${entry.name}...`);
     await client.connectToStdio(transport.command, transport.args, {
-      ...process.env,
+      ...(process.env as Record<string, string>),
       ...transport.env,
     });
     logger.info(`connected to ${entry.name}, fetching tools...`);

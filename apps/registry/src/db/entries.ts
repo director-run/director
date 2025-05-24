@@ -79,7 +79,7 @@ export class EntryStore {
           transport: entriesTable.transport,
           homepage: entriesTable.homepage,
           isConnectable: entriesTable.isConnectable,
-          lastConnectionAt: entriesTable.lastConnectionAttemptedAt,
+          lastConnectionAttemptedAt: entriesTable.lastConnectionAttemptedAt,
           tools: entriesTable.tools,
           parameters: entriesTable.parameters,
         })

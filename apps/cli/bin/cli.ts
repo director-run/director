@@ -20,7 +20,6 @@ program
   .version(packageJson.version);
 
 registerCoreCommands(program);
-
 program.addCommand(createClaudeCommand());
 program.addCommand(createCursorCommands());
 program.addCommand(createRegistryCommands());

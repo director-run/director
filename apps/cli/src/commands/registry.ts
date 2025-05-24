@@ -1,10 +1,8 @@
-import { makeTable } from "@director.run/utilities/cli";
-import { actionWithErrorHandler } from "@director.run/utilities/cli";
+import { makeTable } from "@director.run/utilities/cli/index";
+import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
-import chalk from "chalk";
 import { gatewayClient, registryClient } from "../client";
 import { loader } from "@director.run/utilities/cli/loader";
-import { red } from "@director.run/utilities/cli/colors";
 
 export function createRegistryCommands() {
   const command = new DirectorCommand("registry").description(

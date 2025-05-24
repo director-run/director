@@ -1,12 +1,12 @@
 import path from "node:path";
 import { Gateway } from "@director.run/gateway/gateway";
 import { proxyHTTPToStdio } from "@director.run/mcp/transport";
-import { makeTable } from "@director.run/utilities/cli";
+import { makeTable } from "@director.run/utilities/cli/index";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import {
   actionWithErrorHandler,
   printDirectorAscii,
-} from "@director.run/utilities/cli";
+} from "@director.run/utilities/cli/index";
 import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../client";
 import { env } from "../config";

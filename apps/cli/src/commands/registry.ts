@@ -40,7 +40,7 @@ export function createRegistryCommands() {
 
   command
     .command("get <entryName>")
-    .description("get detailed information about a repository item")
+    .description("Get detailed information about a repository item")
     .action(
       actionWithErrorHandler(async (entryName: string) => {
         const spinner = loader();
@@ -61,7 +61,7 @@ export function createRegistryCommands() {
 
   command
     .command("readme <entryName>")
-    .description("get the readme for a repository item")
+    .description("Print the readme for a repository item")
     .action(
       actionWithErrorHandler(async (entryName: string) => {
         const spinner = loader();
@@ -162,7 +162,7 @@ export function createRegistryCommands() {
 
   command
     .debugCommand("enrich")
-    .description("enrich entries")
+    .description("Enrich entries")
     .action(
       actionWithErrorHandler(async () => {
         const spinner = loader();
@@ -180,7 +180,7 @@ export function createRegistryCommands() {
 
   command
     .debugCommand("stats")
-    .description("get counts")
+    .description("Get high level stats about the registry")
     .action(
       actionWithErrorHandler(async () => {
         const spinner = loader();

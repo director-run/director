@@ -1,17 +1,17 @@
 import path from "node:path";
 import { Gateway } from "@director.run/gateway/gateway";
 import { proxyHTTPToStdio } from "@director.run/mcp/transport";
-import { makeTable } from "@director.run/utilities/cli/index";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
+import { makeTable } from "@director.run/utilities/cli/index";
 import {
   actionWithErrorHandler,
   printDirectorAscii,
 } from "@director.run/utilities/cli/index";
+import { loader } from "@director.run/utilities/cli/loader";
+import { openUrl } from "@director.run/utilities/os";
 import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../client";
 import { env } from "../config";
-import { openUrl } from "@director.run/utilities/os";
-import { loader } from "@director.run/utilities/cli/loader";
 
 export function registerCoreCommands(program: DirectorCommand) {
   program
@@ -35,10 +35,9 @@ export function registerCoreCommands(program: DirectorCommand) {
       }),
     );
 
-
-    program
+  program
     .command("studio")
-    .description("open the director studio")
+    .description("Open the director studio")
     .action(
       actionWithErrorHandler(async () => {
         const spinner = loader();
@@ -46,7 +45,9 @@ export function registerCoreCommands(program: DirectorCommand) {
         try {
           await gatewayClient.health.query();
         } catch (error) {
-          spinner.fail("Failed to connect to gateway. Have you ran `director serve`?");
+          spinner.fail(
+            "Failed to connect to gateway. Have you ran `director serve`?",
+          );
           process.exit(1);
         }
         try {

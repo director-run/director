@@ -3,7 +3,7 @@ import { makeTable } from "@director.run/utilities/cli/index";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { loader } from "@director.run/utilities/cli/loader";
 import { gatewayClient, registryClient } from "../client";
-import { printReistryEntry } from "./print-registry-entry";
+import { printReadme, printReistryEntry } from "./print-registry-entry";
 
 export function createRegistryCommands() {
   const command = new DirectorCommand("registry").description(
@@ -51,6 +51,28 @@ export function createRegistryCommands() {
           });
           spinner.stop();
           printReistryEntry(item);
+        } catch (error) {
+          spinner.fail(
+            error instanceof Error ? error.message : "unknown error",
+          );
+        }
+      }),
+    );
+
+  command
+    .command("readme <entryName>")
+    .description("get the readme for a repository item")
+    .action(
+      actionWithErrorHandler(async (entryName: string) => {
+        const spinner = loader();
+        spinner.start("fetching entry details...");
+
+        try {
+          const item = await registryClient.entries.getEntryByName.query({
+            name: entryName,
+          });
+          spinner.stop();
+          printReadme(item);
         } catch (error) {
           spinner.fail(
             error instanceof Error ? error.message : "unknown error",

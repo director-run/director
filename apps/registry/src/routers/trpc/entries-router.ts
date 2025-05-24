@@ -25,7 +25,7 @@ export function createEntriesRouter({ store }: { store: Store }) {
       await store.entries.deleteAllEntries();
     }),
 
-    import: protectedProcedure.input(z.object({})).mutation(async () => {
+    populate: protectedProcedure.input(z.object({})).mutation(async () => {
       await store.entries.deleteAllEntries();
       await store.entries.addEntries(await fetchRaycastRegistry());
       await store.entries.addEntries(getSeedEntries());

@@ -44,7 +44,7 @@ describe("Entries Router", () => {
         unauthenticatedClient.entries.enrich.mutate({}),
       );
       expectToThrowUnauthorized(
-        unauthenticatedClient.entries.import.mutate({}),
+        unauthenticatedClient.entries.populate.mutate({}),
       );
       expectToThrowUnauthorized(unauthenticatedClient.entries.stats.query({}));
       expect(await authenticatedClient.entries.stats.query({})).toEqual({

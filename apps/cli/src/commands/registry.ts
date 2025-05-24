@@ -111,14 +111,14 @@ export function createRegistryCommands() {
     );
 
   command
-    .debugCommand("import")
-    .description("Seed the database with entries from awesome-mcp-servers")
+    .debugCommand("populate")
+    .description("Seed the registry entries")
     .action(
       actionWithErrorHandler(async () => {
         const spinner = loader();
         spinner.start("importing entries...");
         try {
-          await registryClient.entries.import.mutate({});
+          await registryClient.entries.populate.mutate({});
           spinner.succeed("entries successfully imported");
         } catch (error) {
           spinner.fail(error instanceof Error ? error.message : "unknown error");

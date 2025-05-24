@@ -33,6 +33,18 @@ export function registerCoreCommands(program: DirectorCommand) {
       }),
     );
 
+
+    program
+    .command("studio")
+    .description("open the director studio")
+    .action(
+      actionWithErrorHandler(async () => {
+
+          printDirectorAscii();
+
+      }),
+    );
+
   program
     .command("ls")
     .description("List all proxies")

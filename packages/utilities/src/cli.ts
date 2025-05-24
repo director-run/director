@@ -2,6 +2,7 @@ import { TRPCClientError } from "@trpc/client";
 import Table from "cli-table3";
 import { Option } from "commander";
 import { getLogger } from "./logger";
+import { blue } from "./cli/colors";
 
 const logger = getLogger("cli");
 

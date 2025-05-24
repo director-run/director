@@ -3,6 +3,7 @@ import { actionWithErrorHandler } from "@director.run/utilities/cli";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import chalk from "chalk";
 import { gatewayClient, registryClient } from "../client";
+import { loader } from "@director.run/utilities/cli/loader";
 
 export function createRegistryCommands() {
   const command = new DirectorCommand("registry").description(
@@ -14,11 +15,13 @@ export function createRegistryCommands() {
     .description("List all available servers in the registry")
     .action(
       actionWithErrorHandler(async () => {
-        // TODO: add loader like npx create-turbo@latest
+        const spinner = loader();
+        spinner.start();
         const items = await registryClient.entries.getEntries.query({
           pageIndex: 0,
           pageSize: 100,
         });
+        spinner.succeed();
         const table = makeTable(["Name", "Description"]);
         table.push(
           ...items.entries.map((item) => {

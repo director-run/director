@@ -22,7 +22,7 @@ export const entriesTable = pgTable("entries", {
   isOfficial: boolean("is_official").default(false), // Is it a servers that is officially supported by the companies or makers of the service
   isEnriched: boolean("is_enriched").default(false), // Has the entry been enriched?
   isConnectable: boolean("is_connectable").default(false), // Has the entry been enriched?
-  lastConnectionAt: timestamp("last_connection_at"),
+  lastConnectionAttemptedAt: timestamp("last_connection_attempted_at"),
   lastConnectionError: text("last_connection_error"),
 
   // **

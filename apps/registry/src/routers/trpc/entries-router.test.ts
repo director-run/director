@@ -47,7 +47,7 @@ describe("Entries Router", () => {
           makeTestEntry({
             ...makeTestEntry(),
             isConnectable: false,
-            lastConnectionAt: undefined,
+            lastConnectionAttemptedAt: undefined,
             lastConnectionError: undefined,
           }),
         );
@@ -76,7 +76,7 @@ describe("Entries Router", () => {
           entry.name,
         );
         expect(updatedEntry.isConnectable).toBe(true);
-        expect(updatedEntry.lastConnectionAt).toBeDefined();
+        expect(updatedEntry.lastConnectionAttemptedAt).toBeDefined();
         expect(updatedEntry.lastConnectionError).toBe("test");
       });
     });
@@ -94,6 +94,7 @@ describe("Entries Router", () => {
       expect(await authenticatedClient.entries.stats.query({})).toEqual({
         total: 0,
         enriched: 0,
+        connectionAttempted: 0,
         connectable: 0,
         connectableError: 0,
       });

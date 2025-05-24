@@ -49,12 +49,14 @@ export class EntryStore {
         isEnriched: entriesTable.isEnriched,
         isConnectable: entriesTable.isConnectable,
         lastConnectionError: entriesTable.lastConnectionError,
+        lastConnectionAt: entriesTable.lastConnectionAttemptedAt,
       })
       .from(entriesTable);
 
     return {
       total: entries.length,
       enriched: entries.filter((e) => e.isEnriched).length,
+      connectionAttempted: entries.filter((e) => e.lastConnectionAt).length,
       connectable: entries.filter((e) => e.isConnectable).length,
       connectableError: entries.filter((e) => e.lastConnectionError).length,
     };
@@ -77,7 +79,7 @@ export class EntryStore {
           transport: entriesTable.transport,
           homepage: entriesTable.homepage,
           isConnectable: entriesTable.isConnectable,
-          lastConnectionAt: entriesTable.lastConnectionAt,
+          lastConnectionAt: entriesTable.lastConnectionAttemptedAt,
           tools: entriesTable.tools,
           parameters: entriesTable.parameters,
         })

@@ -9,7 +9,7 @@ const logger = getLogger("enrich-tools");
 export async function enrichTools() {
   const entries = await registryClient.entries.getEntries.query({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 100,
   });
 
   for (const entry of entries.entries) {
@@ -51,7 +51,7 @@ async function fetchToolsForEntry(entry: EntryGetParams) {
       ...transport.env,
     });
     logger.info(`connected to ${entry.name}, fetching tools...`);
-    const tools = await client.listTools();
+    return (await client.listTools()).tools;
     //   console.log(JSON.stringify(tools, null, 2));
     logger.info(`closing client ${entry.name}`);
     await client.close();

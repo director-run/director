@@ -1,3 +1,5 @@
+import type { EntryGetParams } from "@director.run/registry/db/schema";
+import { green, red } from "@director.run/utilities/cli/colors";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import { makeTable } from "@director.run/utilities/cli/index";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
@@ -10,6 +12,36 @@ export function createRegistryCommands() {
   const command = new DirectorCommand("registry").description(
     "MCP server registry commands",
   );
+
+  function listEntries(items: EntryGetParams[]) {
+    const table = makeTable(["Name", "Description", "Is Connectable"]);
+    table.push(
+      ...items.map((item) => {
+        return [
+          item.name,
+          truncateDescription(item.description),
+          item.isConnectable ? "yes" : "no",
+        ];
+      }),
+    );
+    console.log(table.toString());
+  }
+
+  function listDevEntries(
+    items: ReturnType<typeof registryClient.entries.getEntries.query>,
+  ) {
+    const table = makeTable(["Name", "Is Connectable", "hasTools?"]);
+    table.push(
+      ...items.map((item) => {
+        return [
+          item.name,
+          item.isConnectable ? green("yes") : red("no"),
+          item.tools?.length,
+        ];
+      }),
+    );
+    console.log(table.toString());
+  }
 
   command
     .command("ls")
@@ -24,13 +56,7 @@ export function createRegistryCommands() {
             pageSize: 100,
           });
           spinner.stop();
-          const table = makeTable(["Name", "Description"]);
-          table.push(
-            ...items.entries.map((item) => {
-              return [item.name, truncateDescription(item.description)];
-            }),
-          );
-          console.log(table.toString());
+          listDevEntries(items.entries);
         } catch (error) {
           spinner.fail(
             error instanceof Error ? error.message : "unknown error",

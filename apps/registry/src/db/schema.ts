@@ -58,7 +58,20 @@ export const entriesTable = pgTable("entries", {
     Array<{
       name: string;
       description: string;
-      inputSchema: unknown;
+      inputSchema: {
+        type: string;
+        required: string[];
+        properties: Record<
+          string,
+          {
+            type: string;
+            description?: string;
+            default?: unknown;
+            title?: string;
+            anyOf?: unknown;
+          }
+        >;
+      };
     }>
   >(),
   parameters: jsonb("parameters").default([]).$type<Array<EntryParameter>>(),

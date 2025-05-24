@@ -1,5 +1,4 @@
 import { count, eq, inArray } from "drizzle-orm";
-import { isGithubRepo } from "../enrichment/github";
 import { DatabaseConnection } from "./index";
 import { type EntryCreateParams, entriesTable } from "./schema";
 
@@ -44,16 +43,20 @@ export class EntryStore {
   }
 
   public async getStatistics() {
-    const entries = await this.getAllEntries();
-    const enriched = entries.filter((e) => e.isEnriched);
-    const notEnriched = entries.filter((e) => !e.isEnriched);
-    const notGithub = entries.filter((e) => !isGithubRepo(e.homepage));
+    const entries = await this.db.db
+      .select({
+        id: entriesTable.id,
+        isEnriched: entriesTable.isEnriched,
+        isConnectable: entriesTable.isConnectable,
+        lastConnectionError: entriesTable.lastConnectionError,
+      })
+      .from(entriesTable);
 
     return {
       total: entries.length,
-      enriched: enriched.length,
-      notEnriched: notEnriched.length,
-      notGithub: notGithub.length,
+      enriched: entries.filter((e) => e.isEnriched).length,
+      connectable: entries.filter((e) => e.isConnectable).length,
+      connectableError: entries.filter((e) => e.lastConnectionError).length,
     };
   }
 

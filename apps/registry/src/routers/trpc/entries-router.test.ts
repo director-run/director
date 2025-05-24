@@ -92,10 +92,10 @@ describe("Entries Router", () => {
       );
       expectToThrowUnauthorized(unauthenticatedClient.entries.stats.query({}));
       expect(await authenticatedClient.entries.stats.query({})).toEqual({
-        enriched: 0,
-        notEnriched: 0,
-        notGithub: 0,
         total: 0,
+        enriched: 0,
+        connectable: 0,
+        connectableError: 0,
       });
     });
   });

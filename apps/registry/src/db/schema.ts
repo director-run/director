@@ -21,6 +21,8 @@ export const entriesTable = pgTable("entries", {
   createdAt: timestamp("created_at").defaultNow(),
   isOfficial: boolean("is_official").default(false), // Is it a servers that is officially supported by the companies or makers of the service
   isEnriched: boolean("is_enriched").default(false), // Has the entry been enriched?
+  isConnectable: boolean("is_connectable").default(false), // Has the entry been enriched?
+  lastConnectionAt: timestamp("last_connection_at"),
 
   // **
   // ** Transport
@@ -55,13 +57,7 @@ export const entriesTable = pgTable("entries", {
     Array<{
       name: string;
       description: string;
-      arguments?: string[];
-      inputs?: Array<{
-        name: string;
-        type: string;
-        required?: boolean;
-        description?: string;
-      }>;
+      inputSchema: unknown;
     }>
   >(),
   parameters: jsonb("parameters").default([]).$type<Array<EntryParameter>>(),

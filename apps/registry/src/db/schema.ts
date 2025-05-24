@@ -72,41 +72,24 @@ export type EntryParameter = {
   type: "string";
 };
 
-// export type Tool = {
-//   name: string;
-//   description: string;
-//   inputSchema: {
-//     type: string;
-//     required: string[];
-//     properties: Record<
-//       string,
-//       {
-//         type: string;
-//         description?: string;
-//         default?: unknown;
-//         title?: string;
-//         anyOf?: unknown;
-//       }
-//     >;
-//   };
-// };
-
 export const toolSchema = z.object({
   name: z.string(),
   description: z.string(),
   inputSchema: z.object({
     type: z.string(),
-    required: z.array(z.string()),
-    properties: z.record(
-      z.string(),
-      z.object({
-        type: z.string(),
-        description: z.string().optional(),
-        default: z.unknown().optional(),
-        title: z.string().optional(),
-        anyOf: z.unknown().optional(),
-      }),
-    ),
+    required: z.array(z.string()).optional(),
+    properties: z
+      .record(
+        z.string(),
+        z.object({
+          type: z.string().optional(),
+          description: z.string().optional(),
+          default: z.unknown().optional(),
+          title: z.string().optional(),
+          anyOf: z.unknown().optional(),
+        }),
+      )
+      .optional(),
   }),
 });
 

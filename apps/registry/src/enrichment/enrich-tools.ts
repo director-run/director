@@ -2,11 +2,14 @@ import { SimpleClient } from "@director.run/mcp/simple-client";
 import { type EntryGetParams } from "@director.run/registry/db/schema";
 import {} from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
-import { registryClient } from "../client";
+import type { RegistryClient } from "../client";
 
-const logger = getLogger("enrich-tools");
+const logger = getLogger("enrich/tools");
 
-export async function enrichTools() {
+// Takes in a registry client because this is an unsafe operation. So you run this in a VM and push the results back over http.
+// It also likely won't run in vercel because of all the stdio depedenceis (python, ux...)
+
+export async function enrichEntryTools(registryClient: RegistryClient) {
   const entries = await registryClient.entries.getEntries.query({
     pageIndex: 0,
     pageSize: 100,
@@ -17,15 +20,10 @@ export async function enrichTools() {
       logger.info(`skipping ${entry.name}, already processed`);
       continue;
     }
+    let tools;
+
     try {
-      const tools = await fetchToolsForEntry(entry);
-      await registryClient.entries.updateEntry.mutate({
-        id: entry.id,
-        isConnectable: true,
-        lastConnectionAttemptedAt: new Date(),
-        lastConnectionError: undefined,
-        tools,
-      });
+      tools = await fetchEntryTools(entry);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
@@ -37,10 +35,18 @@ export async function enrichTools() {
         lastConnectionError: errorMessage,
       });
     }
+
+    await registryClient.entries.updateEntry.mutate({
+      id: entry.id,
+      isConnectable: true,
+      lastConnectionAttemptedAt: new Date(),
+      lastConnectionError: undefined,
+      tools,
+    });
   }
 }
 
-async function fetchToolsForEntry(entry: EntryGetParams) {
+async function fetchEntryTools(entry: EntryGetParams) {
   const transport = entry.transport;
   const client = new SimpleClient(`${entry.name}-client`);
 
@@ -51,10 +57,10 @@ async function fetchToolsForEntry(entry: EntryGetParams) {
       ...transport.env,
     });
     logger.info(`connected to ${entry.name}, fetching tools...`);
-    return (await client.listTools()).tools;
-    //   console.log(JSON.stringify(tools, null, 2));
+    const tools = (await client.listTools()).tools;
     logger.info(`closing client ${entry.name}`);
     await client.close();
+    return tools;
   } else {
     logger.warn(
       `skipping ${entry.name}, unsupported transport type: ${transport.type}`,

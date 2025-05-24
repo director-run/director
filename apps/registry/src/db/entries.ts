@@ -50,6 +50,7 @@ export class EntryStore {
         isConnectable: entriesTable.isConnectable,
         lastConnectionError: entriesTable.lastConnectionError,
         lastConnectionAt: entriesTable.lastConnectionAttemptedAt,
+        tools: entriesTable.tools,
       })
       .from(entriesTable);
 
@@ -59,6 +60,7 @@ export class EntryStore {
       connectionAttempted: entries.filter((e) => e.lastConnectionAt).length,
       connectable: entries.filter((e) => e.isConnectable).length,
       connectableError: entries.filter((e) => e.lastConnectionError).length,
+      tools: entries.filter((e) => e.tools?.length).length,
     };
   }
 

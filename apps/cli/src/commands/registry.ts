@@ -1,48 +1,15 @@
-import { green, red } from "@director.run/utilities/cli/colors";
+import { enrichEntryTools } from "@director.run/registry/enrichment/enrich-tools";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
-import { makeTable } from "@director.run/utilities/cli/index";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { loader } from "@director.run/utilities/cli/loader";
 import { gatewayClient, registryClient } from "../client";
-import { enrichTools } from "./enrich-tools";
-import { printReadme, printReistryEntry } from "./print-registry-entry";
+import { printReadme, printReistryEntry } from "../views/print-registry-entry";
+import { listEntries } from "../views/registry-list";
 
 export function createRegistryCommands() {
   const command = new DirectorCommand("registry").description(
     "MCP server registry commands",
   );
-
-  type Entries = Awaited<
-    ReturnType<typeof registryClient.entries.getEntries.query>
-  >["entries"];
-
-  function listEntries(items: Entries) {
-    const table = makeTable(["Name", "Description", "Is Connectable"]);
-    table.push(
-      ...items.map((item) => {
-        return [
-          item.name,
-          truncateDescription(item.description),
-          item.isConnectable ? "yes" : "no",
-        ];
-      }),
-    );
-    console.log(table.toString());
-  }
-
-  function listDevEntries(items: Entries) {
-    const table = makeTable(["Name", "Is Connectable", "hasTools?"]);
-    table.push(
-      ...items.map((item) => {
-        return [
-          item.name,
-          item.isConnectable ? green("yes") : red("no"),
-          item.tools?.length,
-        ];
-      }),
-    );
-    console.log(table.toString());
-  }
 
   command
     .command("ls")
@@ -57,7 +24,7 @@ export function createRegistryCommands() {
             pageSize: 100,
           });
           spinner.stop();
-          listDevEntries(items.entries);
+          listEntries(items.entries);
         } catch (error) {
           spinner.fail(
             error instanceof Error ? error.message : "unknown error",
@@ -211,16 +178,7 @@ export function createRegistryCommands() {
     .description("Enrich entry tools")
     .action(
       actionWithErrorHandler(async () => {
-        // const spinner = loader();
-        // spinner.start("enriching tools...");
-        // try {
-        await enrichTools();
-        // spinner.succeed("tools successfully enriched");
-        // } catch (error) {
-        //   spinner.fail(
-        //     error instanceof Error ? error.message : "unknown error",
-        //   );
-        // }
+        await enrichEntryTools(registryClient);
       }),
     );
 
@@ -244,14 +202,4 @@ export function createRegistryCommands() {
     );
 
   return command;
-}
-
-function truncateDescription(
-  description: string,
-  maxWidth: number = 100,
-): string {
-  if (description.length <= maxWidth) {
-    return description;
-  }
-  return description.slice(0, maxWidth - 3) + "...";
 }

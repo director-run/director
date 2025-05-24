@@ -3,6 +3,7 @@ import { makeTable } from "@director.run/utilities/cli/index";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { loader } from "@director.run/utilities/cli/loader";
 import { gatewayClient, registryClient } from "../client";
+import { enrichTools } from "./enrich-tools";
 import { printReadme, printReistryEntry } from "./print-registry-entry";
 
 export function createRegistryCommands() {
@@ -175,6 +176,24 @@ export function createRegistryCommands() {
             error instanceof Error ? error.message : "unknown error",
           );
         }
+      }),
+    );
+
+  command
+    .debugCommand("enrich-tools")
+    .description("Enrich entry tools")
+    .action(
+      actionWithErrorHandler(async () => {
+        // const spinner = loader();
+        // spinner.start("enriching tools...");
+        // try {
+        await enrichTools();
+        // spinner.succeed("tools successfully enriched");
+        // } catch (error) {
+        //   spinner.fail(
+        //     error instanceof Error ? error.message : "unknown error",
+        //   );
+        // }
       }),
     );
 

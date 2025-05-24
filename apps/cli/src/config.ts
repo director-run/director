@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { red } from "@director.run/utilities/cli/colors";
 import {
   createEnv,
   isDevelopment,
@@ -32,10 +31,6 @@ function getEnvFilePath() {
   const localEnvPath = path.join(process.cwd(), "./.env.local");
   if (fs.existsSync(localEnvPath) && isDevelopment()) {
     // In development, we want to use the local env file if it exists in the current working directory
-    console.log(red(`**********`));
-    console.log(red(`* Using local env file: ${localEnvPath}`));
-    console.log(red(`**********`));
-
     return localEnvPath;
   } else {
     return path.join(getDataDir(), "./config.env");

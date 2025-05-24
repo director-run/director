@@ -8,7 +8,6 @@ const logger = getLogger("enrich/tools");
 
 // Takes in a registry client because this is an unsafe operation. So you run this in a VM and push the results back over http.
 // It also likely won't run in vercel because of all the stdio depedenceis (python, ux...)
-
 export async function enrichEntryTools(registryClient: RegistryClient) {
   const entries = await registryClient.entries.getEntries.query({
     pageIndex: 0,

@@ -93,7 +93,11 @@ describe("Entries Router", () => {
           {
             name: "test",
             description: "test",
-            inputSchema: { foo: "bar" },
+            inputSchema: {
+              type: "object",
+              required: [],
+              properties: {},
+            },
           },
         ]);
       });
@@ -115,6 +119,7 @@ describe("Entries Router", () => {
         connectionAttempted: 0,
         connectable: 0,
         connectableError: 0,
+        tools: 0,
       });
     });
   });

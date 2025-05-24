@@ -1,8 +1,12 @@
 import { SimpleClient } from "@director.run/mcp/simple-client";
-import { type EntryGetParams } from "@director.run/registry/db/schema";
 import {} from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
+import type { inferRouterOutputs } from "@trpc/server";
 import type { RegistryClient } from "../client";
+import { type AppRouter } from "../routers/trpc";
+
+type Entry =
+  inferRouterOutputs<AppRouter>["entries"]["getEntries"]["entries"][number];
 
 const logger = getLogger("enrich/tools");
 
@@ -45,7 +49,7 @@ export async function enrichEntryTools(registryClient: RegistryClient) {
   }
 }
 
-async function fetchEntryTools(entry: EntryGetParams) {
+async function fetchEntryTools(entry: Entry) {
   const transport = entry.transport;
   const client = new SimpleClient(`${entry.name}-client`);
 

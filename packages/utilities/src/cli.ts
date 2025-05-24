@@ -1,11 +1,7 @@
 import { TRPCClientError } from "@trpc/client";
-import chalk from "chalk";
 import Table from "cli-table3";
 import { Option } from "commander";
 import { getLogger } from "./logger";
-import ora from "ora";
-import { blue, red } from "./cli/colors";
-import { makeHelpText } from "./cli/help";
 
 const logger = getLogger("cli");
 
@@ -46,23 +42,8 @@ export function makeTable(head: string[]) {
   });
 }
 
-declare module "commander" {
-  interface Command {
-    _debug?: boolean; // is it a debug command?
-    _helpOption?: Option;
-  }
-}
 
 
-
-
-export const turboLoader = (text: string) =>
-  ora({
-    text,
-    spinner: {
-      frames: ["   ", blue(">  "), blue(">> "), blue(">>>")],
-    },
-  });
 
 export function printDirectorAscii(): void {
   console.log(`

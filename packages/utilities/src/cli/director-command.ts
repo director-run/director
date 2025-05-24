@@ -1,9 +1,17 @@
-import { type CommandOptions } from "commander";
+import { Option, type CommandOptions } from "commander";
 import { Command, type HelpContext } from "commander";
 import { isDevelopment } from "../env";
 import { makeHelpText } from "./help";
 
 
+declare module "commander" {
+    interface Command {
+      _debug?: boolean; // is it a debug command?
+      _helpOption?: Option;
+    }
+  }
+  
+  
 
 export class DirectorCommand extends Command {
     public debug = true;

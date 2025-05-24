@@ -1,9 +1,9 @@
 
-import chalk from "chalk";
-import {  Option } from "commander";
+import { Option } from "commander";
 import { Command } from "commander";
 import { isDevelopment } from "../env";
 import { DirectorCommand } from "./director-command";
+import { red, yellow, whiteBold } from "./colors";
 
 const LEFT_PADDING = " ".repeat(2);
 
@@ -12,8 +12,8 @@ export function makeHelpText(program: DirectorCommand) {
   
     if (isDevelopment()) {
       lines.push(
-        chalk.yellow(
-          "🚧 running in development mode, debug commands in yellow 🚧",
+        yellow(
+          "🚧 [development] debug commands in yellow 🚧",
         ),
       );
       lines.push("");
@@ -21,7 +21,7 @@ export function makeHelpText(program: DirectorCommand) {
   
     lines.push(program.description().trim());
     lines.push("");
-    lines.push(chalk.white.bold(`USAGE`));
+    lines.push(makeHeader(`usage`));
     lines.push(
       LEFT_PADDING +
         concat([
@@ -89,7 +89,7 @@ export function makeHelpText(program: DirectorCommand) {
 
 
 const makeHeader = (text: string) => {
-    return chalk.white.bold(text.toLocaleUpperCase());
+    return whiteBold(text.toLocaleUpperCase());
   };
   
   
@@ -108,14 +108,14 @@ const makeHeader = (text: string) => {
       cmd.options.length ? optional("options") : "",
     ]);
   
-    const rightSide = cmd.description() || chalk.red("TODO");
+    const rightSide = cmd.description() || red("TODO");
   
     const text = concat([
       LEFT_PADDING,
       leftSide,
       alignRight(rightSide, leftSide.length),
     ]);
-    return cmd._debug ? chalk.yellow(text) : text;
+    return cmd._debug ? yellow(text) : text;
   };
   
   const alignRight = (t: string, xIndex: number) => {

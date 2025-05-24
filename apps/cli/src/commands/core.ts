@@ -2,6 +2,7 @@ import path from "node:path";
 import { Gateway } from "@director.run/gateway/gateway";
 import { proxyHTTPToStdio } from "@director.run/mcp/transport";
 import { makeTable } from "@director.run/utilities/cli";
+import { loader } from "@director.run/utilities/cli/loader";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import {
   actionWithErrorHandler,
@@ -57,6 +58,23 @@ export function registerCoreCommands(program: DirectorCommand) {
         }
       }),
     );
+
+
+
+  program
+  .command("hi")
+  .description("List all proxies")
+  .action(
+    actionWithErrorHandler(async () => {
+      const spinner = loader("Hang on...")
+      spinner.start();
+
+setTimeout(() => {
+	spinner.succeed();
+}, 10000);
+
+    }),
+  );
 
   program
     .command("get <proxyId>")

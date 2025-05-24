@@ -1,8 +1,8 @@
 import picocolors from "picocolors";
-
+import chalk from "chalk";
 export const blue = hex("#0099F7");
 export const red = hex("#F11712");
-export const yellow = hex("#FFFF00");
+export const yellow = (text: string) => chalk.yellow(text);
 
 function hex (color: string): ((text: string) => string) {
      const ansiColor = hexToAnsi256(color);
@@ -21,4 +21,9 @@ function hex (color: string): ((text: string) => string) {
       6 * Math.round((g / 255) * 5) +
       Math.round((b / 255) * 5);
     return ansi;
+  }
+
+
+  export function whiteBold(text: string) {
+    return chalk.white.bold(text);
   }

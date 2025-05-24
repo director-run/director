@@ -3,7 +3,7 @@ import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { loader } from "@director.run/utilities/cli/loader";
 import { gatewayClient, registryClient } from "../client";
-import { printReadme, printReistryEntry } from "../views/print-registry-entry";
+import { printReadme, printRegistryEntry } from "../views/registry-entry";
 import { listEntries } from "../views/registry-list";
 
 export function createRegistryCommands() {
@@ -45,7 +45,7 @@ export function createRegistryCommands() {
             name: entryName,
           });
           spinner.stop();
-          printReistryEntry(item);
+          printRegistryEntry(item);
         } catch (error) {
           spinner.fail(
             error instanceof Error ? error.message : "unknown error",

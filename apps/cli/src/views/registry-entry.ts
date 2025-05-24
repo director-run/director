@@ -1,7 +1,7 @@
 import type { EntryGetParams } from "@director.run/registry/db/schema";
 import chalk from "chalk";
 
-export function printReistryEntry(entry: EntryGetParams) {
+export function printRegistryEntry(entry: EntryGetParams) {
   console.log(`
 ${chalk.white.bold(entry.name.toUpperCase())}
 ${entry.description}

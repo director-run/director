@@ -15,19 +15,23 @@ export function createRegistryCommands() {
     .action(
       actionWithErrorHandler(async () => {
         const spinner = loader();
-        spinner.start();
-        const items = await registryClient.entries.getEntries.query({
-          pageIndex: 0,
-          pageSize: 100,
-        });
-        spinner.stop();
-        const table = makeTable(["Name", "Description"]);
-        table.push(
-          ...items.entries.map((item) => {
-            return [item.name, truncateDescription(item.description)];
-          }),
-        );
-        console.log(table.toString());
+        spinner.start("fetching entries...");
+        try {
+          const items = await registryClient.entries.getEntries.query({
+            pageIndex: 0,
+            pageSize: 100,
+          });
+          spinner.stop();
+          const table = makeTable(["Name", "Description"]);
+          table.push(
+            ...items.entries.map((item) => {
+              return [item.name, truncateDescription(item.description)];
+            }),
+          );
+          console.log(table.toString());
+        } catch (error) {
+          spinner.fail(error instanceof Error ? error.message : "unknown error");
+        }
       }),
     );
 
@@ -36,19 +40,17 @@ export function createRegistryCommands() {
     .description("get detailed information about a repository item")
     .action(
       actionWithErrorHandler(async (entryName: string) => {
-        
-          const spinner = loader();
-          spinner.start();
-          try {
-            const item = await registryClient.entries.getEntryByName.query({
-              name: entryName,
-            });
-            spinner.stop();
-            console.log(JSON.stringify(item, null, 2));
-          } catch (error) {
-            spinner.fail(error instanceof Error ? error.message : "unknown error");
-            
-          }
+        const spinner = loader();
+        spinner.start("fetching entry details...");
+        try {
+          const item = await registryClient.entries.getEntryByName.query({
+            name: entryName,
+          });
+          spinner.stop();
+          console.log(JSON.stringify(item, null, 2));
+        } catch (error) {
+          spinner.fail(error instanceof Error ? error.message : "unknown error");
+        }
       }),
     );
 
@@ -59,13 +61,17 @@ export function createRegistryCommands() {
       actionWithErrorHandler(async (proxyId: string, entryName: string) => {
         const spinner = loader();
         spinner.start("adding server...");
-        const proxy = await gatewayClient.registry.addServerFromRegistry.mutate(
-          {
-            proxyId,
-            entryName,
-          },
-        );
-        spinner.succeed(`Registry entry ${entryName} added to ${proxy.id}`);
+        try {
+          const proxy = await gatewayClient.registry.addServerFromRegistry.mutate(
+            {
+              proxyId,
+              entryName,
+            },
+          );
+          spinner.succeed(`Registry entry ${entryName} added to ${proxy.id}`);
+        } catch (error) {
+          spinner.fail(error instanceof Error ? error.message : "unknown error");
+        }
       }),
     );
 
@@ -76,11 +82,15 @@ export function createRegistryCommands() {
       actionWithErrorHandler(async (proxyId: string, serverName: string) => {
         const spinner = loader();
         spinner.start("removing server...");
-        const proxy = await gatewayClient.store.removeServer.mutate({
-          proxyId,
-          serverName,
-        });
-        spinner.succeed(`server ${serverName} removed from ${proxy.id}`);
+        try {
+          const proxy = await gatewayClient.store.removeServer.mutate({
+            proxyId,
+            serverName,
+          });
+          spinner.succeed(`Server ${serverName} removed from ${proxy.id}`);
+        } catch (error) {
+          spinner.fail(error instanceof Error ? error.message : "unknown error");
+        }
       }),
     );
 
@@ -91,8 +101,12 @@ export function createRegistryCommands() {
       actionWithErrorHandler(async () => {
         const spinner = loader();
         spinner.start("purging registry...");
-        await registryClient.entries.purge.mutate({});
-        spinner.succeed("registry successfully purged");
+        try {
+          await registryClient.entries.purge.mutate({});
+          spinner.succeed("registry successfully purged");
+        } catch (error) {
+          spinner.fail(error instanceof Error ? error.message : "unknown error");
+        }
       }),
     );
 
@@ -103,8 +117,12 @@ export function createRegistryCommands() {
       actionWithErrorHandler(async () => {
         const spinner = loader();
         spinner.start("importing entries...");
-        await registryClient.entries.import.mutate({});
-        spinner.succeed("entires successfully imported");
+        try {
+          await registryClient.entries.import.mutate({});
+          spinner.succeed("entries successfully imported");
+        } catch (error) {
+          spinner.fail(error instanceof Error ? error.message : "unknown error");
+        }
       }),
     );
 
@@ -115,8 +133,12 @@ export function createRegistryCommands() {
       actionWithErrorHandler(async () => {
         const spinner = loader();
         spinner.start("enriching entries...");
-        await registryClient.entries.enrich.mutate({});
-        spinner.succeed("entries successfully enriched");
+        try {
+          await registryClient.entries.enrich.mutate({});
+          spinner.succeed("entries successfully enriched");
+        } catch (error) {
+          spinner.fail(error instanceof Error ? error.message : "unknown error");
+        }
       }),
     );
 
@@ -127,9 +149,13 @@ export function createRegistryCommands() {
       actionWithErrorHandler(async () => {
         const spinner = loader();
         spinner.start("getting stats...");
-        const stats = await registryClient.entries.stats.query({});
-        spinner.stop();
-        console.log(stats);
+        try {
+          const stats = await registryClient.entries.stats.query({});
+          spinner.stop();
+          console.log(stats);
+        } catch (error) {
+          spinner.fail(error instanceof Error ? error.message : "unknown error");
+        }
       }),
     );
 

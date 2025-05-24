@@ -37,14 +37,13 @@ export function createEntriesRouter({ store }: { store: Store }) {
               z.object({
                 name: z.string(),
                 description: z.string(),
-                inputSchema: z.object({}),
+                inputSchema: z.unknown(),
               }),
             )
             .optional(),
         }),
       )
       .mutation(async ({ input }) => {
-        console.log("input", input);
         await store.entries.updateEntry(input.id, {
           isConnectable: input.isConnectable,
           lastConnectionAttemptedAt: input.lastConnectionAttemptedAt,

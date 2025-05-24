@@ -60,7 +60,26 @@ async function fetchEntryTools(entry: Entry) {
       ...transport.env,
     });
     logger.info(`connected to ${entry.name}, fetching tools...`);
-    const tools = (await client.listTools()).tools;
+    const tools = (await client.listTools()).tools.map(
+      ({ name, description, inputSchema }) => ({
+        name,
+        description: description ?? "",
+        inputSchema: {
+          type: "object",
+          properties: (inputSchema?.properties ?? {}) as Record<
+            string,
+            {
+              type?: string;
+              description?: string;
+              default?: unknown;
+              title?: string;
+              anyOf?: unknown;
+            }
+          >,
+          required: inputSchema?.required,
+        },
+      }),
+    );
     logger.info(`closing client ${entry.name}`);
     await client.close();
     return tools;

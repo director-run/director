@@ -13,7 +13,7 @@ export function makeHelpText(program: DirectorCommand) {
     if (isDevelopment()) {
       lines.push(
         yellow(
-          "🚧 [development] debug commands in yellow 🚧",
+          "🚧 development commands appear in yellow 🚧",
         ),
       );
       lines.push("");

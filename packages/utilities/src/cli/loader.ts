@@ -10,6 +10,42 @@ export const loader = (text?: string) =>
     },
   });
 
+/**
+ * Wraps an async function with a spinner, allowing chainable start and success messages.
+ * Usage:
+ *   await spinnerWrap(() => myAsyncFn()).startMessage('...').successMessage('...').run();
+ */
+export function spinnerWrap<T>(fn: () => Promise<T>) {
+  let startMsg = "Working...";
+  let successMsg: string | undefined;
+  return {
+    startMessage(msg: string) {
+      startMsg = msg;
+      return this;
+    },
+    successMessage(msg: string) {
+      successMsg = msg;
+      return this;
+    },
+    async run() {
+      const spinner = loader();
+      spinner.start(startMsg);
+      try {
+        const result = await fn();
+        if (successMsg) {
+          spinner.succeed(successMsg);
+        } else {
+          spinner.stop();
+        }
+        return result;
+      } catch (error) {
+        spinner.fail(error instanceof Error ? error.message : "unknown error");
+        throw error;
+      }
+    },
+  };
+}
+
 const loaderStrings = [
   "Hang on...",
   "Sit tight...",

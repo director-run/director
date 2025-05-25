@@ -24,6 +24,9 @@ bun install
 docker compose up -d
 ./scripts/setup-development.sh
 bun run test # make sure everything is working
+
+# Teardown enc
+docker compose down -v
 ```
 
 ### Running in Development 

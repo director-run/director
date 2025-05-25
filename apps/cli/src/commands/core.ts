@@ -13,6 +13,16 @@ import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../client";
 import { env } from "../config";
 
+export async function startGateway() {
+  await Gateway.start({
+    port: env.GATEWAY_PORT,
+    databaseFilePath: env.DB_FILE_PATH,
+    registryURL: env.REGISTRY_API_URL,
+    cliPath: path.join(__dirname, "../../bin/cli.ts"),
+    allowedOrigins: [env.STUDIO_URL, /^https?:\/\/localhost(:\d+)?$/],
+  });
+}
+
 export function registerCoreCommands(program: DirectorCommand) {
   program
     .command("serve")
@@ -21,14 +31,7 @@ export function registerCoreCommands(program: DirectorCommand) {
       actionWithErrorHandler(async () => {
         try {
           printDirectorAscii();
-
-          await Gateway.start({
-            port: env.GATEWAY_PORT,
-            databaseFilePath: env.DB_FILE_PATH,
-            registryURL: env.REGISTRY_API_URL,
-            cliPath: path.join(__dirname, "../../bin/cli.ts"),
-            allowedOrigins: [env.STUDIO_URL, /^https?:\/\/localhost(:\d+)?$/],
-          });
+          await startGateway();
         } catch (error) {
           console.error("Fatal error starting gateway", error);
           process.exit(1);

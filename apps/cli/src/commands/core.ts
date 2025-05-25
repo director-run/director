@@ -27,6 +27,7 @@ export function registerCoreCommands(program: DirectorCommand) {
             databaseFilePath: env.DB_FILE_PATH,
             registryURL: env.REGISTRY_API_URL,
             cliPath: path.join(__dirname, "../../bin/cli.ts"),
+            allowedOrigins: [env.STUDIO_URL, /^https?:\/\/localhost(:\d+)?$/],
           });
         } catch (error) {
           console.error("Fatal error starting gateway", error);

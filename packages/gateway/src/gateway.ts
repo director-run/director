@@ -38,6 +38,7 @@ export class Gateway {
     databaseFilePath: string;
     registryURL: string;
     cliPath: string;
+    allowedOrigins?: string[];
   }) {
     logger.info(`starting director gateway`);
 
@@ -47,7 +48,11 @@ export class Gateway {
     const registryURL = attribs.registryURL;
     const cliPath = attribs.cliPath;
 
-    app.use(cors());
+    app.use(
+      cors({
+        origin: attribs.allowedOrigins,
+      }),
+    );
     app.use(logRequests());
     app.use("/", createSSERouter({ proxyStore }));
     app.use("/", createStreamableRouter({ proxyStore }));

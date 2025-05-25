@@ -23,9 +23,9 @@ cd director
 bun install
 docker compose up -d
 ./scripts/setup-development.sh
-bun run test # make sure everything is working
+bun run test # confirm everything is working
 
-# Teardown enc
+# Teardown environment
 docker compose down -v
 ```
 
@@ -37,7 +37,8 @@ bun cli serve # start the gateway
 bun cli:dev # watches for changes
 
 # Working with the registry
-# By default the cli is pointing to registry.director.run. Uncomment the lines in apps/cli/.director/development/config.env
+# Uncomment the lines in this file
+vim apps/cli/.director/development/config.env
 bun registry
 bun cli registry populate # populate the development database with server entries
 bun cli registry enrich # populate the development database with server entries

@@ -100,20 +100,18 @@ export function createRegistryCommands() {
   async function promptForParameters(
     entry: EntryGetParams,
   ): Promise<Record<string, string>> {
-    const parameters = entry.parameters;
+    const answers: Record<string, string> = {};
 
-    if (!parameters) {
+    if (!entry.parameters) {
       return {};
     }
-    const answers = await Promise.all(
-      parameters.map(async (parameter) => {
-        const answer = await input({
-          message: parameter.name,
-        });
-        return { [parameter.name]: answer };
-      }),
-    );
-    return Object.assign({}, ...answers);
+
+    for (const parameter of entry.parameters) {
+      const answer = await input({ message: parameter.name });
+      answers[parameter.name] = answer;
+    }
+
+    return answers;
   }
 
   command

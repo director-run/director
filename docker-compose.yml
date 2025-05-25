@@ -1,7 +1,9 @@
+name: director
+
 services:
   postgres:
     image: postgres
-    container_name: director-registry-postgres
+    container_name: director-postgres
     environment:
       - POSTGRES_PASSWORD=travel-china-spend-nothing
     ports:

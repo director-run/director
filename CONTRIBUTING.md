@@ -16,50 +16,29 @@ Hello! We welcome any and all contributions and we'd be more than happy to help 
 
 ```bash 
 # clone the repo
-$ git clone https://github.com/theworkingcompany/director
-$ cd director
+git clone https://github.com/theworkingcompany/director
+cd director
 
-# Install dependencies
-$ bun install
-
-# Setup registry test and development
-$ cd apps/registy
-$ docker-compose up -d # spin up postgres (ignore if you have it running locally)
-$ createdb -h localhost -p 5432 -U postgres director-registry-test # create test db
-  password: travel-china-spend-nothing
-$ createdb -h localhost -p 5432 -U postgres director-registry-dev # create development db
-  password: travel-china-spend-nothing
-$ bun run db:push # push schema to development db
-$ NODE_ENV=test bun run db:push # push schema to test db
-$ bun run cli entries import # populate the development database with server entries
-$ bun run cli entries enrich # populate the development database with server entries
-
-# Setup the director gateway
-$ cd apps/cli
-
-# seed the gateway with test config (if the gateway is running, 
-# it'll need to be restarted for changes to take effect)
-$ bun run cli debug seed 
+# Setup environment
+bun install
+docker compose up -d
+./scripts/setup-development.sh
+bun run test # make sure everything is working
 ```
 
 ### Running in Development 
 
 ```bash
-# start the registry
-$ cd apps/registry
-$ docker-compose up -d # make sure postgres is running
-$ bun run cli service start # start the registry server
+# Running cli in development
+bun cli serve # start the gateway
+bun cli:dev # watches for changes
 
-# start the director gateway
-$ cd apps/cli
-$ bun run cli service start
-
-# list the proxies and install one to claude
-$ bun run cli ls # list all proxies
-$ bun run cli claude install claude-proxy # install sample proxy to claude and restart it
-
-# now you should see a list of mcp servers in claude
-# try this prompt: "give me the front page of hackernews"
+# Working with the registry
+# By default the cli is pointing to registry.director.run. Uncomment the lines in apps/cli/.director/development/config.env
+bun registry
+bun cli registry populate # populate the development database with server entries
+bun cli registry enrich # populate the development database with server entries
+bun cli registry enrich-tools # populate the development database with server entries
 ```
 
 ### Running Tests

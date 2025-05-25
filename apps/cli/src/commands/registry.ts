@@ -2,6 +2,7 @@ import { enrichEntryTools } from "@director.run/registry/enrichment/enrich-tools
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { loader } from "@director.run/utilities/cli/loader";
+import { confirm } from "@inquirer/prompts";
 import { gatewayClient, registryClient } from "../client";
 import { printReadme, printRegistryEntry } from "../views/registry-entry";
 import { listEntries } from "../views/registry-list";
@@ -124,11 +125,19 @@ export function createRegistryCommands() {
     .description("Delete all entries from the database")
     .action(
       actionWithErrorHandler(async () => {
+        const answer = await confirm({
+          message: "Are you sure you want to purge the registry?",
+          default: false,
+        });
+
+        if (!answer) {
+          return;
+        }
         const spinner = loader();
         spinner.start("purging registry...");
         try {
           await registryClient.entries.purge.mutate({});
-          spinner.succeed("registry successfully purged");
+          spinner.succeed("Registry successfully purged");
         } catch (error) {
           spinner.fail(
             error instanceof Error ? error.message : "unknown error",
@@ -142,11 +151,19 @@ export function createRegistryCommands() {
     .description("Seed the registry entries")
     .action(
       actionWithErrorHandler(async () => {
+        const answer = await confirm({
+          message: "Are you sure you want to re-populate the registry?",
+          default: false,
+        });
+
+        if (!answer) {
+          return;
+        }
         const spinner = loader();
         spinner.start("importing entries...");
         try {
           await registryClient.entries.populate.mutate({});
-          spinner.succeed("entries successfully imported");
+          spinner.succeed("Entries successfully imported");
         } catch (error) {
           spinner.fail(
             error instanceof Error ? error.message : "unknown error",
@@ -178,6 +195,14 @@ export function createRegistryCommands() {
     .description("Enrich entry tools")
     .action(
       actionWithErrorHandler(async () => {
+        const answer = await confirm({
+          message: "insecure, are you sure you want to do this?",
+          default: false,
+        });
+
+        if (!answer) {
+          return;
+        }
         await enrichEntryTools(registryClient);
       }),
     );

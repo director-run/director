@@ -18,7 +18,9 @@
     "prepare": "bun run build",
     "dev": "bun --watch bin/cli.ts"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@inquirer/prompts": "^7.5.2"
+  },
   "peerDependencies": {
     "typescript": "^5"
   },

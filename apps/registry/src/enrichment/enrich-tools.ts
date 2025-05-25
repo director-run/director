@@ -37,6 +37,7 @@ export async function enrichEntryTools(registryClient: RegistryClient) {
         lastConnectionAttemptedAt: new Date(),
         lastConnectionError: errorMessage,
       });
+      continue;
     }
 
     await registryClient.entries.updateEntry.mutate({

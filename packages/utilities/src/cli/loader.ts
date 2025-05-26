@@ -19,11 +19,11 @@ export function spinnerWrap<T>(fn: () => Promise<T>) {
   let startMsg = "Working...";
   let successMsg: string | undefined;
   return {
-    startMessage(msg: string) {
+    start(msg: string) {
       startMsg = msg;
       return this;
     },
-    successMessage(msg: string) {
+    succeed(msg: string) {
       successMsg = msg;
       return this;
     },

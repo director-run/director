@@ -25,8 +25,8 @@ export function createRegistryCommands() {
             pageSize: 100,
           }),
         )
-          .startMessage("fetching entries...")
-          .successMessage("Entries fetched.")
+          .start("fetching entries...")
+          .succeed("Entries fetched.")
           .run();
         listEntries(items.entries);
       }),
@@ -42,8 +42,8 @@ export function createRegistryCommands() {
             name: entryName,
           }),
         )
-          .startMessage("fetching entry details...")
-          .successMessage("Entry details fetched.")
+          .start("fetching entry details...")
+          .succeed("Entry details fetched.")
           .run();
         printRegistryEntry(item);
       }),
@@ -59,8 +59,8 @@ export function createRegistryCommands() {
             name: entryName,
           }),
         )
-          .startMessage("fetching entry details...")
-          .successMessage("Entry details fetched.")
+          .start("fetching entry details...")
+          .succeed("Entry details fetched.")
           .run();
         printReadme(item);
       }),
@@ -76,23 +76,19 @@ export function createRegistryCommands() {
             name: entryName,
           }),
         )
-          .startMessage("fetching entry...")
-          .successMessage("Entry fetched.")
+          .start("fetching entry...")
+          .succeed("Entry fetched.")
           .run();
-        console.log("---");
-        console.log("---");
-        console.log("---");
-        console.log("---");
         const parameters = await promptForParameters(entry);
-        const proxy = await spinnerWrap(() =>
+        await spinnerWrap(() =>
           gatewayClient.registry.addServerFromRegistry.mutate({
             proxyId,
             entryName,
             parameters,
           }),
         )
-          .startMessage("installing server...")
-          .successMessage(`Registry entry ${entryName} added to ${proxyId}`)
+          .start("installing server...")
+          .succeed(`Registry entry ${entryName} added to ${proxyId}`)
           .run();
       }),
     );
@@ -125,8 +121,8 @@ export function createRegistryCommands() {
             serverName,
           }),
         )
-          .startMessage("removing server...")
-          .successMessage(`Server ${serverName} removed from ${proxyId}`)
+          .start("removing server...")
+          .succeed(`Server ${serverName} removed from ${proxyId}`)
           .run();
       }),
     );
@@ -145,8 +141,8 @@ export function createRegistryCommands() {
           return;
         }
         await spinnerWrap(() => registryClient.entries.purge.mutate({}))
-          .startMessage("purging registry...")
-          .successMessage("Registry successfully purged")
+          .start("purging registry...")
+          .succeed("Registry successfully purged")
           .run();
       }),
     );
@@ -165,8 +161,8 @@ export function createRegistryCommands() {
           return;
         }
         await spinnerWrap(() => registryClient.entries.populate.mutate({}))
-          .startMessage("importing entries...")
-          .successMessage("Entries successfully imported")
+          .start("importing entries...")
+          .succeed("Entries successfully imported")
           .run();
       }),
     );
@@ -177,8 +173,8 @@ export function createRegistryCommands() {
     .action(
       actionWithErrorHandler(async () => {
         await spinnerWrap(() => registryClient.entries.enrich.mutate({}))
-          .startMessage("enriching entries...")
-          .successMessage("entries successfully enriched")
+          .start("enriching entries...")
+          .succeed("entries successfully enriched")
           .run();
       }),
     );
@@ -208,8 +204,8 @@ export function createRegistryCommands() {
         const stats = await spinnerWrap(() =>
           registryClient.entries.stats.query({}),
         )
-          .startMessage("getting stats...")
-          .successMessage("Stats fetched.")
+          .start("getting stats...")
+          .succeed("Stats fetched.")
           .run();
         console.log(stats);
       }),

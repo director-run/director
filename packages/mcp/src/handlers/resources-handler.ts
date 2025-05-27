@@ -5,8 +5,8 @@ import {
   ListResourcesResultSchema,
   ReadResourceRequestSchema,
   ReadResourceResultSchema,
+  type Resource,
 } from "@modelcontextprotocol/sdk/types.js";
-import type { z } from "zod";
 import type { SimpleClient } from "../simple-client";
 
 const logger = getLogger("proxy/handlers/resourcesHandler");
@@ -19,8 +19,7 @@ export function setupResourceHandlers(
 
   // List Resources Handler
   server.setRequestHandler(ListResourcesRequestSchema, async (request) => {
-    const allResources: z.infer<typeof ListResourcesResultSchema>["resources"] =
-      [];
+    const allResources: Resource[] = [];
     resourceToClientMap.clear();
 
     for (const connectedClient of connectedClients) {

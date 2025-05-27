@@ -2,31 +2,45 @@
 
 import { useState } from "react";
 
-import { MenuItemLabel } from "@/app/design/components/primitives";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  MenuItemIcon,
+  MenuItemLabel,
+} from "@/app/design/components/primitives";
+import {
+  Badge,
+  BadgeGroup,
+  BadgeIcon,
+  BadgeLabel,
+} from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "@/components/ui/toast";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { useProxy } from "@/hooks/use-proxy";
 import { trpc } from "@/trpc/client";
-import { CopyIcon, PlusIcon, XIcon } from "@phosphor-icons/react";
+import {
+  BoxArrowDownIcon,
+  CheckCircleIcon,
+  CircleNotchIcon,
+  CopyIcon,
+  DotsThreeOutlineVerticalIcon,
+  TrashIcon,
+} from "@phosphor-icons/react";
+import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Input } from "../ui/input";
+import {
+  List,
+  ListItem,
+  ListItemDescription,
+  ListItemDetails,
+  ListItemTitle,
+} from "../ui/list";
 import { SelectNative } from "../ui/select-native";
 
 type TransportType = "http" | "sse" | "stdio";
@@ -82,182 +96,211 @@ interface ProxyInstallersProps {
 }
 
 export function ProxyInstallers({ proxyId }: ProxyInstallersProps) {
-  const [copiedText, copy] = useCopyToClipboard();
-  const [showManualInstruction, setShowManualInstruction] = useState(false);
-  const { proxy, installers } = useProxy(proxyId);
-
-  const KEYS = Object.keys(installers);
-
-  const INSTALLED = KEYS.filter(
-    (key) => installers[key as keyof typeof installers],
-  );
-  const NOT_INSTALLED = KEYS.filter(
-    (key) => !installers[key as keyof typeof installers],
-  );
+  const { installers } = useProxy(proxyId);
 
   return (
-    <div className="flex flex-row gap-x-2">
-      {INSTALLED.includes("claude") && <ClaudeBadgeButton proxyId={proxyId} />}
-      {INSTALLED.includes("cursor") && <CursorBadgeButton proxyId={proxyId} />}
+    <List>
+      <ListItem>
+        <ListItemDetails>
+          <ListItemTitle>Claude</ListItemTitle>
+          <ListItemDescription className="line-clamp-none">
+            Claude is a next generation AI assistant built by Anthropic.
+          </ListItemDescription>
+        </ListItemDetails>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button size={INSTALLED.length > 0 ? "icon" : "default"}>
-            {INSTALLED.length > 0 ? <PlusIcon /> : "Connect"}
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          {NOT_INSTALLED.length > 0 && (
-            <>
-              <DropdownMenuGroup>
-                <DropdownMenuLabel>One-click</DropdownMenuLabel>
-                {NOT_INSTALLED.includes("claude") && (
-                  <ClaudeMenuItem proxyId={proxyId} />
-                )}
-                {NOT_INSTALLED.includes("cursor") && (
-                  <CursorMenuItem proxyId={proxyId} />
-                )}
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-            </>
+        <BadgeGroup>
+          {installers.claude && (
+            <Badge variant="success">
+              <BadgeIcon>
+                <CheckCircleIcon />
+              </BadgeIcon>
+              <BadgeLabel uppercase>Installed</BadgeLabel>
+            </Badge>
           )}
+          <ProxyInstallerDropdown
+            proxyId={proxyId}
+            client="claude"
+            baseUrl="http://localhost:3673"
+            installed={installers.claude}
+          />
+        </BadgeGroup>
+      </ListItem>
+      <ListItem>
+        <ListItemDetails>
+          <ListItemTitle>Cursor</ListItemTitle>
+          <ListItemDescription className="line-clamp-none">
+            Cursor is the best way to code with AI.
+          </ListItemDescription>
+        </ListItemDetails>
+        <BadgeGroup>
+          {installers.cursor && (
+            <Badge variant="success">
+              <BadgeIcon>
+                <CheckCircleIcon />
+              </BadgeIcon>
+              <BadgeLabel uppercase>Installed</BadgeLabel>
+            </Badge>
+          )}
+          <ProxyInstallerDropdown
+            proxyId={proxyId}
+            client="cursor"
+            baseUrl="http://localhost:3673"
+            installed={installers.cursor}
+          />
+        </BadgeGroup>
+      </ListItem>
+    </List>
+  );
+}
 
-          <DropdownMenuGroup>
-            <DropdownMenuItem onSelect={() => setShowManualInstruction(true)}>
-              <MenuItemLabel>Connect manually</MenuItemLabel>
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
+interface ProxyInstallerDropdownProps {
+  proxyId: string;
+  client: "claude" | "cursor";
+  baseUrl: string;
+  installed: boolean;
+}
 
-      <Dialog
-        open={showManualInstruction}
-        onOpenChange={setShowManualInstruction}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Connect manually</DialogTitle>
-            <DialogDescription>
-              Director works with any MCP enabled product. Below you'll find
-              endpoints for both Streamable HTTP and SSE, as well as STDIO via
-              our CLI.
-            </DialogDescription>
-          </DialogHeader>
+function ProxyInstallerDropdown({
+  proxyId,
+  client,
+  baseUrl,
+  installed,
+}: ProxyInstallerDropdownProps) {
+  const [showActions, setShowActions] = useState(false);
 
-          <div className="border-t-[0.5px] p-5">
-            <ManualInput id={proxyId} />
-          </div>
-        </DialogContent>
-      </Dialog>
+  const onSuccess = () => {
+    setShowActions(false);
+  };
+
+  return (
+    <DropdownMenu open={showActions} onOpenChange={setShowActions}>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon">
+          <DotsThreeOutlineVerticalIcon weight="fill" className="!size-4" />
+          <span className="sr-only">Actions</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" sideOffset={4} className="min-w-32">
+        <DropdownMenuGroup>
+          <ProxyInstallMenuItem
+            proxyId={proxyId}
+            client={client}
+            baseUrl={baseUrl}
+            installed={installed}
+            onSuccess={onSuccess}
+          />
+          <ProxyUninstallMenuItem
+            proxyId={proxyId}
+            client={client}
+            installed={installed}
+            onSuccess={onSuccess}
+          />
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+interface ProxyMenuItemProps extends ProxyInstallerDropdownProps {
+  onSuccess: () => void;
+}
+
+function ProxyInstallMenuItem({
+  proxyId,
+  client,
+  baseUrl,
+  installed,
+  onSuccess,
+}: ProxyMenuItemProps) {
+  const utils = trpc.useUtils();
+  const mutation = trpc.installer.byProxy.install.useMutation({
+    onSuccess: () => {
+      utils.installer.byProxy.list.invalidate();
+      toast({
+        title: "Proxy installed",
+        description: `This proxy was successfully installed in ${client}.`,
+      });
+      onSuccess();
+    },
+  });
+
+  if (installed) {
+    return null;
+  }
+
+  return (
+    <DropdownMenuItem
+      onSelect={(event) => {
+        event.preventDefault();
+        mutation.mutate({ proxyId, client, baseUrl });
+      }}
+    >
+      <MenuItemIcon>
+        {mutation.isPending ? (
+          <CircleNotchIcon weight="bold" className="animate-spin" />
+        ) : (
+          <BoxArrowDownIcon />
+        )}
+      </MenuItemIcon>
+      <MenuItemLabel>Install</MenuItemLabel>
+    </DropdownMenuItem>
+  );
+}
+
+function ProxyUninstallMenuItem({
+  proxyId,
+  client,
+  installed,
+  onSuccess,
+}: Omit<ProxyMenuItemProps, "baseUrl">) {
+  const utils = trpc.useUtils();
+  const mutation = trpc.installer.byProxy.uninstall.useMutation({
+    onSuccess: () => {
+      utils.installer.byProxy.list.invalidate();
+      toast({
+        title: "Proxy uninstalled",
+        description: `This proxy was successfully uninstalled from ${client}.`,
+      });
+      onSuccess();
+    },
+  });
+
+  if (!installed) {
+    return null;
+  }
+
+  return (
+    <DropdownMenuItem onSelect={() => mutation.mutate({ proxyId, client })}>
+      <MenuItemIcon>
+        {mutation.isPending ? (
+          <CircleNotchIcon weight="bold" className="animate-spin" />
+        ) : (
+          <TrashIcon weight="fill" />
+        )}
+      </MenuItemIcon>
+      <MenuItemLabel>Uninstall</MenuItemLabel>
+    </DropdownMenuItem>
+  );
+}
+
+{
+  /* <Dialog
+  open={showManualInstruction}
+  onOpenChange={setShowManualInstruction}
+>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Connect manually</DialogTitle>
+      <DialogDescription>
+        Director works with any MCP enabled product. Below you'll find
+        endpoints for both Streamable HTTP and SSE, as well as STDIO via
+        our CLI.
+      </DialogDescription>
+    </DialogHeader>
+
+    <div className="border-t-[0.5px] p-5">
+      <ManualInput id={proxyId} />
     </div>
-  );
-}
-
-function CursorMenuItem({ proxyId }: ProxyInstallersProps) {
-  const utils = trpc.useUtils();
-  const onSuccessHandler = () => {
-    utils.installer.cursor.list.invalidate();
-    toast({
-      title: "Proxy installed",
-      description: "This proxy was successfully installed in Cursor.",
-    });
-  };
-  const installMutation = trpc.installer.cursor.install.useMutation({
-    onSuccess: onSuccessHandler,
-  });
-
-  return (
-    <DropdownMenuItem
-      onSelect={() =>
-        installMutation.mutate({ proxyId, baseUrl: "http://localhost:3673" })
-      }
-    >
-      <MenuItemLabel>Cursor</MenuItemLabel>
-    </DropdownMenuItem>
-  );
-}
-
-function ClaudeMenuItem({ proxyId }: ProxyInstallersProps) {
-  const utils = trpc.useUtils();
-  const onSuccessHandler = () => {
-    utils.installer.claude.list.invalidate();
-    toast({
-      title: "Proxy installed",
-      description: "This proxy was successfully installed in Claude.",
-    });
-  };
-  const installMutation = trpc.installer.claude.install.useMutation({
-    onSuccess: onSuccessHandler,
-  });
-
-  return (
-    <DropdownMenuItem
-      onSelect={() =>
-        installMutation.mutate({
-          proxyId,
-          baseUrl: "http://localhost:3673", // TODO: This is the gateway URL (get it from wherever it's stored...)
-        })
-      }
-    >
-      <MenuItemLabel>Claude</MenuItemLabel>
-    </DropdownMenuItem>
-  );
-}
-
-function CursorBadgeButton({ proxyId }: ProxyInstallersProps) {
-  const utils = trpc.useUtils();
-  const onSuccessHandler = () => {
-    utils.installer.cursor.list.invalidate();
-    toast({
-      title: "Proxy uninstalled",
-      description: "This proxy was successfully uninstalled from Cursor.",
-    });
-  };
-  const uninstallMutation = trpc.installer.cursor.uninstall.useMutation({
-    onSuccess: onSuccessHandler,
-  });
-
-  return (
-    <Badge className="h-8 gap-x-2 rounded-lg pr-1">
-      <span>Cursor</span>
-      <Button
-        className="size-6 rounded-md"
-        size="icon"
-        variant="inverse"
-        onClick={() => uninstallMutation.mutate({ proxyId })}
-      >
-        <XIcon />
-        <span className="sr-only">Uninstall</span>
-      </Button>
-    </Badge>
-  );
-}
-
-function ClaudeBadgeButton({ proxyId }: ProxyInstallersProps) {
-  const utils = trpc.useUtils();
-  const onSuccessHandler = () => {
-    utils.installer.claude.list.invalidate();
-    toast({
-      title: "Proxy uninstalled",
-      description: "This proxy was successfully uninstalled from Claude.",
-    });
-  };
-  const uninstallMutation = trpc.installer.claude.uninstall.useMutation({
-    onSuccess: onSuccessHandler,
-  });
-
-  return (
-    <Badge className="h-8 gap-x-2 rounded-lg pr-1">
-      <span>Claude</span>
-      <Button
-        className="size-6 rounded-md"
-        size="icon"
-        variant="inverse"
-        onClick={() => uninstallMutation.mutate({ proxyId })}
-      >
-        <XIcon />
-        <span className="sr-only">Uninstall</span>
-      </Button>
-    </Badge>
-  );
+  </DialogContent>
+</Dialog> */
 }

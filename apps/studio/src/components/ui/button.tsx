@@ -15,8 +15,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-fg text-surface hover:bg-fg/80 active:bg-fg/90",
-        secondary:
-          "bg-accent text-fg-subtle transition-opacity hover:opacity-50",
+        secondary: "bg-accent text-fg transition-opacity hover:opacity-50",
         inverse: "bg-surface text-fg hover:bg-surface/50",
         ghost:
           "bg-transparent text-fg-subtle transition-colors hover:bg-accent hover:text-fg focus-visible:bg-accent focus-visible:text-fg",

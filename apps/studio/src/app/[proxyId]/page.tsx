@@ -15,6 +15,7 @@ import { McpToolSheet } from "@/components/mcp-servers/mcp-tool-sheet";
 import { McpToolsTable } from "@/components/mcp-servers/mcp-tools-table";
 import { ProxyDeleteConfirmation } from "@/components/proxies/proxy-delete-confirmation";
 import { ProxyInstallers } from "@/components/proxies/proxy-installers";
+import { ProxyManualDialog } from "@/components/proxies/proxy-manual-dialog";
 import { ProxySettingsSheet } from "@/components/proxies/proxy-settings-sheet";
 import { ProxySkeleton } from "@/components/proxies/proxy-skeleton";
 import { RegistryDialog } from "@/components/registry/registry-dialog";
@@ -108,6 +109,7 @@ export default function ProxyPage() {
           </DropdownMenuContent>
         </DropdownMenu>
       </LayoutViewHeader>
+
       <LayoutViewContent>
         <Container size="lg">
           <Section>
@@ -118,10 +120,13 @@ export default function ProxyPage() {
           </Section>
 
           <Section>
-            <SectionHeader>
+            <SectionHeader className="flex flex-row items-center justify-between">
               <SectionTitle variant="h2" asChild>
-                <h2>Usage</h2>
+                <h2>Clients</h2>
               </SectionTitle>
+              <ProxyManualDialog proxyId={proxy.id}>
+                <Button variant="secondary">Connect manually</Button>
+              </ProxyManualDialog>
             </SectionHeader>
             <ProxyInstallers proxyId={proxy.id} />
           </Section>

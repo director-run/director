@@ -12,6 +12,104 @@ export function createInstallerRouter({
   cliPath,
 }: { proxyStore: ProxyServerStore; cliPath: string }) {
   return t.router({
+    byProxy: t.router({
+      list: t.procedure
+        .input(z.object({ proxyId: z.string() }))
+        .query(async ({ input }) => {
+          const [claudeInstaller, cursorInstaller] = await Promise.all([
+            ClaudeInstaller.create(),
+            CursorInstaller.create(),
+          ]);
+
+          const [claudeClients, cursorClients] = await Promise.all([
+            claudeInstaller.list(),
+            cursorInstaller.list(),
+          ]);
+
+          const installedOnClaude = claudeClients.filter(
+            (install) => install.name === `director__${input.proxyId}`,
+          );
+          const installedOnCursor = cursorClients.filter(
+            (install) => install.name === `director__${input.proxyId}`,
+          );
+
+          return {
+            claude: installedOnClaude.length > 0,
+            cursor: installedOnCursor.length > 0,
+          };
+        }),
+      install: t.procedure
+        .input(
+          z.object({
+            client: z.enum(["claude", "cursor"]),
+            proxyId: z.string(),
+            baseUrl: z.string(),
+          }),
+        )
+        .mutation(async ({ input }) => {
+          const proxy = proxyStore.get(input.proxyId);
+
+          switch (input.client) {
+            case "claude":
+              const proxyUrl = joinURL(
+                input.baseUrl,
+                getStreamablePathForProxy(proxy.id),
+              );
+              const claudeInstaller = await ClaudeInstaller.create();
+              if (isProduction()) {
+                // In production, we don't use bun as the CLI is compiled to a binary
+                await claudeInstaller.install({
+                  name: proxy.id,
+                  transport: {
+                    command: cliPath,
+                    args: ["http2stdio", proxyUrl],
+                    env: {
+                      LOG_LEVEL: "silent",
+                    },
+                  },
+                });
+              } else {
+                await claudeInstaller.install({
+                  name: proxy.id,
+                  transport: {
+                    command: "bun",
+                    args: [cliPath, "http2stdio", proxyUrl],
+                    env: {
+                      LOG_LEVEL: "silent",
+                    },
+                  },
+                });
+              }
+              break;
+            case "cursor":
+              const cursorInstaller = await CursorInstaller.create();
+              await cursorInstaller.install({
+                name: proxy.id,
+                url: joinURL(input.baseUrl, getSSEPathForProxy(proxy.id)),
+              });
+          }
+        }),
+      uninstall: t.procedure
+        .input(
+          z.object({
+            client: z.enum(["claude", "cursor"]),
+            proxyId: z.string(),
+          }),
+        )
+        .mutation(async ({ input }) => {
+          const proxy = proxyStore.get(input.proxyId);
+          switch (input.client) {
+            case "claude":
+              const claudeInstaller = await ClaudeInstaller.create();
+              await claudeInstaller.uninstall(proxy.id);
+              break;
+            case "cursor":
+              const cursorInstaller = await CursorInstaller.create();
+              await cursorInstaller.uninstall(proxy.id);
+              break;
+          }
+        }),
+    }),
     claude: t.router({
       install: t.procedure
         .input(

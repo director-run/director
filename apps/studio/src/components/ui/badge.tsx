@@ -9,7 +9,7 @@ import { Slot } from "@radix-ui/react-slot";
 
 const badgeVariants = cva(
   [
-    "inline-flex shrink-0 items-center justify-center gap-x-0 whitespace-nowrap rounded-md",
+    "inline-flex shrink-0 select-none items-center justify-center gap-x-0 whitespace-nowrap rounded-md",
     "font-medium font-mono tracking-[0.05em]",
   ],
   {

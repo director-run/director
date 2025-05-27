@@ -1,5 +1,5 @@
 "use client";
-import { Badge, BadgeLabel } from "@/app/design/components/badge";
+import { Badge, BadgeLabel } from "@/components/ui/badge";
 import {} from "@/components/ui/empty-state";
 import { useInspectMcp } from "@/hooks/use-inspect-mcp";
 import { proxyQuerySerializer } from "@/hooks/use-proxy-query";
@@ -25,11 +25,11 @@ export function McpToolsTable({ proxyId, serverId }: McpToolTableProps) {
             title: it.name,
             subtitle: it.description?.replace(/\[([^\]]+)\]/g, ""),
             scroll: false,
-            href: `/proxies/${proxyId}${proxyQuerySerializer({
+            href: `${proxyQuerySerializer({
               toolId: it.name,
               serverId: server,
             })}`,
-            badges: server && (
+            badges: server && !serverId && (
               <Badge>
                 <BadgeLabel uppercase>{server}</BadgeLabel>
               </Badge>

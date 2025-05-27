@@ -9,7 +9,6 @@ import {
 import { JSONSchema, type JsonSchema } from "@/components/ui/json-schema";
 import {
   Section,
-  SectionDescription,
   SectionHeader,
   SectionSeparator,
   SectionTitle,
@@ -17,6 +16,7 @@ import {
 import {
   Sheet,
   SheetActions,
+  SheetBody,
   SheetContent,
   SheetDescription,
   SheetHeader,
@@ -24,10 +24,19 @@ import {
 } from "@/components/ui/sheet";
 import { useInspectMcp } from "@/hooks/use-inspect-mcp";
 import { useProxy } from "@/hooks/use-proxy";
-import { useProxyQuery } from "@/hooks/use-proxy-query";
+import { proxyQuerySerializer, useProxyQuery } from "@/hooks/use-proxy-query";
 import { ProxyAttributes } from "@director.run/gateway/db/schema";
 import { ProxyTargetAttributes } from "@director.run/mcp/types";
-import Markdown from "react-markdown";
+import Link from "next/link";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "../ui/breadcrumb";
+import { Markdown } from "../ui/markdown";
 
 function SheetInner({
   toolId,
@@ -42,16 +51,13 @@ function SheetInner({
     return (
       <>
         <SheetActions>
-          <Badge className="mr-auto" variant="secondary">
-            Tool
-          </Badge>
+          <Badge className="mr-auto">Tool</Badge>
         </SheetActions>
         <SheetHeader className="pt-6">
           <SheetTitle>Loading tool…</SheetTitle>
           <SheetDescription>
-            Installed from{" "}
-            <span className="text-foreground">{server?.name}</span> on{" "}
-            <span className="text-foreground">{proxy?.name}</span>
+            Installed from <span className="text-fg">{server?.name}</span> on{" "}
+            <span className="text-fg">{proxy?.name}</span>
           </SheetDescription>
         </SheetHeader>
       </>
@@ -62,18 +68,17 @@ function SheetInner({
     return (
       <>
         <SheetActions>
-          <Badge className="mr-auto" variant="secondary">
-            Tool
-          </Badge>
+          <Badge className="mr-auto">Tool</Badge>
         </SheetActions>
-        <SheetHeader className="pt-6">
-          <SheetTitle>Tool not found</SheetTitle>
-          <SheetDescription>
-            Installed from{" "}
-            <span className="text-foreground">{server?.name}</span> on{" "}
-            <span className="text-foreground">{proxy?.name}</span>
-          </SheetDescription>
-        </SheetHeader>
+        <SheetBody>
+          <SheetHeader className="pt-6">
+            <SheetTitle>Tool not found</SheetTitle>
+            <SheetDescription>
+              Installed from <span className="text-fg">{server?.name}</span> on{" "}
+              <span className="text-fg">{proxy?.name}</span>
+            </SheetDescription>
+          </SheetHeader>
+        </SheetBody>
       </>
     );
   }
@@ -81,68 +86,71 @@ function SheetInner({
   return (
     <>
       <SheetActions>
-        <Badge className="mr-auto" variant="secondary">
-          Tool
-        </Badge>
+        <Breadcrumb className="grow">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link href={`/${proxy.id}`}>{proxy?.name}</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link href={`/${proxy.id}/mcp/${server.name}`}>
+                  {server?.name}
+                </Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{tool.name}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
       </SheetActions>
 
-      <SheetHeader className="pt-6">
-        <SheetTitle>{tool.name}</SheetTitle>
-        <SheetDescription className="mb-4 text-sm">
-          Installed from <span className="text-foreground">{server?.name}</span>{" "}
-          on <span className="text-foreground">{proxy?.name}</span>
-        </SheetDescription>
+      <SheetBody>
+        <SheetHeader>
+          <SheetTitle>{tool.name}</SheetTitle>
+          <SheetDescription className="text-sm">
+            Installed from{" "}
+            <Link
+              href={`/${proxy.id}${proxyQuerySerializer({ serverId: server.name })}`}
+              className="text-fg"
+            >
+              {server?.name}
+            </Link>{" "}
+            on{" "}
+            <Link href={`/${proxy.id}`} className="text-fg">
+              {proxy?.name}
+            </Link>
+          </SheetDescription>
+        </SheetHeader>
 
         <Markdown>
           {tool.description?.replace(`[${server?.name}] `, "")}
         </Markdown>
-      </SheetHeader>
 
-      <SectionSeparator className="my-12" />
+        <SectionSeparator />
 
-      <Section>
-        <SectionHeader>
-          <SectionTitle variant="h3" asChild>
-            <h3>Input schema</h3>
-          </SectionTitle>
-          <SectionDescription>
-            The input schema for this tool.
-          </SectionDescription>
-        </SectionHeader>
-        {tool.inputSchema ? (
-          <JSONSchema schema={tool.inputSchema as JsonSchema} />
-        ) : (
-          <EmptyState>
-            <EmptyStateTitle>No input schema</EmptyStateTitle>
-            <EmptyStateDescription>
-              This tool does not require any parameters.
-            </EmptyStateDescription>
-          </EmptyState>
-        )}
-      </Section>
-
-      <SectionSeparator className="my-12" />
-
-      <Section>
-        <SectionHeader>
-          <SectionTitle variant="h3" asChild>
-            <h3>Output schema</h3>
-          </SectionTitle>
-          <SectionDescription>
-            The output schema for this tool.
-          </SectionDescription>
-        </SectionHeader>
-        {tool.outputSchema ? (
-          <JSONSchema schema={tool.outputSchema as JsonSchema} />
-        ) : (
-          <EmptyState>
-            <EmptyStateTitle>No output schema</EmptyStateTitle>
-            <EmptyStateDescription>
-              This tool does not provide an output schema.
-            </EmptyStateDescription>
-          </EmptyState>
-        )}
-      </Section>
+        <Section>
+          <SectionHeader>
+            <SectionTitle variant="h2" asChild>
+              <h3>Input schema</h3>
+            </SectionTitle>
+          </SectionHeader>
+          {tool.inputSchema ? (
+            <JSONSchema schema={tool.inputSchema as JsonSchema} />
+          ) : (
+            <EmptyState>
+              <EmptyStateTitle>No input schema</EmptyStateTitle>
+              <EmptyStateDescription>
+                This tool does not require any parameters.
+              </EmptyStateDescription>
+            </EmptyState>
+          )}
+        </Section>
+      </SheetBody>
     </>
   );
 }

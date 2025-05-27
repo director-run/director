@@ -52,7 +52,7 @@ export function RegistryDialog() {
               >
                 <div className="flex min-w-0 flex-col gap-y-1 overflow-hidden">
                   <span>{entry.title}</span>
-                  <span className="truncate text-foreground-subtle text-xs">
+                  <span className="truncate text-fg-subtle text-xs">
                     {entry.description}
                   </span>
                 </div>

@@ -5,7 +5,7 @@ export const textVariants = cva("", {
     variant: {
       h1: "text-balance font-medium font-sans text-[25px] leading-tight tracking-[0.01em]",
       h2: "text-balance font-medium font-sans text-[17px] leading-6 tracking-[0.01em]",
-      h3: "text-balance font-normal font-sans text-[17px] leading-tight",
+      h3: "text-balance font-medium font-sans text-[15px] leading-tight",
       h4: "text-balance font-normal font-sans text-base leading-tight",
       p: "text-pretty text-[15px] leading-6",
       inlineLink:

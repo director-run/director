@@ -1,17 +1,23 @@
 import { HTTPTransport, STDIOTransport } from "@director.run/mcp/types";
 import { ComponentProps } from "react";
 
-import { Badge } from "@/components/ui/badge";
 import {
-  DescriptionDetail,
-  DescriptionList,
-  DescriptionTerm,
-} from "@/components/ui/description-list";
+  Badge,
+  BadgeGroup,
+  BadgeIcon,
+  BadgeLabel,
+} from "@/components/ui/badge";
 import { assertUnreachable } from "@/lib/assert-unreachable";
-import { getDeterministicColor } from "@/lib/deterministic-colors";
+import { GlobeIcon, TerminalIcon } from "@phosphor-icons/react";
+import {
+  List,
+  ListItem,
+  ListItemDescription,
+  ListItemDetails,
+  ListItemTitle,
+} from "../ui/list";
 
-interface McpDescriptionListProps
-  extends ComponentProps<typeof DescriptionList> {
+interface McpDescriptionListProps extends ComponentProps<typeof List> {
   transport: HTTPTransport | STDIOTransport;
 }
 
@@ -29,8 +35,7 @@ export function McpDescriptionList({
   }
 }
 
-interface McpStdioDescriptionListProps
-  extends ComponentProps<typeof DescriptionList> {
+interface McpStdioDescriptionListProps extends ComponentProps<typeof List> {
   transport: STDIOTransport;
 }
 
@@ -42,51 +47,61 @@ function McpStdioDescriptionList({
   const env = transport.env ?? [];
 
   return (
-    <DescriptionList {...props}>
-      <DescriptionTerm>Type</DescriptionTerm>
-      <DescriptionDetail>
-        <Badge variant={getDeterministicColor("stdio")}>STDIO</Badge>
-      </DescriptionDetail>
-      <DescriptionTerm>Command</DescriptionTerm>
-      <DescriptionDetail>
-        <Badge variant={getDeterministicColor(transport.command)}>
-          {transport.command}
+    <List {...props}>
+      <ListItem>
+        <ListItemDetails>
+          <ListItemTitle>Type</ListItemTitle>
+        </ListItemDetails>
+        <Badge className="ml-auto">
+          <BadgeIcon>
+            <TerminalIcon />
+          </BadgeIcon>
+          <BadgeLabel>STDIO</BadgeLabel>
         </Badge>
-      </DescriptionDetail>
+      </ListItem>
+      <ListItem>
+        <ListItemDetails>
+          <ListItemTitle>Command</ListItemTitle>
+        </ListItemDetails>
+        <Badge className="ml-auto">
+          <BadgeLabel>{transport.command}</BadgeLabel>
+        </Badge>
+      </ListItem>
       {args.length > 0 && (
-        <>
-          <DescriptionTerm>Arguments</DescriptionTerm>
-          <DescriptionDetail>
-            <div className="flex flex-row flex-wrap gap-1">
-              {args.map((it) => (
-                <Badge variant="secondary" key={it}>
-                  {it}
-                </Badge>
-              ))}
-            </div>
-          </DescriptionDetail>
-        </>
+        <ListItem>
+          <ListItemDetails>
+            <ListItemTitle>Arguments</ListItemTitle>
+          </ListItemDetails>
+
+          <BadgeGroup className="ml-auto justify-end">
+            {args.map((it) => (
+              <Badge key={it}>
+                <BadgeLabel>{it}</BadgeLabel>
+              </Badge>
+            ))}
+          </BadgeGroup>
+        </ListItem>
       )}
       {Object.keys(env).length > 0 && (
-        <>
-          <DescriptionTerm>Environment</DescriptionTerm>
-          <DescriptionDetail>
-            <div className="flex flex-row flex-wrap gap-1">
-              {Object.entries(env).map(([key, value]) => (
-                <Badge variant="secondary" key={key}>
-                  {`${key}=${value}`}
-                </Badge>
-              ))}
-            </div>
-          </DescriptionDetail>
-        </>
+        <ListItem>
+          <ListItemDetails>
+            <ListItemTitle>Environment</ListItemTitle>
+          </ListItemDetails>
+
+          <BadgeGroup className="ml-auto justify-end">
+            {Object.entries(env).map(([key, value]) => (
+              <Badge key={key}>
+                <BadgeLabel>{`${key}=${value}`}</BadgeLabel>
+              </Badge>
+            ))}
+          </BadgeGroup>
+        </ListItem>
       )}
-    </DescriptionList>
+    </List>
   );
 }
 
-interface McpSseDescriptionListProps
-  extends ComponentProps<typeof DescriptionList> {
+interface McpSseDescriptionListProps extends ComponentProps<typeof List> {
   transport: HTTPTransport;
 }
 
@@ -95,15 +110,26 @@ function McpSseDescriptionList({
   ...props
 }: McpSseDescriptionListProps) {
   return (
-    <DescriptionList {...props}>
-      <DescriptionTerm>Type</DescriptionTerm>
-      <DescriptionDetail>
-        <Badge variant={getDeterministicColor(transport.type)}>
-          {transport.type}
+    <List {...props}>
+      <ListItem>
+        <ListItemDetails>
+          <ListItemTitle>Type</ListItemTitle>
+        </ListItemDetails>
+        <Badge className="ml-auto">
+          <BadgeIcon>
+            <GlobeIcon />
+          </BadgeIcon>
+          <BadgeLabel>{transport.type}</BadgeLabel>
         </Badge>
-      </DescriptionDetail>
-      <DescriptionTerm>URL</DescriptionTerm>
-      <DescriptionDetail>{transport.url}</DescriptionDetail>
-    </DescriptionList>
+      </ListItem>
+      <ListItem>
+        <ListItemDetails>
+          <ListItemTitle>URL</ListItemTitle>
+        </ListItemDetails>
+        <ListItemDescription className="ml-auto">
+          {transport.url}
+        </ListItemDescription>
+      </ListItem>
+    </List>
   );
 }

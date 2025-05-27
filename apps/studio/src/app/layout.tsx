@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { TRPCProvider } from "@/trpc/client";
 
 import "./globals.css";
+import { Layout } from "@/components/layout";
 import { Toaster } from "@/components/ui/toast";
 
 const geistSans = Inter({
@@ -41,7 +42,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <TRPCProvider>
-            <NuqsAdapter>{children}</NuqsAdapter>
+            <NuqsAdapter>
+              <Layout>{children}</Layout>
+            </NuqsAdapter>
             <ConnectionStatusDialog />
             <Toaster />
           </TRPCProvider>

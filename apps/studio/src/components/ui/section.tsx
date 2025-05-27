@@ -1,8 +1,8 @@
+import { Separator } from "@/components/ui/separator";
+import { textVariants } from "@/components/ui/typography";
 import { cn } from "@/lib/cn";
 import { Slot } from "@radix-ui/react-slot";
 import { VariantProps } from "class-variance-authority";
-import { Separator } from "./separator";
-import { textVariants } from "./typography";
 
 interface SectionProps extends React.ComponentProps<"section"> {
   asChild?: boolean;
@@ -19,7 +19,7 @@ export function Section({
   return (
     <Comp
       data-slot="section"
-      className={cn("relative flex scroll-m-20 flex-col gap-y-8", className)}
+      className={cn("relative flex scroll-m-20 flex-col gap-y-3", className)}
       {...props}
     >
       {children}
@@ -35,7 +35,7 @@ export function SectionHeader({
   return (
     <header
       data-slot="section-header"
-      className={cn("flex flex-col gap-2", className)}
+      className={cn("flex flex-col gap-1", className)}
       {...props}
     >
       {children}
@@ -90,7 +90,7 @@ export function SectionDescription({
       data-slot="section-description"
       className={cn(
         textVariants({ variant: "p", invisibles }),
-        "text-foreground-subtle",
+        "text-fg-subtle",
         className,
       )}
       {...props}

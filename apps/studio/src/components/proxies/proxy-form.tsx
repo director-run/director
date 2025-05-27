@@ -69,7 +69,7 @@ export function NewProxyForm() {
         title: "Proxy created",
         description: "This proxy was successfully created.",
       });
-      router.push(`/proxies/${response.id}`);
+      router.push(`/${response.id}`);
     },
   });
 
@@ -87,11 +87,7 @@ export function NewProxyForm() {
         type="submit"
         disabled={isPending}
       >
-        {isPending ? (
-          <Loader className="text-foreground-subtle" />
-        ) : (
-          "Create proxy"
-        )}
+        {isPending ? <Loader className="text-fg-subtle" /> : "Create proxy"}
       </Button>
     </ProxyForm>
   );
@@ -132,11 +128,7 @@ export function UpdateProxyForm(
       }}
     >
       <Button className="self-start" type="submit" disabled={isPending}>
-        {isPending ? (
-          <Loader className="text-foreground-subtle" />
-        ) : (
-          "Save changes"
-        )}
+        {isPending ? <Loader className="text-fg-subtle" /> : "Save changes"}
       </Button>
     </ProxyForm>
   );

@@ -1,19 +1,19 @@
 "use client";
-
-import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { toast } from "@/components/ui/toast";
 import { trpc } from "@/trpc/client";
-import { Trash2Icon } from "lucide-react";
+
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface McpDeleteConfirmationProps {
+  children: React.ReactNode;
   proxyId: string;
   serverId: string;
 }
 
 export function McpDeleteConfirmation({
+  children,
   proxyId,
   serverId,
 }: McpDeleteConfirmationProps) {
@@ -29,7 +29,7 @@ export function McpDeleteConfirmation({
         title: "Server deleted",
         description: "This server was successfully deleted.",
       });
-      router.push(`/proxies/${proxyId}`);
+      router.push(`/${proxyId}`);
     },
   });
 
@@ -41,10 +41,7 @@ export function McpDeleteConfirmation({
       onOpenChange={setIsOpen}
       onConfirm={() => mutation.mutateAsync({ proxyId, serverName: serverId })}
     >
-      <Button size="icon" className="self-start">
-        <Trash2Icon />
-        <span className="sr-only">Delete server</span>
-      </Button>
+      {children}
     </ConfirmDialog>
   );
 }

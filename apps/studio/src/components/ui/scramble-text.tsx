@@ -13,7 +13,7 @@ interface ScrambleTextProps {
 
 export const ScrambleText = ({
   text,
-  scrambleSpeed = 100,
+  scrambleSpeed = 250,
   useOriginalCharsOnly = false,
   characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()_+",
   className,

@@ -36,7 +36,7 @@ export function TextareaField({
               <div className="flex flex-row items-center">
                 {label && <FormLabel>{label}</FormLabel>}
                 {helperLabel && (
-                  <Label className="ml-auto text-foreground-faint">
+                  <Label className="ml-auto text-fg-subtle/70">
                     {helperLabel}
                   </Label>
                 )}

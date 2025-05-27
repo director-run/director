@@ -1,5 +1,5 @@
 import { cn } from "@/lib/cn";
-import { getDeterministicColor } from "@/lib/deterministic-colors";
+import { CircleIcon } from "@phosphor-icons/react";
 import {
   Accordion,
   AccordionContent,
@@ -7,15 +7,17 @@ import {
   AccordionTrigger,
 } from "@radix-ui/react-accordion";
 import { Slot } from "@radix-ui/react-slot";
-import { ChevronRight, CircleIcon } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import React, { ComponentProps } from "react";
-import Markdown from "react-markdown";
-import { Badge } from "./badge";
+
+import { Badge, BadgeGroup, BadgeLabel } from "./badge";
 import {
   EmptyState,
   EmptyStateDescription,
   EmptyStateTitle,
 } from "./empty-state";
+import { List, ListItemDetails, ListItemTitle } from "./list";
+import { Markdown } from "./markdown";
 
 export interface JsonSchemaProperty {
   type?: string | string[];
@@ -196,109 +198,106 @@ const UnionTypeRenderer: React.FC<UnionTypeRendererProps> = ({
   return (
     <div className="mt-4">
       <div className="mb-3 flex items-center gap-2">
-        <Badge
-          variant={getDeterministicColor(unionType)}
-          className="font-mono text-xs"
-        >
-          {unionType}
-        </Badge>
+        <Badge className="font-mono text-xs">{unionType}</Badge>
         <span className="text-gray-600 text-sm">
           {getUnionDescription(unionType)}
         </span>
       </div>
 
-      <Accordion type="multiple" className="space-y-4 pt-4">
-        {schemas.map((schema, index) => {
-          const schemaTitle = generateUnionOptionTitle(schema, index);
-          const hasOwnProperties =
-            schema.properties && Object.keys(schema.properties).length > 0;
+      <List asChild>
+        <Accordion type="multiple">
+          {schemas.map((schema, index) => {
+            const schemaTitle = generateUnionOptionTitle(schema, index);
+            const hasOwnProperties =
+              schema.properties && Object.keys(schema.properties).length > 0;
 
-          if (isEmptySchema(schema)) {
-            return null;
-          }
+            if (isEmptySchema(schema)) {
+              return null;
+            }
 
-          return (
-            <AccordionItem key={index} value={`option-${index}`} asChild>
-              <PropertyItem>
-                <PropertyHeader
-                  name={schemaTitle}
-                  required={false}
-                  type={formatType(schema.type, schema.format)}
-                >
-                  <AccordionTrigger className="flex size-6 items-center justify-center rounded-lg bg-element-hover [&[data-state=open]>svg]:rotate-90">
-                    <ChevronRight className="size-4 transition-transform duration-200" />
-                  </AccordionTrigger>
-                </PropertyHeader>
-                <PropertyContent>
-                  {schema.description && (
-                    <Markdown>{schema.description}</Markdown>
-                  )}
-
-                  <PropertyConstraints property={schema} />
-                  <PropertyDefault property={schema} />
-                  <PropertyExample property={schema} />
-
-                  <AccordionContent>
-                    {/* Render nested properties if this option is an object */}
-                    {hasOwnProperties && (
-                      <div className="space-y-4 pt-4">
-                        {Object.entries(schema.properties || {}).map(
-                          ([propName, propSchema]) => (
-                            <PropertyRow
-                              key={propName}
-                              name={propName}
-                              property={propSchema}
-                              required={
-                                Array.isArray(schema.required)
-                                  ? schema.required.includes(propName)
-                                  : false
-                              }
-                              level={level + 1}
-                            />
-                          ),
-                        )}
-                      </div>
+            return (
+              <AccordionItem key={index} value={`option-${index}`} asChild>
+                <PropertyItem>
+                  <PropertyHeader
+                    name={schemaTitle}
+                    required={false}
+                    type={formatType(schema.type, schema.format)}
+                  >
+                    <AccordionTrigger className="flex size-6 cursor-pointer items-center justify-center rounded-lg bg-accent text-fg-subtle transition-opacity duration-200 hover:opacity-80 [&[data-state=open]>svg]:rotate-90">
+                      <ChevronRight className="size-4 transition-transform duration-200" />
+                    </AccordionTrigger>
+                  </PropertyHeader>
+                  <PropertyContent>
+                    {schema.description && (
+                      <Markdown>{schema.description}</Markdown>
                     )}
 
-                    {/* Handle nested union types */}
-                    {schema.oneOf && (
-                      <UnionTypeRenderer
-                        unionType="oneOf"
-                        schemas={schema.oneOf}
-                        level={level + 1}
-                      />
-                    )}
-                    {schema.anyOf && (
-                      <UnionTypeRenderer
-                        unionType="anyOf"
-                        schemas={schema.anyOf}
-                        level={level + 1}
-                      />
-                    )}
-                    {schema.allOf && (
-                      <UnionTypeRenderer
-                        unionType="allOf"
-                        schemas={schema.allOf}
-                        level={level + 1}
-                      />
-                    )}
+                    <PropertyConstraints property={schema} />
+                    <PropertyDefault property={schema} />
+                    <PropertyExample property={schema} />
 
-                    {/* Handle array items */}
-                    {schema.type === "array" && schema.items && (
-                      <PropertyRow
-                        name="items"
-                        property={schema.items}
-                        required={false}
-                        level={level + 1}
-                      />
-                    )}
-                  </AccordionContent>
-                </PropertyContent>
-              </PropertyItem>
-            </AccordionItem>
-          );
-        })}
-      </Accordion>
+                    <AccordionContent>
+                      {/* Render nested properties if this option is an object */}
+                      {hasOwnProperties && (
+                        <List>
+                          {Object.entries(schema.properties || {}).map(
+                            ([propName, propSchema]) => (
+                              <PropertyRow
+                                key={propName}
+                                name={propName}
+                                property={propSchema}
+                                required={
+                                  Array.isArray(schema.required)
+                                    ? schema.required.includes(propName)
+                                    : false
+                                }
+                                level={level + 1}
+                              />
+                            ),
+                          )}
+                        </List>
+                      )}
+
+                      {/* Handle nested union types */}
+                      {schema.oneOf && (
+                        <UnionTypeRenderer
+                          unionType="oneOf"
+                          schemas={schema.oneOf}
+                          level={level + 1}
+                        />
+                      )}
+                      {schema.anyOf && (
+                        <UnionTypeRenderer
+                          unionType="anyOf"
+                          schemas={schema.anyOf}
+                          level={level + 1}
+                        />
+                      )}
+                      {schema.allOf && (
+                        <UnionTypeRenderer
+                          unionType="allOf"
+                          schemas={schema.allOf}
+                          level={level + 1}
+                        />
+                      )}
+
+                      {/* Handle array items */}
+                      {schema.type === "array" && schema.items && (
+                        <PropertyRow
+                          name="items"
+                          property={schema.items}
+                          required={false}
+                          level={level + 1}
+                        />
+                      )}
+                    </AccordionContent>
+                  </PropertyContent>
+                </PropertyItem>
+              </AccordionItem>
+            );
+          })}
+        </Accordion>
+      </List>
     </div>
   );
 };
@@ -400,7 +399,6 @@ function PropertyRow({
     hasItems && property.items && !isSimpleArrayItem(property.items);
   const hasUnionTypes = property.oneOf || property.anyOf || property.allOf;
 
-  // Determine the display type for union types
   const getDisplayType = () => {
     if (hasUnionTypes) {
       const unionTypes = [];
@@ -430,7 +428,7 @@ function PropertyRow({
               required={required}
               type={getDisplayType()}
             >
-              <AccordionTrigger className="flex size-6 items-center justify-center rounded-lg bg-element-hover [&[data-state=open]>svg]:rotate-90">
+              <AccordionTrigger className="flex size-6 cursor-pointer items-center justify-center rounded-lg bg-accent text-fg-subtle transition-opacity duration-200 hover:opacity-80 [&[data-state=open]>svg]:rotate-90">
                 <ChevronRight className="size-4 transition-transform duration-200" />
               </AccordionTrigger>
             </PropertyHeader>
@@ -472,7 +470,7 @@ function PropertyRow({
               )}
 
               {hasNestedProperties && (
-                <div className="space-y-4 pt-4">
+                <List>
                   {Object.entries(property.properties || {}).map(
                     ([propName, propSchema]) => (
                       <PropertyRow
@@ -484,7 +482,7 @@ function PropertyRow({
                       />
                     ),
                   )}
-                </div>
+                </List>
               )}
 
               {/* Only show nested items view for complex array items */}
@@ -504,15 +502,32 @@ function PropertyRow({
     );
   }
 
+  const hasConstraints =
+    property.minimum !== undefined &&
+    property.maximum !== undefined &&
+    property.minLength !== undefined &&
+    property.maxLength !== undefined &&
+    property.pattern !== undefined &&
+    property.enum !== undefined &&
+    property.const !== undefined;
+
+  const hasNoContent =
+    !property.description &&
+    !property.default &&
+    !property.example &&
+    !hasConstraints;
+
   return (
     <PropertyItem>
       <PropertyHeader name={name} required={required} type={getDisplayType()} />
-      <PropertyContent>
-        {property.description && <Markdown>{property.description}</Markdown>}
-        <PropertyConstraints property={property} />
-        <PropertyDefault property={property} />
-        <PropertyExample property={property} />
-      </PropertyContent>
+      {!hasNoContent && (
+        <PropertyContent>
+          {property.description && <Markdown>{property.description}</Markdown>}
+          <PropertyConstraints property={property} />
+          <PropertyDefault property={property} />
+          <PropertyExample property={property} />
+        </PropertyContent>
+      )}
     </PropertyItem>
   );
 }
@@ -532,7 +547,10 @@ function PropertyItem({
   return (
     <Comp
       data-slot="property-item"
-      className={cn("flex w-full min-w-0 flex-col gap-y-2", className)}
+      className={cn(
+        "flex flex-col border-accent border-b-[0.5px] py-3 outline-none last:border-b-0",
+        className,
+      )}
       {...props}
     >
       {children}
@@ -556,27 +574,29 @@ function PropertyHeader({
 }: PropertyHeaderProps) {
   return (
     <div
-      className={cn("grid grid-cols-[24px_1fr] gap-2", className)}
+      className={cn("grid grid-cols-[24px_1fr_auto] gap-2", className)}
       {...props}
     >
       <div className="shrink-0">
         {children ?? (
           <div className="flex size-6 items-center justify-center">
-            <CircleIcon className="size-2.5 shrink-0 stroke-[3px] text-foreground-subtle" />
+            <CircleIcon weight="fill" className="size-2 text-fg-subtle" />
           </div>
         )}
       </div>
-      <div className="flex flex-row gap-2">
-        <span className="font-medium font-mono leading-6">{name}</span>
-        <Badge className="ml-2" variant={getDeterministicColor(type)}>
-          {type}
+      <ListItemDetails className="flex-row">
+        <ListItemTitle className="font-mono">{name}</ListItemTitle>
+      </ListItemDetails>
+      <BadgeGroup>
+        <Badge>
+          <BadgeLabel uppercase>{type}</BadgeLabel>
         </Badge>
         {required && (
-          <Badge variant="red" className="text-xs">
-            required
+          <Badge>
+            <BadgeLabel uppercase>required</BadgeLabel>
           </Badge>
         )}
-      </div>
+      </BadgeGroup>
     </div>
   );
 }
@@ -587,7 +607,7 @@ function PropertyContent({
   ...props
 }: ComponentProps<"div">) {
   return (
-    <div className={cn("ml-8 flex flex-col", className)} {...props}>
+    <div className={cn("ml-8 flex flex-col gap-y-3", className)} {...props}>
       {children}
     </div>
   );
@@ -612,17 +632,19 @@ export const JSONSchema: React.FC<JSONSchemaProps> = ({ schema }) => {
   }
 
   return (
-    <Accordion type="multiple" className="space-y-4">
-      {Object.entries(schema.properties).map(
-        ([propertyName, propertySchema]) => (
-          <PropertyRow
-            key={propertyName}
-            name={propertyName}
-            property={propertySchema}
-            required={requiredFields.includes(propertyName)}
-          />
-        ),
-      )}
-    </Accordion>
+    <List asChild>
+      <Accordion type="multiple">
+        {Object.entries(schema.properties).map(
+          ([propertyName, propertySchema]) => (
+            <PropertyRow
+              key={propertyName}
+              name={propertyName}
+              property={propertySchema}
+              required={requiredFields.includes(propertyName)}
+            />
+          ),
+        )}
+      </Accordion>
+    </List>
   );
 };

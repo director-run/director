@@ -1,5 +1,6 @@
 import { cn } from "@/lib/cn";
 import { ComponentProps } from "react";
+import { textVariants } from "./typography";
 
 export function EmptyState({
   children,
@@ -9,7 +10,7 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center gap-y-1 rounded-2xl bg-element px-4 py-6",
+        "flex flex-col items-center justify-center gap-y-1 rounded-xl bg-accent-subtle px-4 py-6 text-fg",
         className,
       )}
       {...props}
@@ -25,7 +26,7 @@ export function EmptyStateTitle({
   ...props
 }: ComponentProps<"h3">) {
   return (
-    <h3 className={cn("text-foreground text-lg", className)} {...props}>
+    <h3 className={cn(textVariants({ variant: "h3" }), className)} {...props}>
       {children}
     </h3>
   );
@@ -37,7 +38,7 @@ export function EmptyStateDescription({
   ...props
 }: ComponentProps<"p">) {
   return (
-    <p className={cn("text-foreground-subtle text-sm", className)} {...props}>
+    <p className={cn("text-[13px] text-fg-subtle", className)} {...props}>
       {children}
     </p>
   );

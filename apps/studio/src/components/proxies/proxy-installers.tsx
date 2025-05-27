@@ -1,8 +1,8 @@
 "use client";
 
-import { CopyIcon, PlusIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 
+import { MenuItemLabel } from "@/app/design/components/primitives";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,12 +21,61 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/toast";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { useProxy } from "@/hooks/use-proxy";
-import { getDeterministicColor } from "@/lib/deterministic-colors";
 import { trpc } from "@/trpc/client";
+import { CopyIcon, PlusIcon, XIcon } from "@phosphor-icons/react";
+import { Input } from "../ui/input";
+import { SelectNative } from "../ui/select-native";
+
+type TransportType = "http" | "sse" | "stdio";
+
+function ManualInput({ id }: { id: string }) {
+  const [_, copy] = useCopyToClipboard();
+  const [transportType, setTransportType] = useState<TransportType>("http");
+
+  const transports: Record<TransportType, string> = {
+    http: `http://localhost:3673/${id}/mcp`,
+    sse: `http://localhost:3673/${id}/sse`,
+    stdio: `director http2stdio http://localhost:3673/${id}/sse`,
+  };
+
+  return (
+    <div className="relative flex">
+      <SelectNative
+        value={transportType}
+        onChange={(e) => setTransportType(e.target.value as TransportType)}
+        className="h-10 rounded-r-none border-[0.5px] border-fg/20 bg-accent-subtle font-medium text-[13px] text-muted-foreground shadow-none ring-0 hover:text-foreground focus-visible:border-fg/30 focus-visible:ring-0"
+      >
+        <option value="http">HTTP</option>
+        <option value="sse">SSE</option>
+        <option value="stdio">STDIO</option>
+      </SelectNative>
+      <Input
+        autoFocus
+        className="-mx-px h-10 rounded-none border-[0.5px] border-fg/30 pr-0 font-medium font-mono text-[13px] shadow-none focus-visible:border-fg/30 focus-visible:ring-0"
+        readOnly
+        value={transports[transportType]}
+      />
+      <div className="flex size-10 shrink-0 items-center justify-center rounded-r-md border-[0.5px] border-fg/20 bg-accent-subtle">
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={async () => {
+            await copy(transports[transportType]);
+            toast({
+              title: "Copied to clipboard",
+              description: "The endpoint has been copied to your clipboard.",
+            });
+          }}
+        >
+          <CopyIcon />
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 interface ProxyInstallersProps {
   proxyId: string;
@@ -45,10 +94,6 @@ export function ProxyInstallers({ proxyId }: ProxyInstallersProps) {
   const NOT_INSTALLED = KEYS.filter(
     (key) => !installers[key as keyof typeof installers],
   );
-
-  const endpoint = `http://localhost:3673/${proxy?.id}/mcp`;
-  const sseEndpoint = `http://localhost:3673/${proxy?.id}/sse`;
-  const stdioCommand = `director http2stdio ${sseEndpoint}`;
 
   return (
     <div className="flex flex-row gap-x-2">
@@ -79,7 +124,7 @@ export function ProxyInstallers({ proxyId }: ProxyInstallersProps) {
 
           <DropdownMenuGroup>
             <DropdownMenuItem onSelect={() => setShowManualInstruction(true)}>
-              Connect manually
+              <MenuItemLabel>Connect manually</MenuItemLabel>
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
@@ -99,81 +144,8 @@ export function ProxyInstallers({ proxyId }: ProxyInstallersProps) {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex flex-col gap-y-6 overflow-hidden pt-2">
-            <div className="flex flex-col gap-y-2">
-              <Label>Streamable</Label>
-              <div className="flex w-full flex-row items-center gap-x-2 rounded-xl bg-element py-1 pr-1 pl-3">
-                <span className="block truncate font-mono text-sm">
-                  {endpoint}
-                </span>
-                <Button
-                  className="ml-auto"
-                  size="icon"
-                  variant="secondary"
-                  onClick={async () => {
-                    await copy(endpoint);
-                    toast({
-                      title: "Copied to clipboard",
-                      description:
-                        "The endpoint has been copied to your clipboard.",
-                    });
-                  }}
-                >
-                  <CopyIcon />
-                  <span className="sr-only">Copy to clipboard</span>
-                </Button>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-y-2">
-              <Label>SSE</Label>
-              <div className="flex w-full flex-row items-center gap-x-2 rounded-xl bg-element py-1 pr-1 pl-3">
-                <span className="block truncate font-mono text-sm">
-                  {sseEndpoint}
-                </span>
-                <Button
-                  className="ml-auto"
-                  size="icon"
-                  variant="secondary"
-                  onClick={async () => {
-                    await copy(sseEndpoint);
-                    toast({
-                      title: "Copied to clipboard",
-                      description:
-                        "The endpoint has been copied to your clipboard.",
-                    });
-                  }}
-                >
-                  <CopyIcon />
-                  <span className="sr-only">Copy to clipboard</span>
-                </Button>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-y-2 overflow-hidden">
-              <Label>STDIO</Label>
-              <div className="flex w-full flex-row items-center gap-x-2 overflow-hidden rounded-xl bg-element py-1 pr-1 pl-3">
-                <span className="block truncate font-mono text-sm">
-                  {stdioCommand}
-                </span>
-                <Button
-                  className="ml-auto"
-                  size="icon"
-                  variant="secondary"
-                  onClick={async () => {
-                    await copy(stdioCommand);
-                    toast({
-                      title: "Copied to clipboard",
-                      description:
-                        "The command has been copied to your clipboard.",
-                    });
-                  }}
-                >
-                  <CopyIcon />
-                  <span className="sr-only">Copy to clipboard</span>
-                </Button>
-              </div>
-            </div>
+          <div className="border-t-[0.5px] p-5">
+            <ManualInput id={proxyId} />
           </div>
         </DialogContent>
       </Dialog>
@@ -200,7 +172,7 @@ function CursorMenuItem({ proxyId }: ProxyInstallersProps) {
         installMutation.mutate({ proxyId, baseUrl: "http://localhost:3673" })
       }
     >
-      Cursor
+      <MenuItemLabel>Cursor</MenuItemLabel>
     </DropdownMenuItem>
   );
 }
@@ -227,7 +199,7 @@ function ClaudeMenuItem({ proxyId }: ProxyInstallersProps) {
         })
       }
     >
-      Claude
+      <MenuItemLabel>Claude</MenuItemLabel>
     </DropdownMenuItem>
   );
 }
@@ -246,10 +218,7 @@ function CursorBadgeButton({ proxyId }: ProxyInstallersProps) {
   });
 
   return (
-    <Badge
-      className="h-8 gap-x-2 rounded-lg pr-1"
-      variant={getDeterministicColor("cursor")}
-    >
+    <Badge className="h-8 gap-x-2 rounded-lg pr-1">
       <span>Cursor</span>
       <Button
         className="size-6 rounded-md"
@@ -278,10 +247,7 @@ function ClaudeBadgeButton({ proxyId }: ProxyInstallersProps) {
   });
 
   return (
-    <Badge
-      className="h-8 gap-x-2 rounded-lg pr-1"
-      variant={getDeterministicColor("claude")}
-    >
+    <Badge className="h-8 gap-x-2 rounded-lg pr-1">
       <span>Claude</span>
       <Button
         className="size-6 rounded-md"

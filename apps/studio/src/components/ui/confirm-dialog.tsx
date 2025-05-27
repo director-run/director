@@ -15,6 +15,7 @@ import {
 } from "./alert-dialog";
 import { Button } from "./button";
 import { Form } from "./form";
+import { Loader } from "./loader";
 
 interface ConfirmDialogProps {
   title: string;
@@ -54,8 +55,14 @@ export function ConfirmDialog({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <Form form={form} onSubmit={onConfirm} className="w-fit">
-            <Button type="submit">Confirm</Button>
+          <Form form={form} onSubmit={onConfirm} className="sm:w-fit">
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? (
+                <Loader className="text-fg-subtle" />
+              ) : (
+                "Confirm"
+              )}
+            </Button>
           </Form>
         </AlertDialogFooter>
       </AlertDialogContent>

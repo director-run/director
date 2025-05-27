@@ -2,9 +2,7 @@
 
 import { cn } from "@/lib/cn";
 import { IconWeight } from "@phosphor-icons/react";
-import { DialogOverlay as RadixDialogOverlayout } from "@radix-ui/react-dialog";
 import { Slot } from "@radix-ui/react-slot";
-import { ComponentProps } from "react";
 
 interface PrimitiveBaseProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
@@ -35,8 +33,11 @@ export function MenuItem({
     <Component
       className={cn(
         "flex h-7 w-full min-w-0 flex-row items-center gap-x-0.5 rounded-md bg-transparent px-1 text-fg-subtle",
-        "transition-colors duration-200 ease-in-out hover:bg-accent",
+        "font-medium text-[13px] leading-7 tracking-[0.01em]",
+        "cursor-default select-none outline-none transition-colors duration-200 ease-in-out hover:bg-accent",
+        "radix-[highlighted]:bg-accent radix-[highlighted]:text-fg",
         "data-[state=active]:bg-accent data-[state=active]:text-fg",
+        "data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
         className,
       )}
       {...props}
@@ -112,29 +113,5 @@ export function MenuLabel({
       </MenuItemLabel>
       {children}
     </MenuItem>
-  );
-}
-
-export function Overlay({ className, ...props }: ComponentProps<typeof Slot>) {
-  return (
-    <Slot
-      className={cn(
-        "fixed inset-0 z-50 bg-fg/25",
-        "radix-state-[closed]:fade-out-0 radix-state-[closed]:animate-out",
-        "radix-state-[open]:fade-in-0 radix-state-[open]:animate-in",
-        className,
-      )}
-      {...props}
-    />
-  );
-}
-
-export function DialogOverlay(
-  props: ComponentProps<typeof RadixDialogOverlayout>,
-) {
-  return (
-    <Overlay>
-      <RadixDialogOverlayout {...props} />
-    </Overlay>
   );
 }

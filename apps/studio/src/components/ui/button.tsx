@@ -4,10 +4,6 @@ import type { ComponentProps } from "react";
 
 import { cn } from "@/lib/cn";
 
-{
-  /* className="flex size-6 cursor-pointer items-center justify-center rounded-md bg-transparent text-fg-subtle outline-none transition-colors duration-200 ease-in-out " */
-}
-
 const buttonVariants = cva(
   [
     "inline-flex shrink-0 cursor-pointer items-center justify-center gap-x-2 whitespace-nowrap duration-200",
@@ -18,13 +14,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "bg-primary text-background hover:bg-primary-hover active:bg-primary-active",
+        default: "bg-fg text-surface hover:bg-fg/80 active:bg-fg/90",
         secondary:
-          "bg-accent text-fg-subtle hover:opacity-50 transition-opacity",
-        inverse: "bg-background text-foreground hover:bg-background/50",
+          "bg-accent text-fg-subtle transition-opacity hover:opacity-50",
+        inverse: "bg-surface text-fg hover:bg-surface/50",
         ghost:
-          "bg-transparent text-fg-subtle hover:bg-accent hover:text-fg focus-visible:bg-accent focus-visible:text-fg transition-colors",
+          "bg-transparent text-fg-subtle transition-colors hover:bg-accent hover:text-fg focus-visible:bg-accent focus-visible:text-fg",
       },
       size: {
         default: "h-8 rounded-lg px-3 pb-0.25",

@@ -2,14 +2,12 @@
 
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
-import { Prompt, Resource, Tool } from "@modelcontextprotocol/sdk/types.js";
+import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { useEffect, useState } from "react";
 
 export function useInspectMcp(proxyId: string, serverId?: string) {
   const [isLoading, setIsLoading] = useState(true);
   const [tools, setTools] = useState<Tool[]>([]);
-  const [prompts, setPrompts] = useState<Prompt[]>([]);
-  const [resources, setResources] = useState<Resource[]>([]);
 
   useEffect(() => {
     const client = new Client({
@@ -47,7 +45,5 @@ export function useInspectMcp(proxyId: string, serverId?: string) {
   return {
     isLoading,
     tools,
-    prompts,
-    resources,
   };
 }

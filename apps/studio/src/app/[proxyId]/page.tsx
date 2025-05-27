@@ -125,7 +125,7 @@ export default function ProxyPage() {
                 <h2>Clients</h2>
               </SectionTitle>
               <ProxyManualDialog proxyId={proxy.id}>
-                <Button variant="secondary">Connect manually</Button>
+                <Button size="sm">Connect manually</Button>
               </ProxyManualDialog>
             </SectionHeader>
             <ProxyInstallers proxyId={proxy.id} />

@@ -29,7 +29,7 @@ export function RegistryDialog() {
 
   return (
     <>
-      <Button onClick={() => setIsOpen(true)} disabled={isLoading}>
+      <Button size="sm" onClick={() => setIsOpen(true)} disabled={isLoading}>
         Add
       </Button>
 

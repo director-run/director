@@ -4,6 +4,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import * as React from "react";
 
+import { DialogOverlay as DialogOverlayPrimitive } from "@/app/design/components/primitives";
 import { cn } from "@/lib/cn";
 import { Button } from "./button";
 
@@ -19,16 +20,7 @@ function DialogOverlay({
   className,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Overlay>) {
-  return (
-    <DialogPrimitive.Overlay
-      className={cn(
-        "radix-state-[closed]:fade-out-0 radix-state-[open]:fade-in-0 fixed inset-0 z-50 radix-state-[closed]:animate-out radix-state-[open]:animate-in bg-foreground/90 backdrop-blur-sm",
-        "dark:bg-background/50",
-        className,
-      )}
-      {...props}
-    />
-  );
+  return <DialogOverlayPrimitive {...props} />;
 }
 
 interface DialogContentProps

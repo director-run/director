@@ -9,7 +9,11 @@ export function useProxy(proxyId: string) {
     t.installer.cursor.list(),
   ]);
 
-  const isLoading = proxy.isLoading || claude.isLoading || cursor.isLoading;
+  const isLoading =
+    proxy.isLoading ||
+    claude.isLoading ||
+    cursor.isLoading ||
+    proxy.error?.message === "Failed to fetch";
 
   return {
     proxy: proxy.data,

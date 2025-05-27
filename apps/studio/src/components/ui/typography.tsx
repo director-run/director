@@ -3,11 +3,11 @@ import { cva } from "class-variance-authority";
 export const textVariants = cva("", {
   variants: {
     variant: {
-      h1: "text-balance font-normal font-sans text-3xl leading-10",
-      h2: "text-balance font-normal font-sans text-2xl leading-tight",
-      h3: "text-balance font-normal font-sans text-lg leading-tight",
+      h1: "text-balance font-medium font-sans text-[25px] leading-tight tracking-[0.01em]",
+      h2: "text-balance font-medium font-sans text-[17px] leading-6 tracking-[0.01em]",
+      h3: "text-balance font-normal font-sans text-[17px] leading-tight",
       h4: "text-balance font-normal font-sans text-base leading-tight",
-      p: "text-pretty text-base leading-relaxed",
+      p: "text-pretty text-[15px] leading-6",
       inlineLink:
         "text-inherit underline decoration-gray-10 decoration-dashed underline-offset-3 hover:decoration-gray-12",
     },

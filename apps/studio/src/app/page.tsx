@@ -14,7 +14,7 @@ export default function ProxiesPage() {
       if (data.length > 0) {
         router.push(`/${data[0].id}`);
       } else if (data.length === 0) {
-        router.push("/proxies/new");
+        router.push("/new");
       }
     }
   }, [data, router]);

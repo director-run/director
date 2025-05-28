@@ -98,7 +98,7 @@ export default function RegistryPage() {
                       </ListItemDescription>
                     </ListItemDetails>
 
-                    <BadgeGroup>
+                    <BadgeGroup className="ml-auto items-start justify-end">
                       {entry.isOfficial && (
                         <Badge variant="success">
                           <BadgeIcon>

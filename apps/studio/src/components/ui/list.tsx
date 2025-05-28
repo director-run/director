@@ -27,7 +27,7 @@ export function ListItem({ asChild, className, ...props }: ListItemProps) {
   return (
     <Comp
       className={cn(
-        "flex flex-row gap-x-8 border-accent border-b-[0.5px] py-3 outline-none last:border-b-0",
+        "flex flex-row items-start gap-x-8 border-accent border-b-[0.5px] py-3 outline-none last:border-b-0",
         "[a&]:hover:bg-accent-subtle/50 [a&]:focus-visible:bg-accent-subtle/50",
         className,
       )}

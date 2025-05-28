@@ -55,10 +55,12 @@ export default function RegistryPage() {
   if (!data || error) {
     return (
       <RegistryLibrarySkeleton>
-        <EmptyState>
-          <EmptyStateTitle>Something went wrong.</EmptyStateTitle>
-          <EmptyStateDescription>Please try again</EmptyStateDescription>
-        </EmptyState>
+        <div className="absolute inset-0 grid place-items-center">
+          <EmptyState>
+            <EmptyStateTitle>Something went wrong.</EmptyStateTitle>
+            <EmptyStateDescription>Please try again</EmptyStateDescription>
+          </EmptyState>
+        </div>
       </RegistryLibrarySkeleton>
     );
   }

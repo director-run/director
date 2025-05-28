@@ -71,7 +71,7 @@ export function RegistryInstallDialog({
   const form = useZodForm({
     schema,
     defaultValues: {
-      proxyId: serverId ?? proxies[0].id ?? "",
+      proxyId: serverId ?? proxies[0]?.id ?? "",
       parameters: parameters.reduce(
         (acc, param) => {
           acc[param.name] = "";

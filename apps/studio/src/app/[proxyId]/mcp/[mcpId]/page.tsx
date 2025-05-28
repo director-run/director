@@ -57,6 +57,14 @@ export default function ProxyPage() {
     return <div>Not found</div>;
   }
 
+  const entryData = mcp.source?.entryData;
+  const description =
+    typeof entryData === "object" &&
+    entryData !== null &&
+    typeof (entryData as { description: string }).description === "string"
+      ? (entryData as { description: string }).description
+      : null;
+
   return (
     <LayoutView>
       <LayoutViewHeader>
@@ -112,11 +120,7 @@ export default function ProxyPage() {
               </SectionDescription>
             </SectionHeader>
 
-            {mcp.source?.entryData ? (
-              <Markdown>
-                {(mcp.source.entryData as { description: string }).description}
-              </Markdown>
-            ) : null}
+            {description ? <Markdown>{description}</Markdown> : null}
           </Section>
 
           <SectionSeparator />

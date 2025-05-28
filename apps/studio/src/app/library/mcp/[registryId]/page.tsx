@@ -99,7 +99,9 @@ export default function RegistryEntryPage() {
         </Breadcrumb>
 
         <RegistryInstallDialog mcp={data} proxies={store.data ?? []}>
-          <Button className="ml-auto">Add to proxy</Button>
+          <Button className="ml-auto" disabled={!store.data?.length}>
+            Add to proxy
+          </Button>
         </RegistryInstallDialog>
       </LayoutViewHeader>
 

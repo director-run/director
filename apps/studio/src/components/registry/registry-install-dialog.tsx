@@ -71,7 +71,7 @@ export function RegistryInstallDialog({
   const form = useZodForm({
     schema,
     defaultValues: {
-      proxyId: serverId ?? proxies[0].id,
+      proxyId: serverId ?? proxies[0].id ?? "",
       parameters: parameters.reduce(
         (acc, param) => {
           acc[param.name] = "";
@@ -97,7 +97,6 @@ export function RegistryInstallDialog({
           form={form}
           className="gap-y-0 border-t-[0.5px]"
           onSubmit={(values) => {
-            console.log(values);
             installMutation.mutate({
               entryName: mcp.name,
               proxyId: values.proxyId,

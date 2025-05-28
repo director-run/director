@@ -6,6 +6,7 @@
     "source.organizeImports.biome": "explicit"
   },
   "tailwindCSS.experimental.configFile": "apps/studio/src/app/globals.css",
+  "tailwindCSS.classFunctions": ["cn", "cva"],
   "[javascript]": {
     "editor.defaultFormatter": "biomejs.biome"
   },

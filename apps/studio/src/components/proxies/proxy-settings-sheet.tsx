@@ -1,10 +1,14 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { ProxyAttributes } from "@director.run/gateway/db/schema";
+import { ReactNode, useState } from "react";
+
+import {} from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
   SheetActions,
+  SheetBody,
   SheetContent,
   SheetDescription,
   SheetHeader,
@@ -12,10 +16,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useProxy } from "@/hooks/use-proxy";
-import { ProxyAttributes } from "@director.run/gateway/db/schema";
-import { TrashIcon } from "lucide-react";
-import { ReactNode, useState } from "react";
-import { ProxyDeleteConfirmation } from "./proxy-delete-confirmation";
 import { UpdateProxyForm } from "./proxy-form";
 
 interface ProxySettingsSheetProps {
@@ -35,32 +35,22 @@ export function ProxySettingsSheet({
       <SheetTrigger asChild>{children}</SheetTrigger>
 
       <SheetContent>
-        <SheetActions>
-          <ProxyDeleteConfirmation proxyId={proxyId}>
-            <Button variant="default" size="icon">
-              <TrashIcon />
-              <span className="sr-only">Delete proxy</span>
-            </Button>
-          </ProxyDeleteConfirmation>
+        <SheetActions />
+        <SheetBody>
+          <SheetHeader>
+            <SheetTitle>Settings</SheetTitle>
+            <SheetDescription>
+              Update the name and description of the proxy.
+            </SheetDescription>
+          </SheetHeader>
 
-          <Badge className="mr-auto" variant="secondary">
-            Proxy
-          </Badge>
-        </SheetActions>
+          <Separator />
 
-        <SheetHeader className="pt-6">
-          <SheetTitle>Settings</SheetTitle>
-          <SheetDescription>
-            Update the name and description of the proxy.
-          </SheetDescription>
-        </SheetHeader>
-
-        <div className="pt-8">
           <UpdateProxyForm
             {...(proxy as ProxyAttributes)}
             onSuccess={() => setIsOpen(false)}
           />
-        </div>
+        </SheetBody>
       </SheetContent>
     </Sheet>
   );

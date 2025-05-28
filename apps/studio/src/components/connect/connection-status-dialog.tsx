@@ -47,8 +47,8 @@ export function ConnectionStatusDialog() {
       open={(data === undefined && isFetchedAfterMount) || isRefetchError}
     >
       <DialogContent dismissable={false}>
-        <Logo />
-        <DialogHeader className="pt-3">
+        <DialogHeader>
+          <Logo className="mb-3" />
           <DialogTitle>Director is connecting…</DialogTitle>
           <DialogDescription>This may take a few seconds.</DialogDescription>
         </DialogHeader>

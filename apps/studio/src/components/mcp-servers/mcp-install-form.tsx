@@ -29,7 +29,7 @@ export function McpInstallForm({ entry, proxyId }: McpInstallFormProps) {
         title: "Proxy installed",
         description: "This proxy was successfully installed.",
       });
-      router.push(`/proxies/${proxyId}`);
+      router.push(`/${proxyId}`);
     },
   });
 

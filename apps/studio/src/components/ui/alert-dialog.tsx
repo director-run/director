@@ -1,10 +1,10 @@
 "use client";
 
-import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
-import * as React from "react";
-
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
+import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
+import * as React from "react";
+import { textVariants } from "./typography";
 
 const AlertDialog = AlertDialogPrimitive.Root;
 
@@ -18,11 +18,7 @@ function AlertDialogOverlay({
 }: React.ComponentProps<typeof AlertDialogPrimitive.Overlay>) {
   return (
     <AlertDialogPrimitive.Overlay
-      className={cn(
-        "radix-state-[closed]:fade-out-0 radix-state-[open]:fade-in-0 fixed inset-0 z-50 radix-state-[closed]:animate-out radix-state-[open]:animate-in bg-foreground/90 backdrop-blur-sm",
-        "dark:bg-background/50",
-        className,
-      )}
+      className={cn("overlay", className)}
       {...props}
     />
   );
@@ -37,9 +33,9 @@ function AlertDialogContent({
       <AlertDialogOverlay />
       <AlertDialogPrimitive.Content
         className={cn(
-          "fixed top-[25%] left-[50%] z-50 grid w-full max-w-[90%] translate-x-[-50%] gap-4 rounded-2xl bg-background p-6 text-foreground outline-none duration-200 sm:max-w-lg",
+          "popover rounded-xl",
+          "fixed top-12 left-[50%] z-50 grid w-full max-w-[90%] translate-x-[-50%] outline-none duration-200 sm:max-w-md",
           "radix-state-[closed]:fade-out-0 radix-state-[open]:fade-in-0 radix-state-[closed]:zoom-out-95 radix-state-[open]:zoom-in-95 radix-state-[closed]:slide-out-to-top-[48%] radix-state-[open]:slide-in-from-top-[48%] radix-state-[closed]:animate-out radix-state-[open]:animate-in",
-          "dark:bg-element",
           className,
         )}
         {...props}
@@ -54,7 +50,7 @@ function AlertDialogHeader({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("flex flex-col space-y-2 text-start", className)}
+      className={cn("flex flex-col gap-y-1 p-5 text-start", className)}
       {...props}
     />
   );
@@ -67,7 +63,7 @@ function AlertDialogFooter({
   return (
     <div
       className={cn(
-        "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+        "flex flex-col-reverse gap-1 border-accent border-t-[0.5px] px-5 py-3 sm:flex-row sm:justify-end",
         className,
       )}
       {...props}
@@ -81,10 +77,7 @@ function AlertDialogTitle({
 }: React.ComponentProps<typeof AlertDialogPrimitive.Title>) {
   return (
     <AlertDialogPrimitive.Title
-      className={cn(
-        "font-normal text-foreground text-xl leading-none tracking-tight",
-        className,
-      )}
+      className={cn(textVariants({ variant: "h2" }), "text-fg", className)}
       {...props}
     />
   );
@@ -96,7 +89,11 @@ function AlertDialogDescription({
 }: React.ComponentProps<typeof AlertDialogPrimitive.Description>) {
   return (
     <AlertDialogPrimitive.Description
-      className={cn("text-base text-foreground-subtle", className)}
+      className={cn(
+        textVariants({ variant: "p" }),
+        "text-fg-subtle",
+        className,
+      )}
       {...props}
     />
   );
@@ -110,7 +107,7 @@ function AlertDialogCancel({
     <AlertDialogPrimitive.Cancel
       className={cn(
         buttonVariants({ variant: "ghost" }),
-        "mt-2 sm:mt-0",
+
         className,
       )}
       {...props}

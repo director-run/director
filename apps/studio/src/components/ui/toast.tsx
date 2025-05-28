@@ -36,10 +36,10 @@ function Toast(props: ToastProps) {
   const { id, title, description } = props;
 
   return (
-    <div className="flex w-full items-start justify-between rounded-xl bg-primary p-3 text-foreground-inverse">
+    <div className="flex w-full items-start justify-between rounded-xl bg-fg p-3 text-surface">
       <div className="flex flex-col gap-y-1">
         <p className="font-medium text-sm leading-tight">{title}</p>
-        <p className="text-foreground-inverse/70 text-xs">{description}</p>
+        <p className="text-surface/70 text-xs">{description}</p>
       </div>
 
       <Button

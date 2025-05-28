@@ -34,8 +34,8 @@ export function ProxyDeleteConfirmation({
 
   return (
     <ConfirmDialog
-      title="Are you sure?"
-      description="This action cannot be undone."
+      title="Delete proxy server"
+      description="Are you sure you want to delete this proxy server? This action cannot be undone."
       open={isOpen}
       onOpenChange={setIsOpen}
       onConfirm={() => mutation.mutateAsync({ proxyId })}

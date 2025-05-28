@@ -1,11 +1,12 @@
 "use client";
 
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
 import * as React from "react";
 
 import { cn } from "@/lib/cn";
+import { XIcon } from "@phosphor-icons/react";
 import { Button } from "./button";
+import { textVariants } from "./typography";
 
 const Dialog = DialogPrimitive.Root;
 
@@ -20,14 +21,7 @@ function DialogOverlay({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Overlay>) {
   return (
-    <DialogPrimitive.Overlay
-      className={cn(
-        "radix-state-[closed]:fade-out-0 radix-state-[open]:fade-in-0 fixed inset-0 z-50 radix-state-[closed]:animate-out radix-state-[open]:animate-in bg-foreground/90 backdrop-blur-sm",
-        "dark:bg-background/50",
-        className,
-      )}
-      {...props}
-    />
+    <DialogPrimitive.Overlay className={cn("overlay", className)} {...props} />
   );
 }
 
@@ -47,9 +41,11 @@ function DialogContent({
       <DialogOverlay />
       <DialogPrimitive.Content
         className={cn(
-          "fixed top-[25%] left-[50%] z-50 grid w-full max-w-[90%] translate-x-[-50%] gap-4 rounded-2xl bg-background p-6 text-foreground outline-none duration-200 sm:max-w-lg",
-          "radix-state-[closed]:fade-out-0 radix-state-[open]:fade-in-0 radix-state-[closed]:zoom-out-95 radix-state-[open]:zoom-in-95 radix-state-[closed]:slide-out-to-top-[48%] radix-state-[open]:slide-in-from-top-[48%] radix-state-[closed]:animate-out radix-state-[open]:animate-in",
-          "dark:bg-element",
+          "popover rounded-xl",
+          "fixed inset-x-1 top-1 z-50 grid outline-none duration-200",
+          "sm:top-12 sm:left-[50%] sm:w-full sm:max-w-md sm:translate-x-[-50%]",
+          "radix-state-[open]:fade-in-0 radix-state-[open]:zoom-in-95 radix-state-[open]:slide-in-from-top-[48%] radix-state-[open]:animate-in",
+          "radix-state-[closed]:fade-out-0 radix-state-[closed]:zoom-out-95 radix-state-[closed]:slide-out-to-top-[48%] radix-state-[closed]:animate-out",
           className,
         )}
         {...props}
@@ -57,11 +53,11 @@ function DialogContent({
         {children}
         {dismissable && (
           <DialogPrimitive.Close
-            className={cn("absolute top-1 right-1")}
+            className={cn("absolute top-1 right-1 rounded-lg")}
             asChild
           >
-            <Button variant="inverse" size="icon">
-              <X className="h-4 w-4" />
+            <Button variant="secondary" size="icon">
+              <XIcon className="size-4" />
               <span className="sr-only">Close</span>
             </Button>
           </DialogPrimitive.Close>
@@ -77,7 +73,7 @@ function DialogHeader({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("flex flex-col gap-y-2 text-start", className)}
+      className={cn("flex flex-col gap-y-1 p-5 text-start", className)}
       {...props}
     />
   );
@@ -104,10 +100,7 @@ function DialogTitle({
 }: React.ComponentProps<typeof DialogPrimitive.Title>) {
   return (
     <DialogPrimitive.Title
-      className={cn(
-        "font-normal text-foreground text-xl leading-none tracking-tight",
-        className,
-      )}
+      className={cn(textVariants({ variant: "h2" }), "text-fg", className)}
       {...props}
     />
   );
@@ -119,7 +112,11 @@ function DialogDescription({
 }: React.ComponentProps<typeof DialogPrimitive.Description>) {
   return (
     <DialogPrimitive.Description
-      className={cn("text-base text-foreground-subtle", className)}
+      className={cn(
+        textVariants({ variant: "p" }),
+        "text-fg-subtle",
+        className,
+      )}
       {...props}
     />
   );

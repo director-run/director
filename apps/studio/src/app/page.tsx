@@ -1,25 +1,23 @@
 "use client";
-
-import { DefaultFallback } from "@/lib/no-ssr-suspense";
+import { ProxySkeleton } from "@/components/proxies/proxy-skeleton";
+import {} from "@/components/ui/empty-state";
 import { trpc } from "@/trpc/client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-export default function HomePage() {
+export default function ProxiesPage() {
   const router = useRouter();
   const { data } = trpc.store.getAll.useQuery();
 
   useEffect(() => {
     if (data) {
-      if (data.length === 1) {
-        router.push(`/proxies/${data[0].id}`);
+      if (data.length > 0) {
+        router.push(`/${data[0].id}`);
       } else if (data.length === 0) {
-        router.push("/proxies/new");
-      } else {
-        router.push("/proxies");
+        router.push("/new");
       }
     }
   }, [data, router]);
 
-  return <DefaultFallback />;
+  return <ProxySkeleton />;
 }

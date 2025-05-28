@@ -5,8 +5,8 @@ import {
   GetPromptResultSchema,
   ListPromptsRequestSchema,
   ListPromptsResultSchema,
+  type Prompt,
 } from "@modelcontextprotocol/sdk/types.js";
-import type { z } from "zod";
 import type { SimpleClient } from "../simple-client";
 
 const logger = getLogger("proxy/handlers/promptsHandler");
@@ -57,7 +57,7 @@ export function setupPromptHandlers(
 
   // List Prompts Handler
   server.setRequestHandler(ListPromptsRequestSchema, async (request) => {
-    const allPrompts: z.infer<typeof ListPromptsResultSchema>["prompts"] = [];
+    const allPrompts: Prompt[] = [];
     promptToClientMap.clear();
 
     for (const connectedClient of connectedClients) {

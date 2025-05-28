@@ -7,7 +7,7 @@ import { cn } from "@/lib/cn";
 const containerVariants = cva(
   [
     "grid w-full auto-rows-min",
-    "gap-x-4 gap-y-10 md:gap-x-8 lg:gap-x-10",
+    "gap-x-4 gap-y-12 md:gap-x-8 lg:gap-x-12 lg:gap-y-16",
     "*:col-span-1 *:col-start-2",
   ],
   {
@@ -16,17 +16,17 @@ const containerVariants = cva(
         sm: [
           "grid-cols-[1fr_min(30rem,_calc(100%-1rem*2))_1fr]",
           "md:grid-cols-[1fr_min(30rem,_calc(100%-2rem*2))_1fr]",
-          "lg:grid-cols-[1fr_min(30rem,_calc(100%-2.5rem*2))_1fr]",
+          "lg:grid-cols-[1fr_min(30rem,_calc(100%-3rem*2))_1fr]",
         ],
         md: [
           "grid-cols-[1fr_min(40rem,_calc(100%-1rem*2))_1fr]",
           "md:grid-cols-[1fr_min(40rem,_calc(100%-2rem*2))_1fr]",
-          "lg:grid-cols-[1fr_min(40rem,_calc(100%-2.5rem*2))_1fr]",
+          "lg:grid-cols-[1fr_min(40rem,_calc(100%-3rem*2))_1fr]",
         ],
         lg: [
           "grid-cols-[1fr_min(50rem,_calc(100%-1rem*2))_1fr]",
           "md:grid-cols-[1fr_min(50rem,_calc(100%-2rem*2))_1fr]",
-          "lg:grid-cols-[1fr_min(50rem,_calc(100%-2.5rem*2))_1fr]",
+          "lg:grid-cols-[1fr_min(50rem,_calc(100%-3rem*2))_1fr]",
         ],
       },
     },

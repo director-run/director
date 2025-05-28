@@ -6,26 +6,25 @@ import { cn } from "@/lib/cn";
 
 const buttonVariants = cva(
   [
-    "inline-flex shrink-0 cursor-pointer items-center justify-center gap-x-2 whitespace-nowrap transition-colors duration-200",
-    "font-sans text-sm tracking-[0.01em]",
+    "inline-flex shrink-0 cursor-pointer items-center justify-center gap-x-2 whitespace-nowrap duration-200",
+    "font-sans text-sm tracking-[0.01em] outline-none",
     "[&_svg]:pointer-events-none [&_svg]:size-3.5 [&_svg]:shrink-0",
-    "disabled:cursor-not-allowed disabled:bg-element disabled:text-foreground-faint dark:disabled:text-foreground-faint",
+    "disabled:cursor-not-allowed disabled:opacity-50",
   ],
   {
     variants: {
       variant: {
-        default:
-          "bg-primary text-background hover:bg-primary-hover active:bg-primary-active",
+        default: "bg-fg text-surface hover:bg-fg/80 active:bg-fg/90",
         secondary:
-          "bg-element text-foreground hover:bg-element-hover active:bg-element-active",
-        inverse: "bg-background text-foreground hover:bg-background/50",
+          "bg-accent text-fg-subtle transition-opacity hover:opacity-50",
+        inverse: "bg-surface text-fg hover:bg-surface/50",
         ghost:
-          "bg-transparent text-foreground-subtle hover:bg-element-hover hover:text-foreground active:bg-element-active disabled:bg-transparent",
+          "bg-transparent text-fg-subtle transition-colors hover:bg-accent hover:text-fg focus-visible:bg-accent focus-visible:text-fg",
       },
       size: {
         default: "h-8 rounded-lg px-3 pb-0.25",
         lg: "h-10 rounded-lg px-4 pb-0.25 text-base",
-        icon: "size-8 rounded-lg [&_svg]:size-4",
+        icon: "size-6 rounded-md [&_svg]:size-5",
       },
     },
     defaultVariants: {

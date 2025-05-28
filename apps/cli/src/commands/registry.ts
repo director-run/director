@@ -1,8 +1,10 @@
+import type { EntryGetParams } from "@director.run/registry/db/schema";
 import { enrichEntryTools } from "@director.run/registry/enrichment/enrich-tools";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
-import { loader } from "@director.run/utilities/cli/loader";
+import { spinnerWrap } from "@director.run/utilities/cli/loader";
 import { confirm } from "@inquirer/prompts";
+import { input } from "@inquirer/prompts";
 import { gatewayClient, registryClient } from "../client";
 import { printReadme, printRegistryEntry } from "../views/registry-entry";
 import { listEntries } from "../views/registry-list";
@@ -17,20 +19,16 @@ export function createRegistryCommands() {
     .description("List all available servers in the registry")
     .action(
       actionWithErrorHandler(async () => {
-        const spinner = loader();
-        spinner.start("fetching entries...");
-        try {
-          const items = await registryClient.entries.getEntries.query({
+        const items = await spinnerWrap(() =>
+          registryClient.entries.getEntries.query({
             pageIndex: 0,
             pageSize: 100,
-          });
-          spinner.stop();
-          listEntries(items.entries);
-        } catch (error) {
-          spinner.fail(
-            error instanceof Error ? error.message : "unknown error",
-          );
-        }
+          }),
+        )
+          .start("fetching entries...")
+          .succeed("Entries fetched.")
+          .run();
+        listEntries(items.entries);
       }),
     );
 
@@ -39,19 +37,15 @@ export function createRegistryCommands() {
     .description("Get detailed information about a repository item")
     .action(
       actionWithErrorHandler(async (entryName: string) => {
-        const spinner = loader();
-        spinner.start("fetching entry details...");
-        try {
-          const item = await registryClient.entries.getEntryByName.query({
+        const item = await spinnerWrap(() =>
+          registryClient.entries.getEntryByName.query({
             name: entryName,
-          });
-          spinner.stop();
-          printRegistryEntry(item);
-        } catch (error) {
-          spinner.fail(
-            error instanceof Error ? error.message : "unknown error",
-          );
-        }
+          }),
+        )
+          .start("fetching entry details...")
+          .succeed("Entry details fetched.")
+          .run();
+        printRegistryEntry(item);
       }),
     );
 
@@ -60,20 +54,15 @@ export function createRegistryCommands() {
     .description("Print the readme for a repository item")
     .action(
       actionWithErrorHandler(async (entryName: string) => {
-        const spinner = loader();
-        spinner.start("fetching entry details...");
-
-        try {
-          const item = await registryClient.entries.getEntryByName.query({
+        const item = await spinnerWrap(() =>
+          registryClient.entries.getEntryByName.query({
             name: entryName,
-          });
-          spinner.stop();
-          printReadme(item);
-        } catch (error) {
-          spinner.fail(
-            error instanceof Error ? error.message : "unknown error",
-          );
-        }
+          }),
+        )
+          .start("fetching entry details...")
+          .succeed("Entry details fetched.")
+          .run();
+        printReadme(item);
       }),
     );
 
@@ -82,41 +71,59 @@ export function createRegistryCommands() {
     .description("Add a server from the registry to a proxy.")
     .action(
       actionWithErrorHandler(async (proxyId: string, entryName: string) => {
-        const spinner = loader();
-        spinner.start("adding server...");
-        try {
-          const proxy =
-            await gatewayClient.registry.addServerFromRegistry.mutate({
-              proxyId,
-              entryName,
-            });
-          spinner.succeed(`Registry entry ${entryName} added to ${proxy.id}`);
-        } catch (error) {
-          spinner.fail(
-            error instanceof Error ? error.message : "unknown error",
-          );
-        }
+        const entry = await spinnerWrap(() =>
+          registryClient.entries.getEntryByName.query({
+            name: entryName,
+          }),
+        )
+          .start("fetching entry...")
+          .succeed("Entry fetched.")
+          .run();
+        const parameters = await promptForParameters(entry);
+        await spinnerWrap(() =>
+          gatewayClient.registry.addServerFromRegistry.mutate({
+            proxyId,
+            entryName,
+            parameters,
+          }),
+        )
+          .start("installing server...")
+          .succeed(`Registry entry ${entryName} added to ${proxyId}`)
+          .run();
       }),
     );
+
+  async function promptForParameters(
+    entry: EntryGetParams,
+  ): Promise<Record<string, string>> {
+    const answers: Record<string, string> = {};
+
+    if (!entry.parameters) {
+      return {};
+    }
+
+    for (const parameter of entry.parameters) {
+      const answer = await input({ message: parameter.name });
+      answers[parameter.name] = answer;
+    }
+
+    return answers;
+  }
 
   command
     .command("uninstall <proxyId> <serverName>")
     .description("Remove a server from a proxy")
     .action(
       actionWithErrorHandler(async (proxyId: string, serverName: string) => {
-        const spinner = loader();
-        spinner.start("removing server...");
-        try {
-          const proxy = await gatewayClient.store.removeServer.mutate({
+        const proxy = await spinnerWrap(() =>
+          gatewayClient.store.removeServer.mutate({
             proxyId,
             serverName,
-          });
-          spinner.succeed(`Server ${serverName} removed from ${proxy.id}`);
-        } catch (error) {
-          spinner.fail(
-            error instanceof Error ? error.message : "unknown error",
-          );
-        }
+          }),
+        )
+          .start("removing server...")
+          .succeed(`Server ${serverName} removed from ${proxyId}`)
+          .run();
       }),
     );
 
@@ -133,16 +140,10 @@ export function createRegistryCommands() {
         if (!answer) {
           return;
         }
-        const spinner = loader();
-        spinner.start("purging registry...");
-        try {
-          await registryClient.entries.purge.mutate({});
-          spinner.succeed("Registry successfully purged");
-        } catch (error) {
-          spinner.fail(
-            error instanceof Error ? error.message : "unknown error",
-          );
-        }
+        await spinnerWrap(() => registryClient.entries.purge.mutate({}))
+          .start("purging registry...")
+          .succeed("Registry successfully purged")
+          .run();
       }),
     );
 
@@ -159,16 +160,10 @@ export function createRegistryCommands() {
         if (!answer) {
           return;
         }
-        const spinner = loader();
-        spinner.start("importing entries...");
-        try {
-          await registryClient.entries.populate.mutate({});
-          spinner.succeed("Entries successfully imported");
-        } catch (error) {
-          spinner.fail(
-            error instanceof Error ? error.message : "unknown error",
-          );
-        }
+        await spinnerWrap(() => registryClient.entries.populate.mutate({}))
+          .start("importing entries...")
+          .succeed("Entries successfully imported")
+          .run();
       }),
     );
 
@@ -177,16 +172,10 @@ export function createRegistryCommands() {
     .description("Enrich entries")
     .action(
       actionWithErrorHandler(async () => {
-        const spinner = loader();
-        spinner.start("enriching entries...");
-        try {
-          await registryClient.entries.enrich.mutate({});
-          spinner.succeed("entries successfully enriched");
-        } catch (error) {
-          spinner.fail(
-            error instanceof Error ? error.message : "unknown error",
-          );
-        }
+        await spinnerWrap(() => registryClient.entries.enrich.mutate({}))
+          .start("enriching entries...")
+          .succeed("entries successfully enriched")
+          .run();
       }),
     );
 
@@ -212,17 +201,13 @@ export function createRegistryCommands() {
     .description("Get high level stats about the registry")
     .action(
       actionWithErrorHandler(async () => {
-        const spinner = loader();
-        spinner.start("getting stats...");
-        try {
-          const stats = await registryClient.entries.stats.query({});
-          spinner.stop();
-          console.log(stats);
-        } catch (error) {
-          spinner.fail(
-            error instanceof Error ? error.message : "unknown error",
-          );
-        }
+        const stats = await spinnerWrap(() =>
+          registryClient.entries.stats.query({}),
+        )
+          .start("getting stats...")
+          .succeed("Stats fetched.")
+          .run();
+        console.log(stats);
       }),
     );
 

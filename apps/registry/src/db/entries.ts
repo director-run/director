@@ -80,6 +80,7 @@ export class EntryStore {
           description: entriesTable.description,
           transport: entriesTable.transport,
           homepage: entriesTable.homepage,
+          isOfficial: entriesTable.isOfficial,
           isConnectable: entriesTable.isConnectable,
           lastConnectionAttemptedAt: entriesTable.lastConnectionAttemptedAt,
           tools: entriesTable.tools,

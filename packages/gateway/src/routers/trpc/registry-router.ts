@@ -1,4 +1,3 @@
-import {} from "@director.run/installer/claude";
 import type { ProxyTransport } from "@director.run/mcp/types";
 import { createRegistryClient } from "@director.run/registry/client";
 import type { EntryParameter } from "@director.run/registry/db/schema";

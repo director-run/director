@@ -1,6 +1,6 @@
 "use client";
+
 import { ProxySkeleton } from "@/components/proxies/proxy-skeleton";
-import {} from "@/components/ui/empty-state";
 import { trpc } from "@/trpc/client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";

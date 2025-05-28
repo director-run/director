@@ -13,13 +13,16 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { DialogTitle } from "@/components/ui/dialog";
-import { useProxyQuery } from "@/hooks/use-proxy-query";
 import { trpc } from "@/trpc/client";
+import { useRouter } from "next/navigation";
+import { EmptyStateDescription, EmptyStateTitle } from "../ui/empty-state";
 
-interface RegistryDialogProps {}
+interface RegistryCommandProps {
+  serverId: string;
+}
 
-export function RegistryDialog() {
-  const { setProxyQuery } = useProxyQuery();
+export function RegistryCommand({ serverId }: RegistryCommandProps) {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
   const { data, isLoading } = trpc.registry.getEntries.useQuery({
@@ -39,14 +42,21 @@ export function RegistryDialog() {
         </VisuallyHidden>
         <CommandInput placeholder="Search for a tool..." />
         <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandEmpty>
+            <EmptyStateTitle>No results found.</EmptyStateTitle>
+            <EmptyStateDescription>
+              Try searching for a different tool.
+            </EmptyStateDescription>
+          </CommandEmpty>
           <CommandGroup>
             {data?.entries.map((entry) => (
               <CommandItem
                 value={entry.name}
                 key={entry.id}
                 onSelect={() => {
-                  setProxyQuery({ registryId: entry.name });
+                  router.push(
+                    `/library/mcp/${entry.name}?serverId=${serverId}`,
+                  );
                   setIsOpen(false);
                 }}
               >

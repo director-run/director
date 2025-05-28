@@ -1,6 +1,6 @@
 "use client";
 
-import { XIcon } from "lucide-react";
+import { XIcon } from "@phosphor-icons/react";
 import { useTheme } from "next-themes";
 import { Toaster as Sonner, toast as sonnerToast } from "sonner";
 import { Button } from "./button";
@@ -50,7 +50,7 @@ function Toast(props: ToastProps) {
           sonnerToast.dismiss(id);
         }}
       >
-        <XIcon />
+        <XIcon weight="bold" className="!size-4" />
         <span className="sr-only">Close</span>
       </Button>
     </div>

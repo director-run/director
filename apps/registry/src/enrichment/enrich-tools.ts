@@ -1,5 +1,4 @@
 import { SimpleClient } from "@director.run/mcp/simple-client";
-import {} from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import type { inferRouterOutputs } from "@trpc/server";
 import type { RegistryClient } from "../client";

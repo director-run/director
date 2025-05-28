@@ -90,7 +90,7 @@ export function SectionDescription({
       data-slot="section-description"
       className={cn(
         textVariants({ variant: "p", invisibles }),
-        "text-fg-subtle",
+        "max-w-md text-fg-subtle",
         className,
       )}
       {...props}

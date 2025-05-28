@@ -2,10 +2,6 @@
 import { useParams } from "next/navigation";
 
 import {
-  MenuItemIcon,
-  MenuItemLabel,
-} from "@/app/design/components/primitives";
-import {
   LayoutView,
   LayoutViewContent,
   LayoutViewHeader,
@@ -32,10 +28,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Markdown } from "@/components/ui/markdown";
+import { MenuItemIcon, MenuItemLabel } from "@/components/ui/menu";
 import {
   Section,
   SectionDescription,
   SectionHeader,
+  SectionSeparator,
   SectionTitle,
 } from "@/components/ui/section";
 import { useProxy } from "@/hooks/use-proxy";
@@ -112,7 +111,15 @@ export default function ProxyPage() {
                 </Link>
               </SectionDescription>
             </SectionHeader>
+
+            {mcp.source?.entryData ? (
+              <Markdown>
+                {(mcp.source.entryData as { description: string }).description}
+              </Markdown>
+            ) : null}
           </Section>
+
+          <SectionSeparator />
 
           <Section>
             <SectionHeader>
@@ -123,6 +130,8 @@ export default function ProxyPage() {
 
             <McpDescriptionList transport={mcp.transport} />
           </Section>
+
+          <SectionSeparator />
 
           <Section>
             <SectionHeader>

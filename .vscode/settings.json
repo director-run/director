@@ -30,5 +30,8 @@
   ],
   "search.exclude": {
     "**/node_modules": true
+  },
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
   }
 }

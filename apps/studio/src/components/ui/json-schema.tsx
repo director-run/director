@@ -1,5 +1,5 @@
 import { cn } from "@/lib/cn";
-import { CircleIcon } from "@phosphor-icons/react";
+import { CaretRightIcon, CircleIcon } from "@phosphor-icons/react";
 import {
   Accordion,
   AccordionContent,
@@ -7,7 +7,7 @@ import {
   AccordionTrigger,
 } from "@radix-ui/react-accordion";
 import { Slot } from "@radix-ui/react-slot";
-import { ChevronRight } from "lucide-react";
+
 import React, { ComponentProps } from "react";
 
 import { Badge, BadgeGroup, BadgeLabel } from "./badge";
@@ -224,7 +224,10 @@ const UnionTypeRenderer: React.FC<UnionTypeRendererProps> = ({
                     type={formatType(schema.type, schema.format)}
                   >
                     <AccordionTrigger className="flex size-6 cursor-pointer items-center justify-center rounded-lg bg-accent text-fg-subtle transition-opacity duration-200 hover:opacity-80 [&[data-state=open]>svg]:rotate-90">
-                      <ChevronRight className="size-4 transition-transform duration-200" />
+                      <CaretRightIcon
+                        weight="bold"
+                        className="size-4 transition-transform duration-200"
+                      />
                     </AccordionTrigger>
                   </PropertyHeader>
                   <PropertyContent>
@@ -429,7 +432,10 @@ function PropertyRow({
               type={getDisplayType()}
             >
               <AccordionTrigger className="flex size-6 cursor-pointer items-center justify-center rounded-lg bg-accent text-fg-subtle transition-opacity duration-200 hover:opacity-80 [&[data-state=open]>svg]:rotate-90">
-                <ChevronRight className="size-4 transition-transform duration-200" />
+                <CaretRightIcon
+                  weight="bold"
+                  className="size-4 transition-transform duration-200"
+                />
               </AccordionTrigger>
             </PropertyHeader>
           )}

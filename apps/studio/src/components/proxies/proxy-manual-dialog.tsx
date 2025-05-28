@@ -1,9 +1,8 @@
 "use client";
 
+import { CopyIcon } from "@phosphor-icons/react";
 import { ComponentProps, useState } from "react";
 
-import {} from "@/app/design/components/primitives";
-import {} from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,12 +12,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {} from "@/components/ui/dropdown-menu";
 import { toast } from "@/components/ui/toast";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
-import { CopyIcon } from "@phosphor-icons/react";
 import { Input } from "../ui/input";
-import {} from "../ui/list";
 import { SelectNative } from "../ui/select-native";
 
 type TransportType = "http" | "sse" | "stdio";

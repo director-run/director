@@ -3,7 +3,6 @@
 import { ProxyAttributes } from "@director.run/gateway/db/schema";
 import { ReactNode, useState } from "react";
 
-import {} from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
   Sheet,

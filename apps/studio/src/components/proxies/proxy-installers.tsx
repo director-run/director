@@ -3,23 +3,19 @@
 import { useState } from "react";
 
 import {
-  MenuItemIcon,
-  MenuItemLabel,
-} from "@/app/design/components/primitives";
-import {
   Badge,
   BadgeGroup,
   BadgeIcon,
   BadgeLabel,
 } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import { MenuItemIcon, MenuItemLabel } from "@/components/ui/menu";
 import { toast } from "@/components/ui/toast";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { useProxy } from "@/hooks/use-proxy";

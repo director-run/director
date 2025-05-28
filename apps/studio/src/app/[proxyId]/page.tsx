@@ -2,10 +2,6 @@
 import { useParams } from "next/navigation";
 
 import {
-  MenuItemIcon,
-  MenuItemLabel,
-} from "@/app/design/components/primitives";
-import {
   LayoutView,
   LayoutViewContent,
   LayoutViewHeader,
@@ -18,8 +14,7 @@ import { ProxyInstallers } from "@/components/proxies/proxy-installers";
 import { ProxyManualDialog } from "@/components/proxies/proxy-manual-dialog";
 import { ProxySettingsSheet } from "@/components/proxies/proxy-settings-sheet";
 import { ProxySkeleton } from "@/components/proxies/proxy-skeleton";
-import { RegistryDialog } from "@/components/registry/registry-dialog";
-import { RegistryEntryDialog } from "@/components/registry/registry-entry-dialog";
+import { RegistryCommand } from "@/components/registry/registry-command";
 import { Badge, BadgeIcon, BadgeLabel } from "@/components/ui/badge";
 import {
   Breadcrumb,
@@ -36,10 +31,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { MenuItemIcon, MenuItemLabel } from "@/components/ui/menu";
 import {
   Section,
   SectionDescription,
   SectionHeader,
+  SectionSeparator,
   SectionTitle,
 } from "@/components/ui/section";
 import { useProxy } from "@/hooks/use-proxy";
@@ -119,6 +116,8 @@ export default function ProxyPage() {
             </SectionHeader>
           </Section>
 
+          <SectionSeparator />
+
           <Section>
             <SectionHeader className="flex flex-row items-center justify-between">
               <SectionTitle variant="h2" asChild>
@@ -131,12 +130,14 @@ export default function ProxyPage() {
             <ProxyInstallers proxyId={proxy.id} />
           </Section>
 
+          <SectionSeparator />
+
           <Section>
             <SectionHeader className="flex flex-row items-center justify-between">
               <SectionTitle variant="h2" asChild>
                 <h2>MCP Servers</h2>
               </SectionTitle>
-              <RegistryDialog />
+              <RegistryCommand serverId={proxy.id} />
             </SectionHeader>
             <ListOfLinks
               isLoading={isLoading}
@@ -174,6 +175,8 @@ export default function ProxyPage() {
             />
           </Section>
 
+          <SectionSeparator />
+
           <Section>
             <SectionHeader>
               <SectionTitle variant="h2" asChild>
@@ -185,7 +188,6 @@ export default function ProxyPage() {
         </Container>
       </LayoutViewContent>
 
-      <RegistryEntryDialog proxyId={proxy.id} />
       <McpToolSheet proxyId={proxy.id} />
     </LayoutView>
   );

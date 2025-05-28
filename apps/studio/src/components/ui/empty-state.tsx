@@ -1,14 +1,22 @@
 import { cn } from "@/lib/cn";
+import { Slot } from "@radix-ui/react-slot";
 import { ComponentProps } from "react";
 import { textVariants } from "./typography";
+
+interface EmptyStateProps extends ComponentProps<"div"> {
+  asChild?: boolean;
+}
 
 export function EmptyState({
   children,
   className,
+  asChild,
   ...props
-}: ComponentProps<"div">) {
+}: EmptyStateProps) {
+  const Comp = asChild ? Slot : "div";
+
   return (
-    <div
+    <Comp
       className={cn(
         "flex flex-col items-center justify-center gap-y-1 rounded-xl bg-accent-subtle px-4 py-6 text-fg",
         className,
@@ -16,7 +24,7 @@ export function EmptyState({
       {...props}
     >
       {children}
-    </div>
+    </Comp>
   );
 }
 

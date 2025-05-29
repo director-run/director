@@ -58,8 +58,6 @@
   }
 }
 
-@import "tailwindcss";
-
 .prose {
   @apply max-w-[65ch] text-fg text-[15px];
 
@@ -123,7 +121,7 @@
     @apply my-6 ml-6 list-disc [&>li]:mt-2;
 
     & p {
-      @apply my-0 inline;
+      @apply my-0;
     }
   }
 
@@ -131,7 +129,7 @@
     @apply my-6 ml-6 list-decimal [&>li]:mt-2;
 
     & p {
-      @apply my-0 inline;
+      @apply my-0;
     }
   }
 

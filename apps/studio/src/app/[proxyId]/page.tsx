@@ -1,5 +1,5 @@
 "use client";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 import {
   LayoutView,
@@ -39,6 +39,7 @@ import {
   SectionSeparator,
   SectionTitle,
 } from "@/components/ui/section";
+import { toast } from "@/components/ui/toast";
 import { useProxy } from "@/hooks/use-proxy";
 import {
   DotsThreeOutlineVerticalIcon,
@@ -48,19 +49,26 @@ import {
   TerminalIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
+import { useEffect } from "react";
 
 export default function ProxyPage() {
+  const router = useRouter();
   const params = useParams<{ proxyId: string }>();
 
   const { proxy, isLoading } = useProxy(params.proxyId);
 
-  if (isLoading) {
-    return <ProxySkeleton />;
-  }
+  useEffect(() => {
+    if (!isLoading && !proxy) {
+      toast({
+        title: "Proxy not found",
+        description: "The proxy you are looking for does not exist.",
+      });
+      router.push("/");
+    }
+  }, [proxy, isLoading]);
 
-  if (!proxy) {
-    // TODO: Add 404
-    return <div>Not found</div>;
+  if (isLoading || !proxy) {
+    return <ProxySkeleton />;
   }
 
   return (

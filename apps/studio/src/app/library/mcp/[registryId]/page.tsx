@@ -27,11 +27,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import {
-  EmptyState,
-  EmptyStateDescription,
-  EmptyStateTitle,
-} from "@/components/ui/empty-state";
+import {} from "@/components/ui/empty-state";
 import {
   Section,
   SectionDescription,
@@ -39,6 +35,7 @@ import {
   SectionSeparator,
   SectionTitle,
 } from "@/components/ui/section";
+import { toast } from "@/components/ui/toast";
 import { useRegistryQuery } from "@/hooks/use-registry-query";
 import { trpc } from "@/trpc/client";
 import {
@@ -50,36 +47,39 @@ import {
   TerminalIcon,
 } from "@phosphor-icons/react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function RegistryEntryPage() {
+  const router = useRouter();
   const { registryId } = useParams<{ registryId: string }>();
   const { toolId } = useRegistryQuery();
-  const [{ data, isLoading, error }, store] = trpc.useQueries((t) => [
+  const [entryQuery, storeQuery] = trpc.useQueries((t) => [
     t.registry.getEntryByName({
       name: registryId,
     }),
     t.store.getAll(),
   ]);
 
-  if (isLoading || store.isLoading) {
+  const isLoading = entryQuery.isLoading || storeQuery.isLoading;
+  const entry = entryQuery.data;
+  const store = storeQuery.data;
+
+  useEffect(() => {
+    if (!isLoading && !entry) {
+      toast({
+        title: "Library entry not found",
+        description: "The library entry you are looking for does not exist.",
+      });
+      router.push("/library");
+    }
+  }, [entry, isLoading]);
+
+  if (isLoading || !entry) {
     return <RegistryEntrySkeleton />;
   }
 
-  if (!data || error || store.error) {
-    return (
-      <RegistryEntrySkeleton>
-        <div className="absolute inset-0 grid place-items-center">
-          <EmptyState>
-            <EmptyStateTitle>Something went wrong.</EmptyStateTitle>
-            <EmptyStateDescription>Please try again</EmptyStateDescription>
-          </EmptyState>
-        </div>
-      </RegistryEntrySkeleton>
-    );
-  }
-
-  const selectedTool = data.tools?.find((tool) => tool.name === toolId);
+  const selectedTool = entry.tools?.find((tool) => tool.name === toolId);
 
   return (
     <LayoutView>
@@ -93,13 +93,13 @@ export default function RegistryEntryPage() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>{data.title}</BreadcrumbPage>
+              <BreadcrumbPage>{entry.title}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
 
-        <RegistryInstallDialog mcp={data} proxies={store.data ?? []}>
-          <Button className="ml-auto" disabled={!store.data?.length}>
+        <RegistryInstallDialog mcp={entry} proxies={store ?? []}>
+          <Button className="ml-auto" disabled={!store?.length}>
             Add to proxy
           </Button>
         </RegistryInstallDialog>
@@ -109,12 +109,12 @@ export default function RegistryEntryPage() {
         <Container size="lg">
           <Section className="gap-y-6">
             <SectionHeader>
-              <SectionTitle>{data.title}</SectionTitle>
-              <SectionDescription>{data.description}</SectionDescription>
+              <SectionTitle>{entry.title}</SectionTitle>
+              <SectionDescription>{entry.description}</SectionDescription>
             </SectionHeader>
 
             <BadgeGroup>
-              {data.isOfficial && (
+              {entry.isOfficial && (
                 <Badge variant="success">
                   <BadgeIcon>
                     <SealCheckIcon />
@@ -122,7 +122,7 @@ export default function RegistryEntryPage() {
                   <BadgeLabel uppercase>Official</BadgeLabel>
                 </Badge>
               )}
-              {data.transport.type === "http" && (
+              {entry.transport.type === "http" && (
                 <Badge>
                   <BadgeIcon>
                     <GlobeIcon />
@@ -130,7 +130,7 @@ export default function RegistryEntryPage() {
                   <BadgeLabel uppercase>HTTP</BadgeLabel>
                 </Badge>
               )}
-              {data.transport.type === "stdio" && (
+              {entry.transport.type === "stdio" && (
                 <Badge>
                   <BadgeIcon>
                     <TerminalIcon />
@@ -139,11 +139,11 @@ export default function RegistryEntryPage() {
                 </Badge>
               )}
 
-              {data.transport.type === "stdio" && (
+              {entry.transport.type === "stdio" && (
                 <Badge>
                   <BadgeIcon>
                     {(() => {
-                      switch (data.transport.command) {
+                      switch (entry.transport.command) {
                         case "docker":
                           return <PackageIcon />;
                         default:
@@ -151,17 +151,17 @@ export default function RegistryEntryPage() {
                       }
                     })()}
                   </BadgeIcon>
-                  <BadgeLabel uppercase>{data.transport.command}</BadgeLabel>
+                  <BadgeLabel uppercase>{entry.transport.command}</BadgeLabel>
                 </Badge>
               )}
 
-              {data.homepage && (
+              {entry.homepage && (
                 <Badge
                   className="ml-auto transition-opacity duration-200 hover:opacity-50"
                   asChild
                 >
                   <a
-                    href={data.homepage}
+                    href={entry.homepage}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -183,7 +183,7 @@ export default function RegistryEntryPage() {
                 <h3>Transport</h3>
               </SectionTitle>
             </SectionHeader>
-            <McpDescriptionList transport={data.transport} />
+            <McpDescriptionList transport={entry.transport} />
           </Section>
 
           <SectionSeparator />
@@ -194,7 +194,7 @@ export default function RegistryEntryPage() {
                 <h3>Parameters</h3>
               </SectionTitle>
             </SectionHeader>
-            <RegistryParameters parameters={data.parameters ?? []} />
+            <RegistryParameters parameters={entry.parameters ?? []} />
           </Section>
 
           <SectionSeparator />
@@ -205,15 +205,15 @@ export default function RegistryEntryPage() {
                 <h3>Tools</h3>
               </SectionTitle>
             </SectionHeader>
-            <RegistryTools tools={data.tools ?? []} />
+            <RegistryTools tools={entry.tools ?? []} />
           </Section>
         </Container>
       </LayoutViewContent>
 
       <RegistryToolSheet
         tool={selectedTool}
-        mcpName={data.title}
-        mcpId={data.name}
+        mcpName={entry.title}
+        mcpId={entry.name}
       />
     </LayoutView>
   );

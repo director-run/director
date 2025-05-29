@@ -1,5 +1,6 @@
 "use client";
-import { useParams } from "next/navigation";
+
+import { useParams, useRouter } from "next/navigation";
 
 import {
   LayoutView,
@@ -37,24 +38,39 @@ import {
   SectionSeparator,
   SectionTitle,
 } from "@/components/ui/section";
+import { toast } from "@/components/ui/toast";
 import { useProxy } from "@/hooks/use-proxy";
 import { DotsThreeOutlineVerticalIcon, TrashIcon } from "@phosphor-icons/react";
 import Link from "next/link";
+import { useEffect } from "react";
 
 export default function ProxyPage() {
+  const router = useRouter();
   const params = useParams<{ proxyId: string; mcpId: string }>();
 
   const { proxy, isLoading } = useProxy(params.proxyId);
 
   const mcp = proxy?.servers.find((server) => server.name === params.mcpId);
 
-  if (isLoading) {
-    return <ProxySkeleton />;
-  }
+  useEffect(() => {
+    if (!isLoading && (!proxy || !mcp)) {
+      toast({
+        title: "MCP server not found",
+        description: "The MCP server you are looking for does not exist.",
+      });
 
-  if (!proxy || !mcp) {
-    // TODO: Add 404
-    return <div>Not found</div>;
+      if (!proxy) {
+        router.push("/");
+      }
+
+      if (!mcp) {
+        router.push(`/${params.proxyId}`);
+      }
+    }
+  }, [proxy, isLoading]);
+
+  if (isLoading || !proxy || !mcp) {
+    return <ProxySkeleton />;
   }
 
   const entryData = mcp.source?.entryData;

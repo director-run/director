@@ -64,37 +64,31 @@
   @apply max-w-[65ch] text-fg text-[15px];
 
   & h1:not(.not-prose h1) {
-    @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
+    @apply scroll-m-20 text-balance font-medium font-sans text-[25px] leading-tight tracking-[0.01em];
   }
 
   & h2:not(.not-prose h2) {
-    @apply scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight mt-12 first:mt-0;
+    @apply scroll-m-20 text-balance font-medium font-sans text-[21px] leading-6 tracking-[0.01em] mt-12 first:mt-0;
   }
 
   & h3:not(.not-prose h3) {
-    @apply scroll-m-20 text-2xl font-semibold mt-12 tracking-tight first:mt-0;
+    @apply scroll-m-20 text-balance font-medium font-sans text-[17px] leading-6 tracking-[0.01em] mt-12 first:mt-0;
   }
 
   & h4:not(.not-prose h4) {
-    @apply scroll-m-20 text-xl font-semibold mt-12 tracking-tight first:mt-0;
+    @apply scroll-m-20 text-balance font-medium font-sans text-[15px] leading-tight tracking-[0.01em] mt-12 first:mt-0;
   }
 
-  & h5:not(.not-prose h5) {
-    @apply scroll-m-20 text-lg font-semibold mt-12 tracking-tight first:mt-0;
-  }
-
-  & h6:not(.not-prose h6) {
-    @apply scroll-m-20 text-base font-semibold mt-12 tracking-tight first:mt-0;
-  }
-
-  & h1:not(.not-prose h1), & h2:not(.not-prose h2), & h3:not(.not-prose h3), & h4:not(.not-prose h4), & h5:not(.not-prose h5), & h6:not(.not-prose h6) {
-    & + p {
-      @apply mt-0;
+  & h1:not(.not-prose h1), & h2:not(.not-prose h2), & h3:not(.not-prose h3), & h4:not(.not-prose h4) {
+    & + p:not(.not-prose p),
+    & + ul:not(.not-prose ul),
+    & + ol:not(.not-prose ol) {  
+      @apply mt-[0.75em];
     }
   }
 
   & p:not(.not-prose p) {
-    @apply leading-7 [&:not(:first-child)]:mt-6;
+    @apply leading-relaxed [&:not(:first-child)]:mt-[1em];
   }
 
   & a:not(.not-prose a) {
@@ -146,7 +140,7 @@
   }
 
   & code:not(pre code):not(.not-prose code) {
-    @apply relative rounded bg-accent px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold;
+    @apply relative rounded bg-accent px-[0.25rem] py-[0.1rem] font-mono text-[0.875em] font-medium;
   }
 
   & .lead:not(.not-prose .lead) {

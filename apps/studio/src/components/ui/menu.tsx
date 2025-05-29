@@ -33,7 +33,7 @@ export function MenuItem({
     <Component
       className={cn(
         "flex h-7 w-full min-w-0 flex-row items-center gap-x-0.5 rounded-md bg-transparent px-1 text-fg-subtle",
-        "font-medium text-[13px] leading-7 tracking-[0.01em]",
+        "cursor-pointer font-medium text-[13px] leading-7 tracking-[0.01em]",
         "cursor-default select-none outline-none transition-colors duration-200 ease-in-out hover:bg-accent",
         "radix-[highlighted]:bg-accent radix-[highlighted]:text-fg",
         "data-[state=active]:bg-accent data-[state=active]:text-fg",

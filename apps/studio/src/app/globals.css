@@ -57,3 +57,155 @@
     @apply radix-state-[open]:fade-in-0 radix-state-[open]:animate-in;
   }
 }
+
+@import "tailwindcss";
+
+.prose {
+  @apply max-w-[65ch] text-fg text-[15px];
+
+  & h1:not(.not-prose h1) {
+    @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
+  }
+
+  & h2:not(.not-prose h2) {
+    @apply scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight mt-12 first:mt-0;
+  }
+
+  & h3:not(.not-prose h3) {
+    @apply scroll-m-20 text-2xl font-semibold mt-12 tracking-tight first:mt-0;
+  }
+
+  & h4:not(.not-prose h4) {
+    @apply scroll-m-20 text-xl font-semibold mt-12 tracking-tight first:mt-0;
+  }
+
+  & h5:not(.not-prose h5) {
+    @apply scroll-m-20 text-lg font-semibold mt-12 tracking-tight first:mt-0;
+  }
+
+  & h6:not(.not-prose h6) {
+    @apply scroll-m-20 text-base font-semibold mt-12 tracking-tight first:mt-0;
+  }
+
+  & h1:not(.not-prose h1), & h2:not(.not-prose h2), & h3:not(.not-prose h3), & h4:not(.not-prose h4), & h5:not(.not-prose h5), & h6:not(.not-prose h6) {
+    & + p {
+      @apply mt-0;
+    }
+  }
+
+  & p:not(.not-prose p) {
+    @apply leading-7 [&:not(:first-child)]:mt-6;
+  }
+
+  & a:not(.not-prose a) {
+    @apply font-medium text-fg underline underline-offset-4;
+  }
+
+  & blockquote:not(.not-prose blockquote) {
+    @apply mt-6 border-l-2 pl-6 italic;
+  }
+
+  & table:not(.not-prose table) {
+    @apply my-6 w-full overflow-y-auto;
+
+    & thead tr {
+      @apply m-0 border-t p-0 even:bg-accent-subtle;
+    }
+
+    & th {
+      @apply border px-4 py-2 text-left font-bold [&[align=center]]:text-center [&[align=right]]:text-right;
+    }
+
+    & tbody tr {
+      @apply m-0 border-t p-0 even:bg-accent-subtle;
+    }
+
+    & td {
+      @apply border px-4 py-2 text-left [&[align=center]]:text-center [&[align=right]]:text-right;
+    }
+  }
+
+  & ul:not(.not-prose ul) {
+    @apply my-6 ml-6 list-disc [&>li]:mt-2;
+
+    & p {
+      @apply my-0 inline;
+    }
+  }
+
+  & ol:not(.not-prose ol) {
+    @apply my-6 ml-6 list-decimal [&>li]:mt-2;
+
+    & p {
+      @apply my-0 inline;
+    }
+  }
+
+  & pre:not(.not-prose pre) {
+    @apply bg-accent rounded-md p-4 my-6 text-sm overflow-y-auto;
+  }
+
+  & code:not(pre code):not(.not-prose code) {
+    @apply relative rounded bg-accent px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold;
+  }
+
+  & .lead:not(.not-prose .lead) {
+    @apply text-xl text-fg-subtle
+  }
+
+  & .large:not(.not-prose .large) {
+    @apply text-lg font-semibold;
+  }
+
+  & .small:not(.not-prose .small) {
+    @apply text-sm font-medium leading-none;
+  }
+
+  & .muted:not(.not-prose .muted) {
+    @apply text-sm text-fg-subtle;
+  }
+
+  & img:not(.not-prose img), & picture:not(.not-prose picture), & video:not(.not-prose video) {
+    @apply my-6;
+  }
+
+  & picture > img:not(.not-prose picture > img) {
+    @apply my-0;
+  }
+
+  & kbd:not(.not-prose kbd) {
+    @apply rounded-md bg-accent px-1.5 py-0.5 text-xs font-semibold;
+  }
+
+  & hr {
+    @apply my-10;
+  }
+
+  & dl:not(.not-prose dl) {
+    @apply my-6;
+
+    & dt {
+      @apply font-semibold mt-6 tracking-tight first:mt-0;
+    }
+  }
+
+  & details:not(.not-prose details) {
+    @apply mt-6;
+
+    & summary {
+      @apply cursor-pointer font-semibold mt-6 tracking-tight;
+    }
+
+    & p {
+      @apply [&:first-of-type]:mt-2;
+    }
+  }
+
+  & mark:not(.not-prose mark) {
+    @apply bg-accent-subtle;
+  }
+
+  & small:not(.not-prose small) {
+    @apply text-xs leading-none;
+  }
+}

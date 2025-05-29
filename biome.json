@@ -10,7 +10,8 @@
       "test",
       "dist",
       "db.test.json",
-      "db.json"
+      "db.json",
+      "*.css"
     ]
   },
   "formatter": {

@@ -1,5 +1,5 @@
 {
-  "name": "@studio/docs",
+  "name": "@director.run/docs",
   "version": "0.0.1",
   "private": true,
   "scripts": {

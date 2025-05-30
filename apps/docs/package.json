@@ -1,0 +1,11 @@
+{
+  "name": "@studio/docs",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "mint dev --port 3002"
+  },
+  "dependencies": {
+    "mint": "^4.1.41"
+  }
+}

@@ -136,7 +136,7 @@ export function SidebarContent() {
         </MenuItem>
         <MenuItem asChild>
           <Link
-            href="https://director.run"
+            href="https://docs.director.run"
             target="_blank"
             rel="noopener noreferrer"
           >

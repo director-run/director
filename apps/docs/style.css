@@ -1,0 +1,10 @@
+h1#page-title {
+    letter-spacing: 0;
+    font-weight: 500;
+}
+
+.mdx-content h2,
+.mdx-content h3 {
+    letter-spacing: 0;
+    font-weight: 500;
+}

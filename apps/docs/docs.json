@@ -1,51 +1,57 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mint Starter Kit",
-  "colors": {
-    "primary": "#EE7803",
-    "light": "#EE7803",
-    "dark": "#EE7803"
-  },
+  "name": "Director",
   "seo": {
     "metatags": {
       "robots": "noindex"
     }
   },
-  "background": {
-    "color": {
-      "light": "#F2F0EE",
-      "dark": "#211D1A"
-    }
-  },
-  "favicon": "/favicon.svg",
   "navigation": {
-    "tabs": [
+    "groups": [
       {
-        "tab": "Docs",
-        "groups": [
-          {
-            "group": "Essentials",
-            "pages": ["index", "quickstart", "development"]
-          }
-        ]
+        "group": "Essentials",
+        "pages": ["index", "quickstart", "development"]
       }
-    ],
-    "global": {
-      "anchors": []
-    }
-  },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    ]
   },
   "navbar": {
-    "links": []
+    "links": [],
+    "primary": {
+      "type": "button",
+      "label": "Open studio",
+      "href": "https://studio.director.run"
+    }
   },
   "footer": {
     "socials": {
       "x": "https://x.com/theworkingco",
       "github": "https://github.com/theworkingcompany"
     }
-  }
+  },
+  "theme": "mint",
+  "colors": {
+    "primary": "#EE7803",
+    "light": "#EE7803",
+    "dark": "#EE7803"
+  },
+  "background": {
+    "color": {
+      "light": "#FBFAF9",
+      "dark": "#211D1A"
+    }
+  },
+  "appearance": {
+    "default": "light",
+    "strict": true
+  },
+  "fonts": {
+    "heading": {
+      "family": "Inter"
+    }
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "favicon": "/favicon.svg"
 }

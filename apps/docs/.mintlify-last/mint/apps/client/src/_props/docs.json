@@ -1,0 +1,61 @@
+{
+  "theme": "mint",
+  "$schema": "https://mintlify.com/docs.json",
+  "name": "Director",
+  "colors": {
+    "primary": "#62A87C",
+    "light": "#62A87C",
+    "dark": "#62A87C"
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "favicon": "/favicon.svg",
+  "appearance": {
+    "default": "light",
+    "strict": true
+  },
+  "background": {
+    "color": {
+      "light": "#F2F0EE",
+      "dark": "#211D1A"
+    }
+  },
+  "navbar": {
+    "links": [],
+    "primary": {
+      "type": "button",
+      "label": "Open studio",
+      "href": "https://studio.director.run"
+    }
+  },
+  "navigation": {
+    "groups": [
+      {
+        "group": "Essentials",
+        "pages": [
+          "index",
+          "quickstart",
+          "development"
+        ]
+      }
+    ]
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/theworkingco",
+      "github": "https://github.com/theworkingcompany"
+    }
+  },
+  "seo": {
+    "metatags": {
+      "robots": "noindex"
+    }
+  },
+  "fonts": {
+    "heading": {
+      "family": "Inter"
+    }
+  }
+}

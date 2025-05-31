@@ -1,6 +1,6 @@
 import { ThemeProvider } from "@/components/theme-provider";
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Inter, Roboto_Mono } from "next/font/google";
 
 import "./globals.css";
 
@@ -9,8 +9,9 @@ const sans = Inter({
   subsets: ["latin"],
 });
 
-const mono = JetBrains_Mono({
+const mono = Roboto_Mono({
   variable: "--font-mono",
+  weight: "variable",
   subsets: ["latin"],
 });
 

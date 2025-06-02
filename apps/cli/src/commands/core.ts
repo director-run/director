@@ -26,7 +26,7 @@ export async function startGateway() {
 export function registerCoreCommands(program: DirectorCommand) {
   program
     .command("serve")
-    .description("Start the director service")
+    .description("Start the web service")
     .action(
       actionWithErrorHandler(async () => {
         try {
@@ -41,7 +41,7 @@ export function registerCoreCommands(program: DirectorCommand) {
 
   program
     .command("studio")
-    .description("Open the director studio")
+    .description("Open the UI in your browser")
     .action(
       actionWithErrorHandler(async () => {
         const spinner = loader();
@@ -65,7 +65,7 @@ export function registerCoreCommands(program: DirectorCommand) {
 
   program
     .command("ls")
-    .description("List all proxies")
+    .description("List proxies")
     .action(
       actionWithErrorHandler(async () => {
         const proxies = await gatewayClient.store.getAll.query();
@@ -157,20 +157,28 @@ export function registerCoreCommands(program: DirectorCommand) {
     });
 
   program
-    .command("config")
-    .description("Print configuration variables")
+    .command("env")
+    .description("Print environment variables")
     .action(
       actionWithErrorHandler(() => {
-        console.log(`config:`, env);
+        console.log(`env`, env);
       }),
     );
 
   program
     .debugCommand("reset")
-    .description("Reset everything")
+    .requiredOption("--target <target>", "Target to reset")
+    .description("Delete proxies & clear the config file")
     .action(
-      actionWithErrorHandler(async () => {
-        await gatewayClient.store.purge.mutate();
+      actionWithErrorHandler(async ({ target }) => {
+        console.log("invoked with", target);
+        if (target === "gateway") {
+          await gatewayClient.store.purge.mutate();
+        } else if (target === "claude") {
+          await gatewayClient.installer.claude.purge.mutate();
+        } else if (target === "cursor") {
+          await gatewayClient.installer.cursor.purge.mutate();
+        }
       }),
     );
 }

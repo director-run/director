@@ -1,8 +1,8 @@
-import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import {
-  actionWithErrorHandler,
-  mandatoryOption,
-} from "@director.run/utilities/cli/index";
+  DirectorCommand,
+  makeOption,
+} from "@director.run/utilities/cli/director-command";
+import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { gatewayClient } from "../client";
 
 export function createClientCommand() {
@@ -72,9 +72,10 @@ export function createClientCommand() {
 }
 
 // If option not provided prompt user for a choice
-const targetOption = mandatoryOption(
-  "-t,--target <target>",
-  "target client",
-  undefined,
-  ["claude", "cursor"],
-);
+const targetOption = makeOption({
+  flags: "-t,--target <target>",
+  description: "target client",
+  defaultValue: "claude",
+  choices: ["claude", "cursor"],
+  mandatory: true,
+});

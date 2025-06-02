@@ -1,8 +1,11 @@
 import path from "node:path";
 import { Gateway } from "@director.run/gateway/gateway";
 import { proxyHTTPToStdio } from "@director.run/mcp/transport";
-import { DirectorCommand } from "@director.run/utilities/cli/director-command";
-import { makeTable, mandatoryOption } from "@director.run/utilities/cli/index";
+import {
+  DirectorCommand,
+  makeOption,
+} from "@director.run/utilities/cli/director-command";
+import { makeTable } from "@director.run/utilities/cli/index";
 import {
   actionWithErrorHandler,
   printDirectorAscii,
@@ -152,7 +155,13 @@ export function registerCoreCommands(program: DirectorCommand) {
   program
     .command("connect <proxyId>")
     .description("connect a proxy to a MCP client")
-    .addOption(targetOption)
+    .addOption(
+      makeOption({
+        flags: "-t,--target <target>",
+        description: "target client",
+        choices: ["claude", "cursor"],
+      }),
+    )
     .action(
       actionWithErrorHandler(
         async (proxyId: string, options: { target: string }) => {
@@ -168,6 +177,11 @@ export function registerCoreCommands(program: DirectorCommand) {
               baseUrl: env.GATEWAY_URL,
             });
             console.log(result);
+          } else {
+            console.log("No target provided");
+            const proxy = await gatewayClient.store.get.query({ proxyId });
+            console.log(proxy);
+            console.log("----");
           }
         },
       ),
@@ -176,7 +190,14 @@ export function registerCoreCommands(program: DirectorCommand) {
   program
     .command("disconnect <proxyId>")
     .description("disconnect a proxy from an MCP client")
-    .addOption(targetOption)
+    .addOption(
+      makeOption({
+        flags: "-t,--target <target>",
+        description: "target client",
+        defaultValue: "claude",
+        choices: ["claude", "cursor"],
+      }).makeOptionMandatory(),
+    )
     .action(
       actionWithErrorHandler(
         async (proxyId: string, options: { target: string }) => {
@@ -222,11 +243,3 @@ export function registerCoreCommands(program: DirectorCommand) {
       }),
     );
 }
-
-// If option not provided prompt user for a choice
-const targetOption = mandatoryOption(
-  "-t,--target <target>",
-  "target client",
-  undefined,
-  ["claude", "cursor"],
-);

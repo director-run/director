@@ -37,3 +37,23 @@ export class DirectorCommand extends Command {
     this.examples = examples;
   }
 }
+
+export function makeOption({
+  flags,
+  description,
+  defaultValue,
+  choices,
+  mandatory,
+}: {
+  flags: string;
+  description?: string;
+  defaultValue?: string;
+  choices?: string[];
+  mandatory?: boolean;
+}) {
+  const option = new Option(flags, description);
+  mandatory && option.makeOptionMandatory();
+  defaultValue && option.default(defaultValue);
+  choices && option.choices(choices);
+  return option;
+}

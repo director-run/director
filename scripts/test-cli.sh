@@ -13,8 +13,14 @@ echo "----------------------------------------"
 echo 
 
 bun cli create my-proxy
-bun cli registry install my-proxy fetch
+
+# target
+bun cli add --target my-proxy
+bun cli add fetch --target my-proxy
+
 bun cli connect my-proxy --target claude
+# TODO
+# bun cli connect my-proxy
 # bun cli cursor install my-proxy
 
 echo

@@ -23,9 +23,16 @@ export function actionWithErrorHandler<Args extends unknown[]>(
   };
 }
 
-export function mandatoryOption(flags: string, description?: string) {
+export function mandatoryOption(
+  flags: string,
+  description?: string,
+  defaultValue?: string,
+  choices?: string[],
+) {
   const option = new Option(flags, description);
-  option.makeOptionMandatory(true);
+  option.makeOptionMandatory();
+  defaultValue && option.default(defaultValue);
+  choices && option.choices(choices);
   return option;
 }
 

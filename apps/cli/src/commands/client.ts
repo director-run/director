@@ -16,47 +16,76 @@ export function createClientCommand() {
     .description("List servers in the client config")
     .addOption(targetOption)
     .action(
-      actionWithErrorHandler(async (proxyId: string) => {
-        const result = await gatewayClient.installer.claude.list.query();
-        console.log(result);
+      actionWithErrorHandler(async (target: string) => {
+        if (target === "claude") {
+          const result = await gatewayClient.installer.claude.list.query();
+          console.log(result);
+        } else if (target === "cursor") {
+          const result = await gatewayClient.installer.cursor.list.query();
+          console.log(result);
+        }
       }),
     );
 
   command
-    .command("install <proxyId>")
-    .description("Install a proxy on a client app")
+    .command("connect <proxyId>")
+    .description("connect a proxy to a MCP client")
     .addOption(targetOption)
     .action(
-      actionWithErrorHandler(async (proxyId: string) => {
-        const result = await gatewayClient.installer.claude.install.mutate({
-          proxyId,
-          baseUrl: env.GATEWAY_URL,
-        });
-        console.log(result);
-      }),
+      actionWithErrorHandler(
+        async (proxyId: string, options: { target: string }) => {
+          if (options.target === "claude") {
+            const result = await gatewayClient.installer.claude.install.mutate({
+              proxyId,
+              baseUrl: env.GATEWAY_URL,
+            });
+            console.log(result);
+          } else if (options.target === "cursor") {
+            const result = await gatewayClient.installer.cursor.install.mutate({
+              proxyId,
+              baseUrl: env.GATEWAY_URL,
+            });
+            console.log(result);
+          }
+        },
+      ),
     );
 
   command
-    .command("uninstall <proxyId>")
-    .description("Uninstall an proxy from a client app")
+    .command("disconnect <proxyId>")
+    .description("disconnect a proxy from an MCP client")
     .addOption(targetOption)
     .action(
-      actionWithErrorHandler(async (proxyId: string) => {
-        const result = await gatewayClient.installer.claude.uninstall.mutate({
-          proxyId,
-        });
-        console.log(result);
-      }),
+      actionWithErrorHandler(
+        async (proxyId: string, options: { target: string }) => {
+          if (options.target === "claude") {
+            console.log(
+              await gatewayClient.installer.claude.uninstall.mutate({
+                proxyId,
+              }),
+            );
+          } else if (options.target === "cursor") {
+            console.log(
+              await gatewayClient.installer.cursor.uninstall.mutate({
+                proxyId,
+              }),
+            );
+          }
+        },
+      ),
     );
 
   command
     .debugCommand("restart")
-    .description("Restart the claude MCP server")
+    .description("Restart the MCP client")
     .addOption(targetOption)
     .action(
-      actionWithErrorHandler(async () => {
-        const result = await gatewayClient.installer.claude.restart.mutate();
-        console.log(result);
+      actionWithErrorHandler(async (options: { target: string }) => {
+        if (options.target === "claude") {
+          console.log(await gatewayClient.installer.claude.restart.mutate());
+        } else if (options.target === "cursor") {
+          console.log(await gatewayClient.installer.cursor.restart.mutate());
+        }
       }),
     );
 
@@ -65,9 +94,12 @@ export function createClientCommand() {
     .description("Purge all claude MCP servers")
     .addOption(targetOption)
     .action(
-      actionWithErrorHandler(async () => {
-        const result = await gatewayClient.installer.claude.purge.mutate();
-        console.log(result);
+      actionWithErrorHandler(async (options: { target: string }) => {
+        if (options.target === "claude") {
+          console.log(await gatewayClient.installer.claude.purge.mutate());
+        } else if (options.target === "cursor") {
+          console.log(await gatewayClient.installer.cursor.purge.mutate());
+        }
       }),
     );
 
@@ -76,8 +108,12 @@ export function createClientCommand() {
     .description("Open claude config file")
     .addOption(targetOption)
     .action(
-      actionWithErrorHandler(() => {
-        gatewayClient.installer.claude.config.query();
+      actionWithErrorHandler((options: { target: string }) => {
+        if (options.target === "claude") {
+          gatewayClient.installer.claude.config.query();
+        } else if (options.target === "cursor") {
+          gatewayClient.installer.cursor.config.query();
+        }
       }),
     );
 

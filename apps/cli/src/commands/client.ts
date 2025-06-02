@@ -4,7 +4,6 @@ import {
   mandatoryOption,
 } from "@director.run/utilities/cli/index";
 import { gatewayClient } from "../client";
-import { env } from "../config";
 
 export function createClientCommand() {
   const command = new DirectorCommand("client").description(
@@ -12,7 +11,7 @@ export function createClientCommand() {
   );
 
   command
-    .command("ls")
+    .debugCommand("ls")
     .description("List servers in the client config")
     .addOption(targetOption)
     .action(
@@ -25,54 +24,6 @@ export function createClientCommand() {
           console.log(result);
         }
       }),
-    );
-
-  command
-    .command("connect <proxyId>")
-    .description("connect a proxy to a MCP client")
-    .addOption(targetOption)
-    .action(
-      actionWithErrorHandler(
-        async (proxyId: string, options: { target: string }) => {
-          if (options.target === "claude") {
-            const result = await gatewayClient.installer.claude.install.mutate({
-              proxyId,
-              baseUrl: env.GATEWAY_URL,
-            });
-            console.log(result);
-          } else if (options.target === "cursor") {
-            const result = await gatewayClient.installer.cursor.install.mutate({
-              proxyId,
-              baseUrl: env.GATEWAY_URL,
-            });
-            console.log(result);
-          }
-        },
-      ),
-    );
-
-  command
-    .command("disconnect <proxyId>")
-    .description("disconnect a proxy from an MCP client")
-    .addOption(targetOption)
-    .action(
-      actionWithErrorHandler(
-        async (proxyId: string, options: { target: string }) => {
-          if (options.target === "claude") {
-            console.log(
-              await gatewayClient.installer.claude.uninstall.mutate({
-                proxyId,
-              }),
-            );
-          } else if (options.target === "cursor") {
-            console.log(
-              await gatewayClient.installer.cursor.uninstall.mutate({
-                proxyId,
-              }),
-            );
-          }
-        },
-      ),
     );
 
   command

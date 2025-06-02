@@ -2,7 +2,7 @@ import path from "node:path";
 import { Gateway } from "@director.run/gateway/gateway";
 import { proxyHTTPToStdio } from "@director.run/mcp/transport";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
-import { makeTable } from "@director.run/utilities/cli/index";
+import { makeTable, mandatoryOption } from "@director.run/utilities/cli/index";
 import {
   actionWithErrorHandler,
   printDirectorAscii,
@@ -11,7 +11,7 @@ import { loader } from "@director.run/utilities/cli/loader";
 import { openUrl } from "@director.run/utilities/os";
 import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../client";
-import { env } from "../config";
+import { env } from "../env";
 
 export async function startGateway() {
   await Gateway.start({
@@ -137,7 +137,7 @@ export function registerCoreCommands(program: DirectorCommand) {
     );
 
   program
-    .command("rm <proxyId>")
+    .command("destroy <proxyId>")
     .description("Delete a proxy")
     .action(
       actionWithErrorHandler(async (proxyId: string) => {
@@ -147,6 +147,54 @@ export function registerCoreCommands(program: DirectorCommand) {
 
         console.log(`proxy ${proxyId} deleted`);
       }),
+    );
+
+  program
+    .command("connect <proxyId>")
+    .description("connect a proxy to a MCP client")
+    .addOption(targetOption)
+    .action(
+      actionWithErrorHandler(
+        async (proxyId: string, options: { target: string }) => {
+          if (options.target === "claude") {
+            const result = await gatewayClient.installer.claude.install.mutate({
+              proxyId,
+              baseUrl: env.GATEWAY_URL,
+            });
+            console.log(result);
+          } else if (options.target === "cursor") {
+            const result = await gatewayClient.installer.cursor.install.mutate({
+              proxyId,
+              baseUrl: env.GATEWAY_URL,
+            });
+            console.log(result);
+          }
+        },
+      ),
+    );
+
+  program
+    .command("disconnect <proxyId>")
+    .description("disconnect a proxy from an MCP client")
+    .addOption(targetOption)
+    .action(
+      actionWithErrorHandler(
+        async (proxyId: string, options: { target: string }) => {
+          if (options.target === "claude") {
+            console.log(
+              await gatewayClient.installer.claude.uninstall.mutate({
+                proxyId,
+              }),
+            );
+          } else if (options.target === "cursor") {
+            console.log(
+              await gatewayClient.installer.cursor.uninstall.mutate({
+                proxyId,
+              }),
+            );
+          }
+        },
+      ),
     );
 
   program
@@ -174,3 +222,11 @@ export function registerCoreCommands(program: DirectorCommand) {
       }),
     );
 }
+
+// If option not provided prompt user for a choice
+const targetOption = mandatoryOption(
+  "-t,--target <target>",
+  "target client",
+  undefined,
+  ["claude", "cursor"],
+);

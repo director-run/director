@@ -4,7 +4,7 @@ import "../src/config";
 
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import packageJson from "../package.json";
-import { createClientCommand } from "../src/commands/claude";
+import { createClientCommand } from "../src/commands/client";
 import { registerCoreCommands } from "../src/commands/core";
 import { createCursorCommands } from "../src/commands/cursor";
 import { createRegistryCommands } from "../src/commands/registry";

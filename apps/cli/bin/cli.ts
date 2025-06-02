@@ -4,7 +4,7 @@ import "../src/config";
 
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import packageJson from "../package.json";
-import { createClaudeCommand } from "../src/commands/claude";
+import { createClientCommand } from "../src/commands/claude";
 import { registerCoreCommands } from "../src/commands/core";
 import { createCursorCommands } from "../src/commands/cursor";
 import { createRegistryCommands } from "../src/commands/registry";
@@ -20,7 +20,7 @@ program
   .version(packageJson.version);
 
 registerCoreCommands(program);
-program.addCommand(createClaudeCommand());
+program.addCommand(createClientCommand());
 program.addCommand(createCursorCommands());
 program.addCommand(createRegistryCommands());
 

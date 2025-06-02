@@ -1,16 +1,20 @@
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
-import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
+import {
+  actionWithErrorHandler,
+  mandatoryOption,
+} from "@director.run/utilities/cli/index";
 import { gatewayClient } from "../client";
 import { env } from "../config";
 
-export function createClaudeCommand() {
-  const command = new DirectorCommand("claude").description(
-    "Manage claude MCP server configuration",
+export function createClientCommand() {
+  const command = new DirectorCommand("client").description(
+    "Manage MCP client configuration JSON (claude, cursor)",
   );
 
   command
     .command("ls")
-    .description("List claude MCP servers")
+    .description("List servers in the client config")
+    .addOption(targetOption)
     .action(
       actionWithErrorHandler(async (proxyId: string) => {
         const result = await gatewayClient.installer.claude.list.query();
@@ -21,6 +25,7 @@ export function createClaudeCommand() {
   command
     .command("install <proxyId>")
     .description("Install a proxy on a client app")
+    .addOption(targetOption)
     .action(
       actionWithErrorHandler(async (proxyId: string) => {
         const result = await gatewayClient.installer.claude.install.mutate({
@@ -34,6 +39,7 @@ export function createClaudeCommand() {
   command
     .command("uninstall <proxyId>")
     .description("Uninstall an proxy from a client app")
+    .addOption(targetOption)
     .action(
       actionWithErrorHandler(async (proxyId: string) => {
         const result = await gatewayClient.installer.claude.uninstall.mutate({
@@ -46,6 +52,7 @@ export function createClaudeCommand() {
   command
     .debugCommand("restart")
     .description("Restart the claude MCP server")
+    .addOption(targetOption)
     .action(
       actionWithErrorHandler(async () => {
         const result = await gatewayClient.installer.claude.restart.mutate();
@@ -54,8 +61,9 @@ export function createClaudeCommand() {
     );
 
   command
-    .debugCommand("purge")
+    .debugCommand("reset")
     .description("Purge all claude MCP servers")
+    .addOption(targetOption)
     .action(
       actionWithErrorHandler(async () => {
         const result = await gatewayClient.installer.claude.purge.mutate();
@@ -66,6 +74,7 @@ export function createClaudeCommand() {
   command
     .debugCommand("config")
     .description("Open claude config file")
+    .addOption(targetOption)
     .action(
       actionWithErrorHandler(() => {
         gatewayClient.installer.claude.config.query();
@@ -74,3 +83,11 @@ export function createClaudeCommand() {
 
   return command;
 }
+
+// If option not provided prompt user for a choice
+const targetOption = mandatoryOption(
+  "-t,--target <target>",
+  "target client",
+  undefined,
+  ["claude", "cursor"],
+);

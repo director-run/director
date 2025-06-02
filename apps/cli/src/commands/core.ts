@@ -2,7 +2,7 @@ import path from "node:path";
 import { Gateway } from "@director.run/gateway/gateway";
 import { proxyHTTPToStdio } from "@director.run/mcp/transport";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
-import { makeTable, mandatoryOption } from "@director.run/utilities/cli/index";
+import { makeTable } from "@director.run/utilities/cli/index";
 import {
   actionWithErrorHandler,
   printDirectorAscii,
@@ -167,24 +167,10 @@ export function registerCoreCommands(program: DirectorCommand) {
 
   program
     .debugCommand("reset")
-    .addOption(
-      mandatoryOption("--target <target>", "Target to reset", undefined, [
-        "gateway",
-        "claude",
-        "cursor",
-      ]),
-    )
     .description("Delete proxies & clear the config file")
     .action(
       actionWithErrorHandler(async ({ target }) => {
-        console.log("invoked with", target);
-        if (target === "gateway") {
-          await gatewayClient.store.purge.mutate();
-        } else if (target === "claude") {
-          await gatewayClient.installer.claude.purge.mutate();
-        } else if (target === "cursor") {
-          await gatewayClient.installer.cursor.purge.mutate();
-        }
+        await gatewayClient.store.purge.mutate();
       }),
     );
 }

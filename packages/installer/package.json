@@ -1,5 +1,5 @@
 {
-  "name": "@director.run/installer",
+  "name": "@director.run/client-manager",
   "private": true,
   "type": "module",
   "version": "0.0.1",

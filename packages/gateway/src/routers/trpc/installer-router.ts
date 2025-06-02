@@ -1,5 +1,5 @@
-import { ClaudeInstaller } from "@director.run/installer/claude";
-import { CursorInstaller } from "@director.run/installer/cursor";
+import { ClaudeInstaller } from "@director.run/client-manager/claude";
+import { CursorInstaller } from "@director.run/client-manager/cursor";
 import { isProduction } from "@director.run/utilities/env";
 import { t } from "@director.run/utilities/trpc";
 import { joinURL } from "@director.run/utilities/url";

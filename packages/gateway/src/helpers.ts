@@ -1,9 +1,9 @@
-import { ClaudeInstaller } from "@director.run/installer/claude";
-import { isClaudeInstalled } from "@director.run/installer/claude";
+import { ClaudeInstaller } from "@director.run/client-manager/claude";
+import { isClaudeInstalled } from "@director.run/client-manager/claude";
 import {
   CursorInstaller,
   isCursorInstalled,
-} from "@director.run/installer/cursor";
+} from "@director.run/client-manager/cursor";
 import type { ProxyServer } from "@director.run/mcp/proxy-server";
 import { getLogger } from "@director.run/utilities/logger";
 

@@ -35,7 +35,7 @@ export async function startGateway() {
   });
 }
 
-export function registerCoreCommands(program: DirectorCommand) {
+export function registerCoreCommands(program: DirectorCommand): void {
   program
     .command("serve")
     .description("Start the web service")

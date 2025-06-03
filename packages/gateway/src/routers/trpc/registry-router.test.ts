@@ -71,47 +71,6 @@ describe("Registry Router", () => {
     await harness.stop();
   });
 
-  describe("getTransportForEntry", () => {
-    test("should throw an error if a required parameter is missing", async () => {
-      await expect(
-        harness.client.registry.getTransportForEntry.query({
-          entryName: "echo",
-          parameters: {
-            FIRST_PARAMETER: "test",
-          },
-        }),
-      ).rejects.toThrow();
-      await expect(
-        harness.client.registry.getTransportForEntry.query({
-          entryName: "echo",
-          parameters: {
-            SECOND_PARAMETER: "test",
-          },
-        }),
-      ).rejects.toThrow();
-    });
-
-    test("should return the transport for an entry with substituted parameters", async () => {
-      const transport =
-        await harness.client.registry.getTransportForEntry.query({
-          entryName: "foo",
-          parameters: {
-            FIRST_PARAMETER: "test",
-            SECOND_PARAMETER: "test2",
-          },
-        });
-      expect(transport.type).toEqual("stdio");
-      expect((transport as STDIOTransport).env).toEqual({
-        FIRST_PARAMETER: "test",
-      });
-      expect((transport as STDIOTransport).args).toEqual([
-        ...testServerStdioConfig.transport.args,
-        "--noop",
-        "test2",
-      ]);
-    });
-  });
-
   describe("addServerFromRegistry", () => {
     let proxy: ProxyServerAttributes;
 

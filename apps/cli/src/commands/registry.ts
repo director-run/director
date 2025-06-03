@@ -80,13 +80,25 @@ export function createRegistryCommands() {
           .succeed("Entry fetched.")
           .run();
         const parameters = await promptForParameters(entry);
-        await spinnerWrap(() =>
-          gatewayClient.registry.addServerFromRegistry.mutate({
+        await spinnerWrap(async () => {
+          const transport =
+            await registryClient.entries.getTransportForEntry.query({
+              entryName,
+              parameters,
+            });
+          await gatewayClient.store.addServer.mutate({
             proxyId,
-            entryName,
-            parameters,
-          }),
-        )
+            server: {
+              name: entryName,
+              transport,
+              source: {
+                name: "registry",
+                entryId: entry.id,
+                entryData: entry,
+              },
+            },
+          });
+        })
           .start("installing server...")
           .succeed(`Registry entry ${entryName} added to ${proxyId}`)
           .run();

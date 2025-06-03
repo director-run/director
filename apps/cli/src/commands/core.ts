@@ -241,7 +241,9 @@ export function registerCoreCommands(program: DirectorCommand): void {
 
   program
     .command("http2stdio <url>")
-    .description("Proxy an HTTP connection to a stdio stream")
+    .description(
+      "Proxy an HTTP connection (sse or streamable) to a stdio stream",
+    )
     .action(async (url) => {
       await proxyHTTPToStdio(url);
     });

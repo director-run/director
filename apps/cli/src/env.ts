@@ -25,8 +25,6 @@ export const env = createEnv({
       .string()
       .optional()
       .default(path.join(getDataDir(), "config.json")),
-    // This is used so that stdio clients know how to proxy stdio2http
-    DIRECTOR_CLI_PATH: z.string().optional().default(getCliPath()),
   },
 });
 
@@ -48,8 +46,4 @@ function getDataDir() {
   } else {
     return path.join(__dirname, `../.director/development`);
   }
-}
-
-function getCliPath() {
-  return path.join(__dirname, "../bin/cli.ts");
 }

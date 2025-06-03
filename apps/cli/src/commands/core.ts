@@ -24,7 +24,6 @@ import { registerRemoveCommand } from "./core/remove-command";
 
 export async function startGateway() {
   await Gateway.start({
-    cliPath: env.DIRECTOR_CLI_PATH,
     port: env.GATEWAY_PORT,
     databaseFilePath: env.DB_FILE_PATH,
     registryURL: env.REGISTRY_API_URL,
@@ -170,18 +169,15 @@ export function registerCoreCommands(program: DirectorCommand): void {
     )
     .action(
       actionWithErrorHandler(
-        async (proxyId: string, options: { target: string }) => {
-          if (options.target === "claude") {
-            const result = await gatewayClient.installer.claude.install.mutate({
-              proxyId,
-              baseUrl: env.GATEWAY_URL,
-            });
-            console.log(result);
-          } else if (options.target === "cursor") {
-            const result = await gatewayClient.installer.cursor.install.mutate({
-              proxyId,
-              baseUrl: env.GATEWAY_URL,
-            });
+        async (proxyId: string, options: { target: "claude" | "cursor" }) => {
+          if (options.target) {
+            const result = await gatewayClient.installer.byProxy.install.mutate(
+              {
+                proxyId,
+                baseUrl: env.GATEWAY_URL,
+                client: options.target,
+              },
+            );
             console.log(result);
           } else {
             console.log();
@@ -229,20 +225,13 @@ export function registerCoreCommands(program: DirectorCommand): void {
     )
     .action(
       actionWithErrorHandler(
-        async (proxyId: string, options: { target: string }) => {
-          if (options.target === "claude") {
-            console.log(
-              await gatewayClient.installer.claude.uninstall.mutate({
-                proxyId,
-              }),
-            );
-          } else if (options.target === "cursor") {
-            console.log(
-              await gatewayClient.installer.cursor.uninstall.mutate({
-                proxyId,
-              }),
-            );
-          }
+        async (proxyId: string, options: { target: "claude" | "cursor" }) => {
+          console.log(
+            await gatewayClient.installer.byProxy.uninstall.mutate({
+              proxyId,
+              client: options.target,
+            }),
+          );
         },
       ),
     );

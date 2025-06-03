@@ -179,7 +179,7 @@
   }
 
   & .lead:not(.not-prose .lead) {
-    @apply text-xl text-fg-subtle
+    @apply text-xl text-fg-subtle;
   }
 
   & .large:not(.not-prose .large) {

@@ -32,7 +32,7 @@ export function createRegistryCommands() {
 
   command
     .command("get <entryName>")
-    .description("Get detailed information about a repository item")
+    .description("Get detailed information about a registry item")
     .action(
       actionWithErrorHandler(async (entryName: string) => {
         const item = await spinnerWrap(() =>
@@ -49,7 +49,7 @@ export function createRegistryCommands() {
 
   command
     .command("readme <entryName>")
-    .description("Print the readme for a repository item")
+    .description("Print the readme for a registry item")
     .action(
       actionWithErrorHandler(async (entryName: string) => {
         const item = await spinnerWrap(() =>

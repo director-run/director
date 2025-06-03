@@ -7,7 +7,7 @@
 bun run build
 npm link
 director --help
-npm uninstall -g @working.dev/director
+npm uninstall -g @director.run/cli
 ```
 
 ### Publish Dry Run

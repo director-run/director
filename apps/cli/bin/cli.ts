@@ -4,7 +4,7 @@ import "../src/env";
 
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import packageJson from "../package.json";
-import { createClientCommand } from "../src/commands/client";
+import { registerClientCommands } from "../src/commands/client";
 import { registerCoreCommands } from "../src/commands/core";
 import { createRegistryCommands } from "../src/commands/registry";
 
@@ -19,7 +19,7 @@ program
   .version(packageJson.version);
 
 registerCoreCommands(program);
-program.addCommand(createClientCommand());
+registerClientCommands(program);
 program.addCommand(createRegistryCommands());
 
 program.addExamples(`

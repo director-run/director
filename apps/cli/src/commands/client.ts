@@ -3,9 +3,15 @@ import {
   makeOption,
 } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
+import { isDevelopment } from "@director.run/utilities/env";
 import { gatewayClient } from "../client";
 
-export function createClientCommand() {
+export function registerClientCommands(program: DirectorCommand): void {
+  if (!isDevelopment()) {
+    // Only show client commands in development
+    return;
+  }
+
   const command = new DirectorCommand("client").description(
     "Manage MCP client configuration JSON (claude, cursor)",
   );
@@ -67,8 +73,6 @@ export function createClientCommand() {
         }
       }),
     );
-
-  return command;
 }
 
 // If option not provided prompt user for a choice

@@ -1,0 +1,240 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@plugin "tailwindcss-radix";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-*: initial;
+
+  /* Background */
+  --color-bg: oklch(95.61% 0.003 67.78);
+
+  /* Foreground */
+  --color-fg: oklch(32.10% 0.010 61.13);
+  --color-fg-subtle: oklch(51.08% 0.007 84.58);
+
+  /* Surface */
+  --color-surface: oklch(99.45% 0.002 67.80);
+
+  /* Accent */
+  --color-accent: oklch(90.98% 0.007 53.44);
+  --color-accent-subtle: oklch(93.88% 0.004 56.37);
+  
+  /* Success */
+  --color-success: oklch(92.85% 0.041 135.05);
+  --color-success-fg: oklch(48.75% 0.106 136.30);
+
+  /* Destructive */
+  --color-destructive: oklch(87.20% 0.053 22.57);
+  --color-destructive-fg: oklch(46.45% 0.178 29.65);
+
+  /* Primary */
+  --color-primary: oklch(0.673 0.097 155.19);
+  --color-primary-fg: oklch(99.45% 0.002 67.80);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  --text-2xs: 0.75rem;
+  --text-2xs--line-height: calc(1 / 0.75);
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: calc(1 / 0.8125);
+  --text-sm: 0.875rem;
+  --text-sm--line-height: calc(1.25 / 0.875);
+  --text-base: 0.9375rem;
+  --text-base--line-height: calc(1.5 / 1);
+  --text-lg: 1.0625rem;
+  --text-lg--line-height: calc(1.75 / 1.0625);
+  --text-xl: 1.1875rem;
+  --text-xl--line-height: calc(1.75 / 1.1875);
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: calc(2 / 1.5);
+  --text-3xl: 1.875rem;
+  --text-3xl--line-height: calc(2.25 / 1.875);
+  --text-4xl: 2.25rem;
+  --text-4xl--line-height: calc(2.5 / 2.25);
+  --text-5xl: 3rem;
+  --text-5xl--line-height: 1;
+  --text-6xl: 3.75rem;
+  --text-6xl--line-height: 1;
+  --text-7xl: 4.5rem;
+  --text-7xl--line-height: 1;
+  --text-8xl: 6rem;
+  --text-8xl--line-height: 1;
+  --text-9xl: 8rem;
+  --text-9xl--line-height: 1;
+}
+
+
+@layer base {
+  * {
+    @apply box-border border-accent selection:bg-fg/95 selection:text-surface;
+  }
+
+  body {
+    @apply font-sans bg-bg text-fg antialiased;
+  }
+}
+
+@layer components {
+  .popover {
+    @apply z-50 bg-surface text-fg outline-none rounded-lg overflow-y-auto overflow-x-hidden;
+    @apply shadow-[0_3px_9px_0px_rgba(55,50,46,0.1),0_0_20px_2px_rgba(55,50,46,0.07),_0_0_0_0.5px_rgba(55,50,46,0.1)];
+  }
+
+  .overlay {
+    @apply fixed inset-0 z-50 bg-fg/25;
+    @apply radix-state-[closed]:fade-out-0 radix-state-[closed]:animate-out;
+    @apply radix-state-[open]:fade-in-0 radix-state-[open]:animate-in;
+  }
+
+  .full-bleed {
+    @apply w-screen relative left-1/2 right-1/2 mx-[-50vw];
+  }
+}
+
+.prose {
+  @apply max-w-[65ch] text-fg text-[15px];
+
+  & h1:not(.not-prose h1) {
+    @apply scroll-m-20 text-balance font-medium font-sans text-[25px] leading-tight tracking-[0.01em];
+  }
+
+  & h2:not(.not-prose h2) {
+    @apply scroll-m-20 text-balance font-medium font-sans text-[21px] leading-6 tracking-[0.01em] mt-12 first:mt-0;
+  }
+
+  & h3:not(.not-prose h3) {
+    @apply scroll-m-20 text-balance font-medium font-sans text-[17px] leading-6 tracking-[0.01em] mt-12 first:mt-0;
+  }
+
+  & h4:not(.not-prose h4) {
+    @apply scroll-m-20 text-balance font-medium font-sans text-[15px] leading-tight tracking-[0.01em] mt-12 first:mt-0;
+  }
+
+  & h1:not(.not-prose h1), & h2:not(.not-prose h2), & h3:not(.not-prose h3), & h4:not(.not-prose h4) {
+    & + p:not(.not-prose p),
+    & + ul:not(.not-prose ul),
+    & + ol:not(.not-prose ol) {  
+      @apply mt-[0.75em];
+    }
+  }
+
+  & p:not(.not-prose p) {
+    @apply leading-relaxed [&:not(:first-child)]:mt-[1em];
+  }
+
+  & a:not(.not-prose a) {
+    @apply font-medium text-fg underline underline-offset-4;
+  }
+
+  & blockquote:not(.not-prose blockquote) {
+    @apply mt-6 border-l-2 pl-6 italic;
+  }
+
+  & table:not(.not-prose table) {
+    @apply my-6 w-full overflow-y-auto;
+
+    & thead tr {
+      @apply m-0 border-t p-0 even:bg-accent-subtle;
+    }
+
+    & th {
+      @apply border px-4 py-2 text-left font-bold [&[align=center]]:text-center [&[align=right]]:text-right;
+    }
+
+    & tbody tr {
+      @apply m-0 border-t p-0 even:bg-accent-subtle;
+    }
+
+    & td {
+      @apply border px-4 py-2 text-left [&[align=center]]:text-center [&[align=right]]:text-right;
+    }
+  }
+
+  & ul:not(.not-prose ul) {
+    @apply my-6 ml-6 list-disc [&>li]:mt-2;
+
+    & p {
+      @apply my-0;
+    }
+  }
+
+  & ol:not(.not-prose ol) {
+    @apply my-6 ml-6 list-decimal [&>li]:mt-2;
+
+    & p {
+      @apply my-0;
+    }
+  }
+
+  & pre:not(.not-prose pre) {
+    @apply bg-accent rounded-md p-4 my-6 text-sm overflow-y-auto;
+  }
+
+  & code:not(pre code):not(.not-prose code) {
+    @apply relative rounded bg-accent px-[0.25rem] py-[0.1rem] font-mono text-[0.875em] font-medium;
+  }
+
+  & .lead:not(.not-prose .lead) {
+    @apply text-xl text-fg-subtle;
+  }
+
+  & .large:not(.not-prose .large) {
+    @apply text-lg font-semibold;
+  }
+
+  & .small:not(.not-prose .small) {
+    @apply text-sm font-medium leading-none;
+  }
+
+  & .muted:not(.not-prose .muted) {
+    @apply text-sm text-fg-subtle;
+  }
+
+  & img:not(.not-prose img), & picture:not(.not-prose picture), & video:not(.not-prose video) {
+    @apply my-6;
+  }
+
+  & picture > img:not(.not-prose picture > img) {
+    @apply my-0;
+  }
+
+  & kbd:not(.not-prose kbd) {
+    @apply rounded-md bg-accent px-1.5 py-0.5 text-xs font-semibold;
+  }
+
+  & hr {
+    @apply my-10;
+  }
+
+  & dl:not(.not-prose dl) {
+    @apply my-6;
+
+    & dt {
+      @apply font-semibold mt-6 tracking-tight first:mt-0;
+    }
+  }
+
+  & details:not(.not-prose details) {
+    @apply mt-6;
+
+    & summary {
+      @apply cursor-pointer font-semibold mt-6 tracking-tight;
+    }
+
+    & p {
+      @apply [&:first-of-type]:mt-2;
+    }
+  }
+
+  & mark:not(.not-prose mark) {
+    @apply bg-accent-subtle;
+  }
+
+  & small:not(.not-prose small) {
+    @apply text-xs leading-none;
+  }
+}

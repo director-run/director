@@ -30,13 +30,13 @@
   },
   "theme": "mint",
   "colors": {
-    "primary": "#EE7803",
-    "light": "#EE7803",
-    "dark": "#EE7803"
+    "primary": "#62A87C",
+    "light": "#62A87C",
+    "dark": "#62A87C"
   },
   "background": {
     "color": {
-      "light": "#FBFAF9",
+      "light": "#F2F0EE",
       "dark": "#211D1A"
     }
   },

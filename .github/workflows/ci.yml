@@ -38,6 +38,8 @@ jobs:
         bun-version: latest
     - name: Install dependencies
       run: bun install
+    - name: Create next-env.d.ts
+      run: echo -e '/// <reference types="next" />\n/// <reference types="next/image-types/global" />' > apps/website/next-env.d.ts && echo -e '/// <reference types="next" />\n/// <reference types="next/image-types/global" />' > apps/studio/next-env.d.ts
     - name: Check types
       run: bun run typecheck
   test:

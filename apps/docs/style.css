@@ -1,3 +1,8 @@
+body {
+    --gray-900: 50, 50, 46;
+}
+
+
 h1#page-title {
     letter-spacing: 0;
     font-weight: 500;

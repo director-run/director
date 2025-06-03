@@ -20,8 +20,7 @@ export const env = createEnv({
       .optional()
       .default(`https://registry.director.run`),
     REGISTRY_API_KEY: z.string().optional().default(""),
-    // Should be called CONFIG_FILE_PATH
-    DB_FILE_PATH: z
+    CONFIG_FILE_PATH: z
       .string()
       .optional()
       .default(path.join(getDataDir(), "config.json")),

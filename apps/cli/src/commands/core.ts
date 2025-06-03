@@ -25,7 +25,7 @@ import { registerRemoveCommand } from "./core/remove-command";
 export async function startGateway() {
   await Gateway.start({
     port: env.GATEWAY_PORT,
-    databaseFilePath: env.DB_FILE_PATH,
+    databaseFilePath: env.CONFIG_FILE_PATH,
     registryURL: env.REGISTRY_API_URL,
     allowedOrigins: [env.STUDIO_URL, /^https?:\/\/localhost(:\d+)?$/],
   });

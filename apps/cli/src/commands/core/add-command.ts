@@ -57,7 +57,7 @@ export function registerAddCommand(program: DirectorCommand) {
             );
             console.log();
             console.log(
-              `${whiteBold("CONFIG_FILE_PATH:")} ${env.DB_FILE_PATH}`,
+              `${whiteBold("CONFIG_FILE_PATH:")} ${env.CONFIG_FILE_PATH}`,
             );
             console.log();
           }

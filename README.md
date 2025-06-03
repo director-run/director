@@ -132,5 +132,5 @@ You can also set environment variables:
 GATEWAY_PORT=3673,
 GATEWAY_URL=http://localhost:3673,
 REGISTRY_URL=http://localhost:3080,
-DB_FILE_PATH=~/.director/db.json
+CONFIG_FILE_PATH=~/.director/db.json
 ```

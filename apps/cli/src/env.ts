@@ -51,5 +51,5 @@ function getDataDir() {
 }
 
 function getCliPath() {
-  return path.join(__dirname, "../../bin/cli.ts");
+  return path.join(__dirname, "../bin/cli.ts");
 }

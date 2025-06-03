@@ -20,6 +20,8 @@ import { openUrl } from "@director.run/utilities/os";
 import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../client";
 import { env } from "../env";
+import { registerAddCommand } from "./core/add-command";
+import { registerRemoveCommand } from "./core/remove-command";
 
 const cliPath = path.join(__dirname, "../../bin/cli.ts");
 
@@ -247,6 +249,9 @@ export function registerCoreCommands(program: DirectorCommand) {
         },
       ),
     );
+
+  registerAddCommand(program);
+  registerRemoveCommand(program);
 
   program
     .command("http2stdio <url>")

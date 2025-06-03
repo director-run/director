@@ -73,6 +73,8 @@ export function registerClientCommands(program: DirectorCommand): void {
         }
       }),
     );
+
+  program.addCommand(command);
 }
 
 // If option not provided prompt user for a choice

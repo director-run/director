@@ -85,6 +85,13 @@ export function createProxyStoreRouter({
                 url: z.string().url(),
               }),
             ]),
+            source: z
+              .object({
+                name: z.literal("registry"),
+                entryId: z.string(),
+                entryData: z.any(),
+              })
+              .optional(),
           }),
         }),
       )

@@ -18,7 +18,7 @@ export type ProxyTargetAttributes = {
   source?: {
     name: "registry";
     entryId: string;
-    entryData: unknown;
+    entryData?: unknown;
   };
 };
 

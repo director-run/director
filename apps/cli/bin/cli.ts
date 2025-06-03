@@ -23,9 +23,9 @@ registerClientCommands(program);
 program.addCommand(createRegistryCommands());
 
 program.addExamples(`
-  $ director create my-proxy
-  $ director registry install my-proxy iterm
-  $ director claude install my-proxy
+  $ director create my-proxy # Create a new proxy
+  $ director add my-proxy --entry fetch # Add a server to a proxy
+  $ director connect my-proxy --target claude # Connect my-proxy to claude
 `);
 
 program.parse();

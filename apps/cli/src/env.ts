@@ -33,7 +33,7 @@ function getEnvFilePath() {
     // In development, we want to use the local env file if it exists in the current working directory
     return localEnvPath;
   } else {
-    return path.join(getDataDir(), "./.env");
+    return path.join(getDataDir(), "./config.env");
   }
 }
 

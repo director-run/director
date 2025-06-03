@@ -15,9 +15,7 @@ echo
 bun cli create my-proxy
 
 # target
-bun cli add --target my-proxy
-bun cli add fetch --target my-proxy
-
+bun cli add my-proxy --entry fetch
 bun cli connect my-proxy --target claude
 # TODO
 # bun cli connect my-proxy

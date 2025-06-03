@@ -255,6 +255,8 @@
 
     "@director.run/cli": ["@director.run/cli@workspace:apps/cli"],
 
+    "@director.run/client-manager": ["@director.run/client-manager@workspace:packages/installer"],
+
     "@director.run/docs": ["@director.run/docs@workspace:apps/docs"],
 
     "@director.run/gateway": ["@director.run/gateway@workspace:packages/gateway"],

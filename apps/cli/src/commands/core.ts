@@ -194,7 +194,7 @@ export function registerCoreCommands(program: DirectorCommand): void {
             );
 
             const stdioCommand = {
-              command: env.DIRECTOR_CLI_PATH,
+              command: "director",
               args: ["http2stdio", streamableURL],
               env: {
                 LOG_LEVEL: "silent",

@@ -59,11 +59,11 @@ export function createClientCommand() {
     .description("Open claude config file")
     .addOption(targetOption)
     .action(
-      actionWithErrorHandler((options: { target: string }) => {
+      actionWithErrorHandler(async (options: { target: string }) => {
         if (options.target === "claude") {
-          gatewayClient.installer.claude.config.query();
+          await gatewayClient.installer.claude.config.query();
         } else if (options.target === "cursor") {
-          gatewayClient.installer.cursor.config.query();
+          await gatewayClient.installer.cursor.config.query();
         }
       }),
     );

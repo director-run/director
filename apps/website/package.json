@@ -13,8 +13,7 @@
     "format:fix-classnames": "biome lint --fix --unsafe --only=lint/nursery/useSortedClasses ./src",
     "lint": "biome check ./src",
     "start": "next start",
-    "tools:shadcn": "bunx --bun shadcn@latest",
-    "postinstall": "bun run build"
+    "tools:shadcn": "bunx --bun shadcn@latest"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",

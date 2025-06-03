@@ -1,4 +1,14 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { makeFooBarServerStdioConfig } from "@director.run/gateway/test/fixtures";
+import type { STDIOTransport } from "@director.run/mcp/types";
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  test,
+} from "vitest";
 import { type RegistryClient, createRegistryClient } from "../../client";
 import { env } from "../../config";
 import type { EntryGetParams } from "../../db/schema";
@@ -129,6 +139,87 @@ describe("Entries Router", () => {
       await registry.store.purge();
       await registry.store.entries.addEntries(makeTestEntries(TOTAL_ENTRIES));
     });
+
+    describe("getTransportForEntry", () => {
+      const testServerStdioConfig = makeFooBarServerStdioConfig();
+      beforeEach(async () => {
+        await registry.store.entries.addEntry({
+          name: testServerStdioConfig.name,
+          title: testServerStdioConfig.name,
+          description: "test",
+          homepage: "test",
+          readme: "test",
+          transport: {
+            type: "stdio",
+            command: testServerStdioConfig.transport.command,
+            args: [
+              ...testServerStdioConfig.transport.args,
+              "--noop",
+              "SECOND_PARAMETER",
+            ],
+            env: {
+              FIRST_PARAMETER: "<PLACEHOLDER>",
+            },
+          },
+          parameters: [
+            {
+              name: "FIRST_PARAMETER",
+              description: "some parameter",
+              scope: "env",
+              required: true,
+              type: "string",
+            },
+            {
+              name: "SECOND_PARAMETER",
+              description: "some parameter",
+              scope: "args",
+              required: true,
+              type: "string",
+            },
+          ],
+        });
+      });
+
+      test("should throw an error if a required parameter is missing", async () => {
+        await expect(
+          unauthenticatedClient.entries.getTransportForEntry.query({
+            entryName: testServerStdioConfig.name,
+            parameters: {
+              FIRST_PARAMETER: "test",
+            },
+          }),
+        ).rejects.toThrow();
+        await expect(
+          unauthenticatedClient.entries.getTransportForEntry.query({
+            entryName: testServerStdioConfig.name,
+            parameters: {
+              SECOND_PARAMETER: "test",
+            },
+          }),
+        ).rejects.toThrow();
+      });
+
+      test("should return the transport for an entry with substituted parameters", async () => {
+        const transport =
+          await unauthenticatedClient.entries.getTransportForEntry.query({
+            entryName: testServerStdioConfig.name,
+            parameters: {
+              FIRST_PARAMETER: "test",
+              SECOND_PARAMETER: "test2",
+            },
+          });
+        expect(transport.type).toEqual("stdio");
+        expect((transport as STDIOTransport).env).toEqual({
+          FIRST_PARAMETER: "test",
+        });
+        expect((transport as STDIOTransport).args).toEqual([
+          ...testServerStdioConfig.transport.args,
+          "--noop",
+          "test2",
+        ]);
+      });
+    });
+
     describe("getEntries", () => {
       it("should handle pagination correctly", async () => {
         // Test first page

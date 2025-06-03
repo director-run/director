@@ -1,6 +1,11 @@
 import path from "node:path";
 import { Gateway } from "@director.run/gateway/gateway";
+import {
+  getSSEPathForProxy,
+  getStreamablePathForProxy,
+} from "@director.run/gateway/helpers";
 import { proxyHTTPToStdio } from "@director.run/mcp/transport";
+import { blue, whiteBold } from "@director.run/utilities/cli/colors";
 import {
   DirectorCommand,
   makeOption,
@@ -16,12 +21,14 @@ import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../client";
 import { env } from "../env";
 
+const cliPath = path.join(__dirname, "../../bin/cli.ts");
+
 export async function startGateway() {
   await Gateway.start({
+    cliPath,
     port: env.GATEWAY_PORT,
     databaseFilePath: env.DB_FILE_PATH,
     registryURL: env.REGISTRY_API_URL,
-    cliPath: path.join(__dirname, "../../bin/cli.ts"),
     allowedOrigins: [env.STUDIO_URL, /^https?:\/\/localhost(:\d+)?$/],
   });
 }
@@ -178,10 +185,34 @@ export function registerCoreCommands(program: DirectorCommand) {
             });
             console.log(result);
           } else {
-            console.log("No target provided");
+            console.log();
+            console.log(
+              blue("--target not provided, manual connection details:"),
+            );
+            console.log();
             const proxy = await gatewayClient.store.get.query({ proxyId });
-            console.log(proxy);
-            console.log("----");
+            const baseUrl = env.GATEWAY_URL;
+            const sseURL = joinURL(baseUrl, getSSEPathForProxy(proxy.id));
+            const streamableURL = joinURL(
+              baseUrl,
+              getStreamablePathForProxy(proxy.id),
+            );
+
+            const stdioCommand = {
+              command: cliPath,
+              args: ["http2stdio", streamableURL],
+              env: {
+                LOG_LEVEL: "silent",
+              },
+            };
+
+            console.log(whiteBold("SSE URL:") + " " + sseURL);
+            console.log(whiteBold("Streamable URL:") + " " + streamableURL);
+            console.log(
+              whiteBold("Stdio Command:"),
+              JSON.stringify(stdioCommand, null, 2),
+            );
+            console.log();
           }
         },
       ),

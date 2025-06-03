@@ -118,6 +118,27 @@ describe("Streamable Router", () => {
         }),
       ).rejects.toThrow();
     });
+
+    test("should fail if it can't connect to the server", async () => {
+      await harness.purge();
+      const testProxy = await harness.client.store.create.mutate({
+        name: "Test Proxy",
+        servers: [],
+      });
+
+      await expect(
+        harness.client.store.addServer.mutate({
+          proxyId: testProxy.id,
+          server: {
+            name: "echo",
+            transport: {
+              type: "http",
+              url: `http://localhost/not_existing_server`,
+            },
+          },
+        }),
+      ).rejects.toThrow();
+    });
   });
 
   describe("removeServer", () => {

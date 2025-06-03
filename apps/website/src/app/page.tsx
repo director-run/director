@@ -87,7 +87,7 @@ export default function IndexPage() {
       <Header />
 
       <Container
-        className="flex grow flex-col gap-y-16 py-20 md:pb-28 md:gap-y-24"
+        className="flex grow flex-col gap-y-16 py-20 md:gap-y-24 md:pb-28"
         asChild
       >
         <main>
@@ -143,7 +143,7 @@ export default function IndexPage() {
 
           <Separator pattern={{ type: "horizontal-lines" }} />
 
-          <div className="-mt-4 md:-mt-6 flex flex-col gap-y-6 sm:gap-y-8 md:gap-y-10">
+          <div className="[[data-slot=separator]+&]:-mt-2 flex flex-col gap-y-6 sm:gap-y-8 md:gap-y-10">
             <div className="flex max-w-[48ch] flex-col gap-y-2 sm:mx-auto sm:items-center sm:text-center">
               <h2 className="text-balance font-[450] text-2xl leading-tight sm:text-3xl">
                 Full of features
@@ -173,7 +173,7 @@ export default function IndexPage() {
 
           <Separator pattern={{ type: "crosshatch" }} className="text-fg/10" />
 
-          <div className="full-bleed relative bg-gradient-to-b from-bg to-accent/50">
+          <div className="[[data-slot=separator]+&]:-mt-2 full-bleed relative bg-gradient-to-b from-bg to-accent/50">
             <Container className="max-w-3xl pb-16 md:pb-24">
               <div className="flex flex-col gap-y-6 sm:gap-y-8 md:gap-y-10">
                 <div className="flex max-w-[48ch] flex-col gap-y-2 sm:mx-auto sm:text-center">
@@ -388,7 +388,7 @@ export default function IndexPage() {
 
           <Separator pattern={{ type: "vertical-lines" }} />
 
-          <div className="flex flex-col gap-y-6 sm:gap-y-8 md:gap-y-10">
+          <div className="[[data-slot=separator]+&]:-mt-2 flex flex-col gap-y-6 sm:gap-y-8 md:gap-y-10">
             <div className="flex max-w-[48ch] flex-col gap-y-2 sm:mx-auto sm:items-center sm:text-center">
               <h2 className="text-balance font-[450] text-2xl leading-tight sm:text-3xl">
                 Meet the team

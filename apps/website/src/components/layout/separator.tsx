@@ -11,6 +11,7 @@ interface SeparatorProps extends Omit<ComponentProps<"div">, "children"> {
 export function Separator({ pattern, className, ...props }: SeparatorProps) {
   return (
     <SeparatorRoot
+      data-slot="separator"
       className={cn("relative h-4 w-full text-fg/15", className)}
       {...props}
     >

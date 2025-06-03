@@ -1,4 +1,3 @@
-import path from "node:path";
 import { Gateway } from "@director.run/gateway/gateway";
 import {
   getSSEPathForProxy,
@@ -23,11 +22,9 @@ import { env } from "../env";
 import { registerAddCommand } from "./core/add-command";
 import { registerRemoveCommand } from "./core/remove-command";
 
-const cliPath = path.join(__dirname, "../../bin/cli.ts");
-
 export async function startGateway() {
   await Gateway.start({
-    cliPath,
+    cliPath: env.DIRECTOR_CLI_PATH,
     port: env.GATEWAY_PORT,
     databaseFilePath: env.DB_FILE_PATH,
     registryURL: env.REGISTRY_API_URL,
@@ -201,7 +198,7 @@ export function registerCoreCommands(program: DirectorCommand): void {
             );
 
             const stdioCommand = {
-              command: cliPath,
+              command: env.DIRECTOR_CLI_PATH,
               args: ["http2stdio", streamableURL],
               env: {
                 LOG_LEVEL: "silent",

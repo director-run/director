@@ -20,10 +20,13 @@ export const env = createEnv({
       .optional()
       .default(`https://registry.director.run`),
     REGISTRY_API_KEY: z.string().optional().default(""),
+    // Should be called CONFIG_FILE_PATH
     DB_FILE_PATH: z
       .string()
       .optional()
-      .default(path.join(getDataDir(), "db.json")),
+      .default(path.join(getDataDir(), "config.json")),
+    // This is used so that stdio clients know how to proxy stdio2http
+    DIRECTOR_CLI_PATH: z.string().optional().default(getCliPath()),
   },
 });
 
@@ -33,7 +36,7 @@ function getEnvFilePath() {
     // In development, we want to use the local env file if it exists in the current working directory
     return localEnvPath;
   } else {
-    return path.join(getDataDir(), "./config.env");
+    return path.join(getDataDir(), "./.env");
   }
 }
 
@@ -45,4 +48,8 @@ function getDataDir() {
   } else {
     return path.join(__dirname, `../.director/development`);
   }
+}
+
+function getCliPath() {
+  return path.join(__dirname, "../../bin/cli.ts");
 }

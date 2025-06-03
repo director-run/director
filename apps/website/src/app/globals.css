@@ -30,6 +30,10 @@
   --color-destructive: oklch(87.20% 0.053 22.57);
   --color-destructive-fg: oklch(46.45% 0.178 29.65);
 
+  /* Primary */
+  --color-primary: oklch(0.673 0.097 155.19);
+  --color-primary-fg: oklch(99.45% 0.002 67.80);
+
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
 
@@ -66,7 +70,7 @@
 
 @layer base {
   * {
-    @apply box-border border-accent selection:bg-accent selection:text-fg;
+    @apply box-border border-accent selection:bg-fg/95 selection:text-surface;
   }
 
   body {
@@ -84,6 +88,10 @@
     @apply fixed inset-0 z-50 bg-fg/25;
     @apply radix-state-[closed]:fade-out-0 radix-state-[closed]:animate-out;
     @apply radix-state-[open]:fade-in-0 radix-state-[open]:animate-in;
+  }
+
+  .full-bleed {
+    @apply w-screen relative left-1/2 right-1/2 mx-[-50vw];
   }
 }
 

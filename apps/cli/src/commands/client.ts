@@ -75,7 +75,6 @@ export function createClientCommand() {
 const targetOption = makeOption({
   flags: "-t,--target <target>",
   description: "target client",
-  defaultValue: "claude",
   choices: ["claude", "cursor"],
   mandatory: true,
 });

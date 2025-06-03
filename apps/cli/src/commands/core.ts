@@ -225,7 +225,6 @@ export function registerCoreCommands(program: DirectorCommand) {
       makeOption({
         flags: "-t,--target <target>",
         description: "target client",
-        defaultValue: "claude",
         choices: ["claude", "cursor"],
       }).makeOptionMandatory(),
     )

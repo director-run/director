@@ -82,6 +82,10 @@ export class ProxyServer extends Server {
     await newTarget.smartConnect({ throwOnError: attribs.throwOnError });
     this.attributes.servers.push(target);
     this.targets.push(newTarget);
+    // TODO: send list changed events. need client to support this first
+    // this.sendToolListChanged();
+    // this.sendPromptListChanged();
+    // this.sendResourceListChanged();
   }
 
   public async removeTarget(targetName: string) {
@@ -99,6 +103,10 @@ export class ProxyServer extends Server {
       (t) => t.name.toLocaleLowerCase() !== targetName.toLocaleLowerCase(),
     );
     this.targets = this.targets.filter((t) => t.name !== targetName);
+    // TODO: send list changed events. need client to support this first
+    // this.sendToolListChanged();
+    // this.sendPromptListChanged();
+    // this.sendResourceListChanged();
   }
 
   public update(

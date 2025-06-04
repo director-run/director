@@ -194,8 +194,8 @@ export function registerCoreCommands(program: DirectorCommand): void {
             );
 
             const stdioCommand = {
-              command: "director",
-              args: ["http2stdio", streamableURL],
+              command: "npx",
+              args: ["-y", "@director.run/cli", "http2stdio", streamableURL],
               env: {
                 LOG_LEVEL: "silent",
               },

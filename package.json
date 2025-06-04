@@ -16,7 +16,8 @@
     "cli": "NODE_ENV=development bun run ./apps/cli/bin/cli.ts",
     "cli:dev": "NODE_ENV=development bun --watch ./apps/cli/bin/cli.ts",
     "registry": "NODE_ENV=development bun run ./apps/registry/bin/api.ts",
-    "registry:dev": "NODE_ENV=development bun  --watch ./apps/registry/bin/api.ts"
+    "registry:dev": "NODE_ENV=development bun  --watch ./apps/registry/bin/api.ts",
+    "inspector": "npx @modelcontextprotocol/inspector"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

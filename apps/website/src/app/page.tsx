@@ -32,6 +32,8 @@ import {
 import { siteConfig } from "@/site-config";
 
 import { Button, ButtonIcon, ButtonLabel } from "@/components/ui/button";
+
+import heroImageMobile from "../public/images/hero-image--mobile.png";
 import heroImage from "../public/images/hero-image.png";
 
 export default function IndexPage() {
@@ -92,7 +94,13 @@ export default function IndexPage() {
             <div className="relative flex flex-col items-center rounded-2xl bg-accent">
               <Image
                 src={heroImage}
-                className="relative z-10"
+                className="hidden md:block relative z-10"
+                alt="Director"
+                priority
+              />
+              <Image
+                src={heroImageMobile}
+                className="block md:hidden max-w-sm relative z-10"
                 alt="Director"
                 priority
               />
@@ -145,7 +153,7 @@ export default function IndexPage() {
             <Container className="relative z-10 py-20 md:py-32">
               <Section>
                 <div className="mx-auto flex w-full max-w-xl flex-col gap-5">
-                  <Card className="rotate-4 transition-transform duration-200 ease-in-out group-focus-within:rotate-0 group-hover:rotate-0">
+                  <Card className="transition-transform duration-200 ease-in-out group-focus-within:rotate-0 group-hover:rotate-0 md:rotate-4">
                     <CardHeader>
                       <CardTitle className="md:text-2xl">
                         Run the Quickstart

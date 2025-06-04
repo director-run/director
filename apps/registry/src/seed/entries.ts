@@ -1,41 +1,9 @@
 import { type EntryCreateParams } from "../db/schema";
 
-export async function fetchRaycastRegistry(): Promise<EntryCreateParams[]> {
-  const toEntryParams = (entry: RawRegistryEntry): EntryCreateParams => ({
-    name: entry.name,
-    title: entry.title,
-    description: entry.description,
-    icon: entry.icon,
-    homepage: entry.homepage,
-    transport: {
-      type: "stdio",
-      command: entry.transport.command,
-      args: entry.transport.args,
-      env: entry.transport.env,
-    },
-  });
-
-  return RAYCAST_ENTRIES.map(toEntryParams);
-}
-
-type RawRegistryEntry = {
-  name: string;
-  title: string;
-  description: string;
-  isOfficial: boolean;
-  icon?: string;
-  homepage: string;
-  transport: {
-    type: "stdio";
-    command: string;
-    args: string[];
-    env?: Record<string, string>;
-  };
-};
-
+// Original source: https://github.com/raycast/extensions/blob/main/extensions/model-context-protocol-registry/src/registries/builtin/entries.ts
 // "https://raw.githubusercontent.com/raycast/extensions/refs/heads/main/extensions/model-context-protocol-registry/assets/chroma.png"
 
-const RAYCAST_ENTRIES: RawRegistryEntry[] = [
+export const entries: EntryCreateParams[] = [
   {
     name: "brave-search",
     title: "Brave Search",
@@ -749,6 +717,31 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
         MONDAY_API_KEY: "<monday-api-key>",
         MONDAY_WORKSPACE_NAME: "<monday-workspace-name>",
       },
+    },
+  },
+  {
+    name: "fetch",
+    title: "Fetch",
+    description:
+      "A Model Context Protocol server that provides web content fetching capabilities. This server enables LLMs to retrieve and process content from web pages, converting HTML to markdown for easier consumption.",
+    homepage:
+      "https://github.com/modelcontextprotocol/servers/tree/main/src/fetch",
+    transport: {
+      type: "stdio",
+      command: "uvx",
+      args: ["mcp-server-fetch"],
+    },
+  },
+  {
+    name: "hackernews",
+    title: "Hackernews",
+    description:
+      "A Model Context Protocol (MCP) server that provides tools for fetching information from Hacker News.",
+    homepage: "https://github.com/erithwik/mcp-hn",
+    transport: {
+      type: "stdio",
+      command: "uvx",
+      args: ["--from", "git+https://github.com/erithwik/mcp-hn", "mcp-hn"],
     },
   },
 ];

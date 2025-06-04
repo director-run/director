@@ -64,7 +64,7 @@ const OFFICIAL_ENTRIES: RaycastRegistryEntry[] = [
       command: "npx",
       args: ["-y", "@modelcontextprotocol/server-brave-search"],
       env: {
-        BRAVE_API_KEY: "YOUR_API_KEY_HERE",
+        BRAVE_API_KEY: "<brave-api-key>",
       },
     },
   },
@@ -82,11 +82,11 @@ const OFFICIAL_ENTRIES: RaycastRegistryEntry[] = [
         "--client-type",
         "cloud",
         "--tenant",
-        "YOUR_TENANT_ID_HERE",
+        "<chroma-tenant-id>",
         "--database",
-        "YOUR_DATABASE_NAME_HERE",
+        "<chroma-database-name>",
         "--api-key",
-        "YOUR_API_KEY_HERE",
+        "<chroma-api-key>",
       ],
     },
   },
@@ -142,7 +142,7 @@ const OFFICIAL_ENTRIES: RaycastRegistryEntry[] = [
         "ghcr.io/github/github-mcp-server",
       ],
       env: {
-        GITHUB_PERSONAL_ACCESS_TOKEN: "<YOUR_TOKEN>",
+        GITHUB_PERSONAL_ACCESS_TOKEN: "<github-personal-access-token>",
       },
     },
   },
@@ -158,7 +158,7 @@ const OFFICIAL_ENTRIES: RaycastRegistryEntry[] = [
       command: "npx",
       args: ["-y", "@modelcontextprotocol/server-gitlab"],
       env: {
-        GITLAB_PERSONAL_ACCESS_TOKEN: "<YOUR_TOKEN>",
+        GITLAB_PERSONAL_ACCESS_TOKEN: "<gitlab-personal-access-token>",
         GITLAB_API_URL: "https://gitlab.com/api/v4", // Optional, for self-hosted instances
       },
     },
@@ -178,7 +178,7 @@ const OFFICIAL_ENTRIES: RaycastRegistryEntry[] = [
       command: "npx",
       args: ["-y", "@e2b/mcp-server"],
       env: {
-        E2B_API_KEY: "YOUR_API_KEY_HERE",
+        E2B_API_KEY: "<e2b-api-key>",
       },
     },
   },
@@ -193,7 +193,7 @@ const OFFICIAL_ENTRIES: RaycastRegistryEntry[] = [
       command: "npx",
       args: ["exa-mcp-server"],
       env: {
-        EXA_API_KEY: "YOUR_API_KEY_HERE",
+        EXA_API_KEY: "<exa-api-key>",
       },
     },
   },
@@ -209,7 +209,7 @@ const OFFICIAL_ENTRIES: RaycastRegistryEntry[] = [
       command: "npx",
       args: ["-y", "@modelcontextprotocol/server-gdrive"],
       env: {
-        GDRIVE_CREDENTIALS_PATH: "/path/to/.gdrive-server-credentials.json",
+        GDRIVE_CREDENTIALS_PATH: "<gdrive-server-credentials-path>",
       },
     },
   },
@@ -235,7 +235,7 @@ const OFFICIAL_ENTRIES: RaycastRegistryEntry[] = [
       command: "npx",
       args: ["-y", "@heroku/mcp-server"],
       env: {
-        HEROKU_API_KEY: "YOUR_API_KEY_HERE",
+        HEROKU_API_KEY: "<heroku-api-key>",
       },
     },
   },
@@ -252,7 +252,7 @@ const OFFICIAL_ENTRIES: RaycastRegistryEntry[] = [
       args: [
         "-y",
         "@modelcontextprotocol/server-filesystem",
-        "YOUR_ALLOWED_PATH_HERE",
+        "<fs-allowed-path>",
       ],
     },
   },
@@ -268,8 +268,8 @@ const OFFICIAL_ENTRIES: RaycastRegistryEntry[] = [
       args: [
         "-y",
         "@paddle/paddle-mcp",
-        "--api-key=PADDLE_API_KEY",
-        "--environment=(sandbox|production)",
+        "--api-key=<paddle-api-key>",
+        "--environment=<paddle-environment>",
       ],
     },
   },
@@ -284,7 +284,7 @@ const OFFICIAL_ENTRIES: RaycastRegistryEntry[] = [
       command: "npx",
       args: ["-y", "server-perplexity-ask"],
       env: {
-        PERPLEXITY_API_KEY: "YOUR_API_KEY_HERE",
+        PERPLEXITY_API_KEY: "<perplexity-api-key>",
       },
     },
   },
@@ -312,9 +312,9 @@ const OFFICIAL_ENTRIES: RaycastRegistryEntry[] = [
       command: "npx",
       args: ["-y", "@modelcontextprotocol/server-slack"],
       env: {
-        SLACK_BOT_TOKEN: "xoxb-your-bot-token",
-        SLACK_TEAM_ID: "T01234567",
-        SLACK_CHANNEL_IDS: "C01234567, C76543210",
+        SLACK_BOT_TOKEN: "<slack-bot-token>",
+        SLACK_TEAM_ID: "<slack-team-id>",
+        SLACK_CHANNEL_IDS: "<slack-channel-ids>", // C01234567, C76543210
       },
     },
   },
@@ -343,7 +343,7 @@ const OFFICIAL_ENTRIES: RaycastRegistryEntry[] = [
         "-y",
         "@stripe/mcp",
         "--tools=all",
-        "--api-key=YOUR_STRIPE_SECRET_KEY",
+        "--api-key=<stripe-secret-key>",
       ],
     },
   },
@@ -360,7 +360,7 @@ const OFFICIAL_ENTRIES: RaycastRegistryEntry[] = [
         "-y",
         "@supabase/mcp-server-supabase@latest",
         "--access-token",
-        "<personal-access-token>",
+        "<supabase-personal-access-token>",
       ],
     },
   },
@@ -375,7 +375,7 @@ const OFFICIAL_ENTRIES: RaycastRegistryEntry[] = [
       command: "npx",
       args: ["-y", "tavily-mcp"],
       env: {
-        TAVILY_API_KEY: "YOUR_API_KEY_HERE",
+        TAVILY_API_KEY: "<tavily-api-key>",
       },
     },
   },
@@ -390,8 +390,8 @@ const OFFICIAL_ENTRIES: RaycastRegistryEntry[] = [
       command: "npx",
       args: ["-y", "@xeroapi/xero-mcp-server@latest"],
       env: {
-        XERO_CLIENT_ID: "YOUR_CLIENT_ID_HERE",
-        XERO_CLIENT_SECRET: "YOUR_CLIENT_SECRET_HERE",
+        XERO_CLIENT_ID: "<xero-client-id>",
+        XERO_CLIENT_SECRET: "<xero-client-secret>",
       },
     },
   },
@@ -406,7 +406,7 @@ const OFFICIAL_ENTRIES: RaycastRegistryEntry[] = [
       command: "npx",
       args: ["-y", "firecrawl-mcp"],
       env: {
-        FIRECRAWL_API_KEY: "YOUR_API_KEY_HERE",
+        FIRECRAWL_API_KEY: "<firecrawl-api-key>",
       },
     },
   },
@@ -434,7 +434,7 @@ const OFFICIAL_ENTRIES: RaycastRegistryEntry[] = [
       args: ["-y", "@notionhq/notion-mcp-server"],
       env: {
         OPENAPI_MCP_HEADERS:
-          '{"Authorization": "Bearer ntn_****", "Notion-Version": "2022-06-28" }',
+          '{"Authorization": "Bearer <notion-bearer-token>", "Notion-Version": "2022-06-28" }',
       },
     },
   },
@@ -467,7 +467,7 @@ const OFFICIAL_ENTRIES: RaycastRegistryEntry[] = [
     homepage: "https://github.com/pydantic/logfire-mcp",
     configuration: {
       command: "uvx",
-      args: ["logfire-mcp", "--read-token=YOUR_TOKEN_HERE"],
+      args: ["logfire-mcp", "--read-token=<logfire-api-key>"],
     },
   },
   {
@@ -487,7 +487,7 @@ const OFFICIAL_ENTRIES: RaycastRegistryEntry[] = [
         "mcp",
         "start",
         "--access-token",
-        "YOUR_ACCESS_TOKEN_HERE",
+        "<polar-access-token>",
       ],
     },
   },
@@ -505,7 +505,7 @@ const OFFICIAL_ENTRIES: RaycastRegistryEntry[] = [
       command: "uvx",
       args: ["elevenlabs-mcp"],
       env: {
-        ELEVENLABS_API_KEY: "YOUR_API_KEY_HERE",
+        ELEVENLABS_API_KEY: "<elevenlabs-api-key>",
       },
     },
   },
@@ -546,7 +546,7 @@ const COMMUNITY_ENTRIES: RaycastRegistryEntry[] = [
       command: "npx",
       args: ["-y", "airtable-mcp-server"],
       env: {
-        AIRTABLE_API_KEY: "YOUR_API_KEY_HERE",
+        AIRTABLE_API_KEY: "<airtable-api-key>",
       },
     },
   },
@@ -586,9 +586,9 @@ const COMMUNITY_ENTRIES: RaycastRegistryEntry[] = [
       args: [
         "mcp-server-bigquery",
         "--project",
-        "YOUR_PROJECT_ID",
+        "<bigquery-project-id>",
         "--location",
-        "YOUR_LOCATION",
+        "<bigquery-location>",
       ],
     },
   },
@@ -603,8 +603,8 @@ const COMMUNITY_ENTRIES: RaycastRegistryEntry[] = [
       command: "npx",
       args: ["-y", "@taazkareem/clickup-mcp-server@latest"],
       env: {
-        CLICKUP_API_KEY: "YOUR_API_KEY_HERE",
-        CLICKUP_TEAM_ID: "YOUR_TEAM_ID_HERE",
+        CLICKUP_API_KEY: "<clickup-api-key>",
+        CLICKUP_TEAM_ID: "<clickup-team-id>",
         DOCUMENT_SUPPORT: "true",
       },
     },
@@ -620,7 +620,7 @@ const COMMUNITY_ENTRIES: RaycastRegistryEntry[] = [
       command: "npx",
       args: ["mcp-remote", "https://gitmcp.io/SaseQ/discord-mcp"],
       env: {
-        DISCORD_TOKEN: "YOUR_DISCORD_BOT_TOKEN",
+        DISCORD_TOKEN: "<discord-bot-token>",
       },
     },
   },
@@ -635,8 +635,9 @@ const COMMUNITY_ENTRIES: RaycastRegistryEntry[] = [
       command: "npx",
       args: ["-y", "@gannonh/firebase-mcp"],
       env: {
-        SERVICE_ACCOUNT_KEY_PATH: "/absolute/path/to/serviceAccountKey.json",
-        FIREBASE_STORAGE_BUCKET: "your-project-id.firebasestorage.app",
+        SERVICE_ACCOUNT_KEY_PATH:
+          "<firebase-absolute-path-to-service-account-key>",
+        FIREBASE_STORAGE_BUCKET: "<firebase-storage-bucket>",
       },
     },
   },
@@ -654,8 +655,8 @@ const COMMUNITY_ENTRIES: RaycastRegistryEntry[] = [
       command: "npx",
       args: ["-y", "@fanyangmeng/ghost-mcp"],
       env: {
-        GHOST_API_URL: "https://yourblog.com",
-        GHOST_ADMIN_API_KEY: "your_admin_api_key",
+        GHOST_API_URL: "<ghost-admin-api-url>",
+        GHOST_ADMIN_API_KEY: "<ghost-admin-api-key>",
         GHOST_API_VERSION: "v5.0",
       },
     },
@@ -686,8 +687,8 @@ const COMMUNITY_ENTRIES: RaycastRegistryEntry[] = [
       command: "npx",
       args: ["-y", "lightdash-mcp-server"],
       env: {
-        LIGHTDASH_API_KEY: "YOUR_API_KEY_HERE",
-        LIGHTDASH_API_URL: "https://<your base url>",
+        LIGHTDASH_API_KEY: "<lightdash-api-key>",
+        LIGHTDASH_API_URL: "<lightdash-api-url>",
       },
     },
   },
@@ -702,8 +703,8 @@ const COMMUNITY_ENTRIES: RaycastRegistryEntry[] = [
       command: "uvx",
       args: ["mcp-server-monday"],
       env: {
-        MONDAY_API_KEY: "your-monday-api-key",
-        MONDAY_WORKSPACE_NAME: "your-monday-workspace-name",
+        MONDAY_API_KEY: "<monday-api-key>",
+        MONDAY_WORKSPACE_NAME: "<monday-workspace-name>",
       },
     },
   },

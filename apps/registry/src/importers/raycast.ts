@@ -1,7 +1,7 @@
 import { type EntryCreateParams } from "../db/schema";
 
 export async function fetchRaycastRegistry(): Promise<EntryCreateParams[]> {
-  const toEntryParams = (entry: RaycastRegistryEntry): EntryCreateParams => ({
+  const toEntryParams = (entry: RawRegistryEntry): EntryCreateParams => ({
     name: entry.name,
     title: entry.title,
     description: entry.description,
@@ -21,7 +21,7 @@ export async function fetchRaycastRegistry(): Promise<EntryCreateParams[]> {
   return RAYCAST_ENTRIES.map(toEntryParams);
 }
 
-type RaycastRegistryEntry = {
+type RawRegistryEntry = {
   name: string;
   title: string;
   description: string;
@@ -47,7 +47,7 @@ const Icon = {
   MemoryStick: "",
 };
 
-const RAYCAST_ENTRIES: RaycastRegistryEntry[] = [
+const RAYCAST_ENTRIES: RawRegistryEntry[] = [
   {
     name: "brave-search",
     title: "Brave Search",

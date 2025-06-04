@@ -5,16 +5,13 @@ export async function fetchRaycastRegistry(): Promise<EntryCreateParams[]> {
     name: entry.name,
     title: entry.title,
     description: entry.description,
-    homepage: entry.homepage || "",
+    icon: entry.icon,
+    homepage: entry.homepage,
     transport: {
       type: "stdio",
-      command: entry.configuration.command,
-      args: entry.configuration.args,
-      env: entry.configuration.env,
-    },
-    source_registry: {
-      name: "RAYCAST",
-      entryId: entry.name,
+      command: entry.transport.command,
+      args: entry.transport.args,
+      env: entry.transport.env,
     },
   });
 
@@ -26,25 +23,16 @@ type RawRegistryEntry = {
   title: string;
   description: string;
   isOfficial: boolean;
-  icon?:
-    | string
-    | { source: string | { light: string; dark: string }; tintColor?: string };
-  homepage?: string;
-  configuration: {
+  icon?: string;
+  homepage: string;
+  transport: {
     command: string;
     args: string[];
     env?: Record<string, string>;
   };
 };
 
-const Color = {
-  PrimaryText: "#000000",
-};
-
-const Icon = {
-  Folder: "https://svgl.app/library/folder.svg",
-  MemoryStick: "",
-};
+// "https://raw.githubusercontent.com/raycast/extensions/refs/heads/main/extensions/model-context-protocol-registry/assets/chroma.png"
 
 const RAYCAST_ENTRIES: RawRegistryEntry[] = [
   {
@@ -56,7 +44,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "https://svgl.app/library/brave.svg",
     homepage:
       "https://github.com/modelcontextprotocol/servers/tree/HEAD/src/brave-search",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["-y", "@modelcontextprotocol/server-brave-search"],
       env: {
@@ -72,7 +60,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: true,
     icon: "chroma.png",
     homepage: "https://github.com/chroma-core/chroma-mcp",
-    configuration: {
+    transport: {
       command: "uvx",
       args: [
         "chroma-mcp",
@@ -93,12 +81,9 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     description:
       "Context7 MCP pulls up-to-date, version-specific documentation and code examples straight from the source — and places them directly into your prompt.",
     isOfficial: true,
-    icon: {
-      source: "context-7.svg",
-      tintColor: Color.PrimaryText,
-    },
+    icon: "context-7.svg",
     homepage: "https://github.com/upstash/context7",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["-y", "@upstash/context7-mcp@latest"],
     },
@@ -112,7 +97,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "https://svgl.app/library/git.svg",
     homepage:
       "https://github.com/modelcontextprotocol/servers/tree/main/src/git",
-    configuration: {
+    transport: {
       command: "uvx",
       args: ["mcp-server-git"],
     },
@@ -123,15 +108,10 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     description:
       "The GitHub MCP Server is a Model Context Protocol (MCP) server that provides seamless integration with GitHub APIs, enabling advanced automation and interaction capabilities for developers and tools.",
     isOfficial: true,
-    icon: {
-      source: {
-        light: "https://svgl.app/library/github_light.svg",
-        dark: "https://svgl.app/library/github_dark.svg",
-      },
-    },
+    icon: "https://svgl.app/library/github_light.svg",
     homepage:
       "https://github.com/github/github-mcp-server?utm_source=Blog&utm_medium=GitHub&utm_campaign=proplus&utm_notesblogtop",
-    configuration: {
+    transport: {
       command: "docker",
       args: [
         "run",
@@ -155,7 +135,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "https://svgl.app/library/gitlab.svg",
     homepage:
       "https://github.com/modelcontextprotocol/servers/tree/main/src/gitlab",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["-y", "@modelcontextprotocol/server-gitlab"],
       env: {
@@ -170,13 +150,10 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     description:
       "A Model Context Protocol server for running code in a secure sandbox by [E2B](https://e2b.dev/).",
     isOfficial: true,
-    icon: {
-      source: "e2b.svg",
-      tintColor: Color.PrimaryText,
-    },
+    icon: "e2b.svg",
     homepage:
       "https://github.com/e2b-dev/mcp-server/blob/main/packages/js/README.md",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["-y", "@e2b/mcp-server"],
       env: {
@@ -192,7 +169,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: true,
     icon: "exa.png",
     homepage: "https://github.com/exa-labs/exa-mcp-server",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["exa-mcp-server"],
       env: {
@@ -209,7 +186,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "https://svgl.app/library/drive.svg",
     homepage:
       "https://github.com/modelcontextprotocol/servers/tree/main/src/gdrive",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["-y", "@modelcontextprotocol/server-gdrive"],
       env: {
@@ -224,7 +201,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: true,
     icon: "https://svgl.app/library/jetbrains.svg",
     homepage: "https://github.com/JetBrains/mcp-jetbrains",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["-y", "@jetbrains/mcp-proxy"],
     },
@@ -237,7 +214,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: true,
     icon: "heroku.svg",
     homepage: "https://github.com/heroku/heroku-mcp-server",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["-y", "@heroku/mcp-server"],
       env: {
@@ -251,10 +228,10 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     description:
       "Node.js server implementing Model Context Protocol (MCP) for filesystem operations. The server will only allow operations within directories specified via args.",
     isOfficial: true,
-    icon: Icon.Folder,
+    icon: "https://svgl.app/library/folder.svg",
     homepage:
       "https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem",
-    configuration: {
+    transport: {
       command: "npx",
       args: [
         "-y",
@@ -271,7 +248,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: true,
     icon: "paddle.svg",
     homepage: "https://github.com/PaddleHQ/paddle-mcp-server",
-    configuration: {
+    transport: {
       command: "npx",
       args: [
         "-y",
@@ -289,7 +266,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: true,
     icon: "https://svgl.app/library/perplexity.svg",
     homepage: "https://github.com/ppl-ai/modelcontextprotocol",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["-y", "server-perplexity-ask"],
       env: {
@@ -305,7 +282,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: true,
     icon: "sentry.svg",
     homepage: "https://mcp.sentry.dev/",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["-y", "mcp-remote", "https://mcp.sentry.dev/sse"],
     },
@@ -319,7 +296,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "https://svgl.app/library/slack.svg",
     homepage:
       "https://github.com/modelcontextprotocol/servers/tree/main/src/slack",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["-y", "@modelcontextprotocol/server-slack"],
       env: {
@@ -337,7 +314,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: true,
     icon: "square.svg",
     homepage: "https://github.com/square/square-mcp-server",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["mcp-remote", "https://mcp.squareup.com/sse"],
     },
@@ -350,7 +327,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: true,
     icon: "https://svgl.app/library/stripe.svg",
     homepage: "https://github.com/stripe/agent-toolkit",
-    configuration: {
+    transport: {
       command: "npx",
       args: [
         "-y",
@@ -368,7 +345,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: true,
     icon: "https://svgl.app/library/supabase.svg",
     homepage: "https://supabase.com/docs/guides/getting-started/mcp",
-    configuration: {
+    transport: {
       command: "npx",
       args: [
         "-y",
@@ -386,7 +363,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: true,
     icon: "tavily.svg",
     homepage: "https://github.com/tavily-ai/tavily-mcp",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["-y", "tavily-mcp"],
       env: {
@@ -402,7 +379,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: true,
     icon: "xero.svg",
     homepage: "https://github.com/XeroAPI/xero-mcp-server",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["-y", "@xeroapi/xero-mcp-server@latest"],
       env: {
@@ -419,7 +396,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: true,
     icon: "🔥",
     homepage: "https://github.com/mendableai/firecrawl-mcp-server",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["-y", "firecrawl-mcp"],
       env: {
@@ -435,7 +412,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: true,
     icon: "https://playwright.dev/img/playwright-logo.svg",
     homepage: "https://github.com/microsoft/playwright-mcp",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["@playwright/mcp@latest"],
     },
@@ -448,7 +425,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: true,
     icon: "https://svgl.app/library/notion.svg",
     homepage: "https://github.com/makenotion/notion-mcp-server",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["-y", "@notionhq/notion-mcp-server"],
       env: {
@@ -465,7 +442,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: true,
     icon: "pydantic.svg",
     homepage: "https://ai.pydantic.dev/mcp/run-python/",
-    configuration: {
+    transport: {
       command: "deno",
       args: [
         "run",
@@ -486,7 +463,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: true,
     icon: "pydantic.svg",
     homepage: "https://github.com/pydantic/logfire-mcp",
-    configuration: {
+    transport: {
       command: "uvx",
       args: ["logfire-mcp", "--read-token=<logfire-api-key>"],
     },
@@ -499,7 +476,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: true,
     icon: "polar.svg",
     homepage: "https://docs.polar.sh/integrate/mcp",
-    configuration: {
+    transport: {
       command: "npx",
       args: [
         "-y",
@@ -519,12 +496,9 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     description:
       "Official ElevenLabs Model Context Protocol (MCP) server that enables interaction with powerful Text to Speech and audio processing APIs. This server allows MCP clients like Claude Desktop, Cursor, Windsurf, OpenAI Agents and others to generate speech, clone voices, transcribe audio, and more.",
     isOfficial: true,
-    icon: {
-      source: "elevenlabs.svg",
-      tintColor: Color.PrimaryText,
-    },
+    icon: "elevenlabs.svg",
     homepage: "https://github.com/elevenlabs/elevenlabs-mcp",
-    configuration: {
+    transport: {
       command: "uvx",
       args: ["elevenlabs-mcp"],
       env: {
@@ -540,7 +514,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: false,
     icon: "https://svgl.app/library/figma.svg",
     homepage: "https://github.com/sonnylazuardi/cursor-talk-to-figma-mcp",
-    configuration: {
+    transport: {
       command: "bunx",
       args: ["cursor-talk-to-figma-mcp@latest"],
     },
@@ -552,7 +526,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: false,
     icon: "https://svgl.app/library/airbnb.svg",
     homepage: "https://github.com/openbnb-org/mcp-server-airbnb",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["-y", "@openbnb/mcp-server-airbnb", "--ignore-robots-txt"],
     },
@@ -565,7 +539,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: false,
     icon: "airtable.svg",
     homepage: "https://github.com/domdomegg/airtable-mcp-server",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["-y", "airtable-mcp-server"],
       env: {
@@ -581,7 +555,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: false,
     icon: "applescript.png",
     homepage: "https://github.com/peakmojo/applescript-mcp",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["@peakmojo/applescript-mcp"],
     },
@@ -592,9 +566,9 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     description:
       "Basic Memory lets you build persistent knowledge through natural conversations with Large Language Models (LLMs) like Claude, while keeping everything in simple Markdown files on your computer. It uses the Model Context Protocol (MCP) to enable any compatible LLM to read and write to your local knowledge base.",
     isOfficial: false,
-    icon: Icon.MemoryStick,
+    icon: "https://svgl.app/library/memory-stick.svg",
     homepage: "https://github.com/basicmachines-co/basic-memory",
-    configuration: {
+    transport: {
       command: "uvx",
       args: ["basic-memory", "mcp"],
     },
@@ -607,7 +581,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: false,
     icon: "bigquery.svg",
     homepage: "https://github.com/LucasHild/mcp-server-bigquery",
-    configuration: {
+    transport: {
       command: "uvx",
       args: [
         "mcp-server-bigquery",
@@ -626,7 +600,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: false,
     icon: "clickup.svg",
     homepage: "https://github.com/TaazKareem/clickup-mcp-server",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["-y", "@taazkareem/clickup-mcp-server@latest"],
       env: {
@@ -644,7 +618,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: false,
     icon: "https://svgl.app/library/discord.svg",
     homepage: "https://github.com/SaseQ/discord-mcp",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["mcp-remote", "https://gitmcp.io/SaseQ/discord-mcp"],
       env: {
@@ -660,7 +634,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: false,
     icon: "https://svgl.app/library/firebase.svg",
     homepage: "https://github.com/gannonh/firebase-mcp",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["-y", "@gannonh/firebase-mcp"],
       env: {
@@ -676,12 +650,9 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     description:
       "A Model Context Protocol (MCP) server for interacting with Ghost CMS through LLM interfaces like Claude. This server provides secure and comprehensive access to your Ghost blog, leveraging JWT authentication and a rich set of MCP tools for managing posts, users, members, tiers, offers, and newsletters.",
     isOfficial: false,
-    icon: {
-      source: "ghost.png",
-      tintColor: Color.PrimaryText,
-    },
+    icon: "ghost.png",
     homepage: "https://github.com/MFYDev/ghost-mcp",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["-y", "@fanyangmeng/ghost-mcp"],
       env: {
@@ -699,7 +670,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: false,
     icon: "iterm.svg",
     homepage: "https://github.com/ferrislucas/iterm-mcp",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["-y", "iterm-mcp"],
     },
@@ -710,12 +681,9 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     description:
       "This server provides MCP-compatible access to Lightdash's API, allowing AI assistants to interact with your Lightdash data through a standardized interface.",
     isOfficial: false,
-    icon: {
-      source: "lightdash.svg",
-      tintColor: Color.PrimaryText,
-    },
+    icon: "lightdash.svg",
     homepage: "https://github.com/syucream/lightdash-mcp-server",
-    configuration: {
+    transport: {
       command: "npx",
       args: ["-y", "lightdash-mcp-server"],
       env: {
@@ -732,7 +700,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     isOfficial: false,
     icon: "monday.svg",
     homepage: "https://github.com/sakce/mcp-server-monday",
-    configuration: {
+    transport: {
       command: "uvx",
       args: ["mcp-server-monday"],
       env: {

@@ -19,6 +19,7 @@ export const entriesTable = pgTable("entries", {
   name: varchar("name", { length: 255 }).notNull().unique(),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description").notNull(),
+  icon: varchar("icon", { length: 255 }),
   createdAt: timestamp("created_at").defaultNow(),
   isOfficial: boolean("is_official").default(false), // Is it a servers that is officially supported by the companies or makers of the service
   isEnriched: boolean("is_enriched").default(false), // Has the entry been enriched?

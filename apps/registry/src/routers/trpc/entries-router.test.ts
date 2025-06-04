@@ -155,23 +155,23 @@ describe("Entries Router", () => {
             args: [
               ...testServerStdioConfig.transport.args,
               "--noop",
-              "SECOND_PARAMETER",
+              "<arg-param>",
             ],
             env: {
-              FIRST_PARAMETER: "<PLACEHOLDER>",
+              FIRST_PARAMETER: "<env-param>",
             },
           },
           parameters: [
             {
-              name: "FIRST_PARAMETER",
-              description: "some parameter",
+              name: "arg-param",
+              description: "",
               scope: "env",
               required: true,
               type: "string",
             },
             {
-              name: "SECOND_PARAMETER",
-              description: "some parameter",
+              name: "env-param",
+              description: "",
               scope: "args",
               required: true,
               type: "string",
@@ -185,7 +185,7 @@ describe("Entries Router", () => {
           unauthenticatedClient.entries.getTransportForEntry.query({
             entryName: testServerStdioConfig.name,
             parameters: {
-              FIRST_PARAMETER: "test",
+              "arg-param": "test",
             },
           }),
         ).rejects.toThrow();
@@ -193,7 +193,7 @@ describe("Entries Router", () => {
           unauthenticatedClient.entries.getTransportForEntry.query({
             entryName: testServerStdioConfig.name,
             parameters: {
-              SECOND_PARAMETER: "test",
+              "env-param": "test",
             },
           }),
         ).rejects.toThrow();
@@ -204,18 +204,18 @@ describe("Entries Router", () => {
           await unauthenticatedClient.entries.getTransportForEntry.query({
             entryName: testServerStdioConfig.name,
             parameters: {
-              FIRST_PARAMETER: "test",
-              SECOND_PARAMETER: "test2",
+              "arg-param": "arg-param-value",
+              "env-param": "env-param-value",
             },
           });
         expect(transport.type).toEqual("stdio");
         expect((transport as STDIOTransport).env).toEqual({
-          FIRST_PARAMETER: "test",
+          FIRST_PARAMETER: "env-param-value",
         });
         expect((transport as STDIOTransport).args).toEqual([
           ...testServerStdioConfig.transport.args,
           "--noop",
-          "test2",
+          "arg-param-value",
         ]);
       });
     });

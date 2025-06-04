@@ -26,6 +26,7 @@ type RawRegistryEntry = {
   icon?: string;
   homepage: string;
   transport: {
+    type: "stdio";
     command: string;
     args: string[];
     env?: Record<string, string>;
@@ -45,6 +46,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     homepage:
       "https://github.com/modelcontextprotocol/servers/tree/HEAD/src/brave-search",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["-y", "@modelcontextprotocol/server-brave-search"],
       env: {
@@ -61,6 +63,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "chroma.png",
     homepage: "https://github.com/chroma-core/chroma-mcp",
     transport: {
+      type: "stdio",
       command: "uvx",
       args: [
         "chroma-mcp",
@@ -84,6 +87,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "context-7.svg",
     homepage: "https://github.com/upstash/context7",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["-y", "@upstash/context7-mcp@latest"],
     },
@@ -98,6 +102,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     homepage:
       "https://github.com/modelcontextprotocol/servers/tree/main/src/git",
     transport: {
+      type: "stdio",
       command: "uvx",
       args: ["mcp-server-git"],
     },
@@ -112,6 +117,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     homepage:
       "https://github.com/github/github-mcp-server?utm_source=Blog&utm_medium=GitHub&utm_campaign=proplus&utm_notesblogtop",
     transport: {
+      type: "stdio",
       command: "docker",
       args: [
         "run",
@@ -136,6 +142,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     homepage:
       "https://github.com/modelcontextprotocol/servers/tree/main/src/gitlab",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["-y", "@modelcontextprotocol/server-gitlab"],
       env: {
@@ -154,6 +161,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     homepage:
       "https://github.com/e2b-dev/mcp-server/blob/main/packages/js/README.md",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["-y", "@e2b/mcp-server"],
       env: {
@@ -170,6 +178,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "exa.png",
     homepage: "https://github.com/exa-labs/exa-mcp-server",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["exa-mcp-server"],
       env: {
@@ -187,6 +196,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     homepage:
       "https://github.com/modelcontextprotocol/servers/tree/main/src/gdrive",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["-y", "@modelcontextprotocol/server-gdrive"],
       env: {
@@ -202,6 +212,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "https://svgl.app/library/jetbrains.svg",
     homepage: "https://github.com/JetBrains/mcp-jetbrains",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["-y", "@jetbrains/mcp-proxy"],
     },
@@ -215,6 +226,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "heroku.svg",
     homepage: "https://github.com/heroku/heroku-mcp-server",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["-y", "@heroku/mcp-server"],
       env: {
@@ -232,6 +244,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     homepage:
       "https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem",
     transport: {
+      type: "stdio",
       command: "npx",
       args: [
         "-y",
@@ -249,6 +262,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "paddle.svg",
     homepage: "https://github.com/PaddleHQ/paddle-mcp-server",
     transport: {
+      type: "stdio",
       command: "npx",
       args: [
         "-y",
@@ -267,6 +281,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "https://svgl.app/library/perplexity.svg",
     homepage: "https://github.com/ppl-ai/modelcontextprotocol",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["-y", "server-perplexity-ask"],
       env: {
@@ -283,6 +298,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "sentry.svg",
     homepage: "https://mcp.sentry.dev/",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["-y", "mcp-remote", "https://mcp.sentry.dev/sse"],
     },
@@ -297,6 +313,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     homepage:
       "https://github.com/modelcontextprotocol/servers/tree/main/src/slack",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["-y", "@modelcontextprotocol/server-slack"],
       env: {
@@ -315,6 +332,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "square.svg",
     homepage: "https://github.com/square/square-mcp-server",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["mcp-remote", "https://mcp.squareup.com/sse"],
     },
@@ -328,6 +346,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "https://svgl.app/library/stripe.svg",
     homepage: "https://github.com/stripe/agent-toolkit",
     transport: {
+      type: "stdio",
       command: "npx",
       args: [
         "-y",
@@ -346,6 +365,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "https://svgl.app/library/supabase.svg",
     homepage: "https://supabase.com/docs/guides/getting-started/mcp",
     transport: {
+      type: "stdio",
       command: "npx",
       args: [
         "-y",
@@ -364,6 +384,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "tavily.svg",
     homepage: "https://github.com/tavily-ai/tavily-mcp",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["-y", "tavily-mcp"],
       env: {
@@ -380,6 +401,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "xero.svg",
     homepage: "https://github.com/XeroAPI/xero-mcp-server",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["-y", "@xeroapi/xero-mcp-server@latest"],
       env: {
@@ -397,6 +419,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "🔥",
     homepage: "https://github.com/mendableai/firecrawl-mcp-server",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["-y", "firecrawl-mcp"],
       env: {
@@ -413,6 +436,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "https://playwright.dev/img/playwright-logo.svg",
     homepage: "https://github.com/microsoft/playwright-mcp",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["@playwright/mcp@latest"],
     },
@@ -426,6 +450,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "https://svgl.app/library/notion.svg",
     homepage: "https://github.com/makenotion/notion-mcp-server",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["-y", "@notionhq/notion-mcp-server"],
       env: {
@@ -443,6 +468,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "pydantic.svg",
     homepage: "https://ai.pydantic.dev/mcp/run-python/",
     transport: {
+      type: "stdio",
       command: "deno",
       args: [
         "run",
@@ -464,6 +490,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "pydantic.svg",
     homepage: "https://github.com/pydantic/logfire-mcp",
     transport: {
+      type: "stdio",
       command: "uvx",
       args: ["logfire-mcp", "--read-token=<logfire-api-key>"],
     },
@@ -477,6 +504,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "polar.svg",
     homepage: "https://docs.polar.sh/integrate/mcp",
     transport: {
+      type: "stdio",
       command: "npx",
       args: [
         "-y",
@@ -499,6 +527,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "elevenlabs.svg",
     homepage: "https://github.com/elevenlabs/elevenlabs-mcp",
     transport: {
+      type: "stdio",
       command: "uvx",
       args: ["elevenlabs-mcp"],
       env: {
@@ -515,6 +544,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "https://svgl.app/library/figma.svg",
     homepage: "https://github.com/sonnylazuardi/cursor-talk-to-figma-mcp",
     transport: {
+      type: "stdio",
       command: "bunx",
       args: ["cursor-talk-to-figma-mcp@latest"],
     },
@@ -527,6 +557,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "https://svgl.app/library/airbnb.svg",
     homepage: "https://github.com/openbnb-org/mcp-server-airbnb",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["-y", "@openbnb/mcp-server-airbnb", "--ignore-robots-txt"],
     },
@@ -540,6 +571,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "airtable.svg",
     homepage: "https://github.com/domdomegg/airtable-mcp-server",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["-y", "airtable-mcp-server"],
       env: {
@@ -556,6 +588,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "applescript.png",
     homepage: "https://github.com/peakmojo/applescript-mcp",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["@peakmojo/applescript-mcp"],
     },
@@ -569,6 +602,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "https://svgl.app/library/memory-stick.svg",
     homepage: "https://github.com/basicmachines-co/basic-memory",
     transport: {
+      type: "stdio",
       command: "uvx",
       args: ["basic-memory", "mcp"],
     },
@@ -582,6 +616,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "bigquery.svg",
     homepage: "https://github.com/LucasHild/mcp-server-bigquery",
     transport: {
+      type: "stdio",
       command: "uvx",
       args: [
         "mcp-server-bigquery",
@@ -601,6 +636,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "clickup.svg",
     homepage: "https://github.com/TaazKareem/clickup-mcp-server",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["-y", "@taazkareem/clickup-mcp-server@latest"],
       env: {
@@ -619,6 +655,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "https://svgl.app/library/discord.svg",
     homepage: "https://github.com/SaseQ/discord-mcp",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["mcp-remote", "https://gitmcp.io/SaseQ/discord-mcp"],
       env: {
@@ -635,6 +672,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "https://svgl.app/library/firebase.svg",
     homepage: "https://github.com/gannonh/firebase-mcp",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["-y", "@gannonh/firebase-mcp"],
       env: {
@@ -653,6 +691,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "ghost.png",
     homepage: "https://github.com/MFYDev/ghost-mcp",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["-y", "@fanyangmeng/ghost-mcp"],
       env: {
@@ -671,6 +710,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "iterm.svg",
     homepage: "https://github.com/ferrislucas/iterm-mcp",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["-y", "iterm-mcp"],
     },
@@ -684,6 +724,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "lightdash.svg",
     homepage: "https://github.com/syucream/lightdash-mcp-server",
     transport: {
+      type: "stdio",
       command: "npx",
       args: ["-y", "lightdash-mcp-server"],
       env: {
@@ -701,6 +742,7 @@ const RAYCAST_ENTRIES: RawRegistryEntry[] = [
     icon: "monday.svg",
     homepage: "https://github.com/sakce/mcp-server-monday",
     transport: {
+      type: "stdio",
       command: "uvx",
       args: ["mcp-server-monday"],
       env: {

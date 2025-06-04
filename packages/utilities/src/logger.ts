@@ -36,8 +36,8 @@ const logger = pino(
         colorize: true,
         translateTime: "HH:MM:ss",
         ignore: "pid,hostname",
-        // hide json objects for any level other than trace or debug
-        hideObject: !["trace", "debug"].includes(LOG_LEVEL.toLowerCase()),
+        // uncomment to hide json objects for any level other than trace or debug
+        // hideObject: !["trace", "debug"].includes(LOG_LEVEL.toLowerCase()),
       })
     : undefined,
 );

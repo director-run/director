@@ -11,8 +11,12 @@ export async function enrichEntries(store: Store) {
     if (entry.isEnriched) {
       logger.info(`skipping ${entry.name}: already enriched`);
     } else {
-      const enriched = await enrichEntry(entry);
-      await store.entries.updateEntry(entry.id, enriched);
+      try {
+        const enriched = await enrichEntry(entry);
+        await store.entries.updateEntry(entry.id, enriched);
+      } catch (error) {
+        logger.error(`error enriching ${entry.name}: ${error}`);
+      }
     }
   }
 }

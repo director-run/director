@@ -1,3 +1,4 @@
+import { AppError } from "@director.run/utilities/error";
 import { describe, expect, it } from "vitest";
 import type { EntryGetParams } from "../db/schema";
 import { makeStdioTransport, makeTestEntry } from "../test/fixtures/entries";
@@ -21,15 +22,7 @@ describe("parseParameters", () => {
       }),
     });
 
-    const parameters = parseParameters(entry as EntryGetParams);
-    expect(parameters.length).toEqual(1);
-    expect(parameters).toContainEqual({
-      name: "your-token",
-      description: "",
-      scope: "env",
-      type: "string",
-      required: true,
-    });
+    expect(() => parseParameters(entry as EntryGetParams)).toThrow(AppError);
   });
 
   it("should parse parameters from arguments correctly", () => {

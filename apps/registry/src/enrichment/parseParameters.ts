@@ -1,3 +1,4 @@
+import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { type EntryGetParams, type EntryParameter } from "../db/schema";
 
 export function parseParameters(entry: EntryGetParams): Array<EntryParameter> {
@@ -5,6 +6,11 @@ export function parseParameters(entry: EntryGetParams): Array<EntryParameter> {
   if (entry.transport.type === "stdio") {
     parameters.push(...parseArgumentParameters(entry.transport.args));
     parameters.push(...parseEnvParameters(entry.transport.env ?? {}));
+  }
+  // if there are duplicate parameters, throw an error
+  const uniqueParameters = new Set(parameters.map((p) => p.name));
+  if (uniqueParameters.size !== parameters.length) {
+    throw new AppError(ErrorCode.DUPLICATE, "Duplicate parameters found");
   }
   return parameters;
 }
@@ -32,10 +38,8 @@ function parseEnvParameters(
   const parameters: Array<EntryParameter> = [];
 
   for (const [key, value] of Object.entries(env)) {
-    // Extract parameters from both the key and value
     const valueParams = extractParameterPlaceholders(value);
 
-    // Add parameters from the value
     parameters.push(
       ...valueParams.map((name) => ({
         name,

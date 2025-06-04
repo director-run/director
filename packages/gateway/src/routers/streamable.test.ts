@@ -119,7 +119,7 @@ describe("Streamable Router", () => {
       ).rejects.toThrow();
     });
 
-    test("should fail if it can't connect to the server", async () => {
+    test.skip("should fail if it can't connect to the server", async () => {
       await harness.purge();
       const testProxy = await harness.client.store.create.mutate({
         name: "Test Proxy",

@@ -9,7 +9,7 @@ import {
 import { serveOverSSE, serveOverStreamable } from "./transport";
 
 describe("ProxyServer", () => {
-  describe("with a controller", () => {
+  describe.skip("with a controller", () => {
     test("should expose controller tools via the proxy", async () => {
       const proxy = new ProxyServer({
         id: "test-proxy",

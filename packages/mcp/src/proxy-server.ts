@@ -1,14 +1,12 @@
 import { getLogger } from "@director.run/utilities/logger";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import * as eventsource from "eventsource";
-import { z } from "zod";
 import packageJson from "../package.json";
 import { setupPromptHandlers } from "./handlers/prompts-handler";
 import { setupResourceTemplateHandlers } from "./handlers/resource-templates-handler";
 import { setupResourceHandlers } from "./handlers/resources-handler";
 import { setupToolHandlers } from "./handlers/tools-handler";
-import { SimpleClient } from "./simple-client";
-import { SimpleServer } from "./simple-server";
+import { ProxyTarget } from "./proxy-target";
 import type { ProxyServerAttributes } from "./types";
 
 global.EventSource = eventsource.EventSource;
@@ -16,7 +14,7 @@ global.EventSource = eventsource.EventSource;
 const logger = getLogger(`ProxyServer`);
 
 export class ProxyServer extends Server {
-  private targets: SimpleClient[];
+  private targets: ProxyTarget[];
   public readonly attributes: ProxyServerAttributes & {
     useController?: boolean;
   };
@@ -37,53 +35,33 @@ export class ProxyServer extends Server {
     );
     this.targets = [];
     this.attributes = attributes;
+
+    for (const server of this.attributes.servers) {
+      const target = new ProxyTarget(server);
+      this.targets.push(target);
+    }
+
+    // TODO: add controller
+    // if (this.attributes.useController) {
+    //   const controllerServer = createControllerServer({ proxy: this });
+    //   const controllerClient =
+    //     await SimpleClient.createAndConnectToServer(controllerServer);
+
+    //   this.targets.push(controllerClient);
+    // }
+
+    setupToolHandlers(this, this.targets);
+    setupPromptHandlers(this, this.targets);
+    setupResourceHandlers(this, this.targets);
+    setupResourceTemplateHandlers(this, this.targets);
   }
 
   public async connectTargets(
     { throwOnError } = { throwOnError: false },
   ): Promise<void> {
-    for (const server of this.attributes.servers) {
-      try {
-        const client = new SimpleClient(server.name);
-
-        if (server.transport.type === "http") {
-          await client.connectToHTTP(server.transport.url);
-        } else {
-          await client.connectToStdio(
-            server.transport.command,
-            server.transport.args ?? [],
-            {
-              ...(process.env as Record<string, string>),
-              ...(server.transport?.env || {}),
-            },
-          );
-        }
-
-        this.targets.push(client);
-      } catch (error) {
-        logger.error({
-          message: `failed to connect to target ${server.name}`,
-          error,
-        });
-        if (throwOnError) {
-          throw error;
-        }
-      }
+    for (const target of this.targets) {
+      await target.smartConnect({ throwOnError });
     }
-
-    if (this.attributes.useController) {
-      const controllerServer = createControllerServer({ proxy: this });
-      const controllerClient =
-        await SimpleClient.createAndConnectToServer(controllerServer);
-
-      this.targets.push(controllerClient);
-    }
-
-    // Setup handlers
-    setupToolHandlers(this, this.targets);
-    setupPromptHandlers(this, this.targets);
-    setupResourceHandlers(this, this.targets);
-    setupResourceTemplateHandlers(this, this.targets);
   }
 
   public toPlainObject() {
@@ -102,24 +80,24 @@ export class ProxyServer extends Server {
   }
 }
 
-function createControllerServer({ proxy }: { proxy: ProxyServer }) {
-  const server = new SimpleServer(`${proxy.id}-controller`);
-  server
-    .tool("list_targets")
-    .schema(z.object({}))
-    .description("List proxy targets")
-    .handle(({}) => {
-      return Promise.resolve({
-        status: "success",
-        data: [
-          {
-            name: "test",
-            description: "test",
-            url: "https://github.com/test",
-          },
-        ],
-      });
-    });
+// function createControllerServer({ proxy }: { proxy: ProxyServer }) {
+//   const server = new SimpleServer(`${proxy.id}-controller`);
+//   server
+//     .tool("list_targets")
+//     .schema(z.object({}))
+//     .description("List proxy targets")
+//     .handle(({}) => {
+//       return Promise.resolve({
+//         status: "success",
+//         data: [
+//           {
+//             name: "test",
+//             description: "test",
+//             url: "https://github.com/test",
+//           },
+//         ],
+//       });
+//     });
 
-  return server;
-}
+//   return server;
+// }

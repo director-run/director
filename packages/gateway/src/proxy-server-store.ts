@@ -121,6 +121,8 @@ export class ProxyServerStore {
     const proxy = this.get(proxyId);
 
     await proxy.addTarget(server, { throwOnError: true });
+    await this.db.updateProxy(proxyId, { servers: proxy.attributes.servers });
+
     return proxy;
   }
 
@@ -129,7 +131,10 @@ export class ProxyServerStore {
     serverName: string,
   ): Promise<ProxyServer> {
     const proxy = this.get(proxyId);
+
     await proxy.removeTarget(serverName);
+    await this.db.updateProxy(proxyId, { servers: proxy.attributes.servers });
+
     return proxy;
   }
 

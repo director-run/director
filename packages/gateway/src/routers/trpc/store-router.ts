@@ -13,7 +13,9 @@ const ProxyCreateSchema = z.object({
   servers: z.array(ProxyTargetSchema).optional(),
 });
 
-const ProxyUpdateSchema = ProxyCreateSchema.partial();
+const ProxyUpdateSchema = ProxyCreateSchema.omit({
+  servers: true,
+}).partial();
 
 export function createProxyStoreRouter({
   proxyStore,
@@ -57,7 +59,6 @@ export function createProxyStoreRouter({
           await proxyStore.update(input.proxyId, {
             name: input.attributes.name,
             description: input.attributes.description ?? undefined,
-            servers: input.attributes.servers,
           })
         ).toPlainObject();
       }),

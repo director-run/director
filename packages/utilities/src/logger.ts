@@ -4,7 +4,7 @@ import pinoPretty from "pino-pretty";
 import { isTest } from "./env";
 import { isAppError } from "./error";
 
-const LOG_LEVEL = process.env.LOG_LEVEL ?? (isTest() ? "trace" : "info");
+const LOG_LEVEL = process.env.LOG_LEVEL ?? (isTest() ? "silent" : "info");
 const LOG_PRETTY = process.env.LOG_PRETTY !== "false";
 const LOG_ERROR_STACK = process.env.LOG_ERROR_STACK === "true";
 

@@ -1,3 +1,4 @@
+import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import * as eventsource from "eventsource";
@@ -7,7 +8,7 @@ import { setupResourceTemplateHandlers } from "./handlers/resource-templates-han
 import { setupResourceHandlers } from "./handlers/resources-handler";
 import { setupToolHandlers } from "./handlers/tools-handler";
 import { ProxyTarget } from "./proxy-target";
-import type { ProxyServerAttributes } from "./types";
+import type { ProxyServerAttributes, ProxyTargetAttributes } from "./types";
 
 global.EventSource = eventsource.EventSource;
 
@@ -64,6 +65,42 @@ export class ProxyServer extends Server {
     }
   }
 
+  public async addTarget(
+    target: ProxyTargetAttributes,
+    attribs: { throwOnError: boolean } = { throwOnError: false },
+  ) {
+    const existingTarget = this.targets.find(
+      (t) => t.name.toLocaleLowerCase() === target.name.toLocaleLowerCase(),
+    );
+    if (existingTarget) {
+      throw new AppError(
+        ErrorCode.BAD_REQUEST,
+        `Target ${target.name} already exists`,
+      );
+    }
+    const newTarget = new ProxyTarget(target);
+    await newTarget.smartConnect({ throwOnError: attribs.throwOnError });
+    this.attributes.servers.push(target);
+    this.targets.push(newTarget);
+  }
+
+  public async removeTarget(targetName: string) {
+    const existingTarget = this.targets.find(
+      (t) => t.name.toLocaleLowerCase() === targetName.toLocaleLowerCase(),
+    );
+    if (!existingTarget) {
+      throw new AppError(
+        ErrorCode.BAD_REQUEST,
+        `Target ${targetName} does not exists`,
+      );
+    }
+    await existingTarget.close();
+    this.attributes.servers = this.attributes.servers.filter(
+      (t) => t.name.toLocaleLowerCase() !== targetName.toLocaleLowerCase(),
+    );
+    this.targets = this.targets.filter((t) => t.name !== targetName);
+  }
+
   public toPlainObject() {
     return this.attributes;
   }
@@ -74,7 +111,6 @@ export class ProxyServer extends Server {
 
   async close(): Promise<void> {
     logger.info({ message: `shutting down`, proxyId: this.id });
-
     await Promise.all(this.targets.map((target) => target.close()));
     await super.close();
   }

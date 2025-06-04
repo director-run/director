@@ -14,7 +14,7 @@ export class ProxyTarget extends SimpleClient {
   public readonly status: ProxyTargetStatus = "disconnected";
 
   constructor(attributes: ProxyTargetAttributes) {
-    super(attributes.name);
+    super(attributes.name.toLocaleLowerCase());
     this.attributes = attributes;
   }
 

@@ -120,7 +120,7 @@ export class ProxyServerStore {
   ): Promise<ProxyServer> {
     const proxy = this.get(proxyId);
 
-    await proxy.addTarget(server, { throwOnError: false });
+    await proxy.addTarget(server, { throwOnError: true });
     return proxy;
   }
 

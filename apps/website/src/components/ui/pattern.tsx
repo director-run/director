@@ -35,14 +35,14 @@ function PatternDefs({
               ? typeof patternOffset === "number"
                 ? patternOffset
                 : patternOffset.x
-              : 1
+              : 0
           }
           y={
             patternOffset
               ? typeof patternOffset === "number"
                 ? patternOffset
                 : patternOffset.y
-              : 1
+              : 0
           }
           width={typeof gap === "number" ? gap : gap.x}
           height={typeof gap === "number" ? gap : gap.y}

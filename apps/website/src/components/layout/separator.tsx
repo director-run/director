@@ -12,7 +12,7 @@ export function Separator({ pattern, className, ...props }: SeparatorProps) {
   return (
     <SeparatorRoot
       data-slot="separator"
-      className={cn("relative h-4 w-full text-fg/15", className)}
+      className={cn("relative h-4 w-full text-accent", className)}
       {...props}
     >
       <Pattern className="absolute inset-0 text-current" {...pattern} />

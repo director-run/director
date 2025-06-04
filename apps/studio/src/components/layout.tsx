@@ -102,7 +102,7 @@ export function SidebarContent() {
           ? new Array(3).fill(0).map((_, index) => (
               <MenuItem key={`loading-${index}`} className="bg-accent-subtle">
                 <MenuItemLabel className="opacity-50">
-                  <ScrambleText scrambleSpeed={100} text="Loading" />
+                  <ScrambleText text="Loading" />
                 </MenuItemLabel>
               </MenuItem>
             ))

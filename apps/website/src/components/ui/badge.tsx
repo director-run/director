@@ -40,6 +40,7 @@ function Badge({ className, variant, size, asChild, ...props }: BadgeProps) {
   const Comp = asChild ? Slot : "div";
   return (
     <Comp
+      data-slot="badge"
       className={cn(badgeVariants({ variant, size }), className)}
       {...props}
     />
@@ -58,6 +59,7 @@ function BadgeLabel({
 }: BadgeLabelProps) {
   return (
     <span
+      data-slot="badge-label"
       className={cn("px-1", uppercase && "uppercase", className)}
       {...props}
     >
@@ -81,6 +83,7 @@ function BadgeIcon({
 }: BadgeIconProps) {
   return (
     <Slot
+      data-slot="badge-icon"
       className={cn("size-5 shrink-0", className)}
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       {...({ weight, color } as any)}
@@ -93,6 +96,7 @@ function BadgeIcon({
 function BadgeGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
+      data-slot="badge-group"
       className={cn("flex flex-row flex-wrap gap-1", className)}
       {...props}
     />

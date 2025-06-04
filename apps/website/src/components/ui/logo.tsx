@@ -5,6 +5,7 @@ import { cn } from "@/lib/cn";
 export function Logo({ className, ...props }: ComponentProps<"svg">) {
   return (
     <svg
+      data-slot="logo"
       viewBox="0 0 240 240"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

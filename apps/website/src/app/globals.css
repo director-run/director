@@ -19,7 +19,7 @@
   --color-surface: oklch(99.45% 0.002 67.80);
 
   /* Accent */
-  --color-accent: oklch(90.98% 0.007 53.44);
+  --color-accent: oklch(0.8767 0.0086 56.3);
   --color-accent-subtle: oklch(93.88% 0.004 56.37);
   
   /* Success */
@@ -31,8 +31,8 @@
   --color-destructive-fg: oklch(46.45% 0.178 29.65);
 
   /* Primary */
-  --color-primary: oklch(0.673 0.097 155.19);
-  --color-primary-fg: oklch(99.45% 0.002 67.80);
+  --color-primary: oklch(0.7505 0.0932 155.67);
+  --color-primary-fg: oklch(32.10% 0.010 61.13);
 
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
@@ -71,6 +71,7 @@
 @layer base {
   * {
     @apply box-border border-accent selection:bg-fg/95 selection:text-surface;
+    @apply outline-none ring-2 ring-transparent ring-offset-2 ring-offset-transparent focus-visible:ring-primary focus-visible:ring-offset-bg focus-visible:relative focus-visible:z-10;
   }
 
   body {

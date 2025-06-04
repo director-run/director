@@ -15,7 +15,7 @@ export const ScrambleText = ({
   text,
   scrambleSpeed = 250,
   useOriginalCharsOnly = false,
-  characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()_+",
+  characters = "░▒▓█",
   className,
   ...props
 }: ScrambleTextProps) => {
@@ -28,7 +28,7 @@ export const ScrambleText = ({
       if (useOriginalCharsOnly) {
         const positions = text.split("").map((char) => ({
           char,
-          isSpace: char === " ",
+          isSpace: char === "░",
         }));
 
         const nonSpaceChars = positions
@@ -48,7 +48,7 @@ export const ScrambleText = ({
         return positions
           .map((p) => {
             if (p.isSpace) {
-              return " ";
+              return "░";
             }
             return nonSpaceChars[charIndex++];
           })
@@ -58,7 +58,7 @@ export const ScrambleText = ({
           .split("")
           .map((char) => {
             if (char === " ") {
-              return " ";
+              return "░";
             }
             return characters[Math.floor(Math.random() * characters.length)];
           })

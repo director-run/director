@@ -1,6 +1,9 @@
-import { ThemeProvider } from "@/components/theme-provider";
 import type { Metadata } from "next";
 import { Inter, Roboto_Mono } from "next/font/google";
+
+import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
+import { siteConfig } from "@/site-config";
 
 import "./globals.css";
 
@@ -16,7 +19,7 @@ const mono = Roboto_Mono({
 });
 
 export const metadata: Metadata = {
-  title: { absolute: "director.run", template: "%s | director.run" },
+  ...siteConfig.metadata,
   robots: {
     index: false,
     follow: false,
@@ -38,6 +41,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <Toaster position="top-center" />
         </ThemeProvider>
       </body>
     </html>

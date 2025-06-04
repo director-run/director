@@ -11,6 +11,7 @@ export function Container({ asChild, className, ...props }: ContainerProps) {
 
   return (
     <Component
+      data-slot="container"
       className={cn(
         "mx-auto w-full max-w-6xl px-5 md:px-12 lg:px-20",
         className,

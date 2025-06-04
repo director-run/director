@@ -4,6 +4,7 @@ import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { spinnerWrap } from "@director.run/utilities/cli/loader";
 import { confirm } from "@inquirer/prompts";
 import { registryClient } from "../client";
+import { env } from "../env";
 import { printReadme, printRegistryEntry } from "../views/registry-entry";
 import { listEntries } from "../views/registry-list";
 
@@ -64,89 +65,90 @@ export function createRegistryCommands() {
       }),
     );
 
-  command
-    .debugCommand("purge")
-    .description("Delete all entries from the database")
-    .action(
-      actionWithErrorHandler(async () => {
-        const answer = await confirm({
-          message: "Are you sure you want to purge the registry?",
-          default: false,
-        });
+  if (env.REGISTRY_API_KEY) {
+    command
+      .command("purge")
+      .description("Delete all entries from the database")
+      .action(
+        actionWithErrorHandler(async () => {
+          const answer = await confirm({
+            message: "Are you sure you want to purge the registry?",
+            default: false,
+          });
 
-        if (!answer) {
-          return;
-        }
-        await spinnerWrap(() => registryClient.entries.purge.mutate({}))
-          .start("purging registry...")
-          .succeed("Registry successfully purged")
-          .run();
-      }),
-    );
+          if (!answer) {
+            return;
+          }
+          await spinnerWrap(() => registryClient.entries.purge.mutate({}))
+            .start("purging registry...")
+            .succeed("Registry successfully purged")
+            .run();
+        }),
+      );
 
-  command
-    .debugCommand("populate")
-    .description("Seed the registry entries")
-    .action(
-      actionWithErrorHandler(async () => {
-        const answer = await confirm({
-          message: "Are you sure you want to re-populate the registry?",
-          default: false,
-        });
+    command
+      .command("populate")
+      .description("Seed the registry entries")
+      .action(
+        actionWithErrorHandler(async () => {
+          const answer = await confirm({
+            message: "Are you sure you want to re-populate the registry?",
+            default: false,
+          });
 
-        if (!answer) {
-          return;
-        }
-        await spinnerWrap(() => registryClient.entries.populate.mutate({}))
-          .start("importing entries...")
-          .succeed("Entries successfully imported")
-          .run();
-      }),
-    );
+          if (!answer) {
+            return;
+          }
+          await spinnerWrap(() => registryClient.entries.populate.mutate({}))
+            .start("importing entries...")
+            .succeed("Entries successfully imported")
+            .run();
+        }),
+      );
 
-  command
-    .debugCommand("enrich")
-    .description("Enrich entries")
-    .action(
-      actionWithErrorHandler(async () => {
-        await spinnerWrap(() => registryClient.entries.enrich.mutate({}))
-          .start("enriching entries...")
-          .succeed("entries successfully enriched")
-          .run();
-      }),
-    );
+    command
+      .command("enrich")
+      .description("Enrich entries")
+      .action(
+        actionWithErrorHandler(async () => {
+          await spinnerWrap(() => registryClient.entries.enrich.mutate({}))
+            .start("enriching entries...")
+            .succeed("entries successfully enriched")
+            .run();
+        }),
+      );
 
-  command
-    .debugCommand("enrich-tools")
-    .description("Enrich entry tools")
-    .action(
-      actionWithErrorHandler(async () => {
-        const answer = await confirm({
-          message: "insecure, are you sure you want to do this?",
-          default: false,
-        });
+    command
+      .command("enrich-tools")
+      .description("Enrich entry tools")
+      .action(
+        actionWithErrorHandler(async () => {
+          const answer = await confirm({
+            message: "insecure, are you sure you want to do this?",
+            default: false,
+          });
 
-        if (!answer) {
-          return;
-        }
-        await enrichEntryTools(registryClient);
-      }),
-    );
+          if (!answer) {
+            return;
+          }
+          await enrichEntryTools(registryClient);
+        }),
+      );
 
-  command
-    .debugCommand("stats")
-    .description("Get high level stats about the registry")
-    .action(
-      actionWithErrorHandler(async () => {
-        const stats = await spinnerWrap(() =>
-          registryClient.entries.stats.query({}),
-        )
-          .start("getting stats...")
-          .succeed("Stats fetched.")
-          .run();
-        console.log(stats);
-      }),
-    );
-
+    command
+      .command("stats")
+      .description("Get high level stats about the registry")
+      .action(
+        actionWithErrorHandler(async () => {
+          const stats = await spinnerWrap(() =>
+            registryClient.entries.stats.query({}),
+          )
+            .start("getting stats...")
+            .succeed("Stats fetched.")
+            .run();
+          console.log(stats);
+        }),
+      );
+  }
   return command;
 }

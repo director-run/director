@@ -141,7 +141,10 @@ export class ProxyServerStore {
     }>,
   ) {
     const proxy = this.get(proxyId);
+
     await proxy.update(attributes);
+    await this.db.updateProxy(proxyId, attributes);
+
     return proxy;
   }
 }

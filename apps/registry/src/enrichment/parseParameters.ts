@@ -14,7 +14,7 @@ function parseArgumentParameters(args: string[]): Array<EntryParameter> {
 
   for (const arg of args) {
     parameters.push(
-      ...extractUppercaseWithUnderscores(arg).map((name) => ({
+      ...extractParameterPlaceholders(arg).map((name) => ({
         name,
         description: "",
         scope: "args" as const,
@@ -32,34 +32,38 @@ function parseEnvParameters(
   const parameters: Array<EntryParameter> = [];
 
   for (const [key, value] of Object.entries(env)) {
-    parameters.push({
-      name: key,
-      description: value,
-      scope: "env" as const,
-      type: "string" as const,
-      required: true,
-    });
+    // Extract parameters from both the key and value
+    const valueParams = extractParameterPlaceholders(value);
+
+    // Add parameters from the value
+    parameters.push(
+      ...valueParams.map((name) => ({
+        name,
+        description: "",
+        scope: "env" as const,
+        type: "string" as const,
+        required: true as const,
+      })),
+    );
   }
   return parameters;
 }
 
 /**
- * Extracts all substrings containing only uppercase letters and underscores from a string
+ * Extracts all parameter placeholders enclosed in < and > symbols from a string
  * @param input The input string to search through
- * @returns An array of extracted uppercase-only substrings
+ * @returns An array of extracted parameter names
  */
-function extractUppercaseWithUnderscores(input: string): string[] {
-  // Use regular expression to find all matches of uppercase letters and underscores
-  const matches = input.match(/[A-Z_]+/g);
+function extractParameterPlaceholders(input: string): string[] {
+  // Use regular expression to find all matches between < and >
+  const matches = input.match(/<([^>]+)>/g);
 
-  // Return matches if found, otherwise return empty array
-  // Filter for matches that are uppercase+underscore only and longer than 3 chars
+  if (!matches) {
+    return [];
+  }
 
-  const filtered = matches
-    ?.filter((match) => /^[A-Z_]+$/.test(match))
-    .filter((match) => match.length > 3);
-
-  return filtered ?? [];
+  // Remove the < and > symbols and return the parameter names
+  return matches.map((match) => match.slice(1, -1));
 }
 
 // Example usage:

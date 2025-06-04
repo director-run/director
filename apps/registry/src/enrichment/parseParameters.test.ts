@@ -4,10 +4,10 @@ import { makeStdioTransport, makeTestEntry } from "../test/fixtures/entries";
 import { parseParameters } from "./parseParameters";
 
 describe("parseParameters", () => {
-  it.skip("should de-duplicate parameters", () => {
+  it("should de-duplicate parameters", () => {
     const entry = makeTestEntry({
       transport: makeStdioTransport({
-        env: { YOUR_ACCESS_TOKEN_HERE: "<YOUR_TOKEN>" },
+        env: { YOUR_ACCESS_TOKEN_HERE: "<duplicate-param>" },
         args: [
           "-y",
           "--package",
@@ -16,9 +16,7 @@ describe("parseParameters", () => {
           "mcp",
           "start",
           "--access-token",
-          "YOUR_ACCESS_TOKEN_HERE",
-          "--access-token-2",
-          "YOUR_ACCESS_TOKEN_HERE",
+          "<duplicate-param>",
         ],
       }),
     });
@@ -26,9 +24,9 @@ describe("parseParameters", () => {
     const parameters = parseParameters(entry as EntryGetParams);
     expect(parameters.length).toEqual(1);
     expect(parameters).toContainEqual({
-      name: "YOUR_ACCESS_TOKEN_HERE",
-      description: "<YOUR_TOKEN>",
-      scope: "args",
+      name: "your-token",
+      description: "",
+      scope: "env",
       type: "string",
       required: true,
     });
@@ -37,7 +35,7 @@ describe("parseParameters", () => {
   it("should parse parameters from arguments correctly", () => {
     const entry1 = makeTestEntry({
       transport: makeStdioTransport({
-        env: { GITHUB_PERSONAL_ACCESS_TOKEN: "<YOUR_TOKEN>" },
+        env: { GITHUB_PERSONAL_ACCESS_TOKEN: "<your-token>" },
         args: [
           "-y",
           "--package",
@@ -46,7 +44,7 @@ describe("parseParameters", () => {
           "mcp",
           "start",
           "--access-token",
-          "YOUR_ACCESS_TOKEN_HERE",
+          "<some-other-token>",
         ],
         type: "stdio",
         command: "docker",
@@ -55,12 +53,12 @@ describe("parseParameters", () => {
 
     const entry2 = makeTestEntry({
       transport: makeStdioTransport({
-        env: { GITHUB_PERSONAL_ACCESS_TOKEN: "<YOUR_TOKEN>" },
+        env: { GITHUB_PERSONAL_ACCESS_TOKEN: "<your-token>" },
         args: [
           "-y",
           "@paddle/paddle-mcp",
-          "--api-key=PADDLE_API_KEY",
-          "--environment=(sandbox|production)",
+          "--api-key=<paddle-api-key>",
+          "--environment=<environment>",
         ],
         type: "stdio",
         command: "docker",
@@ -69,32 +67,39 @@ describe("parseParameters", () => {
 
     const parameters1 = parseParameters(entry1 as EntryGetParams);
     const parameters2 = parseParameters(entry2 as EntryGetParams);
-    expect(parameters2.length).toEqual(2);
+    expect(parameters1.length).toEqual(2);
     expect(parameters1).toContainEqual({
-      name: "YOUR_ACCESS_TOKEN_HERE",
+      name: "some-other-token",
       description: "",
       scope: "args",
       type: "string",
       required: true,
     });
     expect(parameters1).toContainEqual({
-      name: "GITHUB_PERSONAL_ACCESS_TOKEN",
-      description: "<YOUR_TOKEN>",
+      name: "your-token",
+      description: "",
       scope: "env",
       type: "string",
       required: true,
     });
-    expect(parameters2.length).toEqual(2);
+    expect(parameters2.length).toEqual(3);
     expect(parameters2).toContainEqual({
-      name: "PADDLE_API_KEY",
+      name: "paddle-api-key",
       description: "",
       scope: "args",
       type: "string",
       required: true,
     });
     expect(parameters2).toContainEqual({
-      name: "GITHUB_PERSONAL_ACCESS_TOKEN",
-      description: "<YOUR_TOKEN>",
+      name: "environment",
+      description: "",
+      scope: "args",
+      type: "string",
+      required: true,
+    });
+    expect(parameters2).toContainEqual({
+      name: "your-token",
+      description: "",
       scope: "env",
       type: "string",
       required: true,

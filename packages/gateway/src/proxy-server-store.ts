@@ -138,21 +138,10 @@ export class ProxyServerStore {
     attributes: Partial<{
       name: string;
       description: string;
-      servers: ProxyTargetAttributes[];
     }>,
   ) {
     const proxy = this.get(proxyId);
-    await proxy.close();
-    const updatedProxyEntry = await this.db.updateProxy(proxyId, attributes);
-    const updatedProxy = new ProxyServer({
-      id: proxyId,
-      name: updatedProxyEntry.name,
-      description: updatedProxyEntry.description ?? undefined,
-      servers: updatedProxyEntry.servers ?? [],
-    });
-    await updatedProxy.connectTargets();
-    this.proxyServers.set(proxyId, updatedProxy);
-    logger.info({ message: `Updated proxy`, proxyId });
-    return updatedProxy;
+    await proxy.update(attributes);
+    return proxy;
   }
 }

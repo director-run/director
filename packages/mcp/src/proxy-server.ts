@@ -101,6 +101,18 @@ export class ProxyServer extends Server {
     this.targets = this.targets.filter((t) => t.name !== targetName);
   }
 
+  public update(
+    attributes: Partial<Pick<ProxyServerAttributes, "name" | "description">>,
+  ) {
+    const { name, description } = attributes;
+    if (name) {
+      this.attributes.name = name;
+    }
+    if (description && description !== this.attributes.description) {
+      this.attributes.description = description;
+    }
+  }
+
   public toPlainObject() {
     return this.attributes;
   }

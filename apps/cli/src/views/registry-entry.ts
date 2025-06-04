@@ -1,4 +1,8 @@
-import type { EntryGetParams } from "@director.run/registry/db/schema";
+import type {
+  EntryGetParams,
+  EntryParameter,
+} from "@director.run/registry/db/schema";
+import { makeTable } from "@director.run/utilities/cli/index";
 import chalk from "chalk";
 
 export function printRegistryEntry(entry: EntryGetParams) {
@@ -15,11 +19,7 @@ ${chalk.white.underline("enriched:")} ${entry.isEnriched ? "yes" : "no"}
 
 ${chalk.white.bold("TRANSPORT")}
 ${JSON.stringify(entry.transport, null, 2)}
-
-
-${chalk.white.bold("PARAMETERS")}
-${JSON.stringify(entry.parameters, null, 2)}
-
+${printParameters(entry.parameters)}
 ${printTool(entry)}
 `);
 }
@@ -29,6 +29,7 @@ const printTool = (entry: EntryGetParams) => {
     return "";
   } else {
     const lines = [];
+    lines.push("");
     lines.push(chalk.white.bold("TOOLS"));
 
     entry.tools.forEach((tool) => {
@@ -49,3 +50,19 @@ const makeClickableUrl = (url: string) => {
 export const printReadme = (entry: EntryGetParams) => {
   console.log(entry.readme);
 };
+
+function printParameters(parameters: EntryParameter[] | null) {
+  if (!parameters || parameters.length === 0) {
+    return "";
+  }
+  const table = makeTable(["Name", "Type", "Required", "Description"]);
+  parameters.forEach((parameter) => {
+    table.push([
+      parameter.name,
+      parameter.type,
+      parameter.required,
+      parameter.description,
+    ]);
+  });
+  return ["", chalk.white.bold("PARAMETERS"), table.toString()].join("\n");
+}

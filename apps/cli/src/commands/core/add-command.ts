@@ -53,7 +53,7 @@ export function registerAddCommand(program: DirectorCommand) {
             await addServerFromUrl(proxyId, options.url, options.name);
           } else {
             console.warn(
-              "No entry name or url provided. If you want to add a stdio server, update the director config file directly and restart the gateway",
+              "No entry name or url provided. You must speciy --entry or --url and --name, alternatively update the config file directly and restart the gateway:",
             );
             console.log();
             console.log(

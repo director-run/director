@@ -11,6 +11,7 @@ export type ProxyTargetTransport = ProxyTransport;
 
 export class ProxyTarget extends SimpleClient {
   private attributes: ProxyTargetAttributes;
+  // TODO: this should be a computed property
   public readonly status: ProxyTargetStatus = "disconnected";
 
   constructor(attributes: ProxyTargetAttributes) {

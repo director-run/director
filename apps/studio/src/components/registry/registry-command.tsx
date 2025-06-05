@@ -13,9 +13,12 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { DialogTitle } from "@/components/ui/dialog";
+import {
+  EmptyStateDescription,
+  EmptyStateTitle,
+} from "@/components/ui/empty-state";
 import { trpc } from "@/trpc/client";
 import { useRouter } from "next/navigation";
-import { EmptyStateDescription, EmptyStateTitle } from "../ui/empty-state";
 
 interface RegistryCommandProps {
   serverId: string;

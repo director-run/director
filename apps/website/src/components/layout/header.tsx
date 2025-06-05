@@ -29,7 +29,7 @@ export function Header({ className }: { className?: string }) {
         </div>
 
         <nav className="group flex flex-row items-center gap-x-5 leading-5">
-          <div className="group flex flex-row items-center gap-x-0 md:transition-all md:duration-300 md:ease-in-out md:*:group-hover:opacity-20 md:*:group-focus-within:opacity-20 md:*:group-focus-within:focus-visible:opacity-100 md:*:hover:opacity-100">
+          <div className="flex flex-row items-center gap-x-0 md:transition-all md:duration-300 md:ease-in-out md:*:group-hover:opacity-20 md:*:group-focus-within:opacity-20 md:*:group-focus-within:focus-visible:opacity-100 md:*:hover:opacity-100">
             {siteConfig.navigation.map((it) => {
               const key = `header-${it.label}`;
               return (

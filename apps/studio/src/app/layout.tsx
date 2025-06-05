@@ -7,7 +7,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { TRPCProvider } from "@/trpc/client";
 
 import "./globals.css";
-import { Layout } from "@/components/layout";
 import { Toaster } from "@/components/ui/toast";
 
 const sans = Inter({
@@ -43,9 +42,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <TRPCProvider>
-            <NuqsAdapter>
-              <Layout>{children}</Layout>
-            </NuqsAdapter>
+            <NuqsAdapter>{children}</NuqsAdapter>
             <ConnectionStatusDialog />
             <Toaster />
           </TRPCProvider>

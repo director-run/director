@@ -1,5 +1,9 @@
 "use client";
 
+import { EntryGetParams } from "@director.run/registry/db/schema";
+import { ComponentProps } from "react";
+import { z } from "zod";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,31 +16,25 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
+import { HiddenField } from "@/components/ui/form/hidden-field";
 import { InputField } from "@/components/ui/form/input-field";
-import { SelectNativeField } from "@/components/ui/form/select-native-field";
 import { toast } from "@/components/ui/toast";
-import { useRegistryQuery } from "@/hooks/use-registry-query";
 import { useZodForm } from "@/hooks/use-zod-form";
+import { cn } from "@/lib/cn";
 import { trpc } from "@/trpc/client";
-import type { ProxyAttributes } from "@director.run/gateway/db/schema";
-import { EntryGetParams } from "@director.run/registry/db/schema";
-import { useRouter } from "next/navigation";
-import { ComponentProps } from "react";
-import { z } from "zod";
 
-interface RegistryInstallDialogProps extends ComponentProps<typeof Dialog> {
+interface GetStartedInstallServerDialogProps
+  extends ComponentProps<typeof Dialog> {
   mcp: EntryGetParams;
-  proxies: ProxyAttributes[];
+  proxyId: string;
 }
 
-export function RegistryInstallDialog({
+export function GetStartedInstallServerDialog({
   mcp,
-  proxies,
+  proxyId,
   children,
   ...props
-}: RegistryInstallDialogProps) {
-  const router = useRouter();
-  const { serverId } = useRegistryQuery();
+}: GetStartedInstallServerDialogProps) {
   const parameters = (mcp.parameters ?? []).filter(
     (parameter, index, array) =>
       array.findIndex((p) => p.name === parameter.name) === index,
@@ -46,12 +44,11 @@ export function RegistryInstallDialog({
 
   const installMutation = trpc.registry.addServerFromRegistry.useMutation({
     onSuccess: (data) => {
-      utils.store.get.invalidate({ proxyId: data.id });
+      utils.store.getAll.invalidate();
       toast({
         title: "Proxy installed",
         description: "This proxy was successfully installed.",
       });
-      router.push(`/${data.id}`);
     },
   });
 
@@ -71,7 +68,7 @@ export function RegistryInstallDialog({
   const form = useZodForm({
     schema,
     defaultValues: {
-      proxyId: serverId ?? proxies[0]?.id ?? "",
+      proxyId: proxyId,
       parameters: parameters.reduce(
         (acc, param) => {
           acc[param.name] = "";
@@ -88,14 +85,15 @@ export function RegistryInstallDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Install {mcp.title}</DialogTitle>
-          <DialogDescription>
-            Add this MCP server to one of your proxies.
-          </DialogDescription>
+          <DialogDescription>{mcp.description}</DialogDescription>
         </DialogHeader>
 
         <Form
           form={form}
-          className="gap-y-0 border-t-[0.5px]"
+          className={cn(
+            "gap-y-0 border-t-[0.5px]",
+            parameters.length === 0 && "border-t-0",
+          )}
           onSubmit={(values) => {
             installMutation.mutate({
               entryName: mcp.name,
@@ -104,24 +102,14 @@ export function RegistryInstallDialog({
             });
           }}
         >
-          <div className="flex flex-col gap-y-5 p-5">
-            <SelectNativeField name="proxyId" label="Proxy">
-              {proxies.map((it) => {
-                const alreadyInstalled = it.servers.find(
-                  (it) => it.name === mcp.name,
-                );
+          <div
+            className={cn(
+              "flex flex-col gap-y-5 p-5",
+              parameters.length === 0 && "p-0",
+            )}
+          >
+            <HiddenField name={proxyId} />
 
-                return (
-                  <option
-                    key={it.id}
-                    value={it.id}
-                    disabled={!!alreadyInstalled}
-                  >
-                    {it.name}
-                  </option>
-                );
-              })}
-            </SelectNativeField>
             {parameters.map((param) => (
               <InputField
                 key={`${param.name}/${param.scope}`}
@@ -136,7 +124,7 @@ export function RegistryInstallDialog({
               <Button variant="secondary">Cancel</Button>
             </DialogClose>
             <Button type="submit" disabled={installMutation.isPending}>
-              {installMutation.isPending ? "Installing..." : "Install"}
+              {installMutation.isPending ? "Adding..." : "Add to proxy"}
             </Button>
           </DialogFooter>
         </Form>

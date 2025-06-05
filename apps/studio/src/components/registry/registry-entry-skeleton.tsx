@@ -6,6 +6,8 @@ import {
   LayoutViewHeader,
 } from "@/components/layout";
 import { ListOfLinks } from "@/components/list-of-links";
+import { Badge, BadgeIcon, BadgeLabel } from "@/components/ui/badge";
+import { BadgeGroup } from "@/components/ui/badge";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -25,8 +27,6 @@ import {
 } from "@/components/ui/section";
 import { LinkIcon, SpinnerGapIcon } from "@phosphor-icons/react";
 import { ReactNode } from "react";
-import { Badge, BadgeIcon, BadgeLabel } from "../ui/badge";
-import { BadgeGroup } from "../ui/badge";
 
 export function RegistryEntrySkeleton({ children }: { children?: ReactNode }) {
   return (

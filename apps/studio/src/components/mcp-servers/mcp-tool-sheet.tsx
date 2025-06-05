@@ -2,11 +2,20 @@
 
 import { Badge } from "@/components/ui/badge";
 import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import {
   EmptyState,
   EmptyStateDescription,
   EmptyStateTitle,
 } from "@/components/ui/empty-state";
 import { JSONSchema, type JsonSchema } from "@/components/ui/json-schema";
+import { Markdown } from "@/components/ui/markdown";
 import {
   Section,
   SectionHeader,
@@ -28,15 +37,6 @@ import { proxyQuerySerializer, useProxyQuery } from "@/hooks/use-proxy-query";
 import { ProxyAttributes } from "@director.run/gateway/db/schema";
 import { ProxyTargetAttributes } from "@director.run/mcp/types";
 import Link from "next/link";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "../ui/breadcrumb";
-import { Markdown } from "../ui/markdown";
 
 function SheetInner({
   toolId,

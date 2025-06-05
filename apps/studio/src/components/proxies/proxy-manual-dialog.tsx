@@ -12,10 +12,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { SelectNative } from "@/components/ui/select-native";
 import { toast } from "@/components/ui/toast";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
-import { Input } from "../ui/input";
-import { SelectNative } from "../ui/select-native";
 
 type TransportType = "http" | "sse" | "stdio";
 

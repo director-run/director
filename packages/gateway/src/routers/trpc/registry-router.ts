@@ -1,4 +1,3 @@
-import type { ProxyTransport } from "@director.run/mcp/types";
 import { createRegistryClient } from "@director.run/registry/client";
 import type { EntryParameter } from "@director.run/registry/db/schema";
 import { getLogger } from "@director.run/utilities/logger";
@@ -41,10 +40,6 @@ export function createRegistryRouter({
       .input(z.object({ name: z.string() }))
       .query(({ input }) => registryClient.entries.getEntryByName.query(input)),
 
-    /**
-     * @deprecated use getTransportForEntry instead
-     * see the `director add` command for an example of how to use getTransportForEntry
-     */
     addServerFromRegistry: t.procedure
       .input(
         z.object({
@@ -54,50 +49,15 @@ export function createRegistryRouter({
         }),
       )
       .mutation(async ({ input }) => {
-        logger.warn(
-          "addServerFromRegistry is deprecated, use getTransportForEntry instead",
-        );
         const entry = await registryClient.entries.getEntryByName.query({
           name: input.entryName,
         });
 
-        let transport: ProxyTransport;
-
-        if (entry.transport.type === "stdio") {
-          const env: Record<string, string> = {};
-          let args: string[] = [...entry.transport.args];
-          // only stdio transports have parameters
-          entry.parameters?.forEach((parameter) => {
-            const inputValue = input.parameters?.[parameter.name];
-            const schema = parameterToZodSchema(parameter);
-
-            schema.parse(inputValue);
-
-            if (!inputValue) {
-              // Not a required parameter, so we can skip it
-              return;
-            }
-
-            // Substitute the parameter into the transport command
-            if (parameter.scope === "env") {
-              env[parameter.name] = inputValue;
-            } else if (parameter.scope === "args") {
-              args = args.map((arg) => arg.replace(parameter.name, inputValue));
-            }
+        const transport =
+          await registryClient.entries.getTransportForEntry.query({
+            entryName: entry.name,
+            parameters: input.parameters,
           });
-
-          transport = {
-            env,
-            args,
-            type: "stdio",
-            command: entry.transport.command,
-          };
-        } else {
-          transport = {
-            type: "http",
-            url: entry.transport.url,
-          };
-        }
 
         const newProxy = await proxyStore.addServer(input.proxyId, {
           name: entry.name,

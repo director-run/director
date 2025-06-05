@@ -7,15 +7,15 @@ import {
   BadgeIcon,
   BadgeLabel,
 } from "@/components/ui/badge";
-import { assertUnreachable } from "@/lib/assert-unreachable";
-import { GlobeIcon, TerminalIcon } from "@phosphor-icons/react";
 import {
   List,
   ListItem,
   ListItemDescription,
   ListItemDetails,
   ListItemTitle,
-} from "../ui/list";
+} from "@/components/ui/list";
+import { assertUnreachable } from "@/lib/assert-unreachable";
+import { GlobeIcon, TerminalIcon } from "@phosphor-icons/react";
 
 interface McpDescriptionListProps extends ComponentProps<typeof List> {
   transport: HTTPTransport | STDIOTransport;

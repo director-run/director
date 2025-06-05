@@ -19,6 +19,7 @@ const logger = getLogger("restartApp");
 export enum App {
   CLAUDE = "Claude",
   CURSOR = "Cursor",
+  VSCODE = "Visual Studio Code",
 }
 
 export async function restartApp(app: App): Promise<void> {
@@ -40,13 +41,30 @@ export async function openFileInCode(filePath: string): Promise<void> {
 
 /**
  * Checks if a command/application is installed by using the 'which' command
- * @param commandName - The name of the command to check
+ * @param app - The app to check for installation
  * @returns boolean - true if the command is installed, false otherwise
  */
 export function isAppInstalled(app: App): boolean {
   try {
     const isWindows = process.platform === "win32";
-    const command = isWindows ? `where ${app}` : `which ${app}`;
+
+    // Map apps to their command names
+    let commandName: string;
+    switch (app) {
+      case App.CLAUDE:
+        commandName = "claude";
+        break;
+      case App.CURSOR:
+        commandName = "cursor";
+        break;
+      case App.VSCODE:
+        commandName = "code";
+        break;
+      default:
+        commandName = app;
+    }
+
+    const command = isWindows ? `where ${commandName}` : `which ${commandName}`;
 
     execSync(command, {
       stdio: "pipe",

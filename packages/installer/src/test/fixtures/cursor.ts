@@ -18,7 +18,3 @@ export function createCursorServerEntry(params?: {name?: string, url?: string}):
     url: faker.internet.url(),
   };
 }
-
-
-
-

@@ -117,12 +117,15 @@ export function registerCoreCommands(program: DirectorCommand): void {
       makeOption({
         flags: "-t,--target <target>",
         description: "target client",
-        choices: ["claude", "cursor"],
+        choices: ["claude", "cursor", "vscode"],
       }),
     )
     .action(
       actionWithErrorHandler(
-        async (proxyId: string, options: { target: "claude" | "cursor" }) => {
+        async (
+          proxyId: string,
+          options: { target: "claude" | "cursor" | "vscode" },
+        ) => {
           if (options.target) {
             const result = await gatewayClient.installer.byProxy.install.mutate(
               {

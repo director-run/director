@@ -3,6 +3,7 @@ import {
   AppWindowIcon,
   DoorOpenIcon,
   FileTextIcon,
+  ListMagnifyingGlassIcon,
   LockIcon,
   MagnifyingGlassIcon,
   PlugIcon,
@@ -137,14 +138,21 @@ export const siteConfig: SiteConfig = {
       description:
         "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
       icon: DoorOpenIcon,
-      href: "#todo",
+      href: "https://github.com/theworkingcompany/director/tree/main/packages/gateway/README.md",
     },
     {
       title: "Studio",
       description:
         "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
       icon: AppWindowIcon,
-      href: "#todo",
+      href: "https://github.com/theworkingcompany/director/blob/main/apps/studio/README.md",
+    },
+    {
+      title: "Registry",
+      description:
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
+      icon: ListMagnifyingGlassIcon,
+      href: "https://github.com/theworkingcompany/director/blob/main/apps/registry/README.md",
     },
   ],
   members: [

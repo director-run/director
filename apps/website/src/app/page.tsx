@@ -189,7 +189,7 @@ export default function IndexPage() {
               </SectionDescription>
             </SectionHeader>
 
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-2 md:gap-4">
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:gap-4">
               {siteConfig.repos.map((it) => (
                 <PatternCard
                   key={it.title}

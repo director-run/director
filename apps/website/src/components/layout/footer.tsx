@@ -1,6 +1,5 @@
 import { Container } from "@/components/layout/container";
 import { SocialIcon } from "@/components/social-icon";
-import {} from "@/components/ui/badge";
 import { Logo } from "@/components/ui/logo";
 import { Pattern } from "@/components/ui/pattern";
 import { cn } from "@/lib/cn";
@@ -11,7 +10,7 @@ export function Footer() {
   return (
     <footer data-slot="footer" className="bg-accent">
       <div className="relative">
-        <Container className="relative z-10 flex flex-col-reverse pt-6 pb-12 sm:flex-col sm:pb-4 md:pt-8 lg:pt-12">
+        <Container className="relative z-10 flex flex-col-reverse pb-12 sm:flex-col sm:pt-6 sm:pb-0 md:pt-8 lg:pt-12">
           <div className="flex flex-col items-center gap-y-6 sm:flex-row sm:justify-between">
             <div
               className={cn(

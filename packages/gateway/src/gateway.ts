@@ -34,12 +34,15 @@ export class Gateway {
     this.registryURL = attribs.registryURL;
   }
 
-  public static async start(attribs: {
-    port: number;
-    databaseFilePath: string;
-    registryURL: string;
-    allowedOrigins?: string[];
-  }) {
+  public static async start(
+    attribs: {
+      port: number;
+      databaseFilePath: string;
+      registryURL: string;
+      allowedOrigins?: string[];
+    },
+    successCallback?: () => void,
+  ) {
     logger.info(`starting director gateway`);
 
     const db = await Database.connect(attribs.databaseFilePath);
@@ -61,6 +64,7 @@ export class Gateway {
 
     const server = app.listen(attribs.port, () => {
       logger.info(`director gateway running on port ${attribs.port}`);
+      successCallback?.();
     });
 
     const gateway = new Gateway({

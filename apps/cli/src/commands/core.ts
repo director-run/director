@@ -1,4 +1,3 @@
-import { Gateway } from "@director.run/gateway/gateway";
 import {
   getSSEPathForProxy,
   getStreamablePathForProxy,
@@ -10,66 +9,20 @@ import {
   makeOption,
 } from "@director.run/utilities/cli/director-command";
 import { makeTable } from "@director.run/utilities/cli/index";
-import {
-  actionWithErrorHandler,
-  printDirectorAscii,
-} from "@director.run/utilities/cli/index";
-import { loader } from "@director.run/utilities/cli/loader";
-import { openUrl } from "@director.run/utilities/os";
+import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../client";
 import { env } from "../env";
-import { registerAddCommand } from "./core/add-command";
-import { registerRemoveCommand } from "./core/remove-command";
-
-export async function startGateway() {
-  await Gateway.start({
-    port: env.GATEWAY_PORT,
-    databaseFilePath: env.CONFIG_FILE_PATH,
-    registryURL: env.REGISTRY_API_URL,
-    allowedOrigins: [env.STUDIO_URL, /^https?:\/\/localhost(:\d+)?$/],
-  });
-}
+import { registerAddCommand } from "./core/add";
+import { registerQuickstartCommand } from "./core/quickstart";
+import { registerRemoveCommand } from "./core/remove";
+import { registerServeCommand } from "./core/serve";
+import { registerStudioCommand } from "./core/studio";
 
 export function registerCoreCommands(program: DirectorCommand): void {
-  program
-    .command("serve")
-    .description("Start the web service")
-    .action(
-      actionWithErrorHandler(async () => {
-        try {
-          printDirectorAscii();
-          await startGateway();
-        } catch (error) {
-          console.error("Fatal error starting gateway", error);
-          process.exit(1);
-        }
-      }),
-    );
-
-  program
-    .command("studio")
-    .description("Open the UI in your browser")
-    .action(
-      actionWithErrorHandler(async () => {
-        const spinner = loader();
-        spinner.start("opening studio...");
-        try {
-          await gatewayClient.health.query();
-        } catch (error) {
-          spinner.fail(
-            "Failed to connect to gateway. Have you ran `director serve`?",
-          );
-          process.exit(1);
-        }
-        try {
-          await openUrl(env.STUDIO_URL);
-        } catch (error) {
-          spinner.fail(`failed to open ${env.STUDIO_URL}, try manually`);
-        }
-        spinner.stop();
-      }),
-    );
+  registerQuickstartCommand(program);
+  registerServeCommand(program);
+  registerStudioCommand(program);
 
   program
     .command("ls")

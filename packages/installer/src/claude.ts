@@ -12,6 +12,7 @@ import {
   restartApp,
 } from "@director.run/utilities/os";
 import { z } from "zod";
+import { AbstractInstaller } from "./abstract-installer";
 
 export const CLAUDE_COMMAND = "claude";
 export const CLAUDE_CONFIG_PATH = path.join(
@@ -22,11 +23,12 @@ export const CLAUDE_CONFIG_KEY_PREFIX = "director__";
 
 const logger = getLogger("installer/claude");
 
-export class ClaudeInstaller {
+export class ClaudeInstaller extends AbstractInstaller {
   private config: ClaudeConfig;
   public readonly configPath: string;
 
   private constructor(params: { configPath: string; config: ClaudeConfig }) {
+    super();
     this.configPath = params.configPath;
     this.config = params.config;
   }
@@ -69,16 +71,25 @@ export class ClaudeInstaller {
     await this.updateConfig(newConfig);
   }
 
-  public async install(entry: ClaudeServerEntry) {
-    if (this.isInstalled(entry.name)) {
+  public async install(attributes: {
+    name: string;
+    url: string;
+  }) {
+    if (this.isInstalled(attributes.name)) {
       throw new AppError(
         ErrorCode.BAD_REQUEST,
-        `server '${entry.name}' is already installed`,
+        `server '${attributes.name}' is already installed`,
       );
     }
-    logger.info(`installing ${entry.name}`);
+    logger.info(`installing ${attributes.name}`);
     const newConfig = { ...this.config };
-    newConfig.mcpServers[createKey(entry.name)] = entry.transport;
+    newConfig.mcpServers[createKey(attributes.name)] = {
+      command: "npx",
+      args: ["-y", "@director.run/cli", "http2stdio", attributes.url],
+      env: {
+        LOG_LEVEL: "silent",
+      },
+    };
     await this.updateConfig(newConfig);
   }
 
@@ -91,10 +102,12 @@ export class ClaudeInstaller {
 
   public async list() {
     logger.info("listing servers");
-    return Object.entries(this.config.mcpServers).map(([name, transport]) => ({
-      name,
-      transport,
-    }));
+    return Object.entries(this.config.mcpServers)
+      .filter(([name]) => name.startsWith(CLAUDE_CONFIG_KEY_PREFIX))
+      .map(([name, transport]) => ({
+        name,
+        url: transport.args[2],
+      }));
   }
 
   public async openConfig() {
@@ -102,7 +115,7 @@ export class ClaudeInstaller {
     await openFileInCode(this.configPath);
   }
 
-  public async restartClaude() {
+  public async restart() {
     if (!isTest()) {
       logger.info("restarting claude");
       await restartApp(App.CLAUDE);
@@ -111,11 +124,16 @@ export class ClaudeInstaller {
     }
   }
 
+  public async reload(name: string) {
+    logger.info(`reloading ${name}`);
+    await this.restart();
+  }
+
   private async updateConfig(newConfig: ClaudeConfig) {
     this.config = ClaudeConfigSchema.parse(newConfig);
     logger.info(`writing config to ${this.configPath}`);
     await writeJSONFile(this.configPath, this.config);
-    await this.restartClaude();
+    await this.restart();
   }
 }
 

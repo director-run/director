@@ -4,7 +4,7 @@ import { VSCodeInstaller } from "@director.run/client-manager/vscode";
 import { t } from "@director.run/utilities/trpc";
 import { joinURL } from "@director.run/utilities/url";
 import { z } from "zod";
-import { getSSEPathForProxy, getStreamablePathForProxy } from "../../helpers";
+import { getSSEPathForProxy } from "../../helpers";
 import type { ProxyServerStore } from "../../proxy-server-store";
 
 export function createInstallerRouter({
@@ -55,23 +55,12 @@ export function createInstallerRouter({
         )
         .mutation(async ({ input }) => {
           const proxy = proxyStore.get(input.proxyId);
-
           switch (input.client) {
             case "claude":
-              const proxyUrl = joinURL(
-                input.baseUrl,
-                getStreamablePathForProxy(proxy.id),
-              );
               const claudeInstaller = await ClaudeInstaller.create();
               await claudeInstaller.install({
                 name: proxy.id,
-                transport: {
-                  command: "npx",
-                  args: ["-y", "@director.run/cli", "http2stdio", proxyUrl],
-                  env: {
-                    LOG_LEVEL: "silent",
-                  },
-                },
+                url: joinURL(input.baseUrl, getSSEPathForProxy(proxy.id)),
               });
               break;
             case "cursor":
@@ -122,7 +111,7 @@ export function createInstallerRouter({
       }),
       restart: t.procedure.mutation(async () => {
         const installer = await ClaudeInstaller.create();
-        await installer.restartClaude();
+        await installer.restart();
       }),
       purge: t.procedure.mutation(async () => {
         const installer = await ClaudeInstaller.create();

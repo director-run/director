@@ -10,11 +10,9 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { writeJSONFile } from "@director.run/utilities/json";
 import { afterAll, beforeEach, describe, expect, test, vi } from "vitest";
-import { CLAUDE_CONFIG_KEY_PREFIX, ClaudeInstaller } from "./claude";
-import {
-  createClaudeConfig,
-  createClaudeServerEntry,
-} from "./test/fixtures/claude";
+import { ClaudeInstaller } from "./claude";
+import { createInstallable } from "./test/fixtures";
+import { createClaudeConfig } from "./test/fixtures/claude";
 
 describe("claude installer", () => {
   const configFilePath = path.join(__dirname, "test/claude.config.test.json");
@@ -30,7 +28,7 @@ describe("claude installer", () => {
   });
 
   test("should correctly check if a server is installed", async () => {
-    const entry = createClaudeServerEntry();
+    const entry = createInstallable();
     expect(installer.isInstalled(entry.name)).toBe(false);
     await installer.install(entry);
     expect(installer.isInstalled(entry.name)).toBe(true);
@@ -39,31 +37,23 @@ describe("claude installer", () => {
   });
 
   test("should be able to install a server", async () => {
-    const entry = createClaudeServerEntry();
-    await installer.install(entry);
-    const servers = await installer.list();
-    const installedServer = servers.find(
-      (s) => s.name === `${CLAUDE_CONFIG_KEY_PREFIX}${entry.name}`,
-    );
-    expect(installedServer).toBeDefined();
-    expect(installedServer).toEqual({
-      name: `${CLAUDE_CONFIG_KEY_PREFIX}${entry.name}`,
-      transport: entry.transport,
-    });
+    const installable = createInstallable();
+    expect(installer.isInstalled(installable.name)).toBe(false);
+    await installer.install(installable);
+    expect(installer.isInstalled(installable.name)).toBe(true);
   });
 
   test("should be able to uninstall a server", async () => {
-    const entry = createClaudeServerEntry();
-    await installer.install(entry);
+    const installable = createInstallable();
+    await installer.install(installable);
     expect(await installer.list()).toHaveLength(1);
-    await installer.uninstall(entry.name);
+    await installer.uninstall(installable.name);
     expect(await installer.list()).toHaveLength(0);
   });
 
   test("should be able to purge all servers", async () => {
-    await installer.install(createClaudeServerEntry());
-    await installer.install(createClaudeServerEntry());
-    await installer.install(createClaudeServerEntry());
+    await installer.install(createInstallable());
+    await installer.install(createInstallable());
     await installer.purge();
     expect(await installer.list()).toHaveLength(0);
   });

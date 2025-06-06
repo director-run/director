@@ -13,6 +13,8 @@ const logger = pino(
     level: LOG_LEVEL.toLowerCase(),
     messageKey: "message",
     timestamp: true,
+    // TODO: redact sensitive data
+    // redact: [""],
     serializers: {
       error: (error: Error) => {
         if (isAppError(error)) {

@@ -120,7 +120,7 @@ export function GetStartedInstallServerDialog({
               parameters.length === 0 && "p-0",
             )}
           >
-            <HiddenField name={proxyId} />
+            <HiddenField name="proxyId" />
 
             {parameters.map((param) => (
               <InputField

@@ -3,7 +3,6 @@ import { SimpleClient } from "./simple-client";
 import type { ProxyTargetAttributes, ProxyTransport } from "./types";
 
 export type ProxyTargetStatus = "connected" | "disconnected" | "error";
-export type ProxyTargetType = "stdio" | "http" | "in-memory";
 
 const logger = getLogger(`mcp/proxy-target`);
 

@@ -13,7 +13,7 @@ import {
   sleep,
 } from "@director.run/utilities/os";
 import { restartApp } from "@director.run/utilities/os";
-import { z } from "zod";
+import { AbstractInstaller } from "./abstract-installer";
 
 const CURSOR_COMMAND = "cursor";
 const CURSOR_CONFIG_PATH = path.join(os.homedir(), ".cursor/mcp.json");
@@ -22,11 +22,12 @@ export const CURSOR_CONFIG_KEY_PREFIX = "director__";
 
 const logger = getLogger("installer/cursor");
 
-export class CursorInstaller {
+export class CursorInstaller extends AbstractInstaller {
   private config: CursorConfig;
   public readonly configPath: string;
 
   private constructor(params: { configPath: string; config: CursorConfig }) {
+    super();
     this.configPath = params.configPath;
     this.config = params.config;
   }
@@ -48,7 +49,7 @@ export class CursorInstaller {
     const config = await readJSONFile<CursorConfig>(configPath);
     return new CursorInstaller({
       configPath,
-      config: CursorConfigSchema.parse(config),
+      config,
     });
   }
 
@@ -69,16 +70,16 @@ export class CursorInstaller {
     await this.updateConfig(newConfig);
   }
 
-  public async install(entry: CursorServerEntry) {
-    if (this.isInstalled(entry.name)) {
+  public async install(attributes: { name: string; url: string }) {
+    if (this.isInstalled(attributes.name)) {
       throw new AppError(
         ErrorCode.BAD_REQUEST,
-        `server '${entry.name}' is already installed`,
+        `server '${attributes.name}' is already installed`,
       );
     }
-    logger.info(`installing ${entry.name}`);
+    logger.info(`installing ${attributes.name}`);
     const newConfig = { ...this.config };
-    newConfig.mcpServers[createKey(entry.name)] = { url: entry.url };
+    newConfig.mcpServers[createKey(attributes.name)] = { url: attributes.url };
     await this.updateConfig(newConfig);
   }
 
@@ -92,7 +93,6 @@ export class CursorInstaller {
   }
 
   public async reload(name: string) {
-    // TODO: this is segfaulting, something is weird with it
     logger.info(`reloading ${name}`);
 
     const url = this.config.mcpServers[createKey(name)].url;
@@ -122,7 +122,6 @@ export class CursorInstaller {
   }
 
   private async updateConfig(newConfig: CursorConfig) {
-    this.config = CursorConfigSchema.parse(newConfig);
     logger.info(`writing config to ${this.configPath}`);
     await writeJSONFile(this.configPath, this.config);
   }
@@ -130,21 +129,8 @@ export class CursorInstaller {
 
 const createKey = (name: string) => `${CURSOR_CONFIG_KEY_PREFIX}${name}`;
 
-export const CursorMCPServerSchema = z.object({
-  url: z.string().url().describe("The SSE endpoint URL for the MCP server"),
-});
-
-export const CursorConfigSchema = z.object({
-  mcpServers: z
-    .record(z.string(), CursorMCPServerSchema)
-    .describe("Map of MCP server configurations"),
-});
-
-export type CursorMCPServer = z.infer<typeof CursorMCPServerSchema>;
-export type CursorConfig = z.infer<typeof CursorConfigSchema>;
-export type CursorServerEntry = {
-  name: string;
-  url: string;
+export type CursorConfig = {
+  mcpServers: Record<string, { url: string }>;
 };
 
 export function isCursorInstalled(): boolean {

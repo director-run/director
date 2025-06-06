@@ -1,6 +1,7 @@
 import { ClaudeInstaller } from "@director.run/client-manager/claude";
 import { CursorInstaller } from "@director.run/client-manager/cursor";
 import { VSCodeInstaller } from "@director.run/client-manager/vscode";
+import { getInstaller } from "@director.run/installer/get-installer";
 import { t } from "@director.run/utilities/trpc";
 import { joinURL } from "@director.run/utilities/url";
 import { z } from "zod";
@@ -55,29 +56,11 @@ export function createInstallerRouter({
         )
         .mutation(async ({ input }) => {
           const proxy = proxyStore.get(input.proxyId);
-          switch (input.client) {
-            case "claude":
-              const claudeInstaller = await ClaudeInstaller.create();
-              await claudeInstaller.install({
-                name: proxy.id,
-                url: joinURL(input.baseUrl, getSSEPathForProxy(proxy.id)),
-              });
-              break;
-            case "cursor":
-              const cursorInstaller = await CursorInstaller.create();
-              await cursorInstaller.install({
-                name: proxy.id,
-                url: joinURL(input.baseUrl, getSSEPathForProxy(proxy.id)),
-              });
-              break;
-            case "vscode":
-              const vscodeInstaller = await VSCodeInstaller.create();
-              await vscodeInstaller.install({
-                name: proxy.id,
-                url: joinURL(input.baseUrl, getSSEPathForProxy(proxy.id)),
-              });
-              break;
-          }
+          const installer = await getInstaller(input.client);
+          await installer.install({
+            name: proxy.id,
+            url: joinURL(input.baseUrl, getSSEPathForProxy(proxy.id)),
+          });
         }),
       uninstall: t.procedure
         .input(
@@ -88,20 +71,8 @@ export function createInstallerRouter({
         )
         .mutation(async ({ input }) => {
           const proxy = proxyStore.get(input.proxyId);
-          switch (input.client) {
-            case "claude":
-              const claudeInstaller = await ClaudeInstaller.create();
-              await claudeInstaller.uninstall(proxy.id);
-              break;
-            case "cursor":
-              const cursorInstaller = await CursorInstaller.create();
-              await cursorInstaller.uninstall(proxy.id);
-              break;
-            case "vscode":
-              const vscodeInstaller = await VSCodeInstaller.create();
-              await vscodeInstaller.uninstall(proxy.id);
-              break;
-          }
+          const installer = await getInstaller(input.client);
+          await installer.uninstall(proxy.id);
         }),
     }),
     claude: t.router({

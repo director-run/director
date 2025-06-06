@@ -1,24 +1,7 @@
 import { createRegistryClient } from "@director.run/registry/client";
-import type { EntryParameter } from "@director.run/registry/db/schema";
-import { getLogger } from "@director.run/utilities/logger";
-import {
-  optionalStringSchema,
-  requiredStringSchema,
-} from "@director.run/utilities/schema";
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
-import { restartConnectedClients } from "../../helpers";
 import type { ProxyServerStore } from "../../proxy-server-store";
-
-const parameterToZodSchema = (parameter: EntryParameter) => {
-  if (parameter.type === "string") {
-    return parameter.required ? requiredStringSchema : optionalStringSchema;
-  } else {
-    throw new Error(`Unsupported parameter type: ${parameter.type}`);
-  }
-};
-
-const logger = getLogger("registry-router");
 
 export function createRegistryRouter({
   registryURL,
@@ -39,39 +22,18 @@ export function createRegistryRouter({
     getEntryByName: t.procedure
       .input(z.object({ name: z.string() }))
       .query(({ input }) => registryClient.entries.getEntryByName.query(input)),
-
-    addServerFromRegistry: t.procedure
+    getTransportForEntry: t.procedure
       .input(
         z.object({
-          proxyId: z.string(),
           entryName: z.string(),
           parameters: z.record(z.string(), z.string()).optional(),
         }),
       )
       .mutation(async ({ input }) => {
-        const entry = await registryClient.entries.getEntryByName.query({
-          name: input.entryName,
+        return await registryClient.entries.getTransportForEntry.query({
+          entryName: input.entryName,
+          parameters: input.parameters,
         });
-
-        const transport =
-          await registryClient.entries.getTransportForEntry.query({
-            entryName: entry.name,
-            parameters: input.parameters,
-          });
-
-        const newProxy = await proxyStore.addServer(input.proxyId, {
-          name: entry.name,
-          transport,
-          source: {
-            name: "registry",
-            entryId: entry.id,
-            entryData: entry,
-          },
-        });
-
-        await restartConnectedClients(newProxy);
-
-        return newProxy.toPlainObject();
       }),
   });
 }

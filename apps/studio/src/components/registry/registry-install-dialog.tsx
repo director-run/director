@@ -44,7 +44,9 @@ export function RegistryInstallDialog({
 
   const utils = trpc.useUtils();
 
-  const installMutation = trpc.registry.addServerFromRegistry.useMutation({
+  const transportMutation = trpc.registry.getTransportForEntry.useMutation();
+
+  const installMutation = trpc.store.addServer.useMutation({
     onSuccess: (data) => {
       utils.store.get.invalidate({ proxyId: data.id });
       toast({
@@ -96,11 +98,22 @@ export function RegistryInstallDialog({
         <Form
           form={form}
           className="gap-y-0 border-t-[0.5px]"
-          onSubmit={(values) => {
-            installMutation.mutate({
+          onSubmit={async (values) => {
+            const transport = await transportMutation.mutateAsync({
               entryName: mcp.name,
-              proxyId: values.proxyId,
               parameters: values.parameters,
+            });
+            installMutation.mutate({
+              proxyId: values.proxyId,
+              server: {
+                name: mcp.name,
+                transport,
+                source: {
+                  name: "registry",
+                  entryId: mcp.id,
+                  entryData: mcp,
+                },
+              },
             });
           }}
         >

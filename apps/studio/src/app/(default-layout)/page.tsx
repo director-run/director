@@ -12,9 +12,9 @@ export default function ProxiesPage() {
   useEffect(() => {
     if (data) {
       if (data.length > 0) {
-        router.push(`/${data[0].id}`);
+        router.replace(`/${data[0].id}`);
       } else if (data.length === 0) {
-        router.push("/get-started");
+        router.replace("/get-started");
       }
     }
   }, [data, router]);

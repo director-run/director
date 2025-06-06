@@ -1,67 +1,49 @@
 "use client";
 
-import { CircleNotchIcon } from "@phosphor-icons/react";
+import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
 import Image from "next/image";
-import { ComponentProps } from "react";
+import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import { ListItemTitle } from "@/components/ui/list";
 import { toast } from "@/components/ui/toast";
+import { cn } from "@/lib/cn";
 import { trpc } from "@/trpc/client";
 
-import { cn } from "@/lib/cn";
-
 import claudeIconImage from "../../../public/icons/claude-icon.png";
+import vscodeIconImage from "../../../public/icons/code-icon.png";
 import cursorIconImage from "../../../public/icons/cursor-icon.png";
 
-interface InstallButtonProps extends ComponentProps<"button"> {
-  client: "claude" | "cursor";
-  onClick: () => void;
-}
+const clients = [
+  {
+    id: "claude",
+    label: "Claude",
+    image: claudeIconImage,
+  },
+  {
+    id: "cursor",
+    label: "Cursor",
+    image: cursorIconImage,
+  },
+  {
+    id: "vscode",
+    label: "VSCode",
+    image: vscodeIconImage,
+  },
+] as const;
 
-function InstallButton({
-  className,
-  client,
-  onClick,
-  ...props
-}: InstallButtonProps) {
-  const imageSrc = client === "claude" ? claudeIconImage : cursorIconImage;
-
-  return (
-    <button
-      className={cn(
-        "relative flex flex-1 flex-col items-center gap-y-1 overflow-hidden rounded-lg bg-accent p-3",
-        "cursor-pointer hover:bg-accent-subtle",
-        "disabled:cursor-not-allowed disabled:opacity-50",
-        className,
-      )}
-      onClick={(event) => {
-        event.preventDefault();
-        onClick();
-      }}
-      {...props}
-    >
-      <Image src={imageSrc} alt="Claude" width={64} height={64} />
-      <ListItemTitle className="capitalize">{client}</ListItemTitle>
-      <div
-        className="absolute inset-0 hidden items-center justify-center bg-fg/50 data-[state=submitting]:flex"
-        aria-hidden="true"
-      >
-        <CircleNotchIcon
-          weight="bold"
-          className="size-10 animate-spin text-surface"
-        />
-      </div>
-    </button>
-  );
-}
+type ClientId = (typeof clients)[number]["id"];
 
 interface GetStartedInstallersProps {
   proxyId: string;
 }
 
 export function GetStartedInstallers({ proxyId }: GetStartedInstallersProps) {
+  const [selectedClient, setSelectedClient] = useState<ClientId | undefined>(
+    undefined,
+  );
   const utils = trpc.useUtils();
-  const mutation = trpc.installer.byProxy.install.useMutation({
+  const installationMutation = trpc.installer.byProxy.install.useMutation({
     onSuccess: () => {
       utils.installer.byProxy.list.invalidate();
       toast({
@@ -70,32 +52,57 @@ export function GetStartedInstallers({ proxyId }: GetStartedInstallersProps) {
       });
     },
   });
+
   return (
-    <div className="group flex flex-row items-center justify-center gap-x-1.5 p-4 md:transition-all md:duration-300 md:ease-in-out md:*:group-hover:opacity-20 md:*:group-focus-within:opacity-20 md:*:group-focus-within:focus-visible:opacity-100 md:*:hover:opacity-100">
-      <InstallButton
-        data-state={mutation.isPending ? "submitting" : "idle"}
-        client="claude"
+    <div className="flex flex-col gap-y-4 p-4">
+      <ToggleGroupPrimitive.Root
+        type="single"
+        value={selectedClient}
+        onValueChange={(value) => {
+          setSelectedClient(value as ClientId);
+        }}
+        className="group flex flex-row items-center justify-center gap-x-2"
+      >
+        {clients.map((it) => {
+          return (
+            <ToggleGroupPrimitive.Item
+              key={it.id}
+              value={it.id}
+              className={cn(
+                "group relative flex flex-1 flex-col items-center gap-y-1 overflow-hidden rounded-lg bg-accent p-3",
+                "cursor-pointer hover:bg-accent-subtle",
+                "disabled:cursor-not-allowed disabled:opacity-50",
+                "outline-none ring-2 ring-transparent ring-offset-2 ring-offset-surface",
+                "focus-visible:bg-accent-subtle focus-visible:ring-accent",
+                "radix-state-[on]:ring-fg",
+              )}
+              disabled={installationMutation.isPending}
+            >
+              <Image src={it.image} alt="Claude" width={64} height={64} />
+              <ListItemTitle className="font-[450] text-fg/80 capitalize">
+                {it.label}
+              </ListItemTitle>
+            </ToggleGroupPrimitive.Item>
+          );
+        })}
+      </ToggleGroupPrimitive.Root>
+      <Button
+        className="self-end"
+        disabled={!selectedClient || installationMutation.isPending}
         onClick={() => {
-          mutation.mutate({
+          if (!selectedClient) {
+            return;
+          }
+
+          installationMutation.mutate({
             proxyId,
-            client: "claude",
+            client: selectedClient,
             baseUrl: "http://localhost:3673",
           });
         }}
-        disabled={mutation.isPending}
-      />
-      <InstallButton
-        data-state={mutation.isPending ? "submitting" : "idle"}
-        client="cursor"
-        onClick={() => {
-          mutation.mutate({
-            proxyId,
-            client: "cursor",
-            baseUrl: "http://localhost:3673",
-          });
-        }}
-        disabled={mutation.isPending}
-      />
+      >
+        {installationMutation.isPending ? "Connecting…" : "Connect"}
+      </Button>
     </div>
   );
 }

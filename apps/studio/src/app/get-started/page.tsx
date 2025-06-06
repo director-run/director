@@ -1,5 +1,6 @@
 "use client";
 
+import { GetStartedCompleteDialog } from "@/components/get-started/get-started-complete-dialog";
 import { GetStartedInstallServerDialog } from "@/components/get-started/get-started-install-server-dialog";
 import { GetStartedInstallers } from "@/components/get-started/get-started-installers";
 import {
@@ -7,13 +8,7 @@ import {
   GetStartedListItem,
 } from "@/components/get-started/get-started-list";
 import { GetStartedProxyForm } from "@/components/get-started/get-started-proxy-form";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+
 import { Container } from "@/components/ui/container";
 import {
   ListItemDescription,
@@ -29,7 +24,6 @@ import {
 } from "@/components/ui/section";
 import { trpc } from "@/trpc/client";
 import { EntryGetParams } from "@director.run/registry/db/schema";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function GetStartedPage() {
@@ -60,19 +54,23 @@ export default function GetStartedPage() {
     }
   }, [proxyListQuery.data]);
 
-  if (isLoading || !hasData) {
-    return <div>Loading...</div>;
-  }
+  const hasProxy = proxyListQuery.data && proxyListQuery.data.length > 0;
+  const currentProxy = hasProxy ? proxyListQuery.data[0] : null;
 
-  if (proxyListQuery.data.length > 1) {
-    // TODO: Redirect home
-    return <div>Loading…</div>;
+  if (
+    isLoading ||
+    !hasData ||
+    (currentProxy && installersQuery.isLoading && !installersQuery.isFetched)
+  ) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center">
+        <Logo className="size-10 animate-pulse" />
+      </div>
+    );
   }
 
   const installers = installersQuery.data ?? {};
 
-  const hasProxy = proxyListQuery.data.length > 0;
-  const currentProxy = hasProxy ? proxyListQuery.data[0] : null;
   const isInstalled = !!Object.values(installers).filter((it) => Boolean(it))
     .length;
 
@@ -119,7 +117,7 @@ export default function GetStartedPage() {
           </GetStartedListItem>
           <GetStartedListItem
             status={addStepStatus}
-            title="Add an MCP server"
+            title="Add your first MCP server"
             open={addStepStatus === "in-progress"}
             disabled={addStepStatus !== "in-progress"}
           >
@@ -148,7 +146,7 @@ export default function GetStartedPage() {
           </GetStartedListItem>
           <GetStartedListItem
             status={connectStepStatus}
-            title="Connect a client"
+            title="Connect your first client"
             open={connectStepStatus === "in-progress"}
             disabled={connectStepStatus !== "in-progress"}
           >
@@ -157,28 +155,7 @@ export default function GetStartedPage() {
         </GetStartedList>
       </Section>
 
-      <AlertDialog open={isCompleted}>
-        <AlertDialogContent>
-          <AlertDialogHeader className="gap-y-0.5">
-            <AlertDialogTitle className="text-xl">
-              You&apos;re all set!
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              Why not try calling your new MCP server from the installed client?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-
-          <div className="flex flex-col gap-1 border-accent border-t-[0.5px] px-5 py-3">
-            <h3>Next steps</h3>
-
-            <Link href="/library">Discover more MCP servers</Link>
-            <Link href="https://docs.director.run">
-              Explore our documentation
-            </Link>
-            <Link href="/">Continue to your proxy</Link>
-          </div>
-        </AlertDialogContent>
-      </AlertDialog>
+      <GetStartedCompleteDialog open={isCompleted} />
     </Container>
   );
 }

@@ -39,19 +39,6 @@ export function GetStartedInstallServerDialog({
     (parameter, index, array) =>
       array.findIndex((p) => p.name === parameter.name) === index,
   );
-
-  const utils = trpc.useUtils();
-
-  const installMutation = trpc.registry.addServerFromRegistry.useMutation({
-    onSuccess: (data) => {
-      utils.store.getAll.invalidate();
-      toast({
-        title: "Proxy installed",
-        description: "This proxy was successfully installed.",
-      });
-    },
-  });
-
   const schema = z.object({
     proxyId: z.string(),
     parameters: z.object(
@@ -79,6 +66,20 @@ export function GetStartedInstallServerDialog({
     },
   });
 
+  const utils = trpc.useUtils();
+
+  const transportMutation = trpc.registry.getTransportForEntry.useMutation();
+
+  const installMutation = trpc.store.addServer.useMutation({
+    onSuccess: (data) => {
+      utils.store.getAll.invalidate();
+      toast({
+        title: "Proxy installed",
+        description: "This proxy was successfully installed.",
+      });
+    },
+  });
+
   return (
     <Dialog {...props}>
       {children && <DialogTrigger asChild>{children}</DialogTrigger>}
@@ -94,11 +95,22 @@ export function GetStartedInstallServerDialog({
             "gap-y-0 border-t-[0.5px]",
             parameters.length === 0 && "border-t-0",
           )}
-          onSubmit={(values) => {
-            installMutation.mutate({
+          onSubmit={async (values) => {
+            const transport = await transportMutation.mutateAsync({
               entryName: mcp.name,
-              proxyId: values.proxyId,
               parameters: values.parameters,
+            });
+            installMutation.mutate({
+              proxyId: values.proxyId,
+              server: {
+                name: mcp.name,
+                transport,
+                source: {
+                  name: "registry",
+                  entryId: mcp.id,
+                  entryData: mcp,
+                },
+              },
             });
           }}
         >

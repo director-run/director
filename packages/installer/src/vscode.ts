@@ -133,7 +133,7 @@ export class VSCodeInstaller extends AbstractInstaller {
     return Object.entries(this.config.mcp.servers)
       .filter(([name]) => name.startsWith(VSCODE_CONFIG_KEY_PREFIX))
       .map(([name, server]) => ({
-        name: name.replace(VSCODE_CONFIG_KEY_PREFIX, ""),
+        name,
         url: server.url,
       }));
   }

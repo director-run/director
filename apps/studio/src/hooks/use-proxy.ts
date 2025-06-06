@@ -16,6 +16,6 @@ export function useProxy(proxyId: string) {
   return {
     proxy: proxy.data,
     isLoading,
-    installers: clients.data ?? { claude: false, cursor: false },
+    installers: clients.data ?? { claude: false, cursor: false, vscode: false },
   };
 }

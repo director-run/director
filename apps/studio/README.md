@@ -1,36 +1,134 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Director Studio
+
+A modern web interface for managing Model Context Protocol (MCP) servers through the Director proxy system.
+
+## Overview
+
+Director Studio is the web-based management interface for [Director](../../README.md) - a local-first MCP proxy/gateway. The studio provides an intuitive interface for:
+
+- 🔧 **Proxy Management** - Create and configure MCP proxy servers
+- 📦 **Server Discovery** - Browse and install MCP servers from the registry  
+- 🔌 **Client Integration** - Easy setup for Claude, Cursor, and other MCP clients
+- 🛠️ **Tool Inspection** - View and test available tools from connected MCP servers
+- ⚡ **Real-time Monitoring** - Live connection status and health checks
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- [Director CLI](../../README.md) installed and running
+- Node.js 18+ and Bun (recommended) or npm
+
+### Development
+
+1. **Start Director Service**
+   ```bash
+   # Make sure Director is running
+   director serve
+   ```
+
+2. **Install Dependencies**
+   ```bash
+   bun install
+   ```
+
+3. **Start Development Server**
+   ```bash
+   bun dev
+   ```
+
+4. **Open in Browser**
+   
+   Navigate to [http://localhost:3001](http://localhost:3001) to access the Studio interface.
+
+### Production
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Build the application
+bun run build
+
+# Start the production server
+bun start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 🚀 Get Started Wizard
+- Step-by-step proxy creation
+- MCP server installation from registry
+- Client connection setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 📚 MCP Registry Browser
+- Discover available MCP servers
+- View server details and documentation
+- One-click installation to proxies
+
+### 🔧 Proxy Management
+- Create and configure proxy servers
+- View connected MCP servers
+- Monitor server status and health
+
+### 🛠️ Tool Explorer
+- Browse available tools from MCP servers
+- View tool schemas and documentation
+- Test tool functionality
+
+### ⚙️ Client Integration
+- Generate connection endpoints (HTTP, SSE, STDIO)
+- Copy-to-clipboard for easy setup
+- Support for Claude, Cursor, and manual configurations
+
+## Architecture
+
+Built with modern web technologies:
+
+- **Framework**: Next.js 15 with App Router
+- **Styling**: TailwindCSS with custom design system
+- **Components**: Radix UI primitives with shadcn/ui
+- **Data Fetching**: tRPC with TanStack Query
+- **Forms**: React Hook Form with Zod validation
+
+## API Integration
+
+Studio communicates with Director through:
+
+- **Gateway API** (`@director.run/gateway`) - Proxy and server management
+- **Registry API** (`@director.run/registry`) - MCP server discovery
+- **Real-time Updates** - WebSocket connections for live status
+
+## Development Scripts
+
+```bash
+# Development
+bun dev                    # Start dev server with Turbopack
+bun typecheck             # Type checking
+bun lint                  # Code linting with Biome
+bun format                # Code formatting
+
+# Production
+bun build                 # Build for production
+bun start                 # Start production server
+
+# Utilities
+bun clean                 # Clean build artifacts
+bun tools:shadcn          # Add shadcn/ui components
+```
+
+## Environment Configuration
+
+The studio connects to Director services running on default ports:
+
+- **Director Gateway**: `http://localhost:3673`
+- **Studio Dev Server**: `http://localhost:3001`
+
+These can be configured through environment variables or Director's configuration system.
+
+## Contributing
+
+This is part of the larger Director project. See the main [CONTRIBUTING.md](../../CONTRIBUTING.md) for development guidelines.
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Director Documentation](https://docs.director.run)
+- [Model Context Protocol Specification](https://spec.modelcontextprotocol.io)
+- [Next.js Documentation](https://nextjs.org/docs)

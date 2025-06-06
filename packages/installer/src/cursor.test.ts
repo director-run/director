@@ -11,8 +11,7 @@ import path from "node:path";
 import { writeJSONFile } from "@director.run/utilities/json";
 import { afterAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { CURSOR_CONFIG_KEY_PREFIX, CursorInstaller } from "./cursor";
-import { createInstallable } from "./test/fixtures";
-import { createCursorConfig } from "./test/fixtures/cursor";
+import { createCursorConfig, createInstallable } from "./test/fixtures";
 
 describe("cursor installer", () => {
   const configFilePath = path.join(__dirname, "test/cursor.config.test.json");

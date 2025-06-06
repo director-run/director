@@ -5,7 +5,9 @@ echo
 
 bun cli reset
 bun cli client reset --target claude
-# bun cli client reset --target cursor
+bun cli client reset --target cursor
+bun cli client reset --target vscode
+
 echo
 echo "----------------------------------------"
 echo "- Creating a new proxy and installing the fetch server"
@@ -16,7 +18,7 @@ bun cli create my-proxy
 
 # target
 bun cli add my-proxy --entry fetch
-bun cli connect my-proxy --target claude
+# bun cli connect my-proxy --target claude
 # TODO
 # bun cli connect my-proxy
 # bun cli cursor install my-proxy

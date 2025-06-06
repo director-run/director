@@ -176,12 +176,15 @@ export function registerCoreCommands(program: DirectorCommand): void {
       makeOption({
         flags: "-t,--target <target>",
         description: "target client",
-        choices: ["claude", "cursor"],
+        choices: ["claude", "cursor", "vscode"],
       }).makeOptionMandatory(),
     )
     .action(
       actionWithErrorHandler(
-        async (proxyId: string, options: { target: "claude" | "cursor" }) => {
+        async (
+          proxyId: string,
+          options: { target: "claude" | "cursor" | "vscode" },
+        ) => {
           console.log(
             await gatewayClient.installer.byProxy.uninstall.mutate({
               proxyId,

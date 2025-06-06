@@ -12,7 +12,7 @@ import {
   restartApp,
 } from "@director.run/utilities/os";
 import { z } from "zod";
-import { AbstractInstaller } from "./abstract-installer";
+import { AbstractInstaller } from "./types";
 
 export const CLAUDE_COMMAND = "claude";
 export const CLAUDE_CONFIG_PATH = path.join(

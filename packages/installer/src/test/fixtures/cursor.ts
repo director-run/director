@@ -1,5 +1,5 @@
 import { type CursorConfig } from "../../cursor";
-import {type Installable } from "../../abstract-installer";
+import {type Installable } from "../../types";
 
 export function createCursorConfig(entries: Array<Installable>): CursorConfig {
   return {

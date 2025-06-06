@@ -15,7 +15,7 @@ import {
 } from "@director.run/utilities/os";
 import { restartApp } from "@director.run/utilities/os";
 import { z } from "zod";
-import { AbstractInstaller } from "./abstract-installer";
+import { AbstractInstaller } from "./types";
 
 const VSCODE_COMMAND = "code";
 const VSCODE_CONFIG_PATH = path.join(

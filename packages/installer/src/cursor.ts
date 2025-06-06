@@ -13,7 +13,7 @@ import {
   sleep,
 } from "@director.run/utilities/os";
 import { restartApp } from "@director.run/utilities/os";
-import { AbstractInstaller } from "./abstract-installer";
+import { AbstractInstaller } from "./types";
 
 const CURSOR_COMMAND = "cursor";
 const CURSOR_CONFIG_PATH = path.join(os.homedir(), ".cursor/mcp.json");

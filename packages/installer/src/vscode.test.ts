@@ -78,7 +78,7 @@ describe("VSCodeInstaller", () => {
 
     expect(servers).toEqual([
       {
-        name: "test-server",
+        name: "director__test-server",
         url: "https://example.com/test-server/sse",
       },
     ]);
@@ -108,7 +108,7 @@ describe("VSCodeInstaller", () => {
       expect.objectContaining({
         mcp: {
           servers: {
-            "existing-server": {
+            "director__existing-server": {
               url: "https://example.com/existing-server/sse",
             },
           },

@@ -1,5 +1,6 @@
 import { ClaudeInstaller } from "@director.run/client-manager/claude";
 import { CursorInstaller } from "@director.run/client-manager/cursor";
+import { VSCodeInstaller } from "@director.run/client-manager/vscode";
 import { t } from "@director.run/utilities/trpc";
 import { joinURL } from "@director.run/utilities/url";
 import { z } from "zod";
@@ -14,15 +15,19 @@ export function createInstallerRouter({
       list: t.procedure
         .input(z.object({ proxyId: z.string() }))
         .query(async ({ input }) => {
-          const [claudeInstaller, cursorInstaller] = await Promise.all([
-            ClaudeInstaller.create(),
-            CursorInstaller.create(),
-          ]);
+          const [claudeInstaller, cursorInstaller, vscodeInstaller] =
+            await Promise.all([
+              ClaudeInstaller.create(),
+              CursorInstaller.create(),
+              VSCodeInstaller.create(),
+            ]);
 
-          const [claudeClients, cursorClients] = await Promise.all([
-            claudeInstaller.list(),
-            cursorInstaller.list(),
-          ]);
+          const [claudeClients, cursorClients, vscodeClients] =
+            await Promise.all([
+              claudeInstaller.list(),
+              cursorInstaller.list(),
+              vscodeInstaller.list(),
+            ]);
 
           const installedOnClaude = claudeClients.filter(
             (install) => install.name === `director__${input.proxyId}`,
@@ -30,16 +35,20 @@ export function createInstallerRouter({
           const installedOnCursor = cursorClients.filter(
             (install) => install.name === `director__${input.proxyId}`,
           );
+          const installedOnVSCode = vscodeClients.filter(
+            (install) => install.name === `director__${input.proxyId}`,
+          );
 
           return {
             claude: installedOnClaude.length > 0,
             cursor: installedOnCursor.length > 0,
+            vscode: installedOnVSCode.length > 0,
           };
         }),
       install: t.procedure
         .input(
           z.object({
-            client: z.enum(["claude", "cursor"]),
+            client: z.enum(["claude", "cursor", "vscode"]),
             proxyId: z.string(),
             baseUrl: z.string(),
           }),
@@ -71,12 +80,20 @@ export function createInstallerRouter({
                 name: proxy.id,
                 url: joinURL(input.baseUrl, getSSEPathForProxy(proxy.id)),
               });
+              break;
+            case "vscode":
+              const vscodeInstaller = await VSCodeInstaller.create();
+              await vscodeInstaller.install({
+                name: proxy.id,
+                url: joinURL(input.baseUrl, getSSEPathForProxy(proxy.id)),
+              });
+              break;
           }
         }),
       uninstall: t.procedure
         .input(
           z.object({
-            client: z.enum(["claude", "cursor"]),
+            client: z.enum(["claude", "cursor", "vscode"]),
             proxyId: z.string(),
           }),
         )
@@ -90,6 +107,10 @@ export function createInstallerRouter({
             case "cursor":
               const cursorInstaller = await CursorInstaller.create();
               await cursorInstaller.uninstall(proxy.id);
+              break;
+            case "vscode":
+              const vscodeInstaller = await VSCodeInstaller.create();
+              await vscodeInstaller.uninstall(proxy.id);
               break;
           }
         }),
@@ -127,6 +148,24 @@ export function createInstallerRouter({
       }),
       config: t.procedure.query(async () => {
         const installer = await CursorInstaller.create();
+        return installer.openConfig();
+      }),
+    }),
+    vscode: t.router({
+      restart: t.procedure.mutation(async () => {
+        const installer = await VSCodeInstaller.create();
+        await installer.restart();
+      }),
+      list: t.procedure.query(async () => {
+        const installer = await VSCodeInstaller.create();
+        return installer.list();
+      }),
+      purge: t.procedure.mutation(async () => {
+        const installer = await VSCodeInstaller.create();
+        await installer.purge();
+      }),
+      config: t.procedure.query(async () => {
+        const installer = await VSCodeInstaller.create();
         return installer.openConfig();
       }),
     }),

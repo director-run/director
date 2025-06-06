@@ -13,7 +13,7 @@ export function registerClientCommands(program: DirectorCommand): void {
   }
 
   const command = new DirectorCommand("client").description(
-    "Manage MCP client configuration JSON (claude, cursor)",
+    "Manage MCP client configuration JSON (claude, cursor, vscode)",
   );
 
   command
@@ -27,6 +27,9 @@ export function registerClientCommands(program: DirectorCommand): void {
           console.log(result);
         } else if (target === "cursor") {
           const result = await gatewayClient.installer.cursor.list.query();
+          console.log(result);
+        } else if (target === "vscode") {
+          const result = await gatewayClient.installer.vscode.list.query();
           console.log(result);
         }
       }),
@@ -42,6 +45,8 @@ export function registerClientCommands(program: DirectorCommand): void {
           console.log(await gatewayClient.installer.claude.restart.mutate());
         } else if (options.target === "cursor") {
           console.log(await gatewayClient.installer.cursor.restart.mutate());
+        } else if (options.target === "vscode") {
+          console.log(await gatewayClient.installer.vscode.restart.mutate());
         }
       }),
     );
@@ -56,6 +61,8 @@ export function registerClientCommands(program: DirectorCommand): void {
           console.log(await gatewayClient.installer.claude.purge.mutate());
         } else if (options.target === "cursor") {
           console.log(await gatewayClient.installer.cursor.purge.mutate());
+        } else if (options.target === "vscode") {
+          console.log(await gatewayClient.installer.vscode.purge.mutate());
         }
       }),
     );
@@ -70,6 +77,8 @@ export function registerClientCommands(program: DirectorCommand): void {
           await gatewayClient.installer.claude.config.query();
         } else if (options.target === "cursor") {
           await gatewayClient.installer.cursor.config.query();
+        } else if (options.target === "vscode") {
+          await gatewayClient.installer.vscode.config.query();
         }
       }),
     );
@@ -81,6 +90,6 @@ export function registerClientCommands(program: DirectorCommand): void {
 const targetOption = makeOption({
   flags: "-t,--target <target>",
   description: "target client",
-  choices: ["claude", "cursor"],
+  choices: ["claude", "cursor", "vscode"],
   mandatory: true,
 });

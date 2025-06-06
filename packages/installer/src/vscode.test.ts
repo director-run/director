@@ -108,7 +108,7 @@ describe("VSCodeInstaller", () => {
       expect.objectContaining({
         mcp: {
           servers: {
-            "director__existing-server": {
+            "dexisting-server": {
               url: "https://example.com/existing-server/sse",
             },
           },

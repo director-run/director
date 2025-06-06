@@ -11,3 +11,8 @@ export abstract class AbstractInstaller {
   public abstract reload(name: string): Promise<void>;
   public abstract purge(): Promise<void>;
 }
+
+export type Installable = {
+  name: string;
+  url: string;
+};

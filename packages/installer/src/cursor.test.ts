@@ -11,10 +11,8 @@ import path from "node:path";
 import { writeJSONFile } from "@director.run/utilities/json";
 import { afterAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { CURSOR_CONFIG_KEY_PREFIX, CursorInstaller } from "./cursor";
-import {
-  createCursorConfig,
-  createCursorServerEntry,
-} from "./test/fixtures/cursor";
+import { createInstallable } from "./test/fixtures";
+import { createCursorConfig } from "./test/fixtures/cursor";
 
 describe("cursor installer", () => {
   const configFilePath = path.join(__dirname, "test/cursor.config.test.json");
@@ -30,40 +28,39 @@ describe("cursor installer", () => {
   });
 
   test("should correctly check if a server is installed", async () => {
-    const entry = createCursorServerEntry();
-    expect(installer.isInstalled(entry.name)).toBe(false);
-    await installer.install(entry);
-    expect(installer.isInstalled(entry.name)).toBe(true);
-    await installer.uninstall(entry.name);
-    expect(installer.isInstalled(entry.name)).toBe(false);
+    const installable = createInstallable();
+    expect(installer.isInstalled(installable.name)).toBe(false);
+    await installer.install(installable);
+    expect(installer.isInstalled(installable.name)).toBe(true);
+    await installer.uninstall(installable.name);
+    expect(installer.isInstalled(installable.name)).toBe(false);
   });
 
   test("should be able to install a server", async () => {
-    const entry = createCursorServerEntry();
-    await installer.install(entry);
+    const installable = createInstallable();
+    await installer.install(installable);
     const servers = await installer.list();
     const installedServer = servers.find(
-      (s) => s.name === `${CURSOR_CONFIG_KEY_PREFIX}${entry.name}`,
+      (s) => s.name === `${CURSOR_CONFIG_KEY_PREFIX}${installable.name}`,
     );
     expect(installedServer).toBeDefined();
     expect(installedServer).toEqual({
-      name: `${CURSOR_CONFIG_KEY_PREFIX}${entry.name}`,
-      url: entry.url,
+      name: `${CURSOR_CONFIG_KEY_PREFIX}${installable.name}`,
+      url: installable.url,
     });
   });
 
   test("should be able to uninstall a server", async () => {
-    const entry = createCursorServerEntry();
-    await installer.install(entry);
+    const installable = createInstallable();
+    await installer.install(installable);
     expect(await installer.list()).toHaveLength(1);
-    await installer.uninstall(entry.name);
+    await installer.uninstall(installable.name);
     expect(await installer.list()).toHaveLength(0);
   });
 
   test("should be able to purge all servers", async () => {
-    await installer.install(createCursorServerEntry());
-    await installer.install(createCursorServerEntry());
-    await installer.install(createCursorServerEntry());
+    await installer.install(createInstallable());
+    await installer.install(createInstallable());
     await installer.purge();
     expect(await installer.list()).toHaveLength(0);
   });

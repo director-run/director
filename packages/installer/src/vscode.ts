@@ -15,6 +15,7 @@ import {
 } from "@director.run/utilities/os";
 import { restartApp } from "@director.run/utilities/os";
 import { z } from "zod";
+import { AbstractInstaller } from "./abstract-installer";
 
 const VSCODE_COMMAND = "code";
 const VSCODE_CONFIG_PATH = path.join(
@@ -26,11 +27,12 @@ export const VSCODE_CONFIG_KEY_PREFIX = "director__";
 
 const logger = getLogger("installer/vscode");
 
-export class VSCodeInstaller {
+export class VSCodeInstaller extends AbstractInstaller {
   private config: VSCodeConfig;
   public readonly configPath: string;
 
   private constructor(params: { configPath: string; config: VSCodeConfig }) {
+    super();
     this.configPath = params.configPath;
     this.config = params.config;
   }

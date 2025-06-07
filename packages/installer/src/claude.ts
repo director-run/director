@@ -106,7 +106,7 @@ export class ClaudeInstaller extends AbstractInstaller {
       .filter(([name]) => name.startsWith(CLAUDE_CONFIG_KEY_PREFIX))
       .map(([name, transport]) => ({
         name,
-        url: transport.args[2],
+        url: transport.args[3],
       }));
   }
 

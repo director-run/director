@@ -1,6 +1,9 @@
 import { ClaudeInstaller } from "@director.run/client-manager/claude";
 import { CursorInstaller } from "@director.run/client-manager/cursor";
-import { getInstaller } from "@director.run/client-manager/get-installer";
+import {
+  InstallerTarget,
+  getInstaller,
+} from "@director.run/client-manager/get-installer";
 import { VSCodeInstaller } from "@director.run/client-manager/vscode";
 import { t } from "@director.run/utilities/trpc";
 import { joinURL } from "@director.run/utilities/url";
@@ -49,7 +52,7 @@ export function createInstallerRouter({
       install: t.procedure
         .input(
           z.object({
-            client: z.enum(["claude", "cursor", "vscode"]),
+            client: z.nativeEnum(InstallerTarget),
             proxyId: z.string(),
             baseUrl: z.string(),
           }),
@@ -65,7 +68,7 @@ export function createInstallerRouter({
       uninstall: t.procedure
         .input(
           z.object({
-            client: z.enum(["claude", "cursor", "vscode"]),
+            client: z.nativeEnum(InstallerTarget),
             proxyId: z.string(),
           }),
         )
@@ -74,60 +77,6 @@ export function createInstallerRouter({
           const installer = await getInstaller(input.client);
           await installer.uninstall(proxy.id);
         }),
-    }),
-    claude: t.router({
-      list: t.procedure.query(async () => {
-        const installer = await ClaudeInstaller.create();
-        return installer.list();
-      }),
-      restart: t.procedure.mutation(async () => {
-        const installer = await ClaudeInstaller.create();
-        await installer.restart();
-      }),
-      purge: t.procedure.mutation(async () => {
-        const installer = await ClaudeInstaller.create();
-        await installer.purge();
-      }),
-      config: t.procedure.query(async () => {
-        const installer = await ClaudeInstaller.create();
-        return installer.openConfig();
-      }),
-    }),
-    cursor: t.router({
-      restart: t.procedure.mutation(async () => {
-        const installer = await CursorInstaller.create();
-        await installer.restart();
-      }),
-      list: t.procedure.query(async () => {
-        const installer = await CursorInstaller.create();
-        return installer.list();
-      }),
-      purge: t.procedure.mutation(async () => {
-        const installer = await CursorInstaller.create();
-        await installer.purge();
-      }),
-      config: t.procedure.query(async () => {
-        const installer = await CursorInstaller.create();
-        return installer.openConfig();
-      }),
-    }),
-    vscode: t.router({
-      restart: t.procedure.mutation(async () => {
-        const installer = await VSCodeInstaller.create();
-        await installer.restart();
-      }),
-      list: t.procedure.query(async () => {
-        const installer = await VSCodeInstaller.create();
-        return installer.list();
-      }),
-      purge: t.procedure.mutation(async () => {
-        const installer = await VSCodeInstaller.create();
-        await installer.purge();
-      }),
-      config: t.procedure.query(async () => {
-        const installer = await VSCodeInstaller.create();
-        return installer.openConfig();
-      }),
     }),
   });
 }

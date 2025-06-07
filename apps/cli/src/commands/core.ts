@@ -1,4 +1,8 @@
 import {
+  type InstallerTarget,
+  getInstaller,
+} from "@director.run/client-manager/get-installer";
+import {
   getSSEPathForProxy,
   getStreamablePathForProxy,
 } from "@director.run/gateway/helpers";
@@ -122,18 +126,15 @@ export function registerCoreCommands(program: DirectorCommand): void {
     )
     .action(
       actionWithErrorHandler(
-        async (
-          proxyId: string,
-          options: { target: "claude" | "cursor" | "vscode" },
-        ) => {
+        async (proxyId: string, options: { target: InstallerTarget }) => {
           if (options.target) {
-            const result = await gatewayClient.installer.byProxy.install.mutate(
-              {
-                proxyId,
-                baseUrl: env.GATEWAY_URL,
-                client: options.target,
-              },
-            );
+            const proxy = await gatewayClient.store.get.query({ proxyId });
+            const installer = await getInstaller(options.target);
+            const result = await installer.install({
+              name: proxy.id,
+              url: joinURL(env.GATEWAY_URL, getSSEPathForProxy(proxy.id)),
+            });
+
             console.log(result);
           } else {
             console.log();
@@ -181,16 +182,11 @@ export function registerCoreCommands(program: DirectorCommand): void {
     )
     .action(
       actionWithErrorHandler(
-        async (
-          proxyId: string,
-          options: { target: "claude" | "cursor" | "vscode" },
-        ) => {
-          console.log(
-            await gatewayClient.installer.byProxy.uninstall.mutate({
-              proxyId,
-              client: options.target,
-            }),
-          );
+        async (proxyId: string, options: { target: InstallerTarget }) => {
+          const proxy = await gatewayClient.store.get.query({ proxyId });
+          const installer = await getInstaller(options.target);
+          const result = await installer.uninstall(proxy.id);
+          console.log(result);
         },
       ),
     );

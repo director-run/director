@@ -13,7 +13,6 @@ import {
   sleep,
 } from "@director.run/utilities/os";
 import { restartApp } from "@director.run/utilities/os";
-import _ from "lodash";
 import { AbstractConfigurator } from "./types";
 
 const CURSOR_COMMAND = "cursor";
@@ -123,10 +122,10 @@ export class CursorInstaller extends AbstractConfigurator {
   }
 
   private async updateConfig(newConfig: CursorConfig) {
-    if (_.isEqual(this.config, newConfig)) {
-      logger.info("no changes, skipping update");
-      return;
-    }
+    // if (_.isEqual(this.config, newConfig)) {
+    //   logger.info("no changes, skipping update");
+    //   return;
+    // }
     logger.info(`writing config to ${this.configPath}`);
     await writeJSONFile(this.configPath, newConfig);
     this.config = newConfig;

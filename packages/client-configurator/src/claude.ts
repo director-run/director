@@ -11,7 +11,6 @@ import {
   openFileInCode,
   restartApp,
 } from "@director.run/utilities/os";
-import _ from "lodash";
 import { z } from "zod";
 import { AbstractConfigurator } from "./types";
 
@@ -131,10 +130,10 @@ export class ClaudeInstaller extends AbstractConfigurator {
   }
 
   private async updateConfig(newConfig: ClaudeConfig) {
-    if (_.isEqual(this.config, newConfig)) {
-      logger.info("no changes, skipping update");
-      return;
-    }
+    // if (_.isEqual(this.config, newConfig)) {
+    //   logger.info("no changes, skipping update");
+    //   return;
+    // }
     this.config = ClaudeConfigSchema.parse(newConfig);
     logger.info(`writing config to ${this.configPath}`);
     await writeJSONFile(this.configPath, this.config);

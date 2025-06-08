@@ -1,12 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import {
-  createEnv,
-  isDevelopment,
-  isProduction,
-  isTest,
-} from "@director.run/utilities/env";
+import { createEnv, isProduction, isTest } from "@director.run/utilities/env";
 import { z } from "zod";
 
 export const env = createEnv({
@@ -29,8 +24,7 @@ export const env = createEnv({
 
 function getEnvFilePath() {
   const localEnvPath = path.join(process.cwd(), "./.env.local");
-  if (fs.existsSync(localEnvPath) && isDevelopment()) {
-    // In development, we want to use the local env file if it exists in the current working directory
+  if (fs.existsSync(localEnvPath)) {
     return localEnvPath;
   } else {
     return path.join(getDataDir(), "./config.env");

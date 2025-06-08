@@ -12,7 +12,7 @@ import {
   restartApp,
 } from "@director.run/utilities/os";
 import { z } from "zod";
-import { AbstractInstaller } from "./types";
+import { AbstractConfigurator } from "./types";
 
 export const CLAUDE_COMMAND = "claude";
 export const CLAUDE_CONFIG_PATH = path.join(
@@ -23,7 +23,7 @@ export const CLAUDE_CONFIG_KEY_PREFIX = "director__";
 
 const logger = getLogger("client-configurator/claude");
 
-export class ClaudeInstaller extends AbstractInstaller {
+export class ClaudeInstaller extends AbstractConfigurator {
   private config: ClaudeConfig;
   public readonly configPath: string;
 

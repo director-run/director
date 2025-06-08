@@ -13,7 +13,7 @@ import {
   sleep,
 } from "@director.run/utilities/os";
 import { restartApp } from "@director.run/utilities/os";
-import { AbstractInstaller } from "./types";
+import { AbstractConfigurator } from "./types";
 
 const CURSOR_COMMAND = "cursor";
 const CURSOR_CONFIG_PATH = path.join(os.homedir(), ".cursor/mcp.json");
@@ -22,7 +22,7 @@ export const CURSOR_CONFIG_KEY_PREFIX = "director__";
 
 const logger = getLogger("client-configurator/cursor");
 
-export class CursorInstaller extends AbstractInstaller {
+export class CursorInstaller extends AbstractConfigurator {
   private config: CursorConfig;
   public readonly configPath: string;
 

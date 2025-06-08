@@ -1,4 +1,4 @@
-export abstract class AbstractInstaller {
+export abstract class AbstractConfigurator {
   public abstract install(attributes: {
     name: string;
     url: string;

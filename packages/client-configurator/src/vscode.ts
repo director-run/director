@@ -14,7 +14,7 @@ import {
   sleep,
 } from "@director.run/utilities/os";
 import { restartApp } from "@director.run/utilities/os";
-import { AbstractInstaller, type Installable } from "./types";
+import { AbstractConfigurator, type Installable } from "./types";
 
 const VSCODE_COMMAND = "code";
 const VSCODE_CONFIG_PATH = path.join(
@@ -26,7 +26,7 @@ export const VSCODE_CONFIG_KEY_PREFIX = "director__";
 
 const logger = getLogger("client-configurator/vscode");
 
-export class VSCodeInstaller extends AbstractInstaller {
+export class VSCodeInstaller extends AbstractConfigurator {
   private config: VSCodeConfig;
   public readonly configPath: string;
 

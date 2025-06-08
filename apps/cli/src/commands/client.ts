@@ -1,6 +1,6 @@
 import {
-  InstallerTarget,
-  getInstaller,
+  ConfiguratorTarget,
+  getConfigurator,
   resetAllClients,
 } from "@director.run/client-configurator/index";
 import {
@@ -29,16 +29,18 @@ export function registerClientCommands(program: DirectorCommand): void {
     .description("List servers in the client config")
     .addOption(targetOption)
     .action(
-      actionWithErrorHandler(async (options: { target: InstallerTarget }) => {
-        const installer = await getInstaller(options.target);
-        const servers = await installer.list();
-        const table = makeTable(["name", "url"]);
+      actionWithErrorHandler(
+        async (options: { target: ConfiguratorTarget }) => {
+          const installer = await getConfigurator(options.target);
+          const servers = await installer.list();
+          const table = makeTable(["name", "url"]);
 
-        table.push(
-          ...servers.map((server) => [server.name, server.url || "--"]),
-        );
-        console.log(table.toString());
-      }),
+          table.push(
+            ...servers.map((server) => [server.name, server.url || "--"]),
+          );
+          console.log(table.toString());
+        },
+      ),
     );
 
   command
@@ -46,11 +48,13 @@ export function registerClientCommands(program: DirectorCommand): void {
     .description("Restart the MCP client")
     .addOption(targetOption)
     .action(
-      actionWithErrorHandler(async (options: { target: InstallerTarget }) => {
-        const installer = await getInstaller(options.target);
-        const result = await installer.restart();
-        console.log(result);
-      }),
+      actionWithErrorHandler(
+        async (options: { target: ConfiguratorTarget }) => {
+          const installer = await getConfigurator(options.target);
+          const result = await installer.restart();
+          console.log(result);
+        },
+      ),
     );
 
   command
@@ -58,11 +62,13 @@ export function registerClientCommands(program: DirectorCommand): void {
     .description("Delete all servers from the client config")
     .addOption(targetOption)
     .action(
-      actionWithErrorHandler(async (options: { target: InstallerTarget }) => {
-        const installer = await getInstaller(options.target);
-        const result = await installer.reset();
-        console.log(result);
-      }),
+      actionWithErrorHandler(
+        async (options: { target: ConfiguratorTarget }) => {
+          const installer = await getConfigurator(options.target);
+          const result = await installer.reset();
+          console.log(result);
+        },
+      ),
     );
 
   command
@@ -79,11 +85,13 @@ export function registerClientCommands(program: DirectorCommand): void {
     .description("Open claude config file")
     .addOption(targetOption)
     .action(
-      actionWithErrorHandler(async (options: { target: InstallerTarget }) => {
-        const installer = await getInstaller(options.target);
-        const result = await installer.openConfig();
-        console.log(result);
-      }),
+      actionWithErrorHandler(
+        async (options: { target: ConfiguratorTarget }) => {
+          const installer = await getConfigurator(options.target);
+          const result = await installer.openConfig();
+          console.log(result);
+        },
+      ),
     );
 
   program.addCommand(command);

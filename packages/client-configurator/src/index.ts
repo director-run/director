@@ -1,17 +1,17 @@
 import { ClaudeInstaller } from "./claude";
 import { CursorInstaller } from "./cursor";
-import type { AbstractInstaller } from "./types";
+import type { AbstractConfigurator } from "./types";
 import { VSCodeInstaller } from "./vscode";
 
-export enum InstallerTarget {
+export enum ConfiguratorTarget {
   Claude = "claude",
   Cursor = "cursor",
   VSCode = "vscode",
 }
 
-export function getInstaller(
-  target: InstallerTarget,
-): Promise<AbstractInstaller> {
+export function getConfigurator(
+  target: ConfiguratorTarget,
+): Promise<AbstractConfigurator> {
   switch (target) {
     case "claude":
       return ClaudeInstaller.create();
@@ -26,7 +26,7 @@ export function getInstaller(
 
 export async function resetAllClients() {
   const installers = await Promise.all(
-    Object.values(InstallerTarget).map(getInstaller),
+    Object.values(ConfiguratorTarget).map(getConfigurator),
   );
   for (const installer of installers) {
     await installer.reset();

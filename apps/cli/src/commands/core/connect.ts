@@ -1,5 +1,5 @@
-import { InstallerTarget } from "@director.run/client-configurator/index";
-import { getInstaller } from "@director.run/client-configurator/index";
+import { ConfiguratorTarget } from "@director.run/client-configurator/index";
+import { getConfigurator } from "@director.run/client-configurator/index";
 import {
   getSSEPathForProxy,
   getStreamablePathForProxy,
@@ -27,10 +27,10 @@ export function registerConnectCommand(program: DirectorCommand) {
     )
     .action(
       actionWithErrorHandler(
-        async (proxyId: string, options: { target: InstallerTarget }) => {
+        async (proxyId: string, options: { target: ConfiguratorTarget }) => {
           if (options.target) {
             const proxy = await gatewayClient.store.get.query({ proxyId });
-            const installer = await getInstaller(options.target);
+            const installer = await getConfigurator(options.target);
             const result = await installer.install({
               name: proxy.id,
               url: joinURL(env.GATEWAY_URL, getSSEPathForProxy(proxy.id)),

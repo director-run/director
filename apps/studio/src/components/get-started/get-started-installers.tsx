@@ -10,7 +10,7 @@ import { toast } from "@/components/ui/toast";
 import { cn } from "@/lib/cn";
 import { trpc } from "@/trpc/client";
 
-import { InstallerTarget } from "@director.run/client-manager/get-installer";
+import { InstallerTarget } from "@director.run/client-configurator/get-installer";
 import claudeIconImage from "../../../public/icons/claude-icon.png";
 import vscodeIconImage from "../../../public/icons/code-icon.png";
 import cursorIconImage from "../../../public/icons/cursor-icon.png";

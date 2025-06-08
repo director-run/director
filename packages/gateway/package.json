@@ -15,7 +15,7 @@
   "dependencies": {
     "@director.run/registry": "workspace:*",
     "@director.run/utilities": "workspace:*",
-    "@director.run/client-manager": "workspace:*",
+    "@director.run/client-configurator": "workspace:*",
     "@director.run/mcp": "workspace:*",
     "@t3-oss/env-core": "^0.12.0",
     "@trpc/client": "^11.0.2",

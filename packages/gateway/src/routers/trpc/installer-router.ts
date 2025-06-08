@@ -1,10 +1,10 @@
-import { ClaudeInstaller } from "@director.run/client-manager/claude";
-import { CursorInstaller } from "@director.run/client-manager/cursor";
+import { ClaudeInstaller } from "@director.run/client-configurator/claude";
+import { CursorInstaller } from "@director.run/client-configurator/cursor";
 import {
   InstallerTarget,
   getInstaller,
-} from "@director.run/client-manager/get-installer";
-import { VSCodeInstaller } from "@director.run/client-manager/vscode";
+} from "@director.run/client-configurator/get-installer";
+import { VSCodeInstaller } from "@director.run/client-configurator/vscode";
 import { t } from "@director.run/utilities/trpc";
 import { joinURL } from "@director.run/utilities/url";
 import { z } from "zod";

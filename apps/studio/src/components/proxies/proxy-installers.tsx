@@ -7,6 +7,7 @@ import { useProxy } from "@/hooks/use-proxy";
 import { trpc } from "@/trpc/client";
 import { Switch } from "../ui/switch";
 
+import { InstallerTarget } from "@director.run/client-configurator/get-installer";
 import { ArrowUpRightIcon } from "@phosphor-icons/react";
 import claudeIconImage from "../../../public/icons/claude-icon.png";
 import vscodeIconImage from "../../../public/icons/code-icon.png";
@@ -145,11 +146,14 @@ export function ProxyInstallers({ proxyId }: ProxyInstallersProps) {
                 if (checked) {
                   installationMutation.mutate({
                     proxyId,
-                    client: it.id,
+                    client: it.id as InstallerTarget,
                     baseUrl: "http://localhost:3673",
                   });
                 } else {
-                  uninstallationMutation.mutate({ proxyId, client: it.id });
+                  uninstallationMutation.mutate({
+                    proxyId,
+                    client: it.id as InstallerTarget,
+                  });
                 }
               }}
               disabled={

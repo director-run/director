@@ -1,7 +1,7 @@
 import {
   InstallerTarget,
   getInstaller,
-} from "@director.run/client-manager/get-installer";
+} from "@director.run/client-configurator/get-installer";
 import {
   DirectorCommand,
   makeOption,

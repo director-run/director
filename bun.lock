@@ -145,11 +145,24 @@
         "typescript": "^5.8.3",
       },
     },
+    "packages/client-configurator": {
+      "name": "@director.run/client-configurator",
+      "version": "0.0.1",
+      "dependencies": {
+        "@director.run/mcp": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
+        "type-fest": "^4.40.0",
+        "typescript": "^5.8.2",
+        "vitest": "^3.1.1",
+      },
+    },
     "packages/gateway": {
       "name": "@director.run/gateway",
       "version": "0.0.1",
       "dependencies": {
-        "@director.run/client-manager": "workspace:*",
+        "@director.run/client-configurator": "workspace:*",
         "@director.run/mcp": "workspace:*",
         "@director.run/registry": "workspace:*",
         "@director.run/utilities": "workspace:*",
@@ -180,19 +193,6 @@
       },
       "peerDependencies": {
         "typescript": "^5",
-      },
-    },
-    "packages/installer": {
-      "name": "@director.run/client-manager",
-      "version": "0.0.1",
-      "dependencies": {
-        "@director.run/mcp": "workspace:*",
-      },
-      "devDependencies": {
-        "@types/bun": "latest",
-        "type-fest": "^4.40.0",
-        "typescript": "^5.8.2",
-        "vitest": "^3.1.1",
       },
     },
     "packages/mcp": {
@@ -259,7 +259,7 @@
 
     "@director.run/cli": ["@director.run/cli@workspace:apps/cli"],
 
-    "@director.run/client-manager": ["@director.run/client-manager@workspace:packages/installer"],
+    "@director.run/client-configurator": ["@director.run/client-configurator@workspace:packages/client-configurator"],
 
     "@director.run/docs": ["@director.run/docs@workspace:apps/docs"],
 

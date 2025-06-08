@@ -14,6 +14,7 @@ import { gatewayClient } from "../client";
 import { env } from "../env";
 import { registerAddCommand } from "./core/add";
 import { registerConnectCommand } from "./core/connect";
+import { registerEnvCommand } from "./core/env";
 import { registerQuickstartCommand } from "./core/quickstart";
 import { registerRemoveCommand } from "./core/remove";
 import { registerServeCommand } from "./core/serve";
@@ -146,14 +147,7 @@ export function registerCoreCommands(program: DirectorCommand): void {
       await proxyHTTPToStdio(url);
     });
 
-  program
-    .command("env")
-    .description("Print environment variables")
-    .action(
-      actionWithErrorHandler(() => {
-        console.log(`env`, env);
-      }),
-    );
+  registerEnvCommand(program);
 
   program
     .debugCommand("reset")

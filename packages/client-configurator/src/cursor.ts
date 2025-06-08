@@ -123,7 +123,7 @@ export class CursorInstaller extends AbstractInstaller {
 
   private async updateConfig(newConfig: CursorConfig) {
     logger.info(`writing config to ${this.configPath}`);
-    await writeJSONFile(this.configPath, this.config);
+    await writeJSONFile(this.configPath, newConfig);
     this.config = newConfig;
   }
 }

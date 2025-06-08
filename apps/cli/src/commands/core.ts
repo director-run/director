@@ -155,7 +155,9 @@ export function registerCoreCommands(program: DirectorCommand): void {
     .description("Delete proxies, clear the config file, and reset all clients")
     .action(
       actionWithErrorHandler(async ({ target }) => {
+        console.log("resetting service");
         await gatewayClient.store.purge.mutate();
+        console.log("resetting clients");
         await resetAllClients();
       }),
     );

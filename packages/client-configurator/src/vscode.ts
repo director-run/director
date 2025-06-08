@@ -14,6 +14,7 @@ import {
   sleep,
 } from "@director.run/utilities/os";
 import { restartApp } from "@director.run/utilities/os";
+import _ from "lodash";
 import { AbstractConfigurator, type Installable } from "./types";
 
 const VSCODE_COMMAND = "code";
@@ -151,6 +152,11 @@ export class VSCodeInstaller extends AbstractConfigurator {
   }
 
   private async updateConfig(newConfig: VSCodeConfig) {
+    if (_.isEqual(this.config, newConfig)) {
+      logger.info("no changes, skipping update");
+      return;
+    }
+
     logger.info(`writing config to ${this.configPath}`);
 
     // Ensure the directory exists

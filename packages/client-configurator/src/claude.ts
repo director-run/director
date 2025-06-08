@@ -21,7 +21,7 @@ export const CLAUDE_CONFIG_PATH = path.join(
 );
 export const CLAUDE_CONFIG_KEY_PREFIX = "director__";
 
-const logger = getLogger("installer/claude");
+const logger = getLogger("client-configurator/claude");
 
 export class ClaudeInstaller extends AbstractInstaller {
   private config: ClaudeConfig;

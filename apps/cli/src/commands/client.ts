@@ -54,13 +54,27 @@ export function registerClientCommands(program: DirectorCommand): void {
 
   command
     .debugCommand("reset")
-    .description("Purge all claude MCP servers")
+    .description("Delete all servers from the client config")
     .addOption(targetOption)
     .action(
       actionWithErrorHandler(async (options: { target: InstallerTarget }) => {
         const installer = await getInstaller(options.target);
-        const result = await installer.purge();
+        const result = await installer.reset();
         console.log(result);
+      }),
+    );
+
+  command
+    .debugCommand("reset-all")
+    .description("Delete all servers from all clients")
+    .action(
+      actionWithErrorHandler(async () => {
+        const installers = await Promise.all(
+          Object.values(InstallerTarget).map(getInstaller),
+        );
+        for (const installer of installers) {
+          await installer.reset();
+        }
       }),
     );
 

@@ -24,7 +24,7 @@ const VSCODE_CONFIG_PATH = path.join(
 
 export const VSCODE_CONFIG_KEY_PREFIX = "director__";
 
-const logger = getLogger("installer/vscode");
+const logger = getLogger("client-configurator/vscode");
 
 export class VSCodeInstaller extends AbstractInstaller {
   private config: VSCodeConfig;

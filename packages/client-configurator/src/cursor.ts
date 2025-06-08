@@ -20,7 +20,7 @@ const CURSOR_CONFIG_PATH = path.join(os.homedir(), ".cursor/mcp.json");
 
 export const CURSOR_CONFIG_KEY_PREFIX = "director__";
 
-const logger = getLogger("installer/cursor");
+const logger = getLogger("client-configurator/cursor");
 
 export class CursorInstaller extends AbstractInstaller {
   private config: CursorConfig;

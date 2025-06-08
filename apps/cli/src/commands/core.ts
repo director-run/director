@@ -30,6 +30,7 @@ export function registerCoreCommands(program: DirectorCommand): void {
 
   program
     .command("ls")
+    .alias("list")
     .description("List proxies")
     .action(
       actionWithErrorHandler(async () => {

@@ -6,7 +6,10 @@ import {
   DirectorCommand,
   makeOption,
 } from "@director.run/utilities/cli/director-command";
-import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
+import {
+  actionWithErrorHandler,
+  makeTable,
+} from "@director.run/utilities/cli/index";
 import { isDevelopment } from "@director.run/utilities/env";
 
 export function registerClientCommands(program: DirectorCommand): void {
@@ -21,13 +24,19 @@ export function registerClientCommands(program: DirectorCommand): void {
 
   command
     .debugCommand("ls")
+    .alias("list")
     .description("List servers in the client config")
     .addOption(targetOption)
     .action(
       actionWithErrorHandler(async (options: { target: InstallerTarget }) => {
         const installer = await getInstaller(options.target);
-        const result = await installer.list();
-        console.log(result);
+        const servers = await installer.list();
+        const table = makeTable(["name", "url"]);
+
+        table.push(
+          ...servers.map((server) => [server.name, server.url || "--"]),
+        );
+        console.log(table.toString());
       }),
     );
 

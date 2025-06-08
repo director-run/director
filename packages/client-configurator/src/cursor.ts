@@ -114,7 +114,7 @@ export class CursorInstaller extends AbstractInstaller {
     await openFileInCode(this.configPath);
   }
 
-  public async purge() {
+  public async reset() {
     logger.info("purging cursor config");
     const newConfig = { ...this.config };
     newConfig.mcpServers = {};

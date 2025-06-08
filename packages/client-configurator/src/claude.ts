@@ -93,7 +93,7 @@ export class ClaudeInstaller extends AbstractInstaller {
     await this.updateConfig(newConfig);
   }
 
-  public async purge() {
+  public async reset() {
     logger.info("purging claude config");
     const newConfig = { ...this.config };
     newConfig.mcpServers = {};

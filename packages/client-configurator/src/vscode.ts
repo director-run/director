@@ -143,7 +143,7 @@ export class VSCodeInstaller extends AbstractInstaller {
     await openFileInCode(this.configPath);
   }
 
-  public async purge() {
+  public async reset() {
     logger.info("purging vscode config");
     const newConfig = { ...this.config };
     newConfig.mcp.servers = {};

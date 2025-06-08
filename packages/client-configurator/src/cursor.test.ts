@@ -60,7 +60,7 @@ describe("cursor installer", () => {
   test("should be able to purge all servers", async () => {
     await installer.install(createInstallable());
     await installer.install(createInstallable());
-    await installer.purge();
+    await installer.reset();
     expect(await installer.list()).toHaveLength(0);
   });
 });

@@ -1,7 +1,8 @@
 import {
   InstallerTarget,
   getInstaller,
-} from "@director.run/client-configurator/get-installer";
+  resetAllClients,
+} from "@director.run/client-configurator/index";
 import {
   DirectorCommand,
   makeOption,
@@ -69,12 +70,7 @@ export function registerClientCommands(program: DirectorCommand): void {
     .description("Delete all servers from all clients")
     .action(
       actionWithErrorHandler(async () => {
-        const installers = await Promise.all(
-          Object.values(InstallerTarget).map(getInstaller),
-        );
-        for (const installer of installers) {
-          await installer.reset();
-        }
+        await resetAllClients();
       }),
     );
 

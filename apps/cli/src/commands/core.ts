@@ -1,7 +1,8 @@
 import {
   type InstallerTarget,
   getInstaller,
-} from "@director.run/client-configurator/get-installer";
+  resetAllClients,
+} from "@director.run/client-configurator/index";
 import { proxyHTTPToStdio } from "@director.run/mcp/transport";
 import {
   DirectorCommand,
@@ -151,10 +152,11 @@ export function registerCoreCommands(program: DirectorCommand): void {
 
   program
     .debugCommand("reset")
-    .description("Delete proxies & clear the config file")
+    .description("Delete proxies, clear the config file, and reset all clients")
     .action(
       actionWithErrorHandler(async ({ target }) => {
         await gatewayClient.store.purge.mutate();
+        await resetAllClients();
       }),
     );
 }

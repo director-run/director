@@ -23,3 +23,12 @@ export function getInstaller(
       throw new Error(`Unsupported installer target: ${target}`);
   }
 }
+
+export async function resetAllClients() {
+  const installers = await Promise.all(
+    Object.values(InstallerTarget).map(getInstaller),
+  );
+  for (const installer of installers) {
+    await installer.reset();
+  }
+}

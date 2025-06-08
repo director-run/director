@@ -1,5 +1,5 @@
-import { InstallerTarget } from "@director.run/client-configurator/get-installer";
-import { getInstaller } from "@director.run/client-configurator/get-installer";
+import { InstallerTarget } from "@director.run/client-configurator/index";
+import { getInstaller } from "@director.run/client-configurator/index";
 import {
   getSSEPathForProxy,
   getStreamablePathForProxy,

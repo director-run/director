@@ -1,9 +1,9 @@
 import { ClaudeInstaller } from "@director.run/client-configurator/claude";
 import { CursorInstaller } from "@director.run/client-configurator/cursor";
 import {
-  InstallerTarget,
-  getInstaller,
-} from "@director.run/client-configurator/get-installer";
+  ConfiguratorTarget,
+  getConfigurator,
+} from "@director.run/client-configurator/index";
 import { VSCodeInstaller } from "@director.run/client-configurator/vscode";
 import { t } from "@director.run/utilities/trpc";
 import { joinURL } from "@director.run/utilities/url";
@@ -52,14 +52,14 @@ export function createInstallerRouter({
       install: t.procedure
         .input(
           z.object({
-            client: z.nativeEnum(InstallerTarget),
+            client: z.nativeEnum(ConfiguratorTarget),
             proxyId: z.string(),
             baseUrl: z.string(),
           }),
         )
         .mutation(async ({ input }) => {
           const proxy = proxyStore.get(input.proxyId);
-          const installer = await getInstaller(input.client);
+          const installer = await getConfigurator(input.client);
           await installer.install({
             name: proxy.id,
             url: joinURL(input.baseUrl, getSSEPathForProxy(proxy.id)),
@@ -68,13 +68,13 @@ export function createInstallerRouter({
       uninstall: t.procedure
         .input(
           z.object({
-            client: z.nativeEnum(InstallerTarget),
+            client: z.nativeEnum(ConfiguratorTarget),
             proxyId: z.string(),
           }),
         )
         .mutation(async ({ input }) => {
           const proxy = proxyStore.get(input.proxyId);
-          const installer = await getInstaller(input.client);
+          const installer = await getConfigurator(input.client);
           await installer.uninstall(proxy.id);
         }),
     }),

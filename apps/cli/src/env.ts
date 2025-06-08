@@ -4,6 +4,8 @@ import path from "node:path";
 import { createEnv, isProduction, isTest } from "@director.run/utilities/env";
 import { z } from "zod";
 
+export const LOCAL_ENV_FILE_PATH = path.join(process.cwd(), ".env.local");
+
 export const env = createEnv({
   envFilePath: getEnvFilePath(),
   envVars: {
@@ -22,16 +24,19 @@ export const env = createEnv({
   },
 });
 
-function getEnvFilePath() {
-  const localEnvPath = path.join(process.cwd(), "./.env.local");
-  if (fs.existsSync(localEnvPath)) {
-    return localEnvPath;
+export function getEnvFilePath(): string {
+  if (fs.existsSync(LOCAL_ENV_FILE_PATH)) {
+    return LOCAL_ENV_FILE_PATH;
   } else {
     return path.join(getDataDir(), "./config.env");
   }
 }
 
-function getDataDir() {
+export function isUsingEnvFile(): boolean {
+  return fs.existsSync(getEnvFilePath());
+}
+
+function getDataDir(): string {
   if (isProduction()) {
     return path.join(os.homedir(), `.director`);
   } else if (isTest()) {

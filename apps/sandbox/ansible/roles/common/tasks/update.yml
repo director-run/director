@@ -1,0 +1,7 @@
+- name: Update apt packages
+  become: true
+  apt: update_cache=yes
+
+- name: Upgrade apt packages
+  become: true
+  apt: upgrade=dist

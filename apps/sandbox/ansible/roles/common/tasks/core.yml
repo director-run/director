@@ -1,0 +1,30 @@
+- name: Install core packages
+  become: true
+  package:
+    name:
+      - screen
+      - git
+      - libatomic1
+      - net-tools
+      - vim
+      - curl
+      - wget
+      - p7zip-full
+      - htop
+      - postgresql-client
+    state: latest
+
+- name: Install network tools
+  become: true
+  package:
+    name:
+      - avahi-daemon
+      - avahi-discover
+      - avahi-utils
+      - libnss-mdns
+      - mdns-scan
+    state: latest
+
+- name: Add .screenrc file
+  shell: |
+    curl -fsSL https://gist.githubusercontent.com/barnaby/1fe544ea69648fc1b3d3ef81b7fb62bd/raw/b8f482d4d3e4d24893261abc40b0fae8eebdd003/.screenrc -o ~/.screenrc

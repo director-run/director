@@ -1,0 +1,55 @@
+---
+- name: Installing zsh
+  become: true
+  package:
+    name:
+      - zsh
+      - powerline
+      - fonts-powerline
+    state: latest
+
+- name: Check if .zshrc exists
+  stat:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+  register: stat_rc_result
+
+- name: Check if .oh-my-zsh exists
+  stat:
+    path: "~/.oh-my-zsh"
+  register: stat_oh_my_zsh_result
+
+- name: Cloning oh-my-zsh
+  git: repo=https://github.com/robbyrussell/oh-my-zsh
+    dest=~/.oh-my-zsh
+  when: not stat_oh_my_zsh_result.stat.exists
+
+- name: Creating new ~/.zshrc
+  copy: src="~/.oh-my-zsh/templates/zshrc.zsh-template"
+    dest="~/.zshrc"
+  when: not stat_rc_result.stat.exists
+
+- name: Change user shell to zsh
+  become: true
+  user: name={{ user }} shell=/bin/zsh
+
+# - name: Set ZSH Prompt
+#   lineinfile:
+#     create: yes
+#     dest: "~/.zshrc"
+#     regexp: ".*PROMPT="
+#     line: 'autoload -U colors && colors && PROMPT="[ %{$fg[green]%}%n@%m%{$reset_color%} ][ %* ] %{$fg[magenta]%}%~ %{$reset_color% $ "'
+#     state: present
+
+- name: Add ZSH customizations file reference
+  lineinfile: path=~/.zshrc
+    line="source ~/.zshrc.customizations"
+    owner={{ user }}
+    regexp='^source ~/.zshrc.customizations$'
+    state=present
+    insertafter=EOF
+    create=True
+
+- name: Create ZSH customizations file
+  copy:
+    dest: "~/.zshrc.customizations"
+    src: "../files/zshrc.customizations"

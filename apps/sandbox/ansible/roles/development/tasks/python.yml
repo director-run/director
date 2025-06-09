@@ -1,0 +1,12 @@
+- name: Install python
+  become: true
+  package:
+    name:
+      - python3-pip
+      - pipx
+    state: latest
+
+- name: Install uv
+  become: false
+  shell: |
+    pipx install uv

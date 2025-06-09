@@ -1,0 +1,6 @@
+---
+- name: Install nvm
+  import_tasks: nvm.yml
+
+- name: Install pyhon
+  import_tasks: python.yml

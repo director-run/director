@@ -1,0 +1,26 @@
+- name: Install nvm
+  shell: >
+    curl -o- curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
+  args:
+    creates: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
+
+- name: Add nvm to .zshrc
+  lineinfile:
+    dest: "{{ ansible_env.HOME }}/.zshrc"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  loop:
+    - { regexp: '^export NVM_DIR=', line: 'export NVM_DIR=~/.nvm' }
+    - { regexp: '^\[ -s "$NVM_DIR/nvm.sh" ]', line: '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"' }
+
+- name: Install Latest Node
+  shell: |
+    export NVM_DIR="{{ ansible_env.HOME }}/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    nvm install --lts
+
+- name: Install Global Packages
+  shell: |
+    export NVM_DIR="{{ ansible_env.HOME }}/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    npm install -g yarn bun

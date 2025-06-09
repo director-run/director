@@ -1,0 +1,15 @@
+---
+- name: Update apt
+  import_tasks: update.yml
+
+- name: Set hostname
+  import_tasks: hostname.yml
+
+- name: Install core packages
+  import_tasks: core.yml
+
+- name: Install zsh
+  import_tasks: zsh.yml
+
+- name: Install docker
+  import_tasks: docker.yml

@@ -11,7 +11,6 @@ import {
 } from "@/components/layout";
 import { McpLogo } from "@/components/mcp-logo";
 import { RegistryLibrarySkeleton } from "@/components/registry/registry-library-skeleton";
-import {} from "@/components/ui/badge";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -23,7 +22,6 @@ import { EmptyStateDescription } from "@/components/ui/empty-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { EmptyStateTitle } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
-import {} from "@/components/ui/list";
 import {
   Section,
   SectionDescription,

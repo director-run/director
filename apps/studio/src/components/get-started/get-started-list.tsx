@@ -3,7 +3,6 @@
 import * as CollapsiblePrimitive from "@radix-ui/react-collapsible";
 import { ComponentProps } from "react";
 
-import {} from "@/components/ui/list";
 import { cn } from "@/lib/cn";
 import {
   CheckCircleIcon,

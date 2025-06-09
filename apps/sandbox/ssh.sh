@@ -4,7 +4,6 @@ if [ -z "$1" ]; then
 fi
 
 VM_NAME="$1"
+PASSWORD="admin"  # default password is "admin"
 
-# TODO: add --ask-pass to set the password
-# TODO: skip known hosts check
-ssh admin@$(tart ip "$VM_NAME")
+sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no admin@$(tart ip "$VM_NAME")

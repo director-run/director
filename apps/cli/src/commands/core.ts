@@ -1,7 +1,6 @@
 import {
   type ConfiguratorTarget,
   getConfigurator,
-  resetAllClients,
 } from "@director.run/client-configurator/index";
 import { proxyHTTPToStdio } from "@director.run/mcp/transport";
 import {
@@ -15,6 +14,7 @@ import { gatewayClient } from "../client";
 import { env } from "../env";
 import { registerAddCommand } from "./core/add";
 import { registerConnectCommand } from "./core/connect";
+import { registerDebugCommands } from "./core/debug";
 import { registerEnvCommand } from "./core/env";
 import { registerQuickstartCommand } from "./core/quickstart";
 import { registerRemoveCommand } from "./core/remove";
@@ -149,16 +149,5 @@ export function registerCoreCommands(program: DirectorCommand): void {
     });
 
   registerEnvCommand(program);
-
-  program
-    .debugCommand("reset")
-    .description("Delete proxies, clear the config file, and reset all clients")
-    .action(
-      actionWithErrorHandler(async ({ target }) => {
-        console.log("resetting service");
-        await gatewayClient.store.purge.mutate();
-        console.log("resetting clients");
-        await resetAllClients();
-      }),
-    );
+  registerDebugCommands(program);
 }

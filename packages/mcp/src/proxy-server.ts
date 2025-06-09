@@ -103,6 +103,10 @@ export class ProxyServer extends Server {
       (t) => t.name.toLocaleLowerCase() !== targetName.toLocaleLowerCase(),
     );
     this.targets = this.targets.filter((t) => t.name !== targetName);
+    console.log(
+      "targets",
+      this.targets.map((t) => t.name),
+    );
     // TODO: send list changed events. need client to support this first
     // this.sendToolListChanged();
     // this.sendPromptListChanged();

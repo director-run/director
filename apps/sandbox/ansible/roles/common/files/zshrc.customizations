@@ -1,13 +1,3 @@
-
-#
-# Enable history
-#
-#HISTFILE=~/.zsh_history
-#HISTSIZE=10000
-#SAVEHIST=1000
-#setopt SHARE_HISTORY
-
-
 # python
 PATH=$PATH:~/.local/bin
 
@@ -15,26 +5,19 @@ PATH=$PATH:~/.local/bin
 # Aliases
 #
 alias json='python -m json.tool'
-alias flushdns='sudo killall -HUP mDNSResponder'
 alias l='ls -lGh'
-alias edit='code ~/.zshrc'
 alias reload='source ~/.zshrc'
 alias gpl='git pull'
 alias gpu='git push'
 alias gs='git status'
 alias ghostscript='/usr/local/bin/gs'
 alias ga='git add'
-alias rc='bundle exec rails console'
-alias rs='bundle exec rails server'
 alias myip='curl http://jsonip.com/ | cut -d\" -f4'
-alias bexec='bundle exec'
 alias key='cat ~/.ssh/id_rsa.pub'
 alias webserver='python -m SimpleHTTPServer'
 alias docker-ps='docker ps -a --format "table {{.ID}}\t{{.Status}}\t{{.Names}}"'
 
-function proj() { cd ~/Projects/$1 ;}
 function gc() { git commit -a -m "$1" ;}
-function javarun() { mvn exec:java -Dexec.mainClass="$1" ;}
 function spc() {
 	for i in {1..30}
 	do
@@ -42,12 +25,12 @@ function spc() {
 	done
 }
 
-# Fixes Libvirt issue on ssh
-export LIBVIRT_DEFAULT_URI=qemu:///system
-
+#
 # Prompt
-# autoload -U colors && colors && PROMPT="[ %{$fg[green]%}%n@%m%{$reset_color%} ][ %* ] %{$fg[magenta]%}%~ %{$reset_color% $ "
+#
 autoload -U colors && colors && PROMPT='%{$fg[green]%}[ %n@%m ]%{$reset_color%} [ %* ] %{$fg[magenta]%}%~%{$reset_color%} $ '
 
+#
 # Terminal
+#
 export TERM=xterm-256color

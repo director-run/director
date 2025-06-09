@@ -19,6 +19,7 @@
     "typescript": "^5"
   },
   "devDependencies": {
+    "@director.run/utilities": "workspace:*",
     "commander": "^14.0.0",
     "zx": "^8.5.4"
   }

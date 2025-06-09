@@ -1,4 +1,4 @@
-import { Command } from "commander";
+import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import packageJson from "../package.json";
 import {
   copyId,
@@ -9,19 +9,19 @@ import {
   start,
   stop,
   trust,
-} from "./commands";
+} from "../src/commands";
 
-const program = new Command();
+const program = new DirectorCommand();
 
 program
-  .name("computer-cluster")
-  .description("A tool for managing a mcp computers on apple silicon")
+  .name("director-sandbox")
+  .description("A tool for running director inside a VM")
   .version(packageJson.version);
 
 program
   .command("list")
   .alias("ls")
-  .description("List all computers")
+  .description("List all VMs")
   .action(async () => {
     const vms = await list();
     console.log(vms);
@@ -29,7 +29,7 @@ program
 
 program
   .command("create <name>")
-  .description("Create a new computer")
+  .description("Create a new VM")
   .action(async (name) => {
     const vm = await create(name);
     console.log(vm);
@@ -37,7 +37,7 @@ program
 
 program
   .command("start <name>")
-  .description("start a  computer")
+  .description("start a VM")
   .action(async (name) => {
     const vm = await start(name);
     console.log(vm);
@@ -45,7 +45,7 @@ program
 
 program
   .command("stop <name>")
-  .description("stop a  computer")
+  .description("stop a VM")
   .action(async (name) => {
     const vm = await stop(name);
     console.log(vm);
@@ -53,7 +53,7 @@ program
 
 program
   .command("destroy <name>")
-  .description("destroy a computer")
+  .description("destroy a VM")
   .action(async (name) => {
     const vm = await destroy(name);
     console.log(vm);
@@ -61,7 +61,7 @@ program
 
 program
   .command("trust <name>")
-  .description("set up ssh access to a computer")
+  .description("set up ssh access to a VM")
   .action(async (name) => {
     await trust(name);
     await copyId(name);
@@ -69,7 +69,7 @@ program
 
 program
   .command("provision <name>")
-  .description("provision a computer")
+  .description("provision a VM")
   .action(async (name) => {
     await provision(name);
   });

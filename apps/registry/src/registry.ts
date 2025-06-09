@@ -10,8 +10,6 @@ import { createTRPCExpressMiddleware } from "./routers/trpc";
 
 const logger = getLogger("registry");
 
-console.log(path.join(__dirname, "public"));
-
 export class Registry {
   public readonly port: number;
   private server: Server;

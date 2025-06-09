@@ -13,13 +13,13 @@
     - { regexp: '^export NVM_DIR=', line: 'export NVM_DIR=~/.nvm' }
     - { regexp: '^\[ -s "$NVM_DIR/nvm.sh" ]', line: '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"' }
 
-- name: Install Latest Node
+- name: Install latest Node.js
   shell: |
     export NVM_DIR="{{ ansible_env.HOME }}/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
     nvm install --lts
 
-- name: Install Global Packages
+- name: Install global NPM packages
   shell: |
     export NVM_DIR="{{ ansible_env.HOME }}/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"

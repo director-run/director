@@ -1,7 +1,7 @@
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import packageJson from "../package.json";
 import { create } from "../src/commands/create.ts";
-import { copyId, trust } from "../src/commands/create.ts";
+import {} from "../src/commands/create.ts";
 import { destroy, provision, stop } from "../src/commands/index.ts";
 import { list } from "../src/commands/list.ts";
 import { start } from "../src/commands/start.ts";
@@ -24,10 +24,15 @@ program
 
 program
   .command("create <name>")
+  .option("--start", "Start the VM after creation")
   .description("Create a new VM")
-  .action(async (name) => {
+  .action(async (name, options) => {
     const vm = await create(name);
-    console.log(vm);
+    if (options.start) {
+      await start(name);
+    } else {
+      console.log(vm);
+    }
   });
 
 program
@@ -52,14 +57,6 @@ program
   .action(async (name) => {
     const vm = await destroy(name);
     console.log(vm);
-  });
-
-program
-  .command("trust <name>")
-  .description("set up ssh access to a VM")
-  .action(async (name) => {
-    await trust(name);
-    await copyId(name);
   });
 
 program

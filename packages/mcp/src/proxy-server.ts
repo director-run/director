@@ -2,6 +2,7 @@ import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import * as eventsource from "eventsource";
+import _ from "lodash";
 import packageJson from "../package.json";
 import { setupPromptHandlers } from "./handlers/prompts-handler";
 import { setupResourceTemplateHandlers } from "./handlers/resource-templates-handler";
@@ -102,11 +103,9 @@ export class ProxyServer extends Server {
     this.attributes.servers = this.attributes.servers.filter(
       (t) => t.name.toLocaleLowerCase() !== targetName.toLocaleLowerCase(),
     );
-    this.targets = this.targets.filter((t) => t.name !== targetName);
-    console.log(
-      "targets",
-      this.targets.map((t) => t.name),
-    );
+
+    _.remove(this.targets, (t) => t.name === targetName);
+
     // TODO: send list changed events. need client to support this first
     // this.sendToolListChanged();
     // this.sendPromptListChanged();

@@ -45,16 +45,14 @@ program
   .command("start <name>")
   .description("start a VM")
   .action(async (name) => {
-    const vm = await start(name);
-    console.log(vm);
+    await start(name);
   });
 
 program
   .command("stop <name>")
   .description("stop a VM")
   .action(async (name) => {
-    const vm = await stop(name);
-    console.log(vm);
+    await stop(name);
   });
 
 program
@@ -68,8 +66,7 @@ program
   .command("destroy <name>")
   .description("destroy a VM")
   .action(async (name) => {
-    const vm = await destroy(name);
-    console.log(vm);
+    await destroy(name);
   });
 
 program

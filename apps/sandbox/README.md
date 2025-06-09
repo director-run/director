@@ -17,8 +17,7 @@ git clone ...
 
 bun cli create my-sandbox --start
 bun cli provision my-sandbox
+bun cli ssh my-sandbox 
 
-# ssh into the vm
-./ssh.sh my-sandbox 
 ./run-director.sh
 ```

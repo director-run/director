@@ -2,7 +2,6 @@ import { $ } from "zx";
 import type { VM, VMState } from "../types";
 
 export async function list() {
-  console.log(`listing`);
   const ls = await $`tart list`;
   const vms = parseTartOutput(ls.stdout);
 

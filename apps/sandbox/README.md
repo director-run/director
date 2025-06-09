@@ -21,3 +21,8 @@ bun cli ssh my-sandbox
 
 ./run-director.sh
 ```
+
+## TODO 
+- add command --mount director/source
+- document a way to run director from source code
+- easy way to create a golden master and clone from it rather than starting fresh each time

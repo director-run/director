@@ -8,7 +8,7 @@ export async function ssh(
   try {
     await $({
       stdio: "inherit",
-    })`sshpass -p ${password} ssh -o StrictHostKeyChecking=no ${user}@$(tart ip ${name})`;
+    })`sshpass -p ${password} ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${user}@$(tart ip ${name})`;
   } catch (error: unknown) {
     console.error(
       "Failed to connect:",

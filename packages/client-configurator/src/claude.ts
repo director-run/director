@@ -35,7 +35,7 @@ export class ClaudeInstaller extends AbstractConfigurator {
 
   public static async create(configPath: string = CLAUDE_CONFIG_PATH) {
     logger.info(`reading config from ${configPath}`);
-    if (!isClaudeInstalled()) {
+    if (!isAppInstalled(App.CLAUDE)) {
       throw new AppError(
         ErrorCode.NOT_FOUND,
         `Claude desktop app is not installed command: ${CLAUDE_COMMAND}`,
@@ -161,10 +161,6 @@ export type ClaudeServerEntry = {
   name: string;
   transport: ClaudeMCPServer;
 };
-
-export function isClaudeInstalled(): boolean {
-  return isAppInstalled(App.CLAUDE);
-}
 
 export function isClaudeConfigPresent(): boolean {
   return isFilePresent(CLAUDE_CONFIG_PATH);

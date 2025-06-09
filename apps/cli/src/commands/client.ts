@@ -1,5 +1,6 @@
 import {
   ConfiguratorTarget,
+  allClients,
   getConfigurator,
   resetAllClients,
 } from "@director.run/client-configurator/index";
@@ -88,6 +89,16 @@ export function registerClientCommands(program: DirectorCommand): void {
           console.log(result);
         },
       ),
+    );
+
+  command
+    .debugCommand("all-clients")
+    .description("Show a list of the clients")
+    .action(
+      actionWithErrorHandler(async () => {
+        const clients = await allClients();
+        console.log(clients);
+      }),
     );
 }
 

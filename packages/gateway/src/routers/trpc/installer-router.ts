@@ -2,6 +2,7 @@ import { ClaudeInstaller } from "@director.run/client-configurator/claude";
 import { CursorInstaller } from "@director.run/client-configurator/cursor";
 import {
   ConfiguratorTarget,
+  allClients,
   getConfigurator,
 } from "@director.run/client-configurator/index";
 import { VSCodeInstaller } from "@director.run/client-configurator/vscode";
@@ -15,6 +16,7 @@ export function createInstallerRouter({
   proxyStore,
 }: { proxyStore: ProxyServerStore }) {
   return t.router({
+    allClients: t.procedure.query(() => allClients()),
     byProxy: t.router({
       list: t.procedure
         .input(z.object({ proxyId: z.string() }))

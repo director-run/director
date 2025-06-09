@@ -34,7 +34,7 @@ export class CursorInstaller extends AbstractConfigurator {
 
   public static async create(configPath: string = CURSOR_CONFIG_PATH) {
     logger.info(`reading config from ${configPath}`);
-    if (!isCursorInstalled()) {
+    if (!isAppInstalled(App.CURSOR)) {
       throw new AppError(
         ErrorCode.NOT_FOUND,
         `Cursor is not installed command: ${CURSOR_COMMAND}`,
@@ -137,10 +137,6 @@ const createKey = (name: string) => `${CURSOR_CONFIG_KEY_PREFIX}${name}`;
 export type CursorConfig = {
   mcpServers: Record<string, { url: string }>;
 };
-
-export function isCursorInstalled(): boolean {
-  return isAppInstalled(App.CURSOR);
-}
 
 export function isCursorConfigPresent(): boolean {
   return isFilePresent(CURSOR_CONFIG_PATH);

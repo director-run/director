@@ -11,17 +11,13 @@ import {
   actionWithErrorHandler,
   makeTable,
 } from "@director.run/utilities/cli/index";
-import { isDevelopment } from "@director.run/utilities/env";
 
 export function registerClientCommands(program: DirectorCommand): void {
-  if (!isDevelopment()) {
-    // Only show client commands in development
-    return;
-  }
-
   const command = new DirectorCommand("client").description(
     "Manage MCP client configuration JSON (claude, cursor, vscode)",
   );
+
+  program.addCommand(command);
 
   command
     .debugCommand("ls")
@@ -93,8 +89,6 @@ export function registerClientCommands(program: DirectorCommand): void {
         },
       ),
     );
-
-  program.addCommand(command);
 }
 
 // If option not provided prompt user for a choice

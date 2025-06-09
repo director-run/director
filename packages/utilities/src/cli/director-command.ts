@@ -1,12 +1,12 @@
 import { type CommandOptions, Option } from "commander";
 import { Command, type HelpContext } from "commander";
-import { isDevelopment } from "../env";
 import { makeHelpText } from "./help";
 
 declare module "commander" {
   interface Command {
-    _debug?: boolean; // is it a debug command?
+    _debug?: boolean; // is this command a debug command?
     _helpOption?: Option;
+    _enableDebugCommands?: boolean; // should enable debug commands?
   }
 }
 
@@ -19,9 +19,15 @@ export class DirectorCommand extends Command {
     this.helpCommand(false);
   }
 
+  showDebugCommands(showDebugCommands: boolean) {
+    this._enableDebugCommands = showDebugCommands;
+    return this;
+  }
+
   debugCommand(nameAndArgs: string, opts?: CommandOptions) {
-    if (isDevelopment()) {
+    if (this._enableDebugCommands) {
       const command = super.command(nameAndArgs, opts);
+      command._enableDebugCommands = true;
       command._debug = true;
       return command;
     } else {
@@ -35,6 +41,12 @@ export class DirectorCommand extends Command {
 
   addExamples(examples: string) {
     this.examples = examples;
+  }
+
+  addCommand(cmd: DirectorCommand, opts?: CommandOptions) {
+    cmd._enableDebugCommands = this._enableDebugCommands;
+    cmd._debug = this._debug;
+    return super.addCommand(cmd, opts);
   }
 }
 

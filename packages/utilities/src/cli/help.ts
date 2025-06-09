@@ -1,6 +1,5 @@
 import { Option } from "commander";
 import { Command } from "commander";
-import { isDevelopment } from "../env";
 import { red, whiteBold, yellow } from "./colors";
 import { DirectorCommand } from "./director-command";
 
@@ -9,8 +8,8 @@ const LEFT_PADDING = " ".repeat(2);
 export function makeHelpText(program: DirectorCommand) {
   const lines = [];
 
-  if (isDevelopment()) {
-    lines.push(yellow("🚧 development commands appear in yellow 🚧"));
+  if (program._enableDebugCommands) {
+    lines.push(yellow("🚧 debug commands appear in yellow 🚧"));
     lines.push("");
   }
 

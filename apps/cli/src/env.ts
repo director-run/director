@@ -21,6 +21,10 @@ export const env = createEnv({
       .string()
       .optional()
       .default(path.join(getDataDir(), "config.json")),
+    ENABLE_DEBUG_COMMANDS: z
+      .string()
+      .default("false")
+      .transform((s) => s !== "false" && s !== "0"),
   },
 });
 

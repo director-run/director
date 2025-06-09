@@ -5,6 +5,7 @@ import { create } from "../src/commands/create.ts";
 import {} from "../src/commands/create.ts";
 import { destroy, provision, stop } from "../src/commands/index.ts";
 import { list } from "../src/commands/list.ts";
+import { ssh } from "../src/commands/ssh.ts";
 import { start } from "../src/commands/start.ts";
 
 const program = new DirectorCommand();
@@ -54,6 +55,13 @@ program
   .action(async (name) => {
     const vm = await stop(name);
     console.log(vm);
+  });
+
+program
+  .command("ssh <name>")
+  .description("ssh into a VM")
+  .action(async (name) => {
+    await ssh(name);
   });
 
 program

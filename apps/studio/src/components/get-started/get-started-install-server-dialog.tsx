@@ -80,6 +80,8 @@ export function GetStartedInstallServerDialog({
     },
   });
 
+  const isDisabled = form.formState.isSubmitting || installMutation.isPending;
+
   return (
     <Dialog {...props}>
       {children && <DialogTrigger asChild>{children}</DialogTrigger>}
@@ -132,11 +134,11 @@ export function GetStartedInstallServerDialog({
           </div>
 
           <DialogFooter>
-            <DialogClose asChild>
+            <DialogClose disabled={isDisabled} asChild>
               <Button variant="secondary">Cancel</Button>
             </DialogClose>
-            <Button type="submit" disabled={installMutation.isPending}>
-              {installMutation.isPending ? "Adding..." : "Add to proxy"}
+            <Button type="submit" disabled={isDisabled}>
+              {isDisabled ? "Adding..." : "Add to proxy"}
             </Button>
           </DialogFooter>
         </Form>

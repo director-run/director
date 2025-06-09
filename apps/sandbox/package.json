@@ -1,17 +1,24 @@
 {
-  "name": "computer",
+  "name": "@director.run/sandbox",
   "type": "module",
+  "files": ["dist", "ansible", "README.md"],
   "version": "0.0.1",
   "scripts": {
-    "cli": "bun run bin/cli.ts"
-  },
-  "devDependencies": {
-    "@types/bun": "latest"
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "clean": "rm -rf .turbo dist/*",
+    "test": "echo 'no tests'",
+    "cli": "NODE_ENV=development bun run bin/cli.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "bun build --production --target=node bin/cli.ts --outdir dist",
+    "release": "bun publish --access public --omit=peer",
+    "prepare": "bun run build",
+    "dev": "bun --watch bin/cli.ts"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
-  "dependencies": {
+  "devDependencies": {
     "commander": "^14.0.0",
     "zx": "^8.5.4"
   }

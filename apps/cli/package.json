@@ -18,13 +18,11 @@
     "prepare": "bun run build",
     "dev": "bun --watch bin/cli.ts"
   },
-  "dependencies": {
-    "@inquirer/prompts": "^7.5.2"
-  },
   "peerDependencies": {
     "typescript": "^5"
   },
   "devDependencies": {
+    "@inquirer/prompts": "^7.5.2",
     "type-fest": "^4.40.0",
     "@director.run/gateway": "workspace:*",
     "@director.run/mcp": "workspace:*",

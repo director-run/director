@@ -1,5 +1,2 @@
 .vagrant
-.DS_Store
-shared/*
-node_modules/*
 nohup.out

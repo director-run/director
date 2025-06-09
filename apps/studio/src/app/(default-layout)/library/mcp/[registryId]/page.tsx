@@ -5,6 +5,7 @@ import {
   LayoutViewContent,
   LayoutViewHeader,
 } from "@/components/layout";
+import { McpLogo } from "@/components/mcp-logo";
 import { McpDescriptionList } from "@/components/mcp-servers/mcp-description-list";
 import { RegistryEntrySkeleton } from "@/components/registry/registry-entry-skeleton";
 import { RegistryInstallDialog } from "@/components/registry/registry-install-dialog";
@@ -107,6 +108,7 @@ export default function RegistryEntryPage() {
       <LayoutViewContent>
         <Container size="lg">
           <Section className="gap-y-6">
+            <McpLogo icon={entry.icon} className="size-9" />
             <SectionHeader>
               <SectionTitle>{entry.title}</SectionTitle>
               <SectionDescription>{entry.description}</SectionDescription>

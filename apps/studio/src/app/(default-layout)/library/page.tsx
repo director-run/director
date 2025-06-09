@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  FileCodeIcon,
-  GlobeIcon,
-  PackageIcon,
-  SealCheckIcon,
-  TerminalIcon,
-} from "@phosphor-icons/react";
+import { SealCheckIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 
 import {
@@ -14,9 +8,9 @@ import {
   LayoutViewContent,
   LayoutViewHeader,
 } from "@/components/layout";
+import { McpLogo } from "@/components/mcp-logo";
 import { RegistryLibrarySkeleton } from "@/components/registry/registry-library-skeleton";
-import { BadgeGroup, BadgeIcon, BadgeLabel } from "@/components/ui/badge";
-import { Badge } from "@/components/ui/badge";
+import {} from "@/components/ui/badge";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -27,13 +21,7 @@ import { Container } from "@/components/ui/container";
 import { EmptyStateDescription } from "@/components/ui/empty-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { EmptyStateTitle } from "@/components/ui/empty-state";
-import {
-  List,
-  ListItem,
-  ListItemDescription,
-  ListItemDetails,
-  ListItemTitle,
-} from "@/components/ui/list";
+import {} from "@/components/ui/list";
 import {
   Section,
   SectionDescription,
@@ -87,67 +75,31 @@ export default function RegistryPage() {
               </SectionDescription>
             </SectionHeader>
 
-            <List>
+            <div className="@container grid @2xl:grid-cols-2 grid-cols-1 gap-3">
               {data.entries
                 .sort((a, b) => a.title.localeCompare(b.title))
-                .map((entry) => (
-                  <ListItem key={entry.id} asChild>
-                    <Link href={`/library/mcp/${entry.name}`}>
-                      <ListItemDetails>
-                        <ListItemTitle>{entry.title}</ListItemTitle>
-                        <ListItemDescription className="line-clamp-none">
+                .map((entry) => {
+                  return (
+                    <Link
+                      key={entry.id}
+                      href={`/library/mcp/${entry.name}`}
+                      className="flex flex-col gap-y-8 rounded-lg bg-accent-subtle p-4 transition-colors duration-200 ease-in-out hover:bg-accent"
+                    >
+                      <McpLogo icon={entry.icon} className="size-8" />
+
+                      <div className="flex flex-col gap-y-1">
+                        <div className="flex items-center gap-x-1 font-[450] text-[17px]">
+                          {entry.title}{" "}
+                          {entry.isOfficial && <SealCheckIcon weight="fill" />}
+                        </div>
+                        <div className="line-clamp-2 text-[14px] text-fg-subtle">
                           {entry.description}
-                        </ListItemDescription>
-                      </ListItemDetails>
-
-                      <BadgeGroup className="ml-auto items-start justify-end">
-                        {entry.isOfficial && (
-                          <Badge variant="success">
-                            <BadgeIcon>
-                              <SealCheckIcon />
-                            </BadgeIcon>
-                            <BadgeLabel uppercase>Official</BadgeLabel>
-                          </Badge>
-                        )}
-                        {entry.transport.type === "http" && (
-                          <Badge>
-                            <BadgeIcon>
-                              <GlobeIcon />
-                            </BadgeIcon>
-                            <BadgeLabel uppercase>HTTP</BadgeLabel>
-                          </Badge>
-                        )}
-                        {entry.transport.type === "stdio" && (
-                          <Badge>
-                            <BadgeIcon>
-                              <TerminalIcon />
-                            </BadgeIcon>
-                            <BadgeLabel uppercase>STDIO</BadgeLabel>
-                          </Badge>
-                        )}
-
-                        {entry.transport.type === "stdio" && (
-                          <Badge>
-                            <BadgeIcon>
-                              {(() => {
-                                switch (entry.transport.command) {
-                                  case "docker":
-                                    return <PackageIcon />;
-                                  default:
-                                    return <FileCodeIcon />;
-                                }
-                              })()}
-                            </BadgeIcon>
-                            <BadgeLabel uppercase>
-                              {entry.transport.command}
-                            </BadgeLabel>
-                          </Badge>
-                        )}
-                      </BadgeGroup>
+                        </div>
+                      </div>
                     </Link>
-                  </ListItem>
-                ))}
-            </List>
+                  );
+                })}
+            </div>
           </Section>
         </Container>
       </LayoutViewContent>

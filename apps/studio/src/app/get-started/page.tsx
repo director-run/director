@@ -8,6 +8,7 @@ import {
   GetStartedListItem,
 } from "@/components/get-started/get-started-list";
 import { GetStartedProxyForm } from "@/components/get-started/get-started-proxy-form";
+import { McpLogo } from "@/components/mcp-logo";
 
 import { Container } from "@/components/ui/container";
 import {
@@ -131,7 +132,8 @@ export default function GetStartedPage() {
                       mcp={it as EntryGetParams}
                       proxyId={currentProxy ? currentProxy.id : ""}
                     >
-                      <div className="rounded-lg bg-accent-subtle/60 px-2.5 py-1.5 hover:bg-accent">
+                      <div className="flex flex-row items-center gap-x-3 rounded-lg bg-accent-subtle/60 px-2.5 py-1.5 hover:bg-accent">
+                        <McpLogo icon={it.icon} />
                         <ListItemDetails>
                           <ListItemTitle>{it.title}</ListItemTitle>
                           <ListItemDescription>

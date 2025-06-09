@@ -5,6 +5,19 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["@phosphor-icons/react"],
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "3080",
+      },
+      {
+        protocol: "https",
+        hostname: "registry.director.run",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

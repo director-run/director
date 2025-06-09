@@ -7,6 +7,7 @@ import {
   LayoutViewContent,
   LayoutViewHeader,
 } from "@/components/layout";
+import { McpLogo } from "@/components/mcp-logo";
 import { McpDeleteConfirmation } from "@/components/mcp-servers/mcp-delete-confirmation";
 import { McpDescriptionList } from "@/components/mcp-servers/mcp-description-list";
 import { McpToolSheet } from "@/components/mcp-servers/mcp-tool-sheet";
@@ -40,6 +41,7 @@ import {
 } from "@/components/ui/section";
 import { toast } from "@/components/ui/toast";
 import { useProxy } from "@/hooks/use-proxy";
+import { EntryGetParams } from "@director.run/registry/db/schema";
 import { DotsThreeOutlineVerticalIcon, TrashIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useEffect } from "react";
@@ -73,7 +75,7 @@ export default function ProxyPage() {
     return <ProxySkeleton />;
   }
 
-  const entryData = mcp.source?.entryData;
+  const entryData = mcp.source?.entryData as EntryGetParams;
   const description =
     typeof entryData === "object" &&
     entryData !== null &&
@@ -126,6 +128,7 @@ export default function ProxyPage() {
       <LayoutViewContent>
         <Container size="lg">
           <Section>
+            <McpLogo icon={entryData?.icon} className="size-9" />
             <SectionHeader>
               <SectionTitle>{mcp.name}</SectionTitle>
               <SectionDescription>

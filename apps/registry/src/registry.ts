@@ -1,4 +1,5 @@
 import { Server } from "http";
+import path from "node:path";
 import { getLogger } from "@director.run/utilities/logger";
 import { errorRequestHandler } from "@director.run/utilities/middleware";
 import { notFoundHandler } from "@director.run/utilities/middleware";
@@ -8,6 +9,8 @@ import { type Store, createStore } from "./db/store";
 import { createTRPCExpressMiddleware } from "./routers/trpc";
 
 const logger = getLogger("registry");
+
+console.log(path.join(__dirname, "public"));
 
 export class Registry {
   public readonly port: number;
@@ -37,6 +40,7 @@ export class Registry {
     const store = createStore({ connectionString: params.connectionString });
 
     app.use(cors());
+    app.use("/public", express.static(path.join(__dirname, "../", "public")));
     app.use(express.json());
     app.use("/trpc", createTRPCExpressMiddleware({ store }));
     app.all("*", notFoundHandler);

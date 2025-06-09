@@ -33,8 +33,8 @@ import { siteConfig } from "@/site-config";
 
 import { Button, ButtonIcon, ButtonLabel } from "@/components/ui/button";
 
-import heroImageMobile from "../public/images/hero-image--mobile.png";
-import heroImage from "../public/images/hero-image.png";
+import heroImageMobile from "./hero-image--mobile.png";
+import heroImage from "./hero-image.png";
 
 export default function IndexPage() {
   return (

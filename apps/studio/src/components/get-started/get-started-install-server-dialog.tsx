@@ -22,6 +22,7 @@ import { toast } from "@/components/ui/toast";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { cn } from "@/lib/cn";
 import { trpc } from "@/trpc/client";
+import { McpLogo } from "../mcp-logo";
 
 interface GetStartedInstallServerDialogProps
   extends ComponentProps<typeof Dialog> {
@@ -87,7 +88,8 @@ export function GetStartedInstallServerDialog({
       {children && <DialogTrigger asChild>{children}</DialogTrigger>}
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Install {mcp.title}</DialogTitle>
+          <McpLogo icon={mcp.icon} className="size-8" />
+          <DialogTitle className="pt-4">Install {mcp.title}</DialogTitle>
           <DialogDescription>{mcp.description}</DialogDescription>
         </DialogHeader>
 

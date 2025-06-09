@@ -10,6 +10,7 @@ import { toast } from "@/components/ui/toast";
 import { cn } from "@/lib/cn";
 import { trpc } from "@/trpc/client";
 
+import { DIRECTOR_URL } from "@/lib/urls";
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import claudeIconImage from "../../../public/icons/claude-icon.png";
 import vscodeIconImage from "../../../public/icons/code-icon.png";
@@ -98,7 +99,7 @@ export function GetStartedInstallers({ proxyId }: GetStartedInstallersProps) {
           installationMutation.mutate({
             proxyId,
             client: selectedClient as ConfiguratorTarget,
-            baseUrl: "http://localhost:3673",
+            baseUrl: DIRECTOR_URL,
           });
         }}
       >

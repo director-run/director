@@ -15,9 +15,7 @@ brew install sshpass
 ```
 git clone ...
 
-bun cli create my-computer
-bun cli start my-computer
-bun cli trust my-computer
+bun cli create my-computer --start
 bun cli provision my-computer
 
 # ssh into the computer

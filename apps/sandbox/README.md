@@ -15,10 +15,10 @@ brew install sshpass
 ```
 git clone ...
 
-bun cli create my-computer --start
-bun cli provision my-computer
+bun cli create my-sandbox --start
+bun cli provision my-sandbox
 
-# ssh into the computer
-./ssh.sh my-computer 
+# ssh into the vm
+./ssh.sh my-sandbox 
 ./run-director.sh
 ```

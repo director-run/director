@@ -7,9 +7,9 @@ const CHARS = "░▒▓█";
 
 const shuffleText = (text: string) => {
   return text
-      .split("")
-      .map((char) => CHARS[Math.floor(Math.random() * CHARS.length)])
-      .join("");
+    .split("")
+    .map((char) => CHARS[Math.floor(Math.random() * CHARS.length)])
+    .join("");
 };
 
 interface ScrambleTextProps {
@@ -46,7 +46,9 @@ export const ScrambleText = ({
       {...props}
     >
       <span className="sr-only">{text}</span>
-      <span aria-hidden="true" suppressHydrationWarning>{displayText}</span>
+      <span aria-hidden="true" suppressHydrationWarning>
+        {displayText}
+      </span>
     </span>
   );
 };

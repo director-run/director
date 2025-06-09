@@ -2,6 +2,7 @@
 
 import { SealCheckIcon } from "@phosphor-icons/react";
 import Link from "next/link";
+import { useState } from "react";
 
 import {
   LayoutView,
@@ -21,6 +22,7 @@ import { Container } from "@/components/ui/container";
 import { EmptyStateDescription } from "@/components/ui/empty-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { EmptyStateTitle } from "@/components/ui/empty-state";
+import { Input } from "@/components/ui/input";
 import {} from "@/components/ui/list";
 import {
   Section,
@@ -31,6 +33,8 @@ import {
 import { trpc } from "@/trpc/client";
 
 export default function RegistryPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+
   const { data, isLoading, error } = trpc.registry.getEntries.useQuery({
     pageIndex: 0,
     pageSize: 1000,
@@ -52,6 +56,14 @@ export default function RegistryPage() {
       </RegistryLibrarySkeleton>
     );
   }
+
+  const filteredEntries = data.entries.filter((entry) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      entry.title.toLowerCase().includes(query) ||
+      entry.description.toLowerCase().includes(query)
+    );
+  });
 
   return (
     <LayoutView>
@@ -75,30 +87,48 @@ export default function RegistryPage() {
               </SectionDescription>
             </SectionHeader>
 
-            <div className="@container grid @2xl:grid-cols-2 grid-cols-1 gap-3">
-              {data.entries
-                .sort((a, b) => a.title.localeCompare(b.title))
-                .map((entry) => {
-                  return (
-                    <Link
-                      key={entry.id}
-                      href={`/library/mcp/${entry.name}`}
-                      className="flex flex-col gap-y-8 rounded-lg bg-accent-subtle p-4 transition-colors duration-200 ease-in-out hover:bg-accent"
-                    >
-                      <McpLogo icon={entry.icon} className="size-8" />
+            <div className="flex flex-col gap-y-4">
+              <Input
+                type="text"
+                placeholder="Search MCP servers..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="max-w-md"
+              />
 
-                      <div className="flex flex-col gap-y-1">
-                        <div className="flex items-center gap-x-1 font-[450] text-[17px]">
-                          {entry.title}{" "}
-                          {entry.isOfficial && <SealCheckIcon weight="fill" />}
+              <div className="@container grid @2xl:grid-cols-2 grid-cols-1 gap-3">
+                {filteredEntries
+                  .sort((a, b) => a.title.localeCompare(b.title))
+                  .map((entry) => {
+                    return (
+                      <Link
+                        key={entry.id}
+                        href={`/library/mcp/${entry.name}`}
+                        className="flex flex-col gap-y-8 rounded-lg bg-accent-subtle p-4 transition-colors duration-200 ease-in-out hover:bg-accent"
+                      >
+                        <McpLogo icon={entry.icon} className="size-8" />
+
+                        <div className="flex flex-col gap-y-1">
+                          <div className="flex items-center gap-x-1 font-[450] text-[17px]">
+                            {entry.title}{" "}
+                            {entry.isOfficial && (
+                              <SealCheckIcon weight="fill" />
+                            )}
+                          </div>
+                          <div className="line-clamp-2 text-[14px] text-fg-subtle">
+                            {entry.description}
+                          </div>
                         </div>
-                        <div className="line-clamp-2 text-[14px] text-fg-subtle">
-                          {entry.description}
-                        </div>
-                      </div>
-                    </Link>
-                  );
-                })}
+                      </Link>
+                    );
+                  })}
+
+                {filteredEntries.length === 0 && (
+                  <EmptyState className="col-span-2">
+                    <EmptyStateTitle>No MCP servers found</EmptyStateTitle>
+                  </EmptyState>
+                )}
+              </div>
             </div>
           </Section>
         </Container>

@@ -1,15 +1,10 @@
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import packageJson from "../package.json";
-import {
-  copyId,
-  create,
-  destroy,
-  list,
-  provision,
-  start,
-  stop,
-  trust,
-} from "../src/commands";
+import { create } from "../src/commands/create.ts";
+import { copyId, trust } from "../src/commands/create.ts";
+import { destroy, provision, stop } from "../src/commands/index.ts";
+import { list } from "../src/commands/list.ts";
+import { start } from "../src/commands/start.ts";
 
 const program = new DirectorCommand();
 

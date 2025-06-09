@@ -1,4 +1,5 @@
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
+import { makeTable } from "@director.run/utilities/cli/index";
 import packageJson from "../package.json";
 import { create } from "../src/commands/create.ts";
 import {} from "../src/commands/create.ts";
@@ -19,7 +20,11 @@ program
   .description("List all VMs")
   .action(async () => {
     const vms = await list();
-    console.log(vms);
+    const table = makeTable(["Name", "State", "IP"]);
+    vms.forEach((vm) => {
+      table.push([vm.name, vm.state, vm.ip || "--"]);
+    });
+    console.log(table.toString());
   });
 
 program

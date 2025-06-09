@@ -1,21 +1,21 @@
----
-- name: Install Director
-  shell: |
-    export NVM_DIR="{{ ansible_env.HOME }}/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    npm install -g @director.run/cli pm2
+# ---
+# - name: Install Director
+#   shell: |
+#     export NVM_DIR="{{ ansible_env.HOME }}/.nvm"
+#     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+#     npm install -g @director.run/cli pm2
 
-- name: Add director to pm2
-  shell: |
-    source {{ ansible_env.HOME }}/.nvm/nvm.sh
-    pm2 start "director serve" --name "director"
+# - name: Add director to pm2
+#   shell: |
+#     source {{ ansible_env.HOME }}/.nvm/nvm.sh
+#     pm2 start "director serve" --name "director"
 
-- name: Source NVM and generate PM2 startup script
-  shell: |
-    source {{ ansible_env.HOME }}/.nvm/nvm.sh
-    pm2 startup systemd -u {{ ansible_env.USER }} --hp {{ ansible_env.HOME }}
-  register: pm2_startup_command
+# - name: Source NVM and generate PM2 startup script
+#   shell: |
+#     source {{ ansible_env.HOME }}/.nvm/nvm.sh
+#     pm2 startup systemd -u {{ ansible_env.USER }} --hp {{ ansible_env.HOME }}
+#   register: pm2_startup_command
 
-- name: Execute PM2 startup command
-  shell: "{{ pm2_startup_command.stdout_lines | select('match', '^sudo.*') | first }}"
-  become: yes
+# - name: Execute PM2 startup command
+#   shell: "{{ pm2_startup_command.stdout_lines | select('match', '^sudo.*') | first }}"
+#   become: yes

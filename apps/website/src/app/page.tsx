@@ -42,7 +42,7 @@ export default function IndexPage() {
       <div className="relative bg-accent text-fg/90">
         <Container className="flex h-10 items-center justify-center">
           <div className="relative z-10 block bg-accent px-2 py-1 text-center font-[500] text-base leading-none tracking-[0.01em]">
-            Director is in technical preview
+            Director is in BETA and not yet production ready.
           </div>
         </Container>
         <Pattern

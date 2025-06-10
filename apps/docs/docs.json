@@ -17,8 +17,7 @@
         "pages": [
           "concepts/architecture",
           "concepts/configuration",
-          "concepts/client-integration",
-          "concepts/logging",
+          "concepts/studio",
           "concepts/registry"
         ]
       },

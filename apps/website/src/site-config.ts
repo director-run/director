@@ -164,7 +164,8 @@ export const siteConfig: SiteConfig = {
       image: "https://avatars.githubusercontent.com/u/480673?v=4",
       name: "Barnaby Malet",
       // TODO: add description
-      description: "Previously co-founded Upflow and …",
+      description:
+        "Product engineer, occasional manager. Co-founded Upflow (YCW20). Likes to build things.",
       links: [
         { type: "github", url: "https://github.com/barnaby" },
         {
@@ -178,7 +179,7 @@ export const siteConfig: SiteConfig = {
       image: "https://avatars.githubusercontent.com/u/937180?v=4",
       name: "Tom Bates",
       description:
-        "Designer/Engineer. Co-founded Duffel (S18). Previously at Palantir, GoCardless, and more.",
+        "Designer/Engineer. Co-founded Duffel (YCS18). Previously at Palantir, GoCardless, and more.",
       links: [
         { type: "github", url: "https://github.com/yoamomonstruos" },
         {

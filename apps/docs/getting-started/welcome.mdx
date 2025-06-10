@@ -1,0 +1,20 @@
+---
+sidebarTitletitle: Welcome!
+title: "Welcome to Director!"
+description: "The easiest way to manage, run and observe MCP servers."
+icon: hand-wave
+---
+
+Director is in technical preview. There will be bugs and the API is not stable yet. It’s not 100% production ready yet (or is it?).
+
+- Director is an MCP middleware / gateway that sits between MCP clients (like Claude, Cursor etc) and any MCP server.
+- It provides a single connection point for clients, which can any of Stdio, HTTP Streamable or the legacy SSE. And proxies all MCP requests to any MCP server (again, any transport)
+- The benefits of using this approach are as follows:
+    - **100% Open Source / Self Hostable / No lockin**: Director is 100% Open Source and licenced under MIT. This includes our CLI, the UI and our registry. We’ve designed director so you can easily run on your own machine (with 0 external dependecies), in a docker container or as a long running service.
+    - **Configuration & Secret Management**: you don’t need to maintain large config files at each of your clients / users that contain secrets. You can have a single configuration that’s shared across all clients and connect them in 1-line: `director connect my-proxy --target=claude`
+    - **Plug  & Play / Protocol Transparency**: Director’s design is fully aligned with the core MCP protocol, and we’re not looking to change it or fork it. It’s just another MCP server that can be connected to via the two main + one legacy protocol. And it works out of the box with any MCP
+    - **Run 100% Locally + Deploy in Cloud with ease**: Director is easy to deploy. It takes just two CLI commands to get it up and running on your local machine (see quickstart) and can be deployed on a cloud in a docker container easy.
+    - **Observability**: Director provides detailed JSON logging for all MCP calls. In production, you can easily drain these into your existing log aggregation tool. In development, this helps you debug what’s going on.
+    - **Security / Isolation**: Director makes it really easy to isolate MCP servers inside a docker container or a VM. All you need to do is install director itself within the container and then interact with it as if it were local using the CLI.
+    - **Authentication (coming soon):** Director also fronts authentication for you. You can oauth to each of your servers once and then director will manage this for you.
+    - **Server Routing & Discovery**: Although our long term ambition is not to host and manage our own registry . While we wait for the official Registry SDK, our internal registry make it super easy to discover and try MCP servers in a secure way (coupled with isolation). Going forward, we aim to build a Director MCP server that will allow the MCP client to discover, configure and enable servers through MCP tool calls (MCP inception - see roadmap).

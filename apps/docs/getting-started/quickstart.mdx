@@ -1,0 +1,52 @@
+# Start the Director Service
+
+The core functionality of Director is a web service that sits between MCP clients and servers. Use the command below to start it:
+
+```bash
+director serve
+```
+
+# Create & Connect to Your First Proxy
+
+## Option 1: Via the GUI
+
+We provide a GUI, called studio that allows you to manage the service easily. It’s available at https://studio.director.run, you can also open it with the command below.
+
+```bash
+director studio 
+```
+
+## Option 2: Via the CLI
+
+If you prefer, you can also use the command line to manage director. It’s functionally equivalent to the GUI.
+
+### Create a Proxy Server
+
+Proxies are MCP servers that encapsulate any number of other MCP servers. All MCP server specific configuration (environment variables, secrets, arguments..) is encapsulated within each proxy server.
+
+```bash
+director create my-first-proxy
+```
+
+### Add an MCP Server to the Proxy
+
+```bash
+# Add the fetch server from the director registry
+director add fetch --target=my-first-proxy
+
+# Add any server you want
+director add --target=my-first-proxy
+```
+
+### Connect the Proxy Server to your Client
+
+```bash
+# connect the proxy to Claude
+director connect my-first-proxy --target=claude
+
+# connect the proxy to Cursor
+director connect my-first-proxy --target=claude
+
+# print the manual connection details
+director connect my-first-proxy
+```

@@ -1,8 +1,6 @@
 ---
 - hosts: all
   gather_facts: true
-  vars_files:
-    - vars.yml
   roles:
     - role: common
     - role: development

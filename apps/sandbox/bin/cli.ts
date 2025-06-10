@@ -3,10 +3,12 @@ import { makeTable } from "@director.run/utilities/cli/index";
 import packageJson from "../package.json";
 import { create } from "../src/commands/create.ts";
 import {} from "../src/commands/create.ts";
-import { destroy, provision, stop } from "../src/commands/index.ts";
+import { destroy } from "../src/commands/destroy.ts";
 import { list } from "../src/commands/list.ts";
+import { provision } from "../src/commands/provision.ts";
 import { ssh } from "../src/commands/ssh.ts";
 import { start } from "../src/commands/start.ts";
+import { stop } from "../src/commands/stop.ts";
 
 const program = new DirectorCommand();
 
@@ -72,8 +74,12 @@ program
 program
   .command("provision <name>")
   .description("provision a VM")
-  .action(async (name) => {
-    await provision(name);
+  .action(async (name, options) => {
+    await provision({
+      name,
+      password: "admin",
+      user: "admin",
+    });
   });
 
 program.parse();

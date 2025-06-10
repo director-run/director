@@ -15,14 +15,18 @@ brew install sshpass
 ```
 git clone ...
 
+# Inside Hose
 bun cli create gm --start
 bun cli provision gm
 bun cli clone gm my-sandbox
 bun cli ssh my-sandbox
 
-cd director # this is the root of this monorepo
+# Inside VM
+cd shared/director # this is the root of this monorepo
 bun cli serve
 
+# Inside Host
+GATEWAY_URL=http://hi.local:3673 bun cli connect my-proxy -t claude
 ```
 
 ## TODO 

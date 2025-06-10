@@ -20,6 +20,5 @@ The core component of Director is the `Gateway`, that implements a proxy pattern
 
 The `Gateway` is a standalone piece of infrastructure that can either be run locally or on a remote server (right now, running it locally is what's best supported). Director implements a client / server architecture for management purposes (HTTP API, distinct from MCP client / servers). This is implemented in the `Controller` layer, and more specifically, this allows you to manage `ProxyServer` lifecycle, configure new targets (MCP Servers) and query the status / health of the service as well as the underlying servers and client connections. There are two main ways to interact with the `Gateway` currently:
 
-- **CLI**: The CLI is If you’re running locally, then all of these components will run on your machine. If you’ve deployed the `web service` to the cloud (see deployment), then you configure the CLI or GUI to connect to a remote service.
-
- 
+- [CLI](../sdk/cli): The command line interface, which you can install through `npm`. It is also the primary way to run the gateway. 
+- [Studio](../concepts/studio): The Studio is a web-based interface that allows you to manage the `Gateway` and its underlying `ProxyServers`. It's the best way for humans to interact with the `Gateway`, especially as the amount of servers grows.

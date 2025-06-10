@@ -61,7 +61,11 @@ program
   .command("ssh <name>")
   .description("ssh into a VM")
   .action(async (name) => {
-    await ssh(name);
+    await ssh({
+      name,
+      user: "admin",
+      password: "admin",
+    });
   });
 
 program

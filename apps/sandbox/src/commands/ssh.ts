@@ -1,10 +1,11 @@
 import { $ } from "zx";
 
-export async function ssh(
-  name: string,
-  user: string = "admin",
-  password: string = "admin",
-) {
+export async function ssh(params: {
+  name: string;
+  user: string;
+  password: string;
+}) {
+  const { name, user, password } = params;
   try {
     await $({
       stdio: "inherit",

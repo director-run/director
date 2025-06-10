@@ -10,19 +10,14 @@
     "groups": [
       {
         "group": "Getting Started",
-        "pages": [
-          "getting-started/welcome",
-          "getting-started/installation",
-          "getting-started/quickstart"
-        ]
+        "pages": ["getting-started/welcome", "getting-started/quickstart"]
       },
       {
         "group": "Concepts",
         "pages": [
           "concepts/architecture",
           "concepts/configuration",
-          "concepts/client-integration",
-          "concepts/logging",
+          "concepts/studio",
           "concepts/registry"
         ]
       },

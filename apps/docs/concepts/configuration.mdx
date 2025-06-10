@@ -1,74 +1,76 @@
+---
+title: "Configuration"
+description: "Understand how to configure director."
+icon: gear
+---
+
+# Configuration Files
+
+The main way to manage your director instance is via the [CLI](../sdk/cli) or [GUI](https://studio.director.run). These tools are functionally equivalent, and ultimately, they both use the same configuration files:
+
+- `~/.director/config.json` - This is the main configuration file that contains the list of proxies, their targets and their configuration.
+- `~/.director/config.env` - This file is not created by default, but can be used to override the service level configuration (which can also be ser via environment variables directly).
+
+*Note: If you'd like to manually edit the configuration files, you'll need to make sure you restart the service for the changes to take effect.*
+ 
+## config.json
+
 Your configuration file is a JSON file that defines proxy connections (it’s location is `~/.director/config.json`). Here's how to structure it:
 
 ```json
 {
+  // The list of available proxy servers
   "proxies": [
-    // Your proxy configurations go here
     {
-		  "id": "unique-proxy-name",
-		  "name": "Display Name for Proxy",
-		  "description": "What this proxy does (optional)",
-		  "servers": [
-		    // Server connections go here
-		  ]
-		}
+      "id": "unique-proxy-name",
+      "name": "Display Name for Proxy",
+      "description": "What this proxy does (optional)",
+      // The list of servers that this proxy aggregates
+      "servers": [
+        {
+          "name": "stdio-server",
+          "transport": {
+            "type": "stdio",
+            "command": "/path/to/program",
+            "args": ["--option", "value"],
+            "env": {
+              "API_KEY": "your-key-here"
+            }
+          }
+        },
+        {
+          "name": "streamable-or-sse-server",
+          "transport": {
+            "type": "http",
+            // The url of the server, this can be either Streamable or SSE transports
+            "url": "https://api.example.com/mcp"
+          }
+        }
+      ]
+    }
   ]
 }
-
 ```
 
-# Proxy Configuration
+## config.env
 
-**Required fields:**
+The `config.env` file is not created by default, but can be used to override the service level configuration (which can also be ser via environment variables directly).
 
-- `id` - A unique identifier (no spaces, use dashes or underscores)
-- `name` - A friendly name that will be displayed
-- `servers` - At least one server connection
-
-**Optional fields:**
-
-- `description` - Help text explaining what this proxy does
-
-# Server Connections
-
-Each proxy can connect to a server in one of two ways:
-
-### Stdio Transport
-
-Use this when your server is a program you run from the command line:
-
-```json
-{
-  "name": "my-server",
-  "transport": {
-    "type": "stdio",
-    "command": "/path/to/program",
-    "args": ["--option", "value"],
-    "env": {
-      "API_KEY": "your-key-here"
-    }
-  }
-}
-
+```bash
+# The port that the gateway will listen on (if running locally)
+GATEWAY_PORT=3673 
+# The url that the cli should connect to (change if you're using a remote instance)
+GATEWAY_URL=http://localhost:3673 
+# The GUI url, used for the `quickstart` and `studio` commands
+STUDIO_URL=https://studio.director.run 
+# The registry url, you can change this if you're running your own registry somewhere else
+REGISTRY_API_URL=https://registry.director.run 
+# When running your own registry, you can set an api key to use to write to the registry
+REGISTRY_API_KEY=secret-api-write-key 
+# The path to the main config file
+CONFIG_FILE_PATH=/path/to/config.json 
+# Enable debug cli commands (for example the registry write commands)
+ENABLE_DEBUG_COMMANDS=false 
+# The log level to use for the service
+LOG_LEVEL=debug 
 ```
-
-- `command` - Path to the program to run
-- `args` - Command line arguments (optional)
-- `env` - Environment variables to set (optional)
-
-### HTTP Transport (Streamable or SSE)
-
-Use this when your server is a web API:
-
-```json
-{
-  "name": "my-api",
-  "transport": {
-    "type": "http",
-    "url": "https://api.example.com/endpoint"
-  }
-}
-
-```
-
-- `url` - The web address of your API. This can be either SSE or Streamable URL

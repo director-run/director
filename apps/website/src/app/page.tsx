@@ -64,17 +64,17 @@ export default function IndexPage() {
           <div className="flex flex-col gap-y-8 md:gap-y-10">
             <div className="flex flex-col gap-y-3">
               <h1 className="max-w-[32ch] text-balance font-[450] text-3xl leading-[1.125] sm:text-4xl md:text-5xl">
-                Open source middleware for all your MCP needs.
+                An open source middleware for MCP that just works.
               </h1>
               <p className="max-w-[54ch] text-pretty text-fg/80 text-lg leading-snug md:text-xl">
-                Director is a modern, open-source API gateway that allows you to
-                connect your applications to any service, without the need for
-                code.
+                No more complex client config, scattered secrets, or glue code.
+                Director gives you a single, reliable endpoint for everything
+                MCP.
               </p>
 
               <div className="flex flex-row gap-2 pt-2 md:pt-3">
                 <Button size="lg" asChild>
-                  <a href="#">
+                  <a href="#try-it-now">
                     <ButtonLabel>Get started</ButtonLabel>
                   </a>
                 </Button>
@@ -84,7 +84,7 @@ export default function IndexPage() {
                   className="rounded-full"
                   asChild
                 >
-                  <a href="#">
+                  <a href="https://docs.director.run">
                     <ButtonLabel>Read the docs</ButtonLabel>
                   </a>
                 </Button>
@@ -119,8 +119,9 @@ export default function IndexPage() {
             <SectionHeader centered>
               <SectionTitle>Full of features</SectionTitle>
               <SectionDescription>
-                Director is a modern, open-source API gateway that allows you to
-                connect your applications to any service.
+                Director is a lightweight, open-source MCP proxy that
+                streamlines integration, security, and observability for your AI
+                workflows.
               </SectionDescription>
             </SectionHeader>
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:gap-4 lg:grid-cols-3">
@@ -149,19 +150,20 @@ export default function IndexPage() {
             </div>
           </Section>
 
-          <div className="group [[data-slot=separator]+&]:-mt-2 full-bleed relative bg-accent">
+          <div
+            id="try-it-now"
+            className="group [[data-slot=separator]+&]:-mt-2 full-bleed relative scroll-mt-20 bg-accent"
+          >
             <Container className="relative z-10 py-20 md:py-32">
               <Section>
                 <div className="mx-auto flex w-full max-w-xl flex-col gap-5">
                   <Card className="transition-transform duration-200 ease-in-out group-focus-within:rotate-0 group-hover:rotate-0 md:rotate-4">
                     <CardHeader>
-                      <CardTitle className="md:text-2xl">
-                        Run the Quickstart
-                      </CardTitle>
+                      <CardTitle className="md:text-2xl">Try it now</CardTitle>
                       <CardDescription>
-                        Our Quickstart guide walks you through setting up the
-                        MCP Gateway, configuring it effortlessly in Studio, and
-                        seamlessly connecting to your favorite tools.
+                        Start using Director right away. The Quickstart guide
+                        shows you how to install, configure, and connect your
+                        favourite tools with a single command.
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -258,8 +260,8 @@ export default function IndexPage() {
             <SectionHeader centered>
               <SectionTitle>Meet the team</SectionTitle>
               <SectionDescription>
-                Director is a modern, open-source API gateway that allows you to
-                connect your applications to any service.
+                Director is built by a dedicated team focused on open source and
+                community-driven development.
               </SectionDescription>
             </SectionHeader>
 

@@ -90,41 +90,45 @@ export const siteConfig: SiteConfig = {
     {
       variant: "primary",
       label: "Get started",
-      href: "https://docs.director.run",
+      href: "/#try-it-now",
       mobile: true,
     },
   ],
   features: [
     {
-      title: "Connection hub",
+      title: "Complete transparency",
       description:
-        "Single endpoint for all clients with multiple backend MCP servers",
+        "Director is fully open source under the MIT license, giving you complete visibility and control.",
       icon: PlugIcon,
     },
     {
-      title: "One click clients",
-      description: "Install your Director instance with a single click",
+      title: "Centralized hub",
+      description:
+        "Connect all clients through a single endpoint while managing multiple backend MCP servers",
       icon: RocketIcon,
     },
     {
-      title: "Great discovery",
-      description: "Browse and securely install MCP servers from our registry",
+      title: "Easy setup & discovery",
+      description:
+        "Get started, browse and securely install MCP servers from our registry in minutes",
       icon: MagnifyingGlassIcon,
     },
     {
-      title: "Proxy isolation",
-      description: "Prevent cross-contamination with our independent contexts",
+      title: "VM isolation",
+      description:
+        "Sandbox MCP servers within a VM or Docker container to protect against remote code injection attacks",
       icon: ShieldCheckIcon,
     },
     {
-      title: "Audit trails",
-      description: "Track all requests and responses to MCP servers",
+      title: "Detailed observability",
+      description:
+        "Track all MCP calls with detailed JSON logging. Monitor tool usage and success rates in real-time",
       icon: FileTextIcon,
     },
     {
-      title: "Top notch security",
+      title: "Flexible deployment",
       description:
-        "Secure transports, error isolation, and configurable security settings",
+        "Install and run locally in minutes with one line. Deploy in the cloud using Docker or npm on any *nix server",
       icon: LockIcon,
     },
   ],
@@ -136,21 +140,21 @@ export const siteConfig: SiteConfig = {
     {
       title: "Gateway",
       description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
+        "A local-first proxy that connects your models to any MCP server through a unified integration point.",
       icon: DoorOpenIcon,
       href: "https://github.com/theworkingcompany/director/tree/main/packages/gateway/README.md",
     },
     {
       title: "Studio",
       description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
+        "A web interface for managing proxies, MCP servers, and connections with ease.",
       icon: AppWindowIcon,
       href: "https://github.com/theworkingcompany/director/blob/main/apps/studio/README.md",
     },
     {
       title: "Registry",
       description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
+        "A secure directory for discovering, browsing, and installing MCP servers into your environment.",
       icon: ListMagnifyingGlassIcon,
       href: "https://github.com/theworkingcompany/director/blob/main/apps/registry/README.md",
     },
@@ -160,8 +164,7 @@ export const siteConfig: SiteConfig = {
       image: "https://avatars.githubusercontent.com/u/480673?v=4",
       name: "Barnaby Malet",
       // TODO: add description
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
+      description: "Previously co-founded Upflow and …",
       links: [
         { type: "github", url: "https://github.com/barnaby" },
         {
@@ -174,9 +177,8 @@ export const siteConfig: SiteConfig = {
     {
       image: "https://avatars.githubusercontent.com/u/937180?v=4",
       name: "Tom Bates",
-      // TODO: add description
       description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
+        "Designer/Engineer. Co-founded Duffel (S18). Previously at Palantir, GoCardless, and more.",
       links: [
         { type: "github", url: "https://github.com/yoamomonstruos" },
         {

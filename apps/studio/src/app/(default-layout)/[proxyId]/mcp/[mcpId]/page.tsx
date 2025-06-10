@@ -37,7 +37,6 @@ import {
   Section,
   SectionDescription,
   SectionHeader,
-  SectionSeparator,
   SectionTitle,
 } from "@/components/ui/section";
 import { toast } from "@/components/ui/toast";
@@ -147,8 +146,6 @@ export default function ProxyPage() {
             {description ? <Markdown>{description}</Markdown> : null}
           </Section>
 
-          <SectionSeparator />
-
           <Section>
             <SectionHeader>
               <SectionTitle variant="h2" asChild>
@@ -158,8 +155,6 @@ export default function ProxyPage() {
 
             <McpDescriptionList transport={mcp.transport} />
           </Section>
-
-          <SectionSeparator />
 
           <Section>
             <SectionHeader>

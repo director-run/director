@@ -2,7 +2,6 @@ import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import { makeTable } from "@director.run/utilities/cli/index";
 import packageJson from "../package.json";
 import { create } from "../src/commands/create.ts";
-import {} from "../src/commands/create.ts";
 import { destroy } from "../src/commands/destroy.ts";
 import { list } from "../src/commands/list.ts";
 import { provision } from "../src/commands/provision.ts";

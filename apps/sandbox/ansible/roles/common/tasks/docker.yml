@@ -38,6 +38,7 @@
 
 - name: Add user to docker group
   become: true
-  shell: |
-    usermod -aG docker {{ user }}
-
+  ansible.builtin.user:
+    name: "{{ user }}"
+    groups: docker
+    append: yes

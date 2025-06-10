@@ -26,5 +26,7 @@
     state: latest
 
 - name: Add .screenrc file
-  shell: |
-    curl -fsSL https://gist.githubusercontent.com/barnaby/1fe544ea69648fc1b3d3ef81b7fb62bd/raw/b8f482d4d3e4d24893261abc40b0fae8eebdd003/.screenrc -o ~/.screenrc
+  ansible.builtin.get_url:
+    url: https://gist.githubusercontent.com/barnaby/1fe544ea69648fc1b3d3ef81b7fb62bd/raw/b8f482d4d3e4d24893261abc40b0fae8eebdd003/.screenrc
+    dest: "~/.screenrc"
+    mode: '0644'

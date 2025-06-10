@@ -60,8 +60,7 @@ export interface SiteConfig {
 export const siteConfig: SiteConfig = {
   metadata: {
     title: { absolute: "Director", template: "%s | Director" },
-    description:
-      "Director is a modern, open-source API gateway that allows you to connect your applications to any service.",
+    description: "An open source middleware for MCP that just works.",
     keywords: ["director", "api", "gateway", "mcp", "server", "registry"],
     robots: {
       index: true,

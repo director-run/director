@@ -2,6 +2,6 @@
 - hosts: all
   gather_facts: true
   roles:
-    - role: common
-    - role: development
+    # - role: common
+    # - role: development
     - role: director

@@ -75,6 +75,16 @@ program
   });
 
 program
+  .command("destroy-all")
+  .description("destroy all VMs")
+  .action(async () => {
+    const vms = await list();
+    for (const vm of vms) {
+      await destroy(vm.name);
+    }
+  });
+
+program
   .command("provision <name>")
   .description("provision a VM")
   .action(async (name, options) => {

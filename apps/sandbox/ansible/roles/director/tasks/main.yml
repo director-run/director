@@ -1,9 +1,17 @@
-# ---
+---
 # - name: Install Director
 #   shell: |
 #     export NVM_DIR="{{ ansible_env.HOME }}/.nvm"
 #     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 #     npm install -g @director.run/cli pm2
+
+- name: Mount shared directory
+  become: yes
+  shell: |
+    mkdir /mnt/shared
+    mount -t virtiofs com.apple.virtio-fs.automount /mnt/shared
+    chown {{ ansible_env.USER }} /mnt/shared
+    ln -s /mnt/shared/director /home/{{ user }}/director
 
 # - name: Add director to pm2
 #   shell: |

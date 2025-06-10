@@ -98,7 +98,7 @@
   }
 
   & table:not(.not-prose table) {
-    @apply my-6 w-full overflow-y-auto;
+    @apply my-6 w-full overflow-y-auto overflow-x-hidden max-w-full;
 
     & thead tr {
       @apply m-0 border-t p-0 even:bg-accent-subtle;

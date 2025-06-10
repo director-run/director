@@ -1,6 +1,5 @@
 import { Container } from "@/components/layout/container";
 import { SocialIcon } from "@/components/social-icon";
-import { Logo } from "@/components/ui/logo";
 import { Pattern } from "@/components/ui/pattern";
 import { cn } from "@/lib/cn";
 import { siteConfig } from "@/site-config";
@@ -10,7 +9,7 @@ export function Footer() {
   return (
     <footer data-slot="footer" className="bg-accent">
       <div className="relative">
-        <Container className="relative z-10 flex flex-col-reverse pb-12 sm:flex-col sm:pt-6 sm:pb-0 md:pt-8 lg:pt-12">
+        <Container className="relative z-10 flex flex-col-reverse py-12 sm:flex-col sm:py-6 md:py-8 lg:py-12">
           <div className="flex flex-col items-center gap-y-6 sm:flex-row sm:justify-between">
             <div
               className={cn(
@@ -55,18 +54,6 @@ export function Footer() {
                   </a>
                 );
               })}
-            </div>
-          </div>
-
-          <div className="flex flex-col items-center gap-4 py-16">
-            <Logo className="size-12" />
-            <div className="flex flex-col items-center gap-1.5">
-              <span className="bg-accent font-medium text-xl leading-6 ring-2 ring-accent">
-                Director
-              </span>
-              <span className="bg-accent font-[450] text-base text-fg/75 leading-5 ring-2 ring-accent">
-                Made with Ritalin
-              </span>
             </div>
           </div>
         </Container>

@@ -47,7 +47,7 @@ export function PatternCard({
           "transition-colors duration-200 ease-in-out",
           "shadow-[0_3px_9px_0px_rgba(55,50,46,0.07),_0_0_0_1px_rgba(55,50,46,0.1)]",
           asChild &&
-            "group hover:shadow-[0_3px_9px_0px_rgba(55,50,46,0.07),_0_0_0_1px_rgba(55,50,46,0.1)]",
+            "group grow hover:shadow-[0_3px_9px_0px_rgba(55,50,46,0.07),_0_0_0_1px_rgba(55,50,46,0.1)]",
           className,
         )}
         {...props}

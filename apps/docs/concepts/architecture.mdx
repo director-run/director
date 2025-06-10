@@ -1,16 +1,25 @@
+---
+title: "Core architecture"
+description: "Understand the main components of the middleware."
+icon: sitemap
+---
 
+<Frame caption="Director architectural overview">
+  <img src="../images/director-architecture-overview.png" />
+</Frame>
 
-![title](../images/director-architecture-overview.png)
+Director is MCP middleware that sits between MCP Clients and MCP Servers. For clients, it provides a single connection point (supporting HTTP Streamable, Stdio and SSE). For servers, it tools, prompts & resources (again supporting all MCP transports). 
 
+By using Director, you can centralise MCP configuraton and abstract management away from your clients. To make this easy, we provide an CLI, GUI (Studio) and SDK that allow you to configure MCP easliy.
 
-Director is an MCP middleware that sits between MCP Clients and MCP Servers. You can read more about the benefits of the product in the Welcome section.
+# Gateway
 
-At a high level, Director consists of a `web service` (who’s primary responsibility is proxying / routing the MCP client and server communication) and the `Director CLI & Studio` which are the primary interactive ways to interact with the `web service` (in addition to changing the config file directly). 
+The core component of Director is the `Gateway`, that implements a proxy pattern to aggragate the MCP servers and serve them to the MCP clients through the standard protocol transports. In addition, Director also provides a `ClientCongigurator` module that makes it easy to connect clients such as Claude, Cursor and VSCode (with more on the way) to the `Gateway` without needing to write JSON manually. Finally, it provides a `Controller` layer which exposes an API (HTTP [TRPC](https://trpc.io/)) that allows you to add, remove and modify `ProxyServers`
 
-If you’re running locally, then all of these components will run on your machine. If you’ve deployed the `web service` to the cloud (see deployment), then you configure the CLI or GUI to connect to a remote service.
+# Gateway Management
 
-The web service contains three main components:
+The `Gateway` is a standalone piece of infrastructure that can either be run locally or on a remote server (right now, running it locally is what's best supported). Director implements a client / server architecture for management purposes (HTTP API, distinct from MCP client / servers). This is implemented in the `Controller` layer, and more specifically, this allows you to manage `ProxyServer` lifecycle, configure new targets (MCP Servers) and query the status / health of the service as well as the underlying servers and client connections. There are two main ways to interact with the `Gateway` currently:
 
-- `Proxy Manager`: core functionality, responsible for managing proxy server state & lifecycle.
-- `Client Manager`: helps users manage MCP client config (we currently cursor and claude). It’s essentially an API that provides utility functions to read and write client JSON config on disk
-- `Controller`: TRPC management APIs used to interact with Proxy Manager and Client Manager
+- **CLI**: The CLI is If you’re running locally, then all of these components will run on your machine. If you’ve deployed the `web service` to the cloud (see deployment), then you configure the CLI or GUI to connect to a remote service.
+
+ 

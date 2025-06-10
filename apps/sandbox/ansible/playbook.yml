@@ -4,4 +4,5 @@
   roles:
     - role: common
     - role: development
-    - role: director
+    - role: mount # mount the shared directory inside the VM (~/shared/)
+    # - role: director

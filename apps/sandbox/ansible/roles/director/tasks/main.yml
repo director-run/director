@@ -5,15 +5,6 @@
 #     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 #     npm install -g @director.run/cli pm2
 
-# TODO make this persist across reboots
-- name: Mount shared directory
-  become: yes
-  shell: |
-    mkdir /mnt/shared
-    mount -t virtiofs com.apple.virtio-fs.automount /mnt/shared
-    chown {{ ansible_env.USER }} /mnt/shared
-    ln -s /mnt/shared/director /home/{{ user }}/director
-
 # - name: Add director to pm2
 #   shell: |
 #     source {{ ansible_env.HOME }}/.nvm/nvm.sh

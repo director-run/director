@@ -1,0 +1,31 @@
+---
+- name: Create shared directory
+  become: yes
+  file:
+    path: /mnt/shared
+    state: directory
+    mode: '0755'
+
+- name: Add fstab entry
+  become: yes
+  lineinfile:
+    path: /etc/fstab
+    line: "com.apple.virtio-fs.automount /mnt/shared virtiofs defaults 0 0"
+    state: present
+    regexp: "^com\\.apple\\.virtio-fs\\.automount /mnt/shared"
+
+- name: Mount shared directory
+  become: yes
+  mount:
+    path: /mnt/shared
+    src: com.apple.virtio-fs.automount
+    fstype: virtiofs
+    state: mounted
+
+- name: Create symbolic link
+  become: yes
+  file:
+    src: /mnt/shared
+    dest: "/home/{{ user }}/shared"
+    state: link
+    force: yes

@@ -7,6 +7,7 @@ import {
   LayoutViewContent,
   LayoutViewHeader,
 } from "@/components/layout";
+import { McpLogo } from "@/components/mcp-logo";
 import { McpDeleteConfirmation } from "@/components/mcp-servers/mcp-delete-confirmation";
 import { McpDescriptionList } from "@/components/mcp-servers/mcp-description-list";
 import { McpToolSheet } from "@/components/mcp-servers/mcp-tool-sheet";
@@ -29,17 +30,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { EmptyState, EmptyStateTitle } from "@/components/ui/empty-state";
 import { Markdown } from "@/components/ui/markdown";
 import { MenuItemIcon, MenuItemLabel } from "@/components/ui/menu";
 import {
   Section,
   SectionDescription,
   SectionHeader,
-  SectionSeparator,
   SectionTitle,
 } from "@/components/ui/section";
 import { toast } from "@/components/ui/toast";
 import { useProxy } from "@/hooks/use-proxy";
+import { EntryGetParams } from "@director.run/registry/db/schema";
 import { DotsThreeOutlineVerticalIcon, TrashIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useEffect } from "react";
@@ -73,7 +75,7 @@ export default function ProxyPage() {
     return <ProxySkeleton />;
   }
 
-  const entryData = mcp.source?.entryData;
+  const entryData = mcp.source?.entryData as EntryGetParams;
   const description =
     typeof entryData === "object" &&
     entryData !== null &&
@@ -126,6 +128,11 @@ export default function ProxyPage() {
       <LayoutViewContent>
         <Container size="lg">
           <Section>
+            <McpLogo
+              src={entryData?.icon}
+              fallback={mcp.name.charAt(0).toUpperCase()}
+              className="size-9"
+            />
             <SectionHeader>
               <SectionTitle>{mcp.name}</SectionTitle>
               <SectionDescription>
@@ -139,8 +146,6 @@ export default function ProxyPage() {
             {description ? <Markdown>{description}</Markdown> : null}
           </Section>
 
-          <SectionSeparator />
-
           <Section>
             <SectionHeader>
               <SectionTitle variant="h2" asChild>
@@ -151,8 +156,6 @@ export default function ProxyPage() {
             <McpDescriptionList transport={mcp.transport} />
           </Section>
 
-          <SectionSeparator />
-
           <Section>
             <SectionHeader>
               <SectionTitle variant="h2" asChild>
@@ -161,6 +164,23 @@ export default function ProxyPage() {
             </SectionHeader>
 
             <McpToolsTable proxyId={proxy.id} serverId={mcp.name} />
+          </Section>
+
+          <Section>
+            <SectionHeader>
+              <SectionTitle variant="h2" asChild>
+                <h3>Readme</h3>
+              </SectionTitle>
+            </SectionHeader>
+            {entryData.readme ? (
+              <div className="rounded-md border-[0.5px] bg-accent-subtle/20 px-4 py-8">
+                <Markdown className="mx-auto">{entryData.readme}</Markdown>
+              </div>
+            ) : (
+              <EmptyState>
+                <EmptyStateTitle>No readme found</EmptyStateTitle>
+              </EmptyState>
+            )}
           </Section>
         </Container>
       </LayoutViewContent>

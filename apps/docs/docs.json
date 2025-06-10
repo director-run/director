@@ -9,8 +9,42 @@
   "navigation": {
     "groups": [
       {
-        "group": "Essentials",
-        "pages": ["index", "quickstart", "development"]
+        "group": "Getting Started",
+        "pages": [
+          "getting-started/welcome",
+          "getting-started/installation",
+          "getting-started/quickstart"
+        ]
+      },
+      {
+        "group": "Concepts",
+        "pages": [
+          "concepts/architecture",
+          "concepts/configuration",
+          "concepts/client-integration",
+          "concepts/logging",
+          "concepts/registry"
+        ]
+      },
+      {
+        "group": "Deployment",
+        "pages": ["deployment/docker", "deployment/metal"]
+      },
+      {
+        "group": "Security",
+        "pages": ["security/isolation", "security/authentication"]
+      },
+      {
+        "group": "SDK",
+        "pages": ["sdk/cli", "sdk/api", "sdk/plugins"]
+      },
+      {
+        "group": "Project",
+        "pages": [
+          "project/changelog",
+          "project/roadmap",
+          "project/contributing"
+        ]
       }
     ]
   },

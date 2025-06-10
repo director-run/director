@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { SelectNative } from "@/components/ui/select-native";
 import { toast } from "@/components/ui/toast";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
+import { DIRECTOR_URL } from "@/lib/urls";
 
 type TransportType = "http" | "sse" | "stdio";
 
@@ -24,9 +25,9 @@ function ManualInput({ id }: { id: string }) {
   const [transportType, setTransportType] = useState<TransportType>("http");
 
   const transports: Record<TransportType, string> = {
-    http: `http://localhost:3673/${id}/mcp`,
-    sse: `http://localhost:3673/${id}/sse`,
-    stdio: `director http2stdio http://localhost:3673/${id}/sse`,
+    http: `${DIRECTOR_URL}/${id}/mcp`,
+    sse: `${DIRECTOR_URL}/${id}/sse`,
+    stdio: `director http2stdio ${DIRECTOR_URL}/${id}/sse`,
   };
 
   return (

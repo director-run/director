@@ -85,6 +85,7 @@ export class EntryStore {
           lastConnectionAttemptedAt: entriesTable.lastConnectionAttemptedAt,
           tools: entriesTable.tools,
           parameters: entriesTable.parameters,
+          icon: entriesTable.icon,
         })
         .from(entriesTable)
         .limit(pageSize)

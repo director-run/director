@@ -35,7 +35,7 @@ export function SectionHeader({
       data-slot="section-header"
       className={cn(
         "flex flex-col gap-y-2",
-        centered && "max-w-[48ch] sm:mx-auto sm:items-center sm:text-center",
+        centered && "max-w-xl sm:mx-auto sm:items-center sm:text-center",
         className,
       )}
       {...props}
@@ -73,7 +73,7 @@ export function SectionDescription({
     <p
       data-slot="section-description"
       className={cn(
-        "max-w-lg text-pretty text-base text-fg/80 leading-snug sm:text-lg",
+        "max-w-xl text-pretty text-base text-fg/80 leading-snug sm:text-lg",
         className,
       )}
       {...props}

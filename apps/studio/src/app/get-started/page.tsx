@@ -8,8 +8,11 @@ import {
   GetStartedListItem,
 } from "@/components/get-started/get-started-list";
 import { GetStartedProxyForm } from "@/components/get-started/get-started-proxy-form";
+import { McpLogo } from "@/components/mcp-logo";
 
 import { Container } from "@/components/ui/container";
+import { EmptyState, EmptyStateTitle } from "@/components/ui/empty-state";
+import { Input } from "@/components/ui/input";
 import {
   ListItemDescription,
   ListItemDetails,
@@ -27,6 +30,7 @@ import { EntryGetParams } from "@director.run/registry/db/schema";
 import { useEffect, useState } from "react";
 
 export default function GetStartedPage() {
+  const [searchQuery, setSearchQuery] = useState("");
   const [currentProxyId, setCurrentProxyId] = useState<string | null>(null);
   const [proxyListQuery, registryEntriesQuery] = trpc.useQueries((t) => [
     t.store.getAll(),
@@ -91,6 +95,14 @@ export default function GetStartedPage() {
     addStepStatus === "completed" &&
     connectStepStatus === "completed";
 
+  const filteredEntries = registryEntriesQuery.data.entries.filter((entry) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      entry.title.toLowerCase().includes(query) ||
+      entry.description.toLowerCase().includes(query)
+    );
+  });
+
   return (
     <Container size="sm" className="py-12 lg:py-16">
       <Section className="gap-y-8">
@@ -121,8 +133,16 @@ export default function GetStartedPage() {
             open={addStepStatus === "in-progress"}
             disabled={addStepStatus !== "in-progress"}
           >
+            <div className="relative z-10 px-2 pt-2">
+              <Input
+                type="text"
+                placeholder="Search MCP servers..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
             <div className="grid max-h-[320px] grid-cols-1 gap-1 overflow-y-auto p-2">
-              {registryEntriesQuery.data.entries
+              {filteredEntries
                 .sort((a, b) => a.title.localeCompare(b.title))
                 .map((it) => {
                   return (
@@ -131,7 +151,11 @@ export default function GetStartedPage() {
                       mcp={it as EntryGetParams}
                       proxyId={currentProxy ? currentProxy.id : ""}
                     >
-                      <div className="rounded-lg bg-accent-subtle/60 px-2.5 py-1.5 hover:bg-accent">
+                      <div className="flex flex-row items-center gap-x-3 rounded-lg bg-accent-subtle/60 px-2.5 py-1.5 hover:bg-accent">
+                        <McpLogo
+                          src={it.icon}
+                          fallback={it.name.charAt(0).toUpperCase()}
+                        />
                         <ListItemDetails>
                           <ListItemTitle>{it.title}</ListItemTitle>
                           <ListItemDescription>
@@ -142,6 +166,12 @@ export default function GetStartedPage() {
                     </GetStartedInstallServerDialog>
                   );
                 })}
+
+              {filteredEntries.length === 0 && (
+                <EmptyState className="bg-accent-subtle/60">
+                  <EmptyStateTitle>No MCP servers found</EmptyStateTitle>
+                </EmptyState>
+              )}
             </div>
           </GetStartedListItem>
           <GetStartedListItem

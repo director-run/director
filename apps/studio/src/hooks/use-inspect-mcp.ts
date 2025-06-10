@@ -1,5 +1,6 @@
 "use client";
 
+import { DIRECTOR_URL } from "@/lib/urls";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
@@ -16,7 +17,7 @@ export function useInspectMcp(proxyId: string, serverId?: string) {
     });
 
     const transport = new SSEClientTransport(
-      new URL(`http://localhost:3673/${proxyId}/sse`),
+      new URL(`${DIRECTOR_URL}/${proxyId}/sse`),
     );
 
     client.connect(transport).then(() => {

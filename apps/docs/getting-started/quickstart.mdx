@@ -1,52 +1,47 @@
-# Start the Director Service
+---
+title: Quickstart
+description: "Getting started with Director"
+icon: rocket
+---
 
-The core functionality of Director is a web service that sits between MCP clients and servers. Use the command below to start it:
+# Prerequisites
+
+- This is only tested on MacOS and Linux (TODO).
+- You'll need `node` / `npm` installed.
+- You'll need `uvx` for most of the servers. 
+- You'll need Claude, Cursor or VSCode installed if you want director to connect to them automatically.
+
+
+# Quickstart
+
+The fastest way to try director is to use run the quickstart flow via `npx`. This will run the latest version of director and open up the studio in your browser.
 
 ```bash
-director serve
+npx @director/cli quickstart
 ```
 
-# Create & Connect to Your First Proxy
+# Alternative Methods
 
-## Option 1: Via the GUI
+## Installing Locally
 
-We provide a GUI, called studio that allows you to manage the service easily. It’s available at https://studio.director.run, you can also open it with the command below.
+If you'd like to install director locally, you can do so via `npm`.
 
 ```bash
-director studio 
+npm install -g @director/cli
+director serve # start the gateway
+director studio # open the studio in your browser
 ```
 
-## Option 2: Via the CLI
+## Getting started with the CLI
 
-If you prefer, you can also use the command line to manage director. It’s functionally equivalent to the GUI.
-
-### Create a Proxy Server
-
-Proxies are MCP servers that encapsulate any number of other MCP servers. All MCP server specific configuration (environment variables, secrets, arguments..) is encapsulated within each proxy server.
+If you'd like to set up director without going through the UI, you can do so via the CLI.
 
 ```bash
-director create my-first-proxy
-```
-
-### Add an MCP Server to the Proxy
-
-```bash
-# Add the fetch server from the director registry
-director add fetch --target=my-first-proxy
-
-# Add any server you want
-director add --target=my-first-proxy
-```
-
-### Connect the Proxy Server to your Client
-
-```bash
-# connect the proxy to Claude
-director connect my-first-proxy --target=claude
-
-# connect the proxy to Cursor
-director connect my-first-proxy --target=claude
-
-# print the manual connection details
-director connect my-first-proxy
+npm install -g @director/cli
+director serve # start the gateway
+director create my-first-proxy # create a proxy
+director add fetch --target=my-first-proxy # add the fetch server to the proxy
+director connect my-first-proxy --target=claude # connect the proxy to Claude
+director connect my-first-proxy --target=cursor # connect the proxy to Cursor
+director connect my-first-proxy # print the manual connection details
 ```

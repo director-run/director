@@ -1,17 +1,21 @@
 ---
 sidebarTitle: Welcome!
 title: "Welcome to Director!"
-description: "The easiest way to manage, run and observe MCP servers."
+description: "The easiest way to manage and deploy MCP servers, locally or in the cloud."
 icon: hand-wave
 ---
 
 import { BetaBadge } from '/snippets/beta-badge.mdx'
 
 <BetaBadge />
+<br />
+<br />
 
+<Frame caption="Director overview">
+  <img src="../images/director-highlevel-overview.webp" />
+</Frame>
 
-
-Director is a fully open source MCP middleware that simplifies MCP server integration and deployment. It's MCP native (with support for all transports), and sits between your model (or agent) and the underlying MCP servers. It implements a proxy pattern to, on the server side, aggragate all tools, prompts and resources and on the client side, abstract the complexity away and provide a simple, clean and static integration point. This allows you to delegate the management of your MCP servers entirely, so that you can focus on what matters most: the prompt and the domain logic. In a nutshell, the benefits are as follows:
+[Director](https://director.run) is a fully open source MCP middleware that simplifies MCP server integration and deployment. It's MCP native (with support for all transports), and sits between your model (or agent) and the underlying MCP servers. It implements a proxy pattern to, on the server side, aggragate all tools, prompts and resources and on the client side, abstract the complexity away and provide a simple, clean and static integration point. This allows you to delegate the management of your MCP servers entirely, so that you can focus on what matters most: the prompt and the domain logic. In a nutshell, the benefits are as follows:
 
 #### No vendor lockin or hidden fees
 Director is 100% Open Source and licenced under MIT. This includes our CLI, the UI and our registry. We’ve designed director so you can easily run on your own machine (with 0 external dependecies), in a docker container or as a long running service in the cloud.

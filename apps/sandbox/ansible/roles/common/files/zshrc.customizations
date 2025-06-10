@@ -14,7 +14,7 @@ alias ghostscript='/usr/local/bin/gs'
 alias ga='git add'
 alias myip='curl http://jsonip.com/ | cut -d\" -f4'
 alias key='cat ~/.ssh/id_rsa.pub'
-alias webserver='python -m SimpleHTTPServer'
+alias webserver='python3 -m http.server'
 alias docker-ps='docker ps -a --format "table {{.ID}}\t{{.Status}}\t{{.Names}}"'
 
 function gc() { git commit -a -m "$1" ;}

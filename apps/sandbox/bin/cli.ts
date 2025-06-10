@@ -1,3 +1,4 @@
+import path from "path";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import { makeTable } from "@director.run/utilities/cli/index";
 import packageJson from "../package.json";
@@ -13,6 +14,7 @@ import { stop } from "../src/commands/stop.ts";
 const DEFAULT_IMAGE = "ghcr.io/cirruslabs/ubuntu:latest";
 const DEFAULT_USER = "admin";
 const DEFAULT_PASSWORD = "admin";
+const DEFAULT_MOUNT = `director:${path.join(__dirname, "../../../")}`; // source file
 
 const program = new DirectorCommand();
 
@@ -44,7 +46,9 @@ program
       image: DEFAULT_IMAGE,
     });
     if (options.start) {
-      await start(name);
+      await start(name, {
+        mount: DEFAULT_MOUNT,
+      });
     } else {
       console.log(vm);
     }
@@ -60,7 +64,9 @@ program
       dest,
     });
     if (options.start) {
-      await start(dest);
+      await start(dest, {
+        mount: DEFAULT_MOUNT,
+      });
     } else {
       console.log(vm);
     }
@@ -70,7 +76,9 @@ program
   .command("start <name>")
   .description("start a VM")
   .action(async (name) => {
-    await start(name);
+    await start(name, {
+      mount: DEFAULT_MOUNT,
+    });
   });
 
 program

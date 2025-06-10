@@ -15,7 +15,7 @@ brew install sshpass
 ```
 git clone ...
 
-# Inside Hose
+# Inside Host
 bun cli create gm --start
 bun cli provision gm
 bun cli clone gm my-sandbox

@@ -88,7 +88,11 @@ export function GetStartedInstallServerDialog({
       {children && <DialogTrigger asChild>{children}</DialogTrigger>}
       <DialogContent>
         <DialogHeader>
-          <McpLogo icon={mcp.icon} className="size-8" />
+          <McpLogo
+            src={mcp.icon}
+            fallback={mcp.name.charAt(0).toUpperCase()}
+            className="size-8"
+          />
           <DialogTitle className="pt-4">Install {mcp.title}</DialogTitle>
           <DialogDescription>{mcp.description}</DialogDescription>
         </DialogHeader>

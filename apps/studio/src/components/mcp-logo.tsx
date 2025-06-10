@@ -1,27 +1,48 @@
-import { cn } from "@/lib/cn";
-import { REGISTRY_URL } from "@/lib/urls";
+"use client";
+
+import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import Image from "next/image";
 import { ComponentProps } from "react";
 
-interface McpLogoProps extends Omit<ComponentProps<"div">, "children"> {
-  icon?: string | null;
+import { cn } from "@/lib/cn";
+import { REGISTRY_URL } from "@/lib/urls";
+
+import McpImageSrc from "../../public/icons/mcp.svg";
+
+interface McpLogoProps
+  extends Omit<ComponentProps<typeof AvatarPrimitive.Root>, "children"> {
+  src?: string | null;
+  fallback: string;
 }
 
-export function McpLogo({ icon, className, ...props }: McpLogoProps) {
-  const iconUrl = icon?.startsWith("http") ? icon : `${REGISTRY_URL}/${icon}`;
+export function McpLogo({ src, className, fallback, ...props }: McpLogoProps) {
+  const srcUrl = src?.startsWith("http") ? src : `${REGISTRY_URL}/${src}`;
 
   return (
-    <div
-      className={cn("relative size-6 shrink-0", className)}
+    <AvatarPrimitive.Root
+      data-slot="avatar"
+      className={cn(
+        "relative flex size-8 shrink-0 overflow-hidden rounded-full",
+        className,
+      )}
       aria-hidden
       {...props}
     >
-      <Image
-        src={iconUrl ?? `${REGISTRY_URL}/public/mcp.svg`}
-        alt="MCP Logo"
-        fill
-        className="object-contain"
+      <AvatarPrimitive.Image
+        data-slot="avatar-image"
+        className={cn("aspect-square size-full", className)}
+        src={srcUrl ?? `${REGISTRY_URL}/public/mcp.svg`}
       />
-    </div>
+      <AvatarPrimitive.Fallback
+        data-slot="avatar-fallback"
+        className={cn(
+          "flex size-full items-center justify-center rounded-full bg-fg/10 p-1.5",
+          className,
+        )}
+      >
+        <Image src={McpImageSrc} alt="MCP Logo" className="size-full" />
+        <span className="sr-only">{fallback}</span>
+      </AvatarPrimitive.Fallback>
+    </AvatarPrimitive.Root>
   );
 }

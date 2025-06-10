@@ -108,7 +108,11 @@ export default function RegistryEntryPage() {
       <LayoutViewContent>
         <Container size="lg">
           <Section className="gap-y-6">
-            <McpLogo icon={entry.icon} className="size-9" />
+            <McpLogo
+              src={entry.icon}
+              fallback={entry.name.charAt(0).toUpperCase()}
+              className="size-9"
+            />
             <SectionHeader>
               <SectionTitle>{entry.title}</SectionTitle>
               <SectionDescription>{entry.description}</SectionDescription>

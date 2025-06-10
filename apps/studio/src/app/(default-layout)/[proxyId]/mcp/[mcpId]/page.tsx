@@ -128,7 +128,11 @@ export default function ProxyPage() {
       <LayoutViewContent>
         <Container size="lg">
           <Section>
-            <McpLogo icon={entryData?.icon} className="size-9" />
+            <McpLogo
+              src={entryData?.icon}
+              fallback={mcp.name.charAt(0).toUpperCase()}
+              className="size-9"
+            />
             <SectionHeader>
               <SectionTitle>{mcp.name}</SectionTitle>
               <SectionDescription>

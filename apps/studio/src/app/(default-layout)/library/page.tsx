@@ -104,7 +104,11 @@ export default function RegistryPage() {
                         href={`/library/mcp/${entry.name}`}
                         className="flex flex-col gap-y-8 rounded-lg bg-accent-subtle p-4 transition-colors duration-200 ease-in-out hover:bg-accent"
                       >
-                        <McpLogo icon={entry.icon} className="size-8" />
+                        <McpLogo
+                          src={entry.icon}
+                          fallback={entry.name.charAt(0).toUpperCase()}
+                          className="size-8"
+                        />
 
                         <div className="flex flex-col gap-y-1">
                           <div className="flex items-center gap-x-1 font-[450] text-[17px]">

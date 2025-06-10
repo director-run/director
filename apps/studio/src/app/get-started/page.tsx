@@ -152,7 +152,10 @@ export default function GetStartedPage() {
                       proxyId={currentProxy ? currentProxy.id : ""}
                     >
                       <div className="flex flex-row items-center gap-x-3 rounded-lg bg-accent-subtle/60 px-2.5 py-1.5 hover:bg-accent">
-                        <McpLogo icon={it.icon} />
+                        <McpLogo
+                          src={it.icon}
+                          fallback={it.name.charAt(0).toUpperCase()}
+                        />
                         <ListItemDetails>
                           <ListItemTitle>{it.title}</ListItemTitle>
                           <ListItemDescription>

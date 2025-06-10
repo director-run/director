@@ -30,6 +30,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { EmptyState, EmptyStateTitle } from "@/components/ui/empty-state";
 import { Markdown } from "@/components/ui/markdown";
 import { MenuItemIcon, MenuItemLabel } from "@/components/ui/menu";
 import {
@@ -168,6 +169,23 @@ export default function ProxyPage() {
             </SectionHeader>
 
             <McpToolsTable proxyId={proxy.id} serverId={mcp.name} />
+          </Section>
+
+          <Section>
+            <SectionHeader>
+              <SectionTitle variant="h2" asChild>
+                <h3>Readme</h3>
+              </SectionTitle>
+            </SectionHeader>
+            {entryData.readme ? (
+              <div className="rounded-md border-[0.5px] bg-accent-subtle/20 px-4 py-8">
+                <Markdown className="mx-auto">{entryData.readme}</Markdown>
+              </div>
+            ) : (
+              <EmptyState>
+                <EmptyStateTitle>No readme found</EmptyStateTitle>
+              </EmptyState>
+            )}
           </Section>
         </Container>
       </LayoutViewContent>

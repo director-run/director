@@ -5,6 +5,7 @@ import {
   LayoutViewContent,
   LayoutViewHeader,
 } from "@/components/layout";
+import { McpLogo } from "@/components/mcp-logo";
 import { McpDescriptionList } from "@/components/mcp-servers/mcp-description-list";
 import { RegistryEntrySkeleton } from "@/components/registry/registry-entry-skeleton";
 import { RegistryInstallDialog } from "@/components/registry/registry-install-dialog";
@@ -27,11 +28,12 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { EmptyState, EmptyStateTitle } from "@/components/ui/empty-state";
+import { Markdown } from "@/components/ui/markdown";
 import {
   Section,
   SectionDescription,
   SectionHeader,
-  SectionSeparator,
   SectionTitle,
 } from "@/components/ui/section";
 import { toast } from "@/components/ui/toast";
@@ -106,7 +108,12 @@ export default function RegistryEntryPage() {
 
       <LayoutViewContent>
         <Container size="lg">
-          <Section className="gap-y-6">
+          <Section className="gap-y-8">
+            <McpLogo
+              src={entry.icon}
+              fallback={entry.name.charAt(0).toUpperCase()}
+              className="size-9"
+            />
             <SectionHeader>
               <SectionTitle>{entry.title}</SectionTitle>
               <SectionDescription>{entry.description}</SectionDescription>
@@ -174,8 +181,6 @@ export default function RegistryEntryPage() {
             </BadgeGroup>
           </Section>
 
-          <SectionSeparator />
-
           <Section>
             <SectionHeader>
               <SectionTitle variant="h2" asChild>
@@ -184,8 +189,6 @@ export default function RegistryEntryPage() {
             </SectionHeader>
             <McpDescriptionList transport={entry.transport} />
           </Section>
-
-          <SectionSeparator />
 
           <Section>
             <SectionHeader>
@@ -196,8 +199,6 @@ export default function RegistryEntryPage() {
             <RegistryParameters parameters={entry.parameters ?? []} />
           </Section>
 
-          <SectionSeparator />
-
           <Section>
             <SectionHeader>
               <SectionTitle variant="h2" asChild>
@@ -205,6 +206,23 @@ export default function RegistryEntryPage() {
               </SectionTitle>
             </SectionHeader>
             <RegistryTools tools={entry.tools ?? []} />
+          </Section>
+
+          <Section>
+            <SectionHeader>
+              <SectionTitle variant="h2" asChild>
+                <h3>Readme</h3>
+              </SectionTitle>
+            </SectionHeader>
+            {entry.readme ? (
+              <div className="rounded-md border-[0.5px] bg-accent-subtle/20 px-4 py-8">
+                <Markdown className="mx-auto">{entry.readme}</Markdown>
+              </div>
+            ) : (
+              <EmptyState>
+                <EmptyStateTitle>No readme found</EmptyStateTitle>
+              </EmptyState>
+            )}
           </Section>
         </Container>
       </LayoutViewContent>

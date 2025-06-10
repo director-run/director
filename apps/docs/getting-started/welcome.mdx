@@ -1,0 +1,44 @@
+---
+sidebarTitle: Welcome!
+title: "Welcome to Director!"
+description: "The easiest way to manage and deploy MCP servers, locally or in the cloud."
+icon: hand-wave
+---
+
+import { BetaBadge } from '/snippets/beta-badge.mdx'
+
+<BetaBadge />
+<br />
+<br />
+
+<Frame caption="Director overview">
+  <img src="../images/director-highlevel-overview.webp" />
+</Frame>
+
+[Director](https://director.run) is a fully open source MCP middleware that simplifies MCP server integration and deployment. It's MCP native (with support for all transports), and sits between your model (or agent) and the underlying MCP servers. It implements a proxy pattern to, on the server side, aggragate all tools, prompts and resources and on the client side, abstract the complexity away and provide a simple, clean and static integration point. This allows you to delegate the management of your MCP servers entirely, so that you can focus on what matters most: the prompt and the domain logic. In a nutshell, the benefits are as follows:
+
+#### No lockin or hidden fees
+Director is 100% Open Source and licenced under MIT. This includes our CLI, the UI and our registry. We’ve designed director so you can easily run on your own machine (with 0 external dependecies), in a docker container or as a long running service in the cloud.
+#### Configuration & Secret Management
+You no longer need to maintain large config files at each client end point that contain implementation specificities & secrets. Director allows you to create any number of proxies that are isolated from one another and can be integrated with via a single connection point (MCP Streamable, Stdio or SSE). 
+
+#### Protocol Transparency
+Director’s design is fully aligned with the MCP protocol. Ultimately, it’s just another MCP server that "just works" with any client or server that supports the protocol. If you're already familiar with MCP, you can start using Director in minutes.
+
+#### Run locally and deploy in Cloud
+You can try director on your own machine in minutes. No account needed, it's one line to install and run locally. You can deploy in the cloud using our docker image (coming soon), or just install it via `npm` and run it on any *nix server.
+
+#### Multi-tenancy (coming soon)
+Most MCP servers are currently not multi-tenanted. Director allows you to take any MCP server and deploy it multi-tenanted environment in minutes. 
+
+#### Observability
+Director provides detailed JSON logging for all MCP calls. In development, this provides valuable insight into what tools your model is calling, and whether those calls are successful. In production, you can drain these logs into your existing log aggregation tool, which gives you much needed observability into what's actually happening.
+
+#### VM level isolation
+Director makes it really easy to sandboxx MCP servers within a VM or docker container (comming soon). This provides strict isolation when evaluating servers locally, which protects you from remote code injection attacks.
+
+#### Authentication (coming soon)
+Director is oAuth2 compliant. It'll proxy the oAuth2 flow for you, and securly manage the tokens, so you can't sleep well at night.
+
+#### Registry
+The director registry make it super easy to discover and try MCP servers in a secure way (coupled with isolation). Going forward, we aim to build a Director MCP server that will allow the MCP client to discover, configure and enable servers through MCP tool calls (MCP inception - see roadmap).

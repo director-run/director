@@ -7,6 +7,7 @@ import { useProxy } from "@/hooks/use-proxy";
 import { trpc } from "@/trpc/client";
 import { Switch } from "../ui/switch";
 
+import { DIRECTOR_URL } from "@/lib/urls";
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import { ArrowUpRightIcon } from "@phosphor-icons/react";
 import claudeIconImage from "../../../public/icons/claude-icon.png";
@@ -82,7 +83,7 @@ export function ProxyInstallers({ proxyId }: ProxyInstallersProps) {
       {clients.map((it) => {
         if (it.type === "deep-link") {
           const gooseUrl = `goose://extension?url=${encodeURIComponent(
-            `http://localhost:3673/${proxyId}/sse`,
+            `${DIRECTOR_URL}/${proxyId}/sse`,
           )}&id=${proxyId}&name=director__${proxyId}`;
 
           const raycastUrl = `raycast://mcp/install?${encodeURIComponent(
@@ -92,7 +93,7 @@ export function ProxyInstallers({ proxyId }: ProxyInstallersProps) {
               command: "npx",
               args: [
                 "@director.run/cli http2stdio",
-                `http://localhost:3673/${proxyId}/sse`,
+                `${DIRECTOR_URL}/${proxyId}/sse`,
               ],
             }),
           )}`;
@@ -147,7 +148,7 @@ export function ProxyInstallers({ proxyId }: ProxyInstallersProps) {
                   installationMutation.mutate({
                     proxyId,
                     client: it.id as ConfiguratorTarget,
-                    baseUrl: "http://localhost:3673",
+                    baseUrl: DIRECTOR_URL,
                   });
                 } else {
                   uninstallationMutation.mutate({

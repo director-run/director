@@ -1,5 +1,6 @@
 "use client";
 
+import { DIRECTOR_URL } from "@/lib/urls";
 import { createGatewayClient } from "@director.run/gateway/client";
 import type { AppRouter } from "@director.run/gateway/routers/trpc/index";
 import type { QueryClient } from "@tanstack/react-query";
@@ -29,7 +30,7 @@ export function TRPCProvider(
   const queryClient = getQueryClient();
 
   const [trpcClient] = useState(() =>
-    createGatewayClient("http://localhost:3673/trpc"),
+    createGatewayClient(`${DIRECTOR_URL}/trpc`),
   );
 
   return (

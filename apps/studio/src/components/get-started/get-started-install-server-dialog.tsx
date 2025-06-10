@@ -22,6 +22,7 @@ import { toast } from "@/components/ui/toast";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { cn } from "@/lib/cn";
 import { trpc } from "@/trpc/client";
+import { McpLogo } from "../mcp-logo";
 
 interface GetStartedInstallServerDialogProps
   extends ComponentProps<typeof Dialog> {
@@ -80,12 +81,19 @@ export function GetStartedInstallServerDialog({
     },
   });
 
+  const isDisabled = form.formState.isSubmitting || installMutation.isPending;
+
   return (
     <Dialog {...props}>
       {children && <DialogTrigger asChild>{children}</DialogTrigger>}
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Install {mcp.title}</DialogTitle>
+          <McpLogo
+            src={mcp.icon}
+            fallback={mcp.name.charAt(0).toUpperCase()}
+            className="size-8"
+          />
+          <DialogTitle className="pt-4">Install {mcp.title}</DialogTitle>
           <DialogDescription>{mcp.description}</DialogDescription>
         </DialogHeader>
 
@@ -132,11 +140,11 @@ export function GetStartedInstallServerDialog({
           </div>
 
           <DialogFooter>
-            <DialogClose asChild>
+            <DialogClose disabled={isDisabled} asChild>
               <Button variant="secondary">Cancel</Button>
             </DialogClose>
-            <Button type="submit" disabled={installMutation.isPending}>
-              {installMutation.isPending ? "Adding..." : "Add to proxy"}
+            <Button type="submit" disabled={isDisabled}>
+              {isDisabled ? "Adding..." : "Add to proxy"}
             </Button>
           </DialogFooter>
         </Form>

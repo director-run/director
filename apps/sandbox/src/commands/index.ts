@@ -19,7 +19,13 @@ export async function stop(name: string) {
 export async function provision(name: string) {
   console.log(`provisioning ${name}`);
   // TODO: set the password here, not in the vars.yml file
-  const cmd = $`ansible-playbook -i "$(tart ip ${name})," -u admin ansible/playbook.yml  -e "hostname=${name}" --ssh-extra-args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"`;
+  const cmd = $`ansible-playbook \
+    -i "$(tart ip ${name})," \
+    -u admin \
+    ansible/playbook.yml \
+    -e "hostname=${name}" \
+    -e "ansible_ssh_pass=admin" \
+    --ssh-extra-args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"`;
 
   for await (const chunk of cmd.stdout) {
     echo(chunk);

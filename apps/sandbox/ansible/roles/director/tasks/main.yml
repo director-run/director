@@ -5,6 +5,7 @@
 #     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 #     npm install -g @director.run/cli pm2
 
+# TODO make this persist across reboots
 - name: Mount shared directory
   become: yes
   shell: |

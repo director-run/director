@@ -15,11 +15,14 @@ brew install sshpass
 ```
 git clone ...
 
-bun cli create my-sandbox --start
-bun cli provision my-sandbox
-bun cli ssh my-sandbox 
+bun cli create gm --start
+bun cli provision gm
+bun cli clone gm my-sandbox
+bun cli ssh my-sandbox
 
-# start director somehow
+cd director # this is the root of this monorepo
+bun cli serve
+
 ```
 
 ## TODO 

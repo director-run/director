@@ -1,6 +1,7 @@
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import { makeTable } from "@director.run/utilities/cli/index";
 import packageJson from "../package.json";
+import { clone } from "../src/commands/clone.ts";
 import { create } from "../src/commands/create.ts";
 import { destroy } from "../src/commands/destroy.ts";
 import { list } from "../src/commands/list.ts";
@@ -8,6 +9,10 @@ import { provision } from "../src/commands/provision.ts";
 import { ssh } from "../src/commands/ssh.ts";
 import { start } from "../src/commands/start.ts";
 import { stop } from "../src/commands/stop.ts";
+
+const DEFAULT_IMAGE = "ghcr.io/cirruslabs/ubuntu:latest";
+const DEFAULT_USER = "admin";
+const DEFAULT_PASSWORD = "admin";
 
 const program = new DirectorCommand();
 
@@ -34,9 +39,28 @@ program
   .option("--start", "Start the VM after creation")
   .description("Create a new VM")
   .action(async (name, options) => {
-    const vm = await create(name);
+    const vm = await create({
+      name,
+      image: DEFAULT_IMAGE,
+    });
     if (options.start) {
       await start(name);
+    } else {
+      console.log(vm);
+    }
+  });
+
+program
+  .command("clone <src> <dest>")
+  .option("--start", "Start the VM after creation")
+  .description("Clone a VM")
+  .action(async (src, dest, options) => {
+    const vm = await clone({
+      src,
+      dest,
+    });
+    if (options.start) {
+      await start(dest);
     } else {
       console.log(vm);
     }
@@ -62,8 +86,8 @@ program
   .action(async (name) => {
     await ssh({
       name,
-      user: "admin",
-      password: "admin",
+      user: DEFAULT_USER,
+      password: DEFAULT_PASSWORD,
     });
   });
 
@@ -90,8 +114,8 @@ program
   .action(async (name, options) => {
     await provision({
       name,
-      password: "admin",
-      user: "admin",
+      password: DEFAULT_PASSWORD,
+      user: DEFAULT_USER,
     });
   });
 

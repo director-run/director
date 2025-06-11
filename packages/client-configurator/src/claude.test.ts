@@ -15,35 +15,40 @@ import { createClaudeConfig, createInstallable } from "./test/fixtures";
 
 describe("claude installer", () => {
   const configFilePath = path.join(__dirname, "test/claude.config.test.json");
-  let installer: ClaudeInstaller;
 
   beforeEach(async () => {
     await writeJSONFile(configFilePath, createClaudeConfig([]));
-    installer = new ClaudeInstaller({ configPath: configFilePath });
   });
 
   afterAll(async () => {
     await fs.unlink(configFilePath);
   });
 
-  test("should correctly check if a server is installed", async () => {
-    const entry = createInstallable();
-    expect(await installer.isInstalled(entry.name)).toBe(false);
-    await installer.install(entry);
-    expect(await installer.isInstalled(entry.name)).toBe(true);
-    await installer.uninstall(entry.name);
-    expect(await installer.isInstalled(entry.name)).toBe(false);
+  describe("isInstalled", () => {
+    test("should correctly check if a server is installed", async () => {
+      const entry = createInstallable();
+      const installer = new ClaudeInstaller({ configPath: configFilePath });
+      expect(await installer.isInstalled(entry.name)).toBe(false);
+      await installer.install(entry);
+      expect(await installer.isInstalled(entry.name)).toBe(true);
+      await installer.uninstall(entry.name);
+      expect(await installer.isInstalled(entry.name)).toBe(false);
+    });
   });
 
-  test("should be able to install a server", async () => {
-    const installable = createInstallable();
-    expect(await installer.isInstalled(installable.name)).toBe(false);
-    await installer.install(installable);
-    expect(await installer.isInstalled(installable.name)).toBe(true);
+  describe("install", () => {
+    test("should be able to install a server", async () => {
+      const installable = createInstallable();
+      const installer = new ClaudeInstaller({ configPath: configFilePath });
+      expect(await installer.isInstalled(installable.name)).toBe(false);
+      await installer.install(installable);
+      expect(await installer.isInstalled(installable.name)).toBe(true);
+    });
   });
 
   test("should be able to uninstall a server", async () => {
     const installable = createInstallable();
+    const installer = new ClaudeInstaller({ configPath: configFilePath });
     await installer.install(installable);
     expect(await installer.list()).toHaveLength(1);
     await installer.uninstall(installable.name);
@@ -51,6 +56,7 @@ describe("claude installer", () => {
   });
 
   test("should be able to purge all servers", async () => {
+    const installer = new ClaudeInstaller({ configPath: configFilePath });
     await installer.install(createInstallable());
     await installer.install(createInstallable());
     await installer.reset();

@@ -1,5 +1,5 @@
 import { AppError, ErrorCode } from "@director.run/utilities/error";
-import { App, isAppInstalled } from "@director.run/utilities/os";
+import {} from "@director.run/utilities/os";
 import { ClaudeInstaller } from "./claude";
 import { CursorInstaller } from "./cursor";
 import type { AbstractConfigurator } from "./types";
@@ -13,14 +13,14 @@ export enum ConfiguratorTarget {
 
 export function getConfigurator(
   target: ConfiguratorTarget,
-): Promise<AbstractConfigurator> {
+): AbstractConfigurator<unknown> {
   switch (target) {
     case "claude":
-      return ClaudeInstaller.create();
+      return new ClaudeInstaller();
     case "cursor":
-      return CursorInstaller.create();
+      return new CursorInstaller();
     case "vscode":
-      return VSCodeInstaller.create();
+      return new VSCodeInstaller();
     default:
       throw new AppError(
         ErrorCode.BAD_REQUEST,
@@ -38,29 +38,10 @@ export async function resetAllClients() {
   }
 }
 
-export async function isClientPresent(
-  target: ConfiguratorTarget,
-): Promise<boolean> {
-  switch (target) {
-    case ConfiguratorTarget.Claude:
-      return await isAppInstalled(App.CLAUDE);
-    case ConfiguratorTarget.Cursor:
-      return await isAppInstalled(App.CURSOR);
-    case ConfiguratorTarget.VSCode:
-      return await isAppInstalled(App.VSCODE);
-    default:
-      throw new AppError(
-        ErrorCode.BAD_REQUEST,
-        `Client ${target} is not supported`,
-      );
-  }
-}
-
-export async function allClients() {
+export async function allClientStatuses() {
   return await Promise.all(
-    Object.values(ConfiguratorTarget).map(async (target) => ({
-      name: target,
-      present: await isClientPresent(target),
-    })),
+    Object.values(ConfiguratorTarget)
+      .map(getConfigurator)
+      .map((c) => c.getStatus()),
   );
 }

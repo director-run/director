@@ -2,7 +2,7 @@ import os from "node:os";
 import path from "node:path";
 import { isTest } from "@director.run/utilities/env";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
-import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
+import { writeJSONFile } from "@director.run/utilities/json";
 import { getLogger } from "@director.run/utilities/logger";
 import {
   App,
@@ -14,43 +14,33 @@ import {
 import { z } from "zod";
 import { AbstractConfigurator } from "./types";
 
-export const CLAUDE_COMMAND = "claude";
 export const CLAUDE_CONFIG_PATH = path.join(
   os.homedir(),
   "Library/Application Support/Claude/claude_desktop_config.json",
 );
-export const CLAUDE_CONFIG_KEY_PREFIX = "director__";
 
 const logger = getLogger("client-configurator/claude");
 
 export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
-  private async initialize() {
-    if (this.isInitialized && this.config) {
-      return;
-    }
+  public async isClientPresent() {
+    return await isAppInstalled(App.CLAUDE);
+  }
 
-    logger.info(`initializing claude configurator`);
+  public async isClientConfigPresent() {
+    return await isFilePresent(this.configPath);
+  }
 
-    if (!isAppInstalled(App.CLAUDE)) {
-      throw new AppError(
-        ErrorCode.NOT_FOUND,
-        `Claude desktop app is not installed command: ${CLAUDE_COMMAND}`,
-      );
-    }
-    if (!isClaudeConfigPresent()) {
-      throw new AppError(
-        ErrorCode.NOT_FOUND,
-        `Claude config file not found at ${this.configPath}`,
-      );
-    }
-
-    this.config = await readJSONFile<ClaudeConfig>(this.configPath);
-    this.isInitialized = true;
+  public constructor(
+    params: { configPath: string } = { configPath: CLAUDE_CONFIG_PATH },
+  ) {
+    super({ configPath: params.configPath, name: "claude" });
   }
 
   public async isInstalled(name: string) {
     await this.initialize();
-    return this.config?.mcpServers?.[createKey(name)] !== undefined;
+    return (
+      this.config?.mcpServers?.[this.createServerConfigKey(name)] !== undefined
+    );
   }
 
   public async uninstall(name: string) {
@@ -65,7 +55,7 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
     const newConfig: ClaudeConfig = {
       mcpServers: { ...this.config?.mcpServers },
     };
-    delete newConfig.mcpServers?.[createKey(name)];
+    delete newConfig.mcpServers?.[this.createServerConfigKey(name)];
     await this.updateConfig(newConfig);
   }
 
@@ -84,7 +74,7 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
     const newConfig: ClaudeConfig = {
       mcpServers: { ...this.config?.mcpServers },
     };
-    newConfig.mcpServers[createKey(attributes.name)] = {
+    newConfig.mcpServers[this.createServerConfigKey(attributes.name)] = {
       command: "npx",
       args: ["-y", "@director.run/cli", "http2stdio", attributes.url],
       env: {
@@ -108,7 +98,7 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
     await this.initialize();
     logger.info("listing servers");
     return Object.entries(this.config?.mcpServers ?? {})
-      .filter(([name]) => name.startsWith(CLAUDE_CONFIG_KEY_PREFIX))
+      .filter(([name]) => this.isManagedConfigKey(name))
       .map(([name, transport]) => ({
         name,
         url: transport.args[3],
@@ -141,8 +131,6 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
     await this.restart();
   }
 }
-
-const createKey = (name: string) => `${CLAUDE_CONFIG_KEY_PREFIX}${name}`;
 
 export const ClaudeMCPServerSchema = z.object({
   command: z.string().describe('The command to execute (e.g., "bun", "node")'),

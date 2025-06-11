@@ -23,7 +23,7 @@ export default function GlobalError({
               Something went wrong!
             </SectionTitle>
             <SectionDescription className="text-base">
-              {errorMessage}
+              An unexpected error occurred. Please try again later.
             </SectionDescription>
           </SectionHeader>
           {errorData && (

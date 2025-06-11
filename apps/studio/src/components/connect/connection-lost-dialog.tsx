@@ -10,11 +10,11 @@ import {
 import { Logo } from "@/components/ui/logo";
 import { useConnectionStatus } from "./connection-status-provider";
 
-export function ConnectionStatusDialog() {
-  const { showDialog } = useConnectionStatus();
+export function ConnectionLostDialog() {
+  const { lostConnection } = useConnectionStatus();
 
   return (
-    <Dialog open={showDialog}>
+    <Dialog open={lostConnection}>
       <DialogContent dismissable={false}>
         <DialogHeader>
           <Logo className="mb-3" />

@@ -6,11 +6,11 @@ import { useIsClient } from "@/hooks/use-is-client";
 import { createCtx } from "@/lib/create-ctx";
 import { trpc } from "@/trpc/client";
 import { ConnectionEmptyState } from "./connection-empty-state";
-import { ConnectionStatusDialog } from "./connection-status-dialog";
+import { ConnectionLostDialog } from "./connection-lost-dialog";
 
 const [useContext, ContextProvider] = createCtx<{
   connected: boolean;
-  showDialog: boolean;
+  lostConnection: boolean;
 }>("connectionStatus");
 
 export function ConnectionStatusProvider({
@@ -19,7 +19,7 @@ export function ConnectionStatusProvider({
   const isClient = useIsClient();
 
   const [connected, setConnected] = useState(false);
-  const [showDialog, setShowDialog] = useState(false);
+  const [lostConnection, setLostConnection] = useState(false);
 
   const utils = trpc.useUtils();
   const { data, isRefetchError, isFetchedAfterMount } = trpc.health.useQuery(
@@ -34,7 +34,7 @@ export function ConnectionStatusProvider({
   );
 
   useEffect(() => {
-    if (data) {
+    if (data?.status === "ok") {
       setConnected(true);
     } else {
       setConnected(false);
@@ -50,18 +50,18 @@ export function ConnectionStatusProvider({
 
   useEffect(() => {
     if ((data === undefined && isFetchedAfterMount) || isRefetchError) {
-      setShowDialog(true);
+      setLostConnection(true);
     } else {
-      setShowDialog(false);
+      setLostConnection(false);
     }
   }, [isRefetchError, connected, isFetchedAfterMount]);
 
   return (
-    <ContextProvider value={{ connected, showDialog }}>
+    <ContextProvider value={{ connected, lostConnection }}>
       {connected ? (
         <>
           {children}
-          <ConnectionStatusDialog />
+          <ConnectionLostDialog />
         </>
       ) : (
         <ConnectionEmptyState />

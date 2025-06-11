@@ -4,7 +4,7 @@
 
 ## Overview
 
-The Director VM Sandbox provides a secure environment for running stdio MCP servers that execute untrusted code from the internet. By isolating operations within an Ubuntu virtual machine, it protects your system from potential security threats.
+The Director VM Sandbox provides a secure environment for running MCP servers that execute untrusted code from the internet. By isolating code within an virtual machine, you can protect your system from potential security threats.
 
 ## Prerequisites
 

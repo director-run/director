@@ -4,8 +4,7 @@ import path from "node:path";
 import { isTest } from "@director.run/utilities/env";
 import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
-import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
-import { getLogger } from "@director.run/utilities/logger";
+import { writeJSONFile } from "@director.run/utilities/json";
 import {
   App,
   isAppInstalled,
@@ -16,122 +15,88 @@ import {
 import { restartApp } from "@director.run/utilities/os";
 import { AbstractConfigurator, type Installable } from "./types";
 
-const VSCODE_COMMAND = "code";
 const VSCODE_CONFIG_PATH = path.join(
   os.homedir(),
   "Library/Application Support/Code/User/settings.json",
 );
 
-export const VSCODE_CONFIG_KEY_PREFIX = "director__";
-
-const logger = getLogger("client-configurator/vscode");
-
-export class VSCodeInstaller extends AbstractConfigurator {
-  private config: VSCodeConfig;
-  public readonly configPath: string;
-
-  private constructor(params: { configPath: string; config: VSCodeConfig }) {
-    super();
-    this.configPath = params.configPath;
-    this.config = params.config;
+export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
+  public async isClientPresent() {
+    return await isAppInstalled(App.VSCODE);
+  }
+  public async isClientConfigPresent() {
+    return await isFilePresent(this.configPath);
   }
 
-  public static async create(configPath: string = VSCODE_CONFIG_PATH) {
-    logger.info(`reading config from ${configPath}`);
-    if (!isVSCodeInstalled()) {
-      throw new AppError(
-        ErrorCode.NOT_FOUND,
-        `VSCode is not installed command: ${VSCODE_COMMAND}`,
-      );
-    }
-
-    let config: VSCodeConfig;
-
-    if (!isVSCodeConfigPresent()) {
-      logger.info(
-        `VSCode config file not found at ${configPath}, creating new one`,
-      );
-      config = {
-        mcp: {
-          servers: {},
-        },
-      };
-    } else {
-      config = await readJSONFile<VSCodeConfig>(configPath);
-    }
-
-    // Initialize mcp object if it doesn't exist
-    if (!config.mcp) {
-      config.mcp = {
-        servers: {},
-      };
-    }
-
-    const installer = new VSCodeInstaller({
-      configPath,
-      config,
+  public constructor(params: { configPath?: string }) {
+    super({
+      configPath: params.configPath || VSCODE_CONFIG_PATH,
+      name: "vscode",
     });
-
-    // Create the file if it doesn't exist
-    if (!isVSCodeConfigPresent()) {
-      await installer.updateConfig(installer.config);
-    }
-
-    return installer;
   }
 
-  public isInstalled(name: string) {
-    return this.config.mcp.servers[createKey(name)] !== undefined;
+  public async isInstalled(name: string) {
+    await this.initialize();
+    return (
+      this.config?.mcp.servers[this.createServerConfigKey(name)] !== undefined
+    );
   }
 
   public async uninstall(name: string) {
+    await this.initialize();
     if (!this.isInstalled(name)) {
       throw new AppError(
         ErrorCode.NOT_FOUND,
         `server '${name}' is not installed`,
       );
     }
-    logger.info(`uninstalling ${name}`);
+    this.logger.info(`uninstalling ${name}`);
     const newConfig = { ...this.config };
-    delete newConfig.mcp.servers[createKey(name)];
+    delete newConfig.mcp.servers[this.createServerConfigKey(name)];
     await this.updateConfig(newConfig);
   }
 
   public async install(entry: Installable) {
-    if (this.isInstalled(entry.name)) {
+    await this.initialize();
+    if (await this.isInstalled(entry.name)) {
       throw new AppError(
         ErrorCode.BAD_REQUEST,
         `server '${entry.name}' is already installed`,
       );
     }
-    logger.info(`installing ${entry.name}`);
+    this.logger.info(`installing ${entry.name}`);
     const newConfig = { ...this.config };
-    newConfig.mcp.servers[createKey(entry.name)] = { url: entry.url };
+    newConfig.mcp.servers[this.createServerConfigKey(entry.name)] = {
+      url: entry.url,
+    };
     await this.updateConfig(newConfig);
   }
 
   public async restart() {
+    await this.initialize();
     if (!isTest()) {
-      logger.info("restarting vscode");
+      this.logger.info("restarting vscode");
       await restartApp(App.VSCODE);
     } else {
-      logger.warn("skipping restart of vscode in test environment");
+      this.logger.warn("skipping restart of vscode in test environment");
     }
   }
 
   public async reload(name: string) {
-    logger.info(`reloading ${name}`);
+    await this.initialize();
+    this.logger.info(`reloading ${name}`);
 
-    const url = this.config.mcp.servers[createKey(name)].url;
+    const url = this.config?.mcp.servers[this.createServerConfigKey(name)]?.url;
     await this.uninstall(name);
     await sleep(1000);
     await this.install({ name, url });
   }
 
   public async list() {
-    logger.info("listing servers");
-    return Object.entries(this.config.mcp.servers)
-      .filter(([name]) => name.startsWith(VSCODE_CONFIG_KEY_PREFIX))
+    await this.initialize();
+    this.logger.info("listing servers");
+    return Object.entries(this.config?.mcp.servers ?? {})
+      .filter(([name]) => this.isManagedConfigKey(name))
       .map(([name, server]) => ({
         name,
         url: server.url,
@@ -139,24 +104,20 @@ export class VSCodeInstaller extends AbstractConfigurator {
   }
 
   public async openConfig() {
-    logger.info("opening vscode config");
+    this.logger.info("opening vscode config");
     await openFileInCode(this.configPath);
   }
 
   public async reset() {
-    logger.info("purging vscode config");
+    await this.initialize();
+    this.logger.info("purging vscode config");
     const newConfig = { ...this.config };
-    newConfig.mcp.servers = {};
+    newConfig.mcp.servers = {}; // TODO: check if this is correct
     await this.updateConfig(newConfig);
   }
 
   private async updateConfig(newConfig: VSCodeConfig) {
-    // if (_.isEqual(this.config, newConfig)) {
-    //   logger.info("no changes, skipping update");
-    //   return;
-    // }
-
-    logger.info(`writing config to ${this.configPath}`);
+    this.logger.info(`writing config to ${this.configPath}`);
 
     // Ensure the directory exists
     const configDir = path.dirname(this.configPath);
@@ -166,8 +127,6 @@ export class VSCodeInstaller extends AbstractConfigurator {
     this.config = newConfig;
   }
 }
-
-const createKey = (name: string) => `${VSCODE_CONFIG_KEY_PREFIX}${name}`;
 
 export type VSCodeConfig = {
   mcp: {

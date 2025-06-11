@@ -8,7 +8,11 @@ import {
   expectToThrowInitializtionErrors,
 } from "./test/fixtures";
 
-[ConfiguratorTarget.Claude, ConfiguratorTarget.Cursor].forEach((target) => {
+[
+  ConfiguratorTarget.Claude,
+  ConfiguratorTarget.Cursor,
+  ConfiguratorTarget.VSCode,
+].forEach((target) => {
   describe(`${target} installer`, () => {
     beforeEach(async () => {
       await createConfigFile(target);

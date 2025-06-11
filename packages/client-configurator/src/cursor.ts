@@ -35,7 +35,7 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
   public async isInstalled(name: string) {
     await this.initialize();
     return (
-      this.config.mcpServers[this.createServerConfigKey(name)] !== undefined
+      this.config?.mcpServers?.[this.createServerConfigKey(name)] !== undefined
     );
   }
 
@@ -88,7 +88,14 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
 
     this.logger.info(`reloading ${name}`);
 
-    const url = this.config.mcpServers[this.createServerConfigKey(name)].url;
+    const url = this.config?.mcpServers[this.createServerConfigKey(name)]?.url;
+
+    if (!url) {
+      throw new AppError(
+        ErrorCode.NOT_FOUND,
+        `server '${name}' is not installed`,
+      );
+    }
     await this.uninstall(name);
     await sleep(1000);
     await this.install({ name, url });
@@ -98,10 +105,12 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     await this.initialize();
 
     this.logger.info("listing servers");
-    return Object.entries(this.config.mcpServers).map(([name, transport]) => ({
-      name,
-      url: transport.url,
-    }));
+    return Object.entries(this.config?.mcpServers ?? {}).map(
+      ([name, transport]) => ({
+        name,
+        url: transport.url,
+      }),
+    );
   }
 
   public async openConfig() {

@@ -49,7 +49,9 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
       );
     }
     this.logger.info(`uninstalling ${name}`);
-    const newConfig = { ...this.config };
+    const newConfig: CursorConfig = {
+      mcpServers: { ...(this.config?.mcpServers ?? {}) },
+    };
     delete newConfig.mcpServers[this.createServerConfigKey(name)];
     await this.updateConfig(newConfig);
   }
@@ -57,7 +59,6 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
   public async install(attributes: { name: string; url: string }) {
     await this.initialize();
 
-    await this.initialize();
     if (await this.isInstalled(attributes.name)) {
       throw new AppError(
         ErrorCode.BAD_REQUEST,
@@ -65,7 +66,9 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
       );
     }
     this.logger.info(`installing ${attributes.name}`);
-    const newConfig = { ...this.config };
+    const newConfig: CursorConfig = {
+      mcpServers: { ...(this.config?.mcpServers ?? {}) },
+    };
     newConfig.mcpServers[this.createServerConfigKey(attributes.name)] = {
       url: attributes.url,
     };
@@ -122,8 +125,9 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     await this.initialize();
 
     this.logger.info("purging cursor config");
-    const newConfig = { ...this.config };
-    newConfig.mcpServers = {};
+    const newConfig: CursorConfig = {
+      mcpServers: {},
+    };
     await this.updateConfig(newConfig);
   }
 

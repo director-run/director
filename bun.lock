@@ -16,13 +16,11 @@
       "bin": {
         "director": "./dist/cli.js",
       },
-      "dependencies": {
-        "@inquirer/prompts": "^7.5.2",
-      },
       "devDependencies": {
         "@director.run/gateway": "workspace:*",
         "@director.run/mcp": "workspace:*",
         "@director.run/utilities": "workspace:*",
+        "@inquirer/prompts": "^7.5.2",
         "chalk": "^5.4.1",
         "cli-table3": "^0.6.5",
         "commander": "^13.1.0",
@@ -56,6 +54,18 @@
         "drizzle-kit": "^0.31.1",
         "typescript": "^5.8.2",
         "vitest": "^3.1.1",
+      },
+    },
+    "apps/sandbox": {
+      "name": "@director.run/sandbox",
+      "version": "0.0.1",
+      "devDependencies": {
+        "@director.run/utilities": "workspace:*",
+        "commander": "^14.0.0",
+        "zx": "^8.5.4",
+      },
+      "peerDependencies": {
+        "typescript": "^5",
       },
     },
     "apps/studio": {
@@ -269,6 +279,8 @@
     "@director.run/mcp": ["@director.run/mcp@workspace:packages/mcp"],
 
     "@director.run/registry": ["@director.run/registry@workspace:apps/registry"],
+
+    "@director.run/sandbox": ["@director.run/sandbox@workspace:apps/sandbox"],
 
     "@director.run/studio": ["@director.run/studio@workspace:apps/studio"],
 
@@ -2245,6 +2257,10 @@
     "zod-to-json-schema": ["zod-to-json-schema@3.24.5", "", { "peerDependencies": { "zod": "^3.24.1" } }, "sha512-/AuWwMP+YqiPbsJx5D6TfgRTc4kTLjsh5SOcd4bLsfUg2RcEXrFMJl1DGgdHy2aCfsIA/cr/1JM0xcB2GZji8g=="],
 
     "zwitch": ["zwitch@2.0.4", "", {}, "sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A=="],
+
+    "zx": ["zx@8.5.5", "", { "bin": { "zx": "build/cli.js" } }, "sha512-kzkjV3uqyEthw1IBDbA7Co2djji77vCP1DRvt58aYSMwiX4nyvAkFE8OBSEsOUbDJAst0Yo4asNvMTGG5HGPXA=="],
+
+    "@director.run/sandbox/commander": ["commander@14.0.0", "", {}, "sha512-2uM9rYjPvyq39NwLRqaiLtWHyDC1FvryJDa2ATTVims5YAS4PupsEQsDvP14FqhFr0P49CYDugi59xaxJlTXRA=="],
 
     "@esbuild-kit/core-utils/esbuild": ["esbuild@0.18.20", "", { "optionalDependencies": { "@esbuild/android-arm": "0.18.20", "@esbuild/android-arm64": "0.18.20", "@esbuild/android-x64": "0.18.20", "@esbuild/darwin-arm64": "0.18.20", "@esbuild/darwin-x64": "0.18.20", "@esbuild/freebsd-arm64": "0.18.20", "@esbuild/freebsd-x64": "0.18.20", "@esbuild/linux-arm": "0.18.20", "@esbuild/linux-arm64": "0.18.20", "@esbuild/linux-ia32": "0.18.20", "@esbuild/linux-loong64": "0.18.20", "@esbuild/linux-mips64el": "0.18.20", "@esbuild/linux-ppc64": "0.18.20", "@esbuild/linux-riscv64": "0.18.20", "@esbuild/linux-s390x": "0.18.20", "@esbuild/linux-x64": "0.18.20", "@esbuild/netbsd-x64": "0.18.20", "@esbuild/openbsd-x64": "0.18.20", "@esbuild/sunos-x64": "0.18.20", "@esbuild/win32-arm64": "0.18.20", "@esbuild/win32-ia32": "0.18.20", "@esbuild/win32-x64": "0.18.20" }, "bin": { "esbuild": "bin/esbuild" } }, "sha512-ceqxoedUrcayh7Y7ZX6NdbbDzGROiyVBgC4PriJThBKSVPWnnFHZAkfI1lJT8QFkOwH4qOS2SJkS4wvpGl8BpA=="],
 

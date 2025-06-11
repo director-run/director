@@ -1,5 +1,4 @@
 import { AppError, ErrorCode } from "@director.run/utilities/error";
-import {} from "@director.run/utilities/os";
 import { ClaudeInstaller } from "./claude";
 import { CursorInstaller } from "./cursor";
 import type { AbstractConfigurator } from "./types";

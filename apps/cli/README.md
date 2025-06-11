@@ -1,9 +1,5 @@
-# Director CLI
-
-TODO
-
-## CLI Reference
+# Director Middleware
 
 ```bash
-TODO: Update
+npx -g @director.run/cli quickstart
 ```

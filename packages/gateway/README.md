@@ -1,1 +1,1 @@
-# Registry Client
+# Director Gateway

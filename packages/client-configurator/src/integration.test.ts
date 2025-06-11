@@ -114,3 +114,7 @@ import {
     });
   });
 });
+
+describe("getProxyInstalledStatus", () => {
+  test.skip("should work", async () => {});
+});

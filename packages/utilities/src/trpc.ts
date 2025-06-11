@@ -70,6 +70,22 @@ export const logTRPCRequest: AnyTRPCMiddlewareFunction = async ({
 
 export const trpcBase = initTRPC.context().create({
   transformer: superjson,
+  errorFormatter: ({ error, shape }) => {
+    const message = (() => {
+      if (error.code === "INTERNAL_SERVER_ERROR") {
+        return "An unexpected error occurred. Please try again later.";
+      }
+      return error.message;
+    })();
+
+    return {
+      ...shape,
+      message,
+      data: {
+        ...shape.data,
+      },
+    };
+  },
 });
 
 const baseProcedure = trpcBase.procedure.use(logTRPCRequest);

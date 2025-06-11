@@ -1,6 +1,9 @@
 "use client";
 
+import { DotsThreeOutlineVerticalIcon, TrashIcon } from "@phosphor-icons/react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 import {
   LayoutView,
@@ -41,10 +44,6 @@ import {
 } from "@/components/ui/section";
 import { toast } from "@/components/ui/toast";
 import { useProxy } from "@/hooks/use-proxy";
-import { EntryGetParams } from "@director.run/registry/db/schema";
-import { DotsThreeOutlineVerticalIcon, TrashIcon } from "@phosphor-icons/react";
-import Link from "next/link";
-import { useEffect } from "react";
 
 export default function ProxyPage() {
   const router = useRouter();
@@ -75,7 +74,8 @@ export default function ProxyPage() {
     return <ProxySkeleton />;
   }
 
-  const entryData = mcp.source?.entryData as EntryGetParams;
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  const entryData: any = mcp.source?.entryData ?? ({} as unknown);
   const description =
     typeof entryData === "object" &&
     entryData !== null &&

@@ -4,7 +4,6 @@ import type { AnyTRPCMiddlewareFunction } from "@trpc/server";
 import { initTRPC } from "@trpc/server";
 import type { AnyRouter } from "@trpc/server";
 import superjson from "superjson";
-import { isAppError } from "./error";
 import { getLogger } from "./logger";
 
 const logger = getLogger("trpc");
@@ -71,18 +70,9 @@ export const logTRPCRequest: AnyTRPCMiddlewareFunction = async ({
 
 export const trpcBase = initTRPC.context().create({
   transformer: superjson,
-  errorFormatter: ({ error, shape }) => {
-    const message = (() => {
-      if (!isAppError(error) && error.code === "INTERNAL_SERVER_ERROR") {
-        return "An unexpected error occurred. Please try again later.";
-      }
-
-      return error.message;
-    })();
-
+  errorFormatter: ({ shape }) => {
     return {
       ...shape,
-      message,
       data: {
         ...shape.data,
       },

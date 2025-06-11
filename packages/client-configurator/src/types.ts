@@ -17,11 +17,6 @@ export abstract class AbstractConfigurator<T> {
     this.logger = getLogger(`client-configurator/${this.name}`);
   }
 
-  public abstract install(attributes: {
-    name: string;
-    url: string;
-  }): Promise<void>;
-
   protected async initialize() {
     if (this.isInitialized && this.config) {
       return;
@@ -29,7 +24,7 @@ export abstract class AbstractConfigurator<T> {
 
     this.logger.info(`initializing`);
 
-    if (!this.isClientPresent()) {
+    if (!(await this.isClientPresent())) {
       throw new AppError(
         ErrorCode.COMMAND_NOT_FOUND,
         `${this.name} desktop app is not installed command`,
@@ -39,7 +34,7 @@ export abstract class AbstractConfigurator<T> {
         },
       );
     }
-    if (!this.isClientConfigPresent()) {
+    if (!(await this.isClientConfigPresent())) {
       throw new AppError(
         ErrorCode.FILE_NOT_FOUND,
         `${this.name} config file not found at ${this.configPath}`,
@@ -74,6 +69,10 @@ export abstract class AbstractConfigurator<T> {
     return key.startsWith(CONFIG_KEY_PREFIX);
   }
 
+  public abstract install(attributes: {
+    name: string;
+    url: string;
+  }): Promise<void>;
   public abstract uninstall(name: string): Promise<void>;
   public abstract list(): Promise<Array<{ name: string; url: string }>>;
   public abstract openConfig(): Promise<void>;

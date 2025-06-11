@@ -1,31 +1,50 @@
-vi.mock("@director.run/utilities/os", () => ({
-  isAppInstalled: vi.fn(() => true),
-  isFilePresent: vi.fn(() => true),
-  App: {
-    CLAUDE: "Claude",
-  },
-}));
-
 import fs from "node:fs/promises";
 import path from "node:path";
+import { ErrorCode } from "@director.run/utilities/error";
 import { writeJSONFile } from "@director.run/utilities/json";
+import { expectToThrowAppError } from "@director.run/utilities/test";
 import { afterAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { ClaudeInstaller } from "./claude";
 import { createClaudeConfig, createInstallable } from "./test/fixtures";
+import { AbstractConfigurator } from "./types";
 
 const TEST_CONFIG_PATH = path.join(__dirname, "test/claude.config.test.json");
 
-function createInstaller({
-  present = true,
-  configPresent = true,
-}: {
-  present?: boolean;
-  configPresent?: boolean;
-} = {}) {
+function createTestInstaller(
+  params: {
+    isClientPresent: boolean;
+  } = {
+    isClientPresent: true,
+  },
+) {
   const installer = new ClaudeInstaller({ configPath: TEST_CONFIG_PATH });
-  vi.spyOn(installer, "isClientPresent").mockResolvedValue(present);
-  vi.spyOn(installer, "isClientConfigPresent").mockResolvedValue(configPresent);
+  // In CI, the client is not present, so we mock the method to return false
+  vi.spyOn(installer, "isClientPresent").mockResolvedValue(
+    params.isClientPresent,
+  );
+  // We do not mock the config present method because we want to rw properly
   return installer;
+}
+
+function expectToThrowInitializtionErrors(
+  fn: (installer: AbstractConfigurator<unknown>) => Promise<unknown>,
+) {
+  test("should throw an AppError if the client is not present", async () => {
+    const installer = createTestInstaller({ isClientPresent: false });
+    await expectToThrowAppError(() => fn(installer), {
+      code: ErrorCode.COMMAND_NOT_FOUND,
+      props: { name: installer.name, configPath: installer.configPath },
+    });
+  });
+
+  test("should throw an AppError if the config is not present", async () => {
+    const installer = createTestInstaller();
+    vi.spyOn(installer, "isClientConfigPresent").mockResolvedValue(false);
+    await expectToThrowAppError(() => fn(installer), {
+      code: ErrorCode.FILE_NOT_FOUND,
+      props: { name: installer.name, configPath: installer.configPath },
+    });
+  });
 }
 
 describe("claude installer", () => {
@@ -40,45 +59,74 @@ describe("claude installer", () => {
   describe("isInstalled", () => {
     test("should correctly check if a server is installed", async () => {
       const entry = createInstallable();
-      const installer = createInstaller();
+      const installer = createTestInstaller();
       expect(await installer.isInstalled(entry.name)).toBe(false);
       await installer.install(entry);
       expect(await installer.isInstalled(entry.name)).toBe(true);
       await installer.uninstall(entry.name);
       expect(await installer.isInstalled(entry.name)).toBe(false);
     });
+
+    expectToThrowInitializtionErrors((installer) =>
+      installer.isInstalled("something"),
+    );
   });
 
   describe("install", () => {
     test("should be able to install a server", async () => {
       const installable = createInstallable();
-      const installer = new ClaudeInstaller({ configPath: TEST_CONFIG_PATH });
+      const installer = createTestInstaller();
       expect(await installer.isInstalled(installable.name)).toBe(false);
       await installer.install(installable);
       expect(await installer.isInstalled(installable.name)).toBe(true);
     });
-    test("should throw an error if the client is not present", async () => {
-      const installer = createInstaller({ present: false });
-      await expect(installer.install(createInstallable())).rejects.toThrow(
-        "Claude desktop app is not installed command",
-      );
+
+    expectToThrowInitializtionErrors((installer) =>
+      installer.install(createInstallable()),
+    );
+  });
+
+  describe("uninstall", () => {
+    test("should be able to uninstall a server", async () => {
+      const installable = createInstallable();
+      const installer = createTestInstaller();
+      await installer.install(installable);
+      expect(await installer.list()).toHaveLength(1);
+      await installer.uninstall(installable.name);
+      expect(await installer.list()).toHaveLength(0);
     });
+
+    expectToThrowInitializtionErrors((installer) =>
+      installer.uninstall("something"),
+    );
   });
 
-  test("should be able to uninstall a server", async () => {
-    const installable = createInstallable();
-    const installer = new ClaudeInstaller({ configPath: TEST_CONFIG_PATH });
-    await installer.install(installable);
-    expect(await installer.list()).toHaveLength(1);
-    await installer.uninstall(installable.name);
-    expect(await installer.list()).toHaveLength(0);
+  describe("reset", () => {
+    test("should clear all servers", async () => {
+      const installer = createTestInstaller();
+      await installer.install(createInstallable());
+      await installer.install(createInstallable());
+      await installer.reset();
+      expect(await installer.list()).toHaveLength(0);
+    });
+
+    expectToThrowInitializtionErrors((installer) => installer.reset());
   });
 
-  test("should be able to purge all servers", async () => {
-    const installer = new ClaudeInstaller({ configPath: TEST_CONFIG_PATH });
-    await installer.install(createInstallable());
-    await installer.install(createInstallable());
-    await installer.reset();
-    expect(await installer.list()).toHaveLength(0);
+  describe("list", () => {
+    test("should return the list of servers", async () => {
+      const installer = createTestInstaller();
+      await installer.install(createInstallable());
+      expect(await installer.list()).toHaveLength(1);
+    });
+    expectToThrowInitializtionErrors((installer) => installer.reset());
+  });
+
+  describe("reload", () => {
+    expectToThrowInitializtionErrors((installer) => installer.reload("any"));
+  });
+
+  describe("restart", () => {
+    expectToThrowInitializtionErrors((installer) => installer.reload("any"));
   });
 });

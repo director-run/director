@@ -111,6 +111,8 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
   }
 
   public async restart() {
+    await this.initialize();
+
     if (!isTest()) {
       logger.info("restarting claude");
       await restartApp(App.CLAUDE);
@@ -120,6 +122,8 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
   }
 
   public async reload(name: string) {
+    await this.initialize();
+
     logger.info(`reloading ${name}`);
     await this.restart();
   }

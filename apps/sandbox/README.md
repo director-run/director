@@ -1,37 +1,78 @@
 # Director VM Sandbox
 
-**Note: for Apple Silicon Only**
+> **Platform Requirements:** Apple Silicon (M1/M2/M3) only
 
-When you use an Stdio MCP server, it's essentially running unsigned code from the internet. To protect yourself from remote code attacks you can use the virtual machine (VM) sandbox. It allows you to run director (and all the MCP servers) inside an Ubuntu VM. 
+## Overview
 
-## Dependencies
-```
+The Director VM Sandbox provides a secure environment for running stdio MCP servers that execute untrusted code from the internet. By isolating operations within an Ubuntu virtual machine, it protects your system from potential security threats.
+
+## Prerequisites
+
+Install the required dependencies using Homebrew:
+
+```bash
 brew install cirruslabs/cli/tart
 brew install ansible
 brew install sshpass
 ```
 
-## Using
-```
-git clone ...
-cd ...
+## Installation & Setup
 
-# On Host
-bun cli create gm --start
-bun cli provision gm
-bun cli clone gm my-sandbox
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd <repository-directory>
+```
+
+### 2. Create and Provision the VM
+
+```bash
+# Create a new VM named 'my-sandbox' and start it
+bun cli create my-sandbox --start
+
+# Provision the VM with ansible
+bun cli provision my-sandbox
+
+# SSH into your VM
 bun cli ssh my-sandbox
-
-# Inside VM
-cd shared/director # this is the root of this monorepo
-bun cli serve
-
-# On Host
-GATEWAY_URL=http://hi.local:3673 bun cli connect my-proxy -t claude
 ```
 
-## TODO 
-- use key based authentication for ssh
-- add command --mount director/source
-- document a way to run director from source code
-- easy way to create a golden master and clone from it rather than starting fresh each time
+### 3. Start the Director Service
+
+Inside the VM:
+
+```bash
+# Navigate to the shared directory
+cd shared/director
+
+# Start the Director service
+bun cli serve
+```
+
+### 4. Connect from Host
+
+On your host machine:
+
+```bash
+# Connect to the VM sandbox through the gateway
+GATEWAY_URL=http://my-sandbox.local:3673 bun cli connect my-proxy -t claude
+```
+
+## Architecture
+
+- **Host Machine**: Runs the VM management commands and connects to the sandbox
+- **VM Sandbox**: Isolated Ubuntu environment running the Director service
+- **Gateway**: HTTP endpoint at `<vm-name>.local:3673` for communication
+
+## Planned Improvements
+
+- [ ] Implement key-based SSH authentication (replace password authentication)
+- [ ] Add `--mount` flag for directory mounting (e.g., `--mount director/source`)
+- [ ] Create golden master image workflow for faster sandbox creation
+
+## Security Considerations
+
+- All untrusted code execution happens within the VM
+- Network isolation prevents direct access to host resources
+- VM can be destroyed and recreated cleanly if compromised

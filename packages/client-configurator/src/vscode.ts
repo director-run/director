@@ -51,7 +51,11 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
       );
     }
     this.logger.info(`uninstalling ${name}`);
-    const newConfig = { ...this.config };
+    const newConfig: VSCodeConfig = {
+      mcp: {
+        servers: { ...(this.config?.mcp?.servers ?? {}) },
+      },
+    };
     delete newConfig.mcp.servers[this.createServerConfigKey(name)];
     await this.updateConfig(newConfig);
   }
@@ -65,7 +69,11 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
       );
     }
     this.logger.info(`installing ${entry.name}`);
-    const newConfig = { ...this.config };
+    const newConfig: VSCodeConfig = {
+      mcp: {
+        servers: { ...(this.config?.mcp?.servers ?? {}) },
+      },
+    };
     newConfig.mcp.servers[this.createServerConfigKey(entry.name)] = {
       url: entry.url,
     };
@@ -86,7 +94,14 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
     await this.initialize();
     this.logger.info(`reloading ${name}`);
 
-    const url = this.config?.mcp.servers[this.createServerConfigKey(name)]?.url;
+    const url =
+      this.config?.mcp?.servers[this.createServerConfigKey(name)]?.url;
+    if (!url) {
+      throw new AppError(
+        ErrorCode.NOT_FOUND,
+        `server '${name}' is not installed`,
+      );
+    }
     await this.uninstall(name);
     await sleep(1000);
     await this.install({ name, url });
@@ -111,8 +126,11 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
   public async reset() {
     await this.initialize();
     this.logger.info("purging vscode config");
-    const newConfig = { ...this.config };
-    newConfig.mcp.servers = {}; // TODO: check if this is correct
+    const newConfig: VSCodeConfig = {
+      mcp: {
+        servers: {},
+      },
+    };
     await this.updateConfig(newConfig);
   }
 

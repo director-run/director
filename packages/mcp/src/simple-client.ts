@@ -7,7 +7,6 @@ import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js"
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import type { ErrnoException } from "bun";
 // import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import packageJson from "../package.json";
 
@@ -68,8 +67,7 @@ export class SimpleClient extends Client {
     try {
       await this.connect(new StdioClientTransport({ command, args, env }));
     } catch (e) {
-      const error = e as ErrnoException; // TODO: use the proper type. Is it? ErrnoException?
-      if (error.code === "ENOENT") {
+      if (e instanceof Error && (e as ErrnoException).code === "ENOENT") {
         throw new AppError(
           ErrorCode.CONNECTION_REFUSED,
           `command not found: '${command}'. Please make sure it is installed and available in your $PATH.`,

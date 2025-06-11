@@ -87,6 +87,7 @@
         "app/**/route.ts",
         "app/**/loading.tsx",
         "app/**/error.tsx",
+        "app/**/global-error.tsx",
         "app/**/not-found.tsx",
         "*.config.*"
       ],

@@ -102,7 +102,7 @@ describe("Store Router", () => {
           },
         }),
       ).rejects.toThrow(
-        `failed to connect to http://localhost/not_existing_server`,
+        `[echo] failed to connect to http://localhost/not_existing_server`,
       );
     });
 
@@ -126,7 +126,31 @@ describe("Store Router", () => {
           },
         }),
       ).rejects.toThrow(
-        `command not found: 'not_existing_command'. Please make sure it is installed and available in your $PATH.`,
+        `[echo] command not found: 'not_existing_command'. Please make sure it is installed and available in your $PATH.`,
+      );
+    });
+
+    it("should bubble up command errors properly", async () => {
+      await harness.purge();
+      const testProxy = await harness.client.store.create.mutate({
+        name: "Test Proxy",
+        servers: [],
+      });
+
+      await expect(
+        harness.client.store.addServer.mutate({
+          proxyId: testProxy.id,
+          server: {
+            name: "echo",
+            transport: {
+              type: "stdio",
+              command: "ls",
+              args: ["not_existing_dir"],
+            },
+          },
+        }),
+      ).rejects.toThrow(
+        `[echo] failed to run 'ls not_existing_dir'. Please check the logs for more details.`,
       );
     });
   });

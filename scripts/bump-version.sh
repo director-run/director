@@ -10,7 +10,7 @@ fi
 git branch v${version}
 git checkout v${version}
 npm version ${version} --prefix apps/cli
-git commit -m "Release v${version}"
-git push origin v${version}
+git commit -a -m "Release v${version}"
+git push -u origin v${version}
 
 

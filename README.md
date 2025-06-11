@@ -10,13 +10,13 @@
 [![Release](https://github.com/theworkingcompany/director/workflows/Release/badge.svg)](https://github.com/theworkingcompany/director/actions/workflows/release.yml)
 [![npm](https://img.shields.io/npm/v/@director.run/cli.svg)](https://www.npmjs.com/package/@director.run/cli)
 
-[Director](https://director.run) is a fully open source MCP middleware that unifies MCP server integration and deployment. It's MCP native and sits between your model and MCP servers. It implements a proxy pattern to aggragate all server functions behind a single MCP transport (Streamable, SSE or Stdio).
+[Director](https://director.run) is a fully open source MCP middleware that simplifies MCP server integration and deployment. It connects MCP clients and servers by implementing a proxy pattern to aggragate all MCP servers behind a single MCP transport (Streamable, SSE or Stdio).
 
 *Note: This is a new project under active development and is not yet stable.*
 
 ## Quickstart
 
-You can use the command to try out director immediately. If you'd like to install it or learn more, please [read the docs](https://docs.director.run). 
+You can use the command below to try out director immediately. If you'd learn more, please [read the docs](https://docs.director.run). 
 
 ```bash
 $ npx @director.run/cli quickstart
@@ -26,15 +26,13 @@ $ npx @director.run/cli quickstart
 
 ## Project Structure
 
-*Note: This is a monorepo managed by [turborepo](https://turbo.build/).*
-
 #### External Apps
 
 - [`apps/cli`](./apps/cli/README.md) the director command line interface, which is the primary way to interact with director. It is distributed through [npm](https://www.npmjs.com/package/@director.run/cli).
 - [`apps/docs`](./apps/docs/README.md) the project documentation that is hosted at [https://docs.director.run](https://docs.director.run)
-- [`apps/registry`](./apps/cli/README.md) the backend to the director registry that is hosted at [https://registry.director.run](https://registry.director.run)
-- [`apps/sandbox`](./apps/cli/README.md) a tool that makes it easy to run director (and all MCP servers) securly inside a VM. Apple Silicon only. 
-- [`apps/website`](./apps/cli/README.md) our marketing website that is hosted at [https://director.run](https://director.run).
+- [`apps/registry`](./apps/registry/README.md) the backend to the director registry that is hosted at [https://registry.director.run](https://registry.director.run)
+- [`apps/sandbox`](./apps/sandbox/README.md) a tool that makes it easy to run director (and all MCP servers) securly inside a VM. Apple Silicon only. 
+- [`apps/website`](./apps/website/README.md) our marketing website that is hosted at [https://director.run](https://director.run).
 
 #### Internal Packeges
 
@@ -42,3 +40,5 @@ $ npx @director.run/cli quickstart
 - [`packages/gateway`](./packages/gateway/README.md) The core gateway and proxy logic.
 - [`packages/mcp`](./packages/mcp/README.md) Extensions to MCP SDK  that add the functionality needed for the middleware.
 - [`packages/utilities`](./packages/utilities/README.md) Shared helper library that is shared across all packages/apps. 
+
+*Note: this is a monorepo managed by [turborepo](https://turbo.build/).*

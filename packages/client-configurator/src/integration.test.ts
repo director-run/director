@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, test } from "vitest";
+import { afterAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { ConfiguratorTarget } from ".";
 import {
   createConfigFile,
@@ -33,9 +33,18 @@ import {
         expect(await installer.isInstalled(entry.name)).toBe(false);
       });
 
-      expectToThrowInitializtionErrors(target, (installer) =>
-        installer.isInstalled("something"),
-      );
+      test("should return false if the client is not present", async () => {
+        const installer = createTestInstaller(target, {
+          isClientPresent: false,
+        });
+        expect(await installer.isInstalled("any")).toBe(false);
+      });
+
+      test("should return false if the client config is not present", async () => {
+        const installer = createTestInstaller(target);
+        vi.spyOn(installer, "isClientConfigPresent").mockResolvedValue(false);
+        expect(await installer.isInstalled("any")).toBe(false);
+      });
     });
 
     describe("install", () => {

@@ -36,6 +36,12 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
   }
 
   public async isInstalled(name: string) {
+    if (
+      !(await this.isClientPresent()) ||
+      !(await this.isClientConfigPresent())
+    ) {
+      return false;
+    }
     await this.initialize();
     return (
       this.config?.mcp.servers[this.createServerConfigKey(name)] !== undefined

@@ -35,6 +35,12 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
   }
 
   public async isInstalled(name: string) {
+    if (
+      !(await this.isClientPresent()) ||
+      !(await this.isClientConfigPresent())
+    ) {
+      return false;
+    }
     await this.initialize();
     return (
       this.config?.mcpServers?.[this.createServerConfigKey(name)] !== undefined

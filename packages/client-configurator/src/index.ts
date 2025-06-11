@@ -33,7 +33,7 @@ export function getConfigurator(
 
 export async function resetAllClients() {
   const installers = await Promise.all(
-    Object.values(ConfiguratorTarget).map((target) => getConfigurator(target)),
+    allTargets().map((target) => getConfigurator(target)),
   );
   for (const installer of installers) {
     await installer.reset();
@@ -42,8 +42,35 @@ export async function resetAllClients() {
 
 export async function allClientStatuses() {
   return await Promise.all(
-    Object.values(ConfiguratorTarget)
+    allTargets()
       .map((target) => getConfigurator(target))
       .map((c) => c.getStatus()),
   );
+}
+
+export function allTargets() {
+  return Object.values(ConfiguratorTarget);
+}
+
+export async function getProxyInstalledStatus(
+  proxyId: string,
+): Promise<Record<ConfiguratorTarget, boolean>> {
+  const installers = await Promise.all(
+    allTargets().map((target) => getConfigurator(target)),
+  );
+
+  const result: Record<ConfiguratorTarget, boolean> = {
+    [ConfiguratorTarget.Claude]: false,
+    [ConfiguratorTarget.Cursor]: false,
+    [ConfiguratorTarget.VSCode]: false,
+  };
+
+  await Promise.all(
+    installers.map(async (installer) => {
+      const isInstalled = await installer.isInstalled(proxyId);
+      result[installer.name as ConfiguratorTarget] = isInstalled;
+    }),
+  );
+
+  return result;
 }

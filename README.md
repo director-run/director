@@ -1,7 +1,7 @@
 <h1 align="center">Director</h1>
-<p align="center">Local first MCP proxy / gateway</p>
+<p align="center">The easiest way to manage and deploy MCP servers, locally or in the cloud</p>
 
-<p align="center"><code>npm i -g @working.dev/director</code></p>
+<p align="center"><code>npx @director.run/cli quickstart</code></p>
 
 ---
 
@@ -10,127 +10,35 @@
 [![Release](https://github.com/theworkingcompany/director/workflows/Release/badge.svg)](https://github.com/theworkingcompany/director/actions/workflows/release.yml)
 [![npm](https://img.shields.io/npm/v/@director.run/cli.svg)](https://www.npmjs.com/package/@director.run/cli)
 
-Director is a Model Context Protocol (MCP) proxy server that simplifies the management of multiple MCP connections. Instead of manually configuring each client to connect to individual MCP servers, Director acts as a central hub that:
+[Director](https://director.run) is a fully open source MCP middleware that unifies MCP server integration and deployment. It's MCP native and sits between your model and MCP servers. It implements a proxy pattern to aggragate all server functions behind a single MCP transport (Streamable, SSE or Stdio).
 
-- 🔌 **Unified Connection Management**  
-  Single endpoint for all clients with multiple backend MCP servers (`proxy:ls` to view) 
-
-- 🚀 **Client Integration**  
-  One-command installation to Claude/Cursor (`install <proxyId> -c [claude|cursor]`) 
-
-- 🔍 **Registry Discovery**  
-  Browse and install MCP servers from GitHub (`registry:ls` to discover, `registry:get` to inspect)
-
-- 🛡️ **Proxy Isolation** 
-  Independent contexts prevent cross-contamination between proxies 
-
-- 📊 **Audit Trails**  
-  Configurable logging with request tracking and error handling 
-
-- 🔒 **Security**  
-  Secure transports, error isolation, and configurable security settings 
+*Note: This is a new project under active development and is not yet stable.*
 
 ## Quickstart
 
-*Note: Director is new project under active development and is not yet stable. See CONTRIBUTING.md.*
+You can use the command to try out director immediately. If you'd like to install it or learn more, please [read the docs](https://docs.director.run). 
 
 ```bash
-# install director
-$ npm install -g @working.dev/director
-
-# start the service
-$ director service start
-
-# create a new proxy server
-$ director create <proxyName>
-
-# list available servers
-$ director registry ls
-
-# add a target from the registry 
-$ director registry install <proxyId> <entryId>
-
-# install the proxy server
-$ director claude install <proxyId> 
-$ director cursor install <proxyId> 
-
+$ npx @director.run/cli quickstart
 ```
 
 ---
 
-## CLI Reference
+## Project Structure
 
-```bash
-Manage MCP servers seamlessly from the command line.
+*Note: This is a monorepo managed by [turborepo](https://turbo.build/).*
 
-USAGE
-  director <command> [subcommand] [flags]
+#### External Apps
 
-CORE COMMANDS
-  ls                                           List all proxies
-  get <proxyId>                                Show proxy details
-  create <name>                                Create a new proxy
-  rm <proxyId>                                 Delete a proxy
-  sse2stdio <sse_url>                          Proxy a SSE connection to a stdio stream
-  config                                       Print configuration variables
+- [`apps/cli`](./apps/cli/README.md) the director command line interface, which is the primary way to interact with director. It is distributed through [npm](https://www.npmjs.com/package/@director.run/cli).
+- [`apps/docs`](./apps/docs/README.md) the project documentation that is hosted at [https://docs.director.run](https://docs.director.run)
+- [`apps/registry`](./apps/cli/README.md) the backend to the director registry that is hosted at [https://registry.director.run](https://registry.director.run)
+- [`apps/sandbox`](./apps/cli/README.md) a tool that makes it easy to run director (and all MCP servers) securly inside a VM. Apple Silicon only. 
+- [`apps/website`](./apps/cli/README.md) our marketing website that is hosted at [https://director.run](https://director.run).
 
-CLAUDE
-  claude ls                                    List claude MCP servers
-  claude install <proxyId>                     Install a proxy on a client app
-  claude uninstall <proxyId>                   Uninstall an proxy from a client app
-  claude restart                               Restart the claude MCP server
-  claude purge                                 Purge all claude MCP servers
+#### Internal Packeges
 
-CURSOR
-  cursor ls                                    List cursor MCP servers
-  cursor install <proxyId>                     Install a proxy to cursor
-  cursor uninstall <proxyId>                   Uninstall a proxy from cursor
-  cursor purge                                 Purge all cursor MCP servers
-
-REGISTRY
-  registry ls                                  List all available servers in the registry
-  registry get <entryName>                     get detailed information about a repository item
-  registry install <proxyId> <entryName>       Add a server from the registry to a proxy.
-  registry uninstall <proxyId> <serverName>    Remove a server from a proxy
-
-SERVICE
-  service start                                Start the director service
-
-DEBUG
-  debug seed                                   Seed the database with test data, for development
-
-FLAGS
-  --help      Show help for command
-  --version   Show director version
-
-EXAMPLES
-  $ director create my-proxy
-  $ director registry install my-proxy iterm
-  $ director claude install my-proxy
-
-```
-
----
-
-## Configuration
-
-Director looks for config files in **`~/.director/`**. If you edit the files manually, you will need to restart director.
-
-```yaml
-# ~/.director/db.json
-{
-  proxies: [{
-    ...
-  }]
-}
-```
-
-You can also set environment variables:
-
-```yaml
-# ~/.director/config.env
-GATEWAY_PORT=3673,
-GATEWAY_URL=http://localhost:3673,
-REGISTRY_URL=http://localhost:3080,
-CONFIG_FILE_PATH=~/.director/db.json
-```
+- [`packages/client-configurator`](./packages/client-configurator/README.md) A library that helps manage MCP client configuration files.
+- [`packages/gateway`](./packages/gateway/README.md) The core gateway and proxy logic.
+- [`packages/mcp`](./packages/mcp/README.md) Extensions to MCP SDK  that add the functionality needed for the middleware.
+- [`packages/utilities`](./packages/utilities/README.md) Shared helper library that is shared across all packages/apps. 

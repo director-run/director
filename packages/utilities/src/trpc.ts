@@ -14,6 +14,10 @@ export const logTRPCRequest: AnyTRPCMiddlewareFunction = async ({
   next,
   input,
 }) => {
+  if (path === "health") {
+    return next();
+  }
+
   const start = Date.now();
   logger.trace(
     {
@@ -27,14 +31,27 @@ export const logTRPCRequest: AnyTRPCMiddlewareFunction = async ({
   try {
     const result = await next();
     const duration = Date.now() - start;
-    logger.trace(
-      {
-        path,
-        type,
-        duration,
-      },
-      "trpc request completed",
-    );
+
+    if (result.ok) {
+      logger.trace(
+        {
+          path,
+          type,
+          duration,
+        },
+        "trpc request successful",
+      );
+    } else {
+      logger.error(
+        {
+          path,
+          type,
+          duration,
+          error: result.error,
+        },
+        "trpc request failed",
+      );
+    }
     return result;
   } catch (error) {
     const duration = Date.now() - start;

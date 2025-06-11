@@ -3,8 +3,7 @@ import path from "node:path";
 import { isTest } from "@director.run/utilities/env";
 import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
-import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
-import { getLogger } from "@director.run/utilities/logger";
+import { writeJSONFile } from "@director.run/utilities/json";
 import {
   App,
   isAppInstalled,
@@ -15,94 +14,90 @@ import {
 import { restartApp } from "@director.run/utilities/os";
 import { AbstractConfigurator } from "./types";
 
-const CURSOR_COMMAND = "cursor";
 const CURSOR_CONFIG_PATH = path.join(os.homedir(), ".cursor/mcp.json");
 
-export const CURSOR_CONFIG_KEY_PREFIX = "director__";
-
-const logger = getLogger("client-configurator/cursor");
-
-export class CursorInstaller extends AbstractConfigurator {
-  private config: CursorConfig;
-  public readonly configPath: string;
-
-  private constructor(params: { configPath: string; config: CursorConfig }) {
-    super();
-    this.configPath = params.configPath;
-    this.config = params.config;
+export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
+  public async isClientPresent() {
+    return await isAppInstalled(App.CURSOR);
   }
 
-  public static async create(configPath: string = CURSOR_CONFIG_PATH) {
-    logger.info(`reading config from ${configPath}`);
-    if (!isAppInstalled(App.CURSOR)) {
-      throw new AppError(
-        ErrorCode.NOT_FOUND,
-        `Cursor is not installed command: ${CURSOR_COMMAND}`,
-      );
-    }
-    if (!isCursorConfigPresent()) {
-      throw new AppError(
-        ErrorCode.NOT_FOUND,
-        `Cursor config file not found at ${configPath}`,
-      );
-    }
-    const config = await readJSONFile<CursorConfig>(configPath);
-    return new CursorInstaller({
-      configPath,
-      config,
+  public async isClientConfigPresent() {
+    return await isFilePresent(this.configPath);
+  }
+
+  public constructor(params: { configPath?: string }) {
+    super({
+      configPath: params.configPath || CURSOR_CONFIG_PATH,
+      name: "cursor",
     });
   }
 
-  public isInstalled(name: string) {
-    return this.config.mcpServers[createKey(name)] !== undefined;
+  public async isInstalled(name: string) {
+    await this.initialize();
+    return (
+      this.config.mcpServers[this.createServerConfigKey(name)] !== undefined
+    );
   }
 
   public async uninstall(name: string) {
+    await this.initialize();
+
     if (!this.isInstalled(name)) {
       throw new AppError(
         ErrorCode.NOT_FOUND,
         `server '${name}' is not installed`,
       );
     }
-    logger.info(`uninstalling ${name}`);
+    this.logger.info(`uninstalling ${name}`);
     const newConfig = { ...this.config };
-    delete newConfig.mcpServers[createKey(name)];
+    delete newConfig.mcpServers[this.createServerConfigKey(name)];
     await this.updateConfig(newConfig);
   }
 
   public async install(attributes: { name: string; url: string }) {
-    if (this.isInstalled(attributes.name)) {
+    await this.initialize();
+
+    await this.initialize();
+    if (await this.isInstalled(attributes.name)) {
       throw new AppError(
         ErrorCode.BAD_REQUEST,
         `server '${attributes.name}' is already installed`,
       );
     }
-    logger.info(`installing ${attributes.name}`);
+    this.logger.info(`installing ${attributes.name}`);
     const newConfig = { ...this.config };
-    newConfig.mcpServers[createKey(attributes.name)] = { url: attributes.url };
+    newConfig.mcpServers[this.createServerConfigKey(attributes.name)] = {
+      url: attributes.url,
+    };
     await this.updateConfig(newConfig);
   }
 
   public async restart() {
+    await this.initialize();
+
     if (!isTest()) {
-      logger.info("restarting cursor");
+      this.logger.info("restarting cursor");
       await restartApp(App.CURSOR);
     } else {
-      logger.warn("skipping restart of cursor in test environment");
+      this.logger.warn("skipping restart of cursor in test environment");
     }
   }
 
   public async reload(name: string) {
-    logger.info(`reloading ${name}`);
+    await this.initialize();
 
-    const url = this.config.mcpServers[createKey(name)].url;
+    this.logger.info(`reloading ${name}`);
+
+    const url = this.config.mcpServers[this.createServerConfigKey(name)].url;
     await this.uninstall(name);
     await sleep(1000);
     await this.install({ name, url });
   }
 
   public async list() {
-    logger.info("listing servers");
+    await this.initialize();
+
+    this.logger.info("listing servers");
     return Object.entries(this.config.mcpServers).map(([name, transport]) => ({
       name,
       url: transport.url,
@@ -110,29 +105,25 @@ export class CursorInstaller extends AbstractConfigurator {
   }
 
   public async openConfig() {
-    logger.info("opening cursor config");
+    this.logger.info("opening cursor config");
     await openFileInCode(this.configPath);
   }
 
   public async reset() {
-    logger.info("purging cursor config");
+    await this.initialize();
+
+    this.logger.info("purging cursor config");
     const newConfig = { ...this.config };
     newConfig.mcpServers = {};
     await this.updateConfig(newConfig);
   }
 
   private async updateConfig(newConfig: CursorConfig) {
-    // if (_.isEqual(this.config, newConfig)) {
-    //   logger.info("no changes, skipping update");
-    //   return;
-    // }
-    logger.info(`writing config to ${this.configPath}`);
+    this.logger.info(`writing config to ${this.configPath}`);
     await writeJSONFile(this.configPath, newConfig);
     this.config = newConfig;
   }
 }
-
-const createKey = (name: string) => `${CURSOR_CONFIG_KEY_PREFIX}${name}`;
 
 export type CursorConfig = {
   mcpServers: Record<string, { url: string }>;

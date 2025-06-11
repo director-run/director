@@ -3,7 +3,6 @@ import path from "node:path";
 import { isTest } from "@director.run/utilities/env";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { writeJSONFile } from "@director.run/utilities/json";
-import { getLogger } from "@director.run/utilities/logger";
 import {
   App,
   isAppInstalled,
@@ -18,8 +17,6 @@ export const CLAUDE_CONFIG_PATH = path.join(
   os.homedir(),
   "Library/Application Support/Claude/claude_desktop_config.json",
 );
-
-const logger = getLogger("client-configurator/claude");
 
 export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
   public async isClientPresent() {
@@ -52,7 +49,7 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
         `server '${name}' is not installed`,
       );
     }
-    logger.info(`uninstalling ${name}`);
+    this.logger.info(`uninstalling ${name}`);
     const newConfig: ClaudeConfig = {
       mcpServers: { ...this.config?.mcpServers },
     };
@@ -71,7 +68,7 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
         `server '${attributes.name}' is already installed`,
       );
     }
-    logger.info(`installing ${attributes.name}`);
+    this.logger.info(`installing ${attributes.name}`);
     const newConfig: ClaudeConfig = {
       mcpServers: { ...this.config?.mcpServers },
     };
@@ -87,7 +84,7 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
 
   public async reset() {
     await this.initialize();
-    logger.info("purging claude config");
+    this.logger.info("purging claude config");
     const newConfig: ClaudeConfig = {
       mcpServers: { ...this.config?.mcpServers },
     };
@@ -97,7 +94,7 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
 
   public async list() {
     await this.initialize();
-    logger.info("listing servers");
+    this.logger.info("listing servers");
     return Object.entries(this.config?.mcpServers ?? {})
       .filter(([name]) => this.isManagedConfigKey(name))
       .map(([name, transport]) => ({
@@ -107,7 +104,7 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
   }
 
   public async openConfig() {
-    logger.info("opening claude config");
+    this.logger.info("opening claude config");
     await openFileInCode(this.configPath);
   }
 
@@ -115,23 +112,23 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
     await this.initialize();
 
     if (!isTest()) {
-      logger.info("restarting claude");
+      this.logger.info("restarting claude");
       await restartApp(App.CLAUDE);
     } else {
-      logger.warn("skipping restart of claude in test environment");
+      this.logger.warn("skipping restart of claude in test environment");
     }
   }
 
   public async reload(name: string) {
     await this.initialize();
 
-    logger.info(`reloading ${name}`);
+    this.logger.info(`reloading ${name}`);
     await this.restart();
   }
 
   private async updateConfig(newConfig: ClaudeConfig) {
     this.config = ClaudeConfigSchema.parse(newConfig);
-    logger.info(`writing config to ${this.configPath}`);
+    this.logger.info(`writing config to ${this.configPath}`);
     await writeJSONFile(this.configPath, this.config);
     await this.restart();
   }

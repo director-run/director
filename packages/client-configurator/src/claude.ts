@@ -30,10 +30,11 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
     return await isFilePresent(this.configPath);
   }
 
-  public constructor(
-    params: { configPath: string } = { configPath: CLAUDE_CONFIG_PATH },
-  ) {
-    super({ configPath: params.configPath, name: "claude" });
+  public constructor(params: { configPath?: string }) {
+    super({
+      configPath: params.configPath || CLAUDE_CONFIG_PATH,
+      name: "claude",
+    });
   }
 
   public async isInstalled(name: string) {

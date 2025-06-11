@@ -7,6 +7,11 @@ import path from "node:path";
 import { writeJSONFile } from "@director.run/utilities/json";
 import { ConfiguratorTarget } from "..";
 import fs from "node:fs/promises";
+import { ErrorCode } from "@director.run/utilities/error";
+import { expectToThrowAppError } from "@director.run/utilities/test";
+import {  test, vi } from "vitest";
+import { AbstractConfigurator } from "../types";
+import { getConfigurator } from "..";
 
 export function createVSCodeConfig(entries: Array<Installable>): VSCodeConfig {
   return {
@@ -41,7 +46,7 @@ export function createClaudeConfig(entries: ClaudeServerEntry[]): ClaudeConfig {
 export function createInstallable(): { url: string; name: string } {
   return {
     url: faker.internet.url(),
-    name: [faker.hacker.noun(), faker.number.hex()].join("-"),
+    name: [faker.hacker.noun(), faker.string.uuid()].join("-"),
   };
 }
 
@@ -65,4 +70,47 @@ export async function deleteConfigFile(target: ConfiguratorTarget) {
 
 function getConfigPath(target: ConfiguratorTarget) {
   return path.join(__dirname, `${target}.config.test.json`);
+}
+
+export function createTestInstaller(
+  target: ConfiguratorTarget,
+  params: {
+    isClientPresent: boolean;
+  } = {
+    isClientPresent: true,
+  },
+) {
+  const installer = getConfigurator(target, {
+    configPath: getConfigPath(target),
+  });
+  // In CI, the client is not present, so we mock the method to return false
+  vi.spyOn(installer, "isClientPresent").mockResolvedValue(
+    params.isClientPresent,
+  );
+  // We do not mock the config present method because we want to rw properly
+  return installer;
+}
+
+export function expectToThrowInitializtionErrors(
+  target: ConfiguratorTarget,
+  fn: (installer: AbstractConfigurator<unknown>) => Promise<unknown>,
+) {
+  test("should throw an AppError if the client is not present", async () => {
+    const installer = createTestInstaller(target, {
+      isClientPresent: false,
+    });
+    await expectToThrowAppError(() => fn(installer), {
+      code: ErrorCode.COMMAND_NOT_FOUND,
+      props: { name: installer.name, configPath: installer.configPath },
+    });
+  });
+
+  test("should throw an AppError if the config is not present", async () => {
+    const installer = createTestInstaller(target);
+    vi.spyOn(installer, "isClientConfigPresent").mockResolvedValue(false);
+    await expectToThrowAppError(() => fn(installer), {
+      code: ErrorCode.FILE_NOT_FOUND,
+      props: { name: installer.name, configPath: installer.configPath },
+    });
+  });
 }

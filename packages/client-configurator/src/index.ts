@@ -12,14 +12,17 @@ export enum ConfiguratorTarget {
 
 export function getConfigurator(
   target: ConfiguratorTarget,
+  params: {
+    configPath?: string;
+  } = {},
 ): AbstractConfigurator<unknown> {
   switch (target) {
     case "claude":
-      return new ClaudeInstaller();
+      return new ClaudeInstaller(params);
     case "cursor":
-      return new CursorInstaller();
+      return new CursorInstaller(params);
     case "vscode":
-      return new VSCodeInstaller();
+      return new VSCodeInstaller(params);
     default:
       throw new AppError(
         ErrorCode.BAD_REQUEST,

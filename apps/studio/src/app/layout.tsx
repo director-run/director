@@ -1,12 +1,11 @@
+import { ThemeProvider } from "@/components/theme-provider";
+import { TRPCProvider } from "@/trpc/client";
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next";
 
-import { ConnectionStatusDialog } from "@/components/connect/connection-status-dialog";
-import { ThemeProvider } from "@/components/theme-provider";
-import { TRPCProvider } from "@/trpc/client";
-
 import "./globals.css";
+import { ConnectionStatusProvider } from "@/components/connect/connection-status-provider";
 import { Toaster } from "@/components/ui/toast";
 
 const sans = Inter({
@@ -42,8 +41,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <TRPCProvider>
-            <NuqsAdapter>{children}</NuqsAdapter>
-            <ConnectionStatusDialog />
+            <ConnectionStatusProvider>
+              <NuqsAdapter>{children}</NuqsAdapter>
+            </ConnectionStatusProvider>
             <Toaster />
           </TRPCProvider>
         </ThemeProvider>

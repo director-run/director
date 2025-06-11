@@ -36,7 +36,12 @@ export async function resetAllClients() {
     allTargets().map((target) => getConfigurator(target)),
   );
   for (const installer of installers) {
-    await installer.reset();
+    console.log("resetting", installer.name);
+    if (await installer.isClientPresent()) {
+      await installer.reset();
+    } else {
+      console.log("client not present:", installer.name);
+    }
   }
 }
 

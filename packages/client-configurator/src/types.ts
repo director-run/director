@@ -27,7 +27,7 @@ export abstract class AbstractConfigurator<T> {
     if (!(await this.isClientPresent())) {
       throw new AppError(
         ErrorCode.COMMAND_NOT_FOUND,
-        `${this.name} desktop app is not installed command`,
+        `${this.name} doesn't appear to be installed`,
         {
           name: this.name,
           configPath: this.configPath,

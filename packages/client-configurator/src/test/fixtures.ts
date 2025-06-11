@@ -37,6 +37,6 @@ export function createClaudeConfig(entries: ClaudeServerEntry[]): ClaudeConfig {
 export function createInstallable(): { url: string; name: string } {
   return {
     url: faker.internet.url(),
-    name: faker.hacker.noun(),
+    name: [faker.hacker.noun(), faker.number.hex()].join("-"),
   };
 }

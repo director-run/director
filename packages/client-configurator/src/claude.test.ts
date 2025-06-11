@@ -19,7 +19,7 @@ describe("claude installer", () => {
 
   beforeEach(async () => {
     await writeJSONFile(configFilePath, createClaudeConfig([]));
-    installer = await ClaudeInstaller.create(configFilePath);
+    installer = new ClaudeInstaller({ configPath: configFilePath });
   });
 
   afterAll(async () => {
@@ -28,18 +28,18 @@ describe("claude installer", () => {
 
   test("should correctly check if a server is installed", async () => {
     const entry = createInstallable();
-    expect(installer.isInstalled(entry.name)).toBe(false);
+    expect(await installer.isInstalled(entry.name)).toBe(false);
     await installer.install(entry);
-    expect(installer.isInstalled(entry.name)).toBe(true);
+    expect(await installer.isInstalled(entry.name)).toBe(true);
     await installer.uninstall(entry.name);
-    expect(installer.isInstalled(entry.name)).toBe(false);
+    expect(await installer.isInstalled(entry.name)).toBe(false);
   });
 
   test("should be able to install a server", async () => {
     const installable = createInstallable();
-    expect(installer.isInstalled(installable.name)).toBe(false);
+    expect(await installer.isInstalled(installable.name)).toBe(false);
     await installer.install(installable);
-    expect(installer.isInstalled(installable.name)).toBe(true);
+    expect(await installer.isInstalled(installable.name)).toBe(true);
   });
 
   test("should be able to uninstall a server", async () => {

@@ -6,6 +6,13 @@
   "bin": {
     "director": "./dist/cli.js"
   },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theworkingcompany/director"
+  },
+  "author": "Barnaby Malet <barnaby@theworkingcompany.com>",
+  "homepage": "https://director.run",
   "scripts": {
     "lint": "biome check .",
     "format": "biome format --write .",

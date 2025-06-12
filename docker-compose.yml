@@ -1,4 +1,6 @@
-name: director
+# Director development environment
+# If you are looking for the production docker image, please see: https://github.com/theworkingcompany/director-docker
+name: director-development
 
 services:
   postgres:

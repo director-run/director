@@ -28,12 +28,12 @@ import { createGatewayClient } from "@director.run/gateway/client";
 const gatewayClient = createGatewayClient('http://localhost:8080');
 
 // Create a proxy
-await gatewayClient.store.create.mutate({
+await gatewayClient.proxy.create.mutate({
   name: "my-proxy",
 });
 
 // Add a server to a proxy
-await gatewayClient.store.addServer.mutate({
+await gatewayClient.proxy.addServer.mutate({
   proxyId: "my-proxy",
   server: {
     name: "my-server",

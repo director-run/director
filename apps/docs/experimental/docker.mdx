@@ -1,0 +1,23 @@
+---
+sidebarTitle: Docker
+title: "Running in Docker"
+---
+
+We currently have an experimental Docker image that you can use to run the gateway in a containerized environment. This functionality is experimental and may change in the future.
+
+```bash
+# Start the gateway container, listening on port 8080
+# Mount the data directory to persist the gateway's state (config files, etc)
+docker run \
+        -d -p 8080:8080 \
+        -v ./data:/root/.director \
+        --name director \
+        director/gateway:latest
+
+# Tail the logs
+docker logs -f director
+
+# Interact with the gateway using the CLI, on the host machine
+GATEWAY_URL=http://localhost:8080 director create my-proxy
+GATEWAY_URL=http://localhost:8080 director add my-proxy --entry fetch
+```

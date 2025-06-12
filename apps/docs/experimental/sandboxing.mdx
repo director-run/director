@@ -1,0 +1,62 @@
+---
+sidebarTitle: Sandboxing
+title: "Sandboxing MCP Servers"
+---
+
+> **Platform Requirements:** Apple Silicon (M1/M2/M3) only
+
+The Stdio transport is inherently insecure, as it runs unsigned code from the internet. The VM sandbox allows you to isolate this code within an virtual machine which protects your system from remote code execution attacks. Find out more about the sandboxing feature in the [Director VM Sandbox](https://github.com/theworkingcompany/director/tree/main/apps/sandbox) repository.
+
+
+## Quick Start
+
+#### 1. Install Dependencies
+
+```bash
+brew install cirruslabs/cli/tart
+brew install ansible
+brew install sshpass
+```
+
+#### 2. Clone the Repository
+
+```bash
+git clone https://github.com/theworkingcompany/director.git
+cd apps/sandbox
+```
+
+#### 3. Create & Provision a Sandbox
+
+```bash
+# Create a new VM named 'my-sandbox' and start it
+bun cli create my-sandbox --start
+
+# Provision the VM with ansible
+bun cli provision my-sandbox
+
+# SSH into your VM
+bun cli ssh my-sandbox
+
+```
+
+
+#### 4. Start the Director Service
+
+Inside the VM:
+
+```bash
+# Navigate to the shared directory
+cd shared/director
+
+# Start the Director service
+bun cli serve
+```
+
+#### 5. Connect from Host
+
+On your host machine:
+
+```bash
+# Connect to the VM sandbox through the gateway
+GATEWAY_URL=http://my-sandbox.local:3673 bun cli connect my-proxy -t claude
+```

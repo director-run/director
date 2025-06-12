@@ -27,12 +27,8 @@
         "pages": ["sdk/gateway", "sdk/mcp", "sdk/client-configurator"]
       },
       {
-        "group": "Deployment",
-        "pages": ["deployment/docker", "deployment/metal"]
-      },
-      {
-        "group": "Security",
-        "pages": ["security/isolation", "security/authentication"]
+        "group": "Experimental",
+        "pages": ["experimental/docker", "experimental/sandboxing"]
       },
       {
         "group": "Project",

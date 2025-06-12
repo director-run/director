@@ -16,10 +16,10 @@
         "group": "Concepts",
         "pages": [
           "concepts/architecture",
-          "concepts/configuration",
-          "concepts/registry",
           "concepts/cli",
-          "concepts/studio"
+          "concepts/studio",
+          "concepts/registry",
+          "concepts/configuration"
         ]
       },
       {
@@ -36,11 +36,7 @@
       },
       {
         "group": "Project",
-        "pages": [
-          "project/changelog",
-          "project/roadmap",
-          "project/contributing"
-        ]
+        "pages": ["project/roadmap", "project/contributing"]
       }
     ]
   },

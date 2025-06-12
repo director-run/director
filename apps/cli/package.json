@@ -11,6 +11,7 @@
     "type": "git",
     "url": "https://github.com/theworkingcompany/director"
   },
+  "description": "The easiest way to manage and deploy MCP servers",
   "author": "The Working Company <hello@theworkingcompany.com>",
   "homepage": "https://director.run",
   "scripts": {

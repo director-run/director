@@ -18,7 +18,7 @@ const program = new DirectorCommand();
 program
   .name("director")
   .showDebugCommands(env.ENABLE_DEBUG_COMMANDS)
-  .description("Manage MCP servers seamlessly from the command line.")
+  .description(packageJson.description)
   .version(packageJson.version);
 
 registerCoreCommands(program);

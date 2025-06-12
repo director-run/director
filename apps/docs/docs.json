@@ -17,9 +17,14 @@
         "pages": [
           "concepts/architecture",
           "concepts/configuration",
-          "concepts/studio",
-          "concepts/registry"
+          "concepts/registry",
+          "concepts/cli",
+          "concepts/studio"
         ]
+      },
+      {
+        "group": "SDK",
+        "pages": ["sdk/gateway", "sdk/mcp", "sdk/client-configurator"]
       },
       {
         "group": "Deployment",
@@ -28,10 +33,6 @@
       {
         "group": "Security",
         "pages": ["security/isolation", "security/authentication"]
-      },
-      {
-        "group": "SDK",
-        "pages": ["sdk/cli", "sdk/api", "sdk/plugins"]
       },
       {
         "group": "Project",

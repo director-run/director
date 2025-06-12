@@ -117,7 +117,7 @@ export function registerCoreCommands(program: DirectorCommand): void {
 
   program
     .command("disconnect <proxyId>")
-    .description("disconnect a proxy from an MCP client")
+    .description("Disconnect a proxy from an MCP client")
     .addOption(
       makeOption({
         flags: "-t,--target <target>",

@@ -1,26 +1,38 @@
 ---
 sidebarTitle: CLI
 title: "CLI Reference"
-description: "Understand the command line interface for director."
+description: "Understand how to interact with director via the command line interface."
 icon: terminal
 ---
 
+The CLI, along with the [Studio](./studio), are the primary ways to interact with director. The CLI is distributed as a standalone package, and can be installed via [npm](https://www.npmjs.com/package/@director.run/cli).
+
+# Installation
+
 ```bash
-Manage MCP servers seamlessly from the command line.
+$ npm install -g @director.run/cli
+```
+
+# Usage
+
+```bash
+$ director --help
+
+The easiest way to manage and deploy MCP servers
 
 USAGE
   director <command> [subcommand] [flags]
 
 CORE COMMANDS
-   quickstart                                    shortcut to start the gateway and open the studio
+   quickstart                                    Start the gateway and open the studio in your browser
    serve                                         Start the web service
    studio                                        Open the UI in your browser
    ls                                            List proxies
    get <proxyId>                                 Show proxy details
    create <name>                                 Create a new proxy
    destroy <proxyId>                             Delete a proxy
-   connect <proxyId> [options]                   connect a proxy to a MCP client
-   disconnect <proxyId> [options]                disconnect a proxy from an MCP client
+   connect <proxyId> [options]                   Connect a proxy to a MCP client
+   disconnect <proxyId> [options]                Disconnect a proxy from an MCP client
    add <proxyId> [options]                       Add a server to a proxy.
    remove <proxyId> <serverName>                 Remove a server from a proxy
    http2stdio <url>                              Proxy an HTTP connection (sse or streamable) to a stdio stream

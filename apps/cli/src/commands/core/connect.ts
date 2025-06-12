@@ -17,7 +17,7 @@ import { env } from "../../env";
 export function registerConnectCommand(program: DirectorCommand) {
   program
     .command("connect <proxyId>")
-    .description("connect a proxy to a MCP client")
+    .description("Connect a proxy to a MCP client")
     .addOption(
       makeOption({
         flags: "-t,--target <target>",

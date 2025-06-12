@@ -10,7 +10,7 @@ const logger = getLogger("quickstart");
 export function registerQuickstartCommand(program: DirectorCommand) {
   program
     .command("quickstart")
-    .description("shortcut to start the gateway and open the studio")
+    .description("Start the gateway and open the studio in your browser")
     .action(
       actionWithErrorHandler(async () => {
         await startGateway(async () => {

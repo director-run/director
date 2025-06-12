@@ -6,7 +6,7 @@
     "type": "git",
     "url": "https://github.com/theworkingcompany/director"
   },
-  "author": "Barnaby Malet <barnaby@theworkingcompany.com>",
+  "author": "The Working Company <hello@theworkingcompany.com>",
   "homepage": "https://director.run",
   "scripts": {
     "dev": "turbo run dev",

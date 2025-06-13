@@ -11,6 +11,7 @@ export function makeTestEntry(overrides: Partial<EntryCreateParams> = {}): Entry
     title: name,
     description: faker.company.catchPhrase(),
     homepage: faker.internet.url(),
+    parameters: [],
     transport: {
       type: "stdio",
       command: "echo",

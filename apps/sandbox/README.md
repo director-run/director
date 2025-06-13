@@ -21,8 +21,8 @@ brew install sshpass
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
-cd <repository-directory>
+git clone https://github.com/theworkingcompany/director.git
+cd apps/sandbox
 ```
 
 ### 2. Create and Provision the VM

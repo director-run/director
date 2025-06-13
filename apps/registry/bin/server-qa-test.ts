@@ -7,6 +7,7 @@ import { getLogger } from "@director.run/utilities/logger";
 import { joinURL } from "@director.run/utilities/url";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import type { EntryCreateParams } from "../src/db/schema";
+import { parseParameters } from "../src/enrichment/parseParameters";
 import { entries } from "../src/seed/entries";
 
 const GATEWAY_URL = "http://reg.local:3673";
@@ -17,7 +18,10 @@ const gatewayClient = createGatewayClient(GATEWAY_URL);
 await runTests();
 
 async function runTests() {
-  const mcpClient = await setupTestForEntry(entries[0]);
+  const entry = entries[0];
+  const parameters = parseParameters(entry as EntryCreateParams);
+  console.log(parameters);
+  const mcpClient = await setupTestForEntry(entry);
   const tools = await mcpClient.listTools();
   printTools(tools.tools);
 

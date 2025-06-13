@@ -19,12 +19,12 @@ export const CLAUDE_CONFIG_PATH = path.join(
 );
 
 export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
-  public isClientPresent() {
-    return isAppInstalled(App.CLAUDE);
+  public async isClientPresent() {
+    return await isAppInstalled(App.CLAUDE);
   }
 
-  public isClientConfigPresent() {
-    return isFilePresent(this.configPath);
+  public async isClientConfigPresent() {
+    return await isFilePresent(this.configPath);
   }
 
   public constructor(params: { configPath?: string }) {
@@ -35,7 +35,10 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
   }
 
   public async isInstalled(name: string) {
-    if (!this.isClientPresent() || !this.isClientConfigPresent()) {
+    if (
+      !(await this.isClientPresent()) ||
+      !(await this.isClientConfigPresent())
+    ) {
       return false;
     }
     await this.initialize();

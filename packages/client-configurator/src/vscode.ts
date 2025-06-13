@@ -21,11 +21,11 @@ const VSCODE_CONFIG_PATH = path.join(
 );
 
 export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
-  public isClientPresent() {
-    return isAppInstalled(App.VSCODE);
+  public async isClientPresent() {
+    return await isAppInstalled(App.VSCODE);
   }
-  public isClientConfigPresent() {
-    return isFilePresent(this.configPath);
+  public async isClientConfigPresent() {
+    return await isFilePresent(this.configPath);
   }
 
   public constructor(params: { configPath?: string }) {
@@ -36,7 +36,10 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
   }
 
   public async isInstalled(name: string) {
-    if (!this.isClientPresent() || !this.isClientConfigPresent()) {
+    if (
+      !(await this.isClientPresent()) ||
+      !(await this.isClientConfigPresent())
+    ) {
       return false;
     }
     await this.initialize();
@@ -80,7 +83,6 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
     newConfig.mcp.servers[this.createServerConfigKey(entry.name)] = {
       url: entry.url,
     };
-
     await this.updateConfig(newConfig);
   }
 

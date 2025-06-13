@@ -40,7 +40,7 @@ function printTools(tools: Tool[]) {
   console.log("");
 
   for (const tool of tools) {
-    console.log(blue(tool.name), " -- ", tool?.description?.slice(0, 80));
+    console.log(blue(tool.name), ": ", tool?.description?.slice(0, 80));
     if (tool.inputSchema.type === "object" && tool.inputSchema.properties) {
       const table = makeTable(["property", "type", "required", "description"]);
       for (const [key, value] of Object.entries(tool.inputSchema.properties)) {

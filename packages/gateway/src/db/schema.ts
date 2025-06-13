@@ -1,3 +1,4 @@
+import { toolSchema } from "@director.run/registry/db/schema";
 import { z } from "zod";
 
 const requiredStringSchema = z.string().trim().min(1, "Required");
@@ -16,15 +17,50 @@ const proxyTransportSchema = z.discriminatedUnion("type", [
   }),
 ]);
 
-const sourceSchema = z.object({
-  sourceName: z.literal("registry"),
-  sourceId: requiredStringSchema,
-  sourceData: z.object({}).nullish(),
+export const sourceEntrySchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  title: z.string(),
+  description: z.string(),
+  icon: z.string(),
+  createdAt: z.string(),
+  isOfficial: z.boolean(),
+  isEnriched: z.boolean(),
+  isConnectable: z.boolean(),
+  lastConnectionAttemptedAt: z.string().nullish(),
+  lastConnectionError: z.string().nullish(),
+  homepage: z.string().nullish(),
+  transport: z.any(),
+  source_registry: z.any(),
+  categories: z.array(z.string()),
+  tools: z.array(toolSchema),
+  parameters: z.array(
+    z.object({
+      name: z.string(),
+      description: z.string(),
+      scope: z.enum(["env", "args"]),
+      required: z.boolean(),
+      type: z.enum(["string"]),
+      password: z.boolean().optional(),
+    }),
+  ),
+  readme: z.string().nullish(),
 });
+
+export type SourceEntry = z.infer<typeof sourceEntrySchema>;
+
+export const sourceSchema = z.object({
+  name: z.literal("registry"),
+  entryId: z.string(),
+  entryData: sourceEntrySchema,
+});
+
+export type Source = z.infer<typeof sourceSchema>;
 
 export const ProxyTargetSchema = z.object({
   name: requiredStringSchema,
   transport: proxyTransportSchema,
+  source: sourceSchema.optional(),
 });
 
 const proxySchema = z.object({
@@ -32,7 +68,6 @@ const proxySchema = z.object({
   name: requiredStringSchema,
   description: optionalStringSchema,
   servers: z.array(ProxyTargetSchema),
-  source: sourceSchema.optional(),
 });
 
 export type ProxyAttributes = z.infer<typeof proxySchema>;

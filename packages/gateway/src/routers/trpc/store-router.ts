@@ -1,7 +1,7 @@
 import {} from "@director.run/utilities/error";
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
-import { ProxyTargetSchema } from "../../db/schema";
+import { ProxyTargetSchema, sourceSchema } from "../../db/schema";
 import {
   getStreamablePathForProxy,
   restartConnectedClients,
@@ -87,13 +87,7 @@ export function createProxyStoreRouter({
                 url: z.string().url(),
               }),
             ]),
-            source: z
-              .object({
-                name: z.literal("registry"),
-                entryId: z.string(),
-                entryData: z.any(),
-              })
-              .optional(),
+            source: sourceSchema.optional(),
           }),
         }),
       )

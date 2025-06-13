@@ -1,7 +1,8 @@
 import { createGatewayClient } from "@director.run/gateway/client";
 import { getStreamablePathForProxy } from "@director.run/gateway/helpers";
 import { SimpleClient } from "@director.run/mcp/simple-client";
-import { whiteBold } from "@director.run/utilities/cli/colors";
+import { blue, whiteBold, yellow } from "@director.run/utilities/cli/colors";
+import { makeTable } from "@director.run/utilities/cli/index";
 import { getLogger } from "@director.run/utilities/logger";
 import { joinURL } from "@director.run/utilities/url";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
@@ -39,9 +40,22 @@ function printTools(tools: Tool[]) {
   console.log("");
 
   for (const tool of tools) {
-    console.log(tool.name, " - ", tool?.description?.slice(0, 30));
-    console.log(tool.inputSchema);
-    console.log("--");
+    console.log(blue(tool.name), " -- ", tool?.description?.slice(0, 80));
+    if (tool.inputSchema.type === "object" && tool.inputSchema.properties) {
+      const table = makeTable(["property", "type", "required", "description"]);
+      for (const [key, value] of Object.entries(tool.inputSchema.properties)) {
+        table.push([
+          key,
+          value?.type || "--",
+          tool.inputSchema.required?.includes(key) ? yellow("yes") : "no",
+          value?.description || "--",
+        ]);
+      }
+      console.log(table.toString());
+    } else {
+      console.log(tool.inputSchema);
+    }
+    console.log("");
   }
   console.log("");
   console.log("");
@@ -67,3 +81,26 @@ async function setupTestForEntry(
     joinURL(GATEWAY_URL, getStreamablePathForProxy(proxy.id)),
   );
 }
+
+// Slack
+// Notion
+// Github
+// Google Workspace
+// - Email
+// - Calenda
+// Postgres
+// Dropbox?
+// Terminal
+// Google Drive
+// Google Calendar
+// Stripe
+// Obsidian
+// Filesystem
+// A browser one
+// Google Maps
+// Fetch - Web content fetching and conversion for efficient LLM usage (--ignore-robots-txt)
+// Filesystem - Secure file operations with configurable access controls
+// Git - Tools to read, search, and manipulate Git repositories
+// Memory - Knowledge graph-based persistent memory system
+// Sequential Thinking - Dynamic and reflective problem-solving through thought sequences
+// Time - Time and timezone conversion capabilities

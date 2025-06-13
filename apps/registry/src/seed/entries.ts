@@ -3,6 +3,27 @@ import { type EntryCreateParams } from "../db/schema";
 // Original source: https://github.com/raycast/extensions/blob/main/extensions/model-context-protocol-registry/src/registries/builtin/entries.ts
 // "https://raw.githubusercontent.com/raycast/extensions/refs/heads/main/extensions/model-context-protocol-registry/assets/chroma.png"
 
+export const pureEntries: EntryCreateParams[] = [
+  {
+    name: "notion",
+    title: "Notion",
+    description:
+      "The Notion MCP Server is a Model Context Protocol (MCP) server that provides seamless integration with Notion APIs, enabling advanced automation and interaction capabilities for developers and tools.",
+    isOfficial: true,
+    icon: "public/notion.svg",
+    homepage: "https://github.com/makenotion/notion-mcp-server",
+    transport: {
+      type: "stdio",
+      command: "npx",
+      args: ["-y", "@notionhq/notion-mcp-server"],
+      env: {
+        OPENAPI_MCP_HEADERS:
+          '{"Authorization": "Bearer <notion-bearer-token>", "Notion-Version": "2022-06-28" }',
+      },
+    },
+  },
+];
+
 export const entries: EntryCreateParams[] = [
   {
     name: "brave-search",

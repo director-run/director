@@ -28,7 +28,7 @@ export async function runInteractiveTestForEntry({
 
   console.log("");
   console.log(yellow("******************"));
-  console.log(yellow("* ENRICHED ENTRY *"));
+  console.log(yellow("*     ENTRY      *"));
   console.log(yellow("******************"));
   console.log("");
   console.log(entry);

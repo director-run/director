@@ -5,7 +5,7 @@ import { runInteractiveTestForEntry } from "./test-entry";
 const GATEWAY_URL = "http://reg.local:3673";
 
 async function main() {
-  const entry = pureEntries[0];
+  const entry = pureEntries[1];
   await runInteractiveTestForEntry({
     entry,
     gatewayUrl: GATEWAY_URL,

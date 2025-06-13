@@ -1,6 +1,6 @@
 import type {} from "../src/db/schema";
 import { entries } from "../src/seed/entries";
-import { getMCPClientForEntry } from "../src/test/test-entry";
+import { getMCPClientForEntry } from "./test-entry";
 
 const GATEWAY_URL = "http://reg.local:3673";
 

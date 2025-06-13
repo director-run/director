@@ -83,6 +83,8 @@ export default function ProxyPage() {
       ? (entryData as { description: string }).description
       : null;
 
+  console.log({ mcp });
+
   return (
     <LayoutView>
       <LayoutViewHeader>

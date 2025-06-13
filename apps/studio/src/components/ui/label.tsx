@@ -7,7 +7,7 @@ import type { ComponentProps } from "react";
 import { cn } from "@/lib/cn";
 
 const labelVariants = cva(
-  "font-medium font-mono text-xs uppercase leading-none tracking-widest peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+  "font-medium font-mono text-[11px] uppercase leading-none tracking-widest peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
 );
 
 type LabelProps = ComponentProps<typeof LabelPrimitive.Root> &

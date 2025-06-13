@@ -25,6 +25,8 @@ export function McpDeleteConfirmation({
   const mutation = trpc.store.removeServer.useMutation({
     onSuccess: async () => {
       await utils.store.get.invalidate({ proxyId });
+      await utils.store.getAll.invalidate();
+
       toast({
         title: "Server deleted",
         description: "This server was successfully deleted.",

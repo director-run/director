@@ -11,7 +11,7 @@ const SelectNative = ({
   ...props
 }: React.ComponentProps<"select">) => {
   return (
-    <div className="relative flex w-fit">
+    <div className="relative flex w-full">
       <select
         data-slot="select-native"
         className={cn(

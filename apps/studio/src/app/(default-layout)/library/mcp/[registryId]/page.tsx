@@ -27,7 +27,11 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Container } from "@/components/ui/container";
-import { EmptyState, EmptyStateTitle } from "@/components/ui/empty-state";
+import {
+  EmptyState,
+  EmptyStateDescription,
+  EmptyStateTitle,
+} from "@/components/ui/empty-state";
 import { Markdown } from "@/components/ui/markdown";
 import {
   Section,
@@ -79,6 +83,19 @@ export default function RegistryEntryPage() {
   }
 
   const selectedTool = entry.tools?.find((tool) => tool.name === toolId);
+
+  const proxiesWithMcp = (storeQuery.data ?? [])?.filter((proxy) =>
+    proxy.servers.find((it) => {
+      return it.name === entry.name;
+    }),
+  );
+
+  const proxiesWithoutMcp = (storeQuery.data ?? [])?.filter(
+    (proxy) =>
+      !proxy.servers.find((it) => {
+        return it.name === entry.name;
+      }),
+  );
 
   return (
     <LayoutView>
@@ -207,12 +224,50 @@ export default function RegistryEntryPage() {
               </Tabs>
             </div>
             <div className="hidden w-xs shrink-0 flex-col lg:flex">
-              <div className="sticky top-0 rounded-xl bg-accent p-4">
-                Add to proxy
-                <RegistryInstallForm
-                  mcp={entry}
-                  proxies={storeQuery.data ?? []}
-                />
+              <div className="sticky top-0 flex flex-col gap-y-8">
+                {proxiesWithMcp.length > 0 && (
+                  <Section>
+                    <SectionHeader>
+                      <SectionTitle variant="h3" asChild>
+                        <h3>Installed on</h3>
+                      </SectionTitle>
+                    </SectionHeader>
+                    <BadgeGroup>
+                      {proxiesWithMcp.map((proxy) => {
+                        return (
+                          <Badge key={proxy.id} asChild>
+                            <Link
+                              href={`/${proxy.id}/mcp/${entry.name}`}
+                              key={proxy.id}
+                            >
+                              <BadgeLabel>{proxy.name}</BadgeLabel>
+                            </Link>
+                          </Badge>
+                        );
+                      })}
+                    </BadgeGroup>
+                  </Section>
+                )}
+
+                <Section>
+                  <SectionHeader>
+                    <SectionTitle variant="h3" asChild>
+                      <h3>Add to proxy</h3>
+                    </SectionTitle>
+                  </SectionHeader>
+                  {proxiesWithoutMcp.length > 0 ? (
+                    <RegistryInstallForm
+                      mcp={entry}
+                      proxies={proxiesWithoutMcp}
+                    />
+                  ) : (
+                    <EmptyState>
+                      <EmptyStateDescription>
+                        This MCP has already been installed on all your proxies.
+                      </EmptyStateDescription>
+                    </EmptyState>
+                  )}
+                </Section>
               </div>
             </div>
           </div>

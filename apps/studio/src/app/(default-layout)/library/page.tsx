@@ -1,7 +1,4 @@
 "use client";
-
-import { SealCheckIcon } from "@phosphor-icons/react";
-import Link from "next/link";
 import { useState } from "react";
 
 import {
@@ -9,7 +6,10 @@ import {
   LayoutViewContent,
   LayoutViewHeader,
 } from "@/components/layout";
-import { McpLogo } from "@/components/mcp-logo";
+import {
+  MCPLinkCard,
+  MCPLinkCardList,
+} from "@/components/mcp-servers/mcp-link-card";
 import { RegistryLibrarySkeleton } from "@/components/registry/registry-library-skeleton";
 import {
   Breadcrumb,
@@ -94,34 +94,16 @@ export default function RegistryPage() {
                 className="max-w-md"
               />
 
-              <div className="@container grid @2xl:grid-cols-2 grid-cols-1 gap-3">
+              <MCPLinkCardList>
                 {filteredEntries
                   .sort((a, b) => a.title.localeCompare(b.title))
                   .map((entry) => {
                     return (
-                      <Link
+                      <MCPLinkCard
                         key={entry.id}
+                        entry={entry}
                         href={`/library/mcp/${entry.name}`}
-                        className="flex flex-col gap-y-8 rounded-lg bg-accent-subtle p-4 transition-colors duration-200 ease-in-out hover:bg-accent"
-                      >
-                        <McpLogo
-                          src={entry.icon}
-                          fallback={entry.name.charAt(0).toUpperCase()}
-                          className="size-8"
-                        />
-
-                        <div className="flex flex-col gap-y-1">
-                          <div className="flex items-center gap-x-1 font-[450] text-[17px]">
-                            {entry.title}{" "}
-                            {entry.isOfficial && (
-                              <SealCheckIcon weight="fill" />
-                            )}
-                          </div>
-                          <div className="line-clamp-2 text-[14px] text-fg-subtle">
-                            {entry.description}
-                          </div>
-                        </div>
-                      </Link>
+                      />
                     );
                   })}
 
@@ -130,7 +112,7 @@ export default function RegistryPage() {
                     <EmptyStateTitle>No MCP servers found</EmptyStateTitle>
                   </EmptyState>
                 )}
-              </div>
+              </MCPLinkCardList>
             </div>
           </Section>
         </Container>

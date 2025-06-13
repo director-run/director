@@ -6,7 +6,10 @@ import {
   LayoutViewContent,
   LayoutViewHeader,
 } from "@/components/layout";
-import { ListOfLinks } from "@/components/list-of-links";
+import {
+  MCPLinkCard,
+  MCPLinkCardList,
+} from "@/components/mcp-servers/mcp-link-card";
 import { McpToolSheet } from "@/components/mcp-servers/mcp-tool-sheet";
 import { McpToolsTable } from "@/components/mcp-servers/mcp-tools-table";
 import { ProxyDeleteConfirmation } from "@/components/proxies/proxy-delete-confirmation";
@@ -15,7 +18,7 @@ import { ProxyManualDialog } from "@/components/proxies/proxy-manual-dialog";
 import { ProxySettingsSheet } from "@/components/proxies/proxy-settings-sheet";
 import { ProxySkeleton } from "@/components/proxies/proxy-skeleton";
 import { RegistryCommand } from "@/components/registry/registry-command";
-import { Badge, BadgeIcon, BadgeLabel } from "@/components/ui/badge";
+import {} from "@/components/ui/badge";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -41,12 +44,10 @@ import {
 } from "@/components/ui/section";
 import { toast } from "@/components/ui/toast";
 import { useProxy } from "@/hooks/use-proxy";
+import { SourceEntry } from "@director.run/gateway/db/schema";
 import {
   DotsThreeOutlineVerticalIcon,
-  FileCodeIcon,
   GearIcon,
-  GlobeSimpleIcon,
-  TerminalIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
 import { useEffect } from "react";
@@ -147,40 +148,17 @@ export default function ProxyPage() {
               </SectionTitle>
               <RegistryCommand serverId={proxy.id} />
             </SectionHeader>
-            <ListOfLinks
-              isLoading={isLoading}
-              links={proxy.servers.map((it) => ({
-                title: it.name,
-                href: `/${proxy.id}/mcp/${it.name}`,
-                badges: (
-                  <>
-                    <Badge>
-                      <BadgeIcon>
-                        {it.transport.type === "http" ? (
-                          <GlobeSimpleIcon />
-                        ) : (
-                          <TerminalIcon />
-                        )}
-                      </BadgeIcon>
-                      <BadgeLabel uppercase>
-                        {it.transport.type === "http" ? "HTTP" : "STDIO"}
-                      </BadgeLabel>
-                    </Badge>
-
-                    {it.transport.type === "stdio" && (
-                      <Badge>
-                        <BadgeIcon>
-                          <FileCodeIcon />
-                        </BadgeIcon>
-                        <BadgeLabel uppercase>
-                          {it.transport.command}
-                        </BadgeLabel>
-                      </Badge>
-                    )}
-                  </>
-                ),
-              }))}
-            />
+            <MCPLinkCardList>
+              {proxy.servers.map((it) => {
+                return (
+                  <MCPLinkCard
+                    key={it.name}
+                    entry={it.source?.entryData as SourceEntry}
+                    href={`/${proxy.id}/mcp/${it.name}`}
+                  />
+                );
+              })}
+            </MCPLinkCardList>
           </Section>
 
           <SectionSeparator />

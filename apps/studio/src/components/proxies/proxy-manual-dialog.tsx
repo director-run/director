@@ -32,15 +32,17 @@ function ManualInput({ id }: { id: string }) {
 
   return (
     <div className="relative flex">
-      <SelectNative
-        value={transportType}
-        onChange={(e) => setTransportType(e.target.value as TransportType)}
-        className="h-10 rounded-r-none border-[0.5px] border-fg/20 bg-accent-subtle font-medium text-[13px] text-muted-foreground shadow-none ring-0 hover:text-foreground focus-visible:border-fg/30 focus-visible:ring-0"
-      >
-        <option value="http">HTTP</option>
-        <option value="sse">SSE</option>
-        <option value="stdio">STDIO</option>
-      </SelectNative>
+      <div className="w-fit">
+        <SelectNative
+          value={transportType}
+          onChange={(e) => setTransportType(e.target.value as TransportType)}
+          className="h-10 rounded-r-none border-[0.5px] border-fg/20 bg-accent-subtle font-medium text-[13px] text-muted-foreground shadow-none ring-0 hover:text-foreground focus-visible:border-fg/30 focus-visible:ring-0"
+        >
+          <option value="http">HTTP</option>
+          <option value="sse">SSE</option>
+          <option value="stdio">STDIO</option>
+        </SelectNative>
+      </div>
       <Input
         autoFocus
         className="-mx-px h-10 rounded-none border-[0.5px] border-fg/30 pr-0 font-medium font-mono text-[13px] shadow-none focus-visible:border-fg/30 focus-visible:ring-0"

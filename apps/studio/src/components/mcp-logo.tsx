@@ -12,10 +12,9 @@ import McpImageSrc from "../../public/icons/mcp.svg";
 interface McpLogoProps
   extends Omit<ComponentProps<typeof AvatarPrimitive.Root>, "children"> {
   src?: string | null;
-  fallback: string;
 }
 
-export function McpLogo({ src, className, fallback, ...props }: McpLogoProps) {
+export function McpLogo({ src, className, ...props }: McpLogoProps) {
   const srcUrl = src?.startsWith("http") ? src : `${REGISTRY_URL}/${src}`;
 
   return (
@@ -38,7 +37,6 @@ export function McpLogo({ src, className, fallback, ...props }: McpLogoProps) {
         )}
       >
         <Image src={McpImageSrc} alt="MCP Logo" className="size-full" />
-        <span className="sr-only">{fallback}</span>
       </AvatarPrimitive.Fallback>
     </AvatarPrimitive.Root>
   );

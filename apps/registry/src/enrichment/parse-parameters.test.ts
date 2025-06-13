@@ -2,7 +2,7 @@ import { AppError } from "@director.run/utilities/error";
 import { describe, expect, it } from "vitest";
 import type { EntryGetParams } from "../db/schema";
 import { makeStdioTransport, makeTestEntry } from "../test/fixtures/entries";
-import { parseParameters } from "./parseParameters";
+import { parseParameters } from "./parse-parameters";
 
 describe("parseParameters", () => {
   it("should de-duplicate parameters", () => {

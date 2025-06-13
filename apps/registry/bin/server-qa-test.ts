@@ -7,7 +7,7 @@ import { getLogger } from "@director.run/utilities/logger";
 import { joinURL } from "@director.run/utilities/url";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import type { EntryCreateParams } from "../src/db/schema";
-import { parseParameters } from "../src/enrichment/parseParameters";
+import { parseParameters } from "../src/enrichment/parse-parameters";
 import { entries } from "../src/seed/entries";
 
 const GATEWAY_URL = "http://reg.local:3673";

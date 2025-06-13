@@ -1,4 +1,3 @@
-import type { ProxyTransport } from "@director.run/mcp/types";
 import {
   optionalStringSchema,
   requiredStringSchema,
@@ -6,7 +5,11 @@ import {
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
 import { protectedProcedure } from ".";
-import { type EntryParameter, toolSchema } from "../../db/schema";
+import {
+  type EntryGetParams,
+  type EntryParameter,
+  toolSchema,
+} from "../../db/schema";
 import type { Store } from "../../db/store";
 import { enrichEntries } from "../../enrichment/enrich";
 import { entries } from "../../seed/entries";
@@ -18,6 +21,54 @@ const parameterToZodSchema = (parameter: EntryParameter) => {
     throw new Error(`Unsupported parameter type: ${parameter.type}`);
   }
 };
+
+export function interpolateParameters(
+  entry: Pick<EntryGetParams, "transport" | "parameters">,
+  parameters: Record<string, string>,
+) {
+  if (entry.transport.type === "stdio") {
+    const env: Record<string, string> = {
+      ...entry.transport.env,
+    };
+    let args: string[] = [...entry.transport.args];
+    // only stdio transports have parameters
+    entry.parameters?.forEach((parameter) => {
+      const paramValue = parameters[parameter.name];
+      const schema = parameterToZodSchema(parameter);
+
+      schema.parse(paramValue);
+
+      if (!paramValue) {
+        // Not a required parameter, so we can skip it
+        // Missing required parameters are handled by the zod schema
+        return;
+      }
+
+      // Substitute the parameter into the transport command
+      if (parameter.scope === "env") {
+        Object.entries(env).forEach(([key, value]) => {
+          env[key] = value.replace(`<${parameter.name}>`, paramValue);
+        });
+      } else if (parameter.scope === "args") {
+        args = args.map((arg) =>
+          arg.replace(`<${parameter.name}>`, paramValue),
+        );
+      }
+    });
+
+    return {
+      env,
+      args,
+      type: "stdio",
+      command: entry.transport.command,
+    };
+  } else {
+    return {
+      type: "http",
+      url: entry.transport.url,
+    };
+  }
+}
 
 export function createEntriesRouter({ store }: { store: Store }) {
   return t.router({
@@ -43,53 +94,7 @@ export function createEntriesRouter({ store }: { store: Store }) {
       )
       .query(async ({ input }) => {
         const entry = await store.entries.getEntryByName(input.entryName);
-
-        let transport: ProxyTransport;
-
-        if (entry.transport.type === "stdio") {
-          const env: Record<string, string> = {
-            ...entry.transport.env,
-          };
-          let args: string[] = [...entry.transport.args];
-          // only stdio transports have parameters
-          entry.parameters?.forEach((parameter) => {
-            const paramValue = input.parameters?.[parameter.name];
-            const schema = parameterToZodSchema(parameter);
-
-            schema.parse(paramValue);
-
-            if (!paramValue) {
-              // Not a required parameter, so we can skip it
-              // Missing required parameters are handled by the zod schema
-              return;
-            }
-
-            // Substitute the parameter into the transport command
-            if (parameter.scope === "env") {
-              Object.entries(env).forEach(([key, value]) => {
-                env[key] = value.replace(`<${parameter.name}>`, paramValue);
-              });
-            } else if (parameter.scope === "args") {
-              args = args.map((arg) =>
-                arg.replace(`<${parameter.name}>`, paramValue),
-              );
-            }
-          });
-
-          transport = {
-            env,
-            args,
-            type: "stdio",
-            command: entry.transport.command,
-          };
-        } else {
-          transport = {
-            type: "http",
-            url: entry.transport.url,
-          };
-        }
-
-        return transport;
+        return interpolateParameters(entry, input.parameters ?? {});
       }),
 
     purge: protectedProcedure.input(z.object({})).mutation(async () => {

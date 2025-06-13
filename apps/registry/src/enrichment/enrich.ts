@@ -2,7 +2,7 @@ import { getLogger } from "@director.run/utilities/logger";
 import { type EntryGetParams } from "../db/schema";
 import { type Store } from "../db/store";
 import { getGithubRawReadmeUrl, isGithubRepo } from "./github";
-import { parseParameters } from "./parseParameters";
+import { parseParameters } from "./parse-parameters";
 const logger = getLogger("enrich");
 
 export async function enrichEntries(store: Store) {

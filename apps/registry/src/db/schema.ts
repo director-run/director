@@ -69,7 +69,7 @@ export type EntryParameter = {
   name: string;
   description: string;
   scope: "env" | "args";
-  required: true;
+  required: boolean;
   type: "string";
   password?: boolean;
 };

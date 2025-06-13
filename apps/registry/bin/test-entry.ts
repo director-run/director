@@ -172,8 +172,10 @@ async function promptForParameters(
 
   for (const parameter of entry.parameters) {
     const answer = await input({ message: parameter.name });
+    if (!answer.length) {
+      continue;
+    }
     answers[parameter.name] = answer;
   }
-
   return answers;
 }

@@ -179,6 +179,50 @@ export const pureEntries: EntryCreateParams[] = [
     },
     parameters: [],
   },
+  {
+    name: "slack",
+    title: "Slack",
+    description: "Allows you to interact with the Slack API.",
+    isOfficial: true,
+    icon: "public/slack.svg",
+    homepage:
+      "https://github.com/modelcontextprotocol/servers-archived/tree/main/src/slack",
+    transport: {
+      type: "stdio",
+      command: "npx",
+      args: ["-y", "@modelcontextprotocol/server-slack"],
+      env: {
+        SLACK_BOT_TOKEN: "<slack-bot-token>",
+        SLACK_TEAM_ID: "<slack-team-id>",
+        SLACK_CHANNEL_IDS: "<slack-channel-ids>", // C01234567, C76543210
+      },
+    },
+    parameters: [
+      {
+        name: "slack-bot-token",
+        description: "Slack Bot Token (e.g. 'xoxb-1234..').",
+        scope: "env",
+        type: "string",
+        required: true,
+        password: true,
+      },
+      {
+        name: "slack-team-id",
+        description: "Slack Team ID. (e.g. 'T01234567')",
+        scope: "env",
+        type: "string",
+        required: true,
+      },
+      {
+        name: "slack-channel-ids",
+        description:
+          "The IDs of the Slack channels, comma separated. (e.g. 'C01234567, C76543210')",
+        scope: "env",
+        type: "string",
+        required: true,
+      },
+    ],
+  },
 ];
 
 export const entries: EntryCreateParams[] = [

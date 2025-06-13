@@ -1,8 +1,5 @@
 import { type EntryCreateParams } from "../db/schema";
 
-// Original source: https://github.com/raycast/extensions/blob/main/extensions/model-context-protocol-registry/src/registries/builtin/entries.ts
-// "https://raw.githubusercontent.com/raycast/extensions/refs/heads/main/extensions/model-context-protocol-registry/assets/chroma.png"
-
 export const pureEntries: EntryCreateParams[] = [
   {
     name: "github",
@@ -62,6 +59,37 @@ export const pureEntries: EntryCreateParams[] = [
       },
     ],
   },
+  {
+    name: "hackernews",
+    title: "Hackernews",
+    description: "Provides tools for fetching information from Hacker News.",
+    isOfficial: false,
+    icon: "public/hackernews.svg",
+    homepage: "https://github.com/erithwik/mcp-hn",
+    transport: {
+      type: "stdio",
+      command: "uvx",
+      args: ["--from", "git+https://github.com/erithwik/mcp-hn", "mcp-hn"],
+    },
+    parameters: [],
+  },
+  // Can't get this to work
+  // {
+  //   name: "git",
+  //   title: "Git",
+  //   description:
+  //     "Provides tools to read, search, and manipulate Git repositories.",
+  //   isOfficial: true,
+  //   icon: "public/git.svg",
+  //   homepage:
+  //     "https://github.com/modelcontextprotocol/servers/tree/main/src/git",
+  //   transport: {
+  //     type: "stdio",
+  //     command: "uvx",
+  //     args: ["mcp-server-git"],
+  //   },
+  //   parameters: [],
+  // },
 ];
 
 export const entries: EntryCreateParams[] = [

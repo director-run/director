@@ -5,7 +5,7 @@ import { runInteractiveTestForEntry } from "./test-entry";
 const GATEWAY_URL = "http://reg.local:3673";
 
 async function main() {
-  const entry = pureEntries[1];
+  const entry = pureEntries[pureEntries.length - 1];
   await runInteractiveTestForEntry({
     entry,
     gatewayUrl: GATEWAY_URL,
@@ -16,15 +16,10 @@ async function main() {
 main();
 
 // Slack
-// -- Notion
-// -- Github
-// Gmail
-// Google Calendar
+
 // Postgres
 // Dropbox?
 // Terminal?
-// Google Drive
-// Google Calendar
 // Stripe
 // Obsidian
 // Filesystem
@@ -36,3 +31,12 @@ main();
 // Memory - Knowledge graph-based persistent memory system
 // Sequential Thinking - Dynamic and reflective problem-solving through thought sequences
 // Time - Time and timezone conversion capabilities
+
+// Gmail
+// Google Calendar
+// Google Drive
+// Google Calendar
+
+// -- Notion
+// -- Github
+// -- Hackernews

@@ -57,7 +57,7 @@ export async function runInteractiveTestForEntry({
   await gatewayClient.store.addServer.mutate({
     proxyId: proxy.id,
     server: {
-      name: "brave-search",
+      name: entry.name,
       transport: resolvedTransport,
     },
   });

@@ -1,5 +1,21 @@
 import { type EntryCreateParams } from "../db/schema";
 
+// TODO:
+// Postgres
+// Dropbox?
+// Terminal?
+// Stripe
+// Obsidian
+// Playwright
+
+// Gmail
+// Google Calendar
+// Google Drive
+// Google Calendar
+// Google Maps
+
+// All of these servers work. To add a new one, add it to this list.
+// Please test it with bin/test-entry.ts before merging to main
 export const entries: EntryCreateParams[] = [
   {
     name: "github",

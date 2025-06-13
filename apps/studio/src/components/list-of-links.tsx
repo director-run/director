@@ -47,8 +47,10 @@ function ListItem({ link }: { link: LinkItem }) {
   return (
     <List.ListItem asChild>
       <Link href={link.href} scroll={link.scroll}>
-        <List.ListItemDetails>
-          <List.ListItemTitle>{link.title}</List.ListItemTitle>
+        <List.ListItemDetails className="overflow-hidden">
+          <List.ListItemTitle className="truncate">
+            {link.title}
+          </List.ListItemTitle>
           {link.subtitle && (
             <List.ListItemDescription>{link.subtitle}</List.ListItemDescription>
           )}
@@ -65,9 +67,10 @@ function ListItem({ link }: { link: LinkItem }) {
 interface ListOfLinksProps {
   links: LinkItem[];
   isLoading: boolean;
+  className?: string;
 }
 
-export function ListOfLinks({ links, isLoading }: ListOfLinksProps) {
+export function ListOfLinks({ links, isLoading, className }: ListOfLinksProps) {
   if (isLoading) {
     return (
       <div className="flex flex-col border-accent border-y-[0.5px] opacity-50">
@@ -88,7 +91,7 @@ export function ListOfLinks({ links, isLoading }: ListOfLinksProps) {
   }
 
   return (
-    <List.List>
+    <List.List className={className}>
       {links.map((it) => (
         <ListItem key={`li-${it.title}`} link={it} />
       ))}

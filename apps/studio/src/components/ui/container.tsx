@@ -28,6 +28,11 @@ const containerVariants = cva(
           "md:grid-cols-[1fr_min(50rem,_calc(100%-2rem*2))_1fr]",
           "lg:grid-cols-[1fr_min(50rem,_calc(100%-3rem*2))_1fr]",
         ],
+        xl: [
+          "grid-cols-[1fr_min(70rem,_calc(100%-1rem*2))_1fr]",
+          "md:grid-cols-[1fr_min(70rem,_calc(100%-2rem*2))_1fr]",
+          "lg:grid-cols-[1fr_min(70rem,_calc(100%-3rem*2))_1fr]",
+        ],
       },
     },
     defaultVariants: {

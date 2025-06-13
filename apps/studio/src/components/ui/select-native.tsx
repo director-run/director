@@ -15,7 +15,7 @@ const SelectNative = ({
       <select
         data-slot="select-native"
         className={cn(
-          "peer inline-flex cursor-pointer appearance-none items-center rounded-md border border-input text-foreground text-sm shadow-xs outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 has-[option[disabled]:checked]:text-muted-foreground aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
+          "peer inline-flex cursor-pointer appearance-none items-center rounded-md bg-surface text-foreground text-sm shadow-xs outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 has-[option[disabled]:checked]:text-muted-foreground aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
           props.multiple
             ? "py-1 *:px-3 *:py-1 [&_option:checked]:bg-accent"
             : "h-8 ps-3 pe-8",

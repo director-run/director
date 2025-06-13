@@ -18,7 +18,7 @@ export function EmptyState({
   return (
     <Comp
       className={cn(
-        "flex flex-col items-center justify-center gap-y-1 rounded-xl bg-accent-subtle px-4 py-6 text-fg",
+        "flex flex-col items-center justify-center gap-y-1 rounded-xl bg-accent-subtle px-4 py-6 text-center text-fg",
         className,
       )}
       {...props}

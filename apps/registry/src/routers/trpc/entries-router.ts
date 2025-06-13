@@ -1,3 +1,4 @@
+import type { ProxyTransport } from "@director.run/mcp/types";
 import {
   optionalStringSchema,
   requiredStringSchema,
@@ -25,7 +26,7 @@ const parameterToZodSchema = (parameter: EntryParameter) => {
 export function interpolateParameters(
   entry: Pick<EntryGetParams, "transport" | "parameters">,
   parameters: Record<string, string>,
-) {
+): ProxyTransport {
   if (entry.transport.type === "stdio") {
     const env: Record<string, string> = {
       ...entry.transport.env,

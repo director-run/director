@@ -5,9 +5,11 @@ import { blue, whiteBold, yellow } from "@director.run/utilities/cli/colors";
 import { makeTable } from "@director.run/utilities/cli/index";
 import { getLogger } from "@director.run/utilities/logger";
 import { joinURL } from "@director.run/utilities/url";
+import { input } from "@inquirer/prompts";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
-import type { EntryCreateParams } from "../src/db/schema";
+import type { EntryCreateParams, EntryGetParams } from "../src/db/schema";
 import { parseParameters } from "../src/enrichment/parse-parameters";
+import { interpolateParameters } from "../src/routers/trpc/entries-router";
 import { entries } from "../src/seed/entries";
 
 const GATEWAY_URL = "http://reg.local:3673";
@@ -18,10 +20,20 @@ const gatewayClient = createGatewayClient(GATEWAY_URL);
 await runTests();
 
 async function runTests() {
-  const entry = entries[0];
-  const parameters = parseParameters(entry);
-  console.log(parameters);
-  const mcpClient = await setupTestForEntry(entry);
+  const entry = { ...entries[0], parameters: parseParameters(entries[0]) };
+  console.log("");
+  console.log("");
+  console.log(entry);
+  console.log("");
+  console.log("");
+  const parameters = await promptForParameters(entry);
+  const interpolated = interpolateParameters(entry, parameters);
+
+  const mcpClient = await setupTestForEntry({
+    ...entry,
+    transport: interpolated,
+  });
+
   const tools = await mcpClient.listTools();
   printTools(tools.tools);
 
@@ -112,3 +124,20 @@ async function setupTestForEntry(
 // Memory - Knowledge graph-based persistent memory system
 // Sequential Thinking - Dynamic and reflective problem-solving through thought sequences
 // Time - Time and timezone conversion capabilities
+
+async function promptForParameters(
+  entry: Pick<EntryGetParams, "parameters">,
+): Promise<Record<string, string>> {
+  const answers: Record<string, string> = {};
+
+  if (!entry.parameters) {
+    return {};
+  }
+
+  for (const parameter of entry.parameters) {
+    const answer = await input({ message: parameter.name });
+    answers[parameter.name] = answer;
+  }
+
+  return answers;
+}

@@ -22,21 +22,25 @@ main();
 // Terminal?
 // Stripe
 // Obsidian
-// Filesystem
 // A browser one
-// Google Maps
-// Fetch - Web content fetching and conversion for efficient LLM usage (--ignore-robots-txt)
-// Filesystem - Secure file operations with configurable access controls
-// Git - Tools to read, search, and manipulate Git repositories
-// Memory - Knowledge graph-based persistent memory system
-// Sequential Thinking - Dynamic and reflective problem-solving through thought sequences
-// Time - Time and timezone conversion capabilities
 
 // Gmail
 // Google Calendar
 // Google Drive
 // Google Calendar
+// Google Maps
 
-// -- Notion
-// -- Github
-// -- Hackernews
+//
+//
+// DONE
+//
+//
+// Notion
+// Github
+// Hackernews
+// Git - Tools to read, search, and manipulate Git repositories
+// Filesystem - Secure file operations with configurable access controls
+// Fetch - Web content fetching and conversion for efficient LLM usage (--ignore-robots-txt)
+// Memory - Knowledge graph-based persistent memory system
+// Sequential Thinking - Dynamic and reflective problem-solving through thought sequences
+// Time - Time and timezone conversion capabilities

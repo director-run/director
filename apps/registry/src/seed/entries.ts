@@ -73,23 +73,112 @@ export const pureEntries: EntryCreateParams[] = [
     },
     parameters: [],
   },
-  // Can't get this to work
-  // {
-  //   name: "git",
-  //   title: "Git",
-  //   description:
-  //     "Provides tools to read, search, and manipulate Git repositories.",
-  //   isOfficial: true,
-  //   icon: "public/git.svg",
-  //   homepage:
-  //     "https://github.com/modelcontextprotocol/servers/tree/main/src/git",
-  //   transport: {
-  //     type: "stdio",
-  //     command: "uvx",
-  //     args: ["mcp-server-git"],
-  //   },
-  //   parameters: [],
-  // },
+  {
+    name: "git",
+    title: "Git",
+    description:
+      "Provides tools to read, search, and manipulate Git repositories.",
+    isOfficial: true,
+    icon: "public/git.svg",
+    homepage:
+      "https://github.com/modelcontextprotocol/servers/tree/main/src/git",
+    transport: {
+      type: "stdio",
+      command: "uvx",
+      args: ["mcp-server-git"],
+    },
+    parameters: [],
+  },
+  {
+    name: "filesystem",
+    title: "Filesystem",
+    description:
+      "Node.js server implementing Model Context Protocol (MCP) for filesystem operations. The server will only allow operations within directories specified via args.",
+    isOfficial: true,
+    icon: "public/mcp.svg",
+    homepage:
+      "https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem",
+    transport: {
+      type: "stdio",
+      command: "npx",
+      args: [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "<fs-allowed-path>",
+      ],
+    },
+    parameters: [
+      {
+        name: "fs-allowed-path",
+        description:
+          "The path to the directory to allow filesystem operations in.",
+        scope: "args",
+        type: "string",
+        required: true,
+      },
+    ],
+  },
+  {
+    name: "fetch",
+    title: "Fetch",
+    description: "Retrieves and converts web content for efficient LLM usage.",
+    isOfficial: true,
+    icon: "public/mcp.svg",
+    homepage:
+      "https://github.com/modelcontextprotocol/servers/tree/main/src/fetch",
+    transport: {
+      args: ["mcp-server-fetch"],
+      type: "stdio",
+      command: "uvx",
+    },
+    parameters: [],
+  },
+  {
+    name: "memory",
+    title: "Memory",
+    description: "Knowledge graph-based persistent memory system.",
+    isOfficial: true,
+    icon: "public/mcp.svg",
+    homepage:
+      "https://github.com/modelcontextprotocol/servers/tree/main/src/memory",
+    transport: {
+      type: "stdio",
+      command: "npx",
+      args: ["-y", "@modelcontextprotocol/server-memory"],
+    },
+    parameters: [],
+  },
+  {
+    name: "sequential-thinking",
+    title: "Sequential Thinking",
+    description:
+      "dynamic and reflective problem-solving through a structured thinking process.",
+    isOfficial: true,
+    icon: "public/mcp.svg",
+    homepage:
+      "https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking",
+    transport: {
+      type: "stdio",
+      command: "npx",
+      args: ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+    },
+    parameters: [],
+  },
+  {
+    name: "time",
+    title: "Time",
+    description: "Time and timezone conversion capabilities.",
+    isOfficial: true,
+    icon: "public/mcp.svg",
+    homepage:
+      "https://github.com/modelcontextprotocol/servers/tree/main/src/time",
+    transport: {
+      type: "stdio",
+      command: "uvx",
+      args: ["mcp-server-time"],
+    },
+    parameters: [],
+  },
 ];
 
 export const entries: EntryCreateParams[] = [

@@ -1,106 +1,29 @@
-import { createGatewayClient } from "@director.run/gateway/client";
-import { getStreamablePathForProxy } from "@director.run/gateway/helpers";
-import { SimpleClient } from "@director.run/mcp/simple-client";
-import { blue, whiteBold, yellow } from "@director.run/utilities/cli/colors";
-import { makeTable } from "@director.run/utilities/cli/index";
-import { getLogger } from "@director.run/utilities/logger";
-import { joinURL } from "@director.run/utilities/url";
-import { input } from "@inquirer/prompts";
-import type { Tool } from "@modelcontextprotocol/sdk/types.js";
-import type { EntryCreateParams, EntryGetParams } from "../src/db/schema";
-import { parseParameters } from "../src/enrichment/parse-parameters";
-import { interpolateParameters } from "../src/routers/trpc/entries-router";
+import type {} from "../src/db/schema";
 import { entries } from "../src/seed/entries";
+import { getMCPClientForEntry } from "../src/test/test-entry";
 
 const GATEWAY_URL = "http://reg.local:3673";
 
-const logger = getLogger("registry-qa-test");
-const gatewayClient = createGatewayClient(GATEWAY_URL);
-
-await runTests();
-
-async function runTests() {
-  const entry = { ...entries[0], parameters: parseParameters(entries[0]) };
-  console.log("");
-  console.log("");
-  console.log(entry);
-  console.log("");
-  console.log("");
-  const parameters = await promptForParameters(entry);
-  const interpolated = interpolateParameters(entry, parameters);
-
-  const mcpClient = await setupTestForEntry({
-    ...entry,
-    transport: interpolated,
+async function main() {
+  const entry = entries[0];
+  const mcpClient = await getMCPClientForEntry({
+    entry,
+    gatewayUrl: GATEWAY_URL,
   });
+  // logger.info("calling tool...");
 
-  const tools = await mcpClient.listTools();
-  printTools(tools.tools);
-
-  logger.info("calling tool...");
-
-  //   const result = await mcpClient.callTool({
-  //     name: "brave_web_search",
-  //     arguments: {
-  //       query: "What is the capital of France?",
-  //     },
-  //   });
-  //   console.log("result", result);
+  // //   const result = await mcpClient.callTool({
+  // //     name: "brave_web_search",
+  // //     arguments: {
+  // //       query: "What is the capital of France?",
+  // //     },
+  // //   });
+  // //   console.log("result", result);
 
   await mcpClient.close();
 }
 
-function printTools(tools: Tool[]) {
-  console.log("");
-  console.log(whiteBold("TOOLS"));
-  console.log("");
-
-  for (const tool of tools) {
-    console.log(blue(tool.name), ": ", tool?.description?.slice(0, 80));
-    if (tool.inputSchema.type === "object" && tool.inputSchema.properties) {
-      const table = makeTable(["property", "type", "required", "description"]);
-      for (const [key, value] of Object.entries(tool.inputSchema.properties)) {
-        const typedValue = value as {
-          type?: string;
-          description?: string;
-        };
-        table.push([
-          key,
-          typedValue?.type || "--",
-          tool.inputSchema.required?.includes(key) ? yellow("yes") : "no",
-          typedValue?.description || "--",
-        ]);
-      }
-      console.log(table.toString());
-    } else {
-      console.log(tool.inputSchema);
-    }
-    console.log("");
-  }
-  console.log("");
-  console.log("");
-}
-
-async function setupTestForEntry(
-  entry: EntryCreateParams,
-): Promise<SimpleClient> {
-  logger.info("reseting gateway...");
-  await gatewayClient.store.purge.mutate();
-  const proxy = await gatewayClient.store.create.mutate({
-    name: "test-proxy",
-  });
-  await gatewayClient.store.addServer.mutate({
-    proxyId: proxy.id,
-    server: {
-      name: "brave-search",
-      transport: entry.transport,
-    },
-  });
-  logger.info("creating mcp client & listing tools...");
-  return await SimpleClient.createAndConnectToHTTP(
-    joinURL(GATEWAY_URL, getStreamablePathForProxy(proxy.id)),
-  );
-}
+main();
 
 // Slack
 // Notion
@@ -124,20 +47,3 @@ async function setupTestForEntry(
 // Memory - Knowledge graph-based persistent memory system
 // Sequential Thinking - Dynamic and reflective problem-solving through thought sequences
 // Time - Time and timezone conversion capabilities
-
-async function promptForParameters(
-  entry: Pick<EntryGetParams, "parameters">,
-): Promise<Record<string, string>> {
-  const answers: Record<string, string> = {};
-
-  if (!entry.parameters) {
-    return {};
-  }
-
-  for (const parameter of entry.parameters) {
-    const answer = await input({ message: parameter.name });
-    answers[parameter.name] = answer;
-  }
-
-  return answers;
-}

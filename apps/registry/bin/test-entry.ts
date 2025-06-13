@@ -13,17 +13,18 @@ import { interpolateParameters } from "../src/routers/trpc/entries-router";
 
 const logger = getLogger("registry-qa-test");
 
-export async function getMCPClientForEntry({
+export async function runInteractiveTestForEntry({
   entry,
   gatewayUrl,
 }: {
   entry: EntryCreateParams;
   gatewayUrl: string;
-}): Promise<SimpleClient> {
+}) {
+  console.log(blue(`* TESTING ENTRY STARTED *`));
+
   const gatewayClient = createGatewayClient(gatewayUrl);
   const enrichedEntry = { ...entry, parameters: parseParameters(entry) };
 
-  console.log("");
   console.log("");
   console.log(yellow("******************"));
   console.log(yellow("* ENRICHED ENTRY *"));
@@ -69,7 +70,7 @@ export async function getMCPClientForEntry({
   }
   // Choose a tool to execute
 
-  const answer = await select({
+  const toolName = await select({
     message: "select a tool to run",
     choices: tools.tools.map((tool) => {
       return {
@@ -80,11 +81,11 @@ export async function getMCPClientForEntry({
     }),
   });
   console.log(yellow("******************"));
-  console.log(yellow(`* TOOL CALL: ${answer} *`));
+  console.log(yellow(`* TOOL CALL: ${toolName} *`));
   console.log(yellow("******************"));
   console.log("");
 
-  const toolToRun = tools.tools.find((tool) => tool.name === answer);
+  const toolToRun = tools.tools.find((tool) => tool.name === toolName);
   if (!toolToRun) {
     throw new Error("Tool not found");
   }
@@ -92,19 +93,35 @@ export async function getMCPClientForEntry({
   console.log(toolToRun.inputSchema);
   console.log("");
 
-  // console.log("");
-  // console.log(yellow(`* TOOL CALL: ${answer} *`));
-  // console.log("");
+  const requiredArguments = toolToRun.inputSchema.required || [];
+  const argValues: Record<string, string> = {};
 
-  // const parameters = await promptForParameters(toolToRun.inputSchema);
-  // console.log(parameters);
+  console.log(yellow(`* ENTER ARGUMENTS *`));
 
-  // const result = await mcpClient.callTool({
-  //   name: answer,
-  //   arguments: {},
-  // });
+  for (const argument of requiredArguments) {
+    const answer = await input({ message: argument });
+    argValues[argument] = answer;
+  }
 
-  return mcpClient;
+  console.log(yellow(`* EXECUTING TOOL CALL *`));
+
+  console.log("");
+  console.log(
+    `calling ${toolName} with arguments: ${JSON.stringify(argValues)}`,
+  );
+  console.log("");
+
+  const result = await mcpClient.callTool({
+    name: toolName,
+    arguments: argValues,
+  });
+
+  console.log(yellow(`* RESULT *`));
+  console.log(result);
+  console.log("");
+
+  console.log(blue(`* TESTING ENTRY COMPLETED *`));
+  await mcpClient.close();
 }
 
 function printTools(tools: Tool[]) {

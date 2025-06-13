@@ -1,11 +1,11 @@
 import type {} from "../src/db/schema";
-import { entries } from "../src/seed/entries";
+import { pureEntries } from "../src/seed/entries";
 import { runInteractiveTestForEntry } from "./test-entry";
 
 const GATEWAY_URL = "http://reg.local:3673";
 
 async function main() {
-  const entry = entries[0];
+  const entry = pureEntries[0];
   await runInteractiveTestForEntry({
     entry,
     gatewayUrl: GATEWAY_URL,
@@ -16,14 +16,13 @@ async function main() {
 main();
 
 // Slack
-// Notion
-// Github
-// Google Workspace
-// - Email
-// - Calenda
+// -- Notion
+// -- Github
+// Gmail
+// Google Calendar
 // Postgres
 // Dropbox?
-// Terminal
+// Terminal?
 // Google Drive
 // Google Calendar
 // Stripe

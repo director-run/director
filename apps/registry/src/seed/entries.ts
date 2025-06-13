@@ -5,10 +5,29 @@ import { type EntryCreateParams } from "../db/schema";
 
 export const pureEntries: EntryCreateParams[] = [
   {
+    name: "github",
+    title: "GitHub",
+    description:
+      "Connect to the GitHub API, enabling file operations, repository management, search functionality, and more.",
+    isOfficial: false,
+    icon: "public/github.svg",
+    homepage:
+      "https://github.com/modelcontextprotocol/servers-archived/tree/main/src/github",
+    transport: {
+      type: "stdio",
+      command: "npx",
+      args: ["-y", "@modelcontextprotocol/server-github"],
+      env: {
+        GITHUB_PERSONAL_ACCESS_TOKEN: "<github-personal-access-token>",
+      },
+    },
+  },
+
+  {
     name: "notion",
     title: "Notion",
     description:
-      "The Notion MCP Server is a Model Context Protocol (MCP) server that provides seamless integration with Notion APIs, enabling advanced automation and interaction capabilities for developers and tools.",
+      "Provides seamless integration with Notion APIs, enabling advanced automation and interaction capabilities for developers and tools.",
     isOfficial: true,
     icon: "public/notion.svg",
     homepage: "https://github.com/makenotion/notion-mcp-server",

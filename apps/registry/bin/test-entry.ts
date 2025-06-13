@@ -4,6 +4,7 @@ import { SimpleClient } from "@director.run/mcp/simple-client";
 import { blue, yellow } from "@director.run/utilities/cli/colors";
 import { makeTable } from "@director.run/utilities/cli/index";
 import { getLogger } from "@director.run/utilities/logger";
+import { openUrl } from "@director.run/utilities/os";
 import { joinURL } from "@director.run/utilities/url";
 import { input, select } from "@inquirer/prompts";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
@@ -16,9 +17,11 @@ const logger = getLogger("registry-qa-test");
 export async function runInteractiveTestForEntry({
   entry,
   gatewayUrl,
+  openHomepage,
 }: {
   entry: EntryCreateParams;
   gatewayUrl: string;
+  openHomepage?: boolean;
 }) {
   console.log(blue(`* TESTING ENTRY STARTED *`));
 
@@ -33,6 +36,9 @@ export async function runInteractiveTestForEntry({
   console.log(enrichedEntry);
   console.log("");
   console.log("");
+  if (openHomepage) {
+    openUrl(enrichedEntry.homepage);
+  }
 
   const parameters = await promptForParameters(enrichedEntry);
   const resolvedTransport = interpolateParameters(enrichedEntry, parameters);

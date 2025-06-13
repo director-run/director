@@ -9,6 +9,7 @@ async function main() {
   await runInteractiveTestForEntry({
     entry,
     gatewayUrl: GATEWAY_URL,
+    openHomepage: true,
   });
 }
 

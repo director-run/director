@@ -19,7 +19,7 @@ await runTests();
 
 async function runTests() {
   const entry = entries[0];
-  const parameters = parseParameters(entry as EntryCreateParams);
+  const parameters = parseParameters(entry);
   console.log(parameters);
   const mcpClient = await setupTestForEntry(entry);
   const tools = await mcpClient.listTools();
@@ -48,11 +48,15 @@ function printTools(tools: Tool[]) {
     if (tool.inputSchema.type === "object" && tool.inputSchema.properties) {
       const table = makeTable(["property", "type", "required", "description"]);
       for (const [key, value] of Object.entries(tool.inputSchema.properties)) {
+        const typedValue = value as {
+          type?: string;
+          description?: string;
+        };
         table.push([
           key,
-          value?.type || "--",
+          typedValue?.type || "--",
           tool.inputSchema.required?.includes(key) ? yellow("yes") : "no",
-          value?.description || "--",
+          typedValue?.description || "--",
         ]);
       }
       console.log(table.toString());
@@ -102,9 +106,9 @@ async function setupTestForEntry(
 // Filesystem
 // A browser one
 // Google Maps
-// Fetch - Web content fetching and conversion for efficient LLM usage (--ignore-robots-txt)
-// Filesystem - Secure file operations with configurable access controls
-// Git - Tools to read, search, and manipulate Git repositories
-// Memory - Knowledge graph-based persistent memory system
-// Sequential Thinking - Dynamic and reflective problem-solving through thought sequences
-// Time - Time and timezone conversion capabilities
+// Fetch - Web content fetching and conversion for efficient LLM usage (--ignore-robots-txt)
+// Filesystem - Secure file operations with configurable access controls
+// Git - Tools to read, search, and manipulate Git repositories
+// Memory - Knowledge graph-based persistent memory system
+// Sequential Thinking - Dynamic and reflective problem-solving through thought sequences
+// Time - Time and timezone conversion capabilities

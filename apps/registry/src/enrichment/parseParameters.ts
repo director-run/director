@@ -1,7 +1,9 @@
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { type EntryGetParams, type EntryParameter } from "../db/schema";
 
-export function parseParameters(entry: EntryGetParams): Array<EntryParameter> {
+export function parseParameters(
+  entry: Pick<EntryGetParams, "transport">,
+): Array<EntryParameter> {
   const parameters: Array<EntryParameter> = [];
   if (entry.transport.type === "stdio") {
     parameters.push(...parseArgumentParameters(entry.transport.args));

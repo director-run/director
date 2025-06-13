@@ -7,6 +7,7 @@ import { useProxy } from "@/hooks/use-proxy";
 import { trpc } from "@/trpc/client";
 import { Switch } from "../ui/switch";
 
+import { cn } from "@/lib/cn";
 import { DIRECTOR_URL } from "@/lib/urls";
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import { ArrowUpRightIcon } from "@phosphor-icons/react";
@@ -58,6 +59,8 @@ export function ProxyInstallers({ proxyId }: ProxyInstallersProps) {
 
   const utils = trpc.useUtils();
 
+  const listClientsQuery = trpc.installer.allClients.useQuery();
+
   const installationMutation = trpc.installer.byProxy.install.useMutation({
     onSuccess: () => {
       utils.installer.byProxy.list.invalidate();
@@ -77,6 +80,8 @@ export function ProxyInstallers({ proxyId }: ProxyInstallersProps) {
       });
     },
   });
+
+  const availableClients = listClientsQuery.data ?? [];
 
   return (
     <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-3">
@@ -123,11 +128,19 @@ export function ProxyInstallers({ proxyId }: ProxyInstallersProps) {
           );
         }
 
+        const isAvailable = availableClients.some(
+          (client) => client.name === it.id && client.present,
+        );
+
         return (
           <label
             htmlFor={it.id}
             key={it.id}
-            className="flex cursor-pointer flex-row items-center justify-between rounded-lg bg-accent-subtle p-1 pr-2.5 transition-colors duration-200 ease-in-out hover:bg-accent"
+            className={cn(
+              "flex cursor-pointer flex-row items-center justify-between rounded-lg bg-accent-subtle p-1 pr-2.5 transition-colors duration-200 ease-in-out hover:bg-accent",
+              !isAvailable &&
+                "opacity-50 hover:cursor-not-allowed hover:bg-accent-subtle",
+            )}
           >
             <div className="flex grow flex-row items-center gap-x-1">
               <Image
@@ -159,7 +172,9 @@ export function ProxyInstallers({ proxyId }: ProxyInstallersProps) {
               }}
               disabled={
                 installationMutation.isPending ||
-                uninstallationMutation.isPending
+                uninstallationMutation.isPending ||
+                listClientsQuery.isLoading ||
+                !isAvailable
               }
             />
           </label>

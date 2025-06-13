@@ -24,7 +24,7 @@ export abstract class AbstractConfigurator<T> {
 
     this.logger.info(`initializing`);
 
-    if (!(await this.isClientPresent())) {
+    if (!this.isClientPresent()) {
       throw new AppError(
         ErrorCode.COMMAND_NOT_FOUND,
         `${this.name} doesn't appear to be installed`,
@@ -34,7 +34,7 @@ export abstract class AbstractConfigurator<T> {
         },
       );
     }
-    if (!(await this.isClientConfigPresent())) {
+    if (!this.isClientConfigPresent()) {
       throw new AppError(
         ErrorCode.FILE_NOT_FOUND,
         `${this.name} config file not found at ${this.configPath}`,
@@ -49,15 +49,15 @@ export abstract class AbstractConfigurator<T> {
     this.isInitialized = true;
   }
 
-  public async getStatus(): Promise<{
+  public getStatus(): {
     name: string;
     present: boolean;
     configPresent: boolean;
-  }> {
+  } {
     return {
       name: this.name,
-      present: await this.isClientPresent(),
-      configPresent: await this.isClientConfigPresent(),
+      present: this.isClientPresent(),
+      configPresent: this.isClientConfigPresent(),
     };
   }
 
@@ -76,12 +76,12 @@ export abstract class AbstractConfigurator<T> {
   public abstract uninstall(name: string): Promise<void>;
   public abstract list(): Promise<Array<{ name: string; url: string }>>;
   public abstract openConfig(): Promise<void>;
-  public abstract isInstalled(name: string): Promise<boolean>;
+  public abstract isInstalled(name: string): Promise<boolean> | boolean;
   public abstract restart(): Promise<void>;
   public abstract reload(name: string): Promise<void>;
   public abstract reset(): Promise<void>;
-  public abstract isClientPresent(): Promise<boolean>;
-  public abstract isClientConfigPresent(): Promise<boolean>;
+  public abstract isClientPresent(): boolean;
+  public abstract isClientConfigPresent(): boolean;
 }
 
 export type Installable = {

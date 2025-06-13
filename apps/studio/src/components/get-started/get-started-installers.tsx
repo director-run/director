@@ -44,7 +44,11 @@ export function GetStartedInstallers({ proxyId }: GetStartedInstallersProps) {
   const [selectedClient, setSelectedClient] = useState<ClientId | undefined>(
     undefined,
   );
+
   const utils = trpc.useUtils();
+
+  const listClientsQuery = trpc.installer.allClients.useQuery();
+
   const installationMutation = trpc.installer.byProxy.install.useMutation({
     onSuccess: () => {
       utils.installer.byProxy.list.invalidate();
@@ -54,6 +58,8 @@ export function GetStartedInstallers({ proxyId }: GetStartedInstallersProps) {
       });
     },
   });
+
+  const availableClients = listClientsQuery.data ?? [];
 
   return (
     <div className="flex flex-col gap-y-4 p-4">
@@ -66,6 +72,10 @@ export function GetStartedInstallers({ proxyId }: GetStartedInstallersProps) {
         className="group flex flex-row items-center justify-center gap-x-2"
       >
         {clients.map((it) => {
+          const isAvailable = availableClients.some(
+            (client) => client.name === it.id && client.present,
+          );
+
           return (
             <ToggleGroupPrimitive.Item
               key={it.id}
@@ -73,12 +83,16 @@ export function GetStartedInstallers({ proxyId }: GetStartedInstallersProps) {
               className={cn(
                 "group relative flex flex-1 flex-col items-center gap-y-1 overflow-hidden rounded-lg bg-accent p-3",
                 "cursor-pointer hover:bg-accent-subtle",
-                "disabled:cursor-not-allowed disabled:opacity-50",
+                "disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-accent",
                 "outline-none ring-2 ring-transparent ring-offset-2 ring-offset-surface",
                 "focus-visible:bg-accent-subtle focus-visible:ring-accent",
                 "radix-state-[on]:ring-fg",
               )}
-              disabled={installationMutation.isPending}
+              disabled={
+                installationMutation.isPending ||
+                listClientsQuery.isLoading ||
+                !isAvailable
+              }
             >
               <Image src={it.image} alt="Claude" width={64} height={64} />
               <ListItemTitle className="font-[450] text-fg/80 capitalize">

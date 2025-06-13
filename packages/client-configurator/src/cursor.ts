@@ -17,12 +17,12 @@ import { AbstractConfigurator } from "./types";
 const CURSOR_CONFIG_PATH = path.join(os.homedir(), ".cursor/mcp.json");
 
 export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
-  public async isClientPresent() {
-    return await isAppInstalled(App.CURSOR);
+  public isClientPresent() {
+    return isAppInstalled(App.CURSOR);
   }
 
-  public async isClientConfigPresent() {
-    return await isFilePresent(this.configPath);
+  public isClientConfigPresent() {
+    return isFilePresent(this.configPath);
   }
 
   public constructor(params: { configPath?: string }) {
@@ -33,10 +33,7 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
   }
 
   public async isInstalled(name: string) {
-    if (
-      !(await this.isClientPresent()) ||
-      !(await this.isClientConfigPresent())
-    ) {
+    if (!this.isClientPresent() || !this.isClientConfigPresent()) {
       return false;
     }
     await this.initialize();

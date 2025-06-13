@@ -1,3 +1,4 @@
+import { readJSONFile } from "@director.run/utilities/json";
 import { afterAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { ConfiguratorTarget } from ".";
 import {
@@ -7,6 +8,7 @@ import {
   deleteConfigFile,
   expectToThrowInitializtionErrors,
 } from "./test/fixtures";
+import type { VSCodeConfig } from "./vscode";
 
 [
   ConfiguratorTarget.Claude,
@@ -48,12 +50,20 @@ import {
     });
 
     describe("install", () => {
+      const installer = createTestInstaller(target);
       test("should be able to install a server", async () => {
         const installable = createInstallable();
-        const installer = createTestInstaller(target);
         expect(await installer.isInstalled(installable.name)).toBe(false);
         await installer.install(installable);
         expect(await installer.isInstalled(installable.name)).toBe(true);
+
+        const configFile: VSCodeConfig = await readJSONFile(
+          installer.configPath,
+        );
+
+        expect(Object.keys(configFile.mcp.servers)).toContain(
+          `director__${installable.name}`,
+        );
       });
 
       expectToThrowInitializtionErrors(target, (installer) =>

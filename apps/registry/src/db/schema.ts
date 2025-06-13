@@ -57,7 +57,7 @@ export const entriesTable = pgTable("entries", {
   // **
   categories: jsonb("categories").default([]).$type<string[]>(),
   tools: jsonb("tools").default([]).$type<Array<Tool>>(),
-  parameters: jsonb("parameters").default([]).$type<Array<EntryParameter>>(),
+  parameters: jsonb("parameters").notNull().$type<Array<EntryParameter>>(),
   readme: text("readme"),
 });
 
@@ -69,8 +69,9 @@ export type EntryParameter = {
   name: string;
   description: string;
   scope: "env" | "args";
-  required: true;
+  required: boolean;
   type: "string";
+  password?: boolean;
 };
 
 export const toolSchema = z.object({

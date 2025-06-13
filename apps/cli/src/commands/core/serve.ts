@@ -4,6 +4,7 @@ import {
   actionWithErrorHandler,
   printDirectorAscii,
 } from "@director.run/utilities/cli/index";
+import packageJson from "../../../package.json";
 import { env } from "../../env";
 
 export function registerServeCommand(program: DirectorCommand) {
@@ -23,7 +24,9 @@ export function registerServeCommand(program: DirectorCommand) {
 }
 
 export async function startGateway(successCallback?: () => void) {
+  console.log(`v${packageJson.version}`);
   printDirectorAscii();
+
   await Gateway.start(
     {
       port: env.GATEWAY_PORT,

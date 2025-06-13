@@ -25,3 +25,5 @@ export function createGatewayClient(baseURL: string) {
     ],
   });
 }
+
+export type GatewayClient = ReturnType<typeof createGatewayClient>;

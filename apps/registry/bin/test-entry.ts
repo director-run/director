@@ -9,7 +9,6 @@ import { joinURL } from "@director.run/utilities/url";
 import { input, select } from "@inquirer/prompts";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import type { EntryCreateParams, EntryGetParams } from "../src/db/schema";
-import { parseParameters } from "../src/enrichment/parse-parameters";
 import { interpolateParameters } from "../src/routers/trpc/entries-router";
 
 const logger = getLogger("registry-qa-test");
@@ -26,22 +25,21 @@ export async function runInteractiveTestForEntry({
   console.log(blue(`* TESTING ENTRY STARTED *`));
 
   const gatewayClient = createGatewayClient(gatewayUrl);
-  const enrichedEntry = { ...entry, parameters: parseParameters(entry) };
 
   console.log("");
   console.log(yellow("******************"));
   console.log(yellow("* ENRICHED ENTRY *"));
   console.log(yellow("******************"));
   console.log("");
-  console.log(enrichedEntry);
+  console.log(entry);
   console.log("");
   console.log("");
   if (openHomepage) {
-    openUrl(enrichedEntry.homepage);
+    openUrl(entry.homepage);
   }
 
-  const parameters = await promptForParameters(enrichedEntry);
-  const resolvedTransport = interpolateParameters(enrichedEntry, parameters);
+  const parameters = await promptForParameters(entry);
+  const resolvedTransport = interpolateParameters(entry, parameters);
 
   console.log("");
   console.log(yellow("******************"));

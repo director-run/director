@@ -21,13 +21,23 @@ export const pureEntries: EntryCreateParams[] = [
         GITHUB_PERSONAL_ACCESS_TOKEN: "<github-personal-access-token>",
       },
     },
+    parameters: [
+      {
+        name: "github-personal-access-token",
+        description:
+          "Get a personal access token from [GitHub Settings](https://github.com/settings/tokens)",
+        scope: "env",
+        type: "string",
+        password: true,
+        required: true,
+      },
+    ],
   },
-
   {
     name: "notion",
     title: "Notion",
     description:
-      "Provides seamless integration with Notion APIs, enabling advanced automation and interaction capabilities for developers and tools.",
+      "Connect to Notion API, enabling advanced automation and interaction capabilities for developers and tools.",
     isOfficial: true,
     icon: "public/notion.svg",
     homepage: "https://github.com/makenotion/notion-mcp-server",
@@ -40,6 +50,17 @@ export const pureEntries: EntryCreateParams[] = [
           '{"Authorization": "Bearer <notion-bearer-token>", "Notion-Version": "2022-06-28" }',
       },
     },
+    parameters: [
+      {
+        name: "notion-bearer-token",
+        description:
+          "Get a bearer token from [Notion Settings](https://www.notion.so/profile/integrations)",
+        scope: "env",
+        type: "string",
+        required: true,
+        password: true,
+      },
+    ],
   },
 ];
 
@@ -61,6 +82,7 @@ export const entries: EntryCreateParams[] = [
         BRAVE_API_KEY: "<brave-api-key>",
       },
     },
+    parameters: [],
   },
   {
     name: "chroma",
@@ -85,6 +107,7 @@ export const entries: EntryCreateParams[] = [
         "<chroma-api-key>",
       ],
     },
+    parameters: [],
   },
   {
     name: "context-7",
@@ -99,6 +122,7 @@ export const entries: EntryCreateParams[] = [
       command: "npx",
       args: ["-y", "@upstash/context7-mcp@latest"],
     },
+    parameters: [],
   },
   {
     name: "git",
@@ -114,6 +138,7 @@ export const entries: EntryCreateParams[] = [
       command: "uvx",
       args: ["mcp-server-git"],
     },
+    parameters: [],
   },
   {
     name: "github",
@@ -139,6 +164,7 @@ export const entries: EntryCreateParams[] = [
         GITHUB_PERSONAL_ACCESS_TOKEN: "<github-personal-access-token>",
       },
     },
+    parameters: [],
   },
   {
     name: "gitlab",
@@ -158,6 +184,7 @@ export const entries: EntryCreateParams[] = [
         GITLAB_API_URL: "https://gitlab.com/api/v4", // Optional, for self-hosted instances
       },
     },
+    parameters: [],
   },
   {
     name: "e2b",
@@ -176,6 +203,7 @@ export const entries: EntryCreateParams[] = [
         E2B_API_KEY: "<e2b-api-key>",
       },
     },
+    parameters: [],
   },
   {
     name: "exa",
@@ -193,6 +221,7 @@ export const entries: EntryCreateParams[] = [
         EXA_API_KEY: "<exa-api-key>",
       },
     },
+    parameters: [],
   },
   {
     name: "google-drive",
@@ -211,6 +240,7 @@ export const entries: EntryCreateParams[] = [
         GDRIVE_CREDENTIALS_PATH: "<gdrive-server-credentials-path>",
       },
     },
+    parameters: [],
   },
   {
     name: "jetbrains",
@@ -224,6 +254,7 @@ export const entries: EntryCreateParams[] = [
       command: "npx",
       args: ["-y", "@jetbrains/mcp-proxy"],
     },
+    parameters: [],
   },
   {
     name: "heroku",
@@ -241,6 +272,7 @@ export const entries: EntryCreateParams[] = [
         HEROKU_API_KEY: "<heroku-api-key>",
       },
     },
+    parameters: [],
   },
   {
     name: "filesystem",
@@ -260,6 +292,7 @@ export const entries: EntryCreateParams[] = [
         "<fs-allowed-path>",
       ],
     },
+    parameters: [],
   },
   {
     name: "paddle",
@@ -279,6 +312,7 @@ export const entries: EntryCreateParams[] = [
         "--environment=<paddle-environment>",
       ],
     },
+    parameters: [],
   },
   {
     name: "perplexity",
@@ -296,6 +330,7 @@ export const entries: EntryCreateParams[] = [
         PERPLEXITY_API_KEY: "<perplexity-api-key>",
       },
     },
+    parameters: [],
   },
   {
     name: "sentry",
@@ -310,6 +345,7 @@ export const entries: EntryCreateParams[] = [
       command: "npx",
       args: ["-y", "mcp-remote", "https://mcp.sentry.dev/sse"],
     },
+    parameters: [],
   },
   {
     name: "slack",
@@ -330,21 +366,9 @@ export const entries: EntryCreateParams[] = [
         SLACK_CHANNEL_IDS: "<slack-channel-ids>", // C01234567, C76543210
       },
     },
+    parameters: [],
   },
-  {
-    name: "square",
-    title: "Square",
-    description:
-      "This project follows the Model Context Protocol standard, allowing AI assistants to interact with Square's connect API.",
-    isOfficial: true,
-    icon: "public/square.svg",
-    homepage: "https://github.com/square/square-mcp-server",
-    transport: {
-      type: "stdio",
-      command: "npx",
-      args: ["mcp-remote", "https://mcp.squareup.com/sse"],
-    },
-  },
+
   {
     name: "stripe",
     title: "Stripe",
@@ -363,6 +387,7 @@ export const entries: EntryCreateParams[] = [
         "--api-key=<stripe-secret-key>",
       ],
     },
+    parameters: [],
   },
   {
     name: "supabase",
@@ -382,6 +407,7 @@ export const entries: EntryCreateParams[] = [
         "<supabase-personal-access-token>",
       ],
     },
+    parameters: [],
   },
   {
     name: "tavily",
@@ -399,6 +425,7 @@ export const entries: EntryCreateParams[] = [
         TAVILY_API_KEY: "<tavily-api-key>",
       },
     },
+    parameters: [],
   },
   {
     name: "xero",
@@ -417,6 +444,7 @@ export const entries: EntryCreateParams[] = [
         XERO_CLIENT_SECRET: "<xero-client-secret>",
       },
     },
+    parameters: [],
   },
   {
     name: "firecrawl",
@@ -434,6 +462,7 @@ export const entries: EntryCreateParams[] = [
         FIRECRAWL_API_KEY: "<firecrawl-api-key>",
       },
     },
+    parameters: [],
   },
   {
     name: "playwright",
@@ -448,6 +477,7 @@ export const entries: EntryCreateParams[] = [
       command: "npx",
       args: ["@playwright/mcp@latest"],
     },
+    parameters: [],
   },
   {
     name: "notion",
@@ -466,6 +496,7 @@ export const entries: EntryCreateParams[] = [
           '{"Authorization": "Bearer <notion-bearer-token>", "Notion-Version": "2022-06-28" }',
       },
     },
+    parameters: [],
   },
   {
     name: "pydantic-run-python",
@@ -488,6 +519,7 @@ export const entries: EntryCreateParams[] = [
         "stdio",
       ],
     },
+    parameters: [],
   },
   {
     name: "pydantic-logfire",
@@ -502,6 +534,7 @@ export const entries: EntryCreateParams[] = [
       command: "uvx",
       args: ["logfire-mcp", "--read-token=<logfire-api-key>"],
     },
+    parameters: [],
   },
   {
     name: "polar",
@@ -525,6 +558,7 @@ export const entries: EntryCreateParams[] = [
         "<polar-access-token>",
       ],
     },
+    parameters: [],
   },
   {
     name: "elevenlabs",
@@ -542,6 +576,7 @@ export const entries: EntryCreateParams[] = [
         ELEVENLABS_API_KEY: "<elevenlabs-api-key>",
       },
     },
+    parameters: [],
   },
   {
     name: "talk-to-figma",
@@ -556,6 +591,7 @@ export const entries: EntryCreateParams[] = [
       command: "bunx",
       args: ["cursor-talk-to-figma-mcp@latest"],
     },
+    parameters: [],
   },
   {
     name: "airbnb",
@@ -569,6 +605,7 @@ export const entries: EntryCreateParams[] = [
       command: "npx",
       args: ["-y", "@openbnb/mcp-server-airbnb", "--ignore-robots-txt"],
     },
+    parameters: [],
   },
   {
     name: "airtable",
@@ -586,6 +623,7 @@ export const entries: EntryCreateParams[] = [
         AIRTABLE_API_KEY: "<airtable-api-key>",
       },
     },
+    parameters: [],
   },
   {
     name: "apple-script",
@@ -600,6 +638,7 @@ export const entries: EntryCreateParams[] = [
       command: "npx",
       args: ["@peakmojo/applescript-mcp"],
     },
+    parameters: [],
   },
   {
     name: "basic-memory",
@@ -614,6 +653,7 @@ export const entries: EntryCreateParams[] = [
       command: "uvx",
       args: ["basic-memory", "mcp"],
     },
+    parameters: [],
   },
   {
     name: "big-query",
@@ -634,6 +674,7 @@ export const entries: EntryCreateParams[] = [
         "<bigquery-location>",
       ],
     },
+    parameters: [],
   },
   {
     name: "clickup",
@@ -653,6 +694,7 @@ export const entries: EntryCreateParams[] = [
         DOCUMENT_SUPPORT: "true",
       },
     },
+    parameters: [],
   },
   {
     name: "discord",
@@ -670,6 +712,7 @@ export const entries: EntryCreateParams[] = [
         DISCORD_TOKEN: "<discord-bot-token>",
       },
     },
+    parameters: [],
   },
   {
     name: "firebase",
@@ -689,6 +732,7 @@ export const entries: EntryCreateParams[] = [
         FIREBASE_STORAGE_BUCKET: "<firebase-storage-bucket>",
       },
     },
+    parameters: [],
   },
   {
     name: "ghost",
@@ -708,6 +752,7 @@ export const entries: EntryCreateParams[] = [
         GHOST_API_VERSION: "v5.0",
       },
     },
+    parameters: [],
   },
   {
     name: "iterm",
@@ -722,6 +767,7 @@ export const entries: EntryCreateParams[] = [
       command: "npx",
       args: ["-y", "iterm-mcp"],
     },
+    parameters: [],
   },
   {
     name: "lightdash",
@@ -740,6 +786,7 @@ export const entries: EntryCreateParams[] = [
         LIGHTDASH_API_URL: "<lightdash-api-url>",
       },
     },
+    parameters: [],
   },
   {
     name: "monday",
@@ -758,20 +805,7 @@ export const entries: EntryCreateParams[] = [
         MONDAY_WORKSPACE_NAME: "<monday-workspace-name>",
       },
     },
-  },
-  {
-    name: "fetch",
-    title: "Fetch",
-    description:
-      "A Model Context Protocol server that provides web content fetching capabilities. This server enables LLMs to retrieve and process content from web pages, converting HTML to markdown for easier consumption.",
-    homepage:
-      "https://github.com/modelcontextprotocol/servers/tree/main/src/fetch",
-    icon: "public/mcp.svg",
-    transport: {
-      type: "stdio",
-      command: "uvx",
-      args: ["mcp-server-fetch"],
-    },
+    parameters: [],
   },
   {
     name: "hackernews",
@@ -785,5 +819,6 @@ export const entries: EntryCreateParams[] = [
       command: "uvx",
       args: ["--from", "git+https://github.com/erithwik/mcp-hn", "mcp-hn"],
     },
+    parameters: [],
   },
 ];

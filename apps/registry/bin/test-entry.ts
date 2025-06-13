@@ -28,35 +28,6 @@ async function main() {
 
 main();
 
-// Postgres
-// Dropbox?
-// Terminal?
-// Stripe
-// Obsidian
-// A browser one
-
-// Gmail
-// Google Calendar
-// Google Drive
-// Google Calendar
-// Google Maps
-
-//
-//
-// DONE
-//
-//
-// Notion
-// Github
-// Hackernews
-// Git - Tools to read, search, and manipulate Git repositories
-// Filesystem - Secure file operations with configurable access controls
-// Fetch - Web content fetching and conversion for efficient LLM usage (--ignore-robots-txt)
-// Memory - Knowledge graph-based persistent memory system
-// Sequential Thinking - Dynamic and reflective problem-solving through thought sequences
-// Time - Time and timezone conversion capabilities
-// Slack
-
 export async function runInteractiveTestForEntry({
   entry,
   gatewayUrl,

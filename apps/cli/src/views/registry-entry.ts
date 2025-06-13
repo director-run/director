@@ -2,12 +2,13 @@ import type {
   EntryGetParams,
   EntryParameter,
 } from "@director.run/registry/db/schema";
+import { whiteBold } from "@director.run/utilities/cli/colors";
 import { makeTable } from "@director.run/utilities/cli/index";
 import chalk from "chalk";
 
 export function printRegistryEntry(entry: EntryGetParams) {
   console.log(`
-${chalk.white.bold(entry.name.toUpperCase())}
+${whiteBold(entry.name.toUpperCase())}
 ${entry.description}
 
 ${chalk.white.underline("homepage:")} ${makeClickableUrl(entry.homepage)} 
@@ -17,7 +18,7 @@ ${chalk.white.underline("readme:")} ${entry.readme ? "yes" : "no"}
 ${chalk.white.underline("enriched:")} ${entry.isEnriched ? "yes" : "no"}
 
 
-${chalk.white.bold("TRANSPORT")}
+${whiteBold("TRANSPORT")}
 ${JSON.stringify(entry.transport, null, 2)}
 ${printParameters(entry.parameters)}
 ${printTool(entry)}
@@ -30,11 +31,11 @@ const printTool = (entry: EntryGetParams) => {
   } else {
     const lines = [];
     lines.push("");
-    lines.push(chalk.white.bold("TOOLS"));
+    lines.push(whiteBold("TOOLS"));
 
     entry.tools.forEach((tool) => {
       lines.push("");
-      lines.push(chalk.white.bold(tool.name));
+      lines.push(whiteBold(tool.name));
       lines.push(tool.description);
       // lines.push(JSON.stringify(tool.inputSchema, null, 2));
     });

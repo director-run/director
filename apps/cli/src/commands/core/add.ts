@@ -6,7 +6,7 @@ import {
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { spinnerWrap } from "@director.run/utilities/cli/loader";
 import type { RegistryEntry } from "@director.run/utilities/schema";
-import { input } from "@inquirer/prompts";
+import { input, password } from "@inquirer/prompts";
 import { gatewayClient, registryClient } from "../../client";
 import { env } from "../../env";
 
@@ -127,8 +127,14 @@ async function promptForParameters(
   }
 
   for (const parameter of entry.parameters) {
-    const answer = await input({ message: parameter.name });
-    answers[parameter.name] = answer;
+    if (parameter.required) {
+      answers[parameter.name] = await password({
+        message: parameter.name,
+        mask: "*",
+      });
+    } else {
+      answers[parameter.name] = await input({ message: parameter.name });
+    }
   }
 
   return answers;

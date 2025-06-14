@@ -1,7 +1,11 @@
 import {} from "@director.run/utilities/error";
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
-import { ProxyTargetSchema, sourceSchema } from "../../db/schema";
+
+import {
+  proxyTargetAttributesSchema,
+  sourceSchema,
+} from "@director.run/utilities/schema";
 import {
   getStreamablePathForProxy,
   restartConnectedClients,
@@ -11,7 +15,7 @@ import { ProxyServerStore } from "../../proxy-server-store";
 const ProxyCreateSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
-  servers: z.array(ProxyTargetSchema).optional(),
+  servers: z.array(proxyTargetAttributesSchema).optional(),
 });
 
 const ProxyUpdateSchema = ProxyCreateSchema.omit({

@@ -1,4 +1,4 @@
-import type { ProxyTransport } from "@director.run/mcp/types";
+import type { ProxyTransport } from "@director.run/utilities/schema";
 import {
   optionalStringSchema,
   requiredStringSchema,

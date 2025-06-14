@@ -1,6 +1,4 @@
 "use client";
-
-import { ProxyAttributes } from "@director.run/gateway/db/schema";
 import { ReactNode, useState } from "react";
 
 import { Separator } from "@/components/ui/separator";
@@ -15,6 +13,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useProxy } from "@/hooks/use-proxy";
+import type { ProxyServerAttributes } from "@director.run/utilities/schema";
 import { UpdateProxyForm } from "./proxy-form";
 
 interface ProxySettingsSheetProps {
@@ -46,7 +45,7 @@ export function ProxySettingsSheet({
           <Separator />
 
           <UpdateProxyForm
-            {...(proxy as ProxyAttributes)}
+            {...(proxy as ProxyServerAttributes)}
             onSuccess={() => setIsOpen(false)}
           />
         </SheetBody>

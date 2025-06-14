@@ -1,4 +1,7 @@
-import { HTTPTransport, STDIOTransport } from "@director.run/mcp/types";
+import type {
+  HTTPTransport,
+  STDIOTransport,
+} from "@director.run/utilities/schema";
 import { ComponentProps } from "react";
 
 import {

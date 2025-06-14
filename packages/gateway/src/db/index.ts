@@ -1,18 +1,21 @@
 import { existsSync } from "node:fs";
 import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
-import slugify from "slugify";
 import {
-  type DatabaseSchema,
-  type ProxyAttributes,
-  databaseSchema,
-} from "./schema";
+  type DatabaseAttributes,
+  type ProxyServerAttributes,
+  databaseAttributesSchema,
+} from "@director.run/utilities/schema";
+import slugify from "slugify";
 
-async function readDB(filePath: string): Promise<DatabaseSchema> {
+async function readDB(filePath: string): Promise<DatabaseAttributes> {
   const store = await readJSONFile(filePath);
-  return databaseSchema.parse(store);
+  return databaseAttributesSchema.parse(store);
 }
 
-async function writeDB(filePath: string, data: DatabaseSchema): Promise<void> {
+async function writeDB(
+  filePath: string,
+  data: DatabaseAttributes,
+): Promise<void> {
   return await writeJSONFile(filePath, data);
 }
 
@@ -35,7 +38,9 @@ export class Database {
     return db;
   }
 
-  async addProxy(proxy: Omit<ProxyAttributes, "id">): Promise<ProxyAttributes> {
+  async addProxy(
+    proxy: Omit<ProxyServerAttributes, "id">,
+  ): Promise<ProxyServerAttributes> {
     const store = await readDB(this.filePath);
 
     const existingProxy = store.proxies.find((p) => p.name === proxy.name);
@@ -58,7 +63,7 @@ export class Database {
     return newProxy;
   }
 
-  async getProxy(id: string): Promise<ProxyAttributes> {
+  async getProxy(id: string): Promise<ProxyServerAttributes> {
     const store = await readDB(this.filePath);
     const proxy = store.proxies.find((p) => p.id === id);
 
@@ -83,8 +88,8 @@ export class Database {
 
   async updateProxy(
     id: string,
-    attributes: Partial<ProxyAttributes>,
-  ): Promise<ProxyAttributes> {
+    attributes: Partial<ProxyServerAttributes>,
+  ): Promise<ProxyServerAttributes> {
     const store = await readDB(this.filePath);
     const proxy = store.proxies.find((p) => p.id === id);
 
@@ -105,7 +110,7 @@ export class Database {
     return proxy;
   }
 
-  async getAll(): Promise<ProxyAttributes[]> {
+  async getAll(): Promise<ProxyServerAttributes[]> {
     const store = await readDB(this.filePath);
     return store.proxies;
   }

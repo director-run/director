@@ -1,6 +1,9 @@
 import { getLogger } from "@director.run/utilities/logger";
+import type {
+  ProxyTargetAttributes,
+  ProxyTransport,
+} from "@director.run/utilities/schema";
 import { SimpleClient } from "./simple-client";
-import type { ProxyTargetAttributes, ProxyTransport } from "./types";
 
 export type ProxyTargetStatus = "connected" | "disconnected" | "error";
 

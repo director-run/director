@@ -1,5 +1,5 @@
 import { makeFooBarServerStdioConfig } from "@director.run/gateway/test/fixtures";
-import type { STDIOTransport } from "@director.run/mcp/types";
+import type { STDIOTransport } from "@director.run/utilities/schema";
 import {
   afterAll,
   beforeAll,

@@ -1,5 +1,9 @@
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
+import type {
+  ProxyServerAttributes,
+  ProxyTargetAttributes,
+} from "@director.run/utilities/schema";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import * as eventsource from "eventsource";
 import _ from "lodash";
@@ -9,7 +13,6 @@ import { setupResourceTemplateHandlers } from "./handlers/resource-templates-han
 import { setupResourceHandlers } from "./handlers/resources-handler";
 import { setupToolHandlers } from "./handlers/tools-handler";
 import { ProxyTarget } from "./proxy-target";
-import type { ProxyServerAttributes, ProxyTargetAttributes } from "./types";
 
 global.EventSource = eventsource.EventSource;
 

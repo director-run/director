@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { SimpleServer } from "../simple-server";
-import { type ProxyTargetAttributes } from "../types";
+import type { ProxyTargetAttributes } from "@director.run/utilities/schema";
+
 export function makeEchoServer() {
   const server = new SimpleServer("echo-server");
   server

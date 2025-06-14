@@ -6,6 +6,7 @@
   "files": {
     "ignore": [
       "node_modules",
+      "test",
       "public",
       "dist",
       "db.test.json",

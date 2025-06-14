@@ -30,7 +30,8 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useRegistryQuery } from "@/hooks/use-registry-query";
-import { Tool } from "@director.run/registry/db/schema";
+import type { Tool } from "@director.run/utilities/schema";
+
 import Link from "next/link";
 
 interface RegistryToolSheetProps {

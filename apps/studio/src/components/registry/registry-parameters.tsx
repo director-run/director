@@ -1,4 +1,3 @@
-import { EntryParameter } from "@director.run/registry/db/schema";
 import { ComponentProps } from "react";
 
 import {
@@ -19,6 +18,7 @@ import {
   ListItemDetails,
   ListItemTitle,
 } from "@/components/ui/list";
+import type { EntryParameter } from "@director.run/utilities/schema";
 import { AsteriskIcon, TextTIcon } from "@phosphor-icons/react";
 
 interface RegistryParametersProps extends ComponentProps<typeof List> {

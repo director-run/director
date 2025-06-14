@@ -3,7 +3,7 @@ import { z } from "zod";
 export const requiredStringSchema = z.string().trim().min(1, "Required");
 export const optionalStringSchema = requiredStringSchema.nullish();
 
-export const parameterSchema = z.object({
+export const entryParameterSchema = z.object({
   name: requiredStringSchema,
   description: requiredStringSchema,
   scope: z.enum(["env", "args"]),
@@ -12,7 +12,7 @@ export const parameterSchema = z.object({
   password: z.boolean().optional(),
 });
 
-export type Parameter = z.infer<typeof parameterSchema>;
+export type EntryParameter = z.infer<typeof entryParameterSchema>;
 
 export const toolSchema = z.object({
   name: requiredStringSchema,
@@ -49,21 +49,12 @@ export const sourceEntrySchema = z.object({
   isConnectable: z.boolean().nullable(),
   lastConnectionAttemptedAt: z.date().nullable(),
   lastConnectionError: optionalStringSchema,
-  homepage: optionalStringSchema,
+  homepage: requiredStringSchema,
   transport: z.any(),
   source_registry: z.any(),
   categories: z.array(z.string()).nullable(),
   tools: z.array(toolSchema).nullable(),
-  parameters: z.array(
-    z.object({
-      name: requiredStringSchema,
-      description: requiredStringSchema,
-      scope: z.enum(["env", "args"]),
-      required: z.boolean(),
-      type: z.enum(["string"]),
-      password: z.boolean().optional(),
-    }),
-  ),
+  parameters: z.array(entryParameterSchema),
   readme: optionalStringSchema,
 });
 

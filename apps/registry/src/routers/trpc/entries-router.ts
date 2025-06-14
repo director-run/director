@@ -1,16 +1,14 @@
-import type { ProxyTransport } from "@director.run/utilities/schema";
 import {
+  type EntryParameter,
+  type ProxyTransport,
+  type SourceEntry,
   optionalStringSchema,
   requiredStringSchema,
+  toolSchema,
 } from "@director.run/utilities/schema";
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
 import { protectedProcedure } from ".";
-import {
-  type EntryGetParams,
-  type EntryParameter,
-  toolSchema,
-} from "../../db/schema";
 import type { Store } from "../../db/store";
 import { enrichEntries } from "../../enrichment/enrich";
 import { entries } from "../../seed/entries";
@@ -24,7 +22,7 @@ const parameterToZodSchema = (parameter: EntryParameter) => {
 };
 
 export function interpolateParameters(
-  entry: Pick<EntryGetParams, "transport" | "parameters">,
+  entry: Pick<SourceEntry, "transport" | "parameters">,
   parameters: Record<string, string>,
 ): ProxyTransport {
   if (entry.transport.type === "stdio") {

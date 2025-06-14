@@ -1,6 +1,5 @@
 "use client";
 
-import { EntryGetParams } from "@director.run/registry/db/schema";
 import { ComponentProps } from "react";
 import { z } from "zod";
 
@@ -22,11 +21,12 @@ import { toast } from "@/components/ui/toast";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { cn } from "@/lib/cn";
 import { trpc } from "@/trpc/client";
+import type { SourceEntry } from "@director.run/utilities/schema";
 import { McpLogo } from "../mcp-logo";
 
 interface GetStartedInstallServerDialogProps
   extends ComponentProps<typeof Dialog> {
-  mcp: EntryGetParams;
+  mcp: SourceEntry;
   proxyId: string;
 }
 

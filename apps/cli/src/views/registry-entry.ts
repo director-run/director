@@ -1,12 +1,12 @@
-import type {
-  EntryGetParams,
-  EntryParameter,
-} from "@director.run/registry/db/schema";
 import { whiteBold } from "@director.run/utilities/cli/colors";
 import { makeTable } from "@director.run/utilities/cli/index";
+import type {
+  EntryParameter,
+  SourceEntry,
+} from "@director.run/utilities/schema";
 import chalk from "chalk";
 
-export function printRegistryEntry(entry: EntryGetParams) {
+export function printRegistryEntry(entry: SourceEntry) {
   console.log(`
 ${whiteBold(entry.name.toUpperCase())}
 ${entry.description}
@@ -25,7 +25,7 @@ ${printTool(entry)}
 `);
 }
 
-const printTool = (entry: EntryGetParams) => {
+const printTool = (entry: SourceEntry) => {
   if (!entry.tools) {
     return "";
   } else {
@@ -48,7 +48,7 @@ const makeClickableUrl = (url: string) => {
   return `\x1b]8;;${url}\x1b\\${url}\x1b]8;;\x1b\\`;
 };
 
-export const printReadme = (entry: EntryGetParams) => {
+export const printReadme = (entry: SourceEntry) => {
   console.log(entry.readme);
 };
 

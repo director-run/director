@@ -1,5 +1,8 @@
 import { makeFooBarServerStdioConfig } from "@director.run/gateway/test/fixtures";
-import type { STDIOTransport } from "@director.run/utilities/schema";
+import type {
+  STDIOTransport,
+  SourceEntry,
+} from "@director.run/utilities/schema";
 import {
   afterAll,
   beforeAll,
@@ -11,7 +14,6 @@ import {
 } from "vitest";
 import { type RegistryClient, createRegistryClient } from "../../client";
 import { env } from "../../config";
-import type { EntryGetParams } from "../../db/schema";
 import { Registry } from "../../registry";
 import { makeTestEntries, makeTestEntry } from "../../test/fixtures/entries";
 
@@ -49,7 +51,7 @@ describe("Entries Router", () => {
     });
 
     describe("update entry", () => {
-      let entry: EntryGetParams;
+      let entry: SourceEntry;
 
       beforeEach(async () => {
         await registry.store.purge();

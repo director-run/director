@@ -18,14 +18,16 @@ import { toast } from "@/components/ui/toast";
 import { useRegistryQuery } from "@/hooks/use-registry-query";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { trpc } from "@/trpc/client";
-import type { EntryGetParams } from "@director.run/registry/db/schema";
-import type { ProxyServerAttributes } from "@director.run/utilities/schema";
+import type {
+  ProxyServerAttributes,
+  SourceEntry,
+} from "@director.run/utilities/schema";
 import { useRouter } from "next/navigation";
 import { ComponentProps } from "react";
 import { z } from "zod";
 
 interface RegistryInstallDialogProps extends ComponentProps<typeof Dialog> {
-  mcp: EntryGetParams;
+  mcp: SourceEntry;
   proxies: ProxyServerAttributes[];
 }
 

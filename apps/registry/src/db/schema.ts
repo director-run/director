@@ -1,4 +1,5 @@
-import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
+import type { EntryParameter, Tool } from "@director.run/utilities/schema";
+import type { InferInsertModel } from "drizzle-orm";
 import {
   boolean,
   jsonb,
@@ -7,7 +8,6 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
-import { z } from "zod";
 
 export const entriesTable = pgTable("entries", {
   // **
@@ -62,37 +62,3 @@ export const entriesTable = pgTable("entries", {
 });
 
 export type EntryCreateParams = InferInsertModel<typeof entriesTable>;
-export type EntryGetParams = InferSelectModel<typeof entriesTable>;
-
-// Only a very specific type of parameter is supported for now
-export type EntryParameter = {
-  name: string;
-  description: string;
-  scope: "env" | "args";
-  required: boolean;
-  type: "string";
-  password?: boolean;
-};
-
-export const toolSchema = z.object({
-  name: z.string(),
-  description: z.string(),
-  inputSchema: z.object({
-    type: z.string(),
-    required: z.array(z.string()).optional(),
-    properties: z
-      .record(
-        z.string(),
-        z.object({
-          type: z.string().optional(),
-          description: z.string().optional(),
-          default: z.unknown().optional(),
-          title: z.string().optional(),
-          anyOf: z.unknown().optional(),
-        }),
-      )
-      .optional(),
-  }),
-});
-
-export type Tool = z.infer<typeof toolSchema>;

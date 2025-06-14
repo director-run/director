@@ -1,6 +1,6 @@
 "use client";
 
-import { Tool } from "@director.run/registry/db/schema";
+import type { Tool } from "@director.run/utilities/schema";
 
 import {
   registryQuerySerializer,

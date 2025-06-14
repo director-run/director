@@ -7,7 +7,6 @@
     "ignore": [
       "node_modules",
       "public",
-      "test",
       "dist",
       "db.test.json",
       "db.json",

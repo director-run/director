@@ -44,7 +44,7 @@ import {
 } from "@/components/ui/section";
 import { toast } from "@/components/ui/toast";
 import { useProxy } from "@/hooks/use-proxy";
-import { SourceEntry } from "@director.run/gateway/db/schema";
+import { RegistryEntry } from "@director.run/utilities/schema";
 import {
   DotsThreeOutlineVerticalIcon,
   GearIcon,
@@ -153,7 +153,7 @@ export default function ProxyPage() {
                 return (
                   <MCPLinkCard
                     key={it.name}
-                    entry={it.source?.entryData as SourceEntry}
+                    entry={it.source?.entryData as RegistryEntry}
                     href={`/${proxy.id}/mcp/${it.name}`}
                   />
                 );

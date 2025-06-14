@@ -8,15 +8,17 @@ import { toast } from "@/components/ui/toast";
 import { useRegistryQuery } from "@/hooks/use-registry-query";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { trpc } from "@/trpc/client";
-import type { ProxyAttributes } from "@director.run/gateway/db/schema";
-import { EntryGetParams } from "@director.run/registry/db/schema";
+import type {
+  ProxyServerAttributes,
+  RegistryEntry,
+} from "@director.run/utilities/schema";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { SimpleMarkdown } from "../ui/markdown";
 
 interface RegistryInstallFormProps {
-  mcp: EntryGetParams;
-  proxies: ProxyAttributes[];
+  mcp: RegistryEntry;
+  proxies: ProxyServerAttributes[];
 }
 
 export function RegistryInstallForm({

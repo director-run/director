@@ -18,7 +18,6 @@ import { ProxyManualDialog } from "@/components/proxies/proxy-manual-dialog";
 import { ProxySettingsSheet } from "@/components/proxies/proxy-settings-sheet";
 import { ProxySkeleton } from "@/components/proxies/proxy-skeleton";
 import { RegistryCommand } from "@/components/registry/registry-command";
-import {} from "@/components/ui/badge";
 import {
   Breadcrumb,
   BreadcrumbItem,

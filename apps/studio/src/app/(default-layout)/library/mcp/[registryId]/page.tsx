@@ -26,6 +26,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import {
   EmptyState,
@@ -33,6 +34,11 @@ import {
   EmptyStateTitle,
 } from "@/components/ui/empty-state";
 import { Markdown } from "@/components/ui/markdown";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Section,
   SectionDescription,
@@ -113,6 +119,20 @@ export default function RegistryEntryPage() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
+
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button className="ml-auto lg:hidden">Add to proxy</Button>
+          </PopoverTrigger>
+          <PopoverContent
+            side="bottom"
+            align="end"
+            sideOffset={8}
+            className="w-sm max-w-[80dvw] rounded-[20px] lg:hidden"
+          >
+            <RegistryInstallForm mcp={entry} proxies={proxiesWithoutMcp} />
+          </PopoverContent>
+        </Popover>
       </LayoutViewHeader>
 
       <LayoutViewContent>
@@ -120,11 +140,7 @@ export default function RegistryEntryPage() {
           <div className="flex flex-row gap-x-8">
             <div className="flex min-w-0 grow flex-col gap-y-12 lg:gap-y-16">
               <Section className="gap-y-8">
-                <McpLogo
-                  src={entry.icon}
-                  fallback={entry.name.charAt(0).toUpperCase()}
-                  className="size-9"
-                />
+                <McpLogo src={entry.icon} className="size-9" />
                 <SectionHeader>
                   <SectionTitle>{entry.title}</SectionTitle>
                   <SectionDescription>{entry.description}</SectionDescription>

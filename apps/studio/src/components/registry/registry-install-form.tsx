@@ -77,7 +77,7 @@ export function RegistryInstallForm({
   return (
     <Form
       form={form}
-      className="gap-y-0 overflow-hidden rounded-xl bg-accent-subtle shadow-[0_3px_9px_0px_rgba(55,50,46,0.07),_0_0_0_0.5px_rgba(55,50,46,0.15)]"
+      className="gap-y-0 overflow-hidden rounded-xl bg-accent-subtle shadow-[0_0_0_0.5px_rgba(55,50,46,0.15)]"
       onSubmit={async (values) => {
         const transport = await transportMutation.mutateAsync({
           entryName: mcp.name,

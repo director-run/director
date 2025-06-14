@@ -20,14 +20,14 @@ import { useZodForm } from "@/hooks/use-zod-form";
 import { trpc } from "@/trpc/client";
 import type {
   ProxyServerAttributes,
-  SourceEntry,
+  RegistryEntry,
 } from "@director.run/utilities/schema";
 import { useRouter } from "next/navigation";
 import { ComponentProps } from "react";
 import { z } from "zod";
 
 interface RegistryInstallDialogProps extends ComponentProps<typeof Dialog> {
-  mcp: SourceEntry;
+  mcp: RegistryEntry;
   proxies: ProxyServerAttributes[];
 }
 

@@ -5,7 +5,7 @@ import {
 } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { spinnerWrap } from "@director.run/utilities/cli/loader";
-import type { SourceEntry } from "@director.run/utilities/schema";
+import type { RegistryEntry } from "@director.run/utilities/schema";
 import { input } from "@inquirer/prompts";
 import { gatewayClient, registryClient } from "../../client";
 import { env } from "../../env";
@@ -118,7 +118,7 @@ async function addServerFromRegistry(proxyId: string, entryName: string) {
 }
 
 async function promptForParameters(
-  entry: SourceEntry,
+  entry: RegistryEntry,
 ): Promise<Record<string, string>> {
   const answers: Record<string, string> = {};
 

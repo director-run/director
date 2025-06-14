@@ -2,10 +2,7 @@ import {} from "@director.run/utilities/error";
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
 
-import {
-  ProxyTargetSourceSchema,
-  proxyTargetAttributesSchema,
-} from "@director.run/utilities/schema";
+import { proxyTargetAttributesSchema } from "@director.run/utilities/schema";
 import {
   getStreamablePathForProxy,
   restartConnectedClients,
@@ -77,22 +74,7 @@ export function createProxyStoreRouter({
       .input(
         z.object({
           proxyId: z.string(),
-          server: z.object({
-            name: z.string(),
-            transport: z.discriminatedUnion("type", [
-              z.object({
-                type: z.literal("stdio"),
-                command: z.string(),
-                args: z.array(z.string()).optional(),
-                env: z.record(z.string(), z.string()).optional(),
-              }),
-              z.object({
-                type: z.literal("http"),
-                url: z.string().url(),
-              }),
-            ]),
-            source: ProxyTargetSourceSchema.optional(),
-          }),
+          server: proxyTargetAttributesSchema,
         }),
       )
       .mutation(async ({ input }) => {

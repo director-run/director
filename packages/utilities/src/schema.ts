@@ -3,6 +3,29 @@ import { z } from "zod";
 export const requiredStringSchema = z.string().trim().min(1, "Required");
 export const optionalStringSchema = requiredStringSchema.nullish();
 
+export const httpTransportSchema = z.object({
+  type: z.literal("http"),
+  url: requiredStringSchema,
+});
+
+export type HTTPTransport = z.infer<typeof httpTransportSchema>;
+
+export const stdioTransportSchema = z.object({
+  type: z.literal("stdio"),
+  command: requiredStringSchema,
+  args: z.array(z.string()).default([]),
+  env: z.record(requiredStringSchema, z.string()).optional(),
+});
+
+export type STDIOTransport = z.infer<typeof stdioTransportSchema>;
+
+export const proxyTransport = z.discriminatedUnion("type", [
+  httpTransportSchema,
+  stdioTransportSchema,
+]);
+
+export type ProxyTransport = z.infer<typeof proxyTransport>;
+
 export const entryParameterSchema = z.object({
   name: requiredStringSchema,
   description: requiredStringSchema,
@@ -43,17 +66,17 @@ export const registryEntrySchema = z.object({
   title: requiredStringSchema,
   description: requiredStringSchema,
   icon: optionalStringSchema,
-  createdAt: z.date().nullable(),
-  isOfficial: z.boolean().nullable(),
-  isEnriched: z.boolean().nullable(),
-  isConnectable: z.boolean().nullable(),
-  lastConnectionAttemptedAt: z.date().nullable(),
+  createdAt: z.coerce.date().nullable().default(null),
+  isOfficial: z.boolean().nullable().default(null),
+  isEnriched: z.boolean().nullable().default(null),
+  isConnectable: z.boolean().nullable().default(null),
+  lastConnectionAttemptedAt: z.coerce.date().nullable().default(null),
   lastConnectionError: optionalStringSchema,
   homepage: requiredStringSchema,
-  transport: z.any(),
+  transport: proxyTransport,
   source_registry: z.any(),
-  categories: z.array(z.string()).nullable(),
-  tools: z.array(toolSchema).nullable(),
+  categories: z.array(z.string()).nullable().default(null),
+  tools: z.array(toolSchema).nullable().default(null),
   parameters: z.array(entryParameterSchema),
   readme: optionalStringSchema,
 });
@@ -67,29 +90,6 @@ export const ProxyTargetSourceSchema = z.object({
 });
 
 export type ProxyTargetSource = z.infer<typeof ProxyTargetSourceSchema>;
-
-export const httpTransportSchema = z.object({
-  type: z.literal("http"),
-  url: requiredStringSchema,
-});
-
-export type HTTPTransport = z.infer<typeof httpTransportSchema>;
-
-export const stdioTransportSchema = z.object({
-  type: z.literal("stdio"),
-  command: requiredStringSchema,
-  args: z.array(z.string()).optional(),
-  env: z.record(requiredStringSchema, z.string()).optional(),
-});
-
-export type STDIOTransport = z.infer<typeof stdioTransportSchema>;
-
-export const proxyTransport = z.discriminatedUnion("type", [
-  httpTransportSchema,
-  stdioTransportSchema,
-]);
-
-export type ProxyTransport = z.infer<typeof proxyTransport>;
 
 export const proxyTargetAttributesSchema = z.object({
   name: requiredStringSchema,

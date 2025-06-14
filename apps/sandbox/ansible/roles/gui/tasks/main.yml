@@ -1,0 +1,15 @@
+---
+- name: Install Xfce4 desktop environment
+  become: true
+  apt:
+    name: xubuntu-desktop
+    state: present
+    update_cache: yes
+
+- name: Install VSCode
+  become: true
+  command: snap install code --classic  
+
+- name: Install Cursor
+  become: true
+  command: snap install cursor --classic 

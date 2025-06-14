@@ -3,8 +3,8 @@ import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
 
 import {
+  ProxyTargetSourceSchema,
   proxyTargetAttributesSchema,
-  sourceSchema,
 } from "@director.run/utilities/schema";
 import {
   getStreamablePathForProxy,
@@ -91,7 +91,7 @@ export function createProxyStoreRouter({
                 url: z.string().url(),
               }),
             ]),
-            source: sourceSchema.optional(),
+            source: ProxyTargetSourceSchema.optional(),
           }),
         }),
       )

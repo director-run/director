@@ -1,7 +1,7 @@
 import {
   type EntryParameter,
   type ProxyTransport,
-  type SourceEntry,
+  type RegistryEntry,
   optionalStringSchema,
   requiredStringSchema,
   toolSchema,
@@ -22,7 +22,7 @@ const parameterToZodSchema = (parameter: EntryParameter) => {
 };
 
 export function interpolateParameters(
-  entry: Pick<SourceEntry, "transport" | "parameters">,
+  entry: Pick<RegistryEntry, "transport" | "parameters">,
   parameters: Record<string, string>,
 ): ProxyTransport {
   if (entry.transport.type === "stdio") {

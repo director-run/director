@@ -5,7 +5,7 @@ import { blue, yellow } from "@director.run/utilities/cli/colors";
 import { makeTable } from "@director.run/utilities/cli/index";
 import { getLogger } from "@director.run/utilities/logger";
 import { openUrl } from "@director.run/utilities/os";
-import type { SourceEntry } from "@director.run/utilities/schema";
+import type { RegistryEntry } from "@director.run/utilities/schema";
 import { joinURL } from "@director.run/utilities/url";
 import { input, select } from "@inquirer/prompts";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
@@ -177,7 +177,7 @@ function printTools(tools: Tool[]) {
 }
 
 async function promptForParameters(
-  entry: Pick<SourceEntry, "parameters">,
+  entry: Pick<RegistryEntry, "parameters">,
 ): Promise<Record<string, string>> {
   const answers: Record<string, string> = {};
 

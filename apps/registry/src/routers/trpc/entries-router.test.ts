@@ -1,7 +1,7 @@
 import { makeFooBarServerStdioConfig } from "@director.run/gateway/test/fixtures";
 import type {
+  RegistryEntry,
   STDIOTransport,
-  SourceEntry,
 } from "@director.run/utilities/schema";
 import {
   afterAll,
@@ -51,7 +51,7 @@ describe("Entries Router", () => {
     });
 
     describe("update entry", () => {
-      let entry: SourceEntry;
+      let entry: RegistryEntry;
 
       beforeEach(async () => {
         await registry.store.purge();

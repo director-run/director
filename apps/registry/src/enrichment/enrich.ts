@@ -1,5 +1,5 @@
 import { getLogger } from "@director.run/utilities/logger";
-import type { SourceEntry } from "@director.run/utilities/schema";
+import type { RegistryEntry } from "@director.run/utilities/schema";
 import { type Store } from "../db/store";
 import { getGithubRawReadmeUrl, isGithubRepo } from "./github";
 
@@ -21,7 +21,7 @@ export async function enrichEntries(store: Store) {
   }
 }
 
-async function enrichEntry(entry: SourceEntry): Promise<SourceEntry> {
+async function enrichEntry(entry: RegistryEntry): Promise<RegistryEntry> {
   logger.info(`enriching ${entry.name}`);
   if (isGithubRepo(entry.homepage)) {
     const response = await fetch(getGithubRawReadmeUrl(entry.homepage));

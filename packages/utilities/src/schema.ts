@@ -37,7 +37,7 @@ export const toolSchema = z.object({
 
 export type Tool = z.infer<typeof toolSchema>;
 
-export const sourceEntrySchema = z.object({
+export const registryEntrySchema = z.object({
   id: requiredStringSchema,
   name: requiredStringSchema,
   title: requiredStringSchema,
@@ -58,15 +58,15 @@ export const sourceEntrySchema = z.object({
   readme: optionalStringSchema,
 });
 
-export type SourceEntry = z.infer<typeof sourceEntrySchema>;
+export type RegistryEntry = z.infer<typeof registryEntrySchema>;
 
-export const sourceSchema = z.object({
+export const ProxyTargetSourceSchema = z.object({
   name: z.literal("registry"),
   entryId: requiredStringSchema,
-  entryData: sourceEntrySchema,
+  entryData: registryEntrySchema,
 });
 
-export type Source = z.infer<typeof sourceSchema>;
+export type ProxyTargetSource = z.infer<typeof ProxyTargetSourceSchema>;
 
 export const httpTransportSchema = z.object({
   type: z.literal("http"),
@@ -94,7 +94,7 @@ export type ProxyTransport = z.infer<typeof proxyTransport>;
 export const proxyTargetAttributesSchema = z.object({
   name: requiredStringSchema,
   transport: proxyTransport,
-  source: sourceSchema.optional(),
+  source: ProxyTargetSourceSchema.optional(),
 });
 
 export type ProxyTargetAttributes = z.infer<typeof proxyTargetAttributesSchema>;

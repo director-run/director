@@ -21,7 +21,7 @@ const parameterToZodSchema = (parameter: EntryParameter) => {
   }
 };
 
-export function interpolateParameters(
+export function substituteParameters(
   entry: Pick<RegistryEntry, "transport" | "parameters">,
   parameters: Record<string, string>,
 ): ProxyTransport {
@@ -109,7 +109,7 @@ export function createEntriesRouter({ store }: { store: Store }) {
       )
       .query(async ({ input }) => {
         const entry = await store.entries.getEntryByName(input.entryName);
-        return interpolateParameters(entry, input.parameters ?? {});
+        return substituteParameters(entry, input.parameters ?? {});
       }),
 
     purge: protectedProcedure.input(z.object({})).mutation(async () => {

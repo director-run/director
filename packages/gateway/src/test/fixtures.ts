@@ -1,9 +1,9 @@
-
-export const makeHTTPTargetConfig = (params: { name: string; url: string }) => ({
+export const makeHTTPTargetConfig = (params: { name: string; url: string; headers?: Record<string, string> }) => ({
   name: params.name,
   transport: {
     type: "http" as const,
     url: params.url,
+    headers: params.headers,
   },
 });
 

@@ -1,5 +1,9 @@
-import { makeFooBarServerStdioConfig } from "@director.run/gateway/test/fixtures";
+import {
+  makeFooBarServerStdioConfig,
+  makeHTTPTargetConfig,
+} from "@director.run/gateway/test/fixtures";
 import type {
+  HTTPTransport,
   RegistryEntry,
   STDIOTransport,
 } from "@director.run/utilities/schema";
@@ -144,6 +148,14 @@ describe("Entries Router", () => {
 
     describe("getTransportForEntry", () => {
       const testServerStdioConfig = makeFooBarServerStdioConfig();
+      const testServerHTTPConfig = makeHTTPTargetConfig({
+        name: "test-server-http",
+        url: "https://example.com",
+        headers: {
+          Authorization: "Bearer <github-personal-access-token>",
+        },
+      });
+
       beforeEach(async () => {
         await registry.store.entries.addEntry({
           name: testServerStdioConfig.name,
@@ -178,6 +190,22 @@ describe("Entries Router", () => {
             },
           ],
         });
+        await registry.store.entries.addEntry({
+          name: testServerHTTPConfig.name,
+          title: testServerHTTPConfig.name,
+          description: "test-http",
+          parameters: [
+            {
+              name: "github-personal-access-token",
+              description: "",
+              required: true,
+              type: "string",
+            },
+          ],
+          homepage: "test",
+          readme: "test",
+          transport: testServerHTTPConfig.transport,
+        });
       });
 
       test("should throw an error if a required parameter is missing", async () => {
@@ -200,7 +228,7 @@ describe("Entries Router", () => {
       });
 
       test("should return the transport for an entry with substituted parameters", async () => {
-        const transport =
+        const stdioTransport =
           await unauthenticatedClient.entries.getTransportForEntry.query({
             entryName: testServerStdioConfig.name,
             parameters: {
@@ -208,15 +236,28 @@ describe("Entries Router", () => {
               "env-param": "env-param-value",
             },
           });
-        expect(transport.type).toEqual("stdio");
-        expect((transport as STDIOTransport).env).toEqual({
+        expect(stdioTransport.type).toEqual("stdio");
+        expect((stdioTransport as STDIOTransport).env).toEqual({
           FIRST_PARAMETER: "env-param-value",
         });
-        expect((transport as STDIOTransport).args).toEqual([
+        expect((stdioTransport as STDIOTransport).args).toEqual([
           ...testServerStdioConfig.transport.args,
           "--noop",
           "arg-param-value",
         ]);
+
+        const httpTransport =
+          await unauthenticatedClient.entries.getTransportForEntry.query({
+            entryName: testServerHTTPConfig.name,
+            parameters: {
+              "github-personal-access-token":
+                "github-personal-access-token-value",
+            },
+          });
+        expect(httpTransport.type).toEqual("http");
+        expect((httpTransport as HTTPTransport).headers).toEqual({
+          Authorization: "Bearer github-personal-access-token-value",
+        });
       });
     });
 

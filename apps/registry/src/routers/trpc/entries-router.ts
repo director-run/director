@@ -60,9 +60,27 @@ export function interpolateParameters(
       command: entry.transport.command,
     };
   } else {
+    const headers = entry.transport.headers ?? {};
+    entry.parameters?.forEach((parameter) => {
+      const paramValue = parameters[parameter.name];
+      const schema = parameterToZodSchema(parameter);
+
+      schema.parse(paramValue);
+
+      if (!paramValue) {
+        // Not a required parameter, so we can skip it
+        // Missing required parameters are handled by the zod schema
+        return;
+      }
+      Object.entries(headers).forEach(([key, value]) => {
+        headers[key] = value.replace(`<${parameter.name}>`, paramValue);
+      });
+    });
+
     return {
       type: "http",
       url: entry.transport.url,
+      headers,
     };
   }
 }

@@ -44,15 +44,13 @@ export function interpolateParameters(
       }
 
       // Substitute the parameter into the transport command
-      if (parameter.scope === "env") {
-        Object.entries(env).forEach(([key, value]) => {
-          env[key] = value.replace(`<${parameter.name}>`, paramValue);
-        });
-      } else if (parameter.scope === "args") {
-        args = args.map((arg) =>
-          arg.replace(`<${parameter.name}>`, paramValue),
-        );
-      }
+      // Replace the parameter in the env object
+      Object.entries(env).forEach(([key, value]) => {
+        env[key] = value.replace(`<${parameter.name}>`, paramValue);
+      });
+
+      // Replace the parameter in the args array
+      args = args.map((arg) => arg.replace(`<${parameter.name}>`, paramValue));
     });
 
     return {

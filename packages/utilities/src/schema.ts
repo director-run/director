@@ -6,6 +6,7 @@ export const optionalStringSchema = requiredStringSchema.nullish();
 export const httpTransportSchema = z.object({
   type: z.literal("http"),
   url: requiredStringSchema,
+  headers: z.record(requiredStringSchema, z.string()).optional(),
 });
 
 export type HTTPTransport = z.infer<typeof httpTransportSchema>;
@@ -29,7 +30,6 @@ export type ProxyTransport = z.infer<typeof proxyTransport>;
 export const entryParameterSchema = z.object({
   name: requiredStringSchema,
   description: requiredStringSchema,
-  scope: z.enum(["env", "args"]),
   required: z.boolean(),
   type: z.enum(["string"]),
   password: z.boolean().optional(),

@@ -1,4 +1,8 @@
-import type { EntryParameter, Tool } from "@director.run/utilities/schema";
+import type {
+  EntryParameter,
+  ProxyTransport,
+  Tool,
+} from "@director.run/utilities/schema";
 import type { InferInsertModel } from "drizzle-orm";
 import {
   boolean,
@@ -30,18 +34,7 @@ export const entriesTable = pgTable("entries", {
   // **
   // ** Transport
   // **
-  transport: jsonb("transport").notNull().$type<
-    | {
-        type: "stdio";
-        command: string;
-        args: string[];
-        env?: Record<string, string>;
-      }
-    | {
-        type: "http";
-        url: string;
-      }
-  >(),
+  transport: jsonb("transport").notNull().$type<ProxyTransport>(),
 
   // **
   // ** Metadata

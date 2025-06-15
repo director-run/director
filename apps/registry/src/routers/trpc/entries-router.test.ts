@@ -167,14 +167,12 @@ describe("Entries Router", () => {
             {
               name: "arg-param",
               description: "",
-              scope: "args",
               required: true,
               type: "string",
             },
             {
               name: "env-param",
               description: "",
-              scope: "env",
               required: true,
               type: "string",
             },

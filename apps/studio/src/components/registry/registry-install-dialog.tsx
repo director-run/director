@@ -139,7 +139,7 @@ export function RegistryInstallDialog({
             </SelectNativeField>
             {parameters.map((param) => (
               <InputField
-                key={`${param.name}/${param.scope}`}
+                key={param.name}
                 name={`parameters.${param.name}`}
                 label={param.name}
               />

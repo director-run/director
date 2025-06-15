@@ -131,7 +131,7 @@ function GetStartedInstallForm({
           {parameters.map((param) => (
             <InputField
               type={param.password ? "password" : "text"}
-              key={`${param.name}/${param.scope}`}
+              key={param.name}
               name={`parameters.${param.name}`}
               label={param.name}
               helperLabel={!param.required ? "Optional" : undefined}

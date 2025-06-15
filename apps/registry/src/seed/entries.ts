@@ -21,17 +21,15 @@ export const entries: EntryCreateParams[] = [
     name: "github",
     title: "GitHub",
     description:
-      "Connect to the GitHub API, enabling file operations, repository management, search functionality, and more.",
-    isOfficial: false,
+      "Provides seamless integration with GitHub APIs, enabling advanced automation and interaction capabilities for developers and tools.",
+    isOfficial: true,
     icon: "https://registry.director.run/github.svg",
-    homepage:
-      "https://github.com/modelcontextprotocol/servers-archived/tree/main/src/github",
+    homepage: "https://github.com/github/github-mcp-server",
     transport: {
-      type: "stdio",
-      command: "npx",
-      args: ["-y", "@modelcontextprotocol/server-github"],
-      env: {
-        GITHUB_PERSONAL_ACCESS_TOKEN: "<github-personal-access-token>",
+      type: "http",
+      url: "https://api.githubcopilot.com/mcp/",
+      headers: {
+        Authorization: "Bearer <github-personal-access-token>",
       },
     },
     parameters: [
@@ -39,7 +37,6 @@ export const entries: EntryCreateParams[] = [
         name: "github-personal-access-token",
         description:
           "Get a personal access token from [GitHub Settings](https://github.com/settings/tokens)",
-        scope: "env",
         type: "string",
         password: true,
         required: true,
@@ -68,7 +65,6 @@ export const entries: EntryCreateParams[] = [
         name: "notion-bearer-token",
         description:
           "Get a bearer token from [Notion Settings](https://www.notion.so/profile/integrations)",
-        scope: "env",
         type: "string",
         required: true,
         password: true,
@@ -127,7 +123,6 @@ export const entries: EntryCreateParams[] = [
         name: "fs-allowed-path",
         description:
           "The path to the directory to allow filesystem operations in.",
-        scope: "args",
         type: "string",
         required: true,
       },
@@ -216,7 +211,6 @@ export const entries: EntryCreateParams[] = [
       {
         name: "slack-bot-token",
         description: "Slack Bot Token (e.g. 'xoxb-1234..').",
-        scope: "env",
         type: "string",
         required: true,
         password: true,
@@ -224,7 +218,6 @@ export const entries: EntryCreateParams[] = [
       {
         name: "slack-team-id",
         description: "Slack Team ID. (e.g. 'T01234567')",
-        scope: "env",
         type: "string",
         required: true,
       },
@@ -232,7 +225,6 @@ export const entries: EntryCreateParams[] = [
         name: "slack-channel-ids",
         description:
           "Channel IDs, comma separated. (e.g. 'C01234567, C76543210')",
-        scope: "env",
         type: "string",
         required: true,
       },

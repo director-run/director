@@ -38,6 +38,12 @@ export function RegistryInstallForm({
   const transportMutation = trpc.registry.getTransportForEntry.useMutation();
 
   const installMutation = trpc.store.addServer.useMutation({
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+      });
+    },
     onSuccess: (data) => {
       utils.store.get.invalidate({ proxyId: data.id });
       utils.store.getAll.invalidate();

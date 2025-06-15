@@ -2,8 +2,10 @@ import { getLogger } from "@director.run/utilities/logger";
 import {
   CallToolRequestSchema,
   CompatibilityCallToolResultSchema,
+  ErrorCode,
   ListToolsRequestSchema,
   ListToolsResultSchema,
+  McpError,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import type { ProxyServer } from "../proxy-server";
@@ -82,6 +84,20 @@ export function setupToolHandlers(
         CompatibilityCallToolResultSchema,
       );
     } catch (error) {
+      if (
+        error instanceof McpError &&
+        error.code === ErrorCode.MethodNotFound
+      ) {
+        logger.warn(
+          {
+            clientName: clientForTool.name,
+            toolName: name,
+            proxyId: server.id,
+          },
+          "Target does not support tools/call",
+        );
+        throw error;
+      }
       logger.error(
         {
           error,

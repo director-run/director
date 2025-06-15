@@ -1,9 +1,11 @@
 import { getLogger } from "@director.run/utilities/logger";
 import {
+  ErrorCode,
   GetPromptRequestSchema,
   GetPromptResultSchema,
   ListPromptsRequestSchema,
   ListPromptsResultSchema,
+  McpError,
   type Prompt,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { ProxyServer } from "../proxy-server";
@@ -87,15 +89,29 @@ export function setupPromptHandlers(
           allPrompts.push(...promptsWithSource);
         }
       } catch (error) {
-        logger.warn(
-          {
-            error,
-            clientName: connectedClient.name,
-            proxyId: server.id,
-          },
-          "Could not fetch prompts from client. Continuing with other clients.",
-        );
-        continue;
+        if (
+          error instanceof McpError &&
+          error.code === ErrorCode.MethodNotFound
+        ) {
+          logger.warn(
+            {
+              clientName: connectedClient.name,
+              proxyId: server.id,
+            },
+            "Target does not support prompts/list",
+          );
+          continue;
+        } else {
+          logger.warn(
+            {
+              error,
+              clientName: connectedClient.name,
+              proxyId: server.id,
+            },
+            "Could not fetch prompts from client. Continuing with other clients.",
+          );
+          continue;
+        }
       }
     }
 

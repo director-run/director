@@ -1,7 +1,9 @@
 import { getLogger } from "@director.run/utilities/logger";
 import {
+  ErrorCode,
   ListResourcesRequestSchema,
   ListResourcesResultSchema,
+  McpError,
   ReadResourceRequestSchema,
   ReadResourceResultSchema,
   type Resource,
@@ -46,15 +48,27 @@ export function setupResourceHandlers(
           allResources.push(...resourcesWithSource);
         }
       } catch (error) {
-        logger.warn(
-          {
-            error,
-            clientName: connectedClient.name,
-            proxyId: server.id,
-          },
-          "Could not fetch resources from client. Continuing with other clients.",
-        );
-        continue;
+        if (
+          error instanceof McpError &&
+          error.code === ErrorCode.MethodNotFound
+        ) {
+          logger.warn(
+            {
+              clientName: connectedClient.name,
+              proxyId: server.id,
+            },
+            "Target does not support resources/list",
+          );
+        } else {
+          logger.warn(
+            {
+              error,
+              clientName: connectedClient.name,
+              proxyId: server.id,
+            },
+            "Could not fetch resources from client. Continuing with other clients.",
+          );
+        }
       }
     }
 
@@ -85,6 +99,19 @@ export function setupResourceHandlers(
         ReadResourceResultSchema,
       );
     } catch (error) {
+      if (
+        error instanceof McpError &&
+        error.code === ErrorCode.MethodNotFound
+      ) {
+        logger.warn(
+          {
+            clientName: clientForResource.name,
+            uri,
+            proxyId: server.id,
+          },
+          "Target does not support resources/read",
+        );
+      }
       logger.error(
         {
           error,

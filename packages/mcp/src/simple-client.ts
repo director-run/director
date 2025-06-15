@@ -40,12 +40,24 @@ export class SimpleClient extends Client {
     };
   }
 
-  public async connectToHTTP(url: string) {
+  public async connectToHTTP(url: string, headers?: Record<string, string>) {
     try {
-      await this.connect(new StreamableHTTPClientTransport(new URL(url)));
+      await this.connect(
+        new StreamableHTTPClientTransport(new URL(url), {
+          requestInit: {
+            headers,
+          },
+        }),
+      );
     } catch (e) {
       try {
-        await this.connect(new SSEClientTransport(new URL(url)));
+        await this.connect(
+          new SSEClientTransport(new URL(url), {
+            requestInit: {
+              headers,
+            },
+          }),
+        );
       } catch (e) {
         throw new AppError(
           ErrorCode.CONNECTION_REFUSED,
@@ -53,6 +65,7 @@ export class SimpleClient extends Client {
           {
             targetName: this.name,
             url,
+            error: e,
           },
         );
       }

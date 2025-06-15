@@ -31,7 +31,7 @@ export class ProxyTarget extends SimpleClient {
       });
 
       if (transport.type === "http") {
-        await this.connectToHTTP(transport.url);
+        await this.connectToHTTP(transport.url, transport.headers);
       } else {
         await this.connectToStdio(transport.command, transport.args ?? [], {
           ...(process.env as Record<string, string>),

@@ -1,5 +1,4 @@
 import { getLogger } from "@director.run/utilities/logger";
-import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import {
   CallToolRequestSchema,
   CompatibilityCallToolResultSchema,
@@ -7,12 +6,13 @@ import {
   ListToolsResultSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
+import type { ProxyServer } from "../proxy-server";
 import type { SimpleClient } from "../simple-client";
 
 const logger = getLogger("proxy/handlers/toolsHandler");
 
 export function setupToolHandlers(
-  server: Server,
+  server: ProxyServer,
   connectedClients: SimpleClient[],
 ) {
   const toolToClientMap = new Map<string, SimpleClient>();
@@ -49,6 +49,7 @@ export function setupToolHandlers(
           {
             error,
             clientName: connectedClient.name,
+            proxyId: server.id,
           },
           "Could not fetch tools from client. Continuing with other clients.",
         );
@@ -86,6 +87,7 @@ export function setupToolHandlers(
           error,
           clientName: clientForTool.name,
           toolName: name,
+          proxyId: server.id,
         },
         "Error calling tool on client",
       );

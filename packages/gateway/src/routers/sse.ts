@@ -7,7 +7,7 @@ import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
 import type { ProxyServerStore } from "../proxy-server-store";
 
-const logger = getLogger("mcp");
+const logger = getLogger("mcp/sse");
 
 export const createSSERouter = ({
   proxyStore,
@@ -72,6 +72,7 @@ export const createSSERouter = ({
         proxyId: proxy.id,
         sessionId,
         method: body.method,
+        params: body.params,
       });
 
       const transport = transports.get(sessionId);

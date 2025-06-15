@@ -1,5 +1,4 @@
 import { getLogger } from "@director.run/utilities/logger";
-import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import {
   GetPromptRequestSchema,
   GetPromptResultSchema,
@@ -7,12 +6,13 @@ import {
   ListPromptsResultSchema,
   type Prompt,
 } from "@modelcontextprotocol/sdk/types.js";
+import type { ProxyServer } from "../proxy-server";
 import type { SimpleClient } from "../simple-client";
 
 const logger = getLogger("proxy/handlers/promptsHandler");
 
 export function setupPromptHandlers(
-  server: Server,
+  server: ProxyServer,
   connectedClients: SimpleClient[],
 ) {
   const promptToClientMap = new Map<string, SimpleClient>();
@@ -48,6 +48,7 @@ export function setupPromptHandlers(
           error,
           clientName: clientForPrompt.name,
           promptName: name,
+          proxyId: server.id,
         },
         "Error getting prompt from client",
       );
@@ -90,6 +91,7 @@ export function setupPromptHandlers(
           {
             error,
             clientName: connectedClient.name,
+            proxyId: server.id,
           },
           "Could not fetch prompts from client. Continuing with other clients.",
         );

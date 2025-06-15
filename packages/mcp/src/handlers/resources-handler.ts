@@ -1,5 +1,4 @@
 import { getLogger } from "@director.run/utilities/logger";
-import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import {
   ListResourcesRequestSchema,
   ListResourcesResultSchema,
@@ -7,12 +6,13 @@ import {
   ReadResourceResultSchema,
   type Resource,
 } from "@modelcontextprotocol/sdk/types.js";
+import type { ProxyServer } from "../proxy-server";
 import type { SimpleClient } from "../simple-client";
 
 const logger = getLogger("proxy/handlers/resourcesHandler");
 
 export function setupResourceHandlers(
-  server: Server,
+  server: ProxyServer,
   connectedClients: SimpleClient[],
 ) {
   const resourceToClientMap = new Map<string, SimpleClient>();
@@ -50,6 +50,7 @@ export function setupResourceHandlers(
           {
             error,
             clientName: connectedClient.name,
+            proxyId: server.id,
           },
           "Could not fetch resources from client. Continuing with other clients.",
         );
@@ -89,6 +90,7 @@ export function setupResourceHandlers(
           error,
           clientName: clientForResource.name,
           uri,
+          proxyId: server.id,
         },
         "Error reading resource from client",
       );

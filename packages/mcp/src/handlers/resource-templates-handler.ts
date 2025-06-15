@@ -1,13 +1,16 @@
-import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { getLogger } from "@director.run/utilities/logger";
 import {
   ListResourceTemplatesRequestSchema,
   ListResourceTemplatesResultSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { ResourceTemplate } from "@modelcontextprotocol/sdk/types.js";
+import type { ProxyServer } from "../proxy-server";
 import type { SimpleClient } from "../simple-client";
 
+const logger = getLogger("proxy/handlers/resourceTemplatesHandler");
+
 export function setupResourceTemplateHandlers(
-  server: Server,
+  server: ProxyServer,
   connectedClients: SimpleClient[],
 ) {
   // List Resource Templates Handler
@@ -44,10 +47,15 @@ export function setupResourceTemplateHandlers(
             allTemplates.push(...templatesWithSource);
           }
         } catch (error) {
-          console.error(
-            `Error fetching resource templates from ${connectedClient.name}:`,
-            error,
+          logger.error(
+            {
+              error,
+              clientName: connectedClient.name,
+              proxyId: server.id,
+            },
+            "Error fetching resource templates from client",
           );
+          continue;
         }
       }
 

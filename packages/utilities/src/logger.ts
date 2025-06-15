@@ -15,8 +15,12 @@ const logger = pino(
     level: LOG_LEVEL.toLowerCase(),
     messageKey: "message",
     timestamp: true,
-    // TODO: redact sensitive data
-    // redact: [""],
+    redact: [
+      "transport.headers.Authorization",
+      "transport.headers.authorization",
+      "transport.env.OPENAPI_MCP_HEADERS",
+      "transport.env.SLACK_BOT_TOKEN",
+    ],
     serializers: {
       error: (error: Error) => {
         if (isAppError(error)) {

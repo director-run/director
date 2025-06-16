@@ -82,7 +82,6 @@ export function ProxyInstallers({ proxyId }: ProxyInstallersProps) {
   });
 
   const availableClients = listClientsQuery.data ?? [];
-
   return (
     <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-3">
       {clients.map((it) => {
@@ -129,7 +128,7 @@ export function ProxyInstallers({ proxyId }: ProxyInstallersProps) {
         }
 
         const isAvailable = availableClients.some(
-          (client) => client.name === it.id && client.present,
+          (client) => client.name === it.id && client.installed,
         );
 
         return (

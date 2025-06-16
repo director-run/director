@@ -73,7 +73,7 @@ export function GetStartedInstallers({ proxyId }: GetStartedInstallersProps) {
       >
         {clients.map((it) => {
           const isAvailable = availableClients.some(
-            (client) => client.name === it.id && client.present,
+            (client) => client.name === it.id && client.installed,
           );
 
           return (

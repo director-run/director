@@ -1,6 +1,11 @@
 "use client";
 
+import type { RegistryEntry } from "@director.run/utilities/schema";
+import { useEffect, useState } from "react";
+
+import { useConnectionStatus } from "@/components/connect/connection-status-provider";
 import { GetStartedCompleteDialog } from "@/components/get-started/get-started-complete-dialog";
+import { GetStartedDependencies } from "@/components/get-started/get-started-dependencies";
 import { GetStartedInstallServerDialog } from "@/components/get-started/get-started-install-server-dialog";
 import { GetStartedInstallers } from "@/components/get-started/get-started-installers";
 import {
@@ -9,7 +14,6 @@ import {
 } from "@/components/get-started/get-started-list";
 import { GetStartedProxyForm } from "@/components/get-started/get-started-proxy-form";
 import { McpLogo } from "@/components/mcp-logo";
-
 import { Container } from "@/components/ui/container";
 import { EmptyState, EmptyStateTitle } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
@@ -26,8 +30,6 @@ import {
   SectionTitle,
 } from "@/components/ui/section";
 import { trpc } from "@/trpc/client";
-import type { RegistryEntry } from "@director.run/utilities/schema";
-import { useEffect, useState } from "react";
 
 export default function GetStartedPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -39,6 +41,8 @@ export default function GetStartedPage() {
       pageSize: 1000,
     }),
   ]);
+
+  const { dependencies } = useConnectionStatus();
 
   const installersQuery = trpc.installer.byProxy.list.useQuery(
     {
@@ -78,17 +82,27 @@ export default function GetStartedPage() {
   const isInstalled = !!Object.values(installers).filter((it) => Boolean(it))
     .length;
 
-  const createStepStatus = hasProxy ? "completed" : "in-progress";
-  const addStepStatus = !currentProxy
+  const hasMissingDependencies = dependencies.some(
+    (dependency) => !dependency.installed,
+  );
+
+  const createStepStatus = hasMissingDependencies
     ? "not-started"
-    : currentProxy.servers.length > 0
+    : hasProxy
       ? "completed"
       : "in-progress";
-  const connectStepStatus = isInstalled
-    ? "completed"
-    : addStepStatus === "completed" && installersQuery.isFetched
-      ? "in-progress"
-      : "not-started";
+  const addStepStatus =
+    createStepStatus !== "completed" || !currentProxy
+      ? "not-started"
+      : currentProxy.servers.length > 0
+        ? "completed"
+        : "in-progress";
+  const connectStepStatus =
+    addStepStatus === "completed" && isInstalled
+      ? "completed"
+      : addStepStatus === "completed" && installersQuery.isFetched
+        ? "in-progress"
+        : "not-started";
 
   const isCompleted =
     createStepStatus === "completed" &&
@@ -118,9 +132,18 @@ export default function GetStartedPage() {
 
         <GetStartedList>
           <GetStartedListItem
+            status={hasMissingDependencies ? "in-progress" : "completed"}
+            open={hasMissingDependencies}
+            title="Install dependencies"
+          >
+            <div className="p-4">
+              <GetStartedDependencies />
+            </div>
+          </GetStartedListItem>
+          <GetStartedListItem
             status={createStepStatus}
             title="Create an MCP Proxy Server"
-            disabled={hasProxy}
+            disabled={hasMissingDependencies || hasProxy}
             open={createStepStatus === "in-progress"}
           >
             <div className="py-4 pr-4 pl-11.5">

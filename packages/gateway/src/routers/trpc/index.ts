@@ -1,6 +1,7 @@
 import { t } from "@director.run/utilities/trpc";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { ProxyServerStore } from "../../proxy-server-store";
+import { getStatus } from "../../status";
 import { createInstallerRouter } from "./installer-router";
 import { createRegistryRouter } from "./registry-router";
 import { createProxyStoreRouter } from "./store-router";
@@ -13,9 +14,7 @@ export function createAppRouter({
   registryURL: string;
 }) {
   return t.router({
-    health: t.procedure.query(() => ({
-      status: "ok",
-    })),
+    health: t.procedure.query(() => getStatus()),
     store: createProxyStoreRouter({ proxyStore }),
     installer: createInstallerRouter({ proxyStore }),
     registry: createRegistryRouter({ registryURL, proxyStore }),

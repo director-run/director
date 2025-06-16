@@ -11,6 +11,16 @@ import { ConnectionLostDialog } from "./connection-lost-dialog";
 const [useContext, ContextProvider] = createCtx<{
   connected: boolean;
   lostConnection: boolean;
+  dependencies: {
+    name: string;
+    installed: boolean;
+  }[];
+  clients: {
+    name: string;
+    installed: boolean;
+    configExists: boolean;
+    configPath: string;
+  }[];
 }>("connectionStatus");
 
 export function ConnectionStatusProvider({
@@ -34,7 +44,7 @@ export function ConnectionStatusProvider({
   );
 
   useEffect(() => {
-    if (data?.status === "ok") {
+    if (data) {
       setConnected(true);
     } else {
       setConnected(false);
@@ -57,7 +67,14 @@ export function ConnectionStatusProvider({
   }, [isRefetchError, connected, isFetchedAfterMount]);
 
   return (
-    <ContextProvider value={{ connected, lostConnection }}>
+    <ContextProvider
+      value={{
+        connected,
+        lostConnection,
+        dependencies: data?.dependencies ?? [],
+        clients: data?.clients ?? [],
+      }}
+    >
       {connected ? (
         <>
           {children}

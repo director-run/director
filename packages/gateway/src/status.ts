@@ -11,7 +11,7 @@ export async function getStatus() {
       },
       {
         name: "uvx",
-        installed: !isCommandInPath("uvx"),
+        installed: isCommandInPath("uvx"),
       },
     ],
     clients: await allClientStatuses(),

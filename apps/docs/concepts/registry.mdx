@@ -3,7 +3,7 @@ title: Registry
 icon: book
 ---
 
-The registry is a collection of servers that are available to be used in the Gateway. It is fully [open source](https://github.com/theworkingcompany/director/tree/main/apps/registry) and does not require authentication. We are currently prioritising other parts of director until the official [MCP Registry](https://github.com/modelcontextprotocol/registry) matures.
+The registry is a collection of servers that are available to be used in the Gateway. It is fully [open source](https://github.com/director-run/director/tree/main/apps/registry) and does not require authentication. We are currently prioritising other parts of director until the official [MCP Registry](https://github.com/modelcontextprotocol/registry) matures.
 
 ## Accessing the Registry
 
@@ -20,7 +20,7 @@ director add my-proxy --entry google-drive
 
 ## Adding a server to the Registry
 
-We re-populate the registry on a regular basis from the [seed file](https://github.com/theworkingcompany/director/tree/main/apps/registry/src/seed/entries.ts). If you'd like to add a new entry, please add it to the file and open a PR. Here's an example of an entry:
+We re-populate the registry on a regular basis from the [seed file](https://github.com/director-run/director/tree/main/apps/registry/src/seed/entries.ts). If you'd like to add a new entry, please add it to the file and open a PR. Here's an example of an entry:
 
 ```js
   {

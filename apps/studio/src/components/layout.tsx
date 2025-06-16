@@ -148,7 +148,7 @@ export function SidebarContent() {
         </MenuItem>
         <MenuItem asChild>
           <Link
-            href="https://github.com/theworkingcompany/director/issues/new"
+            href="https://github.com/director-run/director/issues/new"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -160,7 +160,7 @@ export function SidebarContent() {
         </MenuItem>
         <MenuItem asChild>
           <Link
-            href="https://github.com/theworkingcompany/director"
+            href="https://github.com/director-run/director"
             target="_blank"
             rel="noopener noreferrer"
           >

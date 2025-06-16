@@ -71,7 +71,7 @@ export const siteConfig: SiteConfig = {
     {
       variant: "ghost",
       label: "Github",
-      href: "https://github.com/theworkingcompany/director",
+      href: "https://github.com/director-run/director",
       mobile: false,
     },
     {
@@ -141,21 +141,21 @@ export const siteConfig: SiteConfig = {
       description:
         "A local-first proxy that connects your models to any MCP server through a unified integration point.",
       icon: DoorOpenIcon,
-      href: "https://github.com/theworkingcompany/director/tree/main/packages/gateway/README.md",
+      href: "https://github.com/director-run/director/tree/main/packages/gateway/README.md",
     },
     {
       title: "Studio",
       description:
         "A web interface for managing proxies, MCP servers, and connections with ease.",
       icon: AppWindowIcon,
-      href: "https://github.com/theworkingcompany/director/blob/main/apps/studio/README.md",
+      href: "https://github.com/director-run/director/blob/main/apps/studio/README.md",
     },
     {
       title: "Registry",
       description:
         "A secure directory for discovering, browsing, and installing MCP servers into your environment.",
       icon: ListMagnifyingGlassIcon,
-      href: "https://github.com/theworkingcompany/director/blob/main/apps/registry/README.md",
+      href: "https://github.com/director-run/director/blob/main/apps/registry/README.md",
     },
   ],
   members: [

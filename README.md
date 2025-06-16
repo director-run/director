@@ -7,9 +7,9 @@
 
 <div align="center">
 
-[![license](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/theworkingcompany/director/blob/main/LICENSE)
-[![ci](https://github.com/theworkingcompany/director/workflows/CI/badge.svg)](https://github.com/theworkingcompany/director/actions/workflows/ci.yml)
-[![Release](https://github.com/theworkingcompany/director/workflows/Release/badge.svg)](https://github.com/theworkingcompany/director/actions/workflows/release.yml)
+[![license](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/director-run/director/blob/main/LICENSE)
+[![ci](https://github.com/director-run/director/workflows/CI/badge.svg)](https://github.com/director-run/director/actions/workflows/ci.yml)
+[![Release](https://github.com/director-run/director/workflows/Release/badge.svg)](https://github.com/director-run/director/actions/workflows/release.yml)
 [![npm](https://img.shields.io/npm/v/@director.run/cli.svg)](https://www.npmjs.com/package/@director.run/cli)
 
 </div>

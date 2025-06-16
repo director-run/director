@@ -21,7 +21,7 @@ brew install sshpass
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/theworkingcompany/director.git
+git clone https://github.com/director-run/director.git
 cd apps/sandbox
 ```
 

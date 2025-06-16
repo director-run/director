@@ -1,5 +1,5 @@
 # Director development environment
-# If you are looking for the production docker image, please see: https://github.com/theworkingcompany/director-docker
+# If you are looking for the production docker image, please see: https://github.com/director-run/director-docker
 name: director-development
 
 services:

@@ -24,21 +24,31 @@ We re-populate the registry on a regular basis from the [seed file](https://gith
 
 ```js
   {
-    name: "google-drive",
-    title: "Google Drive",
+    name: "notion",
+    title: "Notion",
     description:
-      "This MCP server integrates with Google Drive to allow listing, reading, and searching over files.",
+      "Connect to Notion API, enabling advanced automation and interaction capabilities for developers and tools.",
     isOfficial: true,
-    icon: "public/drive.svg",
-    homepage:
-      "https://github.com/modelcontextprotocol/servers/tree/main/src/gdrive",
+    icon: "https://registry.director.run/notion.svg",
+    homepage: "https://github.com/makenotion/notion-mcp-server",
     transport: {
       type: "stdio",
       command: "npx",
-      args: ["-y", "@modelcontextprotocol/server-gdrive"],
+      args: ["-y", "@notionhq/notion-mcp-server"],
       env: {
-        GDRIVE_CREDENTIALS_PATH: "<gdrive-server-credentials-path>", // user will be prompted for the value on add
+        OPENAPI_MCP_HEADERS:
+          '{"Authorization": "Bearer <notion-bearer-token>", "Notion-Version": "2022-06-28" }',
       },
     },
+    parameters: [
+      {
+        name: "notion-bearer-token",
+        description:
+          "Get a bearer token from [Notion Settings](https://www.notion.so/profile/integrations)",
+        type: "string",
+        required: true,
+        password: true,
+      },
+    ],
   }
 ```

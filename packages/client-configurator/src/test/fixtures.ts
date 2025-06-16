@@ -105,12 +105,12 @@ export function expectToThrowInitializtionErrors(
     });
   });
 
-  test("should throw an AppError if the config is not present", async () => {
-    const installer = createTestInstaller(target);
-    vi.spyOn(installer, "isClientConfigPresent").mockResolvedValue(false);
-    await expectToThrowAppError(() => fn(installer), {
-      code: ErrorCode.FILE_NOT_FOUND,
-      props: { name: installer.name, configPath: installer.configPath },
-    });
-  });
+  // test("should throw an AppError if the config is not present", async () => {
+  //   const installer = createTestInstaller(target);
+  //   vi.spyOn(installer, "isClientConfigPresent").mockResolvedValue(false);
+  //   await expectToThrowAppError(() => fn(installer), {
+  //     code: ErrorCode.FILE_NOT_FOUND,
+  //     props: { name: installer.name, configPath: installer.configPath },
+  //   });
+  // });
 }

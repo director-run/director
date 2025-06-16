@@ -4,14 +4,16 @@ import { isCommandInPath } from "@director.run/utilities/os";
 export async function getStatus() {
   return {
     platform: process.platform,
-    dependencies: {
-      npx: {
+    dependencies: [
+      {
+        name: "npx",
         installed: isCommandInPath("npx"),
       },
-      uvx: {
-        installed: isCommandInPath("uvx"),
+      {
+        name: "uvx",
+        installed: !isCommandInPath("uvx"),
       },
-    },
+    ],
     clients: await allClientStatuses(),
   };
 }

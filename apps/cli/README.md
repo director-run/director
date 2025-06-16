@@ -1,5 +1,5 @@
 <h1 align="center">Director</h1>
-<p align="center">MCP middleware that runs locally, or in the cloud.</p>
+<p align="center">The easiest way to connect to any MCP server.</p>
 
 <p align="center"><code>npx @director.run/cli@latest quickstart</code></p>
 

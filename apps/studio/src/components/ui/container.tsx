@@ -13,6 +13,11 @@ const containerVariants = cva(
   {
     variants: {
       size: {
+        xs: [
+          "grid-cols-[1fr_min(24rem,_calc(100%-1rem*2))_1fr]",
+          "md:grid-cols-[1fr_min(24rem,_calc(100%-2rem*2))_1fr]",
+          "lg:grid-cols-[1fr_min(24rem,_calc(100%-3rem*2))_1fr]",
+        ],
         sm: [
           "grid-cols-[1fr_min(30rem,_calc(100%-1rem*2))_1fr]",
           "md:grid-cols-[1fr_min(30rem,_calc(100%-2rem*2))_1fr]",

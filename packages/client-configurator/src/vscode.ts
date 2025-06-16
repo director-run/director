@@ -150,6 +150,13 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
     await writeJSONFile(this.configPath, newConfig);
     this.config = newConfig;
   }
+
+  public async initConfig() {
+    this.logger.info(`initializing vscode config`);
+    await writeJSONFile(this.configPath, {
+      mcp: { servers: {} },
+    });
+  }
 }
 
 export type VSCodeConfig = {

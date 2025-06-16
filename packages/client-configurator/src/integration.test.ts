@@ -133,6 +133,9 @@ import type { VSCodeConfig } from "./vscode";
         installer.reload("any"),
       );
     });
+    describe("initConfig", () => {
+      test.skip("should initialize the config", async () => {});
+    });
   });
 });
 

@@ -35,14 +35,15 @@ export abstract class AbstractConfigurator<T> {
       );
     }
     if (!(await this.isClientConfigPresent())) {
-      throw new AppError(
-        ErrorCode.FILE_NOT_FOUND,
-        `${this.name} config file not found at ${this.configPath}`,
-        {
-          name: this.name,
-          configPath: this.configPath,
-        },
-      );
+      await this.initConfig();
+      // throw new AppError(
+      //   ErrorCode.FILE_NOT_FOUND,
+      //   `${this.name} config file not found at ${this.configPath}`,
+      //   {
+      //     name: this.name,
+      //     configPath: this.configPath,
+      //   },
+      // );
     }
 
     this.config = await readJSONFile<T>(this.configPath);
@@ -82,6 +83,7 @@ export abstract class AbstractConfigurator<T> {
   public abstract restart(): Promise<void>;
   public abstract reload(name: string): Promise<void>;
   public abstract reset(): Promise<void>;
+  public abstract initConfig(): Promise<void>;
   public abstract isClientPresent(): Promise<boolean>;
   public abstract isClientConfigPresent(): Promise<boolean>;
 }

@@ -138,6 +138,13 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
     await writeJSONFile(this.configPath, this.config);
     await this.restart();
   }
+
+  public async initConfig() {
+    this.logger.info(`initializing claude config`);
+    await writeJSONFile(this.configPath, {
+      mcpServers: {},
+    });
+  }
 }
 
 export const ClaudeMCPServerSchema = z.object({

@@ -69,6 +69,12 @@ export function ProxyInstallers({ proxyId }: ProxyInstallersProps) {
         description: `This proxy was successfully installed`,
       });
     },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+      });
+    },
   });
 
   const uninstallationMutation = trpc.installer.byProxy.uninstall.useMutation({

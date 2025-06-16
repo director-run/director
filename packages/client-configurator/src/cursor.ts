@@ -142,6 +142,12 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     await writeJSONFile(this.configPath, newConfig);
     this.config = newConfig;
   }
+  public async initConfig() {
+    this.logger.info(`initializing cursor config`);
+    await writeJSONFile(this.configPath, {
+      mcpServers: {},
+    });
+  }
 }
 
 export type CursorConfig = {

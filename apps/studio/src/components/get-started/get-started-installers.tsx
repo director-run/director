@@ -57,6 +57,12 @@ export function GetStartedInstallers({ proxyId }: GetStartedInstallersProps) {
         description: `This proxy was successfully installed`,
       });
     },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+      });
+    },
   });
 
   const availableClients = listClientsQuery.data ?? [];

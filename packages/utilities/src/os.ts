@@ -39,6 +39,16 @@ export async function openFileInCode(filePath: string): Promise<void> {
   await execAsync(`code "${filePath}"`);
 }
 
+export function isCommandInPath(command: string): boolean {
+  const platform = process.platform;
+  if (platform === "win32") {
+    return false;
+  }
+  return (
+    execSync(`which ${command}`, { stdio: "pipe" }).toString().trim().length > 0
+  );
+}
+
 /**
  * Checks if a desktop application is installed on the system
  * @param app - The app to check for installation
@@ -49,7 +59,8 @@ export function isAppInstalled(app: App): boolean {
   const platform = process.platform;
 
   if (platform === "win32") {
-    throw new Error("isAppInstalled is not supported on Windows");
+    return false;
+    // throw new Error("isAppInstalled is not supported on Windows");
   }
 
   try {

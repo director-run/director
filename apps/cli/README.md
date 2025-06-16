@@ -22,7 +22,7 @@
 The fastest way to try out director is by running the quickstart directly using npx. This will start the director gateway and open the UI.
 
 ```bash
-npx @director.run/cli quickstart
+npx @director.run/cli@latest quickstart
 ```
 
 #### Installing Locally

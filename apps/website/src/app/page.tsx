@@ -167,7 +167,7 @@ export default function IndexPage() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <CopyCommand command="npx @director.run/cli quickstart" />
+                      <CopyCommand command="npx @director.run/cli@latest quickstart" />
                     </CardContent>
                   </Card>
                 </div>

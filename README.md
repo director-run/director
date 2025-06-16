@@ -23,7 +23,7 @@
 Get started with Director immediately using the command below. For more detailed information, please [read the docs](https://docs.director.run).
 
 ```bash
-npx @director.run/cli quickstart
+npx @director.run/cli@latest quickstart
 ```
 
 ---

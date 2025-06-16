@@ -8,17 +8,20 @@ icon: sitemap
   <img src="../images/director-architecture-overview.png" />
 </Frame>
 
-Director is MCP middleware that sits between MCP Clients and MCP Servers. For clients, it provides a single connection point (supporting HTTP Streamable, Stdio and SSE). For servers, it tools, prompts & resources (again supporting all MCP transports). 
+Director is MCP middleware bridging MCP Clients and Servers. It provides clients a single connection point and aggregates server tools, prompts, and resources - supporting all MCP transports (HTTP Streamable, Stdio, SSE).
 
-By using Director, you can centralise MCP configuraton and abstract management away from your clients. To make this easy, we provide an CLI, GUI (Studio) and SDK that allow you to configure MCP easliy.
+Director centralizes MCP configuration and abstracts server management through CLI, Studio (GUI), and SDK interfaces.
 
 # Gateway
 
-The core component of Director is the `Gateway`, that implements a proxy pattern to aggragate the MCP servers and serve them to the MCP clients through the standard protocol transports. In addition, Director also provides a `ClientCongigurator` module that makes it easy to connect clients such as Claude, Cursor and VSCode (with more on the way) to the `Gateway` without needing to write JSON manually. Finally, it provides a `Controller` layer which exposes an API (HTTP [TRPC](https://trpc.io/)) that allows you to add, remove and modify `ProxyServers`
+The `Gateway` implements a proxy pattern aggregating MCP servers and serving them to clients via standard protocol transports. Additional components:
+- `ClientConfigurator`: Automates adding and removing client connections (Claude, Cursor, VSCode) to the `Gateway` without manual JSON configuration
+- `Controller`: Exposes HTTP API ([TRPC](https://trpc.io/)) for dynamic `ProxyServer` management
 
 # Gateway Management
 
-The `Gateway` is a standalone piece of infrastructure that can either be run locally or on a remote server (right now, running it locally is what's best supported). Director implements a client / server architecture for management purposes (HTTP API, distinct from MCP client / servers). This is implemented in the `Controller` layer, and more specifically, this allows you to manage `ProxyServer` lifecycle, configure new targets (MCP Servers) and query the status / health of the service as well as the underlying servers and client connections. There are two main ways to interact with the `Gateway` currently:
+The `Gateway` runs as standalone infrastructure (currently locally is the best supported). Director's client/server architecture for management (distinct from MCP client/server connections) enables `ProxyServer` lifecycle management, target configuration, and service health monitoring via the `Controller` layer.
 
-- [CLI](../sdk/cli): The command line interface, which you can install through `npm`. It is also the primary way to run the gateway. 
-- [Studio](../concepts/studio): The Studio is a web-based interface that allows you to manage the `Gateway` and its underlying `ProxyServers`. It's the best way for humans to interact with the `Gateway`, especially as the amount of servers grows.
+Management interfaces:
+- [CLI](../sdk/cli): Primary `Gateway` runtime and management tool (npm installable)
+- [Studio](../concepts/studio): Web interface for visual `Gateway` and `ProxyServers` management, ideal for complex deployments

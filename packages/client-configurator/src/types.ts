@@ -51,13 +51,15 @@ export abstract class AbstractConfigurator<T> {
 
   public async getStatus(): Promise<{
     name: string;
-    present: boolean;
-    configPresent: boolean;
+    installed: boolean;
+    configExists: boolean;
+    configPath: string;
   }> {
     return {
       name: this.name,
-      present: await this.isClientPresent(),
-      configPresent: await this.isClientConfigPresent(),
+      installed: await this.isClientPresent(),
+      configExists: await this.isClientConfigPresent(),
+      configPath: this.configPath,
     };
   }
 

@@ -19,6 +19,7 @@ import { registerEnvCommand } from "./core/env";
 import { registerQuickstartCommand } from "./core/quickstart";
 import { registerRemoveCommand } from "./core/remove";
 import { registerServeCommand } from "./core/serve";
+import { registerStatusCommand } from "./core/status";
 import { registerStudioCommand } from "./core/studio";
 
 export function registerCoreCommands(program: DirectorCommand): void {
@@ -149,5 +150,7 @@ export function registerCoreCommands(program: DirectorCommand): void {
     });
 
   registerEnvCommand(program);
+  registerStatusCommand(program);
+
   registerDebugCommands(program);
 }

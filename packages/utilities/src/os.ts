@@ -40,37 +40,73 @@ export async function openFileInCode(filePath: string): Promise<void> {
 }
 
 /**
- * Checks if a command/application is installed by using the 'which' command
+ * Checks if a desktop application is installed on the system
  * @param app - The app to check for installation
- * @returns boolean - true if the command is installed, false otherwise
+ * @returns boolean - true if the app is installed, false otherwise
+ * @throws Error on Windows as this function is not supported
  */
 export function isAppInstalled(app: App): boolean {
-  try {
-    const isWindows = process.platform === "win32";
+  const platform = process.platform;
 
-    // Map apps to their command names
-    let commandName: string;
+  if (platform === "win32") {
+    throw new Error("isAppInstalled is not supported on Windows");
+  }
+
+  try {
+    // Map apps to their display names
+    let displayName: string;
     switch (app) {
       case App.CLAUDE:
-        commandName = "claude";
+        displayName = "Claude";
         break;
       case App.CURSOR:
-        commandName = "cursor";
+        displayName = "Cursor";
         break;
       case App.VSCODE:
-        commandName = "code";
+        displayName = "Visual Studio Code";
         break;
       default:
-        commandName = app;
+        displayName = app;
     }
 
-    const command = isWindows ? `where ${commandName}` : `which ${commandName}`;
+    if (platform === "darwin") {
+      // macOS: Use mdfind to search for the application
+      const result = execSync(
+        `mdfind "kMDItemDisplayName == '${displayName}'"`,
+        {
+          stdio: "pipe",
+          encoding: "utf8",
+        },
+      );
+      return result.trim().length > 0;
+    } else if (platform === "linux") {
+      // Linux: Check common application directories and which command
+      const appDirs = [
+        "/usr/share/applications",
+        "/usr/local/share/applications",
+        "~/.local/share/applications",
+      ];
 
-    execSync(command, {
-      stdio: "pipe",
-      encoding: "utf8",
-    });
-    return true;
+      // Check .desktop files in application directories
+      for (const dir of appDirs) {
+        try {
+          const result = execSync(
+            `find ${dir} -name "*.desktop" -exec grep -l "${displayName}" {} \\;`,
+            {
+              stdio: "pipe",
+              encoding: "utf8",
+            },
+          );
+          if (result.trim().length > 0) {
+            return true;
+          }
+        } catch {
+          // Ignore errors for non-existent directories
+          continue;
+        }
+      }
+    }
+    return false;
   } catch (error) {
     return false;
   }

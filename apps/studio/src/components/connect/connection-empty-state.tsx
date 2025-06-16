@@ -58,7 +58,7 @@ export function ConnectionEmptyState() {
                   })}
                 >
                   Safari and Brave are currently not supported, but we're
-                  working on adding support.
+                  working on adding support. Please use Chrome.
                 </p>
               </div>
             </div>

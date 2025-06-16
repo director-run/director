@@ -46,7 +46,7 @@ docker run \
         -d -p 8080:8080 \
         -v ./data:/root/.director \
         --name director \
-        director/gateway:latest
+        barnaby/director:latest
 
 # Tail the logs
 docker logs -f director

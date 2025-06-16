@@ -5,11 +5,12 @@ export async function getStatus() {
   return {
     platform: process.platform,
     dependencies: {
-      npx: isCommandInPath("npx"),
-      uvx: isCommandInPath("uvx"),
-      //   os: process.versions.os,
-      //   node: process.versions.node,
-      //   npm: process.versions.npm,
+      npx: {
+        installed: isCommandInPath("npx"),
+      },
+      uvx: {
+        installed: isCommandInPath("uvx"),
+      },
     },
     clients: await allClientStatuses(),
   };

@@ -9,10 +9,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/theworkingcompany/director"
+    "url": "https://github.com/director-run/director"
   },
   "description": "The easiest way to manage and deploy MCP servers",
-  "author": "The Working Company <hello@theworkingcompany.com>",
+  "author": "The Working Company <hello@director.run>",
   "homepage": "https://director.run",
   "scripts": {
     "lint": "biome check .",

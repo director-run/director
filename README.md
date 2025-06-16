@@ -14,9 +14,9 @@
 
 </div>
 
-[Director](https://director.run) is a fully open-source MCP middleware that simplifies MCP server integration and deployment. It connects MCP clients and servers by implementing a proxy pattern to aggregate all MCP servers behind a single MCP transport (Streamable, SSE, or Stdio).
+[Director](https://director.run) is open source MCP middleware that acts as a proxy between models/agents and MCP servers. Supporting all MCP transports natively, it aggregates tools, prompts, and resources server-side while providing a unified client-side integration point. This abstraction eliminates MCP server management overhead, enabling developers to focus on prompt engineering and domain logic rather than infrastructure complexity.
 
-> **Note:** This project is under active development and is not yet stable.
+> **Note:** This project is under active development and is not yet stable & may contain bugs. Please see our [contributing](https://docs.director.run/project/contributing) if you'd like to help.
 
 ## Quickstart
 

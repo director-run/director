@@ -44,9 +44,14 @@ export function isCommandInPath(command: string): boolean {
   if (platform === "win32") {
     return false;
   }
-  return (
-    execSync(`which ${command}`, { stdio: "pipe" }).toString().trim().length > 0
-  );
+  try {
+    return (
+      execSync(`which ${command}`, { stdio: "pipe" }).toString().trim().length >
+      0
+    );
+  } catch (error) {
+    return false;
+  }
 }
 
 /**

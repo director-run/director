@@ -9,7 +9,7 @@
 
 > **Note:** This project is under active development and is not yet stable & may contain bugs. Please see our [contributing](https://docs.director.run/project/contributing) if you'd like to help.
 
-## Pre-requisits
+## Prerequisites
 
 - Tested on MacOS (Sequoia 15.5) and Ubuntu (24.04.2 LTS)
 - [Node.js](https://nodejs.org/en/download) (tested on v23.7.0) 

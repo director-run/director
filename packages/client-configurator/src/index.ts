@@ -1,8 +1,11 @@
 import { AppError, ErrorCode } from "@director.run/utilities/error";
+import { getLogger } from "@director.run/utilities/logger";
 import { ClaudeInstaller } from "./claude";
 import { CursorInstaller } from "./cursor";
 import type { AbstractConfigurator } from "./types";
 import { VSCodeInstaller } from "./vscode";
+
+const logger = getLogger("client-configurator");
 
 export enum ConfiguratorTarget {
   Claude = "claude",
@@ -72,8 +75,16 @@ export async function getProxyInstalledStatus(
 
   await Promise.all(
     installers.map(async (installer) => {
-      const isInstalled = await installer.isInstalled(proxyId);
-      result[installer.name as ConfiguratorTarget] = isInstalled;
+      try {
+        const isInstalled = await installer.isInstalled(proxyId);
+        result[installer.name as ConfiguratorTarget] = isInstalled;
+      } catch (error) {
+        logger.error({
+          error,
+          message: `error checking ${proxyId} installed status for ${installer.name}`,
+        });
+        result[installer.name as ConfiguratorTarget] = false;
+      }
     }),
   );
 

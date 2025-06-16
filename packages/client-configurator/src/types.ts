@@ -46,8 +46,21 @@ export abstract class AbstractConfigurator<T> {
       // );
     }
 
-    this.config = await readJSONFile<T>(this.configPath);
-    this.isInitialized = true;
+    try {
+      this.config = await readJSONFile<T>(this.configPath);
+      this.isInitialized = true;
+    } catch (error) {
+      // check if the error is a syntax error
+      if (error instanceof SyntaxError) {
+        throw new AppError(
+          ErrorCode.SYNTAX_ERROR,
+          `syntax error in config file: ${error.message}`,
+          { path: this.configPath },
+        );
+      } else {
+        throw error;
+      }
+    }
   }
 
   public async getStatus(): Promise<{

@@ -134,6 +134,7 @@ export default function GetStartedPage() {
           <GetStartedListItem
             status={hasMissingDependencies ? "in-progress" : "completed"}
             open={hasMissingDependencies}
+            disabled={!hasMissingDependencies}
             title="Install dependencies"
           >
             <div className="p-4">

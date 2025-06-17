@@ -265,14 +265,16 @@ ensure_node_installed() {
 source_nvm() {
     if [ -f ~/.nvm/nvm.sh ]; then
         source ~/.nvm/nvm.sh
+        # TODO fish?
     fi
 }
 
 
 source_env() {
     if [ -f "$HOME/.local/bin/env" ]; then
+        # bash, zsh
         source "$HOME/.local/bin/env"
-        # source $HOME/.local/bin/env 
+        # fish 
         # source $HOME/.local/bin/env.fish (fish)
     fi
 }

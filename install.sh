@@ -6,7 +6,7 @@
 #
 # Director Installer
 # curl -fsSL https://director.run/install | bash
-# curl -fsSL https://director.run/install | bash
+# curl -fsSL http://macbook.local:8000/install.sh | bash
 #
 
 # Exit immediately if any command fails and enable error tracing

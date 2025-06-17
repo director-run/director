@@ -26,6 +26,7 @@ describe(`vscode config`, () => {
         configPath,
       });
       expect(await installer.isInstalled("any")).toBe(false);
+      expect(configPath).toEqual(installer.configPath);
       expect(await readJSONFile(configPath)).toEqual({
         foo: "bar",
         mcp: {

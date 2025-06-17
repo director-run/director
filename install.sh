@@ -6,29 +6,13 @@ set -o pipefail
 
 # ========================= CONFIGURATION =========================
 
-# # Branding and Visual Elements
-# readonly BRAND_NAME="Furi Installer"
-# readonly VERSION="1.0.0"
-# readonly DESCRIPTION="CLI & API for MCP management & execution"
-# readonly WEBSITE="https://furi.so     https://discord.gg/B8vAfRkdXS     https://github.com/ashwwwin/furi"
-
-# Directory Configuration
-readonly FURIKAKE_DIR="${HOME}/.furikake"
-readonly BIN_DIR="${HOME}/.local/bin"
-readonly REPO_OWNER="ashwwwin"
-readonly REPO_NAME="furi"
-readonly REPO_BRANCH="main"
-readonly REPO_URL="https://github.com/${REPO_OWNER}/${REPO_NAME}"
-
 # Progress Configuration
-readonly TOTAL_STEPS=7
-readonly PROGRESS_BAR_WIDTH=40
+readonly TOTAL_STEPS=4
 
 # Global Variables
 current_step=0
 temp_dir=""
 shell_config=""
-bun_cmd=""
 
 # ========================= COLORS & STYLING =========================
 
@@ -207,8 +191,7 @@ install_brew() {
         return 0
     fi
     
-    show_info "installing homebrew..."
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    run_with_loader "installing homebrew..." /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
     if ! command_exists brew; then
         show_error "homebrew is not installed. Please install it manually and try again."
@@ -222,22 +205,19 @@ install_nvm() {
         return 0
     fi
 
-    show_info "installing nvm..."
-
     if [[ "$OSTYPE" == "darwin"* ]]; then
         if ! command_exists brew; then
-            show_info "installing homebrew..."
-            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+            run_with_loader "installing homebrew" /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
         fi
 
         run_with_loader "installing nvm" brew install nvm 
         # /opt/homebrew/opt/nvm/nvm.sh
-        source ~/.nvm/nvm.sh
     else 
         # use the shell script to install nvm on linux
-        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-        source ~/.nvm/nvm.sh
+        run_with_loader "installing nvm" /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh)"
     fi
+
+    source_nvm
 
     if ! command_exists nvm; then
         show_error "nvm is not available. Reload your terminal and try again."
@@ -247,26 +227,26 @@ install_nvm() {
 
 
 install_node() {
-    show_info "installing node.js..."
-
     # Try sourcing nvm.sh if it exists
-    if [ -f ~/.nvm/nvm.sh ]; then
-        source ~/.nvm/nvm.sh
-    fi
+    source_nvm
 
     if ! command_exists nvm; then
         install_nvm
     fi
 
-    run_with_loader "installing node with nvm" nvm install node && nvm alias default node && nvm use node
-
+    run_with_loader "installing latest node.js" nvm install node && nvm alias default node && nvm use node
+    source_nvm
+    
     if ! command_exists node; then
-        show_error "node is not available. Reload your terminal and try again."
+        show_error "node.js is not available. Reload your terminal and try again."
         return 1
     fi
 }
 
 ensure_node_installed() {
+    # Try sourcing nvm.sh if it exists
+    source_nvm
+
     if command_exists node; then
         if command_exists npm; then
             show_success "node.js is already installed"
@@ -277,17 +257,53 @@ ensure_node_installed() {
         fi
     else
         install_node
+        return 0
     fi
-    return 0
+}
+
+
+source_nvm() {
+    if [ -f ~/.nvm/nvm.sh ]; then
+        source ~/.nvm/nvm.sh
+    fi
+}
+
+
+source_env() {
+    if [ -f "$HOME/.local/bin/env" ]; then
+        source "$HOME/.local/bin/env"
+        # source $HOME/.local/bin/env 
+        # source $HOME/.local/bin/env.fish (fish)
+    fi
+}
+
+
+ensure_uv_installed() {
+    source_env
+
+    if command_exists uv; then
+        show_success "uv is already installed"
+        return 0
+    else
+        run_with_loader "installing uv" /bin/bash -c "$(curl -fsSL https://astral.sh/uv/install.sh)"
+        source_env
+
+        if ! command_exists uv; then
+            show_error "uv is not available. Reload your terminal and try again."
+            return 1
+        fi
+
+        return 0  
+    fi
 }
 
 ensure_director_installed() {
     if command_exists director; then
-        show_info "director is already installed"
+        show_success "director is already installed"
         # TODO: update director
     else
         if command_exists npm; then
-            if run_with_loader "installing Director via npm" npm install -g @director.run/cli; then
+            if run_with_loader "installing director..." npm install -g @director.run/cli; then
                 show_success "director is now installed"
                 return 0
             else 
@@ -312,25 +328,16 @@ main() {
     if [[ "$OSTYPE" != "darwin"* ]] && [[ "$OSTYPE" != "linux"* ]]; then
         show_error "This installer only supports macOS and Linux environments."
     fi
-    
-    # Initialize shell detection
-    detect_shell_config
-    
-    show_progress "Setting up node.js"
+        
+    show_progress "Installing Node.js"
     printf "\n"
     ensure_node_installed
 
+    show_progress "Installing uv"
+    printf "\n"
+    ensure_uv_installed
 
-    # Step 4: Install UVX
-    # show_progress "Setting up UVX"
-    # printf "\n"
-    # if command_exists uv; then
-    #     show_info "UV is already installed"
-    # else
-    #     show_error "UV is not installed. Please install manually and try again."
-    # fi
-
-    show_progress "Setting up Director"
+    show_progress "Installing Director"
     printf "\n"
     ensure_director_installed
 

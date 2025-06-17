@@ -9,7 +9,6 @@ import { type EntryCreateParams } from "../db/schema";
 // Playwright
 
 // Gmail
-// Google Calendar
 // Google Drive
 // Google Calendar
 // Google Maps
@@ -230,6 +229,30 @@ export const entries: EntryCreateParams[] = [
       },
     ],
   },
+  // {
+  //   name: "google-calendar",
+  //   title: "Google Calendar",
+  //   description: "Allows you to interact with Google Calendar integration.",
+  //   isOfficial: false,
+  //   icon: "https://registry.director.run/google-calendar.png",
+  //   homepage: "https://github.com/nspady/google-calendar-mcp",
+  //   transport: {
+  //     type: "stdio",
+  //     command: "npx",
+  //     args: ["@cocal/google-calendar-mcp"],
+  //     env: {
+  //       GOOGLE_OAUTH_CREDENTIALS: "<google-oauth-credentials-file>",
+  //     },
+  //   },
+  //   parameters: [
+  //     {
+  //       name: "google-oauth-credentials-file",
+  //       description: "Full path to the Google OAuth credentials JSON file.",
+  //       type: "string",
+  //       required: true,
+  //     },
+  //   ],
+  // },
   // {
   //   name: "playwright",
   //   title: "Playwright",

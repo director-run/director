@@ -15,7 +15,7 @@ import { entries } from "../src/seed/entries";
 
 const logger = getLogger("registry-qa-test");
 
-const GATEWAY_URL = "http://reg.local:3673";
+const GATEWAY_URL = "http://localhost:3673";
 
 async function main() {
   const entry = entries[entries.length - 1];

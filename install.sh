@@ -252,7 +252,7 @@ install_node() {
         install_nvm
     fi
 
-    run_with_loader "installing latest node.js" nvm install node && nvm alias default node && nvm use node
+    run_with_loader "installing latest node.js" nvm install node --default
     source_nvm
     
     if ! command_exists node; then

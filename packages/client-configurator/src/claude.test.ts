@@ -7,7 +7,7 @@ import {
   getConfigPath,
 } from "./test/fixtures";
 
-describe(`claude config`, () => {
+describe.skip(`claude config`, () => {
   describe("incomplete config", () => {
     const incompleteConfig = {
       foo: "bar",

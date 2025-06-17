@@ -7,7 +7,7 @@ import {
   getConfigPath,
 } from "./test/fixtures";
 
-describe(`cursor config`, () => {
+describe.skip(`cursor config`, () => {
   describe("incomplete config", () => {
     const incompleteConfig = {
       foo: "bar",

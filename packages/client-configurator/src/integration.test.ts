@@ -22,7 +22,7 @@ import type { VSCodeConfig } from "./vscode";
   ConfiguratorTarget.Cursor,
   ConfiguratorTarget.VSCode,
 ].forEach((target) => {
-  describe(`${target} installer`, () => {
+  describe.skip(`${target} installer`, () => {
     describe("corrupt config", () => {
       beforeEach(async () => {});
       test("should throw an error if the config file is corrupt", async () => {

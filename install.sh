@@ -216,7 +216,7 @@ install_nvm() {
             echo
             printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' '━'
             echo
-            echo "To install homebrew, run the following commands:"
+            echo "  To install homebrew, run the following commands:"
             echo
             echo "    $ xcode-select --install"
             echo '    $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
@@ -254,7 +254,7 @@ install_node() {
 
     run_with_loader "installing latest node.js" nvm install node --default
     source_nvm
-    
+
     if ! command_exists node; then
         show_error "node.js is not available. Reload your terminal and try again."
         return 1

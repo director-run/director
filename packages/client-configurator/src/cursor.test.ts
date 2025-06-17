@@ -1,13 +1,13 @@
 import { readJSONFile } from "@director.run/utilities/json";
 import { afterAll, beforeEach, describe, expect, test } from "vitest";
-import { ConfiguratorTarget, getConfigurator } from ".";
+import { ConfiguratorTarget } from ".";
 import {
   createConfigFile,
+  createTestInstaller,
   deleteConfigFile,
-  getConfigPath,
 } from "./test/fixtures";
 
-describe.skip(`cursor config`, () => {
+describe(`cursor config`, () => {
   describe("incomplete config", () => {
     const incompleteConfig = {
       foo: "bar",
@@ -21,12 +21,12 @@ describe.skip(`cursor config`, () => {
     });
 
     test("should initialize the config if it is missing the mcp.servers", async () => {
-      const configPath = getConfigPath(ConfiguratorTarget.Cursor);
-      const installer = getConfigurator(ConfiguratorTarget.Cursor, {
-        configPath,
+      const installer = createTestInstaller(ConfiguratorTarget.Cursor);
+      expect(await readJSONFile(installer.configPath)).toEqual({
+        foo: "bar",
       });
       expect(await installer.isInstalled("any")).toBe(false);
-      expect(await readJSONFile(configPath)).toEqual({
+      expect(await readJSONFile(installer.configPath)).toEqual({
         foo: "bar",
         mcpServers: {},
       });

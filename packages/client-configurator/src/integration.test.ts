@@ -4,7 +4,7 @@ import { readJSONFile } from "@director.run/utilities/json";
 import { isFilePresent } from "@director.run/utilities/os";
 import { expectToThrowAppError } from "@director.run/utilities/test";
 import { afterAll, beforeEach, describe, expect, test, vi } from "vitest";
-import { ConfiguratorTarget, getConfigurator } from ".";
+import { ConfiguratorTarget } from ".";
 import type { ClaudeConfig } from "./claude";
 import type { CursorConfig } from "./cursor";
 import {
@@ -22,16 +22,14 @@ import type { VSCodeConfig } from "./vscode";
   ConfiguratorTarget.Cursor,
   ConfiguratorTarget.VSCode,
 ].forEach((target) => {
-  describe.skip(`${target} installer`, () => {
+  describe(`${target} installer`, () => {
     describe("corrupt config", () => {
       beforeEach(async () => {});
       test("should throw an error if the config file is corrupt", async () => {
         const configPath = getConfigPath(target);
         expect(isFilePresent(configPath)).toBe(false);
         await fs.promises.writeFile(configPath, "{'invalid': 'json'");
-        const installer = getConfigurator(target, {
-          configPath,
-        });
+        const installer = createTestInstaller(target);
         await expectToThrowAppError(() => installer.isInstalled("any"), {
           code: ErrorCode.JSON_PARSE_ERROR,
           props: { path: configPath },
@@ -42,7 +40,7 @@ import type { VSCodeConfig } from "./vscode";
     describe("config missing", () => {
       let installer: AbstractConfigurator<unknown>;
       beforeEach(async () => {
-        installer = getConfigurator(target);
+        installer = createTestInstaller(target);
         if (isFilePresent(installer.configPath)) {
           await fs.promises.unlink(installer.configPath);
         }

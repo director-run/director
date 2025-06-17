@@ -359,3 +359,11 @@ main() {
 
 # Run the main installation
 main "$@"
+
+
+
+
+
+
+# curl -fsSL https://gist.githubusercontent.com/barnaby/e41208f2dfe89e56a20dafc8f96da953/raw/22b5bf8d51d9d452e2eb1658c77dded82b3adea9/install.sh | bash
+

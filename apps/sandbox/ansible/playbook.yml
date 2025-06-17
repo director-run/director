@@ -2,8 +2,8 @@
 - hosts: all
   gather_facts: true
   roles:
-    - role: common
-    - role: development
+    # - role: common
+    # - role: development
     - role: mount # mount the shared directory inside the VM (~/shared/)
     # - role: gui # installs minimal desktop environment and development tools
     # - role: director

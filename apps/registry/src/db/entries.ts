@@ -113,8 +113,10 @@ export class EntryStore {
 
   public async addEntries(
     entries: EntryCreateParams[],
-    options: AddEntriesOptions = {},
-  ) {
+    options: AddEntriesOptions = {
+      ignoreDuplicates: true,
+    },
+  ): Promise<{ status: "success"; countInserted: number }> {
     if (options.ignoreDuplicates) {
       const existingEntries = await this.db.db
         .select({ name: entriesTable.name })
@@ -132,16 +134,29 @@ export class EntryStore {
       );
 
       if (newEntries.length === 0) {
-        return;
+        return {
+          status: "success",
+          countInserted: newEntries.length,
+        };
       }
 
       await this.db.db.transaction(async (tx) => {
         await tx.insert(entriesTable).values(newEntries);
       });
+
+      return {
+        status: "success",
+        countInserted: newEntries.length,
+      };
     } else {
       await this.db.db.transaction(async (tx) => {
         await tx.insert(entriesTable).values(entries);
       });
+
+      return {
+        status: "success",
+        countInserted: entries.length,
+      };
     }
   }
 

@@ -98,10 +98,13 @@ export function registerRegistryCommands(program: DirectorCommand) {
         if (!answer) {
           return;
         }
-        await spinnerWrap(() => registryClient.entries.populate.mutate({}))
+        const result = await spinnerWrap(() =>
+          registryClient.entries.populate.mutate({}),
+        )
           .start("importing entries...")
           .succeed("Entries successfully imported")
           .run();
+        console.log(result);
       }),
     );
 

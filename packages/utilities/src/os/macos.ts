@@ -125,12 +125,12 @@ export class MacOSController extends AbstractController {
   getConfigFileForApp(app: App): string {
     switch (app) {
       case App.CLAUDE:
-        return path.join(homedir(), ".claude", "config.json");
-      case App.CURSOR:
         return path.join(
           homedir(),
           "Library/Application Support/Claude/claude_desktop_config.json",
         );
+      case App.CURSOR:
+        return path.join(homedir(), ".cursor/mcp.json");
       case App.VSCODE:
         return path.join(
           homedir(),

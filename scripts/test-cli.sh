@@ -11,8 +11,8 @@ echo "----------------------------------------"
 echo 
 
 bun cli create my-proxy
-bun cli add my-proxy --entry fetch
-# bun cli connect my-proxy --target claude
+bun cli add my-proxy --entry hackernews
+bun cli connect my-proxy --target claude
 # TODO
 # bun cli connect my-proxy
 # bun cli cursor install my-proxy

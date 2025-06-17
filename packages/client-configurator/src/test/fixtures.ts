@@ -12,6 +12,7 @@ import { expectToThrowAppError } from "@director.run/utilities/test";
 import {  test, vi } from "vitest";
 import { AbstractConfigurator } from "../types";
 import { getConfigurator } from "..";
+import { isFilePresent } from "@director.run/utilities/os";
 
 export function createVSCodeConfig(entries: Array<Installable>): VSCodeConfig {
   return {
@@ -50,25 +51,27 @@ export function createInstallable(): { url: string; name: string } {
   };
 }
 
-export async function createConfigFile(target: ConfiguratorTarget) {
+export async function createConfigFile(target: ConfiguratorTarget, config?: unknown) {
   switch (target) {
     case ConfiguratorTarget.VSCode:
-      await writeJSONFile(getConfigPath(target), createVSCodeConfig([]));
+      await writeJSONFile(getConfigPath(target), config ?? createVSCodeConfig([]));
       break;
     case ConfiguratorTarget.Cursor:
-      await writeJSONFile(getConfigPath(target), createCursorConfig([]));
+      await writeJSONFile(getConfigPath(target), config ?? createCursorConfig([]));
       break;
     case ConfiguratorTarget.Claude:
-      await writeJSONFile(getConfigPath(target), createClaudeConfig([]));
+      await writeJSONFile(getConfigPath(target), config ?? createClaudeConfig([]));
       break;
   }
 }
 
 export async function deleteConfigFile(target: ConfiguratorTarget) {
-  await fs.unlink(getConfigPath(target));
+  if (isFilePresent(getConfigPath(target))) {
+    await fs.unlink(getConfigPath(target));
+  }
 }
 
-function getConfigPath(target: ConfiguratorTarget) {
+export function getConfigPath(target: ConfiguratorTarget) {
   return path.join(__dirname, `${target}.config.test.json`);
 }
 

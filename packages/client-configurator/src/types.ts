@@ -23,7 +23,6 @@ export abstract class AbstractConfigurator<T> {
     }
 
     this.logger.info(`initializing`);
-
     if (!(await this.isClientPresent())) {
       throw new AppError(
         ErrorCode.COMMAND_NOT_FOUND,
@@ -35,15 +34,7 @@ export abstract class AbstractConfigurator<T> {
       );
     }
     if (!(await this.isClientConfigPresent())) {
-      await this.initConfig();
-      // throw new AppError(
-      //   ErrorCode.FILE_NOT_FOUND,
-      //   `${this.name} config file not found at ${this.configPath}`,
-      //   {
-      //     name: this.name,
-      //     configPath: this.configPath,
-      //   },
-      // );
+      await this.createConfig();
     }
 
     try {
@@ -53,7 +44,7 @@ export abstract class AbstractConfigurator<T> {
       // check if the error is a syntax error
       if (error instanceof SyntaxError) {
         throw new AppError(
-          ErrorCode.SYNTAX_ERROR,
+          ErrorCode.JSON_PARSE_ERROR,
           `syntax error in config file: ${error.message}`,
           { path: this.configPath },
         );
@@ -96,7 +87,7 @@ export abstract class AbstractConfigurator<T> {
   public abstract restart(): Promise<void>;
   public abstract reload(name: string): Promise<void>;
   public abstract reset(): Promise<void>;
-  public abstract initConfig(): Promise<void>;
+  protected abstract createConfig(): Promise<void>;
   public abstract isClientPresent(): Promise<boolean>;
   public abstract isClientConfigPresent(): Promise<boolean>;
 }

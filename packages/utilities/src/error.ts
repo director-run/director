@@ -24,7 +24,7 @@ export enum ErrorCode {
   CONNECTION_REFUSED = "CONNECTION_REFUSED",
   UNAUTHORIZED = "UNAUTHORIZED",
   DUPLICATE = "DUPLICATE",
-  SYNTAX_ERROR = "SYNTAX_ERROR",
+  JSON_PARSE_ERROR = "JSON_PARSE_ERROR",
 }
 
 export function isAppError(error: unknown): error is AppError {

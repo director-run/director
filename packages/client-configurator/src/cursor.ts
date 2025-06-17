@@ -33,10 +33,7 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
   }
 
   public async isInstalled(name: string) {
-    if (
-      !(await this.isClientPresent()) ||
-      !(await this.isClientConfigPresent())
-    ) {
+    if (!(await this.isClientPresent())) {
       return false;
     }
     await this.initialize();
@@ -122,6 +119,16 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     );
   }
 
+  protected async initialize() {
+    await super.initialize();
+    if (!this.config?.mcpServers) {
+      await this.updateConfig({
+        ...this.config,
+        mcpServers: {},
+      });
+    }
+  }
+
   public async openConfig() {
     this.logger.info("opening cursor config");
     await openFileInCode(this.configPath);
@@ -142,7 +149,7 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     await writeJSONFile(this.configPath, newConfig);
     this.config = newConfig;
   }
-  public async initConfig() {
+  public async createConfig() {
     this.logger.info(`initializing cursor config`);
     await writeJSONFile(this.configPath, {
       mcpServers: {},

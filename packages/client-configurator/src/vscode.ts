@@ -35,11 +35,21 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
     });
   }
 
+  protected async initialize() {
+    await super.initialize();
+    if (!this.config?.mcp?.servers) {
+      // If the config is missing the mcp servers, we need to initialize it
+      await this.updateConfig({
+        ...this.config,
+        mcp: {
+          servers: {},
+        },
+      });
+    }
+  }
+
   public async isInstalled(name: string) {
-    if (
-      !(await this.isClientPresent()) ||
-      !(await this.isClientConfigPresent())
-    ) {
+    if (!(await this.isClientPresent())) {
       return false;
     }
     await this.initialize();
@@ -151,7 +161,7 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
     this.config = newConfig;
   }
 
-  public async initConfig() {
+  public async createConfig() {
     this.logger.info(`initializing vscode config`);
     await writeJSONFile(this.configPath, {
       mcp: { servers: {} },

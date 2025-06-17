@@ -34,11 +34,19 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
     });
   }
 
+  protected async initialize() {
+    await super.initialize();
+
+    if (!this.config?.mcpServers) {
+      await this.updateConfig({
+        ...this.config,
+        mcpServers: {},
+      });
+    }
+  }
+
   public async isInstalled(name: string) {
-    if (
-      !(await this.isClientPresent()) ||
-      !(await this.isClientConfigPresent())
-    ) {
+    if (!(await this.isClientPresent())) {
       return false;
     }
     await this.initialize();
@@ -115,8 +123,6 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
   }
 
   public async restart() {
-    await this.initialize();
-
     if (!isTest()) {
       this.logger.info("restarting claude");
       await restartApp(App.CLAUDE);
@@ -133,13 +139,13 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
   }
 
   private async updateConfig(newConfig: ClaudeConfig) {
-    this.config = ClaudeConfigSchema.parse(newConfig);
+    this.config = newConfig;
     this.logger.info(`writing config to ${this.configPath}`);
     await writeJSONFile(this.configPath, this.config);
     await this.restart();
   }
 
-  public async initConfig() {
+  public async createConfig() {
     this.logger.info(`initializing claude config`);
     await writeJSONFile(this.configPath, {
       mcpServers: {},

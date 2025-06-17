@@ -12,16 +12,19 @@ describe(`vscode config`, () => {
     const incompleteConfig = {
       foo: "bar",
     };
-    beforeEach(async () => {
-      await createConfigFile(ConfiguratorTarget.VSCode, incompleteConfig);
-    });
+    beforeEach(async () => {});
 
-    afterAll(async () => {
-      await deleteConfigFile(ConfiguratorTarget.VSCode);
-    });
+    afterAll(async () => {});
 
     test("should initialize the config if it is missing the mcp.servers", async () => {
+      await createConfigFile(ConfiguratorTarget.VSCode, incompleteConfig);
+
       const configPath = getConfigPath(ConfiguratorTarget.VSCode);
+
+      expect(await readJSONFile(configPath)).toEqual({
+        foo: "bar",
+      });
+
       const installer = getConfigurator(ConfiguratorTarget.VSCode, {
         configPath,
       });
@@ -33,6 +36,8 @@ describe(`vscode config`, () => {
           servers: {},
         },
       });
+
+      await deleteConfigFile(ConfiguratorTarget.VSCode);
     });
   });
 });

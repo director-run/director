@@ -48,7 +48,7 @@ import type { VSCodeConfig } from "./vscode";
         }
       });
 
-      test("should initialize the config", async () => {
+      test("should create the config file if it doesn't exist", async () => {
         expect(isFilePresent(installer.configPath)).toBe(false);
         expect(await installer.isClientConfigPresent()).toBe(false);
         expect(await installer.isInstalled("any")).toBe(false);
@@ -179,5 +179,7 @@ import type { VSCodeConfig } from "./vscode";
 });
 
 describe("getProxyInstalledStatus", () => {
-  test.skip("should work", async () => {});
+  test.skip("should work", () => {
+    // TODO: implement this
+  });
 });

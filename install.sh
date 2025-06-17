@@ -281,7 +281,7 @@ ensure_node_installed() {
     return 0
 }
 
-install_director() {
+ensure_director_installed() {
     if command_exists director; then
         show_info "director is already installed"
         # TODO: update director
@@ -332,9 +332,8 @@ main() {
 
     show_progress "Setting up Director"
     printf "\n"
-    install_director
+    ensure_director_installed
 
-    # Step 7: Final verification
     show_progress "Finalizing installation"
     printf "\n"
     

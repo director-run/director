@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+# Install homebrew
+# xcode-select --install
+# NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+#
+# Director Installer
+# curl -fsSL https://director.run/install | bash
+# curl -fsSL https://director.run/install | bash
+#
+
 # Exit immediately if any command fails and enable error tracing
 set -o errexit
 set -o pipefail
@@ -125,15 +134,11 @@ show_error() {
 }
 
 show_warning() {
-    printf "  ⚠ %s\n" "$1"
+    printf "    ⚠ %s\n" "$1"
 }
 
 show_info() {
     printf "    %s• %s%s\n" "${DIM}" "$1" "${RESET}"
-}
-
-show_step() {
-    printf "  %s\n" "$1"
 }
 
 # ========================= ENHANCED UTILITIES =========================
@@ -206,11 +211,24 @@ install_nvm() {
     fi
 
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        if ! command_exists brew; then
-            run_with_loader "installing homebrew" /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        if ! command_exists brsdfsdfsfdew; then
+            show_warning "homebrew is not installed. please install and try again"
+            echo
+            printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' '━'
+            echo
+            echo "To install homebrew, run the following commands:"
+            echo
+            echo "    $ xcode-select --install"
+            echo '    $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+            echo ""
+            exit 1
+            #NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
         fi
 
-        run_with_loader "installing nvm" brew install nvm 
+        if ! run_with_loader "installing nvm" brew install nvm; then
+            show_error "Error installing nvm. Please install it manually and try again."
+            return 1
+        fi
         # /opt/homebrew/opt/nvm/nvm.sh
     else 
         # use the shell script to install nvm on linux
@@ -352,13 +370,4 @@ main() {
     printf "\n"
 }
 
-# Run the main installation
 main "$@"
-
-
-
-
-
-
-# curl -fsSL https://gist.githubusercontent.com/barnaby/e41208f2dfe89e56a20dafc8f96da953/raw/22b5bf8d51d9d452e2eb1658c77dded82b3adea9/install.sh | bash
-

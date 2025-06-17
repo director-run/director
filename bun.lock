@@ -12,7 +12,7 @@
     },
     "apps/cli": {
       "name": "@director.run/cli",
-      "version": "0.0.33",
+      "version": "0.0.35",
       "bin": {
         "director": "./dist/cli.js",
       },

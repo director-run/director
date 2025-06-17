@@ -1,35 +1,22 @@
-import os from "node:os";
-import path from "node:path";
 import { isTest } from "@director.run/utilities/env";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { writeJSONFile } from "@director.run/utilities/json";
-import {
-  App,
-  isAppInstalled,
-  isFilePresent,
-  openFileInCode,
-  restartApp,
-} from "@director.run/utilities/os";
+import { os, App } from "@director.run/utilities/os/index";
 import { z } from "zod";
 import { AbstractConfigurator } from "./types";
 
-export const CLAUDE_CONFIG_PATH = path.join(
-  os.homedir(),
-  "Library/Application Support/Claude/claude_desktop_config.json",
-);
-
 export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
   public async isClientPresent() {
-    return await isAppInstalled(App.CLAUDE);
+    return await os.isAppInstalled(App.CLAUDE);
   }
 
   public async isClientConfigPresent() {
-    return await isFilePresent(this.configPath);
+    return await os.isFilePresent(this.configPath);
   }
 
   public constructor(params: { configPath?: string }) {
     super({
-      configPath: params.configPath || CLAUDE_CONFIG_PATH,
+      configPath: params.configPath || os.getConfigFileForApp(App.CLAUDE),
       name: "claude",
     });
   }
@@ -119,13 +106,13 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
 
   public async openConfig() {
     this.logger.info("opening claude config");
-    await openFileInCode(this.configPath);
+    await os.openFileInCode(this.configPath);
   }
 
   public async restart() {
     if (!isTest()) {
       this.logger.info("restarting claude");
-      await restartApp(App.CLAUDE);
+      await os.restartApp(App.CLAUDE);
     } else {
       this.logger.warn("skipping restart of claude in test environment");
     }
@@ -173,5 +160,5 @@ export type ClaudeServerEntry = {
 };
 
 export function isClaudeConfigPresent(): boolean {
-  return isFilePresent(CLAUDE_CONFIG_PATH);
+  return os.isFilePresent(os.getConfigFileForApp(App.CLAUDE));
 }

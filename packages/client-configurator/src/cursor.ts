@@ -1,33 +1,23 @@
-import os from "node:os";
-import path from "node:path";
 import { isTest } from "@director.run/utilities/env";
 import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
 import { writeJSONFile } from "@director.run/utilities/json";
-import {
-  App,
-  isAppInstalled,
-  isFilePresent,
-  openFileInCode,
-  sleep,
-} from "@director.run/utilities/os";
-import { restartApp } from "@director.run/utilities/os";
+import { os, App } from "@director.run/utilities/os/index";
+import { sleep } from "@director.run/utilities/sleep";
 import { AbstractConfigurator } from "./types";
-
-const CURSOR_CONFIG_PATH = path.join(os.homedir(), ".cursor/mcp.json");
 
 export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
   public async isClientPresent() {
-    return await isAppInstalled(App.CURSOR);
+    return await os.isAppInstalled(App.CURSOR);
   }
 
   public async isClientConfigPresent() {
-    return await isFilePresent(this.configPath);
+    return await os.isFilePresent(this.configPath);
   }
 
   public constructor(params: { configPath?: string }) {
     super({
-      configPath: params.configPath || CURSOR_CONFIG_PATH,
+      configPath: params.configPath || os.getConfigFileForApp(App.CURSOR),
       name: "cursor",
     });
   }
@@ -83,7 +73,7 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
 
     if (!isTest()) {
       this.logger.info("restarting cursor");
-      await restartApp(App.CURSOR);
+      await os.restartApp(App.CURSOR);
     } else {
       this.logger.warn("skipping restart of cursor in test environment");
     }
@@ -131,7 +121,7 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
 
   public async openConfig() {
     this.logger.info("opening cursor config");
-    await openFileInCode(this.configPath);
+    await os.openFileInCode(this.configPath);
   }
 
   public async reset() {
@@ -162,5 +152,5 @@ export type CursorConfig = {
 };
 
 export function isCursorConfigPresent(): boolean {
-  return isFilePresent(CURSOR_CONFIG_PATH);
+  return os.isFilePresent(os.getConfigFileForApp(App.CURSOR));
 }

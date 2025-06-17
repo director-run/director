@@ -1,36 +1,24 @@
 import fs from "node:fs";
-import os from "node:os";
 import path from "node:path";
 import { isTest } from "@director.run/utilities/env";
 import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
 import { writeJSONFile } from "@director.run/utilities/json";
-import {
-  App,
-  isAppInstalled,
-  isFilePresent,
-  openFileInCode,
-  sleep,
-} from "@director.run/utilities/os";
-import { restartApp } from "@director.run/utilities/os";
+import { os, App } from "@director.run/utilities/os/index";
+import { sleep } from "@director.run/utilities/sleep";
 import { AbstractConfigurator, type Installable } from "./types";
-
-const VSCODE_CONFIG_PATH = path.join(
-  os.homedir(),
-  "Library/Application Support/Code/User/settings.json",
-);
 
 export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
   public async isClientPresent() {
-    return await isAppInstalled(App.VSCODE);
+    return await os.isAppInstalled(App.VSCODE);
   }
   public async isClientConfigPresent() {
-    return await isFilePresent(this.configPath);
+    return await os.isFilePresent(this.configPath);
   }
 
   public constructor(params: { configPath?: string }) {
     super({
-      configPath: params.configPath || VSCODE_CONFIG_PATH,
+      configPath: params.configPath || os.getConfigFileForApp(App.VSCODE),
       name: "vscode",
     });
   }
@@ -100,7 +88,7 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
     await this.initialize();
     if (!isTest()) {
       this.logger.info("restarting vscode");
-      await restartApp(App.VSCODE);
+      await os.restartApp(App.VSCODE);
     } else {
       this.logger.warn("skipping restart of vscode in test environment");
     }
@@ -136,7 +124,7 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
 
   public async openConfig() {
     this.logger.info("opening vscode config");
-    await openFileInCode(this.configPath);
+    await os.openFileInCode(this.configPath);
   }
 
   public async reset() {
@@ -176,9 +164,9 @@ export type VSCodeConfig = {
 };
 
 export function isVSCodeInstalled(): boolean {
-  return isAppInstalled(App.VSCODE);
+  return os.isAppInstalled(App.VSCODE);
 }
 
 export function isVSCodeConfigPresent(): boolean {
-  return isFilePresent(VSCODE_CONFIG_PATH);
+  return os.isFilePresent(os.getConfigFileForApp(App.VSCODE));
 }

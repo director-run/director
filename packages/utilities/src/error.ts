@@ -25,6 +25,7 @@ export enum ErrorCode {
   UNAUTHORIZED = "UNAUTHORIZED",
   DUPLICATE = "DUPLICATE",
   JSON_PARSE_ERROR = "JSON_PARSE_ERROR",
+  INVALID_ARGUMENT = "INVALID_ARGUMENT",
 }
 
 export function isAppError(error: unknown): error is AppError {

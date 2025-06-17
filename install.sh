@@ -236,6 +236,7 @@ install_nvm() {
     else 
         # use the shell script to install nvm on linux
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+        source ~/.nvm/nvm.sh
     fi
 
     if ! command_exists nvm; then
@@ -257,7 +258,7 @@ install_node() {
         install_nvm
     fi
 
-    run_with_loader "installing node with nvm" nvm install node && nvm alias default node
+    run_with_loader "installing node with nvm" nvm install node && nvm alias default node && nvm use node
 
     if ! command_exists node; then
         show_error "node is not available. Reload your terminal and try again."

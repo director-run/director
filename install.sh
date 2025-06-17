@@ -7,7 +7,7 @@ set -o pipefail
 # ========================= CONFIGURATION =========================
 
 # Progress Configuration
-readonly TOTAL_STEPS=4
+readonly TOTAL_STEPS=3
 
 # Global Variables
 current_step=0
@@ -340,20 +340,13 @@ main() {
     show_progress "Installing Director"
     printf "\n"
     ensure_director_installed
-
-    show_progress "Finalizing installation"
-    printf "\n"
     
     # Installation complete
     printf "\n"
     printf "  %s✓ installation complete%s" "${GREEN}" "${RESET}"
     printf "\n"
     
-    if command_exists director; then
-        printf "  %srun %s%sdirector quickstart%s%s to get started%s\n" "${DIM}" "${RESET}" "${BOLD}" "${RESET}" "${DIM}" "${RESET}"
-    else
-        printf "  %sRestart your terminal and run %s%director%s%s to get started%s\n" "${DIM}" "${RESET}" "${BOLD}" "${RESET}" "${DIM}" "${RESET}"
-    fi
+    printf "  %sRestart your terminal and run %s%sdirector quickstart%s%s to get started%s\n" "${DIM}" "${RESET}" "${BOLD}" "${RESET}" "${DIM}" "${RESET}"
     printf "\n"
 }
 

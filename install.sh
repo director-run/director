@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
-# Install homebrew
-# xcode-select --install
-# NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 #
 # Director Installer
 # curl -fsSL https://director.run/install | bash
-# curl -fsSL http://macbook.local:8000/install.sh | bash
+# 
+# This script will install:
+# - Node.js (using the official nvm installer)
+# - uv (using the official uv installer)
+# - Director (using npm)
 #
 
 # Exit immediately if any command fails and enable error tracing
@@ -211,30 +212,30 @@ install_nvm() {
     fi
 
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        if ! command_exists brsdfsdfsfdew; then
-            show_warning "homebrew is not installed. please install and try again"
-            echo
-            printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' '━'
-            echo
-            echo "  To install homebrew, run the following commands:"
-            echo
-            echo "    $ xcode-select --install"
-            echo '    $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
-            echo ""
-            exit 1
-            #NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        fi
-
-        if ! run_with_loader "installing nvm" brew install nvm; then
-            show_error "Error installing nvm. Please install it manually and try again."
-            return 1
-        fi
-        # /opt/homebrew/opt/nvm/nvm.sh
-    else 
-        # use the shell script to install nvm on linux
-        run_with_loader "installing nvm" /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh)"
+        # create a .zshrc file if it doesn't exist 
+        # on fresh osx this is needed for npm install
+        touch $HOME/.zshrc
     fi
+    #     if ! command_exists brew; then
+    #         show_warning "homebrew is not installed. please install and try again"
+    #         echo
+    #         printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' '━'
+    #         echo
+    #         echo "  To install homebrew, run the following commands:"
+    #         echo
+    #         echo "    $ xcode-select --install"
+    #         echo '    $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+    #         echo ""
+    #         exit 1
+    #         #NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    #     fi
 
+    #     if ! run_with_loader "installing nvm" brew install nvm; then
+    #         show_error "Error installing nvm. Please install it manually and try again."
+    #         return 1
+    #     fi
+
+    run_with_loader "installing nvm" /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh)"
     source_nvm
 
     if ! command_exists nvm; then
@@ -252,9 +253,10 @@ install_node() {
         install_nvm
     fi
 
-    run_with_loader "installing latest node.js" nvm install node --default
+    # doesn't work with run_with_loader for some reason, just exits the whole script
+    nvm install node --default
     source_nvm
-
+    
     if ! command_exists node; then
         show_error "node.js is not available. Reload your terminal and try again."
         return 1
@@ -281,8 +283,8 @@ ensure_node_installed() {
 
 
 source_nvm() {
-    if [ -f ~/.nvm/nvm.sh ]; then
-        source ~/.nvm/nvm.sh
+    if [ -f "$HOME/.nvm/nvm.sh" ]; then
+        source "$HOME/.nvm/nvm.sh"
         # TODO fish?
     fi
 }
@@ -290,8 +292,7 @@ source_nvm() {
 
 source_env() {
     if [ -f "$HOME/.local/bin/env" ]; then
-        # bash, zsh
-        source "$HOME/.local/bin/env"
+        source "$HOME/.local/bin/env" # bash, zsh
         # fish 
         # source $HOME/.local/bin/env.fish (fish)
     fi
@@ -341,14 +342,13 @@ ensure_director_installed() {
 # ========================= MAIN INSTALLATION FLOW =========================
 
 main() {
-    # Show beautiful banner
     show_banner
     
     # System compatibility check
     if [[ "$OSTYPE" != "darwin"* ]] && [[ "$OSTYPE" != "linux"* ]]; then
         show_error "This installer only supports macOS and Linux environments."
     fi
-        
+
     show_progress "Installing Node.js"
     printf "\n"
     ensure_node_installed

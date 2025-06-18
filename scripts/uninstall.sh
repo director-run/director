@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+#
+# Director Uninstaller
+# curl -fsSL https://director.run/uninstall | bash
+#
+# This script will uninstall:
+# - Director (using npm)
+#
+#
+
 # Exit immediately if any command fails and enable error tracing
 set -o errexit
 set -o pipefail

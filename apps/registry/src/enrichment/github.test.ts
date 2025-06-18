@@ -14,7 +14,7 @@ describe("GitHub URL parsing", () => {
         "https://raw.githubusercontent.com/sonnylazuardi/cursor-talk-to-figma-mcp/refs/heads/main/README.md",
 
       "https://github.com/modelcontextprotocol/servers/tree/HEAD/src/brave-search":
-        "https://raw.githubusercontent.com/modelcontextprotocol/servers/refs/heads/main/src/brave-search/README.md",
+        "https://raw.githubusercontent.com/modelcontextprotocol/servers/refs/heads/HEAD/src/brave-search/README.md",
 
       "https://github.com/modelcontextprotocol/servers/tree/main/src/fetch":
         "https://raw.githubusercontent.com/modelcontextprotocol/servers/refs/heads/main/src/fetch/README.md",

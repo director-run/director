@@ -152,7 +152,16 @@ export default function ProxyPage() {
                 return (
                   <MCPLinkCard
                     key={it.name}
-                    entry={it.source?.entryData as RegistryEntry}
+                    entry={
+                      it.source
+                        ? (it.source.entryData as RegistryEntry)
+                        : {
+                            title: it.name,
+                            description: null,
+                            icon: null,
+                            isOfficial: false,
+                          }
+                    }
                     href={`/${proxy.id}/mcp/${it.name}`}
                   />
                 );

@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Inter, Roboto_Mono } from "next/font/google";
 
@@ -43,6 +44,7 @@ export default function RootLayout({
           {children}
           <Toaster position="top-center" />
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );

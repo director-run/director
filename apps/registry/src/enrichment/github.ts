@@ -1,5 +1,7 @@
+import GitUrlParse from "git-url-parse";
+
 export function isGithubRepo(url: string) {
-  return url.includes("github.com");
+  return GitUrlParse(url).resource === "github.com";
 }
 
 function parseGithubUrl(url: string) {
@@ -17,7 +19,7 @@ function parseGithubUrl(url: string) {
 
   // Look for branch indicators (tree, blob, HEAD)
   const branchIndex = parts.findIndex((part) =>
-    ["tree", "blob", "HEAD"].includes(part),
+    ["tree", "blob", "HEAD", "master"].includes(part),
   );
   if (branchIndex !== -1 && parts[branchIndex + 1]) {
     // Always use 'main' as the branch name, even if we see 'HEAD'
@@ -32,12 +34,15 @@ function parseGithubUrl(url: string) {
 }
 
 export function getGithubRawReadmeUrl(url: string) {
-  const { team, repo, branch, subfolder } = parseGithubUrl(url);
-  // If the URL already contains README.md, use the subfolder as is
-  const readmePath = url.includes("README.md")
-    ? subfolder
-    : subfolder
-      ? `${subfolder}/README.md`
+  const { owner, name, ref, filepath } = GitUrlParse(url);
+
+  const branch = ref || "main";
+
+  const readmePath = filepath.includes("README.md")
+    ? filepath
+    : filepath
+      ? `${filepath}/README.md`
       : "README.md";
-  return `https://raw.githubusercontent.com/${team}/${repo}/refs/heads/${branch}/${readmePath}`;
+
+  return `https://raw.githubusercontent.com/${owner}/${name}/refs/heads/${branch}/${readmePath}`;
 }

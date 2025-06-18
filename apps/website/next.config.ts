@@ -13,6 +13,15 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  rewrites: () => {
+    return Promise.resolve([
+      {
+        source: "/install",
+        destination:
+          "https://raw.githubusercontent.com/director-run/director/refs/heads/main/scripts/install.sh",
+      },
+    ]);
+  },
 };
 
 export default nextConfig;

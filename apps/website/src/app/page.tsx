@@ -64,7 +64,7 @@ export default function IndexPage() {
           <div className="flex flex-col gap-y-8 md:gap-y-10">
             <div className="flex flex-col gap-y-3">
               <h1 className="max-w-[32ch] text-balance font-[450] text-3xl leading-[1.125] sm:text-4xl md:text-5xl">
-                An open source middleware for MCP that just works.
+                The easiest way to use MCP
               </h1>
               <p className="max-w-[54ch] text-pretty text-fg/80 text-lg leading-snug md:text-xl">
                 No more complex client config, scattered secrets, or glue code.
@@ -161,13 +161,13 @@ export default function IndexPage() {
                     <CardHeader>
                       <CardTitle className="md:text-2xl">Try it now</CardTitle>
                       <CardDescription>
-                        Start using Director right away. The Quickstart guide
-                        shows you how to install, configure, and connect your
-                        favourite tools with a single command.
+                        Start using Director right away. The installation script
+                        will download the necessary dependencies and run the
+                        latest version of director.
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <CopyCommand command="npx @director.run/cli@latest quickstart" />
+                      <CopyCommand command="curl -fsSL https://director.run/install | bash" />
                     </CardContent>
                   </Card>
                 </div>

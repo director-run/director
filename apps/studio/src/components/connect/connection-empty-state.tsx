@@ -38,7 +38,7 @@ export function ConnectionEmptyState() {
                 </p>
               </div>
               <pre className="self-start rounded-md border-[0.5px] border-fg/10 bg-fg/10 px-2.5 py-1 text-left font-mono text-sm selection:bg-fg selection:text-bg">
-                <code>npx -y @director.run/cli serve</code>
+                <code>director serve</code>
               </pre>
             </div>
 

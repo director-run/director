@@ -1,7 +1,7 @@
 <h1 align="center">Director</h1>
-<p align="center">The easiest way to connect to any MCP server.</p>
+<p align="center">The easiest way to use MCP.</p>
 
-<p align="center"><code>npx @director.run/cli@latest quickstart</code></p>
+<p align="center"><code>curl -fsSL https://director.run/install | bash</code></p>
 
 ---
 
@@ -22,12 +22,13 @@
 The fastest way to try out director is by running the quickstart directly using npx. This will start the director gateway and open the UI.
 
 ```bash
-npx @director.run/cli@latest quickstart
+curl -fsSL https://director.run/install | bash
+director quickstart
 ```
 
-#### Installing Locally
+#### Installing Manually
 
-If you'd like to install director locally, you can do so via `npm`.
+If you'd like to install director manually, you can do so via `npm` once you've installed the Prerequisites.
 
 ```bash
 npm install -g @director.run/cli

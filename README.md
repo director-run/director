@@ -1,7 +1,7 @@
 <h1 align="center">Director</h1>
-<p align="center">The easiest way to manage and deploy MCP servers, locally or in the cloud</p>
+<p align="center">The easiest way to use MCP</p>
 
-<p align="center"><code>npx @director.run/cli quickstart</code></p>
+<p align="center"><code>curl -fsSL https://director.run/install | bash</code></p>
 
 ---
 
@@ -23,7 +23,8 @@
 Get started with Director immediately using the command below. For more detailed information, please [read the docs](https://docs.director.run).
 
 ```bash
-npx @director.run/cli@latest quickstart
+curl -fsSL https://director.run/install | bash
+director quickstart
 ```
 
 ---

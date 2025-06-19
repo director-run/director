@@ -60,7 +60,7 @@ export interface SiteConfig {
 export const siteConfig: SiteConfig = {
   metadata: {
     title: { absolute: "Director", template: "%s | Director" },
-    description: "An open source middleware for MCP that just works.",
+    description: "The easiest way to use MCP.",
     keywords: ["director", "api", "gateway", "mcp", "server", "registry"],
     robots: {
       index: true,

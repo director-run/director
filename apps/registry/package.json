@@ -3,7 +3,6 @@
   "private": true,
   "type": "module",
   "version": "0.0.1",
-
   "scripts": {
     "lint": "biome check .",
     "format": "biome format --write .",
@@ -31,6 +30,7 @@
   "dependencies": {
     "commander": "^13.1.0",
     "drizzle-orm": "^0.43.1",
+    "git-url-parse": "^16.1.0",
     "pg": "^8.15.6"
   }
 }

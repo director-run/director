@@ -132,7 +132,7 @@ export const siteConfig: SiteConfig = {
     },
   ],
   profiles: [
-    { type: "github", url: "https://github.com/theworkingcompany" },
+    { type: "github", url: "https://github.com/director-run/director" },
     { type: "x", url: "https://x.com/theworkingco" },
   ],
   repos: [

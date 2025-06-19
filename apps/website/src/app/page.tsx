@@ -67,9 +67,8 @@ export default function IndexPage() {
                 The easiest way to use MCP
               </h1>
               <p className="max-w-[54ch] text-pretty text-fg/80 text-lg leading-snug md:text-xl">
-                No more complex client config, scattered secrets, or glue code.
-                Director gives you a single, reliable endpoint for everything
-                MCP.
+                One command to get started. 100% local & open source. Built for
+                humans and agents.
               </p>
 
               <div className="flex flex-row gap-2 pt-2 md:pt-3">

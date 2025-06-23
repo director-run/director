@@ -87,39 +87,17 @@ show_progress() {
     printf "  [%d/%d] %s" "$current_step" "$TOTAL_STEPS" "$step_description"
 }
 
-# Animated loader function
-show_loader() {
-    local message="$1"
-    local pid="$2"
-    local delay=0.1
-    local spinstr='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
-    
-    printf "    %s%s%s " "${DIM}" "$message" "${RESET}"
-    
-    while kill -0 "$pid" 2>/dev/null; do
-        local temp=${spinstr#?}
-        printf "\r    %s%s %s%s" "${DIM}" "$message" "${spinstr%"$temp"}" "${RESET}"
-        local spinstr=$temp${spinstr%"$temp"}
-        sleep $delay
-    done
-    
-    printf "\r    %s✓ %s%s\n" "${DIM}" "$message" "${RESET}"
-}
 
 # Start a background process and show loader
-run_with_loader() {
+run_command() {
     local message="$1"
     shift
-    
-    # Run command in background
-    "$@" &>/dev/null &
-    local pid=$!
-    
-    # Show animated loader
-    show_loader "$message" "$pid"
-    
-    # Wait for completion and return exit status
-    wait "$pid"
+    local command="$@"
+    printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' '━'
+    echo "  $message"
+    printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' '━'
+
+    "$@"
     return $?
 }
 
@@ -197,7 +175,7 @@ install_brew() {
         return 0
     fi
     
-    run_with_loader "installing homebrew..." /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    run_command "installing homebrew..." /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
     if ! command_exists brew; then
         show_error "homebrew is not installed. Please install it manually and try again."
@@ -216,26 +194,8 @@ install_nvm() {
         # on fresh osx this is needed for npm install
         touch $HOME/.zshrc
     fi
-    #     if ! command_exists brew; then
-    #         show_warning "homebrew is not installed. please install and try again"
-    #         echo
-    #         printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' '━'
-    #         echo
-    #         echo "  To install homebrew, run the following commands:"
-    #         echo
-    #         echo "    $ xcode-select --install"
-    #         echo '    $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
-    #         echo ""
-    #         exit 1
-    #         #NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    #     fi
 
-    #     if ! run_with_loader "installing nvm" brew install nvm; then
-    #         show_error "Error installing nvm. Please install it manually and try again."
-    #         return 1
-    #     fi
-
-    run_with_loader "installing nvm" /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh)"
+    run_command "installing nvm" /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh)"
     source_nvm
 
     if ! command_exists nvm; then
@@ -253,7 +213,7 @@ install_node() {
         install_nvm
     fi
 
-    # doesn't work with run_with_loader for some reason, just exits the whole script
+    # doesn't work with run_command for some reason, just exits the whole script
     nvm install node --default
     source_nvm
     
@@ -306,7 +266,7 @@ ensure_uv_installed() {
         show_success "uv is already installed"
         return 0
     else
-        run_with_loader "installing uv" /bin/bash -c "$(curl -fsSL https://astral.sh/uv/install.sh)"
+        run_command "installing uv" /bin/bash -c "$(curl -fsSL https://astral.sh/uv/install.sh)"
         source_env
 
         if ! command_exists uv; then
@@ -324,7 +284,7 @@ ensure_director_installed() {
         # TODO: update director
     else
         if command_exists npm; then
-            if run_with_loader "installing director..." npm install -g @director.run/cli; then
+            if run_command "installing director..." npm install -g @director.run/cli; then
                 show_success "director is now installed"
                 return 0
             else 

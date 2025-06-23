@@ -101,6 +101,7 @@ program
 
 program
   .command("destroy <name>")
+  .alias("rm")
   .description("destroy a VM")
   .action(async (name) => {
     await destroy(name);

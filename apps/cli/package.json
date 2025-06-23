@@ -1,7 +1,7 @@
 {
   "name": "@director.run/cli",
   "type": "module",
-  "version": "0.0.36",
+  "version": "0.0.37",
   "files": ["dist", "README.md"],
   "bin": {
     "director": "./dist/cli.js"

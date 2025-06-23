@@ -5,7 +5,7 @@ export const optionalStringSchema = requiredStringSchema.nullish();
 
 export const httpTransportSchema = z.object({
   type: z.literal("http"),
-  url: requiredStringSchema,
+  url: requiredStringSchema.url(),
   headers: z.record(requiredStringSchema, z.string()).optional(),
 });
 

@@ -33,7 +33,7 @@ export function SelectNativeField({
       name={name}
       render={({ field }) => (
         <FormItem>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1">
             {(label || helperLabel) && (
               <div className="flex flex-row items-center">
                 {label && <FormLabel>{label}</FormLabel>}

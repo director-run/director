@@ -6,6 +6,7 @@ import {
   LayoutViewContent,
   LayoutViewHeader,
 } from "@/components/layout";
+import { McpAddSheet } from "@/components/mcp-servers/mcp-add-sheet";
 import {
   MCPLinkCard,
   MCPLinkCardList,
@@ -17,6 +18,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { EmptyStateDescription } from "@/components/ui/empty-state";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -86,13 +88,18 @@ export default function RegistryPage() {
             </SectionHeader>
 
             <div className="flex flex-col gap-y-4">
-              <Input
-                type="text"
-                placeholder="Search MCP servers..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="max-w-md"
-              />
+              <div className="flex flex-row items-center justify-between">
+                <Input
+                  type="text"
+                  placeholder="Search MCP servers..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="max-w-md"
+                />
+                <McpAddSheet>
+                  <Button>Add manually</Button>
+                </McpAddSheet>
+              </div>
 
               <MCPLinkCardList>
                 {filteredEntries

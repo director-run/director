@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/empty-state";
 import * as List from "@/components/ui/list";
 import { ScrambleText } from "@/components/ui/scramble-text";
-import { SimpleMarkdown } from "./ui/markdown";
 
 function ListSkeletonItem() {
   return (
@@ -51,9 +50,7 @@ function ListItem({ link }: { link: LinkItem }) {
         <List.ListItemDetails>
           <List.ListItemTitle>{link.title}</List.ListItemTitle>
           {link.subtitle && (
-            <List.ListItemDescription>
-              <SimpleMarkdown>{link.subtitle}</SimpleMarkdown>
-            </List.ListItemDescription>
+            <List.ListItemDescription>{link.subtitle}</List.ListItemDescription>
           )}
         </List.ListItemDetails>
 

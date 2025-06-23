@@ -17,7 +17,6 @@ import { ProxyInstallers } from "@/components/proxies/proxy-installers";
 import { ProxyManualDialog } from "@/components/proxies/proxy-manual-dialog";
 import { ProxySettingsSheet } from "@/components/proxies/proxy-settings-sheet";
 import { ProxySkeleton } from "@/components/proxies/proxy-skeleton";
-import { RegistryCommand } from "@/components/registry/registry-command";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -49,6 +48,7 @@ import {
   GearIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
+import Link from "next/link";
 import { useEffect } from "react";
 
 export default function ProxyPage() {
@@ -145,7 +145,9 @@ export default function ProxyPage() {
               <SectionTitle variant="h2" asChild>
                 <h2>MCP Servers</h2>
               </SectionTitle>
-              <RegistryCommand serverId={proxy.id} />
+              <Button size="sm" asChild>
+                <Link href="/library">Add MCP server</Link>
+              </Button>
             </SectionHeader>
             <MCPLinkCardList>
               {proxy.servers.map((it) => {

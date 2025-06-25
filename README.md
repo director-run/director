@@ -14,7 +14,7 @@
 
 </div>
 
-![See it in Action](https://github.com/director-run/director/tree/main/apps/docs/images/demo.gif)
+<img src="https://github.com/director-run/director/blob/main/apps/docs/images/demo.gif" width="100%" alt="animated hello">
 
 [Director](https://director.run) is open source MCP middleware that acts as a proxy between models/agents and MCP servers. Supporting all MCP transports natively, it aggregates tools, prompts, and resources server-side while providing a unified client-side integration point. This abstraction eliminates MCP server management overhead, enabling developers to focus on prompt engineering and domain logic rather than infrastructure complexity.
 

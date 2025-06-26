@@ -6,8 +6,7 @@
     "source.organizeImports.biome": "explicit"
   },
   "tailwindCSS.experimental.configFile": {
-    "apps/studio/src/app/globals.css": "apps/studio/src/**",
-    "apps/website/src/app/globals.css": "apps/website/src/**"
+    "apps/studio/src/app/globals.css": "apps/studio/src/**"
   },
   "tailwindCSS.classFunctions": ["cn", "cva"],
   "[javascript]": {

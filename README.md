@@ -39,7 +39,6 @@ director quickstart
 - [`apps/docs`](./apps/docs/README.md) - Project documentation hosted at [https://docs.director.run](https://docs.director.run)
 - [`apps/registry`](./apps/registry/README.md) - Backend for the Director registry hosted at [https://registry.director.run](https://registry.director.run)
 - [`apps/sandbox`](./apps/sandbox/README.md) - A tool for running Director (and all MCP servers) securely inside a VM. Apple Silicon only.
-- [`apps/website`](./apps/website/README.md) - Marketing website hosted at [https://director.run](https://director.run)
 
 ### Internal Packages
 

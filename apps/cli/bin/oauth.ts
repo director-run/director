@@ -205,25 +205,17 @@ class InteractiveOAuthClient {
     }
   }
 
-  /**
-   * Establishes connection to the MCP server with OAuth authentication
-   */
   async connect(): Promise<void> {
-    console.log(`🔗 Attempting to connect to ${this.serverUrl}...`);
-
-    const clientMetadata: OAuthClientMetadata = {
-      client_name: "Simple OAuth MCP Client",
-      redirect_uris: [CALLBACK_URL],
-      grant_types: ["authorization_code", "refresh_token"],
-      response_types: ["code"],
-      token_endpoint_auth_method: "client_secret_post",
-      scope: "mcp:tools",
-    };
-
-    console.log("🔐 Creating OAuth provider...");
     const oauthProvider = new InMemoryOAuthClientProvider(
       CALLBACK_URL,
-      clientMetadata,
+      {
+        client_name: "Simple OAuth MCP Client",
+        redirect_uris: [CALLBACK_URL],
+        grant_types: ["authorization_code", "refresh_token"],
+        response_types: ["code"],
+        token_endpoint_auth_method: "client_secret_post",
+        scope: "mcp:tools",
+      },
       (redirectUrl: URL) => {
         console.log(`📌 OAuth redirect handler called - opening browser`);
         console.log(`Opening browser to: ${redirectUrl.toString()}`);

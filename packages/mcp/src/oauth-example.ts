@@ -34,16 +34,11 @@ export async function connectWithOAuth(
 
   const client = new SimpleClient("oauth-enabled-client");
 
-  // Use the OAuth-aware connection method that handles the complete flow
-  await client.connectToHTTPWithOAuth(
-    serverUrl,
-    oauthProvider,
-    undefined,
-    async () => {
-      console.log("OAuth flow required - waiting for authorization...");
-      return await waitForOAuthCallback(CALLBACK_PORT);
-    },
-  );
+  // Use the unified connectToHTTP method with OAuth support
+  await client.connectToHTTP(serverUrl, undefined, oauthProvider, async () => {
+    console.log("OAuth flow required - waiting for authorization...");
+    return await waitForOAuthCallback(CALLBACK_PORT);
+  });
 
   console.log("Connected successfully with OAuth!");
   return client;

@@ -54,149 +54,129 @@ export class SimpleClient extends Client {
     url: string,
     headers?: Record<string, string>,
     oauthProvider?: OAuthClientProvider,
-  ) {
-    try {
-      const streamableTransport = new StreamableHTTPClientTransport(
-        new URL(url),
-        {
-          requestInit: {
-            headers,
-          },
-          ...(oauthProvider && { authProvider: oauthProvider }),
-        },
-      );
-      await this.connect(streamableTransport);
-      logger.info(`[${this.name}] connected successfully to ${url}`);
-    } catch (e) {
-      if (e instanceof UnauthorizedError && oauthProvider) {
-        // Re-throw OAuth errors for the caller to handle OAuth flow
-        throw e;
-      }
-
-      try {
-        const sseTransport = new SSEClientTransport(new URL(url), {
-          requestInit: {
-            headers,
-          },
-          ...(oauthProvider && { authProvider: oauthProvider }),
-        });
-        await this.connect(sseTransport);
-        logger.info(`[${this.name}] connected successfully to ${url}`);
-      } catch (e) {
-        if (e instanceof UnauthorizedError && oauthProvider) {
-          // Re-throw OAuth errors for the caller to handle OAuth flow
-          throw e;
-        }
-
-        throw new AppError(
-          ErrorCode.CONNECTION_REFUSED,
-          `[${this.name}] failed to connect to ${url}`,
-          {
-            targetName: this.name,
-            url,
-            error: e,
-          },
-        );
-      }
-    }
-  }
-
-  /**
-   * Connect to HTTP server with full OAuth flow handling.
-   * This method handles the complete OAuth flow internally, including
-   * waiting for authorization and token exchange.
-   */
-  public async connectToHTTPWithOAuth(
-    url: string,
-    oauthProvider: OAuthClientProvider,
-    headers?: Record<string, string>,
     onAuthorizationRequired?: (authUrl: URL) => Promise<string>,
   ) {
-    const attemptConnectionWithOAuth = async (
-      transport: StreamableHTTPClientTransport,
-    ): Promise<void> => {
+    const attemptStreamableConnection = async (
+      useOAuth = false,
+    ): Promise<boolean> => {
       try {
+        const transport = new StreamableHTTPClientTransport(new URL(url), {
+          requestInit: { headers },
+          ...(oauthProvider && { authProvider: oauthProvider }),
+        });
         await this.connect(transport);
-        logger.info(`[${this.name}] connected successfully to ${url}`);
+        logger.info(
+          `[${this.name}] connected successfully to ${url} via Streamable`,
+        );
+        return true;
       } catch (error) {
-        if (error instanceof UnauthorizedError) {
-          logger.info(
-            `[${this.name}] OAuth authentication required for ${url}`,
-          );
-
-          if (!onAuthorizationRequired) {
-            throw new Error(
-              "OAuth authentication required but no authorization handler provided",
-            );
-          }
-
-          // Get authorization code from the handler
-          const authCode = await onAuthorizationRequired(new URL(url));
-
-          // Complete OAuth flow with the transport
-          await transport.finishAuth(authCode);
-          logger.info(`[${this.name}] OAuth token exchange completed`);
-
-          // Create a NEW transport instance for retry - the old one is already started
-          const newTransport = new StreamableHTTPClientTransport(new URL(url), {
-            requestInit: {
-              headers,
-            },
-            authProvider: oauthProvider,
-          });
-
-          // Retry connection with new transport after OAuth completion
-          await this.connect(newTransport);
-          logger.info(
-            `[${this.name}] connected successfully after OAuth flow to ${url}`,
-          );
-        } else {
+        if (error instanceof UnauthorizedError && oauthProvider && !useOAuth) {
+          // First unauthorized attempt - will trigger OAuth flow
           throw error;
         }
+        return false;
       }
     };
 
-    // Try StreamableHTTPClientTransport first
-    try {
-      const streamableTransport = new StreamableHTTPClientTransport(
-        new URL(url),
-        {
-          requestInit: {
-            headers,
-          },
-          authProvider: oauthProvider,
-        },
-      );
-      await attemptConnectionWithOAuth(streamableTransport);
-      return; // Success - exit early
-    } catch (streamableError) {
-      logger.info(`[${this.name}] StreamableHTTP failed, trying SSE transport`);
-
-      // If StreamableHTTP fails (not due to OAuth), try SSE
+    const attemptSSEConnection = async (useOAuth = false): Promise<boolean> => {
       try {
-        const sseTransport = new SSEClientTransport(new URL(url), {
-          requestInit: {
-            headers,
-          },
-          authProvider: oauthProvider,
+        const transport = new SSEClientTransport(new URL(url), {
+          requestInit: { headers },
+          ...(oauthProvider && { authProvider: oauthProvider }),
         });
-
-        // For SSE, we can't use the same OAuth flow pattern, so just try to connect
-        await this.connect(sseTransport);
+        await this.connect(transport);
         logger.info(`[${this.name}] connected successfully to ${url} via SSE`);
-      } catch (sseError) {
+        return true;
+      } catch (error) {
+        if (error instanceof UnauthorizedError && oauthProvider && !useOAuth) {
+          // First unauthorized attempt - will trigger OAuth flow
+          throw error;
+        }
+        return false;
+      }
+    };
+
+    const performOAuthFlow = async (): Promise<void> => {
+      if (!onAuthorizationRequired) {
+        throw new Error(
+          "OAuth authentication required but no authorization handler provided",
+        );
+      }
+
+      logger.info(`[${this.name}] OAuth authentication required for ${url}`);
+
+      // Create a temporary transport just for OAuth flow
+      const oauthTransport = new StreamableHTTPClientTransport(new URL(url), {
+        requestInit: { headers },
+        authProvider: oauthProvider,
+      });
+
+      // Get authorization code from the handler
+      const authCode = await onAuthorizationRequired(new URL(url));
+
+      // Complete OAuth flow
+      await oauthTransport.finishAuth(authCode);
+      logger.info(`[${this.name}] OAuth token exchange completed`);
+    };
+
+    // First attempt: Try both transports without OAuth
+    try {
+      if (await attemptStreamableConnection()) {
+        return;
+      }
+    } catch (error) {
+      if (error instanceof UnauthorizedError && oauthProvider) {
+        // OAuth required - perform flow and retry
+        await performOAuthFlow();
+
+        // Retry both transports after OAuth
+        if (await attemptStreamableConnection(true)) {
+          return;
+        }
+        if (await attemptSSEConnection(true)) {
+          return;
+        }
+
         throw new AppError(
           ErrorCode.CONNECTION_REFUSED,
-          `[${this.name}] failed to connect to ${url} with OAuth`,
-          {
-            targetName: this.name,
-            url,
-            streamableError,
-            sseError,
-          },
+          `[${this.name}] failed to connect to ${url} even after OAuth`,
+          { targetName: this.name, url },
+        );
+      }
+      // Non-OAuth error with streamable, try SSE
+    }
+
+    try {
+      if (await attemptSSEConnection()) {
+        return;
+      }
+    } catch (error) {
+      if (error instanceof UnauthorizedError && oauthProvider) {
+        // OAuth required - perform flow and retry
+        await performOAuthFlow();
+
+        // Retry both transports after OAuth
+        if (await attemptStreamableConnection(true)) {
+          return;
+        }
+        if (await attemptSSEConnection(true)) {
+          return;
+        }
+
+        throw new AppError(
+          ErrorCode.CONNECTION_REFUSED,
+          `[${this.name}] failed to connect to ${url} even after OAuth`,
+          { targetName: this.name, url },
         );
       }
     }
+
+    // If we get here, both transports failed without OAuth requirement
+    throw new AppError(
+      ErrorCode.CONNECTION_REFUSED,
+      `[${this.name}] failed to connect to ${url}`,
+      { targetName: this.name, url },
+    );
   }
 
   public async connectToStdio(
@@ -255,26 +235,13 @@ export class SimpleClient extends Client {
     url: string,
     headers?: Record<string, string>,
     oauthProvider?: OAuthClientProvider,
-  ) {
-    const client = new SimpleClient("test streamable client");
-    await client.connectToHTTP(url, headers, oauthProvider);
-    return client;
-  }
-
-  /**
-   * Static factory method for connecting with full OAuth flow handling
-   */
-  public static async createAndConnectToHTTPWithOAuth(
-    url: string,
-    oauthProvider: OAuthClientProvider,
-    headers?: Record<string, string>,
     onAuthorizationRequired?: (authUrl: URL) => Promise<string>,
   ) {
-    const client = new SimpleClient("oauth-enabled-client");
-    await client.connectToHTTPWithOAuth(
+    const client = new SimpleClient("test streamable client");
+    await client.connectToHTTP(
       url,
-      oauthProvider,
       headers,
+      oauthProvider,
       onAuthorizationRequired,
     );
     return client;

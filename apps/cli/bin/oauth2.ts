@@ -118,11 +118,11 @@ async function main(): Promise<void> {
   const client = new SimpleClient("oauth-test-client");
 
   try {
-    // Use the OAuth-aware connection method
-    await client.connectToHTTPWithOAuth(
+    // Use the unified connectToHTTP method with OAuth support
+    await client.connectToHTTP(
       serverUrl,
-      oauthProvider,
       undefined,
+      oauthProvider,
       async () => {
         console.log("OAuth flow required - waiting for authorization...");
         return await waitForOAuthCallback(CALLBACK_PORT);

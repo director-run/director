@@ -67,7 +67,7 @@ describe("SimpleClient OAuth Integration", () => {
     }).not.toThrow();
   });
 
-  it("should support connectToHTTPWithOAuth method", async () => {
+  it("should support OAuth flow in unified connectToHTTP method", async () => {
     const client = new SimpleClient("test-oauth-client");
     const oauthProvider = SimpleClient.createOAuthProvider(
       "http://localhost:8090/callback",
@@ -85,16 +85,16 @@ describe("SimpleClient OAuth Integration", () => {
 
     // This should not throw an error for method signature validation
     expect(() => {
-      client.connectToHTTPWithOAuth(
+      client.connectToHTTP(
         "http://example.com",
-        oauthProvider,
         {},
+        oauthProvider,
         mockAuthHandler,
       );
     }).not.toThrow();
   });
 
-  it("should support static factory method for OAuth", async () => {
+  it("should support OAuth flow in static factory method", async () => {
     const oauthProvider = SimpleClient.createOAuthProvider(
       "http://localhost:8090/callback",
       {
@@ -111,10 +111,10 @@ describe("SimpleClient OAuth Integration", () => {
 
     // This should not throw an error for method signature validation
     expect(() => {
-      SimpleClient.createAndConnectToHTTPWithOAuth(
+      SimpleClient.createAndConnectToHTTP(
         "http://example.com",
-        oauthProvider,
         {},
+        oauthProvider,
         mockAuthHandler,
       );
     }).not.toThrow();

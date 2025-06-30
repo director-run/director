@@ -192,8 +192,7 @@ class InteractiveOAuthClient {
     } catch (error) {
       if (error instanceof UnauthorizedError) {
         console.log("🔐 OAuth required - waiting for authorization...");
-        const callbackPromise = this.waitForOAuthCallback();
-        const authCode = await callbackPromise;
+        const authCode = await this.waitForOAuthCallback();
         await transport.finishAuth(authCode);
         console.log("🔐 Authorization code received:", authCode);
         console.log("🔌 Reconnecting with authenticated transport...");

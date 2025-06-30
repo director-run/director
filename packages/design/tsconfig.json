@@ -1,0 +1,11 @@
+{
+  "extends": "@director.run/typescript-config/react-library",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@director.run/design/*": ["./src/*"]
+    }
+  },
+  "include": ["."],
+  "exclude": ["node_modules", "dist"]
+}

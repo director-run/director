@@ -62,6 +62,7 @@
     "zod": "^3.25.30"
   },
   "devDependencies": {
+    "@director.run/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "^4.1.7",
     "@types/node": "^22.15.21",
     "@types/react": "^19.1.6",

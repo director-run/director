@@ -80,9 +80,7 @@ function waitForOAuthCallback(port: number): Promise<string> {
     });
 
     server.listen(port, () => {
-      console.log(
-        `OAuth callback server started on http://localhost:${port}`,
-      );
+      console.log(`OAuth callback server started on http://localhost:${port}`);
     });
   });
 }
@@ -134,11 +132,10 @@ async function main(): Promise<void> {
     // Test the connection by listing tools
     const tools = await client.listTools();
     console.log("Available tools:", tools.tools?.length || 0);
-    
-    if (tools.tools && tools.tools.length > 0) {
-      console.log("Tool names:", tools.tools.map(t => t.name).join(", "));
-    }
 
+    if (tools.tools && tools.tools.length > 0) {
+      console.log("Tool names:", tools.tools.map((t) => t.name).join(", "));
+    }
   } catch (error) {
     console.error("❌ Connection failed:", error);
     process.exit(1);

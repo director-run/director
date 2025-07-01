@@ -91,4 +91,23 @@ export class LinuxController extends AbstractController {
         return path.join(homedir(), ".config/Code/User/settings.json");
     }
   }
+
+  getMachineId(): string {
+    try {
+      const result = execSync(
+        `( cat /var/lib/dbus/machine-id /etc/machine-id 2> /dev/null || hostname ) | head -n 1 || :`,
+        {
+          stdio: "pipe",
+          encoding: "utf8",
+        },
+      );
+
+      return result
+        .toString()
+        .replace(/\r+|\n+|\s+/gi, "")
+        .toLowerCase();
+    } catch (error) {
+      throw new Error("Failed to get machine id");
+    }
+  }
 }

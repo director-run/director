@@ -12,4 +12,5 @@ export abstract class AbstractController {
   abstract isFilePresent(filePath: string): boolean;
   abstract openUrl(url: string): Promise<void>;
   abstract getConfigFileForApp(app: App): string;
+  abstract getMachineId(): string;
 }

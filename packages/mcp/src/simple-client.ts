@@ -54,7 +54,6 @@ export class SimpleClient extends Client {
       useOAuth = false,
     ): Promise<boolean> => {
       try {
-        console.log("attemptStreamableConnection");
         const transport = new StreamableHTTPClientTransport(new URL(url), {
           requestInit: { headers },
           ...(oauthProvider && { authProvider: oauthProvider }),
@@ -65,13 +64,7 @@ export class SimpleClient extends Client {
         );
         return true;
       } catch (error) {
-        console.log("");
-        console.log("");
-        console.log("error", error);
-        console.log("");
-        console.log("");
         if (error instanceof UnauthorizedError && oauthProvider && !useOAuth) {
-          console.log("error instanceof UnauthorizedError");
           // First unauthorized attempt - will trigger OAuth flow
           throw error;
         }

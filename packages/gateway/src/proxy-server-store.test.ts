@@ -14,7 +14,7 @@ describe("ProxyServerStore", () => {
       await fs.promises.unlink(dbPath);
     }
     const db = await Database.connect(dbPath);
-    proxyServerStore = await ProxyServerStore.create(db);
+    proxyServerStore = await ProxyServerStore.create({ db });
     await proxyServerStore.create({
       name: "test-proxy",
       servers: [],

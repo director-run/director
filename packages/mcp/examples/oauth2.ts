@@ -1,7 +1,8 @@
 import { exec } from "node:child_process";
 import { createServer } from "node:http";
 import { URL } from "node:url";
-import { SimpleClient } from "@director.run/mcp/simple-client";
+import { createInMemoryOAuthProvider } from "../src/oauth-provider-factory";
+import { SimpleClient } from "../src/simple-client";
 
 // Configuration
 const DEFAULT_SERVER_URL = "https://mcp.notion.com/mcp";
@@ -96,16 +97,8 @@ async function main(): Promise<void> {
   console.log();
 
   // Create OAuth provider
-  const oauthProvider = SimpleClient.createOAuthProvider(
+  const oauthProvider = createInMemoryOAuthProvider(
     CALLBACK_URL,
-    {
-      client_name: "Simple OAuth MCP Client",
-      redirect_uris: [CALLBACK_URL],
-      grant_types: ["authorization_code", "refresh_token"],
-      response_types: ["code"],
-      token_endpoint_auth_method: "client_secret_post",
-      scope: "mcp:tools",
-    },
     (redirectUrl: URL) => {
       console.log(`📌 OAuth redirect handler called - opening browser`);
       console.log(`Opening browser to: ${redirectUrl.toString()}`);
@@ -136,6 +129,15 @@ async function main(): Promise<void> {
     if (tools.tools && tools.tools.length > 0) {
       console.log("Tool names:", tools.tools.map((t) => t.name).join(", "));
     }
+
+    const result = await client.callTool({
+      name: "get-self",
+      arguments: {
+        // query: "Hello",
+      },
+    });
+
+    console.log(result);
   } catch (error) {
     console.error("❌ Connection failed:", error);
     process.exit(1);

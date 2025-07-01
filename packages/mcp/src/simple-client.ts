@@ -10,12 +10,6 @@ import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js"
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import {
-  type OAuthClientInformation,
-  type OAuthClientInformationFull,
-  type OAuthClientMetadata,
-  type OAuthTokens,
-} from "@modelcontextprotocol/sdk/shared/auth.js";
 import { McpError } from "@modelcontextprotocol/sdk/types.js";
 import packageJson from "../package.json";
 
@@ -98,7 +92,8 @@ export class SimpleClient extends Client {
 
     const performOAuthFlow = async (): Promise<void> => {
       if (!onAuthorizationRequired) {
-        throw new Error(
+        throw new AppError(
+          ErrorCode.UNAUTHORIZED,
           "OAuth authentication required but no authorization handler provided",
         );
       }
@@ -247,18 +242,6 @@ export class SimpleClient extends Client {
     return client;
   }
 
-  /**
-   * Creates a basic in-memory OAuth provider for testing and simple use cases.
-   * For production use, implement a persistent OAuth provider.
-   */
-  public static createOAuthProvider(
-    redirectUrl: string | URL,
-    clientMetadata: OAuthClientMetadata,
-    onRedirect?: (url: URL) => void,
-  ): OAuthClientProvider {
-    return new InMemoryOAuthProvider(redirectUrl, clientMetadata, onRedirect);
-  }
-
   public static async createAndConnectToStdio(
     command: string,
     args: string[],
@@ -267,65 +250,6 @@ export class SimpleClient extends Client {
     const client = new SimpleClient("test client");
     await client.connectToStdio(command, args, env);
     return client;
-  }
-}
-
-/**
- * Simple in-memory OAuth client provider for basic OAuth flows.
- * Based on the oauth.ts example but simplified for library use.
- */
-class InMemoryOAuthProvider implements OAuthClientProvider {
-  private _clientInformation?: OAuthClientInformationFull;
-  private _tokens?: OAuthTokens;
-  private _codeVerifier?: string;
-
-  constructor(
-    private readonly _redirectUrl: string | URL,
-    private readonly _clientMetadata: OAuthClientMetadata,
-    private readonly _onRedirect?: (url: URL) => void,
-  ) {}
-
-  get redirectUrl(): string | URL {
-    return this._redirectUrl;
-  }
-
-  get clientMetadata(): OAuthClientMetadata {
-    return this._clientMetadata;
-  }
-
-  clientInformation(): OAuthClientInformation | undefined {
-    return this._clientInformation;
-  }
-
-  saveClientInformation(clientInformation: OAuthClientInformationFull): void {
-    this._clientInformation = clientInformation;
-  }
-
-  tokens(): OAuthTokens | undefined {
-    return this._tokens;
-  }
-
-  saveTokens(tokens: OAuthTokens): void {
-    this._tokens = tokens;
-  }
-
-  redirectToAuthorization(authorizationUrl: URL): void {
-    if (this._onRedirect) {
-      this._onRedirect(authorizationUrl);
-    } else {
-      logger.info(`OAuth redirect required: ${authorizationUrl.toString()}`);
-    }
-  }
-
-  saveCodeVerifier(codeVerifier: string): void {
-    this._codeVerifier = codeVerifier;
-  }
-
-  codeVerifier(): string {
-    if (!this._codeVerifier) {
-      throw new Error("No code verifier saved");
-    }
-    return this._codeVerifier;
   }
 
   // TODO: not sure we need retry logic?

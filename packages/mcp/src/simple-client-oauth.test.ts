@@ -1,22 +1,22 @@
 import { describe, expect, it, vi } from "vitest";
+import { createInMemoryOAuthProvider } from "./oauth-provider-factory.js";
 import { SimpleClient } from "./simple-client.js";
 
 describe("SimpleClient OAuth Integration", () => {
   it("should create OAuth provider with correct parameters", () => {
     const redirectUrl = "http://localhost:8090/callback";
     const clientMetadata = {
-      client_name: "Test Client",
+      client_name: "Simple OAuth MCP Client",
       redirect_uris: [redirectUrl],
-      grant_types: ["authorization_code"],
+      grant_types: ["authorization_code", "refresh_token"],
       response_types: ["code"],
       token_endpoint_auth_method: "client_secret_post",
       scope: "mcp:tools",
     };
 
     const mockRedirectHandler = vi.fn();
-    const provider = SimpleClient.createOAuthProvider(
+    const provider = createInMemoryOAuthProvider(
       redirectUrl,
-      clientMetadata,
       mockRedirectHandler,
     );
 
@@ -26,16 +26,8 @@ describe("SimpleClient OAuth Integration", () => {
 
   it("should accept OAuth provider in connectToHTTP method", async () => {
     const client = new SimpleClient("test-oauth-client");
-    const oauthProvider = SimpleClient.createOAuthProvider(
+    const oauthProvider = createInMemoryOAuthProvider(
       "http://localhost:8090/callback",
-      {
-        client_name: "Test Client",
-        redirect_uris: ["http://localhost:8090/callback"],
-        grant_types: ["authorization_code"],
-        response_types: ["code"],
-        token_endpoint_auth_method: "client_secret_post",
-        scope: "mcp:tools",
-      },
     );
 
     // This should not throw an error for method signature validation
@@ -45,16 +37,8 @@ describe("SimpleClient OAuth Integration", () => {
   });
 
   it("should support OAuth provider in static factory method", async () => {
-    const oauthProvider = SimpleClient.createOAuthProvider(
+    const oauthProvider = createInMemoryOAuthProvider(
       "http://localhost:8090/callback",
-      {
-        client_name: "Test Client",
-        redirect_uris: ["http://localhost:8090/callback"],
-        grant_types: ["authorization_code"],
-        response_types: ["code"],
-        token_endpoint_auth_method: "client_secret_post",
-        scope: "mcp:tools",
-      },
     );
 
     // This should not throw an error for method signature validation
@@ -69,16 +53,8 @@ describe("SimpleClient OAuth Integration", () => {
 
   it("should support OAuth flow in unified connectToHTTP method", async () => {
     const client = new SimpleClient("test-oauth-client");
-    const oauthProvider = SimpleClient.createOAuthProvider(
+    const oauthProvider = createInMemoryOAuthProvider(
       "http://localhost:8090/callback",
-      {
-        client_name: "Test Client",
-        redirect_uris: ["http://localhost:8090/callback"],
-        grant_types: ["authorization_code"],
-        response_types: ["code"],
-        token_endpoint_auth_method: "client_secret_post",
-        scope: "mcp:tools",
-      },
     );
 
     const mockAuthHandler = vi.fn().mockResolvedValue("test-auth-code");
@@ -95,16 +71,8 @@ describe("SimpleClient OAuth Integration", () => {
   });
 
   it("should support OAuth flow in static factory method", async () => {
-    const oauthProvider = SimpleClient.createOAuthProvider(
+    const oauthProvider = createInMemoryOAuthProvider(
       "http://localhost:8090/callback",
-      {
-        client_name: "Test Client",
-        redirect_uris: ["http://localhost:8090/callback"],
-        grant_types: ["authorization_code"],
-        response_types: ["code"],
-        token_endpoint_auth_method: "client_secret_post",
-        scope: "mcp:tools",
-      },
     );
 
     const mockAuthHandler = vi.fn().mockResolvedValue("test-auth-code");

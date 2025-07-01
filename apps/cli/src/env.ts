@@ -15,7 +15,7 @@ export const env = createEnv({
     TELEMETRY_URL: z
       .string()
       .optional()
-      .default(`https://www.director.run/api/telemetry`),
+      .default(`https://director.run/api/telemetry`),
     REGISTRY_API_URL: z
       .string()
       .optional()

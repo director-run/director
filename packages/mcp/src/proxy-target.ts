@@ -60,7 +60,7 @@ export class ProxyTarget extends SimpleClient {
           this.status = "connected";
         } catch (error) {
           if (isAppError(error) && error.code === ErrorCode.UNAUTHORIZED) {
-            console.log("-*------- unauthorized");
+            console.log("-*xxxx------- unauthorized");
             this.status = "unauthorized";
             return;
           } else {

@@ -130,6 +130,13 @@ async function main(): Promise<void> {
       },
     });
 
+    console.log("proxyTarget.status", proxyTarget.status);
+
+    if (proxyTarget.status !== "connected") {
+      console.log("There was a connection issue...", proxyTarget.status);
+      process.exit(1);
+    }
+
     // console.log("✅ Connected successfully with OAuth!");
 
     // Test the connection by listing tools

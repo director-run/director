@@ -43,6 +43,8 @@
   },
   "dependencies": {
     "boxen": "^8.0.1",
+    "node-machine-uid": "^1.0.2",
+    "registry-js": "^1.16.1",
     "update-notifier": "^7.3.1"
   }
 }

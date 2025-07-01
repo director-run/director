@@ -8,7 +8,7 @@ import {
 
 /**
  * Creates a basic in-memory OAuth provider for testing and simple use cases.
- * For production use, implement a persistent OAuth provider.
+ * For production use, use createPersistentOAuthProvider.
  */
 export function createInMemoryOAuthProvider(
   callbackUrl: string,

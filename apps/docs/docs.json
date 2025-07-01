@@ -36,14 +36,6 @@
       }
     ]
   },
-  "navbar": {
-    "links": [],
-    "primary": {
-      "type": "button",
-      "label": "Open studio",
-      "href": "https://studio.director.run"
-    }
-  },
   "footer": {
     "socials": {
       "x": "https://x.com/theworkingco",
@@ -52,19 +44,18 @@
   },
   "theme": "mint",
   "colors": {
-    "primary": "#62A87C",
-    "light": "#62A87C",
-    "dark": "#62A87C"
+    "primary": "#1a211e",
+    "light": "#efeded",
+    "dark": "#1a211e"
   },
   "background": {
     "color": {
-      "light": "#F2F0EE",
-      "dark": "#211D1A"
+      "light": "#fcfcfc",
+      "dark": "#131111"
     }
   },
   "appearance": {
-    "default": "light",
-    "strict": true
+    "default": "dark"
   },
   "fonts": {
     "heading": {

@@ -1,7 +1,7 @@
 {
   "name": "@director.run/cli",
   "type": "module",
-  "version": "0.0.39",
+  "version": "0.0.40",
   "files": ["dist", "README.md"],
   "bin": {
     "director": "./dist/cli.js"
@@ -35,12 +35,13 @@
     "@director.run/utilities": "workspace:*",
     "@inquirer/prompts": "^7.5.2",
     "@types/update-notifier": "^6.0.8",
+    "boxen": "^8.0.1",
     "chalk": "^5.4.1",
     "cli-table3": "^0.6.5",
     "commander": "^13.1.0",
+    "semver": "^7.7.2",
     "superjson": "^2.2.2",
     "type-fest": "^4.40.0",
-    "boxen": "^8.0.1",
     "update-notifier": "^7.3.1"
   }
 }

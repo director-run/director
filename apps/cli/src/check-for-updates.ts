@@ -1,5 +1,6 @@
 import boxen from "boxen";
 import chalk from "chalk";
+import semverGt from "semver/functions/gt.js";
 import updateNotifier from "update-notifier";
 import packageJson from "../package.json" assert { type: "json" };
 
@@ -12,7 +13,7 @@ export async function checkForUpdates() {
 
   const info = await notifier.fetchInfo();
 
-  if (info && info.latest !== info.current) {
+  if (info && semverGt(info.latest, info.current)) {
     const defaultTemplate =
       chalk.bold(
         "Update available " +

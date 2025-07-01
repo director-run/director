@@ -29,6 +29,10 @@ export const env = createEnv({
       .string()
       .default("false")
       .transform((s) => s !== "false" && s !== "0"),
+    OPT_OUT_TELEMETRY: z
+      .string()
+      .default("false")
+      .transform((s) => s !== "false" && s !== "0"),
   },
 });
 

@@ -1,7 +1,7 @@
 import boxen from "boxen";
 import chalk from "chalk";
 import updateNotifier from "update-notifier";
-import packageJson from "../package.json" assert { type: "json" };
+import packageJson from "../package.json";
 
 export async function checkForUpdates() {
   const notifier = updateNotifier({
@@ -10,15 +10,15 @@ export async function checkForUpdates() {
     updateCheckInterval: 1000 * 60 * 60,
   });
 
-  await notifier.fetchInfo();
+  const info = await notifier.fetchInfo();
 
-  if (notifier.update) {
+  if (info && info.latest !== info.current) {
     const defaultTemplate =
       chalk.bold(
         "Update available " +
-          chalk.dim(notifier.update.current) +
+          chalk.dim(info.current) +
           chalk.reset(" → ") +
-          chalk.green(notifier.update.latest),
+          chalk.green(info.latest),
       ) +
       " \n\nTo continue using Director, please update to the lastest version.\n\nRun " +
       chalk.cyan("npm install -g @director.run/cli");

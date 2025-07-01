@@ -4,7 +4,7 @@
 import "../src/env";
 
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
-import packageJson from "../package.json" assert { type: "json" };
+import packageJson from "../package.json";
 import { checkForUpdates } from "../src/check-for-updates";
 import { registerClientCommands } from "../src/commands/client";
 import { registerCoreCommands } from "../src/commands/core";

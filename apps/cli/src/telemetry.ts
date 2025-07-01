@@ -85,7 +85,7 @@ export async function getMachineId(original: boolean = false) {
 export async function trackEvent(eventName: string) {
   const distinctId = await getMachineId();
 
-  if (isProduction()) {
+  if (isProduction() && !env.OPT_OUT_TELEMETRY) {
     try {
       await fetch(env.TELEMETRY_URL + "/metrics", {
         method: "POST",

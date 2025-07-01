@@ -2,10 +2,8 @@ import { exec } from "node:child_process";
 import { createServer } from "node:http";
 import { URL } from "node:url";
 import { createInMemoryOAuthProvider } from "../src/oauth-provider-factory";
-import { SimpleClient } from "../src/simple-client";
+import { ProxyTarget } from "../src/proxy-target";
 
-// Configuration
-const DEFAULT_SERVER_URL = "https://mcp.notion.com/mcp";
 const CALLBACK_PORT = 8090;
 const CALLBACK_URL = `http://localhost:${CALLBACK_PORT}/callback`;
 
@@ -90,13 +88,8 @@ function waitForOAuthCallback(port: number): Promise<string> {
  * Main OAuth test function
  */
 async function main(): Promise<void> {
-  const serverUrl = process.env.MCP_SERVER_URL || DEFAULT_SERVER_URL;
+  const serverUrl = "https://mcp.notion.com/mcp";
 
-  console.log("🚀 Simple MCP OAuth Client");
-  console.log(`Connecting to: ${serverUrl}`);
-  console.log();
-
-  // Create OAuth provider
   const oauthProvider = createInMemoryOAuthProvider(
     CALLBACK_URL,
     (redirectUrl: URL) => {
@@ -106,31 +99,48 @@ async function main(): Promise<void> {
     },
   );
 
-  const client = new SimpleClient("oauth-test-client");
+  // const client = new SimpleClient("oauth-test-client");
+
+  const proxyTarget = new ProxyTarget({
+    name: "oauth-test-client",
+    transport: {
+      type: "http",
+      url: serverUrl,
+    },
+  });
 
   try {
     // Use the unified connectToHTTP method with OAuth support
-    await client.connectToHTTP(
-      serverUrl,
-      undefined,
+    // await client.connectToHTTP(
+    //   serverUrl,
+    //   undefined,
+    //   oauthProvider,
+    //   async () => {
+    //     console.log("OAuth flow required - waiting for authorization...");
+    //     return await waitForOAuthCallback(CALLBACK_PORT);
+    //   },
+    // );
+
+    await proxyTarget.smartConnect({
+      throwOnError: false,
       oauthProvider,
-      async () => {
+      onAuthorizationRequired: async () => {
         console.log("OAuth flow required - waiting for authorization...");
         return await waitForOAuthCallback(CALLBACK_PORT);
       },
-    );
+    });
 
-    console.log("✅ Connected successfully with OAuth!");
+    // console.log("✅ Connected successfully with OAuth!");
 
     // Test the connection by listing tools
-    const tools = await client.listTools();
+    const tools = await proxyTarget.listTools();
     console.log("Available tools:", tools.tools?.length || 0);
 
     if (tools.tools && tools.tools.length > 0) {
       console.log("Tool names:", tools.tools.map((t) => t.name).join(", "));
     }
 
-    const result = await client.callTool({
+    const result = await proxyTarget.callTool({
       name: "get-self",
       arguments: {
         // query: "Hello",
@@ -145,7 +155,8 @@ async function main(): Promise<void> {
 
   process.on("SIGINT", () => {
     console.log("\n\n👋 Goodbye!");
-    client.close();
+    // client.close();
+    proxyTarget.close();
     process.exit(0);
   });
 }

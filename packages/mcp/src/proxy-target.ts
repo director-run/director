@@ -47,6 +47,7 @@ export class ProxyTarget extends SimpleClient {
 
       if (transport.type === "http") {
         try {
+          console.log("connecting to http");
           await this.connectToHTTP(
             transport.url,
             {
@@ -59,6 +60,7 @@ export class ProxyTarget extends SimpleClient {
           this.status = "connected";
         } catch (error) {
           if (isAppError(error) && error.code === ErrorCode.UNAUTHORIZED) {
+            console.log("-*------- unauthorized");
             this.status = "unauthorized";
             return;
           } else {

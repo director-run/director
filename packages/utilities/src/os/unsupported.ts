@@ -25,4 +25,7 @@ export class UnsupportedController extends AbstractController {
   getConfigFileForApp(app: App): string {
     return "";
   }
+  getMachineId(): string {
+    return "";
+  }
 }

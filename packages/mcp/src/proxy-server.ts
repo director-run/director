@@ -128,7 +128,10 @@ export class ProxyServer extends Server {
   }
 
   public toPlainObject() {
-    return this.attributes;
+    return {
+      ...this.attributes,
+      targets: this.targets.map((target) => target.toPlainObject()),
+    };
   }
 
   get id() {

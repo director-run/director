@@ -46,7 +46,7 @@ export class Gateway {
     logger.info(`starting director gateway`);
 
     const db = await Database.connect(attribs.databaseFilePath);
-    const proxyStore = await ProxyServerStore.create(db);
+    const proxyStore = await ProxyServerStore.create({ db });
     const app = express();
     const registryURL = attribs.registryURL;
 

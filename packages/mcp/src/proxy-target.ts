@@ -22,6 +22,14 @@ export class ProxyTarget extends SimpleClient {
     this.attributes = attributes;
   }
 
+  public toPlainObject() {
+    return {
+      ...super.toPlainObject(),
+      transport: this.attributes.transport,
+      status: this.status,
+    };
+  }
+
   public async smartConnect(
     {
       throwOnError,

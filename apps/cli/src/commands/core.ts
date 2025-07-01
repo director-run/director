@@ -16,6 +16,7 @@ import { registerAddCommand } from "./core/add";
 import { registerConnectCommand } from "./core/connect";
 import { registerDebugCommands } from "./core/debug";
 import { registerEnvCommand } from "./core/env";
+import { registerGetCommand } from "./core/get";
 import { registerQuickstartCommand } from "./core/quickstart";
 import { registerRemoveCommand } from "./core/remove";
 import { registerServeCommand } from "./core/serve";
@@ -53,39 +54,7 @@ export function registerCoreCommands(program: DirectorCommand): void {
       }),
     );
 
-  program
-    .command("get <proxyId>")
-    .description("Show proxy details")
-    .action(
-      actionWithErrorHandler(async (proxyId: string) => {
-        const proxy = await gatewayClient.store.get.query({ proxyId });
-
-        if (!proxy) {
-          console.error(`proxy ${proxyId} not found`);
-          return;
-        }
-
-        console.log(`id=${proxy.id}`);
-        console.log(`name=${proxy.name}`);
-
-        const table = makeTable(["name", "transport", "url/command"]);
-
-        table.push(
-          ...proxy.servers.map((server) => [
-            server.name,
-            server.transport.type,
-            server.transport.type === "http"
-              ? server.transport.url
-              : [
-                  server.transport.command,
-                  ...(server.transport.args ?? []),
-                ].join(" "),
-          ]),
-        );
-
-        console.log(table.toString());
-      }),
-    );
+  registerGetCommand(program);
 
   program
     .command("create <name>")

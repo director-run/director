@@ -14,7 +14,11 @@ export class ProxyServerStore {
     this.db = params.db;
   }
 
-  public static async create(db: Database): Promise<ProxyServerStore> {
+  public static async create({
+    db,
+  }: {
+    db: Database;
+  }): Promise<ProxyServerStore> {
     logger.debug("initializing ProxyServerStore");
     const store = new ProxyServerStore({
       db,

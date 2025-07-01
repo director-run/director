@@ -88,42 +88,25 @@ function waitForOAuthCallback(port: number): Promise<string> {
  * Main OAuth test function
  */
 async function main(): Promise<void> {
-  const serverUrl = "https://mcp.notion.com/mcp";
-
-  const oauthProvider = createInMemoryOAuthProvider(
-    CALLBACK_URL,
-    (redirectUrl: URL) => {
-      console.log(`📌 OAuth redirect handler called - opening browser`);
-      console.log(`Opening browser to: ${redirectUrl.toString()}`);
-      openBrowser(redirectUrl.toString());
-    },
-  );
-
-  // const client = new SimpleClient("oauth-test-client");
-
   const proxyTarget = new ProxyTarget({
     name: "oauth-test-client",
     transport: {
       type: "http",
-      url: serverUrl,
+      url: "https://mcp.notion.com/mcp",
     },
   });
 
   try {
-    // Use the unified connectToHTTP method with OAuth support
-    // await client.connectToHTTP(
-    //   serverUrl,
-    //   undefined,
-    //   oauthProvider,
-    //   async () => {
-    //     console.log("OAuth flow required - waiting for authorization...");
-    //     return await waitForOAuthCallback(CALLBACK_PORT);
-    //   },
-    // );
-
     await proxyTarget.smartConnect({
-      throwOnError: false,
-      oauthProvider,
+      throwOnError: true,
+      oauthProvider: createInMemoryOAuthProvider(
+        CALLBACK_URL,
+        (redirectUrl: URL) => {
+          console.log(`📌 OAuth redirect handler called - opening browser`);
+          console.log(`Opening browser to: ${redirectUrl.toString()}`);
+          openBrowser(redirectUrl.toString());
+        },
+      ),
       onAuthorizationRequired: async () => {
         console.log("OAuth flow required - waiting for authorization...");
         return await waitForOAuthCallback(CALLBACK_PORT);

@@ -67,7 +67,7 @@ export class SimpleClient extends Client {
       } catch (error) {
         console.log("");
         console.log("");
-        console.log("error", Object.getOwnPropertyNames(error));
+        console.log("error", error);
         console.log("");
         console.log("");
         if (error instanceof UnauthorizedError && oauthProvider && !useOAuth) {

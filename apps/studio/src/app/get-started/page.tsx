@@ -53,7 +53,9 @@ export default function GetStartedPage() {
     },
   );
 
-  const isLoading = proxyListQuery.isLoading || registryEntriesQuery.isLoading;
+  const isLoading =
+    (proxyListQuery.isLoading && !proxyListQuery.data) ||
+    registryEntriesQuery.isLoading;
   const hasData = proxyListQuery.data && registryEntriesQuery.data;
 
   useEffect(() => {
@@ -65,11 +67,7 @@ export default function GetStartedPage() {
   const hasProxy = proxyListQuery.data && proxyListQuery.data.length > 0;
   const currentProxy = hasProxy ? proxyListQuery.data[0] : null;
 
-  if (
-    isLoading ||
-    !hasData ||
-    (currentProxy && installersQuery.isLoading && !installersQuery.isFetched)
-  ) {
+  if (!hasData) {
     return (
       <div className="flex h-screen w-screen items-center justify-center">
         <Logo className="size-10 animate-pulse" />

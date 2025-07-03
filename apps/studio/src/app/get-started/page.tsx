@@ -53,9 +53,6 @@ export default function GetStartedPage() {
     },
   );
 
-  const isLoading =
-    (proxyListQuery.isLoading && !proxyListQuery.data) ||
-    registryEntriesQuery.isLoading;
   const hasData = proxyListQuery.data && registryEntriesQuery.data;
 
   useEffect(() => {

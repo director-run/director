@@ -89,7 +89,7 @@ export const entries: EntryCreateParams[] = [
     title: "Git",
     description:
       "Provides tools to read, search, and manipulate Git repositories.",
-    isOfficial: true,
+    isOfficial: false,
     icon: "https://registry.director.run/git.svg",
     homepage:
       "https://github.com/modelcontextprotocol/servers/tree/main/src/git",
@@ -104,7 +104,7 @@ export const entries: EntryCreateParams[] = [
     name: "filesystem",
     title: "Filesystem",
     description: "Secure file operations with configurable access controls.",
-    isOfficial: true,
+    isOfficial: false,
     icon: "https://registry.director.run/mcp.svg",
     homepage:
       "https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem",
@@ -131,7 +131,7 @@ export const entries: EntryCreateParams[] = [
     name: "fetch",
     title: "Fetch",
     description: "Retrieves and converts web content for efficient LLM usage.",
-    isOfficial: true,
+    isOfficial: false,
     icon: "https://registry.director.run/mcp.svg",
     homepage:
       "https://github.com/modelcontextprotocol/servers/tree/main/src/fetch",
@@ -146,7 +146,7 @@ export const entries: EntryCreateParams[] = [
     name: "memory",
     title: "Memory",
     description: "Knowledge graph-based persistent memory system.",
-    isOfficial: true,
+    isOfficial: false,
     icon: "https://registry.director.run/mcp.svg",
     homepage:
       "https://github.com/modelcontextprotocol/servers/tree/main/src/memory",
@@ -162,7 +162,7 @@ export const entries: EntryCreateParams[] = [
     title: "Sequential Thinking",
     description:
       "Dynamic and reflective problem-solving through a structured thinking process.",
-    isOfficial: true,
+    isOfficial: false,
     icon: "https://registry.director.run/mcp.svg",
     homepage:
       "https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking",
@@ -177,7 +177,7 @@ export const entries: EntryCreateParams[] = [
     name: "time",
     title: "Time",
     description: "Time and timezone conversion capabilities.",
-    isOfficial: true,
+    isOfficial: false,
     icon: "https://registry.director.run/mcp.svg",
     homepage:
       "https://github.com/modelcontextprotocol/servers/tree/main/src/time",
@@ -268,21 +268,40 @@ export const entries: EntryCreateParams[] = [
     },
     parameters: [],
   },
-  // {
-  //   name: "playwright",
-  //   title: "Playwright",
-  //   description:
-  //     "Interact with web pages through structured accessibility snapshots, bypassing the need for screenshots or visually-tuned models.",
-  //   isOfficial: true,
-  //   icon: "https://registry.director.run/playwright.svg",
-  //   homepage: "https://github.com/microsoft/playwright-mcp",
-  //   transport: {
-  //     type: "stdio",
-  //     command: "npx",
-  //     args: ["@playwright/mcp@latest"],
-  //   },
-  //   parameters: [],
-  // },
+  {
+    name: "playwright",
+    title: "Playwright",
+    description:
+      "Interact with web pages through structured accessibility snapshots, bypassing the need for screenshots or visually-tuned models.",
+    isOfficial: true,
+    icon: "https://registry.director.run/playwright.svg",
+    homepage: "https://github.com/microsoft/playwright-mcp",
+    transport: {
+      type: "stdio",
+      command: "npx",
+      args: ["@playwright/mcp@latest"],
+    },
+    parameters: [],
+  },
+  {
+    name: "supabase",
+    title: "Supabase",
+    description: "Connect your AI tools to Supabase.",
+    isOfficial: true,
+    icon: "https://registry.director.run/supabase.svg",
+    homepage: "https://supabase.com/docs/guides/getting-started/mcp",
+    transport: {
+      type: "stdio",
+      command: "npx",
+      args: [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--access-token",
+        "<supabase-personal-access-token>",
+      ],
+    },
+    parameters: [],
+  },
 ];
 
 // export const entries: EntryCreateParams[] = [
@@ -327,21 +346,6 @@ export const entries: EntryCreateParams[] = [
 //         "--api-key",
 //         "<chroma-api-key>",
 //       ],
-//     },
-//     parameters: [],
-//   },
-//   {
-//     name: "context-7",
-//     title: "Context 7",
-//     description:
-//       "Context7 MCP pulls up-to-date, version-specific documentation and code examples straight from the source — and places them directly into your prompt.",
-//     isOfficial: true,
-//     icon: "https://registry.director.run/context7.svg",
-//     homepage: "https://github.com/upstash/context7",
-//     transport: {
-//       type: "stdio",
-//       command: "npx",
-//       args: ["-y", "@upstash/context7-mcp@latest"],
 //     },
 //     parameters: [],
 //   },
@@ -496,26 +500,6 @@ export const entries: EntryCreateParams[] = [
 //     parameters: [],
 //   },
 //   {
-//     name: "filesystem",
-//     title: "Filesystem",
-//     description:
-//       "Node.js server implementing Model Context Protocol (MCP) for filesystem operations. The server will only allow operations within directories specified via args.",
-//     isOfficial: true,
-//     icon: "https://registry.director.run/mcp.svg",
-//     homepage:
-//       "https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem",
-//     transport: {
-//       type: "stdio",
-//       command: "npx",
-//       args: [
-//         "-y",
-//         "@modelcontextprotocol/server-filesystem",
-//         "<fs-allowed-path>",
-//       ],
-//     },
-//     parameters: [],
-//   },
-//   {
 //     name: "paddle",
 //     title: "Paddle",
 //     description:
@@ -569,28 +553,6 @@ export const entries: EntryCreateParams[] = [
 //     parameters: [],
 //   },
 //   {
-//     name: "slack",
-//     title: "Slack",
-//     description:
-//       "This service provides a Model Context Provider (MCP) for interacting with Slack's API.",
-//     isOfficial: true,
-//     icon: "https://registry.director.run/slack.svg",
-//     homepage:
-//       "https://github.com/modelcontextprotocol/servers/tree/main/src/slack",
-//     transport: {
-//       type: "stdio",
-//       command: "npx",
-//       args: ["-y", "@modelcontextprotocol/server-slack"],
-//       env: {
-//         SLACK_BOT_TOKEN: "<slack-bot-token>",
-//         SLACK_TEAM_ID: "<slack-team-id>",
-//         SLACK_CHANNEL_IDS: "<slack-channel-ids>", // C01234567, C76543210
-//       },
-//     },
-//     parameters: [],
-//   },
-
-//   {
 //     name: "stripe",
 //     title: "Stripe",
 //     description:
@@ -610,26 +572,7 @@ export const entries: EntryCreateParams[] = [
 //     },
 //     parameters: [],
 //   },
-//   {
-//     name: "supabase",
-//     title: "Supabase",
-//     description:
-//       "This project follows the Model Context Protocol standard, allowing AI assistants to interact with Supabase's API.",
-//     isOfficial: true,
-//     icon: "https://registry.director.run/supabase.svg",
-//     homepage: "https://supabase.com/docs/guides/getting-started/mcp",
-//     transport: {
-//       type: "stdio",
-//       command: "npx",
-//       args: [
-//         "-y",
-//         "@supabase/mcp-server-supabase@latest",
-//         "--access-token",
-//         "<supabase-personal-access-token>",
-//       ],
-//     },
-//     parameters: [],
-//   },
+
 //   {
 //     name: "tavily",
 //     title: "Tavily",

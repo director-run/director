@@ -296,11 +296,28 @@ export const entries: EntryCreateParams[] = [
       args: [
         "-y",
         "@supabase/mcp-server-supabase@latest",
-        "--access-token",
-        "<supabase-personal-access-token>",
+        "--read-only",
+        "--project-ref=<supabase-project-ref>",
       ],
+      env: {
+        SUPABASE_ACCESS_TOKEN: "<supabase-personal-access-token>",
+      },
     },
-    parameters: [],
+    parameters: [
+      {
+        name: "supabase-project-ref",
+        description: "Supabase project reference.",
+        type: "string",
+        required: true,
+      },
+      {
+        name: "supabase-personal-access-token",
+        description: "Personal access token for Supabase.",
+        type: "string",
+        required: true,
+        password: true,
+      },
+    ],
   },
 ];
 

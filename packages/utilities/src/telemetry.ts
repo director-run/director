@@ -26,7 +26,7 @@ export class Telemetry {
     this.machineId = await getMachineId();
 
     if (this.enabled) {
-      console.log("ANALYTICS IDENTIFY", this.machineId);
+      // console.log("ANALYTICS IDENTIFY", this.machineId);
       this.analytics.identify({
         userId: this.machineId,
         traits: {
@@ -50,7 +50,7 @@ export class Telemetry {
     await this.initialize();
 
     if (this.enabled) {
-      console.log("ANALYTICS TRACK", event, properties, this.machineId);
+      // console.log("ANALYTICS TRACK", event, properties, this.machineId);
       this.analytics.track({
         userId: this.machineId,
         event,

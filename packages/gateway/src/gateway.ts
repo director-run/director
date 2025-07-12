@@ -5,6 +5,7 @@ import {
   notFoundHandler,
 } from "@director.run/utilities/middleware";
 import { logRequests } from "@director.run/utilities/middleware";
+import { Telemetry } from "@director.run/utilities/telemetry";
 import cors from "cors";
 import express from "express";
 import { Database } from "./db";
@@ -19,19 +20,16 @@ export class Gateway {
   public readonly proxyStore: ProxyServerStore;
   public readonly port: number;
   private server: Server;
-  private registryURL: string;
 
   private constructor(attribs: {
     proxyStore: ProxyServerStore;
     port: number;
     db: Database;
     server: Server;
-    registryURL: string;
   }) {
     this.port = attribs.port;
     this.proxyStore = attribs.proxyStore;
     this.server = attribs.server;
-    this.registryURL = attribs.registryURL;
   }
 
   public static async start(
@@ -40,13 +38,15 @@ export class Gateway {
       databaseFilePath: string;
       registryURL: string;
       allowedOrigins?: string[];
+      telemetry?: Telemetry;
     },
     successCallback?: () => void,
   ) {
     logger.info(`starting director gateway`);
 
     const db = await Database.connect(attribs.databaseFilePath);
-    const proxyStore = await ProxyServerStore.create(db);
+    const telemetry = attribs.telemetry || Telemetry.noTelemetry();
+    const proxyStore = await ProxyServerStore.create(db, telemetry);
     const app = express();
     const registryURL = attribs.registryURL;
 
@@ -62,6 +62,8 @@ export class Gateway {
     app.all("*", notFoundHandler);
     app.use(errorRequestHandler);
 
+    telemetry.trackEvent("gateway_start");
+
     const server = app.listen(attribs.port, () => {
       logger.info(`director gateway running on port ${attribs.port}`);
       successCallback?.();
@@ -72,7 +74,6 @@ export class Gateway {
       db,
       proxyStore,
       server,
-      registryURL: attribs.registryURL,
     });
 
     process.on("SIGINT", async () => {

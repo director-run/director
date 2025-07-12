@@ -2,6 +2,7 @@ import { ProxyServer } from "@director.run/mcp/proxy-server";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import type { ProxyTargetAttributes } from "@director.run/utilities/schema";
+import { Telemetry } from "@director.run/utilities/telemetry";
 import type { Database } from "./db";
 
 const logger = getLogger("ProxyServerStore");
@@ -9,15 +10,21 @@ const logger = getLogger("ProxyServerStore");
 export class ProxyServerStore {
   private proxyServers: Map<string, ProxyServer> = new Map();
   private db: Database;
+  private telemetry: Telemetry;
 
-  private constructor(params: { db: Database }) {
+  private constructor(params: { db: Database; telemetry: Telemetry }) {
     this.db = params.db;
+    this.telemetry = params.telemetry;
   }
 
-  public static async create(db: Database): Promise<ProxyServerStore> {
+  public static async create(
+    db: Database,
+    telemetry: Telemetry,
+  ): Promise<ProxyServerStore> {
     logger.debug("initializing ProxyServerStore");
     const store = new ProxyServerStore({
       db,
+      telemetry,
     });
     await store.initialize();
     logger.debug("initialization complete");

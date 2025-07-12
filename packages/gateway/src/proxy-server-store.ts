@@ -19,12 +19,12 @@ export class ProxyServerStore {
 
   public static async create(
     db: Database,
-    telemetry: Telemetry,
+    telemetry?: Telemetry,
   ): Promise<ProxyServerStore> {
     logger.debug("initializing ProxyServerStore");
     const store = new ProxyServerStore({
       db,
-      telemetry,
+      telemetry: telemetry || Telemetry.noTelemetry(),
     });
     await store.initialize();
     logger.debug("initialization complete");

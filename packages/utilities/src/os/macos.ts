@@ -138,21 +138,4 @@ export class MacOSController extends AbstractController {
         );
     }
   }
-
-  getMachineId(): string {
-    try {
-      const result = execSync(`ioreg -rd1 -c IOPlatformExpertDevice`, {
-        stdio: "pipe",
-        encoding: "utf8",
-      });
-
-      return result
-        .split("IOPlatformUUID")[1]
-        .split("\n")[0]
-        .replace(/\=|\s+|\"/gi, "")
-        .toLowerCase();
-    } catch (error) {
-      throw new Error("Failed to get machine id");
-    }
-  }
 }

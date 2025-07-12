@@ -6,7 +6,6 @@ import { loader } from "@director.run/utilities/cli/loader";
 import { getLogger } from "@director.run/utilities/logger";
 import { select } from "@inquirer/prompts";
 import { env } from "../../env";
-import { trackEvent } from "../../telemetry";
 import { startGateway } from "./serve";
 import { openStudio } from "./studio";
 
@@ -18,7 +17,6 @@ export function registerQuickstartCommand(program: DirectorCommand) {
     .description("Start the gateway and open the studio in your browser")
     .action(
       actionWithErrorHandler(async () => {
-        trackEvent("quickstart_started");
         await checkPrerequisites();
         await startGateway(async () => {
           logger.info(

@@ -28,7 +28,7 @@ export async function startGateway(successCallback?: () => void) {
   console.log(`v${packageJson.version}`);
   printDirectorAscii();
 
-  trackEvent("gateway_started");
+  trackEvent("gateway_start");
 
   await Gateway.start(
     {

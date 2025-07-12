@@ -75,7 +75,7 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
     };
     newConfig.mcpServers[this.createServerConfigKey(attributes.name)] = {
       command: "npx",
-      args: ["-y", "@director.run/cli", "http2stdio", attributes.url],
+      args: ["-y", "@director.run/cli@latest", "http2stdio", attributes.url],
       env: {
         LOG_LEVEL: "silent",
       },

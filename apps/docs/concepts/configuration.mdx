@@ -35,7 +35,9 @@ Your configuration file is a JSON file that defines proxy connections (it’s lo
             "env": {
               "API_KEY": "your-key-here"
             }
-          }
+          },
+          // Optional: prefix all tool names from this server
+          "add_prefix": false
         },
         {
           "name": "streamable-or-sse-server",
@@ -43,13 +45,55 @@ Your configuration file is a JSON file that defines proxy connections (it’s lo
             "type": "http",
             // The url of the server, this can be either Streamable or SSE transports
             "url": "https://api.example.com/mcp"
-          }
+          },
+          // When true, all tools will be prefixed with "streamable-or-sse-server__"
+          "add_prefix": true
         }
       ]
     }
   ]
 }
 ```
+
+### Server Configuration Options
+
+Each server in the `servers` array supports the following fields:
+
+- **name** (required): A unique identifier for the server within this proxy
+- **transport** (required): The transport configuration (either `stdio` or `http`)
+- **add_prefix** (optional, default: `false`): When enabled, all tool names from this server will be prefixed with the server name followed by double underscores (`__`)
+
+#### Tool Name Prefixing
+
+The `add_prefix` option helps prevent naming conflicts when multiple MCP servers expose tools with the same name. When `add_prefix: true`:
+
+- A tool named `search` from a server named `github` becomes `github__search`
+- A tool named `execute` from a server named `code-runner` becomes `code-runner__execute`
+
+This is particularly useful when:
+- You're aggregating multiple MCP servers that might have overlapping tool names
+- You want to clearly identify which server provides which tool
+- You need to maintain compatibility with clients that expect specific tool naming patterns
+
+Example scenario:
+```json
+{
+  "servers": [
+    {
+      "name": "github",
+      "transport": { "type": "http", "url": "https://api.github.com/mcp" },
+      "add_prefix": true  // Tools: github__search, github__create_issue, etc.
+    },
+    {
+      "name": "gitlab", 
+      "transport": { "type": "http", "url": "https://api.gitlab.com/mcp" },
+      "add_prefix": true  // Tools: gitlab__search, gitlab__create_issue, etc.
+    }
+  ]
+}
+```
+
+Without prefixing, only one server's `search` tool would be accessible. With prefixing, both are available as distinct tools.
 
 ## config.env
 

@@ -42,6 +42,8 @@ await gatewayClient.proxy.addServer.mutate({
       command: "npx",
       args: ["-y", "@director.run/cli", "http2stdio", "http://localhost:3673/my-server/sse"],
     },
+    // Optional: prefix all tool names with "my-server__"
+    add_prefix: false,
   },
 });
 ```

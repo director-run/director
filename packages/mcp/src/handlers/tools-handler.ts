@@ -9,20 +9,22 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import type { ProxyServer } from "../proxy-server";
-import type { SimpleClient } from "../simple-client";
+import type { ProxyTarget } from "../proxy-target";
 
 const logger = getLogger("proxy/handlers/toolsHandler");
 
 export function setupToolHandlers(
   server: ProxyServer,
-  connectedClients: SimpleClient[],
+  connectedClients: ProxyTarget[],
 ) {
-  const toolToClientMap = new Map<string, SimpleClient>();
+  const toolToClientMap = new Map<string, ProxyTarget>();
+  const prefixedToOriginalMap = new Map<string, string>();
 
   // List Tools Handler
   server.setRequestHandler(ListToolsRequestSchema, async (request) => {
     const allTools: Tool[] = [];
     toolToClientMap.clear();
+    prefixedToOriginalMap.clear();
 
     for (const connectedClient of connectedClients) {
       try {
@@ -38,9 +40,19 @@ export function setupToolHandlers(
 
         if (result.tools) {
           const toolsWithSource = result.tools.map((tool) => {
-            toolToClientMap.set(tool.name, connectedClient);
+            const shouldPrefix = connectedClient.attributes.add_prefix === true;
+            const toolName = shouldPrefix
+              ? `${connectedClient.name}__${tool.name}`
+              : tool.name;
+
+            toolToClientMap.set(toolName, connectedClient);
+            if (shouldPrefix) {
+              prefixedToOriginalMap.set(toolName, tool.name);
+            }
+
             return {
               ...tool,
+              name: toolName,
               description: `[${connectedClient.name}] ${tool.description || ""}`,
             };
           });
@@ -71,12 +83,15 @@ export function setupToolHandlers(
       throw new Error(`Unknown tool: ${name}`);
     }
 
+    // Get the original tool name if this is a prefixed tool
+    const originalToolName = prefixedToOriginalMap.get(name) || name;
+
     try {
       return await clientForTool.request(
         {
           method: "tools/call",
           params: {
-            name,
+            name: originalToolName,
             arguments: request.params.arguments || {},
             _meta: request.params._meta,
           },

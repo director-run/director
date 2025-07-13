@@ -3,6 +3,7 @@ import { AppError } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { parseMCPMessageBody } from "@director.run/utilities/mcp";
 import { asyncHandler } from "@director.run/utilities/middleware";
+import { Telemetry } from "@director.run/utilities/telemetry";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
 import type { ProxyServerStore } from "../proxy-server-store";
@@ -11,8 +12,10 @@ const logger = getLogger("mcp/sse");
 
 export const createSSERouter = ({
   proxyStore,
+  telemetry,
 }: {
   proxyStore: ProxyServerStore;
+  telemetry: Telemetry;
 }) => {
   const router = express.Router();
   const transports: Map<string, SSEServerTransport> = new Map();
@@ -34,6 +37,9 @@ export const createSSERouter = ({
         host: req.headers["host"],
       });
 
+      telemetry.trackEvent("connection_started", {
+        transport: "sse",
+      });
       /**
        * The MCP documentation says to use res.on("close", () => { ... }) to
        * clean up the transport when the connection is closed. However, this
@@ -86,6 +92,11 @@ export const createSSERouter = ({
         });
         throw new AppError(ErrorCode.NOT_FOUND, "Transport not found");
       }
+
+      telemetry.trackEvent("method_called", {
+        method: body.method,
+        transport: "sse",
+      });
 
       await transport.handlePostMessage(req, res, body);
     }),

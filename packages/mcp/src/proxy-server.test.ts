@@ -148,7 +148,7 @@ describe("ProxyServer", () => {
         },
       })) as CallToolResult;
 
-      expect(result.content[0].text).toContain("Hello, world!");
+      expect(result.content?.[0].text).toContain("Hello, world!");
 
       await streamableServer.close();
     });
@@ -245,8 +245,8 @@ describe("ProxyServer", () => {
         },
       })) as CallToolResult;
 
-      expect(result1.content[0].text).toContain("Test 1");
-      expect(result2.content[0].text).toContain("Test 2");
+      expect(result1.content?.[0].text).toContain("Test 1");
+      expect(result2.content?.[0].text).toContain("Test 2");
 
       await echoServer1.close();
       await echoServer2.close();

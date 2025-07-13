@@ -1,5 +1,5 @@
 <h1 align="center">Director</h1>
-<p align="center">The easiest way to use MCP</p>
+<p align="center">The simplest way to use MCP</p>
 
 <p align="center"><code>curl -fsSL https://director.run/install | bash</code></p>
 
@@ -16,22 +16,22 @@
 
 <img src="https://github.com/director-run/director/blob/main/apps/docs/images/demo.gif" width="100%" alt="animated hello">
 
-[Director](https://director.run) is open source MCP middleware that acts as a proxy between models/agents and MCP servers. Supporting all MCP transports natively, it aggregates tools, prompts, and resources server-side while providing a unified client-side integration point. This abstraction eliminates MCP server management overhead, enabling developers to focus on prompt engineering and domain logic rather than infrastructure complexity.
+[Director](https://director.run) allows you to connect any MCP server to any LLM in seconds. It's local first, and 100% open source. 
+
+More specifically, it's a gateway that proxies requests between MCP clients and servers. It supports all MCP transports natively and aggregates tools, prompts, and resources server-side while providing a unified client-side integration point. This abstraction eliminates MCP server management overhead, enabling you to focus on the work you want to do with your LLM rather than worrying about how MCP works or the best way to manage it.
 
 > **Note:** This project is under active development and is not yet stable & may contain bugs. Please see our [contributing](https://docs.director.run/project/contributing) if you'd like to help.
 
-## Quickstart
 
-Get started with Director immediately using the command below. For more detailed information, please [read the docs](https://docs.director.run).
+# Installation
+
+The easiest way to install Director is using the quickstart commad. However you can learn about alternative installation methods (including running it in Docker) by reading [our documentation](https://docs.director.run).
 
 ```bash
-curl -fsSL https://director.run/install | bash
-director quickstart
+$ curl -fsSL https://director.run/install | bash
+$ director quickstart
 ```
-
----
-
-## Project Structure
+# Project Structure
 
 ### External Apps
 

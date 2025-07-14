@@ -127,8 +127,39 @@ export class ProxyServer extends Server {
     }
   }
 
+  public getTargetsStatus() {
+    return this.targets.map((target) => ({
+      name: target.name,
+      ...target.getStatusInfo(),
+    }));
+  }
+
+  public getTarget(name: string): ProxyTarget | undefined {
+    return this.targets.find((target) => target.name === name);
+  }
+
+  public getAllTargets(): ProxyTarget[] {
+    return [...this.targets];
+  }
+
   public toPlainObject() {
-    return this.attributes;
+    // Update attributes with current status from targets
+    const updatedServers = this.attributes.servers.map((serverAttr) => {
+      const target = this.targets.find((t) => t.name === serverAttr.name);
+      if (target) {
+        const statusInfo = target.getStatusInfo();
+        return {
+          ...serverAttr,
+          ...statusInfo,
+        };
+      }
+      return serverAttr;
+    });
+
+    return {
+      ...this.attributes,
+      servers: updatedServers,
+    };
   }
 
   get id() {

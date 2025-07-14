@@ -1,6 +1,7 @@
 "use client";
 import { useParams, useRouter } from "next/navigation";
 
+import { useConnectionStatus } from "@/components/connect/connection-status-provider";
 import {
   LayoutView,
   LayoutViewContent,
@@ -17,6 +18,7 @@ import { ProxyInstallers } from "@/components/proxies/proxy-installers";
 import { ProxyManualDialog } from "@/components/proxies/proxy-manual-dialog";
 import { ProxySettingsSheet } from "@/components/proxies/proxy-settings-sheet";
 import { ProxySkeleton } from "@/components/proxies/proxy-skeleton";
+import { type ServerStatus } from "@/components/server-status/server-status-indicator";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -56,6 +58,7 @@ export default function ProxyPage() {
   const params = useParams<{ proxyId: string }>();
 
   const { proxy, isLoading } = useProxy(params.proxyId);
+  const { servers } = useConnectionStatus();
 
   useEffect(() => {
     if (!isLoading && !proxy) {
@@ -151,6 +154,9 @@ export default function ProxyPage() {
             </SectionHeader>
             <MCPLinkCardList>
               {proxy.servers.map((it) => {
+                const serverStatus = servers.find(
+                  (s) => s.proxyId === proxy.id && s.serverName === it.name,
+                );
                 return (
                   <MCPLinkCard
                     key={it.name}
@@ -164,6 +170,7 @@ export default function ProxyPage() {
                             isOfficial: false,
                           }
                     }
+                    status={serverStatus?.status as ServerStatus}
                     href={`/${proxy.id}/mcp/${it.name}`}
                   />
                 );

@@ -19,6 +19,36 @@ export const createStreamableRouter = ({
 }) => {
   const router = express.Router();
   const transports: Map<string, StreamableHTTPServerTransport> = new Map();
+  const sessionLastActivity: Map<string, number> = new Map();
+
+  // Clean up stale sessions every 5 minutes
+  const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+  const CLEANUP_INTERVAL = 5 * 60 * 1000; // 5 minutes
+
+  const cleanupInterval = setInterval(() => {
+    const now = Date.now();
+    const staleSessionIds: string[] = [];
+
+    for (const [sessionId, lastActivity] of sessionLastActivity.entries()) {
+      if (now - lastActivity > SESSION_TIMEOUT) {
+        staleSessionIds.push(sessionId);
+      }
+    }
+
+    for (const sessionId of staleSessionIds) {
+      logger.info(`cleaning up stale session: ${sessionId}`);
+      const transport = transports.get(sessionId);
+      if (transport) {
+        transport.close();
+      }
+      transports.delete(sessionId);
+      sessionLastActivity.delete(sessionId);
+    }
+
+    if (staleSessionIds.length > 0) {
+      logger.info(`cleaned up ${staleSessionIds.length} stale sessions`);
+    }
+  }, CLEANUP_INTERVAL);
   // router.get(
   //   "/status",
   //   asyncHandler((req, res) => {
@@ -60,8 +90,17 @@ export const createStreamableRouter = ({
           throw new AppError(ErrorCode.NOT_FOUND, "Transport not found");
         }
         transport = existingTransport;
-      } else if (!sessionId && isInitializeRequest(req.body)) {
-        logger.info(`[${proxy.id}] new initialization request`);
+        // Update session activity
+        sessionLastActivity.set(sessionId, Date.now());
+      } else if (isInitializeRequest(req.body)) {
+        // Allow re-initialization even if session ID is provided but invalid
+        if (sessionId) {
+          logger.info(
+            `[${proxy.id}] re-initializing session with invalid/expired session ID: ${sessionId}`,
+          );
+        } else {
+          logger.info(`[${proxy.id}] new initialization request`);
+        }
         telemetry.trackEvent("connection_started", {
           transport: "streamable",
         });
@@ -71,6 +110,7 @@ export const createStreamableRouter = ({
           onsessioninitialized: (sessionId) => {
             // Store the transport by session ID
             transports.set(sessionId, transport);
+            sessionLastActivity.set(sessionId, Date.now());
           },
         });
 
@@ -82,6 +122,7 @@ export const createStreamableRouter = ({
           });
           if (transport.sessionId) {
             transports.delete(transport.sessionId);
+            sessionLastActivity.delete(transport.sessionId);
           }
         };
 
@@ -137,6 +178,9 @@ export const createStreamableRouter = ({
         throw new AppError(ErrorCode.NOT_FOUND, "Transport not found");
       }
       const transport = existingTransport;
+
+      // Update session activity
+      sessionLastActivity.set(sessionId, Date.now());
 
       logger.info({
         message: `MCP handleSessionRequest`,

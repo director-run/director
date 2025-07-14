@@ -169,4 +169,22 @@ export class ProxyServerStore {
 
     return proxy;
   }
+
+  public async updateServerStatus(
+    proxyId: string,
+    serverName: string,
+    statusUpdate: {
+      status?: string;
+      lastError?: string | null;
+      lastErrorAt?: Date | null;
+      connectedAt?: Date | null;
+      lastAttemptAt?: Date | null;
+      errorCategory?: string | null;
+      isRetryable?: boolean | null;
+      suggestedAction?: string | null;
+      circuitBreakerState?: string | null;
+    },
+  ): Promise<void> {
+    await this.db.updateServerStatus(proxyId, serverName, statusUpdate);
+  }
 }

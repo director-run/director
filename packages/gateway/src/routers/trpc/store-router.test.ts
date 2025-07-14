@@ -1,5 +1,6 @@
 import { TRPCClientError } from "@trpc/client";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { makeFooBarServerStdioConfig } from "../../test/fixtures";
 import { IntegrationTestHarness } from "../../test/integration";
 
 describe("Store Router", () => {
@@ -152,6 +153,145 @@ describe("Store Router", () => {
       ).rejects.toThrow(
         `[echo] failed to run 'ls not_existing_dir'. Please check the logs for more details.`,
       );
+    });
+  });
+
+  describe("Status Management Endpoints", () => {
+    beforeEach(async () => {
+      await harness.purge();
+      await harness.client.store.create.mutate({
+        name: "Test proxy",
+      });
+      await harness.client.store.addServer.mutate({
+        proxyId: "test-proxy",
+        server: makeFooBarServerStdioConfig(),
+      });
+    });
+
+    it("should get server status", async () => {
+      const status = await harness.client.store.getServerStatus.query({
+        proxyId: "test-proxy",
+        serverName: "foo",
+      });
+
+      expect(status).toMatchObject({
+        name: "foo",
+        status: expect.any(String),
+      });
+    });
+
+    it("should throw error for non-existent server", async () => {
+      await expect(
+        harness.client.store.getServerStatus.query({
+          proxyId: "test-proxy",
+          serverName: "non-existent",
+        }),
+      ).rejects.toThrow("Server non-existent not found");
+    });
+
+    it("should refresh server status", async () => {
+      const status = await harness.client.store.refreshServerStatus.mutate({
+        proxyId: "test-proxy",
+        serverName: "foo",
+      });
+
+      expect(status).toMatchObject({
+        status: expect.any(String),
+      });
+    });
+
+    it("should enable server", async () => {
+      // First disable the server
+      await harness.client.store.disableServer.mutate({
+        proxyId: "test-proxy",
+        serverName: "foo",
+      });
+
+      const status = await harness.client.store.enableServer.mutate({
+        proxyId: "test-proxy",
+        serverName: "foo",
+      });
+
+      expect(status.status).not.toBe("disabled");
+    });
+
+    it("should disable server", async () => {
+      const status = await harness.client.store.disableServer.mutate({
+        proxyId: "test-proxy",
+        serverName: "foo",
+      });
+
+      expect(status.status).toBe("disabled");
+    });
+
+    it("should restart server", async () => {
+      const status = await harness.client.store.restartServer.mutate({
+        proxyId: "test-proxy",
+        serverName: "foo",
+      });
+
+      expect(status).toMatchObject({
+        status: expect.any(String),
+      });
+    });
+
+    it("should refresh all statuses", async () => {
+      const statuses = await harness.client.store.refreshAllStatuses.mutate({
+        proxyId: "test-proxy",
+      });
+
+      expect(statuses).toHaveLength(1);
+      expect(statuses[0]).toMatchObject({
+        name: "foo",
+        status: expect.any(String),
+      });
+    });
+
+    it("should throw error for non-existent proxy in status operations", async () => {
+      await expect(
+        harness.client.store.getServerStatus.query({
+          proxyId: "non-existent",
+          serverName: "foo",
+        }),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("Enhanced getAll with Status", () => {
+    beforeEach(async () => {
+      await harness.purge();
+      await harness.client.store.create.mutate({
+        name: "Test proxy",
+      });
+      await harness.client.store.addServer.mutate({
+        proxyId: "test-proxy",
+        server: makeFooBarServerStdioConfig(),
+      });
+    });
+
+    it("should include server status in getAll response", async () => {
+      const proxies = await harness.client.store.getAll.query();
+
+      expect(proxies).toHaveLength(1);
+      expect(proxies[0].servers).toHaveLength(1);
+      expect(proxies[0].servers[0]).toMatchObject({
+        name: "foo",
+        status: expect.any(String),
+        transport: expect.any(Object),
+      });
+    });
+
+    it("should include server status in get response", async () => {
+      const proxy = await harness.client.store.get.query({
+        proxyId: "test-proxy",
+      });
+
+      expect(proxy?.servers).toHaveLength(1);
+      expect(proxy?.servers[0]).toMatchObject({
+        name: "foo",
+        status: expect.any(String),
+        transport: expect.any(Object),
+      });
     });
   });
 });

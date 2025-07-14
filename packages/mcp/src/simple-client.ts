@@ -14,8 +14,14 @@ import packageJson from "../package.json";
 
 const logger = getLogger("SimpleClient");
 
+interface ErrnoException extends Error {
+  code?: string;
+}
+
 export class SimpleClient extends Client {
   public name: string;
+  private _isConnected: boolean = false;
+  private _connectionStartTime?: Date;
 
   constructor(name: string) {
     super(
@@ -34,10 +40,38 @@ export class SimpleClient extends Client {
     this.name = name;
   }
 
+  public get isConnected(): boolean {
+    return this._isConnected;
+  }
+
+  public get connectionStartTime(): Date | undefined {
+    return this._connectionStartTime;
+  }
+
   public toPlainObject() {
     return {
       name: this.name,
+      isConnected: this._isConnected,
+      connectionStartTime: this._connectionStartTime,
     };
+  }
+
+  protected onConnected(): void {
+    this._isConnected = true;
+    this._connectionStartTime = new Date();
+    logger.debug({
+      message: `client connected`,
+      name: this.name,
+    });
+  }
+
+  protected onDisconnected(): void {
+    this._isConnected = false;
+    this._connectionStartTime = undefined;
+    logger.debug({
+      message: `client disconnected`,
+      name: this.name,
+    });
   }
 
   public async connectToHTTP(url: string, headers?: Record<string, string>) {
@@ -49,6 +83,7 @@ export class SimpleClient extends Client {
           },
         }),
       );
+      this.onConnected();
     } catch (e) {
       try {
         await this.connect(
@@ -58,7 +93,9 @@ export class SimpleClient extends Client {
             },
           }),
         );
+        this.onConnected();
       } catch (e) {
+        this.onDisconnected();
         throw new AppError(
           ErrorCode.CONNECTION_REFUSED,
           `[${this.name}] failed to connect to ${url}`,
@@ -79,7 +116,9 @@ export class SimpleClient extends Client {
   ) {
     try {
       await this.connect(new StdioClientTransport({ command, args, env }));
+      this.onConnected();
     } catch (e) {
+      this.onDisconnected();
       if (e instanceof Error && (e as ErrnoException).code === "ENOENT") {
         throw new AppError(
           ErrorCode.CONNECTION_REFUSED,
@@ -138,6 +177,58 @@ export class SimpleClient extends Client {
     const client = new SimpleClient("test client");
     await client.connectToStdio(command, args, env);
     return client;
+  }
+
+  public async close(): Promise<void> {
+    this.onDisconnected();
+    await super.close();
+  }
+
+  public async healthCheck(): Promise<boolean> {
+    if (!this._isConnected) {
+      return false;
+    }
+
+    try {
+      // Try a simple ping operation to check if the connection is still alive
+      await this.ping();
+      return true;
+    } catch (error) {
+      logger.debug({
+        message: `health check failed`,
+        name: this.name,
+        error,
+      });
+      this.onDisconnected();
+      return false;
+    }
+  }
+
+  public async detailedHealthCheck(
+    transport: unknown,
+  ): Promise<{ isHealthy: boolean; responseTime?: number; error?: string }> {
+    const startTime = Date.now();
+
+    try {
+      const isHealthy = await this.healthCheck();
+      const responseTime = Date.now() - startTime;
+
+      return {
+        isHealthy,
+        responseTime,
+        error: isHealthy ? undefined : "Connection health check failed",
+      };
+    } catch (error) {
+      const responseTime = Date.now() - startTime;
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
+      return {
+        isHealthy: false,
+        responseTime,
+        error: errorMessage,
+      };
+    }
   }
 
   // TODO: not sure we need retry logic?

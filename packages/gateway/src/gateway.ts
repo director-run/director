@@ -13,22 +13,26 @@ import { ProxyServerStore } from "./proxy-server-store";
 import { createSSERouter } from "./routers/sse";
 import { createStreamableRouter } from "./routers/streamable";
 import { createTRPCExpressMiddleware } from "./routers/trpc";
+import { StatusMonitor } from "./status-monitor";
 
 const logger = getLogger("Gateway");
 
 export class Gateway {
   public readonly proxyStore: ProxyServerStore;
+  public readonly statusMonitor: StatusMonitor;
   public readonly port: number;
   private server: Server;
 
   private constructor(attribs: {
     proxyStore: ProxyServerStore;
+    statusMonitor: StatusMonitor;
     port: number;
     db: Database;
     server: Server;
   }) {
     this.port = attribs.port;
     this.proxyStore = attribs.proxyStore;
+    this.statusMonitor = attribs.statusMonitor;
     this.server = attribs.server;
   }
 
@@ -47,6 +51,7 @@ export class Gateway {
     const db = await Database.connect(attribs.databaseFilePath);
     const telemetry = attribs.telemetry || Telemetry.noTelemetry();
     const proxyStore = await ProxyServerStore.create(db, telemetry);
+    const statusMonitor = new StatusMonitor(proxyStore);
     const app = express();
     const registryURL = attribs.registryURL;
 
@@ -56,7 +61,7 @@ export class Gateway {
       }),
     );
     app.use(logRequests());
-    app.use("/", createSSERouter({ proxyStore, telemetry }));
+    app.use("/", createSSERouter({ proxyStore, telemetry, statusMonitor }));
     app.use("/", createStreamableRouter({ proxyStore, telemetry }));
     app.use("/trpc", createTRPCExpressMiddleware({ proxyStore, registryURL }));
     app.all("*", notFoundHandler);
@@ -66,6 +71,11 @@ export class Gateway {
 
     const server = app.listen(attribs.port, () => {
       logger.info(`director gateway running on port ${attribs.port}`);
+
+      // Start status monitoring
+      statusMonitor.start();
+      logger.info("status monitoring started");
+
       successCallback?.();
     });
 
@@ -73,6 +83,7 @@ export class Gateway {
       port: attribs.port,
       db,
       proxyStore,
+      statusMonitor,
       server,
     });
 
@@ -86,6 +97,9 @@ export class Gateway {
   }
 
   async stop() {
+    logger.info("stopping status monitor");
+    this.statusMonitor.stop();
+
     await this.proxyStore.closeAll();
     await new Promise<void>((resolve) => {
       // Close all existing connections

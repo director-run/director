@@ -115,6 +115,40 @@ export class Database {
     return store.proxies;
   }
 
+  async updateServerStatus(
+    proxyId: string,
+    serverName: string,
+    statusUpdate: {
+      status?: string;
+      lastError?: string | null;
+      lastErrorAt?: Date | null;
+      connectedAt?: Date | null;
+      lastAttemptAt?: Date | null;
+      errorCategory?: string | null;
+      isRetryable?: boolean | null;
+      suggestedAction?: string | null;
+      circuitBreakerState?: string | null;
+    },
+  ): Promise<ProxyServerAttributes> {
+    const store = await readDB(this.filePath);
+    const proxy = store.proxies.find((p) => p.id === proxyId);
+
+    if (!proxy) {
+      throw new Error("Proxy not found");
+    }
+
+    const server = proxy.servers.find((s) => s.name === serverName);
+    if (!server) {
+      throw new Error("Server not found");
+    }
+
+    // Update server status fields
+    Object.assign(server, statusUpdate);
+
+    await writeDB(this.filePath, store);
+    return proxy;
+  }
+
   async purge(): Promise<void> {
     await writeDB(this.filePath, {
       proxies: [],

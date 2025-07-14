@@ -21,7 +21,7 @@
   /* Accent */
   --color-accent: oklch(90.98% 0.007 53.44);
   --color-accent-subtle: oklch(93.88% 0.004 56.37);
-  
+
   /* Success */
   --color-success: oklch(92.85% 0.041 135.05);
   --color-success-fg: oklch(48.75% 0.106 136.30);
@@ -56,6 +56,39 @@
     @apply radix-state-[closed]:fade-out-0 radix-state-[closed]:animate-out;
     @apply radix-state-[open]:fade-in-0 radix-state-[open]:animate-in;
   }
+
+  .bg-status-running {
+    background-color: oklch(0.6 0.15 140);
+  }
+
+  .bg-status-failed {
+    background-color: oklch(0.55 0.18 30);
+  }
+
+  .bg-status-starting {
+    background-color: oklch(0.8 0.15 85);
+  }
+
+  .bg-status-disabled {
+    background-color: oklch(0.6 0.01 270);
+  }
+
+  .bg-status-disconnected {
+    background-color: oklch(0.7 0.01 270);
+  }
+
+  @keyframes status-pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.6;
+    }
+  }
+
+  .animate-status-pulse {
+    animation: status-pulse 2s ease-in-out infinite;
+  }
 }
 
 .prose {
@@ -80,7 +113,7 @@
   & h1:not(.not-prose h1), & h2:not(.not-prose h2), & h3:not(.not-prose h3), & h4:not(.not-prose h4) {
     & + p:not(.not-prose p),
     & + ul:not(.not-prose ul),
-    & + ol:not(.not-prose ol) {  
+    & + ol:not(.not-prose ol) {
       @apply mt-[0.75em];
     }
   }

@@ -1,10 +1,13 @@
 "use client";
 
 import { SealCheckIcon } from "@phosphor-icons/react";
-import Link from "next/link";
-import { LinkProps } from "next/link";
+import Link, { LinkProps } from "next/link";
 
 import { McpLogo } from "@/components/mcp-logo";
+import {
+  type ServerStatus,
+  ServerStatusIndicator,
+} from "@/components/server-status/server-status-indicator";
 import { cn } from "@/lib/cn";
 import { ComponentProps } from "react";
 
@@ -16,9 +19,15 @@ interface MCPLinkCardProps extends LinkProps {
     icon?: string | null;
     isOfficial?: boolean | null;
   };
+  status?: ServerStatus;
 }
 
-export function MCPLinkCard({ className, entry, ...props }: MCPLinkCardProps) {
+export function MCPLinkCard({
+  className,
+  entry,
+  status,
+  ...props
+}: MCPLinkCardProps) {
   return (
     <Link
       className={cn(
@@ -27,7 +36,10 @@ export function MCPLinkCard({ className, entry, ...props }: MCPLinkCardProps) {
       )}
       {...props}
     >
-      <McpLogo src={entry.icon} className="size-8" />
+      <div className="flex items-center justify-between">
+        <McpLogo src={entry.icon} className="size-8" />
+        {status && <ServerStatusIndicator status={status} size="md" />}
+      </div>
 
       <div className="flex flex-col gap-y-1">
         <div className="flex items-center gap-x-1 font-[450] text-[17px]">

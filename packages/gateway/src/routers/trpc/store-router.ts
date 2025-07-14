@@ -99,5 +99,135 @@ export function createProxyStoreRouter({
         await restartConnectedClients(proxy);
         return proxy.toPlainObject();
       }),
+
+    getServerStatus: t.procedure
+      .input(
+        z.object({
+          proxyId: z.string(),
+          serverName: z.string(),
+        }),
+      )
+      .query(({ input }) => {
+        const proxy = proxyStore.get(input.proxyId);
+        const targetStatus = proxy
+          .getTargetsStatus()
+          .find((target) => target.name === input.serverName);
+
+        if (!targetStatus) {
+          throw new Error(`Server ${input.serverName} not found`);
+        }
+
+        return targetStatus;
+      }),
+
+    refreshServerStatus: t.procedure
+      .input(
+        z.object({
+          proxyId: z.string(),
+          serverName: z.string(),
+        }),
+      )
+      .mutation(async ({ input }) => {
+        const proxy = proxyStore.get(input.proxyId);
+        const target = proxy.getTarget(input.serverName);
+
+        if (!target) {
+          throw new Error(`Server ${input.serverName} not found`);
+        }
+
+        // Trigger a health check
+        await target.healthCheck();
+
+        return target.getStatusInfo();
+      }),
+
+    enableServer: t.procedure
+      .input(
+        z.object({
+          proxyId: z.string(),
+          serverName: z.string(),
+        }),
+      )
+      .mutation(async ({ input }) => {
+        const proxy = proxyStore.get(input.proxyId);
+        const target = proxy.getTarget(input.serverName);
+
+        if (!target) {
+          throw new Error(`Server ${input.serverName} not found`);
+        }
+
+        target.enable();
+        await proxyStore.updateServerStatus(
+          input.proxyId,
+          input.serverName,
+          target.getStatusInfo(),
+        );
+
+        return target.getStatusInfo();
+      }),
+
+    disableServer: t.procedure
+      .input(
+        z.object({
+          proxyId: z.string(),
+          serverName: z.string(),
+        }),
+      )
+      .mutation(async ({ input }) => {
+        const proxy = proxyStore.get(input.proxyId);
+        const target = proxy.getTarget(input.serverName);
+
+        if (!target) {
+          throw new Error(`Server ${input.serverName} not found`);
+        }
+
+        target.disable();
+        await proxyStore.updateServerStatus(
+          input.proxyId,
+          input.serverName,
+          target.getStatusInfo(),
+        );
+
+        return target.getStatusInfo();
+      }),
+
+    restartServer: t.procedure
+      .input(
+        z.object({
+          proxyId: z.string(),
+          serverName: z.string(),
+        }),
+      )
+      .mutation(async ({ input }) => {
+        const proxy = proxyStore.get(input.proxyId);
+        const target = proxy.getTarget(input.serverName);
+
+        if (!target) {
+          throw new Error(`Server ${input.serverName} not found`);
+        }
+
+        await target.restart();
+        await proxyStore.updateServerStatus(
+          input.proxyId,
+          input.serverName,
+          target.getStatusInfo(),
+        );
+
+        return target.getStatusInfo();
+      }),
+
+    refreshAllStatuses: t.procedure
+      .input(z.object({ proxyId: z.string() }))
+      .mutation(async ({ input }) => {
+        const proxy = proxyStore.get(input.proxyId);
+        const targets = proxy.getAllTargets();
+
+        // Run health checks on all targets
+        await Promise.all(
+          targets.map((target) => target.healthCheck().catch(() => false)),
+        );
+
+        return proxy.getTargetsStatus();
+      }),
   });
 }

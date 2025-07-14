@@ -100,11 +100,30 @@ export const ProxyTargetSourceSchema = z.object({
 
 export type ProxyTargetSource = z.infer<typeof ProxyTargetSourceSchema>;
 
+export const proxyTargetStatusSchema = z.enum([
+  "starting",
+  "running",
+  "failed",
+  "disabled",
+  "disconnected",
+]);
+
+export type ProxyTargetStatus = z.infer<typeof proxyTargetStatusSchema>;
+
 export const proxyTargetAttributesSchema = z.object({
   name: slugStringSchema,
   transport: proxyTransport,
   source: ProxyTargetSourceSchema.optional(),
   add_prefix: z.boolean().default(false).optional(),
+  status: proxyTargetStatusSchema.default("disconnected").optional(),
+  lastError: z.string().nullable().optional(),
+  lastErrorAt: z.coerce.date().nullable().optional(),
+  connectedAt: z.coerce.date().nullable().optional(),
+  lastAttemptAt: z.coerce.date().nullable().optional(),
+  errorCategory: z.string().nullable().optional(),
+  isRetryable: z.boolean().nullable().optional(),
+  suggestedAction: z.string().nullable().optional(),
+  circuitBreakerState: z.string().nullable().optional(),
 });
 
 export type ProxyTargetAttributes = z.infer<typeof proxyTargetAttributesSchema>;

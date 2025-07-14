@@ -7,15 +7,18 @@ import { Telemetry } from "@director.run/utilities/telemetry";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
 import type { ProxyServerStore } from "../proxy-server-store";
+import type { StatusChangeEvent, StatusMonitor } from "../status-monitor";
 
 const logger = getLogger("mcp/sse");
 
 export const createSSERouter = ({
   proxyStore,
   telemetry,
+  statusMonitor,
 }: {
   proxyStore: ProxyServerStore;
   telemetry: Telemetry;
+  statusMonitor?: StatusMonitor;
 }) => {
   const router = express.Router();
   const transports: Map<string, SSEServerTransport> = new Map();
@@ -99,6 +102,122 @@ export const createSSERouter = ({
       });
 
       await transport.handlePostMessage(req, res, body);
+    }),
+  );
+
+  // Status events endpoint
+  router.get(
+    "/status/events",
+    asyncHandler(async (req, res) => {
+      if (!statusMonitor) {
+        throw new AppError(
+          ErrorCode.NOT_FOUND,
+          "Status monitoring not enabled",
+        );
+      }
+
+      // Set up SSE headers
+      res.writeHead(200, {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Cache-Control",
+      });
+
+      // Send initial connection event
+      res.write(
+        `data: ${JSON.stringify({ type: "connected", timestamp: new Date() })}\n\n`,
+      );
+
+      const statusChangeHandler = (event: StatusChangeEvent) => {
+        const eventData = {
+          type: "statusChange",
+          ...event,
+        };
+        res.write(`data: ${JSON.stringify(eventData)}\n\n`);
+      };
+
+      // Subscribe to status changes
+      statusMonitor.on("statusChange", statusChangeHandler);
+
+      // Handle client disconnect
+      req.on("close", () => {
+        logger.info({ message: "status events client disconnected" });
+        statusMonitor.off("statusChange", statusChangeHandler);
+      });
+
+      req.on("error", (error) => {
+        logger.error({
+          message: "status events client error",
+          error,
+        });
+        statusMonitor.off("statusChange", statusChangeHandler);
+      });
+    }),
+  );
+
+  // Proxy-specific status events endpoint
+  router.get(
+    "/:proxy_id/status/events",
+    asyncHandler(async (req, res) => {
+      if (!statusMonitor) {
+        throw new AppError(
+          ErrorCode.NOT_FOUND,
+          "Status monitoring not enabled",
+        );
+      }
+
+      const proxyId = req.params.proxy_id;
+
+      // Verify proxy exists
+      proxyStore.get(proxyId);
+
+      // Set up SSE headers
+      res.writeHead(200, {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Cache-Control",
+      });
+
+      // Send initial connection event
+      res.write(
+        `data: ${JSON.stringify({ type: "connected", proxyId, timestamp: new Date() })}\n\n`,
+      );
+
+      const statusChangeHandler = (event: StatusChangeEvent) => {
+        // Only send events for this specific proxy
+        if (event.proxyId === proxyId) {
+          const eventData = {
+            type: "statusChange",
+            ...event,
+          };
+          res.write(`data: ${JSON.stringify(eventData)}\n\n`);
+        }
+      };
+
+      // Subscribe to status changes
+      statusMonitor.on("statusChange", statusChangeHandler);
+
+      // Handle client disconnect
+      req.on("close", () => {
+        logger.info({
+          message: "proxy status events client disconnected",
+          proxyId,
+        });
+        statusMonitor.off("statusChange", statusChangeHandler);
+      });
+
+      req.on("error", (error) => {
+        logger.error({
+          message: "proxy status events client error",
+          proxyId,
+          error,
+        });
+        statusMonitor.off("statusChange", statusChangeHandler);
+      });
     }),
   );
 

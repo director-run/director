@@ -21,6 +21,20 @@ const [useContext, ContextProvider] = createCtx<{
     configExists: boolean;
     configPath: string;
   }[];
+  servers: {
+    proxyId: string;
+    proxyName: string;
+    serverName: string;
+    status: string;
+    lastError?: string | null;
+    lastErrorAt?: Date | null;
+    connectedAt?: Date | null;
+    lastAttemptAt?: Date | null;
+    errorCategory?: string | null;
+    isRetryable?: boolean | null;
+    suggestedAction?: string | null;
+    circuitBreakerState?: string | null;
+  }[];
 }>("connectionStatus");
 
 export function ConnectionStatusProvider({
@@ -73,6 +87,24 @@ export function ConnectionStatusProvider({
         lostConnection,
         dependencies: data?.dependencies ?? [],
         clients: data?.clients ?? [],
+        servers:
+          (
+            data as {
+              servers?: Array<{
+                proxyId: string;
+                proxyName: string;
+                serverName: string;
+                status: string;
+                lastError?: string | null;
+                lastErrorAt?: Date | null;
+                connectedAt?: Date | null;
+                lastAttemptAt?: Date | null;
+                responseTime?: number | null;
+                healthCheckUrl?: string | null;
+                circuitBreakerState?: string | null;
+              }>;
+            }
+          )?.servers ?? [],
       }}
     >
       {connected ? (

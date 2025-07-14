@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
+import { useConnectionStatus } from "@/components/connect/connection-status-provider";
+
 import {
   LayoutView,
   LayoutViewContent,
@@ -16,6 +18,8 @@ import { McpDescriptionList } from "@/components/mcp-servers/mcp-description-lis
 import { McpToolSheet } from "@/components/mcp-servers/mcp-tool-sheet";
 import { McpToolsTable } from "@/components/mcp-servers/mcp-tools-table";
 import { ProxySkeleton } from "@/components/proxies/proxy-skeleton";
+import { ServerStatusDetails } from "@/components/server-status/server-status-details";
+import { type ServerStatus } from "@/components/server-status/server-status-indicator";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -50,8 +54,12 @@ export default function ProxyPage() {
   const params = useParams<{ proxyId: string; mcpId: string }>();
 
   const { proxy, isLoading } = useProxy(params.proxyId);
+  const { servers } = useConnectionStatus();
 
   const mcp = proxy?.servers.find((server) => server.name === params.mcpId);
+  const serverStatus = servers.find(
+    (s) => s.proxyId === params.proxyId && s.serverName === params.mcpId,
+  );
 
   useEffect(() => {
     if (!isLoading && (!proxy || !mcp)) {
@@ -150,6 +158,27 @@ export default function ProxyPage() {
             </SectionHeader>
 
             <McpDescriptionList transport={mcp.transport} />
+          </Section>
+
+          <Section>
+            <SectionHeader>
+              <SectionTitle variant="h2" asChild>
+                <h3>Server Status</h3>
+              </SectionTitle>
+            </SectionHeader>
+
+            {serverStatus ? (
+              <ServerStatusDetails
+                statusInfo={{
+                  ...serverStatus,
+                  status: serverStatus.status as ServerStatus,
+                }}
+              />
+            ) : (
+              <div className="text-fg-subtle text-sm">
+                Server status information is not available
+              </div>
+            )}
           </Section>
 
           <Section>

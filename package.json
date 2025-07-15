@@ -17,7 +17,7 @@
     "format": "turbo run format",
     "release": "turbo run release --filter=@director.run/cli",
     "format:fix-imports": "biome check --formatter-enabled=false --linter-enabled=false --organize-imports-enabled=true --write .",
-    "test": "bun run vitest --fileParallelism=false",
+    "test": "turbo run test --concurrency=1 -- --watch=false",
     "typecheck": "turbo run typecheck",
     "clean": "turbo run clean && rm -rf .turbo node_modules",
     "cli": "NODE_ENV=development bun run ./apps/cli/bin/cli.ts",

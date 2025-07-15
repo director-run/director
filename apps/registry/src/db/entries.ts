@@ -1,7 +1,7 @@
 import { count, eq, inArray } from "drizzle-orm";
 
 import { db } from "./client";
-import { Entry, type EntryCreateParams, entriesTable } from "./schema";
+import { type Entry, type EntryCreateParams, entriesTable } from "./schema";
 
 export class EntryStore {
   public async getEntryByName(name: string) {

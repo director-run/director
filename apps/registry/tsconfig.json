@@ -1,4 +1,17 @@
 {
-  "extends": "../../tsconfig.json",
-  "include": ["src/**/*.ts", "bin/*.ts"]
+  "extends": "@director.run/typescript-config/nextjs.json",
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@director.run/design/*": ["../../packages/design/src/*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "next.config.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
 }

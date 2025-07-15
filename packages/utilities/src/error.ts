@@ -1,4 +1,4 @@
-import { isNumber } from "lodash";
+import _ from "lodash";
 
 export type ExpressError = Error & {
   statusCode: number;
@@ -36,6 +36,6 @@ export function isExpressError(error: unknown): error is ExpressError {
   return (
     error instanceof Error &&
     "statusCode" in error &&
-    isNumber(error.statusCode)
+    _.isNumber(error.statusCode)
   );
 }

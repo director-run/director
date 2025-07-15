@@ -3,17 +3,22 @@ import type * as React from "react";
 import { cn } from "@director.run/design/lib/cn";
 import { Conditional } from "./conditional";
 
+interface InputProps extends React.ComponentProps<"input"> {
+  wrapperClassName?: string;
+}
+
 export function Input({
   className,
   type,
   children,
+  wrapperClassName,
   ...props
-}: React.ComponentProps<"input">) {
+}: InputProps) {
   return (
     <Conditional
       condition={typeof children !== "undefined"}
       wrap={(child) => (
-        <div className="relative">
+        <div className={cn("relative", wrapperClassName)}>
           {child}
           {children}
         </div>

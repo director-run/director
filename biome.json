@@ -11,7 +11,8 @@
       "dist",
       "db.test.json",
       "db.json",
-      "*.css"
+      "*.css",
+      "development/config.json"
     ]
   },
   "formatter": {

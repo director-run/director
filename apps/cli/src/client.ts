@@ -1,5 +1,5 @@
 import { createGatewayClient } from "@director.run/gateway/client";
-import { createRegistryClient } from "@director.run/registry/client";
+import { createRegistryClient } from "@director.run/registry/registry-client";
 import { env } from "./env";
 
 export const gatewayClient = createGatewayClient(env.GATEWAY_URL);

@@ -1,3 +1,8 @@
+import {
+  Shell,
+  ShellContent,
+  ShellHeader,
+} from "@director.run/design/components/shell";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
@@ -7,7 +12,6 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
-import { GlobalLayout } from "../../components/global-layout";
 import { Providers } from "../../components/providers";
 import { routing } from "../../i18n/routing";
 import { TRPCProvider } from "../../trpc/client";
@@ -87,7 +91,10 @@ export default async function RootLayout({
         <NextIntlClientProvider>
           <TRPCProvider>
             <Providers>
-              <GlobalLayout>{children}</GlobalLayout>
+              <Shell>
+                <ShellHeader>Hello</ShellHeader>
+                <ShellContent>{children}</ShellContent>
+              </Shell>
             </Providers>
           </TRPCProvider>
         </NextIntlClientProvider>

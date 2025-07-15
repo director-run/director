@@ -17,7 +17,7 @@ export function Section({
   return (
     <Comp
       className={cn(
-        "@container/section relative flex scroll-m-20 flex-col gap-y-5",
+        "@container/section relative flex scroll-m-20 flex-col gap-y-8 sm:gap-y-10",
         className,
       )}
       data-slot="section"
@@ -35,7 +35,7 @@ export function SectionHeader({
 }: React.ComponentProps<"header">) {
   return (
     <header
-      className={cn("flex flex-col gap-1.5", className)}
+      className={cn("flex flex-col gap-y-2 sm:gap-y-2.5 md:gap-y-3", className)}
       data-slot="section-header"
       {...props}
     >
@@ -60,7 +60,7 @@ export function SectionTitle({
   return (
     <Comp
       className={cn(
-        "font-[450] text-xl",
+        "text-balance text-2xl sm:text-3xl md:text-4xl",
         "[&>a]:focus-visible [&>a]:hover:underline [&>a]:hover:decoration-[0.075em] [&>a]:hover:underline-offset-2",
         className,
       )}
@@ -88,7 +88,7 @@ export function SectionDescription({
   return (
     <Comp
       className={cn(
-        "max-w-[52ch] text-pretty text-content-secondary text-sm",
+        "max-w-[52ch] text-pretty text-content-secondary text-md leading-solid sm:text-lg",
         className,
       )}
       data-slot="section-description"

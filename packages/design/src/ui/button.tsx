@@ -1,6 +1,6 @@
 import { Tooltip } from "@director.run/design/components/tooltip";
 import { cn } from "@director.run/design/lib/cn";
-import { Conditional } from "@director.run/design/lib/conditional";
+import { Conditional } from "@director.run/design/ui/conditional";
 import { type VariantProps, cva } from "class-variance-authority";
 import { Slot } from "radix-ui";
 import type { ComponentProps } from "react";
@@ -8,7 +8,7 @@ import type { ComponentProps } from "react";
 const buttonVariants = cva(
   [
     "inline-flex shrink-0 cursor-pointer items-center justify-center gap-x-2 whitespace-nowrap duration-200 will-change-auto",
-    "focus-visible font-sans leading-none transition-colors duration-300 ease-out",
+    "focus-visible font-medium font-mono leading-none transition-colors duration-300 ease-out",
     "select-none rounded-md has-[.sr-only]:px-0",
     "[&_svg]:pointer-events-none [&_svg]:size-3.5 [&_svg]:shrink-0",
     "disabled:cursor-not-allowed disabled:opacity-50",
@@ -36,10 +36,9 @@ const buttonVariants = cva(
           "bg-sentiment-warning radix-state-[open]:bg-sentiment-warning-hover text-base-dark hover:bg-sentiment-warning-hover",
       },
       size: {
-        xs: "h-6 px-1.5 font-[450] text-sm leading-snug has-[.sr-only]:size-6",
-        sm: "h-7 px-2 font-[450] text-[13px] leading-snug has-[.sr-only]:size-7",
-        md: "h-8 px-4 font-[450] text-[14px] leading-snug has-[.sr-only]:size-8",
-        lg: "h-10 px-5 has-[.sr-only]:size-10",
+        xs: "h-6 px-1.5 text-sm leading-snug has-[.sr-only]:size-6",
+        sm: "h-7 px-2 text-sm leading-snug has-[.sr-only]:size-7",
+        md: "h-8 px-4 text-sm has-[.sr-only]:size-8",
       },
     },
     defaultVariants: {

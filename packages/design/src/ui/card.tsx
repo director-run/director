@@ -1,11 +1,12 @@
-import { cn } from "@director.run/design/lib/cn";
 import { type VariantProps, cva } from "class-variance-authority";
 import { Slot } from "radix-ui";
 import type { ComponentProps } from "react";
 
+import { cn } from "@director.run/design/lib/cn";
+
 const cardVariants = cva(
   [
-    "@container/card group/card flex flex-col rounded-lg text-left text-content-primary shadow-hairline",
+    "group/card flex flex-col rounded-lg text-left text-content-primary shadow-hairline",
     "data-[interactive]:focus-visible data-[interactive]:transition-[box-shadow,_background-color] data-[interactive]:duration-150 data-[interactive]:ease-in-out data-[interactive]:hover:shadow-popover dark:data-[interactive]:hover:bg-surface-neutral/50",
   ],
   {

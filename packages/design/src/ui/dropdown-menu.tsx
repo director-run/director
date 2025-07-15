@@ -1,9 +1,10 @@
 "use client";
 
-import { cn } from "@director.run/design/lib/cn";
 import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react";
 import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui";
 import type * as React from "react";
+
+import { cn } from "@director.run/design/lib/cn";
 
 function DropdownMenu({
   ...props
@@ -73,7 +74,7 @@ function DropdownMenuItem({
   return (
     <DropdownMenuPrimitive.Item
       className={cn(
-        "relative flex min-w-0 cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-[13px] outline-hidden",
+        "relative flex min-w-0 cursor-pointer select-none items-center gap-2 rounded-sm px-2 py-1.5 font-mono text-sm outline-hidden",
         "focus:bg-surface-neutral focus:text-content-primary data-[inset]:pl-8 dark:focus:bg-surface",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         "data-[variant=destructive]:*:[svg]:!text-sentiment-destructive data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive",
@@ -98,7 +99,7 @@ function DropdownMenuCheckboxItem({
     <DropdownMenuPrimitive.CheckboxItem
       checked={checked}
       className={cn(
-        "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-[13px] outline-hidden",
+        "relative flex cursor-pointer select-none items-center gap-2 rounded-sm px-2 py-1.5 font-mono text-sm outline-hidden",
         "pl-8 focus:bg-surface-neutral focus:text-content-primary dark:focus:bg-surface",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         "[&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-content-tertiary [&_svg]:pointer-events-none [&_svg]:shrink-0",
@@ -136,7 +137,7 @@ function DropdownMenuRadioItem({
   return (
     <DropdownMenuPrimitive.RadioItem
       className={cn(
-        "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-[13px] outline-hidden",
+        "relative flex cursor-pointer select-none items-center gap-2 rounded-sm px-2 py-1.5 font-mono text-sm outline-hidden",
         "pl-8 focus:bg-surface-neutral focus:text-content-primary dark:focus:bg-surface",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         "[&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-content-tertiary [&_svg]:pointer-events-none [&_svg]:shrink-0",
@@ -165,7 +166,7 @@ function DropdownMenuLabel({
   return (
     <DropdownMenuPrimitive.Label
       className={cn(
-        "px-2 py-1.5 font-[450] text-content-tertiary text-xs leading-4 data-[inset]:pl-8 dark:text-content-primary",
+        "px-2 py-1.5 font-medium font-mono text-content-tertiary text-xs uppercase leading-4 tracking-wider data-[inset]:pl-8",
         className,
       )}
       data-inset={inset}
@@ -195,7 +196,7 @@ function DropdownMenuShortcut({
   return (
     <span
       className={cn(
-        "ml-auto text-content-tertiary text-xs tracking-widest",
+        "ml-auto h-full rounded bg-base/5 px-1 font-bold font-mono text-content-secondary text-xs leading-5 tracking-widest",
         className,
       )}
       data-slot="dropdown-menu-shortcut"
@@ -221,7 +222,7 @@ function DropdownMenuSubTrigger({
   return (
     <DropdownMenuPrimitive.SubTrigger
       className={cn(
-        "relative flex min-w-0 cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-[13px] outline-hidden",
+        "relative flex min-w-0 cursor-pointer select-none items-center gap-2 rounded-sm px-2 py-1.5 font-mono text-sm outline-hidden",
         "focus:bg-surface-neutral focus:text-content-primary data-[inset]:pl-8 dark:focus:bg-surface",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         "[&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-content-tertiary [&_svg]:pointer-events-none [&_svg]:shrink-0",

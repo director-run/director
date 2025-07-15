@@ -1,7 +1,8 @@
-import { cn } from "@director.run/design/lib/cn";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
+
+import { cn } from "@director.run/design/lib/cn";
 
 export function SimpleMarkdown({ children }: { children: string }) {
   return (

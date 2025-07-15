@@ -1,5 +1,6 @@
-import { cn } from "@director.run/design/lib/cn";
 import type { ComponentProps } from "react";
+
+import { cn } from "@director.run/design/lib/cn";
 
 export function Logo({ className, ...props }: ComponentProps<"svg">) {
   return (

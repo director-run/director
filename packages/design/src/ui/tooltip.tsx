@@ -1,8 +1,9 @@
 "use client";
 
-import { cn } from "@director.run/design/lib/cn";
 import { Tooltip as TooltipPrimitive } from "radix-ui";
 import type * as React from "react";
+
+import { cn } from "@director.run/design/lib/cn";
 
 function TooltipProvider({
   delayDuration = 0,
@@ -43,7 +44,7 @@ export function TooltipContent({
     <TooltipPrimitive.Portal>
       <TooltipPrimitive.Content
         className={cn(
-          "fade-in-0 zoom-in-95 pointer-events-none z-50 w-fit origin-(--radix-tooltip-content-transform-origin) animate-in text-balance rounded-md bg-base px-3 py-1.5 text-background text-xs",
+          "fade-in-0 zoom-in-95 pointer-events-none z-50 w-fit origin-(--radix-tooltip-content-transform-origin) animate-in text-balance rounded-md bg-base px-3 py-1.5 font-medium font-mono text-background text-xs tracking-wide",
           "radix-state-[closed]:fade-out-0 radix-state-[closed]:zoom-out-95 radix-state-[closed]:animate-out",
           "radix-side-[bottom]:slide-in-from-top-2 radix-side-[left]:slide-in-from-right-2 radix-side-[right]:slide-in-from-left-2 radix-side-[top]:slide-in-from-bottom-2",
           className,

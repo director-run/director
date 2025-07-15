@@ -1,6 +1,7 @@
-import { cn } from "@director.run/design/lib/cn";
-import { Card } from "@director.run/design/ui/card";
 import type { ComponentProps } from "react";
+
+import { cn } from "@director.run/design/lib/cn";
+import { Card } from "./card";
 
 export function ActionCard({
   className,

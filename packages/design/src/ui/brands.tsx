@@ -1,5 +1,6 @@
-import { cn } from "@director.run/design/lib/cn";
 import type { ComponentProps } from "react";
+
+import { cn } from "@director.run/design/lib/cn";
 
 export function MCPBrand({ className, ...props }: ComponentProps<"svg">) {
   return (

@@ -1,10 +1,10 @@
 "use client";
 
-import { cn } from "@director.run/design/lib/cn";
-import { Label } from "@director.run/design/ui/label";
 import type { Label as LabelPrimitive } from "radix-ui";
 import { Slot } from "radix-ui";
 import * as React from "react";
+import { useContext } from "react";
+import { createContext } from "react";
 import {
   Controller,
   type ControllerProps,
@@ -15,6 +15,9 @@ import {
   useFormState,
 } from "react-hook-form";
 
+import { cn } from "@director.run/design/lib/cn";
+import { Label } from "./label";
+
 const Form = FormProvider;
 
 type FormFieldContextValue<
@@ -24,7 +27,7 @@ type FormFieldContextValue<
   name: TName;
 };
 
-const FormFieldContext = React.createContext<FormFieldContextValue>(
+const FormFieldContext = createContext<FormFieldContextValue>(
   {} as FormFieldContextValue,
 );
 
@@ -42,8 +45,8 @@ const FormField = <
 };
 
 const useFormField = () => {
-  const fieldContext = React.useContext(FormFieldContext);
-  const itemContext = React.useContext(FormItemContext);
+  const fieldContext = useContext(FormFieldContext);
+  const itemContext = useContext(FormItemContext);
   const { getFieldState } = useFormContext();
   const formState = useFormState({ name: fieldContext.name });
   const fieldState = getFieldState(fieldContext.name, formState);
@@ -68,7 +71,7 @@ type FormItemContextValue = {
   id: string;
 };
 
-const FormItemContext = React.createContext<FormItemContextValue>(
+const FormItemContext = createContext<FormItemContextValue>(
   {} as FormItemContextValue,
 );
 
@@ -125,7 +128,7 @@ function FormDescription({ className, ...props }: React.ComponentProps<"p">) {
 
   return (
     <p
-      className={cn("text-[13px] text-content-secondary", className)}
+      className={cn("text-content-secondary text-sm", className)}
       data-slot="form-description"
       id={formDescriptionId}
       {...props}
@@ -143,7 +146,7 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
 
   return (
     <p
-      className={cn("text-[13px] text-sentiment-negative", className)}
+      className={cn("text-sentiment-negative text-sm", className)}
       data-slot="form-message"
       id={formMessageId}
       {...props}

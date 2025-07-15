@@ -53,8 +53,8 @@ jobs:
         image: postgres:16
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test
+          POSTGRES_PASSWORD: travel-china-spend-nothing
+          POSTGRES_DB: director-registry-test
         ports:
           - 5432:5432
         options: >-

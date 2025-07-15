@@ -60,7 +60,7 @@
     "sonner": "^2.0.3",
     "superjson": "^2.2.2",
     "tailwind-merge": "^3.3.0",
-    "zod": "^3.25.30"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@director.run/typescript-config": "workspace:*",

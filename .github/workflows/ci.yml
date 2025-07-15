@@ -63,7 +63,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
+      DATABASE_URL: postgresql://postgres:travel-china-spend-nothing@localhost:5432/director-registry-test
     steps:
     - uses: actions/checkout@v4
     - name: Install uv

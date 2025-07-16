@@ -1,7 +1,7 @@
 <h1 align="center">Director</h1>
 <p align="center">The simplest way to use MCP</p>
 
-<p align="center"><code>curl -fsSL https://director.run/install | bash</code></p>
+<p align="center"><code>curl -LsSf https://director.run/install.sh | sh</code></p>
 
 ---
 

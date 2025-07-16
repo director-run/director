@@ -11,7 +11,6 @@
 [![ci](https://github.com/director-run/director/workflows/CI/badge.svg)](https://github.com/director-run/director/actions/workflows/ci.yml)
 [![Release](https://github.com/director-run/director/workflows/Release/badge.svg)](https://github.com/director-run/director/actions/workflows/release.yml)
 [![npm](https://img.shields.io/npm/v/@director.run/cli.svg)](https://www.npmjs.com/package/@director.run/cli)
-[![](https://dcbadge.limes.pink/api/server/INVITE)](https://discord.gg/INVITE)
 
 </div>
 

@@ -11,6 +11,7 @@
 [![ci](https://github.com/director-run/director/workflows/CI/badge.svg)](https://github.com/director-run/director/actions/workflows/ci.yml)
 [![Release](https://github.com/director-run/director/workflows/Release/badge.svg)](https://github.com/director-run/director/actions/workflows/release.yml)
 [![npm](https://img.shields.io/npm/v/@director.run/cli.svg)](https://www.npmjs.com/package/@director.run/cli)
+[![](https://dcbadge.limes.pink/api/server/INVITE)](https://discord.gg/INVITE)
 
 </div>
 
@@ -31,6 +32,12 @@ The easiest way to install Director is using the quickstart commad. However you 
 $ curl -fsSL https://director.run/install | bash
 $ director quickstart
 ```
+
+# Getting in Touch
+If you're using director, have any ideas, or just want to chat about MCP, we'd love to chat:
+- Join our [Discord](https://discord.gg/kWZGvWks)
+- Send us an [Email](mailto:hello@director.run)
+
 # Project Structure
 
 ### External Apps

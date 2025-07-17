@@ -28,6 +28,7 @@
     "@director.run/mcp": "workspace:*",
     "@director.run/utilities": "workspace:*",
     "@hookform/resolvers": "^5.1.1",
+    "@neondatabase/serverless": "^1.0.1",
     "@tanstack/react-query": "^5.81.5",
     "@trpc/client": "^11.4.3",
     "@trpc/react-query": "^11.4.3",

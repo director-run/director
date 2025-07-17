@@ -1,12 +1,21 @@
-import { drizzle } from "drizzle-orm/node-postgres";
-import { Pool } from "pg";
+import { drizzle as NeonDrizzle } from "drizzle-orm/neon-http";
+import { drizzle as LocalDrizzle } from "drizzle-orm/node-postgres";
 
+import { isProduction } from "@director.run/utilities/env";
 import * as schema from "./schema";
 
-export const client = new Pool({
-  connectionString: process.env.DATABASE_URL as string,
-});
+function getDb() {
+  if (
+    isProduction() &&
+    typeof process.env.DATABASE_URL === "string" &&
+    process.env.DATABASE_URL.includes("neon")
+  ) {
+    return NeonDrizzle(process.env.DATABASE_URL, { schema });
+  } else {
+    return LocalDrizzle(process.env.DATABASE_URL as string, { schema });
+  }
+}
 
-export const db = drizzle(client, { schema });
+export const db = getDb();
 
 export type DatabaseConnection = typeof db;

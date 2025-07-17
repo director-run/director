@@ -1,4 +1,4 @@
-import { asc, count, eq, inArray, sql } from "drizzle-orm";
+import { asc, count, eq, inArray, or, sql } from "drizzle-orm";
 
 import {} from "@director.run/utilities/error";
 import { TRPCError } from "@trpc/server";
@@ -97,7 +97,10 @@ export class EntryStore {
         .from(entriesTable)
         .where(
           searchQuery
-            ? sql`${entriesTable.name} ILIKE ${"%" + searchQuery + "%"} `
+            ? or(
+                sql`${entriesTable.name} ILIKE ${"%" + searchQuery + "%"}`,
+                sql`${entriesTable.description} ILIKE ${"%" + searchQuery + "%"}`,
+              )
             : undefined,
         )
         .orderBy(asc(entriesTable.name))

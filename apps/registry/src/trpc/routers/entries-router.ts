@@ -1,3 +1,4 @@
+import { AppError, ErrorCode } from "@director.run/utilities/error";
 import {
   type EntryParameter,
   type ProxyTransport,
@@ -7,10 +8,9 @@ import {
   toolSchema,
 } from "@director.run/utilities/schema";
 import { t } from "@director.run/utilities/trpc";
+import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import { z } from "zod";
 
-import { AppError, ErrorCode } from "@director.run/utilities/error";
-import { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import { EntryStore } from "../../db/entries";
 import { entries } from "../../db/seed/entries";
 import { enrichEntries } from "../../lib/enrich-entries";

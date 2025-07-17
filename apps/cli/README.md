@@ -1,7 +1,7 @@
 <h1 align="center">Director</h1>
 <p align="center">The easiest way to use MCP.</p>
 
-<p align="center"><code>curl -fsSL https://director.run/install | bash</code></p>
+<p align="center"><code>curl -LsSf https://director.run/install.sh | sh</code></p>
 
 ---
 
@@ -22,7 +22,7 @@
 The fastest way to try out director is by running the quickstart directly using npx. This will start the director gateway and open the UI.
 
 ```bash
-curl -fsSL https://director.run/install | bash
+curl -LsSf https://director.run/install.sh | sh
 director quickstart
 ```
 

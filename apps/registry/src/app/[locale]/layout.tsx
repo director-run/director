@@ -27,6 +27,7 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { type ReactNode } from "react";
 
 import { Providers } from "../../components/providers";
@@ -109,54 +110,56 @@ export default async function RootLayout({
         className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased`}
       >
         <NextIntlClientProvider>
-          <TRPCProvider>
-            <Providers>
-              <Shell>
-                <ShellHeader>
-                  <div className="grid size-7 place-items-center">
-                    <Logo className="size-4.5" />
-                  </div>
+          <NuqsAdapter>
+            <TRPCProvider>
+              <Providers>
+                <Shell>
+                  <ShellHeader>
+                    <div className="grid size-7 place-items-center">
+                      <Logo className="size-4.5" />
+                    </div>
 
-                  {breadcrumb}
+                    {breadcrumb}
 
-                  <div className="flex flex-row items-center gap-x-1">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button size="sm" variant="tertiary">
-                          <MoreVerticalIcon />
-                          <div className="sr-only">More</div>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="end"
-                        className="w-48"
-                        side="bottom"
-                      >
-                        <DropdownMenuGroup>
-                          <DropdownMenuLabel>Resources</DropdownMenuLabel>
-                          <DropdownMenuItem>
-                            <BookOpenTextIcon />
-                            Documentation
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <MegaphoneIcon />
-                            Give feedback
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <GithubBrand className="size-4" />
-                            Github
-                          </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                        <DropdownMenuSeparator />
-                        <ModeToggle />
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </ShellHeader>
-                <ShellContent>{children}</ShellContent>
-              </Shell>
-            </Providers>
-          </TRPCProvider>
+                    <div className="flex flex-row items-center gap-x-1">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button size="sm" variant="tertiary">
+                            <MoreVerticalIcon />
+                            <div className="sr-only">More</div>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="w-48"
+                          side="bottom"
+                        >
+                          <DropdownMenuGroup>
+                            <DropdownMenuLabel>Resources</DropdownMenuLabel>
+                            <DropdownMenuItem>
+                              <BookOpenTextIcon />
+                              Documentation
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <MegaphoneIcon />
+                              Give feedback
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <GithubBrand className="size-4" />
+                              Github
+                            </DropdownMenuItem>
+                          </DropdownMenuGroup>
+                          <DropdownMenuSeparator />
+                          <ModeToggle />
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </ShellHeader>
+                  <ShellContent>{children}</ShellContent>
+                </Shell>
+              </Providers>
+            </TRPCProvider>
+          </NuqsAdapter>
         </NextIntlClientProvider>
         <Analytics />
         <SpeedInsights />

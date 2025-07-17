@@ -1,4 +1,4 @@
-import { count, desc, eq, inArray, sql } from "drizzle-orm";
+import { asc, count, eq, inArray, sql } from "drizzle-orm";
 
 import {} from "@director.run/utilities/error";
 import { TRPCError } from "@trpc/server";
@@ -73,6 +73,11 @@ export class EntryStore {
     const { pageIndex, pageSize } = params;
     const offset = pageIndex * pageSize;
 
+    const searchQuery =
+      params.searchQuery && params.searchQuery.trim() === ""
+        ? undefined
+        : params.searchQuery;
+
     const [entries, totalCount] = await Promise.all([
       db
         .select({
@@ -90,17 +95,22 @@ export class EntryStore {
           icon: entriesTable.icon,
         })
         .from(entriesTable)
-        .orderBy(desc(entriesTable.name))
         .where(
-          params.searchQuery
-            ? sql`${entriesTable.name} ILIKE ${"%" + params.searchQuery + "%"} `
+          searchQuery
+            ? sql`${entriesTable.name} ILIKE ${"%" + searchQuery + "%"} `
             : undefined,
         )
+        .orderBy(asc(entriesTable.name))
         .limit(pageSize)
         .offset(offset),
       db
         .select({ count: count() })
         .from(entriesTable)
+        .where(
+          searchQuery
+            ? sql`${entriesTable.name} ILIKE ${"%" + searchQuery + "%"} `
+            : undefined,
+        )
         .then((result) => result[0]?.count ?? 0),
     ]);
 

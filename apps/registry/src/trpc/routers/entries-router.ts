@@ -10,6 +10,7 @@ import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
 
 import { AppError, ErrorCode } from "@director.run/utilities/error";
+import { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import { EntryStore } from "../../db/entries";
 import { entries } from "../../db/seed/entries";
 import { enrichEntries } from "../../lib/enrich-entries";
@@ -160,3 +161,9 @@ export const entriesRouter = createTRPCRouter({
     return await store.getStatistics();
   }),
 });
+
+export type EntryRouter = typeof entriesRouter;
+
+export type EntriesInputs = inferRouterInputs<EntryRouter>;
+
+export type EntriesOutputs = inferRouterOutputs<EntryRouter>;

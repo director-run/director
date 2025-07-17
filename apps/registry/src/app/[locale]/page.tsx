@@ -11,22 +11,27 @@ import {
   ViewPanelContent,
   ViewPanels,
 } from "@director.run/design/components/view";
-import { Button } from "@director.run/design/ui/button";
+import {
+  NonIdealState,
+  NonIdealStateDescription,
+  NonIdealStateTitle,
+} from "@director.run/design/ui/non-ideal-state";
 import { MCPSearchInput } from "components/mcp-server/mcp-search-input";
+import { MCPSearchPagination } from "components/mcp-server/mcp-search-pagination";
 import { MCPCard } from "components/mcp-server/mcp-server-card";
 import { trpc } from "../../trpc/server";
 
 interface HomePageProps {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ query?: string }>;
+  searchParams: Promise<{ query?: string; pageIndex?: string }>;
 }
 
 export default async function HomePage({ searchParams }: HomePageProps) {
-  const { query } = await searchParams;
+  const { query, pageIndex } = await searchParams;
 
   const data = await trpc.entries.getEntries({
-    pageIndex: 0,
-    pageSize: 20,
+    pageIndex: pageIndex ? parseInt(pageIndex) : 0,
+    pageSize: 100,
     searchQuery: query,
   });
 
@@ -46,30 +51,41 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
                 <MCPSearchInput />
 
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {data.entries.map((it) => {
-                    return (
-                      <MCPCard
-                        key={it.id}
-                        title={it.title}
-                        description={it.description}
-                        href={`/${it.name}`}
-                        icon={it.icon ?? null}
-                        isOfficial={it.isOfficial ?? false}
-                      />
-                    );
-                  })}
-                </div>
-                {data.pagination.hasPreviousPage && (
-                  <Button variant="tertiary" size="sm">
-                    Previous page
-                  </Button>
+                {data.entries.length > 0 && (
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {data.entries.map((it) => {
+                      return (
+                        <MCPCard
+                          key={it.id}
+                          title={it.title}
+                          description={it.description}
+                          href={`/${it.name}`}
+                          icon={it.icon ?? null}
+                          isOfficial={it.isOfficial ?? false}
+                        />
+                      );
+                    })}
+                  </div>
                 )}
-                {data.pagination.hasNextPage && (
-                  <Button variant="tertiary" size="sm">
-                    Next page
-                  </Button>
+
+                {data.entries.length === 0 && (
+                  <NonIdealState>
+                    <NonIdealStateTitle>
+                      No MCP servers found
+                    </NonIdealStateTitle>
+                    <NonIdealStateDescription>
+                      {query ? (
+                        <>
+                          We couldn't find any MCP servers matching your search.
+                        </>
+                      ) : (
+                        <>We couldn't find any MCP servers in the registry.</>
+                      )}
+                    </NonIdealStateDescription>
+                  </NonIdealState>
                 )}
+
+                <MCPSearchPagination pagination={data.pagination} />
               </Section>
             </Container>
           </ViewPanelContent>

@@ -2,17 +2,26 @@
 
 import { Input } from "@director.run/design/ui/input";
 import { Loader2, SearchIcon } from "lucide-react";
-import { parseAsString, useQueryState } from "nuqs";
-import { useTransition } from "react";
+import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
+import { useEffect, useTransition } from "react";
 
 export function MCPSearchInput() {
   const [isLoading, startTransition] = useTransition();
+  const [, setPageIndex] = useQueryState(
+    "pageIndex",
+    parseAsInteger.withDefault(0).withOptions({ shallow: false }),
+  );
+
   const [query, setQuery] = useQueryState(
     "query",
     parseAsString
       .withDefault("")
       .withOptions({ startTransition, shallow: false }),
   );
+
+  useEffect(() => {
+    setPageIndex(0);
+  }, [query]);
 
   return (
     <div>

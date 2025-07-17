@@ -295,6 +295,43 @@ test.describe("Entries Router", () => {
           hasPreviousPage: true,
         });
       });
+
+      test("should handle search correctly", async () => {
+        const testServerHTTPConfig = makeFooBarServerStdioConfig();
+        await entryStore.addEntry({
+          name: testServerHTTPConfig.name,
+          title: testServerHTTPConfig.name,
+          description: "test-http",
+          parameters: [
+            {
+              name: "github-personal-access-token",
+              description: "",
+              required: true,
+              type: "string",
+            },
+          ],
+          homepage: "test",
+          readme: "test",
+          transport: testServerHTTPConfig.transport,
+        });
+
+        // Test first page
+        const result1 = await unauthenticatedClient.entries.getEntries.query({
+          pageIndex: 0,
+          pageSize: ENTRIES_PER_PAGE,
+          searchQuery: "foo",
+        });
+        expect(result1.entries).toHaveLength(1);
+        expect(result1.entries[0]?.name).toEqual(testServerHTTPConfig.name);
+        expect(result1.pagination).toEqual({
+          pageIndex: 0,
+          pageSize: ENTRIES_PER_PAGE,
+          totalItems: 1,
+          totalPages: 1,
+          hasNextPage: false,
+          hasPreviousPage: false,
+        });
+      });
     });
   });
 });

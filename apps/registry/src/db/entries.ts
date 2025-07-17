@@ -73,10 +73,12 @@ export class EntryStore {
     const { pageIndex, pageSize } = params;
     const offset = pageIndex * pageSize;
 
-    const searchQuery =
-      params.searchQuery && params.searchQuery.trim() === ""
-        ? undefined
-        : params.searchQuery;
+    const whereSql = params.searchQuery
+      ? or(
+          sql`${entriesTable.name} ILIKE ${"%" + params.searchQuery + "%"}`,
+          sql`${entriesTable.description} ILIKE ${"%" + params.searchQuery + "%"}`,
+        )
+      : undefined;
 
     const [entries, totalCount] = await Promise.all([
       db
@@ -95,25 +97,14 @@ export class EntryStore {
           icon: entriesTable.icon,
         })
         .from(entriesTable)
-        .where(
-          searchQuery
-            ? or(
-                sql`${entriesTable.name} ILIKE ${"%" + searchQuery + "%"}`,
-                sql`${entriesTable.description} ILIKE ${"%" + searchQuery + "%"}`,
-              )
-            : undefined,
-        )
+        .where(whereSql)
         .orderBy(asc(entriesTable.name))
         .limit(pageSize)
         .offset(offset),
       db
         .select({ count: count() })
         .from(entriesTable)
-        .where(
-          searchQuery
-            ? sql`${entriesTable.name} ILIKE ${"%" + searchQuery + "%"} `
-            : undefined,
-        )
+        .where(whereSql)
         .then((result) => result[0]?.count ?? 0),
     ]);
 

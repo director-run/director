@@ -97,7 +97,7 @@ export const entriesRouter = createTRPCRouter({
       z.object({
         pageIndex: z.number().min(0),
         pageSize: z.number().min(1),
-        searchQuery: z.string().optional(),
+        searchQuery: z.string().trim().optional(),
       }),
     )
     .query(({ input }) => store.paginateEntries(input)),

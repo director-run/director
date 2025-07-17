@@ -12,7 +12,7 @@ import { type AppRouter, appRouter } from "./routers/_app";
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
  * handling a tRPC call from a React Server Component.
  */
-const createContext = cache(async () => {
+export const createContext = cache(async () => {
   const heads = await headers();
   const headersObject = new Headers();
 
@@ -29,7 +29,16 @@ const createContext = cache(async () => {
 
 export const getQueryClient = cache(makeQueryClient);
 
-const caller = createCallerFactory(appRouter)(createContext);
+const caller = createCallerFactory(appRouter)(createContext, {
+  onError:
+    process.env.NODE_ENV === "development"
+      ? ({ path, error }) => {
+          console.error(
+            `❌ tRPC failed on ${path ?? "<no-path>"}: ${error.message}`,
+          );
+        }
+      : undefined,
+});
 
 const hydrationHelpers: ReturnType<typeof createHydrationHelpers<AppRouter>> =
   createHydrationHelpers<AppRouter>(caller, getQueryClient);

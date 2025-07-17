@@ -12,14 +12,6 @@ import {
   ViewPanelContent,
   ViewPanels,
 } from "@director.run/design/components/view";
-import { Markdown, SimpleMarkdown } from "@director.run/design/ui/markdown";
-import {
-  NonIdealState,
-  NonIdealStateDescription,
-  NonIdealStateTitle,
-} from "@director.run/design/ui/non-ideal-state";
-import { notFound } from "next/navigation";
-
 import {
   Badge,
   BadgeGroup,
@@ -28,11 +20,12 @@ import {
 } from "@director.run/design/ui/badge";
 import { Button } from "@director.run/design/ui/button";
 import { Card } from "@director.run/design/ui/card";
-import { MCPServerInstallationDescription } from "components/mcp-server/mcp-installation-description";
-import { MCPServerAvatar } from "components/mcp-server/mcp-server-avatar";
-import { MCPServerNavigation } from "components/mcp-server/mcp-server-navigation";
-import { MCPServerToolCard } from "components/mcp-server/mcp-server-tool-card";
-import { Link } from "i18n/navigation";
+import { Markdown, SimpleMarkdown } from "@director.run/design/ui/markdown";
+import {
+  NonIdealState,
+  NonIdealStateDescription,
+  NonIdealStateTitle,
+} from "@director.run/design/ui/non-ideal-state";
 import {
   ArrowRightIcon,
   BadgeCheckIcon,
@@ -40,6 +33,13 @@ import {
   LinkIcon,
   TerminalIcon,
 } from "lucide-react";
+import { notFound } from "next/navigation";
+
+import { MCPServerInstallationDescription } from "components/mcp-server/mcp-installation-description";
+import { MCPServerAvatar } from "components/mcp-server/mcp-server-avatar";
+import { MCPServerNavigation } from "components/mcp-server/mcp-server-navigation";
+import { MCPServerToolCard } from "components/mcp-server/mcp-server-tool-card";
+import { Link } from "i18n/navigation";
 import { trpc } from "../../../trpc/server";
 
 interface ServerPageProps {

@@ -1,5 +1,7 @@
 import { count, eq, inArray } from "drizzle-orm";
 
+import {} from "@director.run/utilities/error";
+import { TRPCError } from "@trpc/server";
 import { db } from "./client";
 import { type Entry, type EntryCreateParams, entriesTable } from "./schema";
 
@@ -12,7 +14,10 @@ export class EntryStore {
       .limit(1);
 
     if (entry.length === 0) {
-      return null;
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Entry not found",
+      });
     }
 
     return entry[0] as Entry;

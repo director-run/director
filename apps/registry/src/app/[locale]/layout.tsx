@@ -27,7 +27,7 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
-import type { ReactNode } from "react";
+import { type ReactNode } from "react";
 
 import { Providers } from "../../components/providers";
 import { ModeToggle } from "../../components/theme-toggle";

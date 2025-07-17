@@ -5,6 +5,7 @@ import {
   AvatarImage,
 } from "@director.run/design/ui/avatar";
 import { MCPBrand } from "@director.run/design/ui/brands";
+import Image from "next/image";
 import { ComponentProps } from "react";
 
 const inverseIcon = ["GitHub", "Context 7"];
@@ -30,7 +31,17 @@ export function MCPServerAvatar({
       )}
       {...props}
     >
-      <AvatarImage src={icon ?? undefined} />
+      {icon && (
+        <AvatarImage src={icon} asChild>
+          <Image
+            src={icon}
+            width={40}
+            height={40}
+            alt={title}
+            className="size-full"
+          />
+        </AvatarImage>
+      )}
       <AvatarFallback>
         <MCPBrand />
       </AvatarFallback>

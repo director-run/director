@@ -1,7 +1,7 @@
 <h1 align="center">Director</h1>
 <p align="center">The simplest way to use MCP</p>
 
-<p align="center"><code>curl -fsSL https://director.run/install | bash</code></p>
+<p align="center"><code>curl -LsSf https://director.run/install.sh | sh</code></p>
 
 ---
 
@@ -31,6 +31,12 @@ The easiest way to install Director is using the quickstart commad. However you 
 $ curl -fsSL https://director.run/install | bash
 $ director quickstart
 ```
+
+# Getting in Touch
+If you're using director, have any ideas, or just want to chat about MCP, we'd love to chat:
+- Join our [Discord](https://discord.gg/kWZGvWks)
+- Send us an [Email](mailto:hello@director.run)
+
 # Project Structure
 
 ### External Apps

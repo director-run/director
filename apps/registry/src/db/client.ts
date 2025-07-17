@@ -1,7 +1,7 @@
+import { isProduction } from "@director.run/utilities/env";
 import { drizzle as NeonDrizzle } from "drizzle-orm/neon-http";
 import { drizzle as LocalDrizzle } from "drizzle-orm/node-postgres";
 
-import { isProduction } from "@director.run/utilities/env";
 import * as schema from "./schema";
 
 function getDb() {

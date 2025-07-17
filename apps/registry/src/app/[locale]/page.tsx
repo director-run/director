@@ -12,8 +12,8 @@ import {
   ViewPanels,
 } from "@director.run/design/components/view";
 import { Button } from "@director.run/design/ui/button";
+import { MCPSearchInput } from "components/mcp-server/mcp-search-input";
 import { MCPCard } from "components/mcp-server/mcp-server-card";
-import { MCPServerList } from "components/mcp-server/mcp-server-list";
 import { trpc } from "../../trpc/server";
 
 interface HomePageProps {
@@ -44,7 +44,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                   </SectionDescription>
                 </SectionHeader>
 
-                <MCPServerList />
+                <MCPSearchInput />
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {data.entries.map((it) => {

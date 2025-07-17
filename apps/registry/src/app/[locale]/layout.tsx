@@ -117,8 +117,6 @@ export default async function RootLayout({
                     <Logo className="size-4.5" />
                   </div>
 
-                  {breadcrumb}
-
                   <div className="flex flex-row items-center gap-x-1">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

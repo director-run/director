@@ -1,4 +1,4 @@
-import { count, eq, inArray } from "drizzle-orm";
+import { count, desc, eq, inArray, sql } from "drizzle-orm";
 
 import {} from "@director.run/utilities/error";
 import { TRPCError } from "@trpc/server";
@@ -66,6 +66,7 @@ export class EntryStore {
   }
 
   public async paginateEntries(params: {
+    searchQuery?: string;
     pageIndex: number;
     pageSize: number;
   }) {
@@ -89,6 +90,12 @@ export class EntryStore {
           icon: entriesTable.icon,
         })
         .from(entriesTable)
+        .orderBy(desc(entriesTable.name))
+        .where(
+          params.searchQuery
+            ? sql`${entriesTable.name} ILIKE ${"%" + params.searchQuery + "%"} `
+            : undefined,
+        )
         .limit(pageSize)
         .offset(offset),
       db

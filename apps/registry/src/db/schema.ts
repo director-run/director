@@ -3,7 +3,7 @@ import type {
   ProxyTransport,
   Tool,
 } from "@director.run/utilities/schema";
-import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
+import { type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import {
   boolean,
   jsonb,

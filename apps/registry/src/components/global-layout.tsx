@@ -1,26 +1,88 @@
-import { Container } from "@director.run/design/components/container";
+import {
+  Shell,
+  ShellBreadcrumb,
+  ShellBreadcrumbAction,
+  ShellBreadcrumbList,
+  ShellBreadcrumbSeparator,
+  ShellContent,
+  ShellHeader,
+} from "@director.run/design/components/shell";
+import { GithubBrand } from "@director.run/design/ui/brands";
+import { Button } from "@director.run/design/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@director.run/design/ui/dropdown-menu";
+import { Logo } from "@director.run/design/ui/logo";
+import { Link } from "i18n/navigation";
+import {
+  BookOpenTextIcon,
+  MegaphoneIcon,
+  MoreVerticalIcon,
+} from "lucide-react";
 import type { ReactNode } from "react";
+import { ModeToggle } from "./theme-toggle";
 
-import { trpc } from "../trpc/server";
-import { Footer } from "./footer";
-import { Header } from "./header";
+interface GlobalLayoutProps {
+  children: ReactNode;
+}
 
-export async function GlobalLayout({ children }: { children: ReactNode }) {
-  const { stargazers } = await trpc.github.getStarCount({
-    organization: "director-run",
-    repo: "director",
-  });
-
+export function GlobalLayout({ children }: GlobalLayoutProps) {
   return (
-    <div className="@container/layout flex min-h-dvh flex-col gap-y-24 pt-6 md:pt-12">
-      <Header />
-      <Container
-        className="gap-y-28 last:*:mb-4 md:gap-y-32 md:*:last:mb-12 lg:gap-y-48 lg:*:last:mb-24"
-        size="xl"
-      >
-        {children}
-      </Container>
-      <Footer starCount={stargazers} />
-    </div>
+    <Shell>
+      <ShellHeader>
+        <div className="grid size-7 place-items-center">
+          <Logo className="size-4.5" />
+        </div>
+
+        <ShellBreadcrumb>
+          <ShellBreadcrumbList>
+            <ShellBreadcrumbAction asChild>
+              <Link href="/">Registry</Link>
+            </ShellBreadcrumbAction>
+            <ShellBreadcrumbSeparator />
+            <ShellBreadcrumbAction asChild>
+              <Link href="/">Thing</Link>
+            </ShellBreadcrumbAction>
+          </ShellBreadcrumbList>
+        </ShellBreadcrumb>
+
+        <div className="flex flex-row items-center gap-x-1">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size="sm" variant="tertiary">
+                <MoreVerticalIcon />
+                <div className="sr-only">More</div>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48" side="bottom">
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>Resources</DropdownMenuLabel>
+                <DropdownMenuItem>
+                  <BookOpenTextIcon />
+                  Documentation
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <MegaphoneIcon />
+                  Give feedback
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <GithubBrand className="size-4" />
+                  Github
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <ModeToggle />
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </ShellHeader>
+      <ShellContent>{children}</ShellContent>
+    </Shell>
   );
 }

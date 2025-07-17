@@ -1,11 +1,11 @@
 "use client";
 
 import { cn } from "@director.run/design/lib/cn";
-import { createCtx } from "@director.run/design/lib/create-ctx";
 import { Button } from "@director.run/design/ui/button";
 import { PanelRightCloseIcon, PanelRightOpenIcon } from "lucide-react";
 import { Slot } from "radix-ui";
 import { type ComponentProps, useState } from "react";
+import { createCtx } from "../lib/create-ctx";
 
 const [useContext, ContextProvider] = createCtx<{
   sidePanel?: {
@@ -181,9 +181,9 @@ export function ViewNavigationLink({
   return (
     <Comp
       className={cn(
-        "group flex h-12 shrink-0 cursor-pointer items-center border-transparent border-b-2 px-2.5 pt-0.5",
+        "group flex h-12 shrink-0 items-center border-transparent border-b-2 px-2.5 pt-0.5 [a&]:cursor-pointer",
         "transition-colors duration-150 ease-in-out",
-        "data-[state=selected]:border-base data-[state=unselected]:hover:border-border",
+        "data-[state=selected]:border-base [a&]:data-[state=unselected]:hover:border-border",
         "text-[13px] data-[state=selected]:font-[450] data-[state=selected]:text-content-primary data-[state=unselected]:text-content-secondary",
         "focus-visible:[&>span]:rounded focus-visible:[&>span]:ring-2 focus-visible:[&>span]:ring-interactive-primary focus-visible:[&>span]:ring-offset-2 focus-visible:[&>span]:ring-offset-background dark:[&>span]:ring-interactive-accent",
         className,

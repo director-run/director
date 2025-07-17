@@ -44,7 +44,7 @@ export function NonIdealStateDescription({
   return (
     <p
       className={cn(
-        "text-[13px] text-content-secondary",
+        "max-w-[52ch] text-pretty text-center text-[13px] text-content-secondary leading-normal",
         "[&>a]:underline [&>a]:decoration-1 [&>a]:underline-offset-2",
         className,
       )}

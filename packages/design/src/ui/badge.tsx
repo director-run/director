@@ -8,6 +8,7 @@ const badgeVariants = cva(
   [
     "inline-flex shrink-0 select-none items-center justify-center gap-x-0 whitespace-nowrap rounded-md",
     "font-bold font-mono tracking-[0.05em]",
+    "[a&]:focus-visible",
   ],
   {
     variants: {
@@ -15,7 +16,8 @@ const badgeVariants = cva(
         primary: "bg-interactive-primary text-interactive-accent",
         accent: "bg-interactive-accent text-interactive-primary",
         secondary: "bg-interactive-secondary text-content-primary",
-        tertiary: "bg-transparent text-content-secondary",
+        tertiary:
+          "bg-transparent text-content-secondary [a&]:hover:bg-interactive-secondary",
         inverse: "bg-base text-base-inverse",
         negative: "bg-sentiment-negative text-base-light",
         positive: "bg-sentiment-positive text-base-light",
@@ -27,7 +29,7 @@ const badgeVariants = cva(
         lime: "bg-spruce text-lime dark:bg-lime dark:text-spruce",
       },
       size: {
-        sm: "h-5 px-[3px] text-[11px] leading-5",
+        sm: "h-5 px-0.5 text-[11px] leading-5",
         md: "h-6 px-[3px] text-[11px] leading-6",
       },
     },

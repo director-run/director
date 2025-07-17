@@ -9,6 +9,7 @@ import {
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
 
+import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { EntryStore } from "../../db/entries";
 import { entries } from "../../db/seed/entries";
 import { enrichEntries } from "../../lib/enrich-entries";
@@ -112,6 +113,14 @@ export const entriesRouter = createTRPCRouter({
     )
     .query(async ({ input }) => {
       const entry = await store.getEntryByName(input.entryName);
+
+      if (!entry) {
+        throw new AppError(
+          ErrorCode.NOT_FOUND,
+          `entry '${input.entryName}' not found`,
+        );
+      }
+
       return substituteParameters(entry, input.parameters ?? {});
     }),
 

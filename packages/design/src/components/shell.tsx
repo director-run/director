@@ -94,7 +94,7 @@ export function ShellBreadcrumbSeparator({
   return (
     <SeparatorPrimitive.Root
       className={cn(
-        "[&>svg]:-rotate-15 shrink-0 px-1.5 text-content-tertiary/75 [&>svg]:size-3",
+        "[&>svg]:-rotate-15 shrink-0 text-content-tertiary/75 [&>svg]:size-3",
         className,
       )}
       data-slot="shell-breadcrumb-separator"
@@ -114,13 +114,31 @@ export function ShellBreadcrumbAction({
   return (
     <Button
       className={cn(
-        "max-w-[8rem] text-content-primary [&>span]:truncate",
+        "max-w-[8rem] font-sans text-content-primary [&>span]:truncate",
         className,
       )}
       size={size}
       variant={variant}
       {...props}
     />
+  );
+}
+
+export function ShellBreadcrumbPage({
+  className,
+  children,
+  ...props
+}: ComponentProps<"span">) {
+  return (
+    <span
+      className={cn(
+        "inline-flex max-w-[8rem] px-2 font-sans text-content-secondary text-sm leading-7 [&>span]:truncate",
+        className,
+      )}
+      {...props}
+    >
+      <span>{children}</span>
+    </span>
   );
 }
 

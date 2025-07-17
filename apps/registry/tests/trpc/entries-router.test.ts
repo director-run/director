@@ -88,10 +88,11 @@ test.describe("Entries Router", () => {
         });
 
         const updatedEntry = await entryStore.getEntryByName(entry.name);
-        expect(updatedEntry.isConnectable).toBe(true);
-        expect(updatedEntry.lastConnectionAttemptedAt).toBeDefined();
-        expect(updatedEntry.lastConnectionError).toBe("test");
-        expect(updatedEntry.tools).toEqual([
+        expect(updatedEntry).toBeDefined();
+        expect(updatedEntry?.isConnectable).toBe(true);
+        expect(updatedEntry?.lastConnectionAttemptedAt).toBeDefined();
+        expect(updatedEntry?.lastConnectionError).toBe("test");
+        expect(updatedEntry?.tools).toEqual([
           {
             name: "test",
             description: "test",

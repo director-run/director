@@ -3,10 +3,13 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@source "../../../../packages/design";
+
 @plugin "tailwindcss-radix";
 @plugin "@tailwindcss/typography";
 
-@source "../../../../packages/design";
+
+/* @source "../../../../packages/design"; */
 
 @custom-variant dark (&:is(.dark *));
 

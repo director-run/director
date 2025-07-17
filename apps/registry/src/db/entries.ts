@@ -12,7 +12,7 @@ export class EntryStore {
       .limit(1);
 
     if (entry.length === 0) {
-      throw new Error(`No entry found with name: ${name}`);
+      return null;
     }
 
     return entry[0] as Entry;

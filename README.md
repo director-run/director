@@ -28,7 +28,7 @@ More specifically, it's a gateway that proxies requests between MCP clients and 
 The easiest way to install Director is using the quickstart commad. However you can learn about alternative installation methods (including running it in Docker) by reading [our documentation](https://docs.director.run).
 
 ```bash
-$ curl -fsSL https://director.run/install | bash
+$ curl -LsSf https://director.run/install.sh | sh
 $ director quickstart
 ```
 

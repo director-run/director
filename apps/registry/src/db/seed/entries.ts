@@ -319,32 +319,6 @@ export const entries: EntryCreateParams[] = [
       },
     ],
   },
-  {
-    name: "airtable",
-    title: "Airtable",
-    description:
-      "A Model Context Protocol server that provides read and write access to Airtable databases. This server enables LLMs to inspect database schemas, then read and write records.",
-    isOfficial: false,
-    icon: "https://registry.director.run/airtable.svg",
-    homepage: "https://github.com/domdomegg/airtable-mcp-server",
-    transport: {
-      type: "stdio",
-      command: "npx",
-      args: ["-y", "airtable-mcp-server"],
-      env: {
-        AIRTABLE_API_KEY: "<airtable-api-key>",
-      },
-    },
-    parameters: [
-      {
-        name: "airtable-api-key",
-        description: "Airtable API key",
-        type: "string",
-        required: true,
-        password: true,
-      },
-    ],
-  },
 ];
 
 // export const entries: EntryCreateParams[] = [

@@ -12,7 +12,7 @@ import { type AppRouter, appRouter } from "./routers/_app";
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
  * handling a tRPC call from a React Server Component.
  */
-export const createContext = cache(async () => {
+export const createContext = async () => {
   const heads = await headers();
   const headersObject = new Headers();
 
@@ -25,7 +25,7 @@ export const createContext = cache(async () => {
   return createTRPCContext({
     headers: headersObject,
   });
-});
+};
 
 export const getQueryClient = cache(makeQueryClient);
 

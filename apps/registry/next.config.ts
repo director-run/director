@@ -5,7 +5,6 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  distDir: "dist",
   devIndicators: false,
   transpilePackages: ["@director.run/design", "@director.run/utilities"],
   images: {

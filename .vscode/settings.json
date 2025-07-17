@@ -6,7 +6,7 @@
     "source.organizeImports.biome": "explicit"
   },
   "tailwindCSS.experimental.configFile": {
-    "apps/new-registry/src/app/globals.css": "apps/new-registry/src/**",
+    "apps/registry/src/app/globals.css": "apps/registry/src/**",
     "apps/studio/src/app/globals.css": "apps/studio/src/**",
     "packages/design/styles.css": "packages/design/src/**"
   },

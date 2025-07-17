@@ -6,6 +6,7 @@ import {
   ShellBreadcrumbSeparator,
 } from "@director.run/design/components/shell";
 import { notFound } from "next/navigation";
+
 import { Link } from "../../../../../i18n/navigation";
 import { trpc } from "../../../../../trpc/server";
 

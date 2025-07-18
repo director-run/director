@@ -12,7 +12,8 @@
       "db.test.json",
       "db.json",
       "*.css",
-      "development/config.json"
+      "development/config.json",
+      "db/seed/entries.ts"
     ]
   },
   "formatter": {

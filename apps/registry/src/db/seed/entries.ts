@@ -15,7 +15,7 @@ import { type EntryCreateParams } from "../schema";
 
 // All of these servers work. To add a new one, add it to this list.
 // Please test it with bin/test-entry.ts before merging to main
-export const entries: EntryCreateParams[] = [
+export const entries: any[] = [
   {
     name: "github",
     title: "GitHub",

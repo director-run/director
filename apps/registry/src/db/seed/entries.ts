@@ -260,7 +260,7 @@ export const entries: EntryCreateParams[] = [
       "Context7 MCP pulls up-to-date, version-specific documentation and code examples straight from the source — and places them directly into your prompt.",
     isOfficial: true,
     icon: "https://registry.director.run/context7.svg",
-    homepage: "https://github.com/upstash/context7/blob/master/README.md",
+    homepage: "https://github.com/upstash/context7",
     transport: {
       type: "stdio",
       command: "npx",

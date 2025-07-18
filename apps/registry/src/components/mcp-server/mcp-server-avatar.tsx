@@ -39,6 +39,7 @@ export function MCPServerAvatar({
             height={40}
             alt={title}
             className="size-full"
+            loading="lazy"
           />
         </AvatarImage>
       )}

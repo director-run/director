@@ -31,7 +31,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
   const data = await trpc.entries.getEntries({
     pageIndex: pageIndex ? parseInt(pageIndex) : 0,
-    pageSize: 100,
+    pageSize: 20,
     searchQuery: query,
   });
 

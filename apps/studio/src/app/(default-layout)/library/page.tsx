@@ -30,15 +30,24 @@ import {
   SectionHeader,
   SectionTitle,
 } from "@/components/ui/section";
+import { cn } from "@/lib/cn";
 import { trpc } from "@/trpc/client";
+import { ArrowLeftIcon, ArrowRightIcon } from "@phosphor-icons/react";
 
 export default function RegistryPage() {
+  const [pageIndex, setPageIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { data, isLoading, error } = trpc.registry.getEntries.useQuery({
-    pageIndex: 0,
-    pageSize: 1000,
-  });
+  const { data, isLoading, error } = trpc.registry.getEntries.useQuery(
+    {
+      pageIndex,
+      pageSize: 20,
+      searchQuery,
+    },
+    {
+      placeholderData: (prev) => prev,
+    },
+  );
 
   if (isLoading) {
     return <RegistryLibrarySkeleton />;
@@ -56,14 +65,6 @@ export default function RegistryPage() {
       </RegistryLibrarySkeleton>
     );
   }
-
-  const filteredEntries = data.entries.filter((entry) => {
-    const query = searchQuery.toLowerCase();
-    return (
-      entry.title.toLowerCase().includes(query) ||
-      entry.description.toLowerCase().includes(query)
-    );
-  });
 
   return (
     <LayoutView>
@@ -102,7 +103,7 @@ export default function RegistryPage() {
               </div>
 
               <MCPLinkCardList>
-                {filteredEntries
+                {data.entries
                   .sort((a, b) => a.title.localeCompare(b.title))
                   .map((entry) => {
                     return (
@@ -114,13 +115,42 @@ export default function RegistryPage() {
                     );
                   })}
 
-                {filteredEntries.length === 0 && (
+                {data.entries.length === 0 && (
                   <EmptyState className="col-span-2">
                     <EmptyStateTitle>No MCP servers found</EmptyStateTitle>
                   </EmptyState>
                 )}
               </MCPLinkCardList>
             </div>
+
+            {data.pagination.totalItems > 0 && (
+              <div className="grid grid-cols-3 items-center gap-2">
+                <div>
+                  <Button
+                    className={cn(!data.pagination.hasPreviousPage && "hidden")}
+                    variant="secondary"
+                    onClick={() => setPageIndex(pageIndex - 1)}
+                  >
+                    <ArrowLeftIcon /> Previous
+                  </Button>
+                </div>
+
+                <span className="text-center text-fg-subtle text-sm leading-7">
+                  Page {data.pagination.pageIndex + 1} of{" "}
+                  {data.pagination.totalPages}
+                </span>
+
+                <div className="flex justify-end">
+                  <Button
+                    className={cn(!data.pagination.hasNextPage && "hidden")}
+                    variant="secondary"
+                    onClick={() => setPageIndex(pageIndex + 1)}
+                  >
+                    Next <ArrowRightIcon />
+                  </Button>
+                </div>
+              </div>
+            )}
           </Section>
         </Container>
       </LayoutViewContent>

@@ -34,13 +34,17 @@ import { trpc } from "@/trpc/client";
 export default function GetStartedPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentProxyId, setCurrentProxyId] = useState<string | null>(null);
-  const [proxyListQuery, registryEntriesQuery] = trpc.useQueries((t) => [
-    t.store.getAll(),
-    t.registry.getEntries({
+  const proxyListQuery = trpc.store.getAll.useQuery();
+  const registryEntriesQuery = trpc.registry.getEntries.useQuery(
+    {
       pageIndex: 0,
-      pageSize: 1000,
-    }),
-  ]);
+      pageSize: 20,
+      searchQuery,
+    },
+    {
+      placeholderData: (prev) => prev,
+    },
+  );
 
   const { dependencies } = useConnectionStatus();
 
@@ -104,14 +108,6 @@ export default function GetStartedPage() {
     addStepStatus === "completed" &&
     connectStepStatus === "completed";
 
-  const filteredEntries = registryEntriesQuery.data.entries.filter((entry) => {
-    const query = searchQuery.toLowerCase();
-    return (
-      entry.title.toLowerCase().includes(query) ||
-      entry.description.toLowerCase().includes(query)
-    );
-  });
-
   return (
     <Container size="sm" className="py-12 lg:py-16">
       <Section className="gap-y-8">
@@ -161,7 +157,7 @@ export default function GetStartedPage() {
               />
             </div>
             <div className="grid max-h-[320px] grid-cols-1 gap-1 overflow-y-auto p-2">
-              {filteredEntries
+              {registryEntriesQuery.data.entries
                 .sort((a, b) => a.title.localeCompare(b.title))
                 .map((it) => {
                   return (
@@ -183,7 +179,7 @@ export default function GetStartedPage() {
                   );
                 })}
 
-              {filteredEntries.length === 0 && (
+              {registryEntriesQuery.data.entries.length === 0 && (
                 <EmptyState className="bg-accent-subtle/60">
                   <EmptyStateTitle>No MCP servers found</EmptyStateTitle>
                 </EmptyState>

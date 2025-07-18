@@ -15,6 +15,7 @@ export function createRegistryRouter({
         z.object({
           pageIndex: z.number().min(0),
           pageSize: z.number().min(1),
+          searchQuery: z.string().trim().optional(),
         }),
       )
       .query(({ input }) => registryClient.entries.getEntries.query(input)),

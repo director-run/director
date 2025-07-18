@@ -1,7 +1,6 @@
 import type {
   EntryParameter,
   ProxyTransport,
-  Tool,
 } from "@director.run/utilities/schema";
 import { type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import {
@@ -49,7 +48,8 @@ export const entriesTable = pgTable("entries", {
   // ** Documentation
   // **
   categories: jsonb("categories").default([]).$type<string[]>(),
-  tools: jsonb("tools").default([]).$type<Array<Tool>>(),
+  // biome-ignore lint/suspicious/noExplicitAny: FIX ME
+  tools: jsonb("tools").default([]).$type<Array<any[]>>(),
   parameters: jsonb("parameters").notNull().$type<Array<EntryParameter>>(),
   readme: text("readme"),
 });

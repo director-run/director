@@ -20,11 +20,7 @@ import {
 } from "@director.run/design/ui/dropdown-menu";
 import { Logo } from "@director.run/design/ui/logo";
 import { Link } from "i18n/navigation";
-import {
-  BookOpenTextIcon,
-  MegaphoneIcon,
-  MoreVerticalIcon,
-} from "lucide-react";
+import { BookOpenTextIcon, MoreVerticalIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { ModeToggle } from "./theme-toggle";
 
@@ -63,17 +59,21 @@ export function GlobalLayout({ children }: GlobalLayoutProps) {
             <DropdownMenuContent align="end" className="w-48" side="bottom">
               <DropdownMenuGroup>
                 <DropdownMenuLabel>Resources</DropdownMenuLabel>
-                <DropdownMenuItem>
-                  <BookOpenTextIcon />
-                  Documentation
+                <DropdownMenuItem asChild>
+                  <a href="https://docs.director.run">
+                    <BookOpenTextIcon />
+                    Documentation
+                  </a>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <MegaphoneIcon />
-                  Give feedback
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <GithubBrand className="size-4" />
-                  Github
+                <DropdownMenuItem asChild>
+                  <a
+                    href="https://github.com/director-run/director"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <GithubBrand className="size-4" />
+                    Github
+                  </a>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />

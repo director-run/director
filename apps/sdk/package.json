@@ -1,7 +1,7 @@
 {
   "name": "@director.run/sdk",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "files": ["dist", "README.md"],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -25,7 +25,7 @@
     "clean": "rm -rf .turbo dist/*",
     "test": "echo 'no tests'",
     "typecheck": "tsc --noEmit",
-    "build": "bun build --production --target=node bin/cli.ts --outdir dist",
+    "build": "bun build --production --target=node src/index.ts --outdir dist",
     "release": "bun publish --access public --omit=peer",
     "prepare": "bun run build",
     "dev": "bun --watch bin/cli.ts"

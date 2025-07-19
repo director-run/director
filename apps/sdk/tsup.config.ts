@@ -9,7 +9,7 @@ export default defineConfig({
       baseUrl: ".",
       paths: {
         "@director.run/gateway/*": ["../../packages/gateway/src/*"],
-        "@director.run/registry/*": ["../../packages/registry/src/*"],
+        "@director.run/registry/*": ["../../apps/registry/src/*"],
       },
     },
   },

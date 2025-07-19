@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.json",
   "include": ["src/**/*.ts", "test/**/*.ts"],
   "compilerOptions": {
+    "baseUrl": ".",
     "paths": {
       "@director.run/gateway/*": ["../../packages/gateway/src/*"],
       "@director.run/registry/*": ["../../packages/registry/src/*"]

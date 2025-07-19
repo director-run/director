@@ -2,10 +2,9 @@ import { defineConfig } from "tsup";
 
 export default defineConfig({
   entry: ["src/index.ts"],
-  format: ["cjs", "esm"],
+  format: ["esm"],
   dts: {
     resolve: true,
-
     compilerOptions: {
       // See: https://github.com/egoist/tsup/issues/571#issuecomment-2457920686
       composite: false,

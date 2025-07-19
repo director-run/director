@@ -297,6 +297,16 @@
         "vitest": "^3.1.1",
       },
     },
+    "packages/sdk": {
+      "name": "@director.run/sdk",
+      "version": "0.0.1",
+      "dependencies": {
+        "@director.run/gateway": "workspace:*",
+      },
+      "peerDependencies": {
+        "typescript": "^5",
+      },
+    },
     "packages/typescript-config": {
       "name": "@director.run/typescript-config",
       "version": "0.0.0",
@@ -551,6 +561,8 @@
     "@director.run/registry-next": ["@director.run/registry-next@workspace:apps/registry-next"],
 
     "@director.run/sandbox": ["@director.run/sandbox@workspace:apps/sandbox"],
+
+    "@director.run/sdk": ["@director.run/sdk@workspace:packages/sdk"],
 
     "@director.run/studio": ["@director.run/studio@workspace:apps/studio"],
 

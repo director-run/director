@@ -1,14 +1,10 @@
 {
   "extends": "../../tsconfig.json",
+  "include": ["src/**/*.ts", "test/**/*.ts"],
   "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "noEmit": false,
-    "allowImportingTsExtensions": false
-  },
-  "include": ["src/**/*.ts"],
-  "exclude": ["dist", "node_modules"]
+    "paths": {
+      "@director.run/gateway/*": ["../../packages/gateway/src/*"],
+      "@director.run/registry/*": ["../../packages/registry/src/*"]
+    }
+  }
 }

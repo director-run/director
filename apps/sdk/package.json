@@ -25,7 +25,7 @@
     "clean": "rm -rf .turbo dist/*",
     "test": "echo 'no tests'",
     "typecheck": "tsc --noEmit",
-    "build": "tsup && api-extractor run --local || true && if [ -f dist/index.bundled.d.ts ]; then mv dist/index.bundled.d.ts dist/index.d.ts && cp dist/index.d.ts dist/index.d.cts; fi",
+    "build": "bun run clean && tsup",
     "release": "bun publish --access public --omit=peer",
     "prepare": "bun run build",
     "dev": "bun --watch bin/cli.ts"
@@ -36,9 +36,6 @@
   "devDependencies": {
     "@director.run/gateway": "workspace:*",
     "@director.run/registry": "workspace:*",
-    "@microsoft/api-extractor": "^7.52.8",
-    "rollup": "^4.45.1",
-    "rollup-plugin-dts": "^6.2.1",
     "tsup": "^8.5.0"
   }
 }

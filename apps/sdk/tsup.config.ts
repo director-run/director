@@ -2,14 +2,23 @@ import { defineConfig } from "tsup";
 
 export default defineConfig({
   entry: ["src/index.ts"],
-  format: ["esm", "cjs"],
+  format: ["cjs", "esm"],
   dts: {
     resolve: true,
+
+    compilerOptions: {
+      // See: https://github.com/egoist/tsup/issues/571#issuecomment-2457920686
+      composite: false,
+      paths: {
+        "@director.run/gateway/*": ["../../packages/gateway/src/*"],
+        "@director.run/registry/*": ["../../packages/registry/src/*"],
+      },
+    },
   },
-  bundle: true,
-  external: [],
-  noExternal: ["@director.run/gateway", "@director.run/registry"],
+  clean: true,
   splitting: false,
   sourcemap: true,
-  clean: true,
+  minify: true,
+  treeshake: true,
+  noExternal: [/.*/],
 });

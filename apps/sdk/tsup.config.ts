@@ -6,8 +6,7 @@ export default defineConfig({
   dts: {
     resolve: true,
     compilerOptions: {
-      // See: https://github.com/egoist/tsup/issues/571#issuecomment-2457920686
-      composite: false,
+      baseUrl: ".",
       paths: {
         "@director.run/gateway/*": ["../../packages/gateway/src/*"],
         "@director.run/registry/*": ["../../packages/registry/src/*"],

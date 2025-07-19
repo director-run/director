@@ -73,11 +73,11 @@ export class EntryStore {
     const offset = pageIndex * pageSize;
 
     const whereSql = params.searchQuery
-    ? or(
-        sql`${entriesTable.name} ILIKE ${"%" + params.searchQuery + "%"}`,
-        sql`${entriesTable.description} ILIKE ${"%" + params.searchQuery + "%"}`,
-      )
-    : undefined;
+      ? or(
+          sql`${entriesTable.name} ILIKE ${"%" + params.searchQuery + "%"}`,
+          sql`${entriesTable.description} ILIKE ${"%" + params.searchQuery + "%"}`,
+        )
+      : undefined;
 
     const [entries, totalCount] = await Promise.all([
       this.db.db

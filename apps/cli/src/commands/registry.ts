@@ -1,4 +1,4 @@
-import { enrichEntryTools } from "@director.run/registry/lib/enrich-tools";
+import { enrichEntryTools } from "@director.run/registry/enrichment/enrich-tools";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { spinnerWrap } from "@director.run/utilities/cli/loader";

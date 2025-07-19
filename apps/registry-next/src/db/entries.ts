@@ -1,49 +1,50 @@
-import { count, eq, inArray } from "drizzle-orm";
-import { DatabaseConnection } from "./index";
-import { type EntryCreateParams, entriesTable } from "./schema";
+import { asc, count, eq, inArray, or, sql } from "drizzle-orm";
+
+import {} from "@director.run/utilities/error";
+import { TRPCError } from "@trpc/server";
+import { db } from "./client";
+import { type Entry, type EntryCreateParams, entriesTable } from "./schema";
 
 export class EntryStore {
-  constructor(private readonly db: DatabaseConnection) {}
-
   public async getEntryByName(name: string) {
-    const entry = await this.db.db
+    const entry = await db
       .select()
       .from(entriesTable)
       .where(eq(entriesTable.name, name))
       .limit(1);
 
     if (entry.length === 0) {
-      throw new Error(`No entry found with name: ${name}`);
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Entry not found",
+      });
     }
 
-    return entry[0];
+    return entry[0] as Entry;
   }
 
   public async deleteAllEntries(): Promise<void> {
-    await this.db.db.delete(entriesTable);
+    await db.delete(entriesTable);
   }
 
   public async getAllEntries() {
-    return await this.db.db.select().from(entriesTable);
+    return await db.select().from(entriesTable);
   }
 
   public async addEntry(entry: EntryCreateParams) {
-    return (await this.db.db.insert(entriesTable).values(entry).returning())[0];
+    return (await db.insert(entriesTable).values(entry).returning())[0];
   }
 
   public async deleteEntry(id: string) {
-    await this.db.db.delete(entriesTable).where(eq(entriesTable.id, id));
+    await db.delete(entriesTable).where(eq(entriesTable.id, id));
   }
 
   public async updateEntry(id: string, entry: Partial<EntryCreateParams>) {
-    await this.db.db
-      .update(entriesTable)
-      .set(entry)
-      .where(eq(entriesTable.id, id));
+    await db.update(entriesTable).set(entry).where(eq(entriesTable.id, id));
   }
 
   public async getStatistics() {
-    const entries = await this.db.db
+    const entries = await db
       .select({
         id: entriesTable.id,
         isEnriched: entriesTable.isEnriched,
@@ -65,14 +66,22 @@ export class EntryStore {
   }
 
   public async paginateEntries(params: {
+    searchQuery?: string;
     pageIndex: number;
     pageSize: number;
   }) {
     const { pageIndex, pageSize } = params;
     const offset = pageIndex * pageSize;
 
+    const whereSql = params.searchQuery
+      ? or(
+          sql`${entriesTable.name} ILIKE ${"%" + params.searchQuery + "%"}`,
+          sql`${entriesTable.description} ILIKE ${"%" + params.searchQuery + "%"}`,
+        )
+      : undefined;
+
     const [entries, totalCount] = await Promise.all([
-      this.db.db
+      db
         .select({
           id: entriesTable.id,
           name: entriesTable.name,
@@ -88,12 +97,15 @@ export class EntryStore {
           icon: entriesTable.icon,
         })
         .from(entriesTable)
+        .where(whereSql)
+        .orderBy(asc(entriesTable.name))
         .limit(pageSize)
         .offset(offset),
-      this.db.db
+      db
         .select({ count: count() })
         .from(entriesTable)
-        .then((result) => result[0].count),
+        .where(whereSql)
+        .then((result) => result[0]?.count ?? 0),
     ]);
 
     const totalPages = Math.ceil(totalCount / pageSize);
@@ -118,7 +130,7 @@ export class EntryStore {
     },
   ): Promise<{ status: "success"; countInserted: number }> {
     if (options.ignoreDuplicates) {
-      const existingEntries = await this.db.db
+      const existingEntries = await db
         .select({ name: entriesTable.name })
         .from(entriesTable)
         .where(
@@ -140,7 +152,7 @@ export class EntryStore {
         };
       }
 
-      await this.db.db.transaction(async (tx) => {
+      await db.transaction(async (tx) => {
         await tx.insert(entriesTable).values(newEntries);
       });
 
@@ -149,7 +161,7 @@ export class EntryStore {
         countInserted: newEntries.length,
       };
     } else {
-      await this.db.db.transaction(async (tx) => {
+      await db.transaction(async (tx) => {
         await tx.insert(entriesTable).values(entries);
       });
 
@@ -161,10 +173,8 @@ export class EntryStore {
   }
 
   public async countEntries(): Promise<number> {
-    const result = await this.db.db
-      .select({ count: count() })
-      .from(entriesTable);
-    return result[0].count;
+    const result = await db.select({ count: count() }).from(entriesTable);
+    return result[0]?.count ?? 0;
   }
 }
 

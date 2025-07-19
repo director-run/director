@@ -1,4 +1,4 @@
-import { createRegistryClient } from "@director.run/registry/registry-client";
+import { createRegistryClient } from "@director.run/registry/client";
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
 import type { ProxyServerStore } from "../../proxy-server-store";

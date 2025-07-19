@@ -3,7 +3,7 @@ import type {
   ProxyTransport,
   Tool,
 } from "@director.run/utilities/schema";
-import type { InferInsertModel } from "drizzle-orm";
+import { type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import {
   boolean,
   jsonb,
@@ -54,4 +54,5 @@ export const entriesTable = pgTable("entries", {
   readme: text("readme"),
 });
 
+export type Entry = InferSelectModel<typeof entriesTable>;
 export type EntryCreateParams = InferInsertModel<typeof entriesTable>;

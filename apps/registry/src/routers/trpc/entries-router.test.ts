@@ -262,6 +262,7 @@ describe("Entries Router", () => {
     });
 
     describe("getEntries", () => {
+      it.skip("should handle search query correctly", async () => {});
       it("should handle pagination correctly", async () => {
         // Test first page
         const result1 = await unauthenticatedClient.entries.getEntries.query({

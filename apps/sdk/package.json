@@ -1,7 +1,7 @@
 {
   "name": "@director.run/sdk",
   "type": "module",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "files": ["dist", "README.md"],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -11,13 +11,13 @@
       "import": "./dist/index.js"
     }
   },
-  "license": "MIT",
+  "author": "Barnaby Malet <barnaby@director.run>",
+  "license": "AGPL-3.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/director-run/director"
   },
   "description": "Director SDK for managing MCP servers programmatically",
-  "author": "The Working Company <hello@director.run>",
   "homepage": "https://director.run",
   "scripts": {
     "lint": "biome check .",

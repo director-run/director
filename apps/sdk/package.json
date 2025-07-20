@@ -11,13 +11,13 @@
       "import": "./dist/index.js"
     }
   },
-  "license": "MIT",
+  "author": "Barnaby Malet <barnaby@director.run>",
+  "license": "AGPL-3.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/director-run/director"
   },
   "description": "Director SDK for managing MCP servers programmatically",
-  "author": "The Working Company <hello@director.run>",
   "homepage": "https://director.run",
   "scripts": {
     "lint": "biome check .",

@@ -104,6 +104,7 @@ export const proxyTargetAttributesSchema = z.object({
   name: slugStringSchema,
   transport: proxyTransport,
   source: ProxyTargetSourceSchema.optional(),
+  add_prefix: z.boolean().default(false).optional(),
 });
 
 export type ProxyTargetAttributes = z.infer<typeof proxyTargetAttributesSchema>;

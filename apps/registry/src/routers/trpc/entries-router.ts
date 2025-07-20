@@ -92,6 +92,7 @@ export function createEntriesRouter({ store }: { store: Store }) {
         z.object({
           pageIndex: z.number().min(0),
           pageSize: z.number().min(1),
+          searchQuery: z.string().trim().optional(),
         }),
       )
       .query(({ input }) => store.entries.paginateEntries(input)),

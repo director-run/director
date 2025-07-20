@@ -1,4 +1,4 @@
-import { count, eq, inArray } from "drizzle-orm";
+import { asc, count, eq, inArray, or, sql } from "drizzle-orm";
 import { DatabaseConnection } from "./index";
 import { type EntryCreateParams, entriesTable } from "./schema";
 
@@ -67,9 +67,17 @@ export class EntryStore {
   public async paginateEntries(params: {
     pageIndex: number;
     pageSize: number;
+    searchQuery?: string;
   }) {
     const { pageIndex, pageSize } = params;
     const offset = pageIndex * pageSize;
+
+    const whereSql = params.searchQuery
+      ? or(
+          sql`${entriesTable.name} ILIKE ${"%" + params.searchQuery + "%"}`,
+          sql`${entriesTable.description} ILIKE ${"%" + params.searchQuery + "%"}`,
+        )
+      : undefined;
 
     const [entries, totalCount] = await Promise.all([
       this.db.db
@@ -88,11 +96,14 @@ export class EntryStore {
           icon: entriesTable.icon,
         })
         .from(entriesTable)
+        .where(whereSql)
+        .orderBy(asc(entriesTable.name))
         .limit(pageSize)
         .offset(offset),
       this.db.db
         .select({ count: count() })
         .from(entriesTable)
+        .where(whereSql)
         .then((result) => result[0].count),
     ]);
 

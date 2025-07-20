@@ -6,12 +6,18 @@ import { z } from "zod";
 
 export const LOCAL_ENV_FILE_PATH = path.join(process.cwd(), ".env.local");
 
+const SEGMENT_PRODUCTION_WRITE_KEY = "Z8wjEfWMFnlltCpGPPWlvsEQH1aVEUH3";
+
 export const env = createEnv({
   envFilePath: getEnvFilePath(),
   envVars: {
     GATEWAY_PORT: z.number({ coerce: true }).optional().default(3673),
     GATEWAY_URL: z.string().optional().default(`http://localhost:3673`),
     STUDIO_URL: z.string().optional().default(`https://studio.director.run`),
+    SEGMENT_WRITE_KEY: z
+      .string()
+      .optional()
+      .default(SEGMENT_PRODUCTION_WRITE_KEY),
     REGISTRY_API_URL: z
       .string()
       .optional()
@@ -24,6 +30,10 @@ export const env = createEnv({
     ENABLE_DEBUG_COMMANDS: z
       .string()
       .default("false")
+      .transform((s) => s !== "false" && s !== "0"),
+    SEND_TELEMETRY: z
+      .string()
+      .default("true")
       .transform((s) => s !== "false" && s !== "0"),
   },
 });

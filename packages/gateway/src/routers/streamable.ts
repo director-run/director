@@ -2,6 +2,7 @@ import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { asyncHandler } from "@director.run/utilities/middleware";
+import { Telemetry } from "@director.run/utilities/telemetry";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 import express from "express";
@@ -11,8 +12,10 @@ const logger = getLogger("mcp/streamable");
 
 export const createStreamableRouter = ({
   proxyStore,
+  telemetry,
 }: {
   proxyStore: ProxyServerStore;
+  telemetry: Telemetry;
 }) => {
   const router = express.Router();
   const transports: Map<string, StreamableHTTPServerTransport> = new Map();
@@ -59,6 +62,9 @@ export const createStreamableRouter = ({
         transport = existingTransport;
       } else if (!sessionId && isInitializeRequest(req.body)) {
         logger.info(`[${proxy.id}] new initialization request`);
+        telemetry.trackEvent("connection_started", {
+          transport: "streamable",
+        });
         // New initialization request
         transport = new StreamableHTTPServerTransport({
           sessionIdGenerator: () => crypto.randomUUID(),
@@ -100,6 +106,11 @@ export const createStreamableRouter = ({
         sessionId: transport.sessionId,
         method: req.body.method,
         body: req.body,
+      });
+
+      telemetry.trackEvent("method_called", {
+        method: req.body.method,
+        transport: "streamable",
       });
 
       // Handle the request

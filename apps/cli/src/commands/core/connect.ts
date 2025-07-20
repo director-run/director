@@ -58,7 +58,12 @@ export function registerConnectCommand(program: DirectorCommand) {
 
             const stdioCommand = {
               command: "npx",
-              args: ["-y", "@director.run/cli", "http2stdio", streamableURL],
+              args: [
+                "-y",
+                "@director.run/cli@latest",
+                "http2stdio",
+                streamableURL,
+              ],
               env: {
                 LOG_LEVEL: "silent",
               },

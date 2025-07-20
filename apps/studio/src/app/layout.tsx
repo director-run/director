@@ -1,12 +1,13 @@
+import { ConnectionStatusProvider } from "@/components/connect/connection-status-provider";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toast";
 import { TRPCProvider } from "@/trpc/client";
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next";
 
 import "./globals.css";
-import { ConnectionStatusProvider } from "@/components/connect/connection-status-provider";
-import { Toaster } from "@/components/ui/toast";
 
 const sans = Inter({
   variable: "--font-sans",
@@ -47,6 +48,7 @@ export default function RootLayout({
             <Toaster />
           </TRPCProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );

@@ -6,6 +6,6 @@
     "dev": "mint dev --port 3002"
   },
   "dependencies": {
-    "mint": "^4.1.41"
+    "mint": "^4.1.101"
   }
 }

@@ -2,7 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ "**" ]
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -51,8 +53,8 @@ jobs:
         image: postgres:16
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test
+          POSTGRES_PASSWORD: travel-china-spend-nothing
+          POSTGRES_DB: director-registry-test
         ports:
           - 5432:5432
         options: >-
@@ -61,7 +63,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
+      DATABASE_URL: postgresql://postgres:travel-china-spend-nothing@localhost:5432/director-registry-test
     steps:
     - uses: actions/checkout@v4
     - name: Install uv

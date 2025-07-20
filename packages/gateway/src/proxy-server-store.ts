@@ -2,6 +2,7 @@ import { ProxyServer } from "@director.run/mcp/proxy-server";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import type { ProxyTargetAttributes } from "@director.run/utilities/schema";
+import { Telemetry } from "@director.run/utilities/telemetry";
 import type { Database } from "./db";
 
 const logger = getLogger("ProxyServerStore");
@@ -9,19 +10,24 @@ const logger = getLogger("ProxyServerStore");
 export class ProxyServerStore {
   private proxyServers: Map<string, ProxyServer> = new Map();
   private db: Database;
+  private telemetry: Telemetry;
 
-  private constructor(params: { db: Database }) {
+  private constructor(params: { db: Database; telemetry?: Telemetry }) {
     this.db = params.db;
+    this.telemetry = params.telemetry || Telemetry.noTelemetry();
   }
 
   public static async create({
     db,
+    telemetry,
   }: {
     db: Database;
+    telemetry: Telemetry;
   }): Promise<ProxyServerStore> {
     logger.debug("initializing ProxyServerStore");
     const store = new ProxyServerStore({
       db,
+      telemetry,
     });
     await store.initialize();
     logger.debug("initialization complete");
@@ -58,6 +64,8 @@ export class ProxyServerStore {
   }
 
   async delete(proxyId: string) {
+    this.telemetry.trackEvent("proxy_deleted");
+
     const proxy = this.get(proxyId);
     await proxy.close();
     await this.db.deleteProxy(proxyId);
@@ -101,6 +109,8 @@ export class ProxyServerStore {
       };
     };
   }): Promise<ProxyServer> {
+    this.telemetry.trackEvent("proxy_created");
+
     const newProxy = await this.db.addProxy({
       name,
       description,
@@ -122,6 +132,8 @@ export class ProxyServerStore {
     proxyId: string,
     server: ProxyTargetAttributes,
   ): Promise<ProxyServer> {
+    this.telemetry.trackEvent("server_added");
+
     const proxy = this.get(proxyId);
 
     await proxy.addTarget(server, { throwOnError: true });
@@ -134,6 +146,8 @@ export class ProxyServerStore {
     proxyId: string,
     serverName: string,
   ): Promise<ProxyServer> {
+    this.telemetry.trackEvent("server_removed");
+
     const proxy = this.get(proxyId);
 
     await proxy.removeTarget(serverName);
@@ -149,6 +163,8 @@ export class ProxyServerStore {
       description: string;
     }>,
   ) {
+    this.telemetry.trackEvent("proxy_updated");
+
     const proxy = this.get(proxyId);
 
     await proxy.update(attributes);

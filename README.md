@@ -1,7 +1,7 @@
 <h1 align="center">Director</h1>
-<p align="center">The easiest way to use MCP</p>
+<p align="center">The simplest way to use MCP</p>
 
-<p align="center"><code>curl -fsSL https://director.run/install | bash</code></p>
+<p align="center"><code>curl -LsSf https://director.run/install.sh | sh</code></p>
 
 ---
 
@@ -16,22 +16,28 @@
 
 <img src="https://github.com/director-run/director/blob/main/apps/docs/images/demo.gif" width="100%" alt="animated hello">
 
-[Director](https://director.run) is open source MCP middleware that acts as a proxy between models/agents and MCP servers. Supporting all MCP transports natively, it aggregates tools, prompts, and resources server-side while providing a unified client-side integration point. This abstraction eliminates MCP server management overhead, enabling developers to focus on prompt engineering and domain logic rather than infrastructure complexity.
+[Director](https://director.run) allows you to connect any MCP server to any LLM in seconds. It's local first, and 100% open source. 
+
+More specifically, it's a gateway that proxies requests between MCP clients and servers. It supports all MCP transports natively and aggregates tools, prompts, and resources server-side while providing a unified client-side integration point. This abstraction eliminates MCP server management overhead, enabling you to focus on the work you want to do with your LLM rather than worrying about how MCP works or the best way to manage it.
 
 > **Note:** This project is under active development and is not yet stable & may contain bugs. Please see our [contributing](https://docs.director.run/project/contributing) if you'd like to help.
 
-## Quickstart
 
-Get started with Director immediately using the command below. For more detailed information, please [read the docs](https://docs.director.run).
+# Installation
+
+The easiest way to install Director is using the quickstart commad. However you can learn about alternative installation methods (including running it in Docker) by reading [our documentation](https://docs.director.run).
 
 ```bash
-curl -fsSL https://director.run/install | bash
-director quickstart
+$ curl -LsSf https://director.run/install.sh | sh
+$ director quickstart
 ```
 
----
+# Getting in Touch
+If you're using director, have any ideas, or just want to chat about MCP, we'd love to chat:
+- Join our [Discord](https://discord.gg/kWZGvWks)
+- Send us an [Email](mailto:hello@director.run)
 
-## Project Structure
+# Project Structure
 
 ### External Apps
 
@@ -46,5 +52,7 @@ director quickstart
 - [`packages/gateway`](./packages/gateway/README.md) - Core gateway and proxy logic
 - [`packages/mcp`](./packages/mcp/README.md) - Extensions to MCP SDK that add middleware functionality
 - [`packages/utilities`](./packages/utilities/README.md) - Shared utilities used across all packages and apps
+- [`packages/design`](./packages/design/README.md) - Design system: reusable UI components, hooks, and styles for all Director apps
+- [`packages/typescript-config`](./packages/typescript-config/README.md) - Shared TypeScript configuration for all packages and apps
 
 *This is a monorepo managed by [Turborepo](https://turbo.build/).*

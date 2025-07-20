@@ -1,0 +1,41 @@
+{
+  "name": "@director.run/sdk",
+  "type": "module",
+  "version": "0.0.11",
+  "files": ["dist", "README.md"],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/director-run/director"
+  },
+  "description": "Director SDK for managing MCP servers programmatically",
+  "author": "The Working Company <hello@director.run>",
+  "homepage": "https://director.run",
+  "scripts": {
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "clean": "rm -rf .turbo dist/*",
+    "test": "echo 'no tests'",
+    "typecheck": "tsc --noEmit",
+    "build": "bun run clean && tsup",
+    "release": "bun publish --access public --omit=peer",
+    "prepare": "bun run build",
+    "dev": "bun --watch bin/cli.ts"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "devDependencies": {
+    "@director.run/gateway": "workspace:*",
+    "@director.run/registry": "workspace:*",
+    "tsup": "^8.5.0"
+  }
+}

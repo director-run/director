@@ -1,4 +1,4 @@
-import { omit, pick } from "lodash";
+import _ from "lodash";
 import pino from "pino";
 import pinoPretty from "pino-pretty";
 import { isTest } from "./env";
@@ -26,7 +26,7 @@ const logger = pino(
         if (isAppError(error)) {
           return {
             type: error.name,
-            ...pick(error, "message", "stack", "code", "props"),
+            ..._.pick(error, "message", "stack", "code", "props"),
             ...((error as Error).cause
               ? {
                   cause: pino.stdSerializers.errWithCause(error),
@@ -35,7 +35,7 @@ const logger = pino(
           };
         }
         const serialized = pino.stdSerializers.errWithCause(error);
-        return LOG_ERROR_STACK ? serialized : omit(serialized, "stack");
+        return LOG_ERROR_STACK ? serialized : _.omit(serialized, "stack");
       },
     },
   },

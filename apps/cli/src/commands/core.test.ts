@@ -1,6 +1,6 @@
 import type { Server } from "node:http";
 import path from "node:path";
-import { SimpleClient } from "@director.run/mcp/simple-client";
+import { StdioClient } from "@director.run/mcp/client/stdio-client";
 import { makeEchoServer } from "@director.run/mcp/test/fixtures";
 import { serveOverSSE } from "@director.run/mcp/transport";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
@@ -13,7 +13,7 @@ describe("sse2stdio <sse_url>", () => {
   beforeAll(async () => {
     proxyTargetServerInstance = await serveOverSSE(makeEchoServer(), 4522);
 
-    client = await SimpleClient.createAndConnectToStdio(
+    client = await StdioClient.createAndConnectToStdio(
       "bun",
       [
         path.join(__dirname, "../../bin/cli"),

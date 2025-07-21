@@ -1,5 +1,5 @@
 import type { Server } from "node:http";
-import { SimpleClient } from "@director.run/mcp/simple-client";
+import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { makeEchoServer } from "@director.run/mcp/test/fixtures";
 import { serveOverSSE } from "@director.run/mcp/transport";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
@@ -49,7 +49,7 @@ describe("SSE Router", () => {
       servers: [makeFooBarServerStdioConfig(), echoServerSSEConfig],
     });
 
-    const client = await SimpleClient.createAndConnectToHTTP(
+    const client = await HTTPClient.createAndConnectToHTTP(
       `http://localhost:${harness.gateway.port}/${testProxy.id}/sse`,
     );
 
@@ -79,7 +79,7 @@ describe("SSE Router", () => {
       servers: [makeFooBarServerStdioConfig()],
     });
 
-    const client = await SimpleClient.createAndConnectToHTTP(
+    const client = await HTTPClient.createAndConnectToHTTP(
       `http://localhost:${harness.gateway.port}/${testProxy.id}/sse`,
     );
 
@@ -93,7 +93,7 @@ describe("SSE Router", () => {
       server: echoServerSSEConfig,
     });
 
-    const client2 = await SimpleClient.createAndConnectToHTTP(
+    const client2 = await HTTPClient.createAndConnectToHTTP(
       `http://localhost:${harness.gateway.port}/${testProxy.id}/sse`,
     );
 
@@ -109,7 +109,7 @@ describe("SSE Router", () => {
       servers: [echoServerSSEConfig, makeFooBarServerStdioConfig()],
     });
 
-    const client = await SimpleClient.createAndConnectToHTTP(
+    const client = await HTTPClient.createAndConnectToHTTP(
       `http://localhost:${harness.gateway.port}/${testProxy.id}/sse`,
     );
     const toolsResult = await client.listTools();
@@ -122,7 +122,7 @@ describe("SSE Router", () => {
       serverName: "echo",
     });
 
-    const client2 = await SimpleClient.createAndConnectToHTTP(
+    const client2 = await HTTPClient.createAndConnectToHTTP(
       `http://localhost:${harness.gateway.port}/${testProxy.id}/sse`,
     );
     const toolsResult2 = await client2.listTools();

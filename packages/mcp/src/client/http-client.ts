@@ -8,7 +8,7 @@ import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { AbstractClient } from "./abstract-client";
 
-const logger = getLogger("client/http-client");
+const logger = getLogger("client/http");
 
 export class HTTPClient extends AbstractClient {
   private url: string;

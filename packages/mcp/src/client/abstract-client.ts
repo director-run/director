@@ -1,13 +1,5 @@
-import {} from "@director.run/utilities/error";
-import { getLogger } from "@director.run/utilities/logger";
-import {} from "@modelcontextprotocol/sdk/client/auth.js";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import packageJson from "../../package.json";
-
-// const CONNECT_RETRY_INTERVAL = 2500;
-// const CONNECT_RETRY_COUNT = 3;
-
-const logger = getLogger("SimpleClient");
 
 export type ClientStatus =
   | "connected"

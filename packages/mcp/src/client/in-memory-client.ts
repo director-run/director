@@ -9,22 +9,43 @@ const logger = getLogger("client/in-memory");
 
 export class InMemoryClient extends AbstractClient {
   private server: Server;
+  //   private serverTransport: InMemoryTransport;
+  //   private clientTransport: InMemoryTransport;
+
   constructor(params: { name: string; server: Server }) {
     super(params.name);
     this.server = params.server;
   }
 
+  //   public static async createAndConnectToServer(
+  //     server: Server,
+  //   ): Promise<InMemoryClient> {
+  //     const client = new InMemoryClient({ name: "test client", server });
+  //     await client.connectToTarget({ throwOnError: true });
+  //     return client;
+  //   }
+
   public static async createAndConnectToServer(
     server: Server,
   ): Promise<InMemoryClient> {
+    const [clientTransport, serverTransport] =
+      InMemoryTransport.createLinkedPair();
+
     const client = new InMemoryClient({ name: "test client", server });
-    await client.connectToTarget({ throwOnError: true });
+
+    await Promise.all([
+      client.connect(clientTransport),
+      server.connect(serverTransport),
+    ]);
+
     return client;
   }
 
   public async connectToTarget({ throwOnError }: { throwOnError: boolean }) {
     const [clientTransport, serverTransport] =
       InMemoryTransport.createLinkedPair();
+
+    console.log("-------- connecting to server --------");
 
     const client = new InMemoryClient({
       name: "test client",
@@ -35,5 +56,6 @@ export class InMemoryClient extends AbstractClient {
       client.connect(clientTransport),
       this.server.connect(serverTransport),
     ]);
+    console.log("-------- connecting to server --------");
   }
 }

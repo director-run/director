@@ -8,16 +8,17 @@ import {
   McpError,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
+import type { AbstractClient } from "../client/abstract-client";
 import type { ProxyServer } from "../proxy-server";
-import type { ProxyTarget } from "../proxy-target";
 
 const logger = getLogger("proxy/handlers/toolsHandler");
 
 export function setupToolHandlers(
   server: ProxyServer,
-  connectedClients: ProxyTarget[],
+  connectedClients: AbstractClient[],
+  addToolPrefix?: boolean,
 ) {
-  const toolToClientMap = new Map<string, ProxyTarget>();
+  const toolToClientMap = new Map<string, AbstractClient>();
   const prefixedToOriginalMap = new Map<string, string>();
 
   // List Tools Handler
@@ -40,13 +41,12 @@ export function setupToolHandlers(
 
         if (result.tools) {
           const toolsWithSource = result.tools.map((tool) => {
-            const shouldPrefix = connectedClient.attributes.add_prefix === true;
-            const toolName = shouldPrefix
+            const toolName = addToolPrefix
               ? `${connectedClient.name}__${tool.name}`
               : tool.name;
 
             toolToClientMap.set(toolName, connectedClient);
-            if (shouldPrefix) {
+            if (addToolPrefix) {
               prefixedToOriginalMap.set(toolName, tool.name);
             }
 

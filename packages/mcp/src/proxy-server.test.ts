@@ -71,20 +71,19 @@ describe("ProxyServer", () => {
       const proxy = new ProxyServer({
         id: "test-proxy",
         name: "test-proxy",
+        addToolPrefix: true,
         servers: [
           {
             ...makeHTTPTargetConfig({
               name: "echo-service",
               url: `http://localhost:4524/mcp`,
             }),
-            add_prefix: true,
           },
           {
             ...makeHTTPTargetConfig({
               name: "foobar-service",
               url: `http://localhost:4525/sse`,
             }),
-            add_prefix: false,
           },
         ],
       });
@@ -102,7 +101,7 @@ describe("ProxyServer", () => {
       expect(echoTool?.description).toContain("[echo-service]");
 
       // Check non-prefixed tool
-      const fooTool = tools.tools.find((t) => t.name === "foo");
+      const fooTool = tools.tools.find((t) => t.name === "foobar-service__foo");
       expect(fooTool).toBeDefined();
       expect(fooTool?.description).toContain("[foobar-service]");
 
@@ -122,13 +121,13 @@ describe("ProxyServer", () => {
       const proxy = new ProxyServer({
         id: "test-proxy",
         name: "test-proxy",
+        addToolPrefix: true,
         servers: [
           {
             ...makeHTTPTargetConfig({
               name: "echo-service",
               url: `http://localhost:4526/mcp`,
             }),
-            add_prefix: true,
           },
         ],
       });
@@ -160,20 +159,19 @@ describe("ProxyServer", () => {
       const proxy = new ProxyServer({
         id: "test-proxy",
         name: "test-proxy",
+        addToolPrefix: true,
         servers: [
           {
             ...makeHTTPTargetConfig({
               name: "service-a",
               url: `http://localhost:4527/mcp`,
             }),
-            add_prefix: true,
           },
           {
             ...makeHTTPTargetConfig({
               name: "service-b",
               url: `http://localhost:4528/mcp`,
             }),
-            add_prefix: true,
           },
         ],
       });
@@ -191,65 +189,6 @@ describe("ProxyServer", () => {
 
       await server1.close();
       await server2.close();
-    });
-
-    test("should handle mixed prefixed and non-prefixed servers", async () => {
-      const echoServer1 = await serveOverStreamable(makeEchoServer(), 4529);
-      const echoServer2 = await serveOverStreamable(makeEchoServer(), 4530);
-
-      const proxy = new ProxyServer({
-        id: "test-proxy",
-        name: "test-proxy",
-        servers: [
-          {
-            ...makeHTTPTargetConfig({
-              name: "prefixed-echo",
-              url: `http://localhost:4529/mcp`,
-            }),
-            add_prefix: true,
-          },
-          {
-            ...makeHTTPTargetConfig({
-              name: "normal-echo",
-              url: `http://localhost:4530/mcp`,
-            }),
-            add_prefix: false,
-          },
-        ],
-      });
-
-      await proxy.connectTargets();
-
-      const client = await InMemoryClient.createAndConnectToServer(proxy);
-      const tools = await client.listTools();
-
-      expect(tools.tools).toHaveLength(2);
-
-      // Both tools should exist with different names
-      expect(
-        tools.tools.find((t) => t.name === "prefixed-echo__echo"),
-      ).toBeDefined();
-      expect(tools.tools.find((t) => t.name === "echo")).toBeDefined();
-
-      // Both should be callable
-      const result1 = (await client.callTool({
-        name: "prefixed-echo__echo",
-        arguments: {
-          message: "Test 1",
-        },
-      })) as CallToolResult;
-      const result2 = (await client.callTool({
-        name: "echo",
-        arguments: {
-          message: "Test 2",
-        },
-      })) as CallToolResult;
-
-      expect(result1.content?.[0].text).toContain("Test 1");
-      expect(result2.content?.[0].text).toContain("Test 2");
-
-      await echoServer1.close();
-      await echoServer2.close();
     });
   });
 });

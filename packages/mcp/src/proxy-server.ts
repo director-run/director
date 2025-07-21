@@ -8,18 +8,19 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import * as eventsource from "eventsource";
 import _ from "lodash";
 import packageJson from "../package.json";
+import { AbstractClient } from "./client/abstract-client";
+import { createClientForTarget } from "./client/client-factory";
 import { setupPromptHandlers } from "./handlers/prompts-handler";
 import { setupResourceTemplateHandlers } from "./handlers/resource-templates-handler";
 import { setupResourceHandlers } from "./handlers/resources-handler";
 import { setupToolHandlers } from "./handlers/tools-handler";
-import { ProxyTarget } from "./proxy-target";
 
 global.EventSource = eventsource.EventSource;
 
 const logger = getLogger(`ProxyServer`);
 
 export class ProxyServer extends Server {
-  private targets: ProxyTarget[];
+  private targets: AbstractClient[];
   public readonly attributes: ProxyServerAttributes & {
     useController?: boolean;
   };
@@ -42,7 +43,7 @@ export class ProxyServer extends Server {
     this.attributes = attributes;
 
     for (const server of this.attributes.servers) {
-      const target = new ProxyTarget(server);
+      const target = createClientForTarget(server);
       this.targets.push(target);
     }
 
@@ -55,7 +56,7 @@ export class ProxyServer extends Server {
     //   this.targets.push(controllerClient);
     // }
 
-    setupToolHandlers(this, this.targets);
+    setupToolHandlers(this, this.targets, this.attributes.addToolPrefix);
     setupPromptHandlers(this, this.targets);
     setupResourceHandlers(this, this.targets);
     setupResourceTemplateHandlers(this, this.targets);
@@ -65,7 +66,7 @@ export class ProxyServer extends Server {
     { throwOnError } = { throwOnError: false },
   ): Promise<void> {
     for (const target of this.targets) {
-      await target.smartConnect({ throwOnError });
+      await target.connectToTarget({ throwOnError });
     }
   }
 
@@ -82,8 +83,8 @@ export class ProxyServer extends Server {
         `Target ${target.name} already exists`,
       );
     }
-    const newTarget = new ProxyTarget(target);
-    await newTarget.smartConnect({ throwOnError: attribs.throwOnError });
+    const newTarget = createClientForTarget(target);
+    await newTarget.connectToTarget({ throwOnError: attribs.throwOnError });
     this.attributes.servers.push(target);
     this.targets.push(newTarget);
     // TODO: send list changed events. need client to support this first

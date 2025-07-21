@@ -8,16 +8,16 @@ import {
   ReadResourceResultSchema,
   type Resource,
 } from "@modelcontextprotocol/sdk/types.js";
+import type { AbstractClient } from "../client/abstract-client";
 import type { ProxyServer } from "../proxy-server";
-import type { SimpleClient } from "../simple-client";
 
 const logger = getLogger("proxy/handlers/resourcesHandler");
 
 export function setupResourceHandlers(
   server: ProxyServer,
-  connectedClients: SimpleClient[],
+  connectedClients: AbstractClient[],
 ) {
-  const resourceToClientMap = new Map<string, SimpleClient>();
+  const resourceToClientMap = new Map<string, AbstractClient>();
 
   // List Resources Handler
   server.setRequestHandler(ListResourcesRequestSchema, async (request) => {

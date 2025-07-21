@@ -22,7 +22,7 @@ export class ProxyServerStore {
     telemetry,
   }: {
     db: Database;
-    telemetry: Telemetry;
+    telemetry?: Telemetry;
   }): Promise<ProxyServerStore> {
     logger.debug("initializing ProxyServerStore");
     const store = new ProxyServerStore({

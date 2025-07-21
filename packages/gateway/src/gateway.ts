@@ -46,7 +46,7 @@ export class Gateway {
 
     const db = await Database.connect(attribs.databaseFilePath);
     const telemetry = attribs.telemetry || Telemetry.noTelemetry();
-    const proxyStore = await ProxyServerStore.create(db, telemetry);
+    const proxyStore = await ProxyServerStore.create({ db, telemetry });
     const app = express();
     const registryURL = attribs.registryURL;
 

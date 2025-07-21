@@ -1,4 +1,8 @@
 import { readFile, writeFile } from "fs/promises";
+import slugify from "slugify";
+import { env } from "../src/config";
+import { type EntryCreateParams } from "../src/db/schema";
+import { createStore } from "../src/db/store";
 import { PulseMCPClient } from "../src/importers/clients/pulsemcp";
 import type { Server } from "../src/importers/clients/pulsemcp";
 
@@ -35,4 +39,32 @@ export async function readServersFromFile(
   return JSON.parse(data) as Server[];
 }
 
-main();
+const servers = await readServersFromFile();
+
+let countGithub = 0;
+
+const entries: EntryCreateParams[] = servers
+  .filter(
+    (server) =>
+      server.source_code_url && server.source_code_url.includes("github.com"),
+  )
+  .map((server) => {
+    return {
+      name: slugify(server.name),
+      title: server.name,
+      description: server.short_description,
+      transport: {
+        type: "http",
+        url: "http://example.com",
+      },
+      homepage: server.source_code_url,
+      parameters: [],
+    };
+  });
+
+const store = createStore({ connectionString: env.DATABASE_URL });
+await store.purge();
+await store.entries.addEntries(entries, { state: "published" });
+
+const stats = await store.entries.getStatistics();
+console.log(`Stats`, stats);

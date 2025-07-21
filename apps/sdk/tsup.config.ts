@@ -24,4 +24,5 @@ export default defineConfig({
   minify: true,
   treeshake: true,
   noExternal: [/.*/],
+  external: ["@trpc/server", "@trpc/client", "trpc"],
 });

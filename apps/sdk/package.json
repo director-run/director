@@ -1,10 +1,11 @@
 {
   "name": "@director.run/sdk",
   "type": "module",
-  "version": "0.0.13",
+  "version": "0.0.15",
   "files": ["dist", "README.md"],
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -37,5 +38,9 @@
     "@director.run/gateway": "workspace:*",
     "@director.run/registry": "workspace:*",
     "tsup": "^8.5.0"
+  },
+  "dependencies": {
+    "@trpc/client": "^11.4.3",
+    "@trpc/server": "^11.4.3"
   }
 }

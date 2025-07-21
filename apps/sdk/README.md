@@ -1,8 +1,5 @@
 # Director SDK
 
-#### Todo
-- I haven't quite figured out how to export the typedef properly
-
 #### Example
 ```typescript
 import { createRegistryClient } from "@director.run/sdk";

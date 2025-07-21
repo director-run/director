@@ -139,7 +139,11 @@
     },
     "apps/sdk": {
       "name": "@director.run/sdk",
-      "version": "0.0.13",
+      "version": "0.0.15",
+      "dependencies": {
+        "@trpc/client": "^11.4.3",
+        "@trpc/server": "^11.4.3",
+      },
       "devDependencies": {
         "@director.run/gateway": "workspace:*",
         "@director.run/registry": "workspace:*",

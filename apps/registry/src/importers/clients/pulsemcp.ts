@@ -1,10 +1,4 @@
 /**
- * Pulse MCP API Client
- * API access to data collected from MCP servers and clients around the web
- * Version: v0beta
- */
-
-/**
  * Server interface representing an MCP server
  */
 export interface Server {
@@ -159,50 +153,20 @@ export class PulseMCPClient {
     });
   }
 
-  /**
-   * Helper method to fetch all servers using pagination
-   */
-  async *listAllServers(
-    params: Omit<ListServersParams, "offset"> = {},
-  ): AsyncGenerator<Server, void, unknown> {
+  async fetchAllServers(): Promise<Server[]> {
+    const allServers: Server[] = [];
     let offset = 0;
+    const count_per_page = 5000;
+    let total_count = 0;
     let hasMore = true;
 
     while (hasMore) {
-      const response = await this.listServers({
-        ...params,
-        offset,
-        count_per_page: params.count_per_page || 5000,
-      });
-
-      for (const server of response.servers) {
-        yield server;
-      }
-
-      hasMore = !!response.next;
+      const response = await this.listServers({ count_per_page, offset });
+      allServers.push(...response.servers);
+      total_count = response.total_count;
       offset += response.servers.length;
+      hasMore = offset < total_count;
     }
-  }
-
-  /**
-   * Search for servers by query
-   */
-  async searchServers(query: string, limit?: number): Promise<Server[]> {
-    const response = await this.listServers({
-      query,
-      count_per_page: limit,
-    });
-    return response.servers;
-  }
-
-  /**
-   * Get total count of servers
-   */
-  async getServerCount(query?: string): Promise<number> {
-    const response = await this.listServers({
-      query,
-      count_per_page: 1,
-    });
-    return response.total_count;
+    return allServers;
   }
 }

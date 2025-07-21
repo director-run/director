@@ -1,7 +1,7 @@
 {
   "name": "@director.run/sdk",
   "type": "module",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "files": ["dist", "README.md"],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

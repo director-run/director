@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { createInMemoryOAuthProvider } from "./oauth-provider-factory.js";
+import { createInMemoryOAuthProvider } from "./oauth/oauth-provider-factory.js";
 import { SimpleClient } from "./simple-client.js";
 
 describe("SimpleClient OAuth Integration", () => {

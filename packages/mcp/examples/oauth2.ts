@@ -1,7 +1,7 @@
 import { exec } from "node:child_process";
 import { createServer } from "node:http";
 import { URL } from "node:url";
-import { createInMemoryOAuthProvider } from "../src/oauth-provider-factory";
+import { createInMemoryOAuthProvider } from "../src/oauth/oauth-provider-factory";
 import { ProxyTarget } from "../src/proxy-target";
 
 const CALLBACK_PORT = 8090;

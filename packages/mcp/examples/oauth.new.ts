@@ -1,7 +1,7 @@
 import { URL } from "node:url";
 import { HTTPClient } from "../src/client/http-client";
-import { createInMemoryOAuthProvider } from "../src/oauth-provider-factory";
 import { openBrowser, waitForOAuthCallback } from "../src/oauth/helpers";
+import { createInMemoryOAuthProvider } from "../src/oauth/oauth-provider-factory";
 
 const CALLBACK_PORT = 8090;
 const CALLBACK_URL = `http://localhost:${CALLBACK_PORT}/callback`;

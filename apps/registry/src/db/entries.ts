@@ -1,6 +1,10 @@
 import { asc, count, eq, inArray, or, sql } from "drizzle-orm";
 import { DatabaseConnection } from "./index";
-import { type EntryCreateParams, entriesTable } from "./schema";
+import {
+  type EntryCreateParams,
+  type EntryState,
+  entriesTable,
+} from "./schema";
 
 export class EntryStore {
   constructor(private readonly db: DatabaseConnection) {}
@@ -130,6 +134,7 @@ export class EntryStore {
     entries: EntryCreateParams[],
     options: AddEntriesOptions = {
       ignoreDuplicates: true,
+      state: "draft",
     },
   ): Promise<{ status: "success"; countInserted: number }> {
     if (options.ignoreDuplicates) {
@@ -156,7 +161,11 @@ export class EntryStore {
       }
 
       await this.db.db.transaction(async (tx) => {
-        await tx.insert(entriesTable).values(newEntries);
+        await tx
+          .insert(entriesTable)
+          .values(
+            newEntries.map((entry) => ({ ...entry, state: options.state })),
+          );
       });
 
       return {
@@ -165,7 +174,9 @@ export class EntryStore {
       };
     } else {
       await this.db.db.transaction(async (tx) => {
-        await tx.insert(entriesTable).values(entries);
+        await tx
+          .insert(entriesTable)
+          .values(entries.map((entry) => ({ ...entry, state: options.state })));
       });
 
       return {
@@ -185,4 +196,5 @@ export class EntryStore {
 
 interface AddEntriesOptions {
   ignoreDuplicates?: boolean;
+  state?: EntryState;
 }

@@ -56,6 +56,22 @@ describe("queries", () => {
       await store.entries.deleteAllEntries();
     });
 
+    it("should add entries with a default state of draft", async () => {
+      const entries = makeTestEntries(3);
+      await store.entries.addEntries(entries);
+      expect(await store.entries.countEntries()).toEqual(3);
+      const allEntries = await store.entries.getAllEntries();
+      expect(allEntries.every((e) => e.state === "draft")).toBe(true);
+    });
+
+    it("should add entries with a custom state", async () => {
+      const entries = makeTestEntries(3);
+      await store.entries.addEntries(entries, { state: "published" });
+      expect(await store.entries.countEntries()).toEqual(3);
+      const allEntries = await store.entries.getAllEntries();
+      expect(allEntries.every((e) => e.state === "published")).toBe(true);
+    });
+
     it("should insert all entries when ignoreDuplicates is false", async () => {
       const entries = makeTestEntries(3);
       await store.entries.addEntries(entries);

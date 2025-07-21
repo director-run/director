@@ -14,7 +14,10 @@ export function createClientForTarget(target: ProxyTargetAttributes) {
         name: target.name,
         command: target.transport.command,
         args: target.transport.args,
-        env: target.transport.env,
+        env: {
+          ...(process.env as Record<string, string>),
+          ...target.transport.env,
+        },
       });
   }
 }

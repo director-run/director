@@ -1,4 +1,3 @@
-import { SimpleClient } from "@director.run/mcp/simple-client";
 import { getLogger } from "@director.run/utilities/logger";
 import type { inferRouterOutputs } from "@trpc/server";
 
@@ -51,42 +50,5 @@ export async function enrichEntryTools(registryClient: RegistryClient) {
 }
 
 async function fetchEntryTools(entry: Entry) {
-  const transport = entry.transport;
-  const client = new SimpleClient(`${entry.name}-client`);
-
-  if (transport.type === "stdio") {
-    await client.connectToStdio(transport.command, transport.args, {
-      ...(process.env as Record<string, string>),
-      ...transport.env,
-    });
-  } else if (transport.type === "http") {
-    await client.connectToHTTP(transport.url);
-  } else {
-    return [];
-  }
-
-  logger.info(`connected to ${entry.name}, fetching tools...`);
-  const tools = (await client.listTools()).tools.map(
-    ({ name, description, inputSchema }) => ({
-      name,
-      description: description ?? "",
-      inputSchema: {
-        type: "object",
-        properties: (inputSchema?.properties ?? {}) as Record<
-          string,
-          {
-            type?: string;
-            description?: string;
-            default?: unknown;
-            title?: string;
-            anyOf?: unknown;
-          }
-        >,
-        required: inputSchema?.required,
-      },
-    }),
-  );
-  logger.info(`closing client ${entry.name}`);
-  await client.close();
-  return tools;
+  return await [];
 }

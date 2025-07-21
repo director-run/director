@@ -1,4 +1,6 @@
-import { SimpleClient } from "@director.run/mcp/simple-client";
+import { HTTPClient } from "@director.run/mcp/client/http-client";
+import { StdioClient } from "@director.run/mcp/client/stdio-client";
+
 import { getLogger } from "@director.run/utilities/logger";
 import type { inferRouterOutputs } from "@trpc/server";
 import type { RegistryClient } from "../client";
@@ -51,15 +53,19 @@ export async function enrichEntryTools(registryClient: RegistryClient) {
 
 async function fetchEntryTools(entry: Entry) {
   const transport = entry.transport;
-  const client = new SimpleClient(`${entry.name}-client`);
+  let client: HTTPClient | StdioClient;
 
   if (transport.type === "stdio") {
-    await client.connectToStdio(transport.command, transport.args, {
-      ...(process.env as Record<string, string>),
-      ...transport.env,
-    });
+    client = await StdioClient.createAndConnectToStdio(
+      transport.command,
+      transport.args,
+      {
+        ...(process.env as Record<string, string>),
+        ...transport.env,
+      },
+    );
   } else if (transport.type === "http") {
-    await client.connectToHTTP(transport.url);
+    client = await HTTPClient.createAndConnectToHTTP(transport.url);
   } else {
     return [];
   }

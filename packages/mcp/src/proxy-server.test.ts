@@ -60,8 +60,8 @@ describe("ProxyServer", () => {
     await sseServerInstance.close();
   });
 
-  describe("add_prefix feature", () => {
-    test("should prefix tool names when add_prefix is true", async () => {
+  describe("tool prefixing", () => {
+    test("should not prefix tool names when addToolPrefix = false", async () => {
       const streamableServer = await serveOverStreamable(
         makeEchoServer(),
         4524,
@@ -152,7 +152,7 @@ describe("ProxyServer", () => {
       await streamableServer.close();
     });
 
-    test("should handle multiple servers with add_prefix enabled", async () => {
+    test("should prefix tool names when addToolPrefix = true", async () => {
       const server1 = await serveOverStreamable(makeEchoServer(), 4527);
       const server2 = await serveOverStreamable(makeFooBarServer(), 4528);
 

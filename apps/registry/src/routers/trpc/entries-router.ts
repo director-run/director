@@ -138,7 +138,9 @@ export function createEntriesRouter({ store }: { store: Store }) {
 
     populate: protectedProcedure
       .input(z.object({}))
-      .mutation(() => store.entries.addEntries(entries)),
+      .mutation(() =>
+        store.entries.addEntries(entries, { state: "published" }),
+      ),
 
     enrich: protectedProcedure.input(z.object({})).mutation(async () => {
       await enrichEntries(store);

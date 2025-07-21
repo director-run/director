@@ -61,8 +61,8 @@ describe("Entries Router", () => {
         const stats = await authenticatedClient.entries.stats.query({});
 
         expect(stats).toHaveProperty("total", 14);
-        expect(stats).toHaveProperty("draft", 14);
-        expect(stats).toHaveProperty("published", 0);
+        expect(stats).toHaveProperty("draft", 0);
+        expect(stats).toHaveProperty("published", 14);
       });
     });
 

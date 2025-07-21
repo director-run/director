@@ -9,53 +9,39 @@ const logger = getLogger("client/in-memory");
 
 export class InMemoryClient extends AbstractClient {
   private server: Server;
-  //   private serverTransport: InMemoryTransport;
-  //   private clientTransport: InMemoryTransport;
+  private serverTransport: InMemoryTransport;
+  private clientTransport: InMemoryTransport;
 
-  constructor(params: { name: string; server: Server }) {
+  constructor(params: {
+    name: string;
+    server: Server;
+  }) {
+    const [clientTransport, serverTransport] =
+      InMemoryTransport.createLinkedPair();
+
     super(params.name);
     this.server = params.server;
+    this.serverTransport = serverTransport;
+    this.clientTransport = clientTransport;
   }
-
-  //   public static async createAndConnectToServer(
-  //     server: Server,
-  //   ): Promise<InMemoryClient> {
-  //     const client = new InMemoryClient({ name: "test client", server });
-  //     await client.connectToTarget({ throwOnError: true });
-  //     return client;
-  //   }
 
   public static async createAndConnectToServer(
     server: Server,
   ): Promise<InMemoryClient> {
-    const [clientTransport, serverTransport] =
-      InMemoryTransport.createLinkedPair();
+    const client = new InMemoryClient({
+      name: "test client",
+      server,
+    });
 
-    const client = new InMemoryClient({ name: "test client", server });
-
-    await Promise.all([
-      client.connect(clientTransport),
-      server.connect(serverTransport),
-    ]);
+    await client.connectToTarget({ throwOnError: true });
 
     return client;
   }
 
   public async connectToTarget({ throwOnError }: { throwOnError: boolean }) {
-    const [clientTransport, serverTransport] =
-      InMemoryTransport.createLinkedPair();
-
-    console.log("-------- connecting to server --------");
-
-    const client = new InMemoryClient({
-      name: "test client",
-      server: this.server,
-    });
-
     await Promise.all([
-      client.connect(clientTransport),
-      this.server.connect(serverTransport),
+      this.connect(this.clientTransport),
+      this.server.connect(this.serverTransport),
     ]);
-    console.log("-------- connecting to server --------");
   }
 }

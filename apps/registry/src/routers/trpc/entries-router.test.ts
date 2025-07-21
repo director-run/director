@@ -158,7 +158,9 @@ describe("Entries Router", () => {
   describe("public endpoints", () => {
     beforeEach(async () => {
       await registry.store.purge();
-      await registry.store.entries.addEntries(makeTestEntries(TOTAL_ENTRIES));
+      await registry.store.entries.addEntries(makeTestEntries(TOTAL_ENTRIES), {
+        state: "published",
+      });
     });
 
     describe("getTransportForEntry", () => {
@@ -277,7 +279,69 @@ describe("Entries Router", () => {
     });
 
     describe("getEntries", () => {
-      it.skip("should handle search query correctly", async () => {});
+      it("should handle search query correctly", async () => {
+        // Add a few published entries and one with a unique name/description
+        await registry.store.purge();
+        await registry.store.entries.addEntries(
+          [
+            makeTestEntry({
+              name: "alpha",
+              description: "foo",
+              state: "published",
+            }),
+            makeTestEntry({
+              name: "beta",
+              description: "bar",
+              state: "published",
+            }),
+            makeTestEntry({
+              name: "gamma",
+              description: "baz",
+              state: "published",
+            }),
+          ],
+          { ignoreDuplicates: false },
+        );
+        // Search for 'alpha' (should match one entry)
+        const result = await unauthenticatedClient.entries.getEntries.query({
+          pageIndex: 0,
+          pageSize: 10,
+          searchQuery: "alpha",
+        });
+        expect(result.entries.length).toBe(1);
+        expect(result.entries[0].name).toBe("alpha");
+        // Search for 'ba' (should match beta and gamma by description)
+        const result2 = await unauthenticatedClient.entries.getEntries.query({
+          pageIndex: 0,
+          pageSize: 10,
+          searchQuery: "ba",
+        });
+        const names = result2.entries.map((e) => e.name);
+        expect(names).toContain("beta");
+        expect(names).toContain("gamma");
+      });
+
+      it("should not return draft entries", async () => {
+        await registry.store.purge();
+        await registry.store.entries.addEntries(
+          [
+            makeTestEntry({ name: "published-entry", state: "published" }),
+            makeTestEntry({ name: "draft-entry", state: "draft" }),
+          ],
+          { ignoreDuplicates: false },
+        );
+        const result = await unauthenticatedClient.entries.getEntries.query({
+          pageIndex: 0,
+          pageSize: 10,
+        });
+        expect(result.entries.length).toBe(1);
+        expect(result.entries[0].name).toBe("published-entry");
+        // Ensure no draft entries are returned
+        expect(result.entries.some((e) => e.name === "draft-entry")).toBe(
+          false,
+        );
+      });
+
       it("should handle pagination correctly", async () => {
         // Test first page
         const result1 = await unauthenticatedClient.entries.getEntries.query({

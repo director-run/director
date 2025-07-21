@@ -95,7 +95,12 @@ export function createEntriesRouter({ store }: { store: Store }) {
           searchQuery: z.string().trim().optional(),
         }),
       )
-      .query(({ input }) => store.entries.paginateEntries(input)),
+      .query(({ input }) =>
+        store.entries.paginateEntries({
+          ...input,
+          state: "published",
+        }),
+      ),
 
     getEntryByName: t.procedure
       .input(z.object({ name: z.string() }))

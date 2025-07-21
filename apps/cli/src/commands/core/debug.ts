@@ -1,5 +1,5 @@
 import { resetAllClients } from "@director.run/client-configurator/index";
-import { SimpleClient } from "@director.run/mcp/simple-client";
+import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { whiteBold } from "@director.run/utilities/cli/colors";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
@@ -13,8 +13,9 @@ export function registerDebugCommands(program: DirectorCommand) {
     .description("Run a high level test of a proxy")
     .action(
       actionWithErrorHandler(async (proxyId: string) => {
-        const client = new SimpleClient("proxy-test-client");
-        await client.connectToHTTP(joinURL(env.GATEWAY_URL, `${proxyId}/mcp`));
+        const client = await HTTPClient.createAndConnectToHTTP(
+          joinURL(env.GATEWAY_URL, `${proxyId}/mcp`),
+        );
         const { tools } = await client.listTools();
 
         console.log();

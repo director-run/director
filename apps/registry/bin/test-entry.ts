@@ -1,6 +1,6 @@
 import { createGatewayClient } from "@director.run/gateway/client";
 import { getStreamablePathForProxy } from "@director.run/gateway/helpers";
-import { SimpleClient } from "@director.run/mcp/simple-client";
+import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { blue, yellow } from "@director.run/utilities/cli/colors";
 import { makeTable } from "@director.run/utilities/cli/index";
 import { getLogger } from "@director.run/utilities/logger";
@@ -77,7 +77,7 @@ export async function runInteractiveTestForEntry({
     },
   });
   logger.info("creating mcp client & listing tools...");
-  const mcpClient = await SimpleClient.createAndConnectToHTTP(
+  const mcpClient = await HTTPClient.createAndConnectToHTTP(
     joinURL(gatewayUrl, getStreamablePathForProxy(proxy.id)),
   );
 

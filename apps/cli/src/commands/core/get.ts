@@ -24,13 +24,13 @@ export function registerGetCommand(program: DirectorCommand) {
         table.push(
           ...proxy.targets.map((target) => [
             target.name,
-            target.transport.type,
-            target.transport.type === "http"
-              ? target.transport.url
-              : [
-                  target.transport.command,
-                  ...(target.transport.args ?? []),
-                ].join(" "),
+            // target.transport.type,
+            // target.transport.type === "http"
+            //   ? target.transport.url
+            //   : [
+            //       target.transport.command,
+            //       ...(target.transport.args ?? []),
+            //     ].join(" "),
             target.status,
           ]),
         );

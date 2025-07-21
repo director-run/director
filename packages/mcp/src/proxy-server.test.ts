@@ -1,7 +1,7 @@
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { describe, expect, test } from "vitest";
+import { InMemoryClient } from "./client/in-memory-client";
 import { ProxyServer } from "./proxy-server";
-import { SimpleClient } from "./simple-client";
 import {
   makeEchoServer,
   makeFooBarServer,
@@ -20,7 +20,7 @@ describe("ProxyServer", () => {
       });
       await proxy.connectTargets();
 
-      const client = await SimpleClient.createAndConnectToServer(proxy);
+      const client = await InMemoryClient.createAndConnectToServer(proxy);
       const tools = await client.listTools();
 
       expect(tools.tools).toHaveLength(1);
@@ -49,7 +49,7 @@ describe("ProxyServer", () => {
 
     await proxy.connectTargets();
 
-    const client = await SimpleClient.createAndConnectToServer(proxy);
+    const client = await InMemoryClient.createAndConnectToServer(proxy);
     const tools = await client.listTools();
 
     expect(tools.tools).toHaveLength(2);
@@ -91,7 +91,7 @@ describe("ProxyServer", () => {
 
       await proxy.connectTargets();
 
-      const client = await SimpleClient.createAndConnectToServer(proxy);
+      const client = await InMemoryClient.createAndConnectToServer(proxy);
       const tools = await client.listTools();
 
       expect(tools.tools).toHaveLength(2);
@@ -135,7 +135,7 @@ describe("ProxyServer", () => {
 
       await proxy.connectTargets();
 
-      const client = await SimpleClient.createAndConnectToServer(proxy);
+      const client = await InMemoryClient.createAndConnectToServer(proxy);
 
       // List tools first to populate the mapping
       await client.listTools();
@@ -180,7 +180,7 @@ describe("ProxyServer", () => {
 
       await proxy.connectTargets();
 
-      const client = await SimpleClient.createAndConnectToServer(proxy);
+      const client = await InMemoryClient.createAndConnectToServer(proxy);
       const tools = await client.listTools();
 
       expect(tools.tools).toHaveLength(2);
@@ -220,7 +220,7 @@ describe("ProxyServer", () => {
 
       await proxy.connectTargets();
 
-      const client = await SimpleClient.createAndConnectToServer(proxy);
+      const client = await InMemoryClient.createAndConnectToServer(proxy);
       const tools = await client.listTools();
 
       expect(tools.tools).toHaveLength(2);

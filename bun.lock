@@ -12,7 +12,7 @@
     },
     "apps/cli": {
       "name": "@director.run/cli",
-      "version": "0.0.47",
+      "version": "0.0.49",
       "bin": {
         "director": "./dist/cli.js",
       },
@@ -139,7 +139,7 @@
     },
     "apps/sdk": {
       "name": "@director.run/sdk",
-      "version": "0.0.4",
+      "version": "0.0.13",
       "devDependencies": {
         "@director.run/gateway": "workspace:*",
         "@director.run/registry": "workspace:*",

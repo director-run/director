@@ -6,6 +6,7 @@ import {
   requiredStringSchema,
   toolSchema,
 } from "@director.run/utilities/schema";
+import { proxyTransport } from "@director.run/utilities/schema";
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
 import { protectedProcedure } from ".";
@@ -95,7 +96,12 @@ export function createEntriesRouter({ store }: { store: Store }) {
           searchQuery: z.string().trim().optional(),
         }),
       )
-      .query(({ input }) => store.entries.paginateEntries(input)),
+      .query(({ input }) =>
+        store.entries.paginateEntries({
+          ...input,
+          state: "published",
+        }),
+      ),
 
     getEntryByName: t.procedure
       .input(z.object({ name: z.string() }))
@@ -125,6 +131,7 @@ export function createEntriesRouter({ store }: { store: Store }) {
           lastConnectionAttemptedAt: z.date().optional(),
           lastConnectionError: z.string().optional(),
           tools: z.array(toolSchema).optional(),
+          transport: proxyTransport.optional(),
         }),
       )
       .mutation(async ({ input }) => {
@@ -133,12 +140,15 @@ export function createEntriesRouter({ store }: { store: Store }) {
           lastConnectionAttemptedAt: input.lastConnectionAttemptedAt,
           lastConnectionError: input.lastConnectionError,
           tools: input.tools,
+          transport: input.transport,
         });
       }),
 
     populate: protectedProcedure
       .input(z.object({}))
-      .mutation(() => store.entries.addEntries(entries)),
+      .mutation(() =>
+        store.entries.addEntries(entries, { state: "published" }),
+      ),
 
     enrich: protectedProcedure.input(z.object({})).mutation(async () => {
       await enrichEntries(store);

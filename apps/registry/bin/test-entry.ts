@@ -18,7 +18,7 @@ const logger = getLogger("registry-qa-test");
 const GATEWAY_URL = "http://localhost:3673";
 
 async function main() {
-  const entry = entries[entries.length - 1];
+  const entry = entries[1];
   await runInteractiveTestForEntry({
     entry,
     gatewayUrl: GATEWAY_URL,

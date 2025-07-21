@@ -1,4 +1,5 @@
 import { enrichEntryTools } from "@director.run/registry/enrichment/enrich-tools";
+import { enrichEntryTransports } from "@director.run/registry/enrichment/enrich-transports";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { spinnerWrap } from "@director.run/utilities/cli/loader";
@@ -134,6 +135,23 @@ export function registerRegistryCommands(program: DirectorCommand) {
           return;
         }
         await enrichEntryTools(registryClient);
+      }),
+    );
+
+  command
+    .debugCommand("enrich-transports")
+    .description("Enrich entry transports")
+    .action(
+      actionWithErrorHandler(async () => {
+        const answer = await confirm({
+          message: "are you sure you want to do this?",
+          default: false,
+        });
+
+        if (!answer) {
+          return;
+        }
+        await enrichEntryTransports(registryClient);
       }),
     );
 

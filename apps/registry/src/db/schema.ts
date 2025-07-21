@@ -6,12 +6,15 @@ import type {
 import type { InferInsertModel } from "drizzle-orm";
 import {
   boolean,
+  integer,
   jsonb,
   pgTable,
   text,
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
+
+export type EntryState = "draft" | "published" | "archived";
 
 export const entriesTable = pgTable("entries", {
   // **
@@ -27,10 +30,19 @@ export const entriesTable = pgTable("entries", {
   createdAt: timestamp("created_at").defaultNow(),
   isOfficial: boolean("is_official").default(false), // Is it a servers that is officially supported by the companies or makers of the service
   isEnriched: boolean("is_enriched").default(false), // Has the entry been enriched?
+  isFeatured: boolean("is_featured").default(false), // Has the entry been enriched?
   isConnectable: boolean("is_connectable").default(false), // Has the entry been enriched?
   lastConnectionAttemptedAt: timestamp("last_connection_attempted_at"),
   lastConnectionError: text("last_connection_error"),
+  state: varchar("state", { length: 255 })
+    .notNull()
+    .default("draft")
+    .$type<EntryState>(),
 
+  // Metrics & Metadata
+  githubStarCount: integer("github_star_count").default(0),
+  downloadCount: integer("download_count").default(0),
+  metadata: jsonb("metadata"),
   // **
   // ** Transport
   // **

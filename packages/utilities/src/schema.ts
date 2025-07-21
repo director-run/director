@@ -88,6 +88,7 @@ export const registryEntrySchema = z.object({
   tools: z.array(toolSchema).nullable().default(null),
   parameters: z.array(entryParameterSchema),
   readme: optionalStringSchema,
+  state: z.enum(["draft", "published", "archived"]),
 });
 
 export type RegistryEntry = z.infer<typeof registryEntrySchema>;

@@ -1,6 +1,10 @@
-import { asc, count, eq, inArray, or, sql } from "drizzle-orm";
+import { and, asc, count, eq, inArray, or, sql } from "drizzle-orm";
 import { DatabaseConnection } from "./index";
-import { type EntryCreateParams, entriesTable } from "./schema";
+import {
+  type EntryCreateParams,
+  type EntryState,
+  entriesTable,
+} from "./schema";
 
 export class EntryStore {
   constructor(private readonly db: DatabaseConnection) {}
@@ -51,6 +55,7 @@ export class EntryStore {
         lastConnectionError: entriesTable.lastConnectionError,
         lastConnectionAt: entriesTable.lastConnectionAttemptedAt,
         tools: entriesTable.tools,
+        state: entriesTable.state,
       })
       .from(entriesTable);
 
@@ -60,6 +65,9 @@ export class EntryStore {
       connectionAttempted: entries.filter((e) => e.lastConnectionAt).length,
       connectable: entries.filter((e) => e.isConnectable).length,
       connectableError: entries.filter((e) => e.lastConnectionError).length,
+      published: entries.filter((e) => e.state === "published").length,
+      archived: entries.filter((e) => e.state === "archived").length,
+      draft: entries.filter((e) => e.state === "draft").length,
       tools: entries.filter((e) => e.tools?.length).length,
     };
   }
@@ -68,16 +76,36 @@ export class EntryStore {
     pageIndex: number;
     pageSize: number;
     searchQuery?: string;
+    state?: EntryState | EntryState[];
   }) {
-    const { pageIndex, pageSize } = params;
+    const { pageIndex, pageSize, state } = params;
     const offset = pageIndex * pageSize;
 
-    const whereSql = params.searchQuery
-      ? or(
-          sql`${entriesTable.name} ILIKE ${"%" + params.searchQuery + "%"}`,
-          sql`${entriesTable.description} ILIKE ${"%" + params.searchQuery + "%"}`,
-        )
-      : undefined;
+    let whereSql;
+    if (params.searchQuery && state) {
+      const search = or(
+        sql`${entriesTable.name} ILIKE ${"%" + params.searchQuery + "%"}`,
+        sql`${entriesTable.description} ILIKE ${"%" + params.searchQuery + "%"}`,
+      );
+      if (Array.isArray(state)) {
+        whereSql = and(search, inArray(entriesTable.state, state));
+      } else {
+        whereSql = and(search, eq(entriesTable.state, state));
+      }
+    } else if (params.searchQuery) {
+      whereSql = or(
+        sql`${entriesTable.name} ILIKE ${"%" + params.searchQuery + "%"}`,
+        sql`${entriesTable.description} ILIKE ${"%" + params.searchQuery + "%"}`,
+      );
+    } else if (state) {
+      if (Array.isArray(state)) {
+        whereSql = inArray(entriesTable.state, state);
+      } else {
+        whereSql = eq(entriesTable.state, state);
+      }
+    } else {
+      whereSql = undefined;
+    }
 
     const [entries, totalCount] = await Promise.all([
       this.db.db
@@ -94,6 +122,7 @@ export class EntryStore {
           tools: entriesTable.tools,
           parameters: entriesTable.parameters,
           icon: entriesTable.icon,
+          state: entriesTable.state,
         })
         .from(entriesTable)
         .where(whereSql)
@@ -126,6 +155,7 @@ export class EntryStore {
     entries: EntryCreateParams[],
     options: AddEntriesOptions = {
       ignoreDuplicates: true,
+      state: "draft",
     },
   ): Promise<{ status: "success"; countInserted: number }> {
     if (options.ignoreDuplicates) {
@@ -152,7 +182,11 @@ export class EntryStore {
       }
 
       await this.db.db.transaction(async (tx) => {
-        await tx.insert(entriesTable).values(newEntries);
+        await tx
+          .insert(entriesTable)
+          .values(
+            newEntries.map((entry) => ({ ...entry, state: options.state })),
+          );
       });
 
       return {
@@ -161,7 +195,15 @@ export class EntryStore {
       };
     } else {
       await this.db.db.transaction(async (tx) => {
-        await tx.insert(entriesTable).values(entries);
+        await tx
+          .insert(entriesTable)
+          .values(
+            entries.map((entry) =>
+              options.state !== undefined
+                ? { ...entry, state: options.state }
+                : entry,
+            ),
+          );
       });
 
       return {
@@ -181,4 +223,5 @@ export class EntryStore {
 
 interface AddEntriesOptions {
   ignoreDuplicates?: boolean;
+  state?: EntryState;
 }

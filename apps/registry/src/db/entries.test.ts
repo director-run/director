@@ -131,4 +131,89 @@ describe("queries", () => {
       expect(updatedEntry.title).toBe("new");
     });
   });
+
+  describe("paginateEntries", () => {
+    afterEach(async () => {
+      await store.entries.deleteAllEntries();
+    });
+
+    it("should search with no state", async () => {
+      const entries = [
+        makeTestEntry({ name: "alpha", description: "foo", state: "draft" }),
+        makeTestEntry({ name: "beta", description: "bar", state: "published" }),
+        makeTestEntry({ name: "gamma", description: "baz", state: "archived" }),
+      ];
+      await store.entries.addEntries(entries, { ignoreDuplicates: false });
+      // Search for 'alpha' (should match one entry regardless of state)
+      let result = await store.entries.paginateEntries({
+        pageIndex: 0,
+        pageSize: 10,
+        searchQuery: "alpha",
+      });
+      expect(result.entries.length).toBe(1);
+      expect(result.entries[0].name).toBe("alpha");
+      // Search for 'ba' (should match beta and gamma by description)
+      result = await store.entries.paginateEntries({
+        pageIndex: 0,
+        pageSize: 10,
+        searchQuery: "ba",
+      });
+      expect(result.entries.length).toBe(2);
+      const names = result.entries.map((e) => e.name);
+      expect(names).toContain("beta");
+      expect(names).toContain("gamma");
+    });
+
+    it("should search with a state", async () => {
+      const entries = [
+        makeTestEntry({ name: "alpha", description: "foo", state: "draft" }),
+        makeTestEntry({ name: "beta", description: "bar", state: "published" }),
+        makeTestEntry({ name: "gamma", description: "baz", state: "archived" }),
+      ];
+      await store.entries.addEntries(entries, { ignoreDuplicates: false });
+      // Search for 'ba' with state 'archived' (should match only gamma)
+      const result = await store.entries.paginateEntries({
+        pageIndex: 0,
+        pageSize: 10,
+        searchQuery: "ba",
+        state: "archived",
+      });
+      expect(result.entries.length).toBe(1);
+      expect(result.entries[0].name).toBe("gamma");
+      expect(result.entries[0].state).toBe("archived");
+    });
+
+    it("should filter by a single state", async () => {
+      const entries = [
+        makeTestEntry({ state: "draft" }),
+        makeTestEntry({ state: "published" }),
+        makeTestEntry({ state: "archived" }),
+      ];
+      await store.entries.addEntries(entries, { ignoreDuplicates: false });
+      const result = await store.entries.paginateEntries({
+        pageIndex: 0,
+        pageSize: 10,
+        state: "published",
+      });
+      expect(result.entries.length).toBe(1);
+      expect(result.entries[0].state).toBe("published");
+    });
+
+    it("should filter by multiple states", async () => {
+      const entries = [
+        makeTestEntry({ state: "draft" }),
+        makeTestEntry({ state: "published" }),
+        makeTestEntry({ state: "archived" }),
+      ];
+      await store.entries.addEntries(entries, { ignoreDuplicates: false });
+      const result = await store.entries.paginateEntries({
+        pageIndex: 0,
+        pageSize: 10,
+        state: ["published", "archived"],
+      });
+      expect(result.entries.length).toBe(2);
+      expect(result.entries.some((e) => e.state === "published")).toBe(true);
+      expect(result.entries.some((e) => e.state === "archived")).toBe(true);
+    });
+  });
 });

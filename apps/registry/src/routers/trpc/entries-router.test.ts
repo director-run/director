@@ -98,6 +98,10 @@ describe("Entries Router", () => {
           isConnectable: true,
           lastConnectionAttemptedAt: new Date(),
           lastConnectionError: "test",
+          transport: {
+            type: "http",
+            url: "http://new-url.com",
+          },
           tools: [
             {
               name: "test",
@@ -117,6 +121,10 @@ describe("Entries Router", () => {
         expect(updatedEntry.isConnectable).toBe(true);
         expect(updatedEntry.lastConnectionAttemptedAt).toBeDefined();
         expect(updatedEntry.lastConnectionError).toBe("test");
+        expect(updatedEntry.transport).toEqual({
+          type: "http",
+          url: "http://new-url.com",
+        });
         expect(updatedEntry.tools).toEqual([
           {
             name: "test",

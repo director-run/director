@@ -13,6 +13,8 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
+export type EntryState = "draft" | "published" | "archived";
+
 export const entriesTable = pgTable("entries", {
   // **
   // ** Primary Attributes
@@ -30,6 +32,10 @@ export const entriesTable = pgTable("entries", {
   isConnectable: boolean("is_connectable").default(false), // Has the entry been enriched?
   lastConnectionAttemptedAt: timestamp("last_connection_attempted_at"),
   lastConnectionError: text("last_connection_error"),
+  state: varchar("state", { length: 255 })
+    .notNull()
+    .default("draft")
+    .$type<EntryState>(),
 
   // **
   // ** Transport

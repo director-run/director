@@ -54,6 +54,18 @@ describe("Entries Router", () => {
       );
     });
 
+    describe("populate", () => {
+      it("should work", async () => {
+        await authenticatedClient.entries.purge.mutate({});
+        await authenticatedClient.entries.populate.mutate({});
+        const stats = await authenticatedClient.entries.stats.query({});
+
+        expect(stats).toHaveProperty("total", 14);
+        expect(stats).toHaveProperty("draft", 14);
+        expect(stats).toHaveProperty("published", 0);
+      });
+    });
+
     describe("update entry", () => {
       let entry: RegistryEntry;
 
@@ -135,6 +147,9 @@ describe("Entries Router", () => {
         connectionAttempted: 0,
         connectable: 0,
         connectableError: 0,
+        published: 0,
+        archived: 0,
+        draft: 0,
         tools: 0,
       });
     });

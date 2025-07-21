@@ -51,6 +51,7 @@ export class EntryStore {
         lastConnectionError: entriesTable.lastConnectionError,
         lastConnectionAt: entriesTable.lastConnectionAttemptedAt,
         tools: entriesTable.tools,
+        state: entriesTable.state,
       })
       .from(entriesTable);
 
@@ -60,6 +61,9 @@ export class EntryStore {
       connectionAttempted: entries.filter((e) => e.lastConnectionAt).length,
       connectable: entries.filter((e) => e.isConnectable).length,
       connectableError: entries.filter((e) => e.lastConnectionError).length,
+      published: entries.filter((e) => e.state === "published").length,
+      archived: entries.filter((e) => e.state === "archived").length,
+      draft: entries.filter((e) => e.state === "draft").length,
       tools: entries.filter((e) => e.tools?.length).length,
     };
   }

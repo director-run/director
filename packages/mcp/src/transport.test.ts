@@ -2,7 +2,10 @@ import type { Server } from "http";
 import path from "path";
 import type { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { SimpleClient } from "./simple-client";
+
+import { HTTPClient } from "./client/http-client";
+import { StdioClient } from "./client/stdio-client";
+
 import { SimpleServer } from "./simple-server";
 import { makeEchoServer } from "./test/fixtures";
 import { serveOverSSE, serveOverStreamable } from "./transport";
@@ -23,7 +26,7 @@ describe("transport", () => {
     });
 
     test("should create a server with a tool", async () => {
-      const client = await SimpleClient.createAndConnectToHTTP(
+      const client = await HTTPClient.createAndConnectToHTTP(
         "http://localhost:2345/mcp",
       );
 
@@ -36,7 +39,7 @@ describe("transport", () => {
   describe("serveOverStdio", () => {
     test("should expose a server over stdio", async () => {
       const basePath = __dirname;
-      const client = await SimpleClient.createAndConnectToStdio("bun", [
+      const client = await StdioClient.createAndConnectToStdio("bun", [
         "-e",
         `
             import { makeEchoServer } from '${path.join(basePath, "test/fixtures.ts")}'; 
@@ -54,7 +57,7 @@ describe("transport", () => {
     test("should expose a server over stdio", async () => {
       const server = makeEchoServer();
       const app = serveOverSSE(server, 3000);
-      const client = await SimpleClient.createAndConnectToHTTP(
+      const client = await HTTPClient.createAndConnectToHTTP(
         `http://localhost:3000/sse`,
       );
       const tools = await client.listTools();
@@ -71,7 +74,7 @@ describe("transport", () => {
       beforeAll(async () => {
         proxyTargetServerInstance = await serveOverSSE(makeEchoServer(), 4522);
         const basePath = __dirname;
-        client = await SimpleClient.createAndConnectToStdio("bun", [
+        client = await StdioClient.createAndConnectToStdio("bun", [
           "-e",
           `
             import { proxyHTTPToStdio } from '${path.join(basePath, "transport.ts")}'; 
@@ -107,7 +110,7 @@ describe("transport", () => {
           4522,
         );
         const basePath = __dirname;
-        client = await SimpleClient.createAndConnectToStdio("bun", [
+        client = await StdioClient.createAndConnectToStdio("bun", [
           "-e",
           `
             import { proxyHTTPToStdio } from '${path.join(basePath, "transport.ts")}'; 

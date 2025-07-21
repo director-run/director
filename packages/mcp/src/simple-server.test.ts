@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
-import { SimpleClient } from "./simple-client";
+import { InMemoryClient } from "./client/in-memory-client";
 import { SimpleServer } from "./simple-server";
 
 interface ToolResponse {
@@ -34,7 +34,7 @@ describe("SimpleServer", () => {
         });
       });
 
-    const client = await SimpleClient.createAndConnectToServer(server);
+    const client = await InMemoryClient.createAndConnectToServer(server);
     const tools = await client.listTools();
 
     expect(tools.tools).toHaveLength(1);
@@ -74,7 +74,7 @@ describe("SimpleServer", () => {
       .description("A test tool")
       .handle(() => Promise.resolve({ status: "success" }));
 
-    const client = await SimpleClient.createAndConnectToServer(server);
+    const client = await InMemoryClient.createAndConnectToServer(server);
 
     await expect(
       client.callTool({
@@ -89,7 +89,7 @@ describe("SimpleServer", () => {
 
   test("should throw an error if the tool is not defined", async () => {
     const server = new SimpleServer();
-    const client = await SimpleClient.createAndConnectToServer(server);
+    const client = await InMemoryClient.createAndConnectToServer(server);
 
     await expect(
       client.callTool({

@@ -17,7 +17,7 @@ const CALLBACK_URL = `http://localhost:${CALLBACK_PORT}/callback`;
 const logger = getLogger("examples/oauth");
 
 async function main(): Promise<void> {
-  const proxyTarget = new HTTPClient({
+  const httpTarget = new HTTPClient({
     name: "oauth-test-client",
     url: "https://mcp.notion.com/mcp",
     oauthProvider: createInMemoryOAuthProvider(
@@ -39,11 +39,11 @@ async function main(): Promise<void> {
   });
 
   try {
-    await proxyTarget.connectToTarget({
+    await httpTarget.connectToTarget({
       throwOnError: true,
     });
 
-    await runNotionMCPChecks(proxyTarget);
+    await runNotionMCPChecks(httpTarget);
   } catch (error) {
     console.error("❌ Connection failed:", error);
     process.exit(1);
@@ -51,7 +51,7 @@ async function main(): Promise<void> {
 
   process.on("SIGINT", () => {
     console.log("\n\nTiding up...");
-    proxyTarget.close();
+    httpTarget.close();
     process.exit(0);
   });
 }

@@ -1,6 +1,6 @@
 import { exec } from "node:child_process";
-import { createServer } from "node:http";
 import { URL } from "node:url";
+import express, { type Request, type Response } from "express";
 
 const CALLBACK_PORT = 8090;
 const CALLBACK_URL = `http://localhost:${CALLBACK_PORT}/callback`;
@@ -25,17 +25,12 @@ export async function openBrowser(url: string): Promise<void> {
  * Starts a temporary HTTP server to receive the OAuth callback
  */
 export function waitForOAuthCallback(port: number): Promise<string> {
-  return new Promise<string>((resolve, reject) => {
-    const server = createServer((req, res) => {
-      // Ignore favicon requests
-      if (req.url === "/favicon.ico") {
-        res.writeHead(404);
-        res.end();
-        return;
-      }
+  const app = express();
 
-      console.log(`📥 Received callback: ${req.url}`);
-      const parsedUrl = new URL(req.url || "", "http://localhost");
+  return new Promise<string>((resolve, reject) => {
+    app.get("/callback", (req: Request, res: Response) => {
+      console.log(`📥 Received callback: ${req.originalUrl}`);
+      const parsedUrl = new URL(req.originalUrl || "", "http://localhost");
       const code = parsedUrl.searchParams.get("code");
       const error = parsedUrl.searchParams.get("error");
 
@@ -43,8 +38,10 @@ export function waitForOAuthCallback(port: number): Promise<string> {
         console.log(
           `✅ Authorization code received: ${code?.substring(0, 10)}...`,
         );
-        res.writeHead(200, { "Content-Type": "text/html" });
-        res.end(`
+        res
+          .status(200)
+          .contentType("text/html")
+          .send(`
           <html>
             <body>
               <h1>Authorization Successful!</h1>
@@ -53,13 +50,14 @@ export function waitForOAuthCallback(port: number): Promise<string> {
             </body>
           </html>
         `);
-
         resolve(code);
         setTimeout(() => server.close(), 3000);
       } else if (error) {
         console.log(`❌ Authorization error: ${error}`);
-        res.writeHead(400, { "Content-Type": "text/html" });
-        res.end(`
+        res
+          .status(400)
+          .contentType("text/html")
+          .send(`
           <html>
             <body>
               <h1>Authorization Failed</h1>
@@ -70,14 +68,15 @@ export function waitForOAuthCallback(port: number): Promise<string> {
         reject(new Error(`OAuth authorization failed: ${error}`));
       } else {
         console.log(`❌ No authorization code or error in callback`);
-        res.writeHead(400);
-        res.end("Bad request");
+        res.status(400).send("Bad request");
         reject(new Error("No authorization code provided"));
       }
     });
 
-    server.listen(port, () => {
-      console.log(`OAuth callback server started on http://localhost:${port}`);
+    const server = app.listen(port, () => {
+      console.log(
+        `OAuth callback server (Express) started on http://localhost:${port}`,
+      );
     });
   });
 }

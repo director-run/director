@@ -16,6 +16,10 @@ export interface Server {
   package_name: string;
   package_download_count: number;
   EXPERIMENTAL_ai_generated_description: string;
+  remotes: {
+    url: string;
+    headers: Record<string, string>;
+  }[];
 }
 
 /**
@@ -184,7 +188,7 @@ export class PulseMCPClient {
   }
 
   async topMostStarredServers(
-    params: { count: number } = { count: 100 },
+    params: { count: number } = { count: 200 },
   ): Promise<Server[]> {
     const servers = await this.fetchAllServers();
     return servers
@@ -201,6 +205,10 @@ export function pulseMCPServersToCreateEntries(
       (server) =>
         server.source_code_url && server.source_code_url.includes("github.com"),
     )
+    .filter(
+      (server) =>
+        !(server.package_registry !== null && server.remotes.length === 0),
+    )
     .map((server) => {
       return {
         name: slugify(server.name)
@@ -208,10 +216,19 @@ export function pulseMCPServersToCreateEntries(
           .replace(/[\(|\)]/g, ""),
         title: server.name,
         description: server.short_description,
-        transport: {
-          type: "http",
-          url: "http://example.com",
-        },
+        transport:
+          server.remotes.length > 0
+            ? {
+                type: "http",
+                url: server.remotes[0].url,
+                headers: server.remotes[0].headers,
+              }
+            : {
+                type: "stdio",
+                command: server.package_registry === "npm" ? "npx" : "uvx",
+                args: [],
+                env: {},
+              },
         homepage: server.source_code_url,
         parameters: [],
       };

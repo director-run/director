@@ -1,0 +1,684 @@
+You are a helpful assistant that extracts model context prototcol (MCP) server configurations from github readmes.
+
+<rules>
+- Only use what is provided.
+- Ignore configuration for using with Smithery. This includes keys, envs and parameters.
+- Ignore configuration for local development
+- DO NOT MAKE ANYTHING UP and DOUBLE CHECK YOUR WORK
+- IGNORE DOCKER, SMITHERY
+</rules>
+
+<task-definition>
+Given the markdown content located in <provided_readme />:
+- ONLY USE THE CONTENT PROVIDED IN <provided_readme/>.
+- Extract the available transports for using the MCP server.
+  - FOCUS ON THE FOLLOWING PREFERRED TRANSPORT TYPE {PREFERRED_TRANSPORT}
+- Extract the parameters that a user should provide to configure both the `env` and `args` for the transport.
+  - The variables in `env` and `args` should be replaced with a template. The template is the parameter key in kebabcase wrapped in `<>`.
+  - if one of the args is a path placeholder (e.g. "/path/to/ntfy-mcp/build/index.js"), turn it into a parameter.
+  - If the value is a secret or password it should be set as `password` true.
+  - Do not include any parameters that aren't present in the `transport` configuration.
+- Return a JSON object following the schema provided below
+</task-definition>
+
+<schema>
+{
+  "type": "object",
+  "properties": {
+    "transports": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "transport": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "stdio"
+                  },
+                  "command": {
+                    "type": "string"
+                  },
+                  "args": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "env": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "default": {}
+                  }
+                },
+                "required": [
+                  "type",
+                  "command",
+                  "args"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "http"
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "headers": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "default": {}
+                  }
+                },
+                "required": [
+                  "type",
+                  "url"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          },
+          "parameters": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "required": {
+                  "type": "boolean"
+                },
+                "password": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "example": {
+                  "type": "string",
+                  "default": ""
+                },
+                "default": {
+                  "type": "string",
+                  "default": ""
+                }
+              },
+              "required": [
+                "name",
+                "type",
+                "description",
+                "required"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "transport",
+          "parameters"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "transports"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
+</schema>
+
+<examples>
+    <example>
+        <readme>
+            # Notion MCP Server
+
+            > [!NOTE] 
+            > 
+            > We’ve introduced **Notion MCP** (Beta), a remote MCP server with the following improvements:
+            > - Easy installation via standard OAuth. No need to fiddle with JSON or API token anymore.
+            > - Powerful tools tailored to AI agents. These tools are designed with optimized token consumption in mind.
+            > 
+            > Learn more and try it out [here](https://notion.notion.site/Beta-Overview-Notion-MCP-206efdeead058060a59bf2c14202bd0a)
+
+
+            ![notion-mcp-sm](https://github.com/user-attachments/assets/6c07003c-8455-4636-b298-d60ffdf46cd8)
+
+            This project implements an [MCP server](https://spec.modelcontextprotocol.io/) for the [Notion API](https://developers.notion.com/reference/intro). 
+
+            ![mcp-demo](https://github.com/user-attachments/assets/e3ff90a7-7801-48a9-b807-f7dd47f0d3d6)
+
+            ### Installation
+
+            #### 1. Setting up Integration in Notion:
+            Go to [https://www.notion.so/profile/integrations](https://www.notion.so/profile/integrations) and create a new **internal** integration or select an existing one.
+
+            ![Creating a Notion Integration token](docs/images/integrations-creation.png)
+
+            While we limit the scope of Notion API's exposed (for example, you will not be able to delete databases via MCP), there is a non-zero risk to workspace data by exposing it to LLMs. Security-conscious users may want to further configure the Integration's _Capabilities_. 
+
+            For example, you can create a read-only integration token by giving only "Read content" access from the "Configuration" tab:
+
+            ![Notion Integration Token Capabilities showing Read content checked](docs/images/integrations-capabilities.png)
+
+            #### 2. Connecting content to integration:
+            Ensure relevant pages and databases are connected to your integration.
+
+            To do this, visit the **Access** tab in your internal integration settings. Edit access and select the pages you'd like to use.
+            ![Integration Access tab](docs/images/integration-access.png)
+
+            ![Edit integration access](docs/images/page-access-edit.png)
+
+            Alternatively, you can grant page access individually. You'll need to visit the target page, and click on the 3 dots, and select "Connect to integration". 
+
+            ![Adding Integration Token to Notion Connections](docs/images/connections.png)
+
+            #### 3. Adding MCP config to your client:
+
+            ##### Using npm:
+
+            **Cursor & Claude:**
+
+            Add the following to your `.cursor/mcp.json` or `claude_desktop_config.json` (MacOS: `~/Library/Application\ Support/Claude/claude_desktop_config.json`)
+
+            ```javascript
+            {
+            "mcpServers": {
+                "notionApi": {
+                "command": "npx",
+                "args": ["-y", "@notionhq/notion-mcp-server"],
+                "env": {
+                    "OPENAPI_MCP_HEADERS": "{\"Authorization\": \"Bearer ntn_****\", \"Notion-Version\": \"2022-06-28\" }"
+                }
+                }
+            }
+            }
+            ```
+
+            **Zed**
+
+            Add the following to your `settings.json`
+
+            ```json
+            {
+            "context_servers": {
+                "some-context-server": {
+                "command": {
+                    "path": "npx",
+                    "args": ["-y", "@notionhq/notion-mcp-server"],
+                    "env": {
+                    "OPENAPI_MCP_HEADERS": "{\"Authorization\": \"Bearer ntn_****\", \"Notion-Version\": \"2022-06-28\" }"
+                    }
+                },
+                "settings": {}
+                }
+            }
+            }
+            ```
+
+            ##### Using Docker:
+
+            There are two options for running the MCP server with Docker:
+
+            ###### Option 1: Using the official Docker Hub image:
+
+            Add the following to your `.cursor/mcp.json` or `claude_desktop_config.json`:
+
+            ```javascript
+            {
+            "mcpServers": {
+                "notionApi": {
+                "command": "docker",
+                "args": [
+                    "run",
+                    "--rm",
+                    "-i",
+                    "-e", "OPENAPI_MCP_HEADERS",
+                    "mcp/notion"
+                ],
+                "env": {
+                    "OPENAPI_MCP_HEADERS": "{\"Authorization\":\"Bearer ntn_****\",\"Notion-Version\":\"2022-06-28\"}"
+                }
+                }
+            }
+            }
+            ```
+
+            This approach:
+            - Uses the official Docker Hub image
+            - Properly handles JSON escaping via environment variables
+            - Provides a more reliable configuration method
+
+            ###### Option 2: Building the Docker image locally:
+
+            You can also build and run the Docker image locally. First, build the Docker image:
+
+            ```bash
+            docker-compose build
+            ```
+
+            Then, add the following to your `.cursor/mcp.json` or `claude_desktop_config.json`:
+
+            ```javascript
+            {
+            "mcpServers": {
+                "notionApi": {
+                "command": "docker",
+                "args": [
+                    "run",
+                    "--rm",
+                    "-i",
+                    "-e",
+                    "OPENAPI_MCP_HEADERS={\"Authorization\": \"Bearer ntn_****\", \"Notion-Version\": \"2022-06-28\"}",
+                    "notion-mcp-server"
+                ]
+                }
+            }
+            }
+            ```
+
+            Don't forget to replace `ntn_****` with your integration secret. Find it from your integration configuration tab:
+
+            ![Copying your Integration token from the Configuration tab in the developer portal](https://github.com/user-attachments/assets/67b44536-5333-49fa-809c-59581bf5370a)
+
+
+            #### Installing via Smithery
+
+            [![smithery badge](https://smithery.ai/badge/@makenotion/notion-mcp-server)](https://smithery.ai/server/@makenotion/notion-mcp-server)
+
+            To install Notion API Server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@makenotion/notion-mcp-server):
+
+            ```bash
+            npx -y @smithery/cli install @makenotion/notion-mcp-server --client claude
+            ```
+
+            ### Examples
+
+            1. Using the following instruction
+            ```
+            Comment "Hello MCP" on page "Getting started"
+            ```
+
+            AI will correctly plan two API calls, `v1/search` and `v1/comments`, to achieve the task
+
+            2. Similarly, the following instruction will result in a new page named "Notion MCP" added to parent page "Development"
+            ```
+            Add a page titled "Notion MCP" to page "Development"
+            ```
+
+            3. You may also reference content ID directly
+            ```
+            Get the content of page 1a6b35e6e67f802fa7e1d27686f017f2
+            ```
+
+            ### Development
+
+            Build
+
+            ```
+            npm run build
+            ```
+
+            Execute
+
+            ```
+            npx -y --prefix /path/to/local/notion-mcp-server @notionhq/notion-mcp-server
+            ```
+
+            Publish
+
+            ```
+            npm publish --access public
+            ```
+        </readme>
+        <result>
+            {   
+                "transports": [{
+                    "transport": {
+                        "type": "stdio",
+                        "command": "npx",
+                        "args": ["-y", "@notionhq/notion-mcp-server"],
+                        "env": {
+                            "OPENAPI_MCP_HEADERS": "<OPENAPI_MCP_HEADERS>",
+                            "BASE_URL": "<BASE_URL>"
+                        }
+                    },
+                    "parameters": {
+                        "OPENAPI_MCP_HEADERS": {
+                            "type": "string",
+                            "required": true,
+                            "description": "JSON string for HTTP headers, must include Authorization and Notion-Version",
+                            "example": "{\"Authorization\": \"Bearer ntn_****\", \"Notion-Version\": \"2022-06-28\" }",
+                        },
+                        "BASE_URL": {
+                            "type": "string",
+                            "required": false,
+                            "description": "Optional override for Notion API base URL",
+                            "example": "https://api.notion.com"
+                        }
+                    }
+                }]
+            }
+        </result>
+    </example>
+    <example>
+        <readme>
+            # Filesystem MCP Server
+
+            Node.js server implementing Model Context Protocol (MCP) for filesystem operations.
+
+            ## Features
+
+            - Read/write files
+            - Create/list/delete directories
+            - Move files/directories
+            - Search files
+            - Get file metadata
+            - Dynamic directory access control via [Roots](https://modelcontextprotocol.io/docs/concepts/roots)
+
+            ## Directory Access Control
+
+            The server uses a flexible directory access control system. Directories can be specified via command-line arguments or dynamically via [Roots](https://modelcontextprotocol.io/docs/concepts/roots).
+
+            ### Method 1: Command-line Arguments
+            Specify Allowed directories when starting the server:
+            ```bash
+            mcp-server-filesystem /path/to/dir1 /path/to/dir2
+            ```
+
+            ### Method 2: MCP Roots (Recommended)
+            MCP clients that support [Roots](https://modelcontextprotocol.io/docs/concepts/roots) can dynamically update the Allowed directories. 
+
+            Roots notified by Client to Server, completely replace any server-side Allowed directories when provided.
+
+            **Important**: If server starts without command-line arguments AND client doesn't support roots protocol (or provides empty roots), the server will throw an error during initialization.
+
+            This is the recommended method, as this enables runtime directory updates via `roots/list_changed` notifications without server restart, providing a more flexible and modern integration experience.
+
+            ### How It Works
+
+            The server's directory access control follows this flow:
+
+            1. **Server Startup**
+            - Server starts with directories from command-line arguments (if provided)
+            - If no arguments provided, server starts with empty allowed directories
+
+            2. **Client Connection & Initialization**
+            - Client connects and sends `initialize` request with capabilities
+            - Server checks if client supports roots protocol (`capabilities.roots`)
+            
+            3. **Roots Protocol Handling** (if client supports roots)
+            - **On initialization**: Server requests roots from client via `roots/list`
+            - Client responds with its configured roots
+            - Server replaces ALL allowed directories with client's roots
+            - **On runtime updates**: Client can send `notifications/roots/list_changed`
+            - Server requests updated roots and replaces allowed directories again
+
+            4. **Fallback Behavior** (if client doesn't support roots)
+            - Server continues using command-line directories only
+            - No dynamic updates possible
+
+            5. **Access Control**
+            - All filesystem operations are restricted to allowed directories
+            - Use `list_allowed_directories` tool to see current directories
+            - Server requires at least ONE allowed directory to operate
+
+            **Note**: The server will only allow operations within directories specified either via `args` or via Roots.
+
+
+
+            ## API
+
+            ### Resources
+
+            - `file://system`: File system operations interface
+
+            ### Tools
+
+            - **read_file**
+            - Read complete contents of a file
+            - Input: `path` (string)
+            - Reads complete file contents with UTF-8 encoding
+
+            - **read_multiple_files**
+            - Read multiple files simultaneously
+            - Input: `paths` (string[])
+            - Failed reads won't stop the entire operation
+
+            - **write_file**
+            - Create new file or overwrite existing (exercise caution with this)
+            - Inputs:
+                - `path` (string): File location
+                - `content` (string): File content
+
+            - **edit_file**
+            - Make selective edits using advanced pattern matching and formatting
+            - Features:
+                - Line-based and multi-line content matching
+                - Whitespace normalization with indentation preservation
+                - Multiple simultaneous edits with correct positioning
+                - Indentation style detection and preservation
+                - Git-style diff output with context
+                - Preview changes with dry run mode
+            - Inputs:
+                - `path` (string): File to edit
+                - `edits` (array): List of edit operations
+                - `oldText` (string): Text to search for (can be substring)
+                - `newText` (string): Text to replace with
+                - `dryRun` (boolean): Preview changes without applying (default: false)
+            - Returns detailed diff and match information for dry runs, otherwise applies changes
+            - Best Practice: Always use dryRun first to preview changes before applying them
+
+            - **create_directory**
+            - Create new directory or ensure it exists
+            - Input: `path` (string)
+            - Creates parent directories if needed
+            - Succeeds silently if directory exists
+
+            - **list_directory**
+            - List directory contents with [FILE] or [DIR] prefixes
+            - Input: `path` (string)
+
+            - **move_file**
+            - Move or rename files and directories
+            - Inputs:
+                - `source` (string)
+                - `destination` (string)
+            - Fails if destination exists
+
+            - **search_files**
+            - Recursively search for files/directories
+            - Inputs:
+                - `path` (string): Starting directory
+                - `pattern` (string): Search pattern
+                - `excludePatterns` (string[]): Exclude any patterns. Glob formats are supported.
+            - Case-insensitive matching
+            - Returns full paths to matches
+
+            - **get_file_info**
+            - Get detailed file/directory metadata
+            - Input: `path` (string)
+            - Returns:
+                - Size
+                - Creation time
+                - Modified time
+                - Access time
+                - Type (file/directory)
+                - Permissions
+
+            - **list_allowed_directories**
+            - List all directories the server is allowed to access
+            - No input required
+            - Returns:
+                - Directories that this server can read/write from
+
+            ## Usage with Claude Desktop
+            Add this to your `claude_desktop_config.json`:
+
+            Note: you can provide sandboxed directories to the server by mounting them to `/projects`. Adding the `ro` flag will make the directory readonly by the server.
+
+            ### Docker
+            Note: all directories must be mounted to `/projects` by default.
+
+            ```json
+            {
+            "mcpServers": {
+                "filesystem": {
+                "command": "docker",
+                "args": [
+                    "run",
+                    "-i",
+                    "--rm",
+                    "--mount", "type=bind,src=/Users/username/Desktop,dst=/projects/Desktop",
+                    "--mount", "type=bind,src=/path/to/other/allowed/dir,dst=/projects/other/allowed/dir,ro",
+                    "--mount", "type=bind,src=/path/to/file.txt,dst=/projects/path/to/file.txt",
+                    "mcp/filesystem",
+                    "/projects"
+                ]
+                }
+            }
+            }
+            ```
+
+            ### NPX
+
+            ```json
+            {
+            "mcpServers": {
+                "filesystem": {
+                "command": "npx",
+                "args": [
+                    "-y",
+                    "@modelcontextprotocol/server-filesystem",
+                    "/Users/username/Desktop",
+                    "/path/to/other/allowed/dir"
+                ]
+                }
+            }
+            }
+            ```
+
+            ## Usage with VS Code
+
+            For quick installation, click the installation buttons below...
+
+            [![Install with NPX in VS Code](https://img.shields.io/badge/VS_Code-NPM-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=filesystem&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22%40modelcontextprotocol%2Fserver-filesystem%22%2C%22%24%7BworkspaceFolder%7D%22%5D%7D) [![Install with NPX in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-NPM-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=filesystem&config=%7B%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22%40modelcontextprotocol%2Fserver-filesystem%22%2C%22%24%7BworkspaceFolder%7D%22%5D%7D&quality=insiders)
+
+            [![Install with Docker in VS Code](https://img.shields.io/badge/VS_Code-Docker-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=filesystem&config=%7B%22command%22%3A%22docker%22%2C%22args%22%3A%5B%22run%22%2C%22-i%22%2C%22--rm%22%2C%22--mount%22%2C%22type%3Dbind%2Csrc%3D%24%7BworkspaceFolder%7D%2Cdst%3D%2Fprojects%2Fworkspace%22%2C%22mcp%2Ffilesystem%22%2C%22%2Fprojects%22%5D%7D) [![Install with Docker in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Docker-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=filesystem&config=%7B%22command%22%3A%22docker%22%2C%22args%22%3A%5B%22run%22%2C%22-i%22%2C%22--rm%22%2C%22--mount%22%2C%22type%3Dbind%2Csrc%3D%24%7BworkspaceFolder%7D%2Cdst%3D%2Fprojects%2Fworkspace%22%2C%22mcp%2Ffilesystem%22%2C%22%2Fprojects%22%5D%7D&quality=insiders)
+
+            For manual installation, add the following JSON block to your User Settings (JSON) file in VS Code. You can do this by pressing `Ctrl + Shift + P` and typing `Preferences: Open Settings (JSON)`.
+
+            Optionally, you can add it to a file called `.vscode/mcp.json` in your workspace. This will allow you to share the configuration with others.
+
+            > Note that the `mcp` key is not needed in the `.vscode/mcp.json` file.
+
+            You can provide sandboxed directories to the server by mounting them to `/projects`. Adding the `ro` flag will make the directory readonly by the server.
+
+            ### Docker
+            Note: all directories must be mounted to `/projects` by default. 
+
+            ```json
+            {
+            "mcp": {
+                "servers": {
+                "filesystem": {
+                    "command": "docker",
+                    "args": [
+                    "run",
+                    "-i",
+                    "--rm",
+                    "--mount", "type=bind,src=${workspaceFolder},dst=/projects/workspace",
+                    "mcp/filesystem",
+                    "/projects"
+                    ]
+                }
+                }
+            }
+            }
+            ```
+
+            ### NPX
+
+            ```json
+            {
+            "mcp": {
+                "servers": {
+                "filesystem": {
+                    "command": "npx",
+                    "args": [
+                    "-y",
+                    "@modelcontextprotocol/server-filesystem",
+                    "${workspaceFolder}"
+                    ]
+                }
+                }
+            }
+            }
+            ```
+
+            ## Build
+
+            Docker build:
+
+            ```bash
+            docker build -t mcp/filesystem -f src/filesystem/Dockerfile .
+            ```
+
+            ## License
+
+            This MCP server is licensed under the MIT License. This means you are free to use, modify, and distribute the software, subject to the terms and conditions of the MIT License. For more details, please see the LICENSE file in the project repository.
+        </readme>
+        <result>
+            {   
+                "transports": [{
+                    "transport": {
+                        type: "stdio",
+                        command: "npx",
+                        args: [
+                            "-y",
+                            "@modelcontextprotocol/server-filesystem",
+                            "<fs-allowed-path>",
+                        ],
+                    },
+                    "parameters": {
+                    {
+                            name: "fs-allowed-path",
+                            description:
+                            "The path to the directory to allow filesystem operations in.",
+                            type: "string",
+                            required: true,
+                        },
+                    }
+                }]
+            }
+        </result>
+    </example>
+</examples>
+
+Here is the README you should use to create the configuration described all above.
+
+<provided_readme>
+{REPLACE_WITH_README}
+</provided_readme>
+
+<clean_up>
+- For `stdio` transports, remove any parameters that aren't included in the `transport.env`, `transport.args`
+- For `http` transports, remove any parameters that aren't included in the `transport.headers`.
+</clean_up>

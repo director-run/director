@@ -9,6 +9,8 @@ export const env = createEnv({
     PORT: z.number({ coerce: true }).default(3080),
     DATABASE_URL: z.string(),
     API_KEY: z.string().default(""),
+    OPENAI_API_KEY: z.string(),
+    GITHUB_API_TOKEN: z.string(),
   },
 });
 

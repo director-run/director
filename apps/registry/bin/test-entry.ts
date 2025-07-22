@@ -11,14 +11,18 @@ import { input, select } from "@inquirer/prompts";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import type { EntryCreateParams } from "../src/db/schema";
 import { substituteParameters } from "../src/routers/trpc/entries-router";
-import { entries } from "../src/seed/entries";
 
 const logger = getLogger("registry-qa-test");
 
 const GATEWAY_URL = "http://localhost:3673";
 
+const gatewayClient = createGatewayClient(GATEWAY_URL);
+
 async function main() {
-  const entry = entries[1];
+  const entry = await gatewayClient.registry.getEntryByName.query({
+    name: "browser-tools",
+  });
+
   await runInteractiveTestForEntry({
     entry,
     gatewayUrl: GATEWAY_URL,

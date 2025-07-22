@@ -2,6 +2,7 @@ import {
   type EntryParameter,
   type ProxyTransport,
   type RegistryEntry,
+  entryParameterSchema,
   optionalStringSchema,
   requiredStringSchema,
   toolSchema,
@@ -132,6 +133,7 @@ export function createEntriesRouter({ store }: { store: Store }) {
           lastConnectionError: z.string().optional(),
           tools: z.array(toolSchema).optional(),
           transport: proxyTransport.optional(),
+          parameters: z.array(entryParameterSchema).default([]).optional(),
         }),
       )
       .mutation(async ({ input }) => {
@@ -141,6 +143,7 @@ export function createEntriesRouter({ store }: { store: Store }) {
           lastConnectionError: input.lastConnectionError,
           tools: input.tools,
           transport: input.transport,
+          parameters: input.parameters,
         });
       }),
 

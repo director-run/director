@@ -1,7 +1,7 @@
 import { getLogger } from "@director.run/utilities/logger";
 import express, { type Request, type Response } from "express";
 
-const logger = getLogger("routers/oauth");
+const logger = getLogger("oauth/callback-router");
 
 export function createOauthCallbackRouter(params: {
   onAuthorizationSuccess: (code: string) => void;

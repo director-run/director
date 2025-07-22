@@ -1,4 +1,11 @@
 import { URL } from "node:url";
+import {
+  green,
+  red,
+  whiteBold,
+  yellow,
+} from "@director.run/utilities/cli/colors";
+import { getLogger } from "@director.run/utilities/logger";
 import { openUrl } from "@director.run/utilities/os";
 import { HTTPClient } from "../src/client/http-client";
 import { waitForOAuthCallback } from "../src/oauth/helpers";
@@ -7,6 +14,8 @@ import { createInMemoryOAuthProvider } from "../src/oauth/oauth-provider-factory
 const CALLBACK_PORT = 8090;
 const CALLBACK_URL = `http://localhost:${CALLBACK_PORT}/callback`;
 
+const logger = getLogger("examples/oauth");
+
 async function main(): Promise<void> {
   const proxyTarget = new HTTPClient({
     name: "oauth-test-client",
@@ -14,13 +23,17 @@ async function main(): Promise<void> {
     oauthProvider: createInMemoryOAuthProvider(
       CALLBACK_URL,
       (redirectUrl: URL) => {
-        console.log(`📌 OAuth redirect handler called - opening browser`);
-        console.log(`Opening browser to: ${redirectUrl.toString()}`);
+        logger.warn({
+          message: "oauth redirect handler called",
+          redirectUrl: redirectUrl.toString(),
+        });
         openUrl(redirectUrl.toString());
       },
     ),
     onAuthorizationRequired: async () => {
-      console.log("OAuth flow required - waiting for authorization...");
+      logger.warn({
+        message: "oauth flow required, waiting for callback",
+      });
       return await waitForOAuthCallback(CALLBACK_PORT);
     },
   });
@@ -30,38 +43,49 @@ async function main(): Promise<void> {
       throwOnError: true,
     });
 
-    console.log("proxyTarget.status", proxyTarget.status);
-
-    if (proxyTarget.status !== "connected") {
-      console.log("There was a connection issue...", proxyTarget.status);
-      process.exit(1);
-    }
-
-    const tools = await proxyTarget.listTools();
-    console.log("Available tools:", tools.tools?.length || 0);
-
-    if (tools.tools && tools.tools.length > 0) {
-      console.log("Tool names:", tools.tools.map((t) => t.name).join(", "));
-    }
-
-    const result = await proxyTarget.callTool({
-      name: "get-self",
-      arguments: {
-        // query: "Hello",
-      },
-    });
-
-    console.log(result);
+    await runNotionMCPChecks(proxyTarget);
   } catch (error) {
     console.error("❌ Connection failed:", error);
     process.exit(1);
   }
 
   process.on("SIGINT", () => {
-    console.log("\n\n👋 Goodbye!");
+    console.log("\n\nTiding up...");
     proxyTarget.close();
     process.exit(0);
   });
+}
+
+async function runNotionMCPChecks(client: HTTPClient) {
+  console.log("");
+  console.log(whiteBold("CLIENT CHECKS"));
+  console.log("");
+  console.log("");
+
+  const prefix = yellow(">>>> ");
+  console.log(
+    prefix,
+    "client.status =",
+    client.status === "connected" ? green(client.status) : red(client.status),
+  );
+
+  const tools = await client.listTools();
+  const countTools = tools.tools?.length || 0;
+  console.log(
+    prefix,
+    "tool count =",
+    countTools > 0 ? green(countTools.toString()) : red(countTools.toString()),
+  );
+
+  const result = (await client.callTool({
+    name: "get-self",
+    arguments: {},
+  })) as { content: { text: string }[] };
+
+  const self = result?.content[0]?.text || "{}";
+
+  console.log(prefix, "get-self() =", self);
+  console.log(green("ALL CHECKS PASSED!!!!"));
 }
 
 main();

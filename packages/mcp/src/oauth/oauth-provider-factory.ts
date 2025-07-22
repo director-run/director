@@ -1,3 +1,4 @@
+import { getLogger } from "@director.run/utilities/logger";
 import { type OAuthClientProvider } from "@modelcontextprotocol/sdk/client/auth.js";
 import {
   type OAuthClientInformation,
@@ -6,10 +7,8 @@ import {
   type OAuthTokens,
 } from "@modelcontextprotocol/sdk/shared/auth.js";
 
-/**
- * Creates a basic in-memory OAuth provider for testing and simple use cases.
- * For production use, use createPersistentOAuthProvider.
- */
+const logger = getLogger("oauth/provider");
+
 export function createInMemoryOAuthProvider(
   callbackUrl: string,
   onRedirect?: (url: URL) => void,
@@ -52,17 +51,17 @@ class InMemoryOAuthProvider implements OAuthClientProvider {
   }
 
   saveClientInformation(clientInformation: OAuthClientInformationFull): void {
-    console.log("saveClientInformation", clientInformation);
+    logger.info({ message: "saveClientInformation", clientInformation });
     this._clientInformation = clientInformation;
   }
 
   tokens(): OAuthTokens | undefined {
-    console.log("getting tokens...");
+    logger.info("getting tokens...");
     return this._tokens;
   }
 
   saveTokens(tokens: OAuthTokens): void {
-    console.log("Saving tokens", tokens);
+    logger.info("saving tokens");
     this._tokens = tokens;
   }
 
@@ -70,12 +69,12 @@ class InMemoryOAuthProvider implements OAuthClientProvider {
     if (this._onRedirect) {
       this._onRedirect(authorizationUrl);
     } else {
-      console.log(`OAuth redirect required: ${authorizationUrl.toString()}`);
+      logger.info(`oauth redirect required: ${authorizationUrl.toString()}`);
     }
   }
 
   saveCodeVerifier(codeVerifier: string): void {
-    console.log("saving code verifier", codeVerifier);
+    logger.info({ message: "saving code verifier", codeVerifier });
     this._codeVerifier = codeVerifier;
   }
 

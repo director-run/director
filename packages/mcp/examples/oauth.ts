@@ -7,9 +7,6 @@ import { createInMemoryOAuthProvider } from "../src/oauth/oauth-provider-factory
 const CALLBACK_PORT = 8090;
 const CALLBACK_URL = `http://localhost:${CALLBACK_PORT}/callback`;
 
-/**
- * Main OAuth test function
- */
 async function main(): Promise<void> {
   const proxyTarget = new HTTPClient({
     name: "oauth-test-client",
@@ -40,9 +37,6 @@ async function main(): Promise<void> {
       process.exit(1);
     }
 
-    // console.log("✅ Connected successfully with OAuth!");
-
-    // Test the connection by listing tools
     const tools = await proxyTarget.listTools();
     console.log("Available tools:", tools.tools?.length || 0);
 

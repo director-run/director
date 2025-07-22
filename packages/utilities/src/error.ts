@@ -32,6 +32,13 @@ export function isAppError(error: unknown): error is AppError {
   return error instanceof AppError;
 }
 
+export function isAppErrorWithCode(
+  error: unknown,
+  code: ErrorCode,
+): error is AppError {
+  return isAppError(error) && error.code === code;
+}
+
 export function isExpressError(error: unknown): error is ExpressError {
   return (
     error instanceof Error &&

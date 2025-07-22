@@ -5,6 +5,7 @@ import {
   whiteBold,
   yellow,
 } from "@director.run/utilities/cli/colors";
+import { ErrorCode, isAppErrorWithCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { openUrl } from "@director.run/utilities/os";
 import { HTTPClient } from "../src/client/http-client";
@@ -39,15 +40,40 @@ async function main(): Promise<void> {
   });
 
   try {
+    logger.info({
+      message: "connecting to target",
+    });
     await httpTarget.connectToTarget({
       throwOnError: true,
     });
-
-    await runNotionMCPChecks(httpTarget);
   } catch (error) {
-    console.error("❌ Connection failed:", error);
-    process.exit(1);
+    if (isAppErrorWithCode(error, ErrorCode.UNAUTHORIZED)) {
+      logger.info({
+        message: "received unauthorized error, attempting oauth flow",
+      });
+      try {
+        await httpTarget.performOAuthFlow();
+        logger.info({
+          message: "oauth flow completed, trying again to connect to target",
+        });
+        await httpTarget.connectToTarget({ throwOnError: true });
+      } catch (error) {
+        logger.error({
+          message: "exhausted all attempts, connection failed",
+          error,
+        });
+        throw error;
+      }
+    } else {
+      logger.error({
+        message: "massive failure, connection failed",
+        error,
+      });
+      throw error;
+    }
   }
+
+  await runNotionMCPChecks(httpTarget);
 
   process.on("SIGINT", () => {
     console.log("\n\nTiding up...");

@@ -1,4 +1,8 @@
-import { AppError, ErrorCode } from "@director.run/utilities/error";
+import {
+  AppError,
+  ErrorCode,
+  isAppErrorWithCode,
+} from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import {
   type OAuthClientProvider,
@@ -30,7 +34,11 @@ export class HTTPClient extends AbstractClient {
     this.onAuthorizationRequired = params.onAuthorizationRequired;
   }
 
-  async connectToSSE(): Promise<boolean> {
+  async connectToSSE({
+    throwOnError,
+  }: {
+    throwOnError: boolean;
+  }): Promise<boolean> {
     try {
       const transport = new SSEClientTransport(new URL(this.url), {
         requestInit: { headers: this.headers },
@@ -43,17 +51,37 @@ export class HTTPClient extends AbstractClient {
       this.status = "connected";
       return true;
     } catch (error) {
-      if (error instanceof UnauthorizedError && this.oauthProvider) {
-        // First unauthorized attempt - will trigger OAuth flow
+      if (error instanceof UnauthorizedError) {
         this.status = "unauthorized";
-        throw error;
+        if (throwOnError) {
+          throw new AppError(
+            ErrorCode.UNAUTHORIZED,
+            `authorization required, [${this.name}] failed to connect to ${this.url}`,
+            { targetName: this.name, url: this.url, message: error.message },
+          );
+        } else {
+          return false;
+        }
+      } else {
+        this.status = "error";
+        if (throwOnError) {
+          throw new AppError(
+            ErrorCode.CONNECTION_REFUSED,
+            `connection refused, [${this.name}] failed to connect to ${this.url}`,
+            { targetName: this.name, url: this.url },
+          );
+        } else {
+          return false;
+        }
       }
-      this.status = "disconnected";
-      return false;
     }
   }
 
-  async connectToStreamable(): Promise<boolean> {
+  async connectToStreamable({
+    throwOnError,
+  }: {
+    throwOnError: boolean;
+  }): Promise<boolean> {
     try {
       const transport = new StreamableHTTPClientTransport(new URL(this.url), {
         requestInit: { headers: this.headers },
@@ -66,14 +94,57 @@ export class HTTPClient extends AbstractClient {
       this.status = "connected";
       return true;
     } catch (error) {
-      if (error instanceof UnauthorizedError && this.oauthProvider) {
-        // First unauthorized attempt - will trigger OAuth flow
+      if (error instanceof UnauthorizedError) {
         this.status = "unauthorized";
-        throw error;
+        if (throwOnError) {
+          throw new AppError(
+            ErrorCode.UNAUTHORIZED,
+            `authorization required, [${this.name}] failed to connect to ${this.url}`,
+            { targetName: this.name, url: this.url, message: error.message },
+          );
+        } else {
+          return false;
+        }
+      } else {
+        this.status = "error";
+        if (throwOnError) {
+          throw new AppError(
+            ErrorCode.CONNECTION_REFUSED,
+            `connection refused, [${this.name}] failed to connect to ${this.url}`,
+            { targetName: this.name, url: this.url },
+          );
+        } else {
+          return false;
+        }
       }
-      this.status = "disconnected";
-      return false;
     }
+  }
+
+  async performOAuthFlow(): Promise<void> {
+    if (!this.onAuthorizationRequired) {
+      throw new AppError(
+        ErrorCode.UNAUTHORIZED,
+        "OAuth authentication required but no authorization handler provided",
+      );
+    }
+
+    logger.info(`[${this.name}] OAuth authentication required for ${this.url}`);
+
+    // Create a temporary transport just for OAuth flow
+    const oauthTransport = new StreamableHTTPClientTransport(
+      new URL(this.url),
+      {
+        requestInit: { headers: this.headers },
+        authProvider: this.oauthProvider,
+      },
+    );
+
+    // Get authorization code from the handler
+    const authCode = await this.onAuthorizationRequired(new URL(this.url));
+
+    // Complete OAuth flow
+    await oauthTransport.finishAuth(authCode);
+    logger.info(`[${this.name}] oAuth token exchange completed`);
   }
 
   public async connectToTarget(
@@ -83,93 +154,19 @@ export class HTTPClient extends AbstractClient {
       throwOnError: boolean;
     } = { throwOnError: true },
   ) {
-    const performOAuthFlow = async (): Promise<void> => {
-      if (!this.onAuthorizationRequired) {
-        throw new AppError(
-          ErrorCode.UNAUTHORIZED,
-          "OAuth authentication required but no authorization handler provided",
-        );
-      }
-
-      logger.info(
-        `[${this.name}] OAuth authentication required for ${this.url}`,
-      );
-
-      // Create a temporary transport just for OAuth flow
-      const oauthTransport = new StreamableHTTPClientTransport(
-        new URL(this.url),
-        {
-          requestInit: { headers: this.headers },
-          authProvider: this.oauthProvider,
-        },
-      );
-
-      // Get authorization code from the handler
-      const authCode = await this.onAuthorizationRequired(new URL(this.url));
-
-      // Complete OAuth flow
-      await oauthTransport.finishAuth(authCode);
-      logger.info(`[${this.name}] OAuth token exchange completed`);
-    };
-
-    // First attempt: Try both transports without OAuth
     try {
-      if (await this.connectToStreamable()) {
-        return;
-      }
+      await this.connectToStreamable({ throwOnError: true });
     } catch (error) {
-      if (error instanceof UnauthorizedError && this.oauthProvider) {
-        // OAuth required - perform flow and retry
-        await performOAuthFlow();
-
-        // Retry both transports after OAuth
-        if (await this.connectToStreamable()) {
-          return;
+      if (isAppErrorWithCode(error, ErrorCode.UNAUTHORIZED)) {
+        // OAuth required - user need to authorize
+        if (throwOnError) {
+          throw error;
         }
-        if (await this.connectToSSE()) {
-          return;
-        }
-
-        throw new AppError(
-          ErrorCode.CONNECTION_REFUSED,
-          `[${this.name}] failed to connect to ${this.url} even after OAuth`,
-          { targetName: this.name, url: this.url },
-        );
-      }
-      // Non-OAuth error with streamable, try SSE
-    }
-
-    try {
-      if (await this.connectToSSE()) {
-        return;
-      }
-    } catch (error) {
-      if (error instanceof UnauthorizedError && this.oauthProvider) {
-        // OAuth required - perform flow and retry
-        await performOAuthFlow();
-
-        // Retry both transports after OAuth
-        if (await this.connectToStreamable()) {
-          return;
-        }
-        if (await this.connectToSSE()) {
-          return;
-        }
-
-        throw new AppError(
-          ErrorCode.CONNECTION_REFUSED,
-          `[${this.name}] failed to connect to ${this.url} even after OAuth`,
-          { targetName: this.name, url: this.url },
-        );
+      } else {
+        // fall back to SSE
+        await this.connectToSSE({ throwOnError });
       }
     }
-
-    // If we get here, both transports failed without OAuth requirement
-    throw new AppError(
-      ErrorCode.CONNECTION_REFUSED,
-      `[${this.name}] failed to connect to ${this.url}`,
-      { targetName: this.name, url: this.url },
-    );
   }
 
   public static async createAndConnectToHTTP(

@@ -88,6 +88,7 @@ export class ProxyServer extends Server {
     await newTarget.connectToTarget({ throwOnError: attribs.throwOnError });
     this.attributes.servers.push(target);
     this.targets.push(newTarget);
+
     // TODO: send list changed events. need client to support this first
     // this.sendToolListChanged();
     // this.sendPromptListChanged();

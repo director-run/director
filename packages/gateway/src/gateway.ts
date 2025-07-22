@@ -58,6 +58,8 @@ export class Gateway {
     app.use(logRequests());
     app.use("/", createSSERouter({ proxyStore, telemetry }));
     app.use("/", createStreamableRouter({ proxyStore, telemetry }));
+    // TODO: add a router to handle the incoming oauth tokens
+    // onTokenReceived((token) => OauthBroker.registerToken(token))
     app.use("/trpc", createTRPCExpressMiddleware({ proxyStore, registryURL }));
     app.all("*", notFoundHandler);
     app.use(errorRequestHandler);

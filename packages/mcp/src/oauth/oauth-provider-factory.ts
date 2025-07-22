@@ -28,10 +28,6 @@ export function createInMemoryOAuthProvider(
   );
 }
 
-/**
- * Simple in-memory OAuth client provider for basic OAuth flows.
- * Based on the oauth.ts example but simplified for library use.
- */
 class InMemoryOAuthProvider implements OAuthClientProvider {
   private _clientInformation?: OAuthClientInformationFull;
   private _tokens?: OAuthTokens;

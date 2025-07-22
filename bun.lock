@@ -78,7 +78,7 @@
     },
     "apps/sdk": {
       "name": "@director.run/sdk",
-      "version": "0.0.16",
+      "version": "0.0.17",
       "dependencies": {
         "@trpc/client": "^11.4.3",
         "@trpc/server": "^11.4.3",

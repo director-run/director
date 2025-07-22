@@ -1,6 +1,7 @@
 import { URL } from "node:url";
+import { openUrl } from "@director.run/utilities/os";
 import { HTTPClient } from "../src/client/http-client";
-import { openBrowser, waitForOAuthCallback } from "../src/oauth/helpers";
+import { waitForOAuthCallback } from "../src/oauth/helpers";
 import { createInMemoryOAuthProvider } from "../src/oauth/oauth-provider-factory";
 
 const CALLBACK_PORT = 8090;
@@ -18,7 +19,7 @@ async function main(): Promise<void> {
       (redirectUrl: URL) => {
         console.log(`📌 OAuth redirect handler called - opening browser`);
         console.log(`Opening browser to: ${redirectUrl.toString()}`);
-        openBrowser(redirectUrl.toString());
+        openUrl(redirectUrl.toString());
       },
     ),
     onAuthorizationRequired: async () => {

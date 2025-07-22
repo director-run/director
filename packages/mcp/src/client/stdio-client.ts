@@ -7,9 +7,9 @@ import { AbstractClient } from "./abstract-client";
 const logger = getLogger("client/stdio");
 
 export class StdioClient extends AbstractClient {
-  private command: string;
-  private args: string[];
-  private env?: Record<string, string>;
+  public readonly command: string;
+  public readonly args: string[];
+  public readonly env?: Record<string, string>;
 
   constructor(params: {
     name: string;
@@ -32,6 +32,7 @@ export class StdioClient extends AbstractClient {
           env: this.env,
         }),
       );
+      this.status = "connected";
     } catch (e) {
       if (e instanceof Error && (e as ErrnoException).code === "ENOENT") {
         throw new AppError(

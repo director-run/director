@@ -19,18 +19,12 @@ export function registerGetCommand(program: DirectorCommand) {
         console.log(`id=${proxy.id}`);
         console.log(`name=${proxy.name}`);
 
-        const table = makeTable(["name", "transport", "url/command", "status"]);
-
+        const table = makeTable(["name", "type", "url/command", "status"]);
         table.push(
           ...proxy.targets.map((target) => [
             target.name,
-            // target.transport.type,
-            // target.transport.type === "http"
-            //   ? target.transport.url
-            //   : [
-            //       target.transport.command,
-            //       ...(target.transport.args ?? []),
-            //     ].join(" "),
+            target.type,
+            target.command,
             target.status,
           ]),
         );

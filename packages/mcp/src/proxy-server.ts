@@ -8,8 +8,9 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import * as eventsource from "eventsource";
 import _ from "lodash";
 import packageJson from "../package.json";
-import { AbstractClient } from "./client/abstract-client";
 import { createClientForTarget } from "./client/client-factory";
+import { HTTPClient } from "./client/http-client";
+import { StdioClient } from "./client/stdio-client";
 import { setupPromptHandlers } from "./handlers/prompts-handler";
 import { setupResourceTemplateHandlers } from "./handlers/resource-templates-handler";
 import { setupResourceHandlers } from "./handlers/resources-handler";
@@ -20,7 +21,7 @@ global.EventSource = eventsource.EventSource;
 const logger = getLogger(`ProxyServer`);
 
 export class ProxyServer extends Server {
-  private targets: AbstractClient[];
+  private targets: (HTTPClient | StdioClient)[];
   public readonly attributes: ProxyServerAttributes & {
     useController?: boolean;
   };
@@ -131,7 +132,22 @@ export class ProxyServer extends Server {
   public toPlainObject() {
     return {
       ...this.attributes,
-      targets: this.targets.map((target) => target.toPlainObject()),
+      targets: this.targets.map((target) => {
+        const base = target.toPlainObject();
+        if (target instanceof HTTPClient) {
+          return {
+            ...base,
+            type: "http",
+            command: target.url,
+          };
+        } else {
+          return {
+            ...base,
+            type: "stdio",
+            command: [target.command, ...(target.args ?? [])].join(" "),
+          };
+        }
+      }),
     };
   }
 

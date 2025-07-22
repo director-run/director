@@ -11,7 +11,7 @@ import { AbstractClient } from "./abstract-client";
 const logger = getLogger("client/http");
 
 export class HTTPClient extends AbstractClient {
-  private url: string;
+  public readonly url: string;
   private oauthProvider?: OAuthClientProvider;
   private headers?: Record<string, string>;
   private onAuthorizationRequired?: (authUrl: URL) => Promise<string>;

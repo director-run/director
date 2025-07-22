@@ -8,10 +8,10 @@ export type ClientStatus =
   | "error";
 
 export abstract class AbstractClient extends Client {
-  public name: string;
+  public readonly name: string;
   public status: ClientStatus = "disconnected";
-  public lastConnectedAt: Date | null = null;
-  public lastError: Error | null = null;
+  public readonly lastConnectedAt: Date | null = null;
+  public readonly lastError: Error | null = null;
 
   constructor(name: string) {
     super(

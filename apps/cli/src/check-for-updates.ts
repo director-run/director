@@ -21,16 +21,17 @@ export async function checkForUpdates() {
           chalk.reset(" → ") +
           chalk.green(info.latest),
       ) +
-      " \n\nTo continue using Director, please update to the lastest version.\n\nRun " +
+      " \n\nTo continue using Director, please update to the latest version.\n\nRun " +
       chalk.cyan("npm install -g @director.run/cli");
 
+    console.log();
     console.log(
       boxen(defaultTemplate, {
         padding: 1,
         borderStyle: "double",
+        borderColor: "yellow",
       }),
     );
-
-    process.exit(0);
+    console.log();
   }
 }

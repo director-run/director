@@ -2,12 +2,12 @@ import { ErrorCode } from "@director.run/utilities/error";
 import { expectToThrowAppError } from "@director.run/utilities/test";
 import { describe, expect, test } from "vitest";
 import { makeEchoServer } from "../test/fixtures";
-import { serveOverSSE } from "../transport";
 import { serveOverStreamable } from "../transport";
+import { serveOverSSE } from "../transport";
 import { HTTPClient } from "./http-client";
 
 describe("HTTPClient", () => {
-  describe("createAndConnectToHTTP", () => {
+  describe("connectToTarget", () => {
     describe("when connecting to a streamable server", () => {
       test("should connect properly", async () => {
         const instance = await serveOverStreamable(makeEchoServer(), 2345);
@@ -47,6 +47,27 @@ describe("HTTPClient", () => {
     });
 
     describe("failures", () => {
+      // test("oauth unauthorized", async () => {
+      //   const client = new HTTPClient({
+      //     name: "test-client",
+      //     url: "https://mcp.notion.com/mcp",
+      //     oauthProvider: createInMemoryOAuthProvider(
+      //       "http://localhost:2345/callback",
+      //       (redirectUrl: URL) => {},
+      //     ),
+      //   });
+
+      //   const result = await client.connectToTarget({
+      //     throwOnError: false,
+      //   });
+
+      //   expect(result).toBe(false);
+      //   expect(client.status).toBe("unauthorized");
+      //   expect(client.lastErrorMessage).toBe(
+      //     "unauthorized, please re-authenticate",
+      //   );
+      // });
+
       test("throwOnError = true", async () => {
         const client = new HTTPClient({
           name: "test-client",

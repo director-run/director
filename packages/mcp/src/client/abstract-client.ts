@@ -43,5 +43,5 @@ export abstract class AbstractClient extends Client {
     throwOnError,
   }: {
     throwOnError: boolean;
-  }): Promise<void>;
+  }): Promise<boolean>;
 }

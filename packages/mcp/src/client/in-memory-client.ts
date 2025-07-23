@@ -43,5 +43,6 @@ export class InMemoryClient extends AbstractClient {
       this.connect(this.clientTransport),
       this.server.connect(this.serverTransport),
     ]);
+    return true;
   }
 }

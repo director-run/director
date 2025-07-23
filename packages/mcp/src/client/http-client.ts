@@ -34,25 +34,25 @@ export class HTTPClient extends AbstractClient {
     this.onAuthorizationRequired = params.onAuthorizationRequired;
   }
 
-  async connectToSSE({
+  private async connectToTransport({
     throwOnError,
+    transport,
   }: {
     throwOnError: boolean;
+    transport: StreamableHTTPClientTransport | SSEClientTransport;
   }): Promise<boolean> {
     try {
-      const transport = new SSEClientTransport(new URL(this.url), {
-        requestInit: { headers: this.headers },
-        ...(this.oauthProvider && { authProvider: this.oauthProvider }),
-      });
       await this.connect(transport);
       logger.info(
-        `[${this.name}] connected successfully to ${this.url} via SSE`,
+        `[${this.name}] connected successfully to ${this.url} via Streamable`,
       );
       this.status = "connected";
+      this.lastErrorMessage = undefined;
       return true;
     } catch (error) {
       if (error instanceof UnauthorizedError) {
         this.status = "unauthorized";
+        this.lastErrorMessage = "unauthorized, please re-authenticate";
         if (throwOnError) {
           throw new AppError(
             ErrorCode.UNAUTHORIZED,
@@ -79,47 +79,32 @@ export class HTTPClient extends AbstractClient {
     }
   }
 
+  async connectToSSE({
+    throwOnError,
+  }: {
+    throwOnError: boolean;
+  }): Promise<boolean> {
+    return await this.connectToTransport({
+      throwOnError,
+      transport: new SSEClientTransport(new URL(this.url), {
+        requestInit: { headers: this.headers },
+        ...(this.oauthProvider && { authProvider: this.oauthProvider }),
+      }),
+    });
+  }
+
   async connectToStreamable({
     throwOnError,
   }: {
     throwOnError: boolean;
   }): Promise<boolean> {
-    try {
-      const transport = new StreamableHTTPClientTransport(new URL(this.url), {
+    return await this.connectToTransport({
+      throwOnError,
+      transport: new StreamableHTTPClientTransport(new URL(this.url), {
         requestInit: { headers: this.headers },
         ...(this.oauthProvider && { authProvider: this.oauthProvider }),
-      });
-      await this.connect(transport);
-      logger.info(
-        `[${this.name}] connected successfully to ${this.url} via Streamable`,
-      );
-      this.status = "connected";
-      return true;
-    } catch (error) {
-      if (error instanceof UnauthorizedError) {
-        this.status = "unauthorized";
-        if (throwOnError) {
-          throw new AppError(
-            ErrorCode.UNAUTHORIZED,
-            `authorization required, [${this.name}] failed to connect to ${this.url}`,
-            { targetName: this.name, url: this.url, message: error.message },
-          );
-        } else {
-          return false;
-        }
-      } else {
-        this.status = "error";
-        if (throwOnError) {
-          throw new AppError(
-            ErrorCode.CONNECTION_REFUSED,
-            `connection refused, [${this.name}] failed to connect to ${this.url}`,
-            { targetName: this.name, url: this.url },
-          );
-        } else {
-          return false;
-        }
-      }
-    }
+      }),
+    });
   }
 
   async performOAuthFlow(): Promise<void> {
@@ -149,6 +134,7 @@ export class HTTPClient extends AbstractClient {
     logger.info(`[${this.name}] oAuth token exchange completed`);
   }
 
+  // TODO: returns true if connected, false if not
   public async connectToTarget(
     {
       throwOnError,
@@ -157,16 +143,17 @@ export class HTTPClient extends AbstractClient {
     } = { throwOnError: true },
   ) {
     try {
-      await this.connectToStreamable({ throwOnError: true });
+      return await this.connectToStreamable({ throwOnError: true });
     } catch (error) {
       if (isAppErrorWithCode(error, ErrorCode.UNAUTHORIZED)) {
         // OAuth required - user need to authorize
         if (throwOnError) {
           throw error;
+        } else {
+          return false;
         }
       } else {
-        // fall back to SSE
-        await this.connectToSSE({ throwOnError });
+        return await this.connectToSSE({ throwOnError });
       }
     }
   }

@@ -33,6 +33,7 @@ export class StdioClient extends AbstractClient {
         }),
       );
       this.status = "connected";
+      return true;
     } catch (e) {
       if (e instanceof Error && (e as ErrnoException).code === "ENOENT") {
         throw new AppError(

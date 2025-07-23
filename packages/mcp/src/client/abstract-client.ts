@@ -10,7 +10,7 @@ export type ClientStatus =
 export abstract class AbstractClient extends Client {
   public readonly name: string;
   public status: ClientStatus = "disconnected";
-  public readonly lastConnectedAt?: Date;
+  public lastConnectedAt?: Date;
   public lastErrorMessage?: string;
 
   constructor(name: string) {

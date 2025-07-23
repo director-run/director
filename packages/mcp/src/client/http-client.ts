@@ -38,10 +38,12 @@ function transportErrorToAppError(
       `authorization required, [${serverName}] failed to connect to ${serverUrl}`,
       { targetName: serverName, url: serverUrl, message: error.message },
     );
-  } else if (error instanceof SseError) {
+  } else if (
+    error instanceof SseError &&
+    error.message.includes("ECONNREFUSED")
+  ) {
     status = "error";
-    lastErrorMessage =
-      error instanceof Error ? error.message : "connection refused";
+    lastErrorMessage = "connection refused";
 
     appError = new AppError(
       ErrorCode.CONNECTION_REFUSED,
@@ -50,8 +52,7 @@ function transportErrorToAppError(
     );
   } else {
     status = "error";
-    lastErrorMessage =
-      error instanceof Error ? error.message : "connection refused";
+    lastErrorMessage = error instanceof Error ? error.message : "unknown error";
     appError = new AppError(
       ErrorCode.CONNECTION_REFUSED,
       `connection refused, [${serverName}] failed to connect to ${serverUrl}`,
@@ -95,6 +96,7 @@ export class HTTPClient extends AbstractClient {
       );
       this.status = "connected";
       this.lastErrorMessage = undefined;
+      this.lastConnectedAt = new Date();
       return true;
     } catch (error) {
       const { appError, lastErrorMessage, status } = transportErrorToAppError(

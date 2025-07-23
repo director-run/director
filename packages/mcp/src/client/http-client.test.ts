@@ -1,6 +1,7 @@
 import { ErrorCode } from "@director.run/utilities/error";
 import { expectToThrowAppError } from "@director.run/utilities/test";
 import { describe, expect, test } from "vitest";
+import { createInMemoryOAuthProvider } from "../oauth/oauth-provider-factory";
 import { makeEchoServer } from "../test/fixtures";
 import { serveOverStreamable } from "../transport";
 import { serveOverSSE } from "../transport";
@@ -18,6 +19,7 @@ describe("HTTPClient", () => {
 
       expect(client.status).toBe("connected");
       expect(client.lastErrorMessage).toBeUndefined();
+      expect(client.lastConnectedAt).toBeInstanceOf(Date);
 
       const tools = await client.listTools();
       expect(tools.tools).toHaveLength(1);
@@ -36,6 +38,7 @@ describe("HTTPClient", () => {
 
       expect(client.status).toBe("connected");
       expect(client.lastErrorMessage).toBeUndefined();
+      expect(client.lastConnectedAt).toBeInstanceOf(Date);
 
       const tools = await client.listTools();
       expect(tools.tools).toHaveLength(1);
@@ -44,26 +47,27 @@ describe("HTTPClient", () => {
     });
 
     describe("error handling", () => {
-      // test("oauth unauthorized", async () => {
-      //   const client = new HTTPClient({
-      //     name: "test-client",
-      //     url: "https://mcp.notion.com/mcp",
-      //     oauthProvider: createInMemoryOAuthProvider(
-      //       "http://localhost:2345/callback",
-      //       (redirectUrl: URL) => {},
-      //     ),
-      //   });
+      test("oauth unauthorized", async () => {
+        const client = new HTTPClient({
+          name: "test-client",
+          url: "https://mcp.notion.com/mcp",
+          oauthProvider: createInMemoryOAuthProvider(
+            "http://localhost:2345/callback",
+            (redirectUrl: URL) => {},
+          ),
+        });
 
-      //   const result = await client.connectToTarget({
-      //     throwOnError: false,
-      //   });
+        const result = await client.connectToTarget({
+          throwOnError: false,
+        });
 
-      //   expect(result).toBe(false);
-      //   expect(client.status).toBe("unauthorized");
-      //   expect(client.lastErrorMessage).toBe(
-      //     "unauthorized, please re-authenticate",
-      //   );
-      // });
+        expect(result).toBe(false);
+        expect(client.status).toBe("unauthorized");
+        expect(client.lastConnectedAt).toBeUndefined();
+        expect(client.lastErrorMessage).toBe(
+          "unauthorized, please re-authenticate",
+        );
+      });
 
       test("throwOnError = true", async () => {
         const client = new HTTPClient({
@@ -82,9 +86,8 @@ describe("HTTPClient", () => {
         );
 
         expect(client.status).toBe("error");
-        expect(client.lastErrorMessage).toBe(
-          "SSE error: TypeError: fetch failed: connect ECONNREFUSED ::1:80, connect ECONNREFUSED 127.0.0.1:80",
-        );
+        expect(client.lastErrorMessage).toBe("connection refused");
+        expect(client.lastConnectedAt).toBeUndefined();
       });
 
       test("throwOnError = false", async () => {
@@ -96,9 +99,8 @@ describe("HTTPClient", () => {
         await client.connectToTarget({ throwOnError: false });
 
         expect(client.status).toBe("error");
-        expect(client.lastErrorMessage).toBe(
-          "SSE error: TypeError: fetch failed: connect ECONNREFUSED ::1:80, connect ECONNREFUSED 127.0.0.1:80",
-        );
+        expect(client.lastErrorMessage).toBe("connection refused");
+        expect(client.lastConnectedAt).toBeUndefined();
       });
     });
   });

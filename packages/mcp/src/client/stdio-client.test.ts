@@ -1,4 +1,6 @@
-import { describe, expect, it } from "vitest";
+import { ErrorCode } from "@director.run/utilities/error";
+import { expectToThrowAppError } from "@director.run/utilities/test";
+import { describe, it } from "vitest";
 import { StdioClient } from "./stdio-client";
 
 describe("StdioClient", () => {
@@ -11,10 +13,13 @@ describe("StdioClient", () => {
           args: [],
         });
 
-        await expect(
-          client.connectToTarget({ throwOnError: true }),
-        ).rejects.toThrow(
-          `[echo] command not found: 'not_existing_command'. Please make sure it is installed and available in your $PATH.`,
+        await expectToThrowAppError(
+          () => client.connectToTarget({ throwOnError: true }),
+          {
+            code: ErrorCode.CONNECTION_REFUSED,
+            message: `[echo] command not found: 'not_existing_command'. Please make sure it is installed and available in your $PATH.`,
+            props: {},
+          },
         );
       });
 
@@ -25,10 +30,13 @@ describe("StdioClient", () => {
           args: ["not_existing_dir"],
         });
 
-        await expect(
-          client.connectToTarget({ throwOnError: true }),
-        ).rejects.toThrow(
-          `[echo] failed to run 'ls not_existing_dir'. Please check the logs for more details.`,
+        await expectToThrowAppError(
+          () => client.connectToTarget({ throwOnError: true }),
+          {
+            code: ErrorCode.CONNECTION_REFUSED,
+            message: `[echo] failed to run 'ls not_existing_dir'. Please check the logs for more details.`,
+            props: {},
+          },
         );
       });
     });

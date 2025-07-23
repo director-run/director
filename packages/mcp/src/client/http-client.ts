@@ -8,11 +8,58 @@ import {
   type OAuthClientProvider,
   UnauthorizedError,
 } from "@modelcontextprotocol/sdk/client/auth.js";
-import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
+import {
+  SSEClientTransport,
+  SseError,
+} from "@modelcontextprotocol/sdk/client/sse.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { AbstractClient } from "./abstract-client";
 
 const logger = getLogger("client/http");
+
+function transportErrorToAppError(
+  error: unknown,
+  serverUrl: string,
+  serverName: string,
+): {
+  appError: AppError;
+  lastErrorMessage: string;
+  status: "connected" | "unauthorized" | "error";
+} {
+  let status: "connected" | "unauthorized" | "error";
+  let lastErrorMessage: string;
+  let appError: AppError;
+
+  if (error instanceof UnauthorizedError) {
+    status = "unauthorized";
+    lastErrorMessage = "unauthorized, please re-authenticate";
+    appError = new AppError(
+      ErrorCode.UNAUTHORIZED,
+      `authorization required, [${serverName}] failed to connect to ${serverUrl}`,
+      { targetName: serverName, url: serverUrl, message: error.message },
+    );
+  } else if (error instanceof SseError) {
+    status = "error";
+    lastErrorMessage =
+      error instanceof Error ? error.message : "connection refused";
+
+    appError = new AppError(
+      ErrorCode.CONNECTION_REFUSED,
+      `connection refused, [${serverName}] failed to connect to ${serverUrl}`,
+      { targetName: serverName, url: serverUrl },
+    );
+  } else {
+    status = "error";
+    lastErrorMessage =
+      error instanceof Error ? error.message : "connection refused";
+    appError = new AppError(
+      ErrorCode.CONNECTION_REFUSED,
+      `connection refused, [${serverName}] failed to connect to ${serverUrl}`,
+      { targetName: serverName, url: serverUrl },
+    );
+  }
+  return { appError, lastErrorMessage, status };
+}
 
 export class HTTPClient extends AbstractClient {
   public readonly url: string;
@@ -50,31 +97,17 @@ export class HTTPClient extends AbstractClient {
       this.lastErrorMessage = undefined;
       return true;
     } catch (error) {
-      if (error instanceof UnauthorizedError) {
-        this.status = "unauthorized";
-        this.lastErrorMessage = "unauthorized, please re-authenticate";
-        if (throwOnError) {
-          throw new AppError(
-            ErrorCode.UNAUTHORIZED,
-            `authorization required, [${this.name}] failed to connect to ${this.url}`,
-            { targetName: this.name, url: this.url, message: error.message },
-          );
-        } else {
-          return false;
-        }
+      const { appError, lastErrorMessage, status } = transportErrorToAppError(
+        error,
+        this.url,
+        this.name,
+      );
+      this.status = status;
+      this.lastErrorMessage = lastErrorMessage;
+      if (throwOnError) {
+        throw appError;
       } else {
-        this.status = "error";
-        this.lastErrorMessage =
-          error instanceof Error ? error.message : "connection refused";
-        if (throwOnError) {
-          throw new AppError(
-            ErrorCode.CONNECTION_REFUSED,
-            `connection refused, [${this.name}] failed to connect to ${this.url}`,
-            { targetName: this.name, url: this.url },
-          );
-        } else {
-          return false;
-        }
+        return false;
       }
     }
   }

@@ -1,4 +1,6 @@
 import type { GatewayRouterOutputs } from "@director.run/gateway/client";
+import { getSSEPathForProxy } from "@director.run/gateway/helpers";
+import { getStreamablePathForProxy } from "@director.run/gateway/helpers";
 import {
   blue,
   green,
@@ -36,11 +38,18 @@ function printProxyDetails(proxy: GatewayRouterOutputs["store"]["get"]) {
   console.log(whiteBold(`PROXIES > ${blue(name)}`));
   console.log();
 
+  const sseURL = joinURL(env.GATEWAY_URL, getSSEPathForProxy(proxy.id));
+  const streamableURL = joinURL(
+    env.GATEWAY_URL,
+    getStreamablePathForProxy(proxy.id),
+  );
+
   console.log(`${whiteBold("id")} = ${id}`);
   console.log(`${whiteBold("name")} = ${name}`);
   console.log(`${whiteBold("description")} = ${description}`);
   console.log(`${whiteBold("addToolPreix")} = ${addToolPrefix}`);
-  console.log(`${whiteBold("path")} = ${joinURL(env.GATEWAY_URL, path)}`);
+  console.log(`${whiteBold("streamableUrl")} = ${streamableURL}`);
+  console.log(`${whiteBold("sseURL")} = ${sseURL}`);
 
   const table = makeTable([
     "name",

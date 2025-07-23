@@ -1,4 +1,8 @@
-import { AppError, ErrorCode } from "@director.run/utilities/error";
+import {
+  AppError,
+  ErrorCode,
+  isAppErrorWithCode,
+} from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import type {
   ProxyServerAttributes,
@@ -8,13 +12,37 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import * as eventsource from "eventsource";
 import _ from "lodash";
 import packageJson from "../package.json";
-import { createClientForTarget } from "./client/client-factory";
 import { HTTPClient } from "./client/http-client";
 import { StdioClient } from "./client/stdio-client";
 import { setupPromptHandlers } from "./handlers/prompts-handler";
 import { setupResourceTemplateHandlers } from "./handlers/resource-templates-handler";
 import { setupResourceHandlers } from "./handlers/resources-handler";
 import { setupToolHandlers } from "./handlers/tools-handler";
+import { createInMemoryOAuthProvider } from "./oauth/oauth-provider-factory";
+
+export function createClientForTarget(target: ProxyTargetAttributes) {
+  switch (target.transport.type) {
+    case "http":
+      return new HTTPClient({
+        url: target.transport.url,
+        name: target.name,
+        oauthProvider: createInMemoryOAuthProvider(
+          "http://localhost:2345/callback",
+          (redirectUrl: URL) => {},
+        ),
+      });
+    case "stdio":
+      return new StdioClient({
+        name: target.name,
+        command: target.transport.command,
+        args: target.transport.args,
+        env: {
+          ...(process.env as Record<string, string>),
+          ...target.transport.env,
+        },
+      });
+  }
+}
 
 global.EventSource = eventsource.EventSource;
 
@@ -22,11 +50,9 @@ const logger = getLogger(`ProxyServer`);
 
 export class ProxyServer extends Server {
   private targets: (HTTPClient | StdioClient)[];
-  public readonly attributes: ProxyServerAttributes & {
-    useController?: boolean;
-  };
+  public readonly attributes: ProxyServerAttributes;
 
-  constructor(attributes: ProxyServerAttributes & { useController?: boolean }) {
+  constructor(attributes: ProxyServerAttributes) {
     super(
       {
         name: attributes.name,
@@ -48,15 +74,6 @@ export class ProxyServer extends Server {
       this.targets.push(target);
     }
 
-    // TODO: add controller
-    // if (this.attributes.useController) {
-    //   const controllerServer = createControllerServer({ proxy: this });
-    //   const controllerClient =
-    //     await SimpleClient.createAndConnectToServer(controllerServer);
-
-    //   this.targets.push(controllerClient);
-    // }
-
     setupToolHandlers(this, this.targets, this.attributes.addToolPrefix);
     setupPromptHandlers(this, this.targets);
     setupResourceHandlers(this, this.targets);
@@ -74,7 +91,7 @@ export class ProxyServer extends Server {
   public async addTarget(
     target: ProxyTargetAttributes,
     attribs: { throwOnError: boolean } = { throwOnError: false },
-  ) {
+  ): Promise<HTTPClient | StdioClient> {
     const existingTarget = this.targets.find(
       (t) => t.name.toLocaleLowerCase() === target.name.toLocaleLowerCase(),
     );
@@ -85,10 +102,21 @@ export class ProxyServer extends Server {
       );
     }
     const newTarget = createClientForTarget(target);
-    await newTarget.connectToTarget({ throwOnError: attribs.throwOnError });
+
+    try {
+      await newTarget.connectToTarget({ throwOnError: attribs.throwOnError });
+    } catch (error) {
+      if (isAppErrorWithCode(error, ErrorCode.UNAUTHORIZED)) {
+        // Oauth error, so we supress the exception
+      } else {
+        throw error;
+      }
+    }
+
     this.attributes.servers.push(target);
     this.targets.push(newTarget);
 
+    return newTarget;
     // TODO: send list changed events. need client to support this first
     // this.sendToolListChanged();
     // this.sendPromptListChanged();
@@ -147,25 +175,3 @@ export class ProxyServer extends Server {
     await super.close();
   }
 }
-
-// function createControllerServer({ proxy }: { proxy: ProxyServer }) {
-//   const server = new SimpleServer(`${proxy.id}-controller`);
-//   server
-//     .tool("list_targets")
-//     .schema(z.object({}))
-//     .description("List proxy targets")
-//     .handle(({}) => {
-//       return Promise.resolve({
-//         status: "success",
-//         data: [
-//           {
-//             name: "test",
-//             description: "test",
-//             url: "https://github.com/test",
-//           },
-//         ],
-//       });
-//     });
-
-//   return server;
-// }

@@ -13,19 +13,17 @@ import { serveOverSSE, serveOverStreamable } from "./transport";
 describe("ProxyServer", () => {
   describe.skip("with a controller", () => {
     test("should expose controller tools via the proxy", async () => {
-      const proxy = new ProxyServer({
-        id: "test-proxy",
-        name: "test-proxy",
-        servers: [],
-        useController: true,
-      });
-      await proxy.connectTargets();
-
-      const client = await InMemoryClient.createAndConnectToServer(proxy);
-      const tools = await client.listTools();
-
-      expect(tools.tools).toHaveLength(1);
-      expect(tools.tools[0].name).toBe("list_targets");
+      // const proxy = new ProxyServer({
+      //   id: "test-proxy",
+      //   name: "test-proxy",
+      //   servers: [],
+      //   useController: true,
+      // });
+      // await proxy.connectTargets();
+      // const client = await InMemoryClient.createAndConnectToServer(proxy);
+      // const tools = await client.listTools();
+      // expect(tools.tools).toHaveLength(1);
+      // expect(tools.tools[0].name).toBe("list_targets");
     });
   });
 

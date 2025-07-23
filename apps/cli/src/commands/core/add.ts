@@ -29,6 +29,12 @@ export function registerAddCommand(program: DirectorCommand) {
     )
     .addOption(
       makeOption({
+        flags: "-c,--command <command>",
+        description: "add a stdio server by specifying the command",
+      }),
+    )
+    .addOption(
+      makeOption({
         flags: "-n,--name <serverName>",
         description:
           "the name of the server as it'll appear in the config file",
@@ -38,7 +44,12 @@ export function registerAddCommand(program: DirectorCommand) {
       actionWithErrorHandler(
         async (
           proxyId: string,
-          options: { entry: string; url: string; name: string },
+          options: {
+            entry: string;
+            url: string;
+            name: string;
+            command: string;
+          },
         ) => {
           if (options.entry) {
             console.log(`adding ${options.entry} to ${proxyId}`);
@@ -51,6 +62,16 @@ export function registerAddCommand(program: DirectorCommand) {
             }
             console.log(`adding ${options.url} to ${proxyId}`);
             await addServerFromUrl(proxyId, options.url, options.name);
+          } else if (options.command) {
+            if (!options.name) {
+              throw new Error(
+                "No server name provided. use --name to specify the name of the server",
+              );
+            }
+            console.log(`adding ${options.command} to ${proxyId}`);
+
+            //
+            //
           } else {
             console.warn(
               "No entry name or url provided. You must speciy --entry or --url and --name, alternatively update the config file directly and restart the gateway:",

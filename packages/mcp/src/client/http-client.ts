@@ -17,51 +17,6 @@ import { AbstractClient, type SerializedClient } from "./abstract-client";
 
 const logger = getLogger("client/http");
 
-function transportErrorToAppError(
-  error: unknown,
-  serverUrl: string,
-  serverName: string,
-): {
-  appError: AppError;
-  lastErrorMessage: string;
-  status: "connected" | "unauthorized" | "error";
-} {
-  let status: "connected" | "unauthorized" | "error";
-  let lastErrorMessage: string;
-  let appError: AppError;
-
-  if (error instanceof UnauthorizedError) {
-    status = "unauthorized";
-    lastErrorMessage = "unauthorized, please re-authenticate";
-    appError = new AppError(
-      ErrorCode.UNAUTHORIZED,
-      `authorization required, [${serverName}] failed to connect to ${serverUrl}`,
-      { targetName: serverName, url: serverUrl, message: error.message },
-    );
-  } else if (
-    error instanceof SseError &&
-    error.message.includes("ECONNREFUSED")
-  ) {
-    status = "error";
-    lastErrorMessage = "connection refused";
-
-    appError = new AppError(
-      ErrorCode.CONNECTION_REFUSED,
-      `connection refused, [${serverName}] failed to connect to ${serverUrl}`,
-      { targetName: serverName, url: serverUrl },
-    );
-  } else {
-    status = "error";
-    lastErrorMessage = error instanceof Error ? error.message : "unknown error";
-    appError = new AppError(
-      ErrorCode.CONNECTION_REFUSED,
-      `connection refused, [${serverName}] failed to connect to ${serverUrl}`,
-      { targetName: serverName, url: serverUrl },
-    );
-  }
-  return { appError, lastErrorMessage, status };
-}
-
 export class HTTPClient extends AbstractClient {
   public readonly url: string;
   private oauthProvider?: OAuthClientProvider;
@@ -220,4 +175,49 @@ export class HTTPClient extends AbstractClient {
       type: "http",
     };
   }
+}
+
+function transportErrorToAppError(
+  error: unknown,
+  serverUrl: string,
+  serverName: string,
+): {
+  appError: AppError;
+  lastErrorMessage: string;
+  status: "connected" | "unauthorized" | "error";
+} {
+  let status: "connected" | "unauthorized" | "error";
+  let lastErrorMessage: string;
+  let appError: AppError;
+
+  if (error instanceof UnauthorizedError) {
+    status = "unauthorized";
+    lastErrorMessage = "unauthorized, please re-authenticate";
+    appError = new AppError(
+      ErrorCode.UNAUTHORIZED,
+      `authorization required, [${serverName}] failed to connect to ${serverUrl}`,
+      { targetName: serverName, url: serverUrl, message: error.message },
+    );
+  } else if (
+    error instanceof SseError &&
+    error.message.includes("ECONNREFUSED")
+  ) {
+    status = "error";
+    lastErrorMessage = "connection refused";
+
+    appError = new AppError(
+      ErrorCode.CONNECTION_REFUSED,
+      `connection refused, [${serverName}] failed to connect to ${serverUrl}`,
+      { targetName: serverName, url: serverUrl },
+    );
+  } else {
+    status = "error";
+    lastErrorMessage = error instanceof Error ? error.message : "unknown error";
+    appError = new AppError(
+      ErrorCode.CONNECTION_REFUSED,
+      `connection refused, [${serverName}] failed to connect to ${serverUrl}`,
+      { targetName: serverName, url: serverUrl },
+    );
+  }
+  return { appError, lastErrorMessage, status };
 }

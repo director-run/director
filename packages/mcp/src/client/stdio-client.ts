@@ -6,60 +6,6 @@ import { AbstractClient, type SerializedClient } from "./abstract-client";
 
 const logger = getLogger("client/stdio");
 
-function transportErrorToAppError(
-  error: unknown,
-  serverName: string,
-  command: string,
-  args: string[],
-  env?: Record<string, string>,
-): {
-  appError: AppError;
-  lastErrorMessage: string;
-  status: "connected" | "unauthorized" | "error";
-} {
-  let status: "connected" | "unauthorized" | "error";
-  let lastErrorMessage: string;
-  let appError: AppError;
-
-  if (error instanceof Error && (error as ErrnoException).code === "ENOENT") {
-    appError = new AppError(
-      ErrorCode.CONNECTION_REFUSED,
-      `[${serverName}] command not found: '${command}'. Please make sure it is installed and available in your $PATH.`,
-      {
-        targetName: serverName,
-        command: command,
-        args: args,
-        env: env,
-      },
-    );
-    lastErrorMessage = appError.message;
-    status = "error";
-  } else if (error instanceof McpError) {
-    appError = new AppError(
-      ErrorCode.CONNECTION_REFUSED,
-      `[${serverName}] failed to run '${[command, ...args].join(" ")}'. Please check the logs for more details.`,
-      {
-        targetName: serverName,
-        command: command,
-        args: args,
-        env,
-      },
-    );
-    lastErrorMessage = appError.message;
-    status = "error";
-  } else {
-    status = "error";
-    lastErrorMessage = error instanceof Error ? error.message : "unknown error";
-    appError = new AppError(
-      ErrorCode.CONNECTION_REFUSED,
-      `connection refused, [${serverName}] failed to connect`,
-      { targetName: serverName, command, args, env },
-    );
-  }
-
-  return { appError, lastErrorMessage, status };
-}
-
 export class StdioClient extends AbstractClient {
   public readonly command: string;
   public readonly args: string[];
@@ -132,4 +78,58 @@ export class StdioClient extends AbstractClient {
       type: "stdio",
     };
   }
+}
+
+function transportErrorToAppError(
+  error: unknown,
+  serverName: string,
+  command: string,
+  args: string[],
+  env?: Record<string, string>,
+): {
+  appError: AppError;
+  lastErrorMessage: string;
+  status: "connected" | "unauthorized" | "error";
+} {
+  let status: "connected" | "unauthorized" | "error";
+  let lastErrorMessage: string;
+  let appError: AppError;
+
+  if (error instanceof Error && (error as ErrnoException).code === "ENOENT") {
+    appError = new AppError(
+      ErrorCode.CONNECTION_REFUSED,
+      `[${serverName}] command not found: '${command}'. Please make sure it is installed and available in your $PATH.`,
+      {
+        targetName: serverName,
+        command: command,
+        args: args,
+        env: env,
+      },
+    );
+    lastErrorMessage = appError.message;
+    status = "error";
+  } else if (error instanceof McpError) {
+    appError = new AppError(
+      ErrorCode.CONNECTION_REFUSED,
+      `[${serverName}] failed to run '${[command, ...args].join(" ")}'. Please check the logs for more details.`,
+      {
+        targetName: serverName,
+        command: command,
+        args: args,
+        env,
+      },
+    );
+    lastErrorMessage = appError.message;
+    status = "error";
+  } else {
+    status = "error";
+    lastErrorMessage = error instanceof Error ? error.message : "unknown error";
+    appError = new AppError(
+      ErrorCode.CONNECTION_REFUSED,
+      `connection refused, [${serverName}] failed to connect`,
+      { targetName: serverName, command, args, env },
+    );
+  }
+
+  return { appError, lastErrorMessage, status };
 }

@@ -6,6 +6,8 @@ export {
 export {
   createRegistryClient,
   type RegistryClient,
+  type RegistryRouterInputs,
+  type RegistryRouterOutputs,
 } from "@director.run/registry/client";
 
 export function sayHello() {

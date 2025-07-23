@@ -133,22 +133,7 @@ export class ProxyServer extends Server {
   public toPlainObject() {
     return {
       ...this.attributes,
-      targets: this.targets.map((target) => {
-        const base = target.toPlainObject();
-        if (target instanceof HTTPClient) {
-          return {
-            ...base,
-            type: "http",
-            command: target.url,
-          };
-        } else {
-          return {
-            ...base,
-            type: "stdio",
-            command: [target.command, ...(target.args ?? [])].join(" "),
-          };
-        }
-      }),
+      targets: this.targets.map((target) => target.toPlainObject()),
     };
   }
 

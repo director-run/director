@@ -1,6 +1,7 @@
 import { joinURL } from "@director.run/utilities/url";
 import { createTRPCClient } from "@trpc/client";
 import { httpBatchLink } from "@trpc/client/links/httpBatchLink";
+import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import superjson from "superjson";
 import type { AppRouter } from "./routers/trpc";
 
@@ -27,3 +28,5 @@ export function createGatewayClient(baseURL: string) {
 }
 
 export type GatewayClient = ReturnType<typeof createGatewayClient>;
+export type GatewayRouterInputs = inferRouterInputs<AppRouter>;
+export type GatewayRouterOutputs = inferRouterOutputs<AppRouter>;

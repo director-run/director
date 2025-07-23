@@ -10,9 +10,11 @@ echo "- Creating a new proxy and installing the fetch server"
 echo "----------------------------------------"
 echo 
 
-bun cli create my-proxy
-bun cli add my-proxy --entry hackernews
-bun cli connect my-proxy --target claude
+bun cli create test
+bun cli add test --entry hackernews
+bun cli add test --entry fetch
+
+# bun cli connect my-proxy --target claude
 # TODO
 # bun cli connect my-proxy
 # bun cli cursor install my-proxy
@@ -31,4 +33,4 @@ bun cli ls
 echo
 echo "PROXY DETAILS:"
 echo
-bun cli get my-proxy
+bun cli get test

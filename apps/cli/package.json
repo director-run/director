@@ -20,6 +20,7 @@
     "clean": "rm -rf .turbo dist/*",
     "test": "bun run vitest  --fileParallelism=false",
     "cli": "NODE_ENV=development bun run bin/cli.ts",
+    "cli:dev": "NODE_ENV=development bun --watch bin/cli.ts",
     "typecheck": "tsc --noEmit",
     "build": "bun build --production --target=node bin/cli.ts --outdir dist",
     "release": "bun publish --access public --omit=peer",

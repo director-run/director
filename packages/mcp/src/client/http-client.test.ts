@@ -11,9 +11,14 @@ describe("HTTPClient", () => {
     describe("when connecting to a streamable server", () => {
       test("should connect properly", async () => {
         const instance = await serveOverStreamable(makeEchoServer(), 2345);
-        const client = await HTTPClient.createAndConnectToHTTP(
-          "http://localhost:2345/mcp",
-        );
+        const client = new HTTPClient({
+          name: "test-client",
+          url: "http://localhost:2345/mcp",
+        });
+        await client.connectToTarget({ throwOnError: true });
+
+        expect(client.status).toBe("connected");
+        expect(client.lastErrorMessage).toBeUndefined();
 
         const tools = await client.listTools();
         expect(tools.tools).toHaveLength(1);
@@ -24,9 +29,15 @@ describe("HTTPClient", () => {
     describe("when connecting to a sse server", () => {
       test("should connect properly", async () => {
         const instance = await serveOverSSE(makeEchoServer(), 2345);
-        const client = await HTTPClient.createAndConnectToHTTP(
-          "http://localhost:2345/sse",
-        );
+
+        const client = new HTTPClient({
+          name: "test-client",
+          url: "http://localhost:2345/sse",
+        });
+        await client.connectToTarget({ throwOnError: true });
+
+        expect(client.status).toBe("connected");
+        expect(client.lastErrorMessage).toBeUndefined();
 
         const tools = await client.listTools();
         expect(tools.tools).toHaveLength(1);
@@ -34,16 +45,43 @@ describe("HTTPClient", () => {
         await instance.close();
       });
     });
-    test("should fail properly", async () => {
-      await expectToThrowAppError(
-        () => HTTPClient.createAndConnectToHTTP("http://localhost/mcp"),
-        {
-          code: ErrorCode.CONNECTION_REFUSED,
-          props: {
-            url: "http://localhost/mcp",
+
+    describe("failures", () => {
+      test("throwOnError = true", async () => {
+        const client = new HTTPClient({
+          name: "test-client",
+          url: "http://localhost/mcp",
+        });
+
+        await expectToThrowAppError(
+          () => client.connectToTarget({ throwOnError: true }),
+          {
+            code: ErrorCode.CONNECTION_REFUSED,
+            props: {
+              url: "http://localhost/mcp",
+            },
           },
-        },
-      );
+        );
+
+        expect(client.status).toBe("error");
+        expect(client.lastErrorMessage).toBe(
+          "SSE error: TypeError: fetch failed: connect ECONNREFUSED ::1:80, connect ECONNREFUSED 127.0.0.1:80",
+        );
+      });
+
+      test("throwOnError = false", async () => {
+        const client = new HTTPClient({
+          name: "test-client",
+          url: "http://localhost/mcp",
+        });
+
+        await client.connectToTarget({ throwOnError: false });
+
+        expect(client.status).toBe("error");
+        expect(client.lastErrorMessage).toBe(
+          "SSE error: TypeError: fetch failed: connect ECONNREFUSED ::1:80, connect ECONNREFUSED 127.0.0.1:80",
+        );
+      });
     });
   });
 });

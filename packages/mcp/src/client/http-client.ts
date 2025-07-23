@@ -64,6 +64,8 @@ export class HTTPClient extends AbstractClient {
         }
       } else {
         this.status = "error";
+        this.lastErrorMessage =
+          error instanceof Error ? error.message : "connection refused";
         if (throwOnError) {
           throw new AppError(
             ErrorCode.CONNECTION_REFUSED,

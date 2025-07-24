@@ -18,7 +18,7 @@ import { setupPromptHandlers } from "./handlers/prompts-handler";
 import { setupResourceTemplateHandlers } from "./handlers/resource-templates-handler";
 import { setupResourceHandlers } from "./handlers/resources-handler";
 import { setupToolHandlers } from "./handlers/tools-handler";
-import { createInMemoryOAuthProvider } from "./oauth/oauth-provider-factory";
+import { OAuthHandler } from "./oauth/oauth-provider-factory";
 
 global.EventSource = eventsource.EventSource;
 
@@ -162,10 +162,7 @@ export function createClientForTarget(target: ProxyTargetAttributes) {
       return new HTTPClient({
         url: target.transport.url,
         name: target.name,
-        oauthProvider: createInMemoryOAuthProvider(
-          "http://localhost:2345/callback",
-          (redirectUrl: URL) => {},
-        ),
+        oAuthHandler: new OAuthHandler({ id: target.transport.url }),
       });
     case "stdio":
       return new StdioClient({

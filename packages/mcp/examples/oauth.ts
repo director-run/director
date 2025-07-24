@@ -1,4 +1,3 @@
-import { URL } from "node:url";
 import {
   green,
   red,
@@ -9,11 +8,7 @@ import { ErrorCode, isAppErrorWithCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { openUrl } from "@director.run/utilities/os";
 import { HTTPClient } from "../src/client/http-client";
-import { waitForOAuthCallback } from "../src/oauth/helpers";
-import { createInMemoryOAuthProvider } from "../src/oauth/oauth-provider-factory";
-
-const CALLBACK_PORT = 8090;
-const CALLBACK_URL = `http://localhost:${CALLBACK_PORT}/callback`;
+import { OAuthHandler } from "../src/oauth/oauth-provider-factory";
 
 const logger = getLogger("examples/oauth");
 
@@ -21,22 +16,7 @@ async function main(): Promise<void> {
   const httpTarget = new HTTPClient({
     name: "oauth-test-client",
     url: "https://mcp.notion.com/mcp",
-    oauthProvider: createInMemoryOAuthProvider(
-      CALLBACK_URL,
-      (redirectUrl: URL) => {
-        logger.warn({
-          message: "oauth redirect handler called",
-          redirectUrl: redirectUrl.toString(),
-        });
-        openUrl(redirectUrl.toString());
-      },
-    ),
-    onAuthorizationRequired: async () => {
-      logger.warn({
-        message: "oauth flow required, waiting for callback",
-      });
-      return await waitForOAuthCallback(CALLBACK_PORT);
-    },
+    oAuthHandler: new OAuthHandler({ id: "notion" }),
   });
 
   try {
@@ -52,7 +32,9 @@ async function main(): Promise<void> {
         message: "received unauthorized error, attempting oauth flow",
       });
       try {
-        await httpTarget.performOAuthFlow();
+        await httpTarget.performOAuthFlow((url: URL) => {
+          openUrl(url.toString());
+        });
         logger.info({
           message: "oauth flow completed, trying again to connect to target",
         });

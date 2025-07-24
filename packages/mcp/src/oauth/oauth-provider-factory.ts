@@ -13,19 +13,6 @@ const logger = getLogger("oauth/provider");
 const CALLBACK_PORT = 8090;
 const CALLBACK_URL = `http://localhost:${CALLBACK_PORT}/callback`;
 
-export function getDeeeets(onRedirect?: (url: URL) => void) {
-  return {
-    oauthProvider: createInMemoryOAuthProvider(CALLBACK_URL, onRedirect),
-    onAuthorizationRequired: async (url: URL) => {
-      console.log("xxxxx onAuthorizationRequired");
-      logger.warn({
-        message: "oauth flow required, waiting for callback",
-      });
-      return await waitForOAuthCallback(CALLBACK_PORT);
-    },
-  };
-}
-
 export class OAuthHandler {
   private _id: string;
   private _callbackUrl: string;
@@ -41,8 +28,16 @@ export class OAuthHandler {
     } = {},
   ) {
     return {
-      oauthProvider: createInMemoryOAuthProvider(
-        CALLBACK_URL,
+      oauthProvider: new InMemoryOAuthProvider(
+        this._callbackUrl,
+        {
+          client_name: "Simple OAuth MCP Client",
+          redirect_uris: [this._callbackUrl],
+          grant_types: ["authorization_code", "refresh_token"],
+          response_types: ["code"],
+          token_endpoint_auth_method: "client_secret_post",
+          scope: "mcp:tools",
+        },
         params.onRedirect,
       ),
       onAuthorizationRequired: async (url: URL) => {
@@ -54,35 +49,6 @@ export class OAuthHandler {
       },
     };
   }
-
-  // onAuthorizationRequired() {
-  //   logger.warn({
-  //     message: "oauth flow required, waiting for callback",
-  //   });
-  //   return waitForOAuthCallback(CALLBACK_PORT);
-  // }
-}
-
-export function getOAuthHandler(params: { id: string }) {
-  return new OAuthHandler(params);
-}
-
-export function createInMemoryOAuthProvider(
-  callbackUrl: string,
-  onRedirect?: (url: URL) => void,
-): OAuthClientProvider {
-  return new InMemoryOAuthProvider(
-    callbackUrl,
-    {
-      client_name: "Simple OAuth MCP Client",
-      redirect_uris: [callbackUrl],
-      grant_types: ["authorization_code", "refresh_token"],
-      response_types: ["code"],
-      token_endpoint_auth_method: "client_secret_post",
-      scope: "mcp:tools",
-    },
-    onRedirect,
-  );
 }
 
 class InMemoryOAuthProvider implements OAuthClientProvider {

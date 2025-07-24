@@ -60,9 +60,9 @@ describe("Entries Router", () => {
         await authenticatedClient.entries.populate.mutate({});
         const stats = await authenticatedClient.entries.stats.query({});
 
-        expect(stats).toHaveProperty("total", 14);
+        expect(stats).toHaveProperty("total", 89);
         expect(stats).toHaveProperty("draft", 0);
-        expect(stats).toHaveProperty("published", 14);
+        expect(stats).toHaveProperty("published", 89);
       });
     });
 

@@ -20,30 +20,6 @@ import { setupResourceHandlers } from "./handlers/resources-handler";
 import { setupToolHandlers } from "./handlers/tools-handler";
 import { createInMemoryOAuthProvider } from "./oauth/oauth-provider-factory";
 
-export function createClientForTarget(target: ProxyTargetAttributes) {
-  switch (target.transport.type) {
-    case "http":
-      return new HTTPClient({
-        url: target.transport.url,
-        name: target.name,
-        oauthProvider: createInMemoryOAuthProvider(
-          "http://localhost:2345/callback",
-          (redirectUrl: URL) => {},
-        ),
-      });
-    case "stdio":
-      return new StdioClient({
-        name: target.name,
-        command: target.transport.command,
-        args: target.transport.args,
-        env: {
-          ...(process.env as Record<string, string>),
-          ...target.transport.env,
-        },
-      });
-  }
-}
-
 global.EventSource = eventsource.EventSource;
 
 const logger = getLogger(`ProxyServer`);
@@ -173,5 +149,29 @@ export class ProxyServer extends Server {
     logger.info({ message: `shutting down`, proxyId: this.id });
     await Promise.all(this.targets.map((target) => target.close()));
     await super.close();
+  }
+}
+
+export function createClientForTarget(target: ProxyTargetAttributes) {
+  switch (target.transport.type) {
+    case "http":
+      return new HTTPClient({
+        url: target.transport.url,
+        name: target.name,
+        oauthProvider: createInMemoryOAuthProvider(
+          "http://localhost:2345/callback",
+          (redirectUrl: URL) => {},
+        ),
+      });
+    case "stdio":
+      return new StdioClient({
+        name: target.name,
+        command: target.transport.command,
+        args: target.transport.args,
+        env: {
+          ...(process.env as Record<string, string>),
+          ...target.transport.env,
+        },
+      });
   }
 }

@@ -70,8 +70,9 @@ export function registerAddCommand(program: DirectorCommand) {
             }
             console.log(`adding ${options.command} to ${proxyId}`);
 
-            //
-            //
+            const [command, ...args] = options.command.split(" ");
+
+            await addServerFromStdio(proxyId, command, args, options.name);
           } else {
             console.warn(
               "No entry name or url provided. You must speciy --entry or --url and --name, alternatively update the config file directly and restart the gateway:",
@@ -85,6 +86,30 @@ export function registerAddCommand(program: DirectorCommand) {
         },
       ),
     );
+}
+
+async function addServerFromStdio(
+  proxyId: string,
+  command: string,
+  args: string[],
+  name: string,
+) {
+  await spinnerWrap(async () => {
+    await gatewayClient.store.addServer.mutate({
+      proxyId,
+      server: {
+        name,
+        transport: {
+          type: "stdio",
+          command,
+          args,
+        },
+      },
+    });
+  })
+    .start("installing server...")
+    .succeed(`Stdio server ${command} added to ${proxyId}`)
+    .run();
 }
 
 async function addServerFromUrl(proxyId: string, url: string, name: string) {

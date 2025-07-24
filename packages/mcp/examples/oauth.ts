@@ -56,7 +56,7 @@ async function main(): Promise<void> {
         logger.info({
           message: "oauth flow completed, trying again to connect to target",
         });
-        await httpTarget.connectToTarget({ throwOnError: true });
+        // await httpTarget.connectToTarget({ throwOnError: true });
       } catch (error) {
         logger.error({
           message: "exhausted all attempts, connection failed",

@@ -6,8 +6,66 @@ import {
   type OAuthClientMetadata,
   type OAuthTokens,
 } from "@modelcontextprotocol/sdk/shared/auth.js";
+import { waitForOAuthCallback } from "./helpers";
 
 const logger = getLogger("oauth/provider");
+
+const CALLBACK_PORT = 8090;
+const CALLBACK_URL = `http://localhost:${CALLBACK_PORT}/callback`;
+
+export function getDeeeets(onRedirect?: (url: URL) => void) {
+  return {
+    oauthProvider: createInMemoryOAuthProvider(CALLBACK_URL, onRedirect),
+    onAuthorizationRequired: async (url: URL) => {
+      console.log("xxxxx onAuthorizationRequired");
+      logger.warn({
+        message: "oauth flow required, waiting for callback",
+      });
+      return await waitForOAuthCallback(CALLBACK_PORT);
+    },
+  };
+}
+
+export class OAuthHandler {
+  private _id: string;
+  private _callbackUrl: string;
+
+  constructor({ id }: { id: string }) {
+    this._id = id;
+    this._callbackUrl = CALLBACK_URL;
+  }
+
+  getProvider(
+    params: {
+      onRedirect?: (url: URL) => void;
+    } = {},
+  ) {
+    return {
+      oauthProvider: createInMemoryOAuthProvider(
+        CALLBACK_URL,
+        params.onRedirect,
+      ),
+      onAuthorizationRequired: async (url: URL) => {
+        console.log("xxxxx onAuthorizationRequired");
+        logger.warn({
+          message: "oauth flow required, waiting for callback",
+        });
+        return await waitForOAuthCallback(CALLBACK_PORT);
+      },
+    };
+  }
+
+  // onAuthorizationRequired() {
+  //   logger.warn({
+  //     message: "oauth flow required, waiting for callback",
+  //   });
+  //   return waitForOAuthCallback(CALLBACK_PORT);
+  // }
+}
+
+export function getOAuthHandler(params: { id: string }) {
+  return new OAuthHandler(params);
+}
 
 export function createInMemoryOAuthProvider(
   callbackUrl: string,

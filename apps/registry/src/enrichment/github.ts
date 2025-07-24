@@ -1,40 +1,92 @@
-import GitUrlParse from "git-url-parse";
+import { getLogger } from "@director.run/utilities/logger";
+import parseGitUrl from "git-url-parse";
+import { Octokit } from "octokit";
+import { env } from "../config";
+
+const githubClient = new Octokit({
+  auth: env.GITHUB_API_TOKEN,
+});
 
 export function isGithubRepo(url: string) {
-  return GitUrlParse(url).resource === "github.com";
+  return parseGitUrl(url).resource === "github.com";
 }
 
-function parseGithubUrl(url: string) {
-  const urlObj = new URL(url);
-  const path = urlObj.pathname;
-  const parts = path.split("/").filter(Boolean);
+const logger = getLogger("github");
 
-  // Extract team and repo from the first two parts
-  const team = parts[0];
-  const repo = parts[1];
+export async function getGithubReadme(url: string) {
+  try {
+    const parsedUrl = parseGitUrl(url);
 
-  // Find the branch and subfolder
-  let branch = "main";
-  let subfolder = "";
+    if (parsedUrl.filepath === "") {
+      const readmeContent = await githubClient.rest.repos.getReadme({
+        owner: parsedUrl.owner,
+        repo: parsedUrl.name,
+        mediaType: {
+          format: "raw",
+        },
+        ...(parsedUrl.ref ? { ref: parsedUrl.ref } : {}),
+      });
 
-  // Look for branch indicators (tree, blob, HEAD)
-  const branchIndex = parts.findIndex((part) =>
-    ["tree", "blob", "HEAD", "master"].includes(part),
-  );
-  if (branchIndex !== -1 && parts[branchIndex + 1]) {
-    // Always use 'main' as the branch name, even if we see 'HEAD'
-    branch = "main";
-    // If we found a branch, everything after it is the subfolder
-    if (parts.length > branchIndex + 2) {
-      subfolder = parts.slice(branchIndex + 2).join("/");
+      return readmeContent.data as unknown as string;
     }
-  }
 
-  return { team, repo, branch, subfolder };
+    if (
+      parsedUrl.filepathtype === "blob" &&
+      parsedUrl.filepath.toLowerCase().includes("readme")
+    ) {
+      const readmeContent = await githubClient.rest.repos.getContent({
+        owner: parsedUrl.owner,
+        repo: parsedUrl.name,
+        mediaType: {
+          format: "raw",
+        },
+        ...(parsedUrl.ref ? { ref: parsedUrl.ref } : {}),
+        path: parsedUrl.filepath,
+      });
+
+      return readmeContent.data as unknown as string;
+    }
+
+    const repoContents = await githubClient.rest.repos.getContent({
+      owner: parsedUrl.owner,
+      repo: parsedUrl.name,
+      ...(parsedUrl.ref ? { ref: parsedUrl.ref } : {}),
+      path: parsedUrl.filepath
+        .replace("README.md", "")
+        .replace("readme.md", ""),
+    });
+
+    if (Array.isArray(repoContents.data)) {
+      const readme = repoContents.data.find(
+        (item) => item.name.toLowerCase() === "readme.md",
+      );
+
+      if (!readme) {
+        return null;
+      }
+
+      const readmeContent = await githubClient.rest.repos.getContent({
+        owner: parsedUrl.owner,
+        repo: parsedUrl.name,
+        mediaType: {
+          format: "raw",
+        },
+        ...(parsedUrl.ref ? { ref: parsedUrl.ref } : {}),
+        path: readme.path,
+      });
+
+      return readmeContent.data as unknown as string;
+    }
+
+    return null;
+  } catch (error) {
+    logger.error(`error getting github readme for ${url}`);
+    return null;
+  }
 }
 
 export function getGithubRawReadmeUrl(url: string) {
-  const { owner, name, ref, filepath } = GitUrlParse(url);
+  const { owner, name, ref, filepath } = parseGitUrl(url);
 
   const branch = ref || "main";
 

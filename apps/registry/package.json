@@ -33,6 +33,7 @@
     "commander": "^13.1.0",
     "drizzle-orm": "^0.43.1",
     "git-url-parse": "^16.1.0",
+    "octokit": "^5.0.3",
     "pg": "^8.15.6"
   }
 }

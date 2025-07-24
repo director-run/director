@@ -126,7 +126,7 @@ export class EntryStore {
         })
         .from(entriesTable)
         .where(whereSql)
-        .orderBy(asc(entriesTable.name))
+        .orderBy(sql`${entriesTable.isOfficial} DESC`, asc(entriesTable.name))
         .limit(pageSize)
         .offset(offset),
       this.db.db

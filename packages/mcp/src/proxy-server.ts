@@ -25,8 +25,12 @@ global.EventSource = eventsource.EventSource;
 const logger = getLogger(`ProxyServer`);
 
 export class ProxyServer extends Server {
-  private targets: (HTTPClient | StdioClient)[];
+  private _targets: (HTTPClient | StdioClient)[];
   public readonly attributes: ProxyServerAttributes;
+
+  public get targets(): (HTTPClient | StdioClient)[] {
+    return this._targets;
+  }
 
   constructor(attributes: ProxyServerAttributes) {
     super(
@@ -42,18 +46,18 @@ export class ProxyServer extends Server {
         },
       },
     );
-    this.targets = [];
+    this._targets = [];
     this.attributes = attributes;
 
     for (const server of this.attributes.servers) {
       const target = createClientForTarget(server);
-      this.targets.push(target);
+      this._targets.push(target);
     }
 
     setupToolHandlers(this, this.targets, this.attributes.addToolPrefix);
-    setupPromptHandlers(this, this.targets);
-    setupResourceHandlers(this, this.targets);
-    setupResourceTemplateHandlers(this, this.targets);
+    setupPromptHandlers(this, this._targets);
+    setupResourceHandlers(this, this._targets);
+    setupResourceTemplateHandlers(this, this._targets);
   }
 
   public async connectTargets(
@@ -73,7 +77,7 @@ export class ProxyServer extends Server {
     );
     if (existingTarget) {
       throw new AppError(
-        ErrorCode.BAD_REQUEST,
+        ErrorCode.DUPLICATE,
         `Target ${target.name} already exists`,
       );
     }

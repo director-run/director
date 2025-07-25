@@ -22,13 +22,22 @@ export class OAuthProvider implements OAuthClientProvider {
   private _clientInformation?: OAuthClientInformationFull;
   private _tokens?: OAuthTokens;
   private _codeVerifier?: string;
+  private _clientMetadata: OAuthClientMetadata;
 
   constructor(
     private readonly _redirectUrl: string | URL,
-    private readonly _clientMetadata: OAuthClientMetadata,
     private readonly _storage: AbstractOAuthStorage,
     private readonly _onRedirect?: (url: URL) => void,
-  ) {}
+  ) {
+    this._clientMetadata = {
+      client_name: "Simple OAuth MCP Client",
+      redirect_uris: [this._redirectUrl.toString()],
+      grant_types: ["authorization_code", "refresh_token"],
+      response_types: ["code"],
+      token_endpoint_auth_method: "client_secret_post",
+      scope: "mcp:tools",
+    };
+  }
 
   get redirectUrl(): string | URL {
     return this._redirectUrl;
@@ -120,18 +129,8 @@ export class OAuthHandler {
       onRedirect?: (url: URL) => void;
     } = {},
   ) {
-    const clientMetadata = {
-      client_name: "Simple OAuth MCP Client",
-      redirect_uris: [this._callbackUrl],
-      grant_types: ["authorization_code", "refresh_token"],
-      response_types: ["code"],
-      token_endpoint_auth_method: "client_secret_post",
-      scope: "mcp:tools",
-    };
-
     const oauthProvider = new OAuthProvider(
       this._callbackUrl,
-      clientMetadata,
       this._storage,
       params.onRedirect,
     );
@@ -147,20 +146,4 @@ export class OAuthHandler {
       },
     };
   }
-}
-
-// Factory functions for convenience
-export function createInMemoryOAuthHandler(): OAuthHandler {
-  return new OAuthHandler({
-    storage: new InMemoryOAuthStorage(),
-  });
-}
-
-export function createOnDiskOAuthHandler(
-  directory: string,
-  filePrefix?: string,
-): OAuthHandler {
-  return new OAuthHandler({
-    storage: new OnDiskOAuthStorage("default", directory, filePrefix),
-  });
 }

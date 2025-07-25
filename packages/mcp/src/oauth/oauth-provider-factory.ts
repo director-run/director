@@ -1,6 +1,7 @@
 import {} from "@director.run/utilities/env";
 import { getLogger } from "@director.run/utilities/logger";
 import {} from "@director.run/utilities/secure-json";
+import { joinURL } from "@director.run/utilities/url";
 import { type OAuthClientProvider } from "@modelcontextprotocol/sdk/client/auth.js";
 import {
   type OAuthClientInformation,
@@ -8,15 +9,11 @@ import {
   type OAuthClientMetadata,
   type OAuthTokens,
 } from "@modelcontextprotocol/sdk/shared/auth.js";
-import { waitForOAuthCallback } from "./helpers";
 import { AbstractOAuthStorage } from "./storage/abstract-oauth-storage";
 import { InMemoryOAuthStorage } from "./storage/in-memory-oauth-storage";
 import { OnDiskOAuthStorage } from "./storage/on-disk-oauth-storage";
 
 const logger = getLogger("oauth/provider");
-
-const CALLBACK_PORT = 8090;
-const CALLBACK_URL = `http://localhost:${CALLBACK_PORT}/callback`;
 
 export interface OAuthProviderParams {
   id: string;
@@ -113,42 +110,49 @@ export class OAuthProvider implements OAuthClientProvider {
     return this._codeVerifier;
   }
 
-  async onAuthorizationRequired(url: URL) {
+  onAuthorizationRequired(url: URL) {
     logger.warn({
       message: "oauth flow required, waiting for callback",
     });
-    return await waitForOAuthCallback(CALLBACK_PORT);
+    // return await waitForOAuthCallback(CALLBACK_PORT);
+    return "1234567890";
   }
 }
 
 export interface OAuthHandlerParams {
   storage: AbstractOAuthStorage;
+  baseCallbackUrl: string;
 }
 
 export class OAuthHandler {
-  private _callbackUrl: string;
+  private _baseCallbackUrl: string;
   private _storage: AbstractOAuthStorage;
 
   constructor(params: OAuthHandlerParams) {
-    this._callbackUrl = CALLBACK_URL;
+    this._baseCallbackUrl = params.baseCallbackUrl;
     this._storage = params.storage;
   }
 
   public static createDiskBackedHandler(params: {
     directory: string;
     filePrefix?: string;
+    baseCallbackUrl: string;
   }) {
     return new OAuthHandler({
       storage: new OnDiskOAuthStorage({
         directory: params.directory,
         filePrefix: params.filePrefix,
       }),
+      baseCallbackUrl: params.baseCallbackUrl,
     });
   }
 
-  public static createMemoryBackedHandler() {
+  public static createMemoryBackedHandler(params: {
+    baseCallbackUrl: string;
+  }) {
     return new OAuthHandler({
       storage: new InMemoryOAuthStorage(),
+      baseCallbackUrl: params.baseCallbackUrl,
     });
   }
 
@@ -160,7 +164,7 @@ export class OAuthHandler {
   ) {
     return new OAuthProvider({
       id,
-      redirectUrl: this._callbackUrl,
+      redirectUrl: joinURL(this._baseCallbackUrl, `${id}/callback`),
       storage: this._storage,
       onRedirect: params.onRedirect,
     });

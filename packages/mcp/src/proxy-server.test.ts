@@ -155,7 +155,9 @@ describe("ProxyServer", () => {
               servers: [],
             },
             {
-              oAuthHandler: OAuthHandler.createMemoryBackedHandler(),
+              oAuthHandler: OAuthHandler.createMemoryBackedHandler({
+                baseCallbackUrl: "http://localhost:8999",
+              }),
             },
           );
 
@@ -181,7 +183,9 @@ describe("ProxyServer", () => {
               servers: [],
             },
             {
-              oAuthHandler: OAuthHandler.createMemoryBackedHandler(),
+              oAuthHandler: OAuthHandler.createMemoryBackedHandler({
+                baseCallbackUrl: "http://localhost:8999",
+              }),
             },
           );
 

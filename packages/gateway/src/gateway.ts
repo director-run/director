@@ -64,9 +64,12 @@ export class Gateway {
       if (attribs.oauth.storage === "disk") {
         oAuthHandler = OAuthHandler.createDiskBackedHandler({
           directory: attribs.oauth.tokenDirectory,
+          baseCallbackUrl: `http://localhost:${attribs.port}`,
         });
       } else if (attribs.oauth.storage === "memory") {
-        oAuthHandler = OAuthHandler.createMemoryBackedHandler();
+        oAuthHandler = OAuthHandler.createMemoryBackedHandler({
+          baseCallbackUrl: `http://localhost:${attribs.port}`,
+        });
       }
     }
 

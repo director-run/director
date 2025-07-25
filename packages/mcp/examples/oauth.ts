@@ -22,6 +22,7 @@ async function main(): Promise<void> {
     url: "https://mcp.notion.com/mcp",
     oAuthHandler: OAuthHandler.createDiskBackedHandler({
       directory: path.join(__dirname, "tokens"),
+      baseCallbackUrl: `http://localhost:${port}`,
     }),
   });
 
@@ -29,12 +30,13 @@ async function main(): Promise<void> {
 
   app.use(
     createOauthCallbackRouter({
-      onAuthorizationSuccess: async (code) => {
-        console.log("GOT THE TOKEN");
+      onAuthorizationSuccess: async (clientId, code) => {
+        console.log("GOT THE TOKEN for", clientId);
         await httpTarget.completeAuthFlow(code);
 
         console.log("--------------------------------");
         console.log(">", httpTarget.status);
+        runNotionMCPChecks(httpTarget);
         console.log("--------------------------------");
       },
       onAuthorizationError: (error) => {},

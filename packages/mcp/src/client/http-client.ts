@@ -73,7 +73,7 @@ export class HTTPClient extends AbstractClient {
       throwOnError,
       transport: new SSEClientTransport(new URL(this.url), {
         requestInit: { headers: this.headers },
-        authProvider: this.oAuthHandler?.getProvider(this.name).oauthProvider,
+        authProvider: this.oAuthHandler?.getProvider(this.name),
       }),
     });
   }
@@ -87,7 +87,7 @@ export class HTTPClient extends AbstractClient {
       throwOnError,
       transport: new StreamableHTTPClientTransport(new URL(this.url), {
         requestInit: { headers: this.headers },
-        authProvider: this.oAuthHandler?.getProvider(this.name).oauthProvider,
+        authProvider: this.oAuthHandler?.getProvider(this.name),
       }),
     });
   }
@@ -100,17 +100,16 @@ export class HTTPClient extends AbstractClient {
       );
     }
 
-    const { oauthProvider, onAuthorizationRequired } =
-      this.oAuthHandler.getProvider(this.name, {
-        onRedirect,
-      });
+    const oAuthProvider = this.oAuthHandler.getProvider(this.name, {
+      onRedirect,
+    });
 
     try {
       await this.connectToTransport({
         throwOnError: true,
         transport: new StreamableHTTPClientTransport(new URL(this.url), {
           requestInit: { headers: this.headers },
-          authProvider: oauthProvider,
+          authProvider: oAuthProvider,
         }),
       });
     } catch (error) {
@@ -124,12 +123,14 @@ export class HTTPClient extends AbstractClient {
           new URL(this.url),
           {
             requestInit: { headers: this.headers },
-            authProvider: oauthProvider,
+            authProvider: oAuthProvider,
           },
         );
 
         // Get authorization code from the handler
-        const authCode = await onAuthorizationRequired(new URL(this.url));
+        const authCode = await oAuthProvider.onAuthorizationRequired(
+          new URL(this.url),
+        );
 
         // Complete OAuth flow
         await oauthTransport.finishAuth(authCode);
@@ -138,7 +139,7 @@ export class HTTPClient extends AbstractClient {
           throwOnError: true,
           transport: new StreamableHTTPClientTransport(new URL(this.url), {
             requestInit: { headers: this.headers },
-            authProvider: oauthProvider,
+            authProvider: oAuthProvider,
           }),
         });
       } else {

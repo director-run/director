@@ -98,6 +98,13 @@ export class OAuthProvider implements OAuthClientProvider {
     }
     return this._codeVerifier;
   }
+
+  async onAuthorizationRequired(url: URL) {
+    logger.warn({
+      message: "oauth flow required, waiting for callback",
+    });
+    return await waitForOAuthCallback(CALLBACK_PORT);
+  }
 }
 
 export class OAuthHandler {
@@ -129,21 +136,10 @@ export class OAuthHandler {
       onRedirect?: (url: URL) => void;
     } = {},
   ) {
-    const oauthProvider = new OAuthProvider(
+    return new OAuthProvider(
       this._callbackUrl,
       this._storage,
       params.onRedirect,
     );
-
-    return {
-      oauthProvider,
-      onAuthorizationRequired: async (url: URL) => {
-        console.log("xxxxx onAuthorizationRequired");
-        logger.warn({
-          message: "oauth flow required, waiting for callback",
-        });
-        return await waitForOAuthCallback(CALLBACK_PORT);
-      },
-    };
   }
 }

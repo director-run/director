@@ -16,7 +16,7 @@ async function main(): Promise<void> {
   const httpTarget = new HTTPClient({
     name: "oauth-test-client",
     url: "https://mcp.notion.com/mcp",
-    oAuthHandler: new OAuthHandler({ id: "notion", storage: "disk" }),
+    oAuthHandler: new OAuthHandler({ storage: "disk" }),
   });
 
   try {

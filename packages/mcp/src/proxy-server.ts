@@ -178,7 +178,6 @@ export function createClientForTarget(target: ProxyTargetAttributes) {
         url: target.transport.url,
         name: target.name,
         oAuthHandler: new OAuthHandler({
-          id: target.transport.url,
           storage: "disk",
         }),
       });

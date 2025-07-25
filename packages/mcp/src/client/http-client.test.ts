@@ -51,7 +51,7 @@ describe("HTTPClient", () => {
         const client = new HTTPClient({
           name: "test-client",
           url: "https://mcp.notion.com/mcp",
-          oAuthHandler: new OAuthHandler({ id: "test-client" }),
+          oAuthHandler: new OAuthHandler({ storage: "memory" }),
         });
 
         const result = await client.connectToTarget({

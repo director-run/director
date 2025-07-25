@@ -73,7 +73,7 @@ export class HTTPClient extends AbstractClient {
       throwOnError,
       transport: new SSEClientTransport(new URL(this.url), {
         requestInit: { headers: this.headers },
-        authProvider: this.oAuthHandler?.getProvider().oauthProvider,
+        authProvider: this.oAuthHandler?.getProvider(this.name).oauthProvider,
       }),
     });
   }
@@ -87,7 +87,7 @@ export class HTTPClient extends AbstractClient {
       throwOnError,
       transport: new StreamableHTTPClientTransport(new URL(this.url), {
         requestInit: { headers: this.headers },
-        authProvider: this.oAuthHandler?.getProvider().oauthProvider,
+        authProvider: this.oAuthHandler?.getProvider(this.name).oauthProvider,
       }),
     });
   }
@@ -101,7 +101,7 @@ export class HTTPClient extends AbstractClient {
     }
 
     const { oauthProvider, onAuthorizationRequired } =
-      this.oAuthHandler.getProvider({
+      this.oAuthHandler.getProvider(this.name, {
         onRedirect,
       });
 

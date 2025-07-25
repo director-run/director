@@ -21,24 +21,20 @@ const CALLBACK_PORT = 8090;
 const CALLBACK_URL = `http://localhost:${CALLBACK_PORT}/callback`;
 
 export class OAuthHandler {
-  private _id: string;
   private _callbackUrl: string;
   private _storage: "memory" | "disk";
   private _directory?: string;
   private _filePrefix?: string;
 
   constructor({
-    id,
     storage,
     directory,
     filePrefix,
   }: {
-    id: string;
     storage?: "memory" | "disk";
     directory?: string;
     filePrefix?: string;
   }) {
-    this._id = id;
     this._callbackUrl = CALLBACK_URL;
     this._storage = storage || "memory";
     this._directory = directory;
@@ -46,6 +42,7 @@ export class OAuthHandler {
   }
 
   getProvider(
+    id: string,
     params: {
       onRedirect?: (url: URL) => void;
     } = {},
@@ -65,7 +62,7 @@ export class OAuthHandler {
             this._callbackUrl,
             clientMetadata,
             params.onRedirect,
-            this._id,
+            id,
             this._directory,
             this._filePrefix,
           )

@@ -1,7 +1,11 @@
 import path from "node:path";
 import {} from "@director.run/utilities/env";
-import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
+import { ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
+import {
+  readSecureJSONFile,
+  writeSecureJSONFile,
+} from "@director.run/utilities/secure-json";
 import { type OAuthClientProvider } from "@modelcontextprotocol/sdk/client/auth.js";
 import {
   type OAuthClientInformation,
@@ -20,11 +24,25 @@ export class OAuthHandler {
   private _id: string;
   private _callbackUrl: string;
   private _storage: "memory" | "disk";
+  private _directory?: string;
+  private _filePrefix?: string;
 
-  constructor({ id, storage }: { id: string; storage?: "memory" | "disk" }) {
+  constructor({
+    id,
+    storage,
+    directory,
+    filePrefix,
+  }: {
+    id: string;
+    storage?: "memory" | "disk";
+    directory?: string;
+    filePrefix?: string;
+  }) {
     this._id = id;
     this._callbackUrl = CALLBACK_URL;
     this._storage = storage || "memory";
+    this._directory = directory;
+    this._filePrefix = filePrefix;
   }
 
   getProvider(
@@ -48,6 +66,8 @@ export class OAuthHandler {
             clientMetadata,
             params.onRedirect,
             this._id,
+            this._directory,
+            this._filePrefix,
           )
         : new InMemoryOAuthProvider(
             this._callbackUrl,
@@ -131,30 +151,20 @@ export class OnDiskOAuthProvider implements OAuthClientProvider {
   private _clientInformation?: OAuthClientInformationFull;
   private _tokens?: OAuthTokens;
   private _codeVerifier?: string;
-  private readonly _dataDir: string;
-  private readonly _clientInfoPath: string;
-  private readonly _tokensPath: string;
-  private readonly _codeVerifierPath: string;
+  private readonly _filePath: string;
 
   constructor(
     private readonly _redirectUrl: string | URL,
     private readonly _clientMetadata: OAuthClientMetadata,
     private readonly _onRedirect?: (url: URL) => void,
     private readonly _providerId?: string,
+    private readonly _directory?: string,
+    private readonly _filePrefix?: string,
   ) {
-    this._dataDir = this._getDataDir();
-    const providerDir = path.join(
-      this._dataDir,
-      "oauth",
-      this._providerId || "default",
-    );
-    this._clientInfoPath = path.join(providerDir, "client-info.json");
-    this._tokensPath = path.join(providerDir, "tokens.json");
-    this._codeVerifierPath = path.join(providerDir, "code-verifier.json");
-  }
-
-  private _getDataDir(): string {
-    return path.join(process.cwd(), "oauth");
+    const directory = this._directory || path.join(process.cwd(), "oauth");
+    const prefix = this._filePrefix || "oauth";
+    const providerId = this._providerId || "default";
+    this._filePath = path.join(directory, `${prefix}-${providerId}.json`);
   }
 
   get redirectUrl(): string | URL {
@@ -171,20 +181,29 @@ export class OnDiskOAuthProvider implements OAuthClientProvider {
     }
 
     try {
-      this._clientInformation = await readJSONFile<OAuthClientInformationFull>(
-        this._clientInfoPath,
-      );
-      logger.info({
-        message: "loaded client information from disk",
-        path: this._clientInfoPath,
-      });
-      return this._clientInformation;
+      const data = await this._loadData();
+      this._clientInformation = data.clientInformation;
+      if (data.clientInformation) {
+        logger.info({
+          message: "loaded client information from disk",
+          path: this._filePath,
+        });
+      }
+      return data.clientInformation;
     } catch (error) {
-      logger.debug({
-        message: "no client information found on disk",
-        path: this._clientInfoPath,
-      });
-      return undefined;
+      // Only catch file not found errors, let permission errors propagate
+      if (
+        error instanceof Error &&
+        "code" in error &&
+        (error as { code: string }).code === ErrorCode.NOT_FOUND
+      ) {
+        logger.debug({
+          message: "no client information found on disk",
+          path: this._filePath,
+        });
+        return undefined;
+      }
+      throw error;
     }
   }
 
@@ -193,10 +212,10 @@ export class OnDiskOAuthProvider implements OAuthClientProvider {
   ): Promise<void> {
     logger.info({
       message: "saving client information to disk",
-      path: this._clientInfoPath,
+      path: this._filePath,
     });
     this._clientInformation = clientInformation;
-    await writeJSONFile(this._clientInfoPath, clientInformation);
+    await this._saveData({ clientInformation });
   }
 
   async tokens(): Promise<OAuthTokens | undefined> {
@@ -205,25 +224,36 @@ export class OnDiskOAuthProvider implements OAuthClientProvider {
     }
 
     try {
-      this._tokens = await readJSONFile<OAuthTokens>(this._tokensPath);
-      logger.info({
-        message: "loaded tokens from disk",
-        path: this._tokensPath,
-      });
-      return this._tokens;
+      const data = await this._loadData();
+      this._tokens = data.tokens;
+      if (data.tokens) {
+        logger.info({
+          message: "loaded tokens from disk",
+          path: this._filePath,
+        });
+      }
+      return data.tokens;
     } catch (error) {
-      logger.debug({
-        message: "no tokens found on disk",
-        path: this._tokensPath,
-      });
-      return undefined;
+      // Only catch file not found errors, let permission errors propagate
+      if (
+        error instanceof Error &&
+        "code" in error &&
+        (error as { code: string }).code === ErrorCode.NOT_FOUND
+      ) {
+        logger.debug({
+          message: "no tokens found on disk",
+          path: this._filePath,
+        });
+        return undefined;
+      }
+      throw error;
     }
   }
 
   async saveTokens(tokens: OAuthTokens): Promise<void> {
-    logger.info({ message: "saving tokens to disk", path: this._tokensPath });
+    logger.info({ message: "saving tokens to disk", path: this._filePath });
     this._tokens = tokens;
-    await writeJSONFile(this._tokensPath, tokens);
+    await this._saveData({ tokens });
   }
 
   redirectToAuthorization(authorizationUrl: URL): void {
@@ -237,10 +267,10 @@ export class OnDiskOAuthProvider implements OAuthClientProvider {
   async saveCodeVerifier(codeVerifier: string): Promise<void> {
     logger.info({
       message: "saving code verifier to disk",
-      path: this._codeVerifierPath,
+      path: this._filePath,
     });
     this._codeVerifier = codeVerifier;
-    await writeJSONFile(this._codeVerifierPath, codeVerifier);
+    await this._saveData({ codeVerifier });
   }
 
   async codeVerifier(): Promise<string> {
@@ -249,14 +279,61 @@ export class OnDiskOAuthProvider implements OAuthClientProvider {
     }
 
     try {
-      this._codeVerifier = await readJSONFile<string>(this._codeVerifierPath);
-      logger.info({
-        message: "loaded code verifier from disk",
-        path: this._codeVerifierPath,
-      });
-      return this._codeVerifier;
+      const data = await this._loadData();
+      this._codeVerifier = data.codeVerifier;
+      if (data.codeVerifier) {
+        logger.info({
+          message: "loaded code verifier from disk",
+          path: this._filePath,
+        });
+      }
+      if (!data.codeVerifier) {
+        throw new Error("No code verifier saved");
+      }
+      return data.codeVerifier;
     } catch (error) {
-      throw new Error("No code verifier saved");
+      // Only catch file not found errors, let permission errors propagate
+      if (
+        error instanceof Error &&
+        "code" in error &&
+        (error as { code: string }).code === ErrorCode.NOT_FOUND
+      ) {
+        throw new Error("No code verifier saved");
+      }
+      throw error;
     }
+  }
+
+  private async _loadData(): Promise<{
+    clientInformation?: OAuthClientInformationFull;
+    tokens?: OAuthTokens;
+    codeVerifier?: string;
+  }> {
+    try {
+      return await readSecureJSONFile(this._filePath);
+    } catch (error) {
+      // Only catch file not found errors, let permission errors propagate
+      if (
+        error instanceof Error &&
+        "code" in error &&
+        (error as { code: string }).code === ErrorCode.NOT_FOUND
+      ) {
+        return {};
+      }
+      throw error;
+    }
+  }
+
+  private async _saveData(data: {
+    clientInformation?: OAuthClientInformationFull;
+    tokens?: OAuthTokens;
+    codeVerifier?: string;
+  }): Promise<void> {
+    const existingData = await this._loadData();
+    const mergedData = {
+      ...existingData,
+      ...data,
+    };
+    await writeSecureJSONFile(this._filePath, mergedData);
   }
 }

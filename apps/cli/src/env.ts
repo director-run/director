@@ -23,6 +23,10 @@ export const env = createEnv({
       .optional()
       .default(`https://registry.director.run`),
     REGISTRY_API_KEY: z.string().optional().default(""),
+    OAUTH_TOKEN_DIRECTORY: z
+      .string()
+      .optional()
+      .default(path.join(getDataDir(), "tokens")),
     CONFIG_FILE_PATH: z
       .string()
       .optional()

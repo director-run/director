@@ -155,7 +155,7 @@ describe("ProxyServer", () => {
               servers: [],
             },
             {
-              oAuthHandler: new OAuthHandler({}),
+              oAuthHandler: OAuthHandler.createMemoryBackedHandler(),
             },
           );
 
@@ -181,7 +181,7 @@ describe("ProxyServer", () => {
               servers: [],
             },
             {
-              oAuthHandler: new OAuthHandler({}),
+              oAuthHandler: OAuthHandler.createMemoryBackedHandler(),
             },
           );
 

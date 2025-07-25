@@ -122,27 +122,34 @@ export class OAuthProvider implements OAuthClientProvider {
 }
 
 export interface OAuthHandlerParams {
-  storage?: AbstractOAuthStorage;
-  directory?: string;
-  filePrefix?: string;
+  storage: AbstractOAuthStorage;
 }
 
 export class OAuthHandler {
   private _callbackUrl: string;
   private _storage: AbstractOAuthStorage;
 
-  constructor(params: OAuthHandlerParams = {}) {
+  constructor(params: OAuthHandlerParams) {
     this._callbackUrl = CALLBACK_URL;
-    if (params.storage) {
-      this._storage = params.storage;
-    } else if (params.directory) {
-      this._storage = new OnDiskOAuthStorage({
+    this._storage = params.storage;
+  }
+
+  public static createDiskBackerHandler(params: {
+    directory: string;
+    filePrefix?: string;
+  }) {
+    return new OAuthHandler({
+      storage: new OnDiskOAuthStorage({
         directory: params.directory,
         filePrefix: params.filePrefix,
-      });
-    } else {
-      this._storage = new InMemoryOAuthStorage();
-    }
+      }),
+    });
+  }
+
+  public static createMemoryBackedHandler() {
+    return new OAuthHandler({
+      storage: new InMemoryOAuthStorage(),
+    });
   }
 
   getProvider(

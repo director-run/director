@@ -40,6 +40,16 @@ export class Gateway {
       registryURL: string;
       allowedOrigins?: string[];
       telemetry?: Telemetry;
+      oauth?:
+        | {
+            enabled: boolean;
+            storage: "disk";
+            tokenDirectory: string;
+          }
+        | {
+            enabled: boolean;
+            storage: "memory";
+          };
     },
     successCallback?: () => void,
   ) {
@@ -47,7 +57,19 @@ export class Gateway {
 
     const db = await Database.connect(attribs.databaseFilePath);
     const telemetry = attribs.telemetry || Telemetry.noTelemetry();
-    const oAuthHandler = new OAuthHandler({ directory: process.cwd() });
+
+    let oAuthHandler: OAuthHandler | undefined;
+
+    if (attribs.oauth && attribs.oauth.enabled) {
+      if (attribs.oauth.storage === "disk") {
+        oAuthHandler = OAuthHandler.createDiskBackerHandler({
+          directory: attribs.oauth.tokenDirectory,
+        });
+      } else if (attribs.oauth.storage === "memory") {
+        oAuthHandler = OAuthHandler.createMemoryBackedHandler();
+      }
+    }
+
     const proxyStore = await ProxyServerStore.create({
       db,
       telemetry,

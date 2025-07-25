@@ -1,3 +1,4 @@
+import path from "path";
 import {
   green,
   red,
@@ -16,7 +17,9 @@ async function main(): Promise<void> {
   const httpTarget = new HTTPClient({
     name: "oauth-test-client",
     url: "https://mcp.notion.com/mcp",
-    oAuthHandler: new OAuthHandler({ directory: process.cwd() }),
+    oAuthHandler: OAuthHandler.createDiskBackerHandler({
+      directory: path.join(__dirname, "tokens"),
+    }),
   });
 
   try {

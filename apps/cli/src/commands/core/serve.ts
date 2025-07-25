@@ -41,6 +41,11 @@ export async function startGateway(successCallback?: () => void) {
           cliVersion: packageJson.version,
         },
       }),
+      oauth: {
+        enabled: true,
+        storage: "disk",
+        tokenDirectory: env.OAUTH_TOKEN_DIRECTORY,
+      },
     },
     successCallback,
   );

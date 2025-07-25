@@ -25,6 +25,10 @@ export class IntegrationTestHarness {
             port: TEST_PORT,
             databaseFilePath: path.join(__dirname, "config.test.json"),
             registryURL: "http://localhost:3000",
+            oauth: {
+                enabled: true,
+                storage: "memory",
+            },
         });
 
         const client = createGatewayClient(`http://localhost:${gateway.port}`);

@@ -1,6 +1,9 @@
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
 
+import { HTTPClient } from "@director.run/mcp/client/http-client";
+import { AppError, ErrorCode } from "@director.run/utilities/error";
+import { openUrl } from "@director.run/utilities/os";
 import { proxyTargetAttributesSchema } from "@director.run/utilities/schema";
 import {
   getStreamablePathForProxy,
@@ -80,6 +83,32 @@ export function createProxyStoreRouter({
         const proxy = await proxyStore.addServer(input.proxyId, input.server);
         await restartConnectedClients(proxy);
         return proxy.toPlainObject();
+      }),
+
+    authenticate: t.procedure
+      .input(z.object({ proxyId: z.string(), serverName: z.string() }))
+      .query(async ({ input }) => {
+        const proxy = await proxyStore.get(input.proxyId);
+        const target = await proxy.getTarget(input.serverName);
+
+        if (target instanceof HTTPClient) {
+          if (target.status === "connected") {
+            throw new AppError(
+              ErrorCode.BAD_REQUEST,
+              "target is alreadt connected",
+            );
+          } else {
+            await target.performOAuthFlow((url: URL) => {
+              openUrl(url.toString());
+            });
+          }
+        } else {
+          throw new AppError(
+            ErrorCode.BAD_REQUEST,
+            "can only authenticate http clients",
+          );
+        }
+        return target.toPlainObject();
       }),
 
     purge: t.procedure.mutation(() => proxyStore.purge()),

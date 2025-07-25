@@ -9,6 +9,7 @@ import { checkForUpdates } from "../src/check-for-updates";
 import { registerClientCommands } from "../src/commands/client";
 import { registerCoreCommands } from "../src/commands/core";
 import { registerRegistryCommands } from "../src/commands/registry";
+import { registerToolsCommands } from "../src/commands/tools";
 import { env } from "../src/env";
 
 // add this to prevent the program from exiting (useful for working on help text in live reload)
@@ -27,6 +28,7 @@ program
 registerCoreCommands(program);
 env.ENABLE_DEBUG_COMMANDS && registerClientCommands(program);
 registerRegistryCommands(program);
+registerToolsCommands(program);
 
 program.addExamples(`
   $ director create my-proxy # Create a new proxy

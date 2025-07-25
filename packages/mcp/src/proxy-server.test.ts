@@ -56,6 +56,35 @@ describe("ProxyServer", () => {
     });
   });
 
+  describe("getTarget", () => {
+    test("should return the target or throw an error if it doesn't exist", async () => {
+      const proxy = new ProxyServer({
+        id: "test-proxy",
+        name: "test-proxy",
+        servers: [],
+      });
+
+      await proxy.addTarget(
+        {
+          name: "streamable",
+          transport: {
+            type: "http",
+            url: `http://localhost/mcp`,
+          },
+        },
+        { throwOnError: false },
+      );
+
+      const target = await proxy.getTarget("streamable");
+      expect(target).toBeDefined();
+
+      await expectToThrowAppError(() => proxy.getTarget("random"), {
+        code: ErrorCode.NOT_FOUND,
+        props: {},
+      });
+    });
+  });
+
   describe("addTarget", () => {
     test("should fail when adding a target that already exists", async () => {
       const proxy = new ProxyServer({

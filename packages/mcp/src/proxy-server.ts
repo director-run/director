@@ -68,6 +68,21 @@ export class ProxyServer extends Server {
     }
   }
 
+  public async getTarget(
+    targetName: string,
+  ): Promise<HTTPClient | StdioClient> {
+    const target = this.targets.find(
+      (t) => t.name.toLocaleLowerCase() === targetName.toLocaleLowerCase(),
+    );
+    if (!target) {
+      throw new AppError(
+        ErrorCode.NOT_FOUND,
+        `Target ${targetName} does not exists`,
+      );
+    }
+    return target;
+  }
+
   public async addTarget(
     target: ProxyTargetAttributes,
     attribs: { throwOnError: boolean } = { throwOnError: false },
@@ -162,7 +177,10 @@ export function createClientForTarget(target: ProxyTargetAttributes) {
       return new HTTPClient({
         url: target.transport.url,
         name: target.name,
-        oAuthHandler: new OAuthHandler({ id: target.transport.url }),
+        oAuthHandler: new OAuthHandler({
+          id: target.transport.url,
+          storage: "disk",
+        }),
       });
     case "stdio":
       return new StdioClient({

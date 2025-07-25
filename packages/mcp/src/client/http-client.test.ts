@@ -1,10 +1,8 @@
 import { ErrorCode } from "@director.run/utilities/error";
 import { expectToThrowAppError } from "@director.run/utilities/test";
 import { describe, expect, test } from "vitest";
-import {
-  InMemoryOAuthStorage,
-  OAuthHandler,
-} from "../oauth/oauth-provider-factory";
+import { OAuthHandler } from "../oauth/oauth-provider-factory";
+import { InMemoryOAuthStorage } from "../oauth/storage/in-memory-oauth-storage";
 import { makeEchoServer } from "../test/fixtures";
 import { serveOverStreamable } from "../transport";
 import { serveOverSSE } from "../transport";

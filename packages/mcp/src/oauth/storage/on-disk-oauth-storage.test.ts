@@ -19,7 +19,6 @@ describe("OnDiskOAuthStorage", () => {
     tempDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "oauth-test-"));
 
     storage = new OnDiskOAuthStorage({
-      providerId: testProviderId,
       directory: tempDir,
       filePrefix: "test-oauth",
     });
@@ -43,8 +42,8 @@ describe("OnDiskOAuthStorage", () => {
       scope: "test:scope",
     };
 
-    await storage.saveClientInformation(clientInfo);
-    const loaded = await storage.getClientInformation();
+    await storage.saveClientInformation(testProviderId, clientInfo);
+    const loaded = await storage.getClientInformation(testProviderId);
 
     expect(loaded).toEqual(clientInfo);
   });
@@ -58,8 +57,8 @@ describe("OnDiskOAuthStorage", () => {
       scope: "test:scope",
     };
 
-    await storage.saveTokens(tokens);
-    const loaded = await storage.getTokens();
+    await storage.saveTokens(testProviderId, tokens);
+    const loaded = await storage.getTokens(testProviderId);
 
     expect(loaded).toEqual(tokens);
   });
@@ -67,8 +66,8 @@ describe("OnDiskOAuthStorage", () => {
   it("should save and load code verifier", async () => {
     const codeVerifier = "test-code-verifier";
 
-    await storage.saveCodeVerifier(codeVerifier);
-    const loaded = await storage.getCodeVerifier();
+    await storage.saveCodeVerifier(testProviderId, codeVerifier);
+    const loaded = await storage.getCodeVerifier(testProviderId);
 
     expect(loaded).toBe(codeVerifier);
   });
@@ -94,9 +93,9 @@ describe("OnDiskOAuthStorage", () => {
     };
     const codeVerifier = "test-code-verifier";
 
-    await storage.saveClientInformation(clientInfo);
-    await storage.saveTokens(tokens);
-    await storage.saveCodeVerifier(codeVerifier);
+    await storage.saveClientInformation(testProviderId, clientInfo);
+    await storage.saveTokens(testProviderId, tokens);
+    await storage.saveCodeVerifier(testProviderId, codeVerifier);
 
     // Check that only one file was created
     const files = await fs.promises.readdir(tempDir);
@@ -108,6 +107,51 @@ describe("OnDiskOAuthStorage", () => {
     const stats = fs.statSync(filePath);
     const mode = stats.mode & 0o777;
     expect(mode).toBe(0o600);
+  });
+
+  it("should support multiple providers", async () => {
+    const provider1Id = "provider-1";
+    const provider2Id = "provider-2";
+
+    const clientInfo1: OAuthClientInformationFull = {
+      client_id: "client-1",
+      client_secret: "secret-1",
+      client_id_issued_at: 1234567890,
+      client_secret_expires_at: 1234567890,
+      redirect_uris: ["http://localhost:8080/callback"],
+      grant_types: ["authorization_code"],
+      response_types: ["code"],
+      token_endpoint_auth_method: "client_secret_post",
+      scope: "test:scope",
+    };
+
+    const clientInfo2: OAuthClientInformationFull = {
+      client_id: "client-2",
+      client_secret: "secret-2",
+      client_id_issued_at: 1234567890,
+      client_secret_expires_at: 1234567890,
+      redirect_uris: ["http://localhost:8080/callback"],
+      grant_types: ["authorization_code"],
+      response_types: ["code"],
+      token_endpoint_auth_method: "client_secret_post",
+      scope: "test:scope",
+    };
+
+    await storage.saveClientInformation(provider1Id, clientInfo1);
+    await storage.saveClientInformation(provider2Id, clientInfo2);
+
+    const loaded1 = await storage.getClientInformation(provider1Id);
+    const loaded2 = await storage.getClientInformation(provider2Id);
+
+    expect(loaded1).toEqual(clientInfo1);
+    expect(loaded2).toEqual(clientInfo2);
+    expect(loaded1).not.toEqual(loaded2);
+
+    // Check that two separate files were created
+    const files = await fs.promises.readdir(tempDir);
+    expect(files).toHaveLength(2);
+    expect(files).toContain("test-oauth-provider-1.json");
+    expect(files).toContain("test-oauth-provider-2.json");
   });
 
   it("should fail when file permissions are insecure", async () => {
@@ -123,7 +167,7 @@ describe("OnDiskOAuthStorage", () => {
       token_endpoint_auth_method: "client_secret_post",
       scope: "test:scope",
     };
-    await storage.saveClientInformation(clientInfo);
+    await storage.saveClientInformation(testProviderId, clientInfo);
 
     // Make the file permissions insecure (644 - readable by others)
     const filePath = path.join(tempDir, "test-oauth-test-provider.json");
@@ -131,22 +175,25 @@ describe("OnDiskOAuthStorage", () => {
 
     // Create a new storage instance to force reading from disk
     const newStorage = new OnDiskOAuthStorage({
-      providerId: testProviderId,
       directory: tempDir,
       filePrefix: "test-oauth",
     });
 
     // Try to read the file - should fail with permission error
-    await expect(newStorage.getClientInformation()).rejects.toThrow(AppError);
-    await expect(newStorage.getClientInformation()).rejects.toMatchObject({
+    await expect(
+      newStorage.getClientInformation(testProviderId),
+    ).rejects.toThrow(AppError);
+    await expect(
+      newStorage.getClientInformation(testProviderId),
+    ).rejects.toMatchObject({
       code: ErrorCode.INSECURE_FILE_PERMISSIONS,
     });
   });
 
   it("should return undefined for non-existent data", async () => {
-    const clientInfo = await storage.getClientInformation();
-    const tokens = await storage.getTokens();
-    const codeVerifier = await storage.getCodeVerifier();
+    const clientInfo = await storage.getClientInformation(testProviderId);
+    const tokens = await storage.getTokens(testProviderId);
+    const codeVerifier = await storage.getCodeVerifier(testProviderId);
 
     expect(clientInfo).toBeUndefined();
     expect(tokens).toBeUndefined();

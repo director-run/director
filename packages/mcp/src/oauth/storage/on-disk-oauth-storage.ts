@@ -15,31 +15,41 @@ import { AbstractOAuthStorage } from "./abstract-oauth-storage";
 const logger = getLogger("oauth/storage/disk");
 
 export interface OnDiskOAuthStorageParams {
-  providerId: string;
   directory: string;
   filePrefix?: string;
 }
 
+interface OAuthData {
+  clientInformation?: OAuthClientInformationFull;
+  tokens?: OAuthTokens;
+  codeVerifier?: string;
+}
+
 export class OnDiskOAuthStorage extends AbstractOAuthStorage {
-  private readonly _filePath: string;
+  private readonly _directory: string;
+  private readonly _filePrefix: string;
 
   constructor(params: OnDiskOAuthStorageParams) {
     super();
-    const directory = params.directory || path.join(process.cwd(), "oauth");
-    const prefix = params.filePrefix || "oauth";
-    const providerId = params.providerId || "default";
-    this._filePath = path.join(directory, `${prefix}-${providerId}.json`);
+    this._directory = params.directory || path.join(process.cwd(), "oauth");
+    this._filePrefix = params.filePrefix || "oauth";
   }
 
-  async getClientInformation(): Promise<
-    OAuthClientInformationFull | undefined
-  > {
+  private _getFilePath(providerId: string): string {
+    return path.join(this._directory, `${this._filePrefix}-${providerId}.json`);
+  }
+
+  async getClientInformation(
+    providerId: string,
+  ): Promise<OAuthClientInformationFull | undefined> {
+    const filePath = this._getFilePath(providerId);
     try {
-      const data = await this._loadData();
+      const data = await this._loadData(filePath);
       if (data.clientInformation) {
         logger.info({
           message: "loaded client information from disk",
-          path: this._filePath,
+          providerId,
+          path: filePath,
         });
       }
       return data.clientInformation;
@@ -52,7 +62,8 @@ export class OnDiskOAuthStorage extends AbstractOAuthStorage {
       ) {
         logger.debug({
           message: "no client information found on disk",
-          path: this._filePath,
+          providerId,
+          path: filePath,
         });
         return undefined;
       }
@@ -61,22 +72,27 @@ export class OnDiskOAuthStorage extends AbstractOAuthStorage {
   }
 
   async saveClientInformation(
+    providerId: string,
     clientInformation: OAuthClientInformationFull,
   ): Promise<void> {
+    const filePath = this._getFilePath(providerId);
     logger.info({
       message: "saving client information to disk",
-      path: this._filePath,
+      providerId,
+      path: filePath,
     });
-    await this._saveData({ clientInformation });
+    await this._saveData(filePath, { clientInformation });
   }
 
-  async getTokens(): Promise<OAuthTokens | undefined> {
+  async getTokens(providerId: string): Promise<OAuthTokens | undefined> {
+    const filePath = this._getFilePath(providerId);
     try {
-      const data = await this._loadData();
+      const data = await this._loadData(filePath);
       if (data.tokens) {
         logger.info({
           message: "loaded tokens from disk",
-          path: this._filePath,
+          providerId,
+          path: filePath,
         });
       }
       return data.tokens;
@@ -89,7 +105,8 @@ export class OnDiskOAuthStorage extends AbstractOAuthStorage {
       ) {
         logger.debug({
           message: "no tokens found on disk",
-          path: this._filePath,
+          providerId,
+          path: filePath,
         });
         return undefined;
       }
@@ -97,18 +114,25 @@ export class OnDiskOAuthStorage extends AbstractOAuthStorage {
     }
   }
 
-  async saveTokens(tokens: OAuthTokens): Promise<void> {
-    logger.info({ message: "saving tokens to disk", path: this._filePath });
-    await this._saveData({ tokens });
+  async saveTokens(providerId: string, tokens: OAuthTokens): Promise<void> {
+    const filePath = this._getFilePath(providerId);
+    logger.info({
+      message: "saving tokens to disk",
+      providerId,
+      path: filePath,
+    });
+    await this._saveData(filePath, { tokens });
   }
 
-  async getCodeVerifier(): Promise<string | undefined> {
+  async getCodeVerifier(providerId: string): Promise<string | undefined> {
+    const filePath = this._getFilePath(providerId);
     try {
-      const data = await this._loadData();
+      const data = await this._loadData(filePath);
       if (data.codeVerifier) {
         logger.info({
           message: "loaded code verifier from disk",
-          path: this._filePath,
+          providerId,
+          path: filePath,
         });
       }
       return data.codeVerifier;
@@ -125,21 +149,22 @@ export class OnDiskOAuthStorage extends AbstractOAuthStorage {
     }
   }
 
-  async saveCodeVerifier(codeVerifier: string): Promise<void> {
+  async saveCodeVerifier(
+    providerId: string,
+    codeVerifier: string,
+  ): Promise<void> {
+    const filePath = this._getFilePath(providerId);
     logger.info({
       message: "saving code verifier to disk",
-      path: this._filePath,
+      providerId,
+      path: filePath,
     });
-    await this._saveData({ codeVerifier });
+    await this._saveData(filePath, { codeVerifier });
   }
 
-  private async _loadData(): Promise<{
-    clientInformation?: OAuthClientInformationFull;
-    tokens?: OAuthTokens;
-    codeVerifier?: string;
-  }> {
+  private async _loadData(filePath: string): Promise<OAuthData> {
     try {
-      return await readSecureJSONFile(this._filePath);
+      return await readSecureJSONFile(filePath);
     } catch (error) {
       // Only catch file not found errors, let permission errors propagate
       if (
@@ -153,16 +178,15 @@ export class OnDiskOAuthStorage extends AbstractOAuthStorage {
     }
   }
 
-  private async _saveData(data: {
-    clientInformation?: OAuthClientInformationFull;
-    tokens?: OAuthTokens;
-    codeVerifier?: string;
-  }): Promise<void> {
-    const existingData = await this._loadData();
+  private async _saveData(
+    filePath: string,
+    data: Partial<OAuthData>,
+  ): Promise<void> {
+    const existingData = await this._loadData(filePath);
     const mergedData = {
       ...existingData,
       ...data,
     };
-    await writeSecureJSONFile(this._filePath, mergedData);
+    await writeSecureJSONFile(filePath, mergedData);
   }
 }

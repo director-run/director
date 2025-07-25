@@ -63,7 +63,9 @@ export class OAuthProvider implements OAuthClientProvider {
     if (this._clientInformation) {
       return this._clientInformation;
     }
-    this._clientInformation = await this._storage.getClientInformation();
+    this._clientInformation = await this._storage.getClientInformation(
+      this._id,
+    );
     return this._clientInformation;
   }
 
@@ -71,20 +73,20 @@ export class OAuthProvider implements OAuthClientProvider {
     clientInformation: OAuthClientInformationFull,
   ): Promise<void> {
     this._clientInformation = clientInformation;
-    await this._storage.saveClientInformation(clientInformation);
+    await this._storage.saveClientInformation(this._id, clientInformation);
   }
 
   async tokens(): Promise<OAuthTokens | undefined> {
     if (this._tokens) {
       return this._tokens;
     }
-    this._tokens = await this._storage.getTokens();
+    this._tokens = await this._storage.getTokens(this._id);
     return this._tokens;
   }
 
   async saveTokens(tokens: OAuthTokens): Promise<void> {
     this._tokens = tokens;
-    await this._storage.saveTokens(tokens);
+    await this._storage.saveTokens(this._id, tokens);
   }
 
   redirectToAuthorization(authorizationUrl: URL): void {
@@ -97,14 +99,14 @@ export class OAuthProvider implements OAuthClientProvider {
 
   async saveCodeVerifier(codeVerifier: string): Promise<void> {
     this._codeVerifier = codeVerifier;
-    await this._storage.saveCodeVerifier(codeVerifier);
+    await this._storage.saveCodeVerifier(this._id, codeVerifier);
   }
 
   async codeVerifier(): Promise<string> {
     if (this._codeVerifier) {
       return this._codeVerifier;
     }
-    this._codeVerifier = await this._storage.getCodeVerifier();
+    this._codeVerifier = await this._storage.getCodeVerifier(this._id);
     if (!this._codeVerifier) {
       throw new Error("No code verifier saved");
     }
@@ -135,7 +137,6 @@ export class OAuthHandler {
       this._storage = params.storage;
     } else if (params.directory) {
       this._storage = new OnDiskOAuthStorage({
-        providerId: "default",
         directory: params.directory,
         filePrefix: params.filePrefix,
       });

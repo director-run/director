@@ -9,45 +9,65 @@ import { AbstractOAuthStorage } from "./abstract-oauth-storage";
 
 const logger = getLogger("oauth/storage/memory");
 
+interface OAuthData {
+  clientInformation?: OAuthClientInformationFull;
+  tokens?: OAuthTokens;
+  codeVerifier?: string;
+}
+
 export class InMemoryOAuthStorage extends AbstractOAuthStorage {
-  private _clientInformation?: OAuthClientInformationFull;
-  private _tokens?: OAuthTokens;
-  private _codeVerifier?: string;
+  private _data: Map<string, OAuthData> = new Map();
 
   constructor() {
     super();
   }
 
-  getClientInformation(): Promise<OAuthClientInformationFull | undefined> {
-    return Promise.resolve(this._clientInformation);
+  getClientInformation(
+    providerId: string,
+  ): Promise<OAuthClientInformationFull | undefined> {
+    const data = this._data.get(providerId);
+    return Promise.resolve(data?.clientInformation);
   }
 
   saveClientInformation(
+    providerId: string,
     clientInformation: OAuthClientInformationFull,
   ): Promise<void> {
-    logger.info({ message: "saveClientInformation", clientInformation });
-    this._clientInformation = clientInformation;
+    logger.info({
+      message: "saveClientInformation",
+      providerId,
+      clientInformation,
+    });
+    const data = this._data.get(providerId) || {};
+    data.clientInformation = clientInformation;
+    this._data.set(providerId, data);
     return Promise.resolve();
   }
 
-  getTokens(): Promise<OAuthTokens | undefined> {
-    logger.info("getting tokens...");
-    return Promise.resolve(this._tokens);
+  getTokens(providerId: string): Promise<OAuthTokens | undefined> {
+    logger.info("getting tokens...", { providerId });
+    const data = this._data.get(providerId);
+    return Promise.resolve(data?.tokens);
   }
 
-  saveTokens(tokens: OAuthTokens): Promise<void> {
-    logger.info("saving tokens");
-    this._tokens = tokens;
+  saveTokens(providerId: string, tokens: OAuthTokens): Promise<void> {
+    logger.info("saving tokens", { providerId });
+    const data = this._data.get(providerId) || {};
+    data.tokens = tokens;
+    this._data.set(providerId, data);
     return Promise.resolve();
   }
 
-  getCodeVerifier(): Promise<string | undefined> {
-    return Promise.resolve(this._codeVerifier);
+  getCodeVerifier(providerId: string): Promise<string | undefined> {
+    const data = this._data.get(providerId);
+    return Promise.resolve(data?.codeVerifier);
   }
 
-  saveCodeVerifier(codeVerifier: string): Promise<void> {
-    logger.info({ message: "saving code verifier", codeVerifier });
-    this._codeVerifier = codeVerifier;
+  saveCodeVerifier(providerId: string, codeVerifier: string): Promise<void> {
+    logger.info({ message: "saving code verifier", providerId, codeVerifier });
+    const data = this._data.get(providerId) || {};
+    data.codeVerifier = codeVerifier;
+    this._data.set(providerId, data);
     return Promise.resolve();
   }
 }

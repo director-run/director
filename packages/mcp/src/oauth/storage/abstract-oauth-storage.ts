@@ -4,14 +4,18 @@ import {
 } from "@modelcontextprotocol/sdk/shared/auth.js";
 
 export abstract class AbstractOAuthStorage {
-  abstract getClientInformation(): Promise<
-    OAuthClientInformationFull | undefined
-  >;
+  abstract getClientInformation(
+    providerId: string,
+  ): Promise<OAuthClientInformationFull | undefined>;
   abstract saveClientInformation(
+    providerId: string,
     clientInformation: OAuthClientInformationFull,
   ): Promise<void>;
-  abstract getTokens(): Promise<OAuthTokens | undefined>;
-  abstract saveTokens(tokens: OAuthTokens): Promise<void>;
-  abstract getCodeVerifier(): Promise<string | undefined>;
-  abstract saveCodeVerifier(codeVerifier: string): Promise<void>;
+  abstract getTokens(providerId: string): Promise<OAuthTokens | undefined>;
+  abstract saveTokens(providerId: string, tokens: OAuthTokens): Promise<void>;
+  abstract getCodeVerifier(providerId: string): Promise<string | undefined>;
+  abstract saveCodeVerifier(
+    providerId: string,
+    codeVerifier: string,
+  ): Promise<void>;
 }

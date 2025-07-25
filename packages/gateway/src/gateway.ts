@@ -1,4 +1,5 @@
 import { Server } from "http";
+import { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { getLogger } from "@director.run/utilities/logger";
 import {
   errorRequestHandler,
@@ -46,7 +47,12 @@ export class Gateway {
 
     const db = await Database.connect(attribs.databaseFilePath);
     const telemetry = attribs.telemetry || Telemetry.noTelemetry();
-    const proxyStore = await ProxyServerStore.create({ db, telemetry });
+    const oAuthHandler = new OAuthHandler({ storage: "disk" });
+    const proxyStore = await ProxyServerStore.create({
+      db,
+      telemetry,
+      oAuthHandler,
+    });
     const app = express();
     const registryURL = attribs.registryURL;
 

@@ -26,13 +26,19 @@ const logger = getLogger(`ProxyServer`);
 
 export class ProxyServer extends Server {
   private _targets: (HTTPClient | StdioClient)[];
+  private _oAuthHandler?: OAuthHandler;
   public readonly attributes: ProxyServerAttributes;
 
   public get targets(): (HTTPClient | StdioClient)[] {
     return this._targets;
   }
 
-  constructor(attributes: ProxyServerAttributes) {
+  constructor(
+    attributes: ProxyServerAttributes,
+    params?: {
+      oAuthHandler?: OAuthHandler;
+    },
+  ) {
     super(
       {
         name: attributes.name,
@@ -48,9 +54,10 @@ export class ProxyServer extends Server {
     );
     this._targets = [];
     this.attributes = attributes;
+    this._oAuthHandler = params?.oAuthHandler;
 
     for (const server of this.attributes.servers) {
-      const target = createClientForTarget(server);
+      const target = createClientForTarget(server, this._oAuthHandler);
       this._targets.push(target);
     }
 
@@ -96,7 +103,7 @@ export class ProxyServer extends Server {
         `Target ${target.name} already exists`,
       );
     }
-    const newTarget = createClientForTarget(target);
+    const newTarget = createClientForTarget(target, this._oAuthHandler);
 
     try {
       await newTarget.connectToTarget({ throwOnError: attribs.throwOnError });
@@ -171,15 +178,16 @@ export class ProxyServer extends Server {
   }
 }
 
-export function createClientForTarget(target: ProxyTargetAttributes) {
+export function createClientForTarget(
+  target: ProxyTargetAttributes,
+  oAuthHandler?: OAuthHandler,
+) {
   switch (target.transport.type) {
     case "http":
       return new HTTPClient({
         url: target.transport.url,
         name: target.name,
-        oAuthHandler: new OAuthHandler({
-          storage: "disk",
-        }),
+        oAuthHandler,
       });
     case "stdio":
       return new StdioClient({

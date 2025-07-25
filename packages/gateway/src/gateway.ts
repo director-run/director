@@ -47,7 +47,7 @@ export class Gateway {
 
     const db = await Database.connect(attribs.databaseFilePath);
     const telemetry = attribs.telemetry || Telemetry.noTelemetry();
-    const oAuthHandler = new OAuthHandler({ storage: "disk" });
+    const oAuthHandler = new OAuthHandler({ directory: process.cwd() });
     const proxyStore = await ProxyServerStore.create({
       db,
       telemetry,

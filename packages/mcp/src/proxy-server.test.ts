@@ -4,6 +4,7 @@ import { expectToThrowAppError } from "@director.run/utilities/test";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { InMemoryClient } from "./client/in-memory-client";
+import { OAuthHandler } from "./oauth/oauth-provider-factory";
 import { ProxyServer } from "./proxy-server";
 import {
   makeEchoServer,
@@ -147,11 +148,16 @@ describe("ProxyServer", () => {
           expect(proxy.targets.length).toBe(0);
         });
         test("should succeed when adding an unauthorized oauth target", async () => {
-          const proxy = new ProxyServer({
-            id: "test-proxy",
-            name: "test-proxy",
-            servers: [],
-          });
+          const proxy = new ProxyServer(
+            {
+              id: "test-proxy",
+              name: "test-proxy",
+              servers: [],
+            },
+            {
+              oAuthHandler: new OAuthHandler({}),
+            },
+          );
 
           const target = await proxy.addTarget(
             {
@@ -168,11 +174,16 @@ describe("ProxyServer", () => {
       });
       describe("when throwOnError === false", () => {
         test("should succeed when adding a oauth target", async () => {
-          const proxy = new ProxyServer({
-            id: "test-proxy",
-            name: "test-proxy",
-            servers: [],
-          });
+          const proxy = new ProxyServer(
+            {
+              id: "test-proxy",
+              name: "test-proxy",
+              servers: [],
+            },
+            {
+              oAuthHandler: new OAuthHandler({}),
+            },
+          );
 
           const target = await proxy.addTarget(
             {

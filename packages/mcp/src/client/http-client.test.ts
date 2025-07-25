@@ -1,7 +1,10 @@
 import { ErrorCode } from "@director.run/utilities/error";
 import { expectToThrowAppError } from "@director.run/utilities/test";
 import { describe, expect, test } from "vitest";
-import { OAuthHandler } from "../oauth/oauth-provider-factory";
+import {
+  InMemoryOAuthStorage,
+  OAuthHandler,
+} from "../oauth/oauth-provider-factory";
 import { makeEchoServer } from "../test/fixtures";
 import { serveOverStreamable } from "../transport";
 import { serveOverSSE } from "../transport";
@@ -51,7 +54,9 @@ describe("HTTPClient", () => {
         const client = new HTTPClient({
           name: "test-client",
           url: "https://mcp.notion.com/mcp",
-          oAuthHandler: new OAuthHandler({ storage: "memory" }),
+          oAuthHandler: new OAuthHandler({
+            storage: new InMemoryOAuthStorage(),
+          }),
         });
 
         const result = await client.connectToTarget({

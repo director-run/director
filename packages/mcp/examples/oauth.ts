@@ -16,7 +16,7 @@ async function main(): Promise<void> {
   const httpTarget = new HTTPClient({
     name: "oauth-test-client",
     url: "https://mcp.notion.com/mcp",
-    oAuthHandler: new OAuthHandler({ storage: "disk" }),
+    oAuthHandler: new OAuthHandler({ directory: process.cwd() }),
   });
 
   try {
@@ -94,6 +94,7 @@ async function runNotionMCPChecks(client: HTTPClient) {
 
   console.log(prefix, "get-self() =", self);
   console.log(green("ALL CHECKS PASSED!!!!"));
+  process.exit(0);
 }
 
 main();

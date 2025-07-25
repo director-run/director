@@ -19,6 +19,7 @@ const CALLBACK_PORT = 8090;
 const CALLBACK_URL = `http://localhost:${CALLBACK_PORT}/callback`;
 
 export interface OAuthProviderParams {
+  id: string;
   redirectUrl: string | URL;
   storage: AbstractOAuthStorage;
   onRedirect?: (url: URL) => void;
@@ -29,11 +30,13 @@ export class OAuthProvider implements OAuthClientProvider {
   private _tokens?: OAuthTokens;
   private _codeVerifier?: string;
   private _clientMetadata: OAuthClientMetadata;
+  private _id: string;
   private readonly _redirectUrl: string | URL;
   private readonly _storage: AbstractOAuthStorage;
   private readonly _onRedirect?: (url: URL) => void;
 
   constructor(params: OAuthProviderParams) {
+    this._id = params.id;
     this._redirectUrl = params.redirectUrl;
     this._storage = params.storage;
     this._onRedirect = params.onRedirect;
@@ -148,6 +151,7 @@ export class OAuthHandler {
     } = {},
   ) {
     return new OAuthProvider({
+      id,
       redirectUrl: this._callbackUrl,
       storage: this._storage,
       onRedirect: params.onRedirect,

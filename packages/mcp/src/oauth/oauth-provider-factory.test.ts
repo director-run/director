@@ -18,6 +18,7 @@ describe("OAuthProvider", () => {
     beforeEach(() => {
       storage = new InMemoryOAuthStorage();
       provider = new OAuthProvider({
+        id: "test-provider",
         redirectUrl: "http://localhost:8080/callback",
         storage,
       });
@@ -88,6 +89,7 @@ describe("OAuthProvider", () => {
     it("should call onRedirect callback when provided", () => {
       const onRedirect = vi.fn();
       const providerWithCallback = new OAuthProvider({
+        id: "test-provider",
         redirectUrl: "http://localhost:8080/callback",
         storage,
         onRedirect,
@@ -122,6 +124,7 @@ describe("OAuthProvider", () => {
         filePrefix: "test-oauth",
       });
       provider = new OAuthProvider({
+        id: testProviderId,
         redirectUrl: "http://localhost:8080/callback",
         storage,
       });

@@ -14,6 +14,7 @@ bun cli create test
 bun cli add test --entry hackernews
 bun cli add test --entry fetch
 bun cli add test --name notion --url https://mcp.notion.com/mcp
+bun cli add test --name github --url https://api.githubcopilot.com/mcp/
 bun cli add test --name custom-fetch --command "uvx mcp-server-fetch"
 # bun cli connect my-proxy --target claude
 # TODO

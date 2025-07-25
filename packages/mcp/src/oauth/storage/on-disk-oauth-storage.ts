@@ -6,29 +6,28 @@ import {
   readSecureJSONFile,
   writeSecureJSONFile,
 } from "@director.run/utilities/secure-json";
-import { type OAuthClientProvider } from "@modelcontextprotocol/sdk/client/auth.js";
 import {
-  type OAuthClientInformation,
   type OAuthClientInformationFull,
-  type OAuthClientMetadata,
   type OAuthTokens,
 } from "@modelcontextprotocol/sdk/shared/auth.js";
 import { AbstractOAuthStorage } from "./abstract-oauth-storage";
 
 const logger = getLogger("oauth/storage/disk");
 
+export interface OnDiskOAuthStorageParams {
+  providerId: string;
+  directory: string;
+  filePrefix?: string;
+}
+
 export class OnDiskOAuthStorage extends AbstractOAuthStorage {
   private readonly _filePath: string;
 
-  constructor(
-    private readonly _providerId: string,
-    private readonly _directory: string,
-    private readonly _filePrefix: string = "oauth",
-  ) {
+  constructor(params: OnDiskOAuthStorageParams) {
     super();
-    const directory = this._directory || path.join(process.cwd(), "oauth");
-    const prefix = this._filePrefix || "oauth";
-    const providerId = this._providerId || "default";
+    const directory = params.directory || path.join(process.cwd(), "oauth");
+    const prefix = params.filePrefix || "oauth";
+    const providerId = params.providerId || "default";
     this._filePath = path.join(directory, `${prefix}-${providerId}.json`);
   }
 
@@ -165,79 +164,5 @@ export class OnDiskOAuthStorage extends AbstractOAuthStorage {
       ...data,
     };
     await writeSecureJSONFile(this._filePath, mergedData);
-  }
-}
-
-// Single OAuth provider class
-export class OAuthProvider implements OAuthClientProvider {
-  private _clientInformation?: OAuthClientInformationFull;
-  private _tokens?: OAuthTokens;
-  private _codeVerifier?: string;
-
-  constructor(
-    private readonly _redirectUrl: string | URL,
-    private readonly _clientMetadata: OAuthClientMetadata,
-    private readonly _storage: AbstractOAuthStorage,
-    private readonly _onRedirect?: (url: URL) => void,
-  ) {}
-
-  get redirectUrl(): string | URL {
-    return this._redirectUrl;
-  }
-
-  get clientMetadata(): OAuthClientMetadata {
-    return this._clientMetadata;
-  }
-
-  async clientInformation(): Promise<OAuthClientInformation | undefined> {
-    if (this._clientInformation) {
-      return this._clientInformation;
-    }
-    this._clientInformation = await this._storage.getClientInformation();
-    return this._clientInformation;
-  }
-
-  async saveClientInformation(
-    clientInformation: OAuthClientInformationFull,
-  ): Promise<void> {
-    this._clientInformation = clientInformation;
-    await this._storage.saveClientInformation(clientInformation);
-  }
-
-  async tokens(): Promise<OAuthTokens | undefined> {
-    if (this._tokens) {
-      return this._tokens;
-    }
-    this._tokens = await this._storage.getTokens();
-    return this._tokens;
-  }
-
-  async saveTokens(tokens: OAuthTokens): Promise<void> {
-    this._tokens = tokens;
-    await this._storage.saveTokens(tokens);
-  }
-
-  redirectToAuthorization(authorizationUrl: URL): void {
-    if (this._onRedirect) {
-      this._onRedirect(authorizationUrl);
-    } else {
-      logger.info(`oauth redirect required: ${authorizationUrl.toString()}`);
-    }
-  }
-
-  async saveCodeVerifier(codeVerifier: string): Promise<void> {
-    this._codeVerifier = codeVerifier;
-    await this._storage.saveCodeVerifier(codeVerifier);
-  }
-
-  async codeVerifier(): Promise<string> {
-    if (this._codeVerifier) {
-      return this._codeVerifier;
-    }
-    this._codeVerifier = await this._storage.getCodeVerifier();
-    if (!this._codeVerifier) {
-      throw new Error("No code verifier saved");
-    }
-    return this._codeVerifier;
   }
 }

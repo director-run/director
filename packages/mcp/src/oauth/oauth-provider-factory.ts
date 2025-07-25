@@ -18,17 +18,26 @@ const logger = getLogger("oauth/provider");
 const CALLBACK_PORT = 8090;
 const CALLBACK_URL = `http://localhost:${CALLBACK_PORT}/callback`;
 
+export interface OAuthProviderParams {
+  redirectUrl: string | URL;
+  storage: AbstractOAuthStorage;
+  onRedirect?: (url: URL) => void;
+}
+
 export class OAuthProvider implements OAuthClientProvider {
   private _clientInformation?: OAuthClientInformationFull;
   private _tokens?: OAuthTokens;
   private _codeVerifier?: string;
   private _clientMetadata: OAuthClientMetadata;
+  private readonly _redirectUrl: string | URL;
+  private readonly _storage: AbstractOAuthStorage;
+  private readonly _onRedirect?: (url: URL) => void;
 
-  constructor(
-    private readonly _redirectUrl: string | URL,
-    private readonly _storage: AbstractOAuthStorage,
-    private readonly _onRedirect?: (url: URL) => void,
-  ) {
+  constructor(params: OAuthProviderParams) {
+    this._redirectUrl = params.redirectUrl;
+    this._storage = params.storage;
+    this._onRedirect = params.onRedirect;
+
     this._clientMetadata = {
       client_name: "Simple OAuth MCP Client",
       redirect_uris: [this._redirectUrl.toString()],
@@ -107,24 +116,26 @@ export class OAuthProvider implements OAuthClientProvider {
   }
 }
 
+export interface OAuthHandlerParams {
+  storage?: AbstractOAuthStorage;
+  directory?: string;
+  filePrefix?: string;
+}
+
 export class OAuthHandler {
   private _callbackUrl: string;
   private _storage: AbstractOAuthStorage;
 
-  constructor({
-    storage,
-    directory,
-    filePrefix,
-  }: {
-    storage?: AbstractOAuthStorage;
-    directory?: string;
-    filePrefix?: string;
-  }) {
+  constructor(params: OAuthHandlerParams = {}) {
     this._callbackUrl = CALLBACK_URL;
-    if (storage) {
-      this._storage = storage;
-    } else if (directory) {
-      this._storage = new OnDiskOAuthStorage("default", directory, filePrefix);
+    if (params.storage) {
+      this._storage = params.storage;
+    } else if (params.directory) {
+      this._storage = new OnDiskOAuthStorage({
+        providerId: "default",
+        directory: params.directory,
+        filePrefix: params.filePrefix,
+      });
     } else {
       this._storage = new InMemoryOAuthStorage();
     }
@@ -136,10 +147,10 @@ export class OAuthHandler {
       onRedirect?: (url: URL) => void;
     } = {},
   ) {
-    return new OAuthProvider(
-      this._callbackUrl,
-      this._storage,
-      params.onRedirect,
-    );
+    return new OAuthProvider({
+      redirectUrl: this._callbackUrl,
+      storage: this._storage,
+      onRedirect: params.onRedirect,
+    });
   }
 }

@@ -3,7 +3,6 @@ import os from "node:os";
 import path from "node:path";
 import {
   type OAuthClientInformationFull,
-  type OAuthClientMetadata,
   type OAuthTokens,
 } from "@modelcontextprotocol/sdk/shared/auth.js";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -18,7 +17,10 @@ describe("OAuthProvider", () => {
 
     beforeEach(() => {
       storage = new InMemoryOAuthStorage();
-      provider = new OAuthProvider("http://localhost:8080/callback", storage);
+      provider = new OAuthProvider({
+        redirectUrl: "http://localhost:8080/callback",
+        storage,
+      });
     });
 
     it("should save and load client information", async () => {
@@ -85,11 +87,11 @@ describe("OAuthProvider", () => {
 
     it("should call onRedirect callback when provided", () => {
       const onRedirect = vi.fn();
-      const providerWithCallback = new OAuthProvider(
-        "http://localhost:8080/callback",
+      const providerWithCallback = new OAuthProvider({
+        redirectUrl: "http://localhost:8080/callback",
         storage,
         onRedirect,
-      );
+      });
 
       const authUrl = new URL("https://example.com/auth");
       providerWithCallback.redirectToAuthorization(authUrl);
@@ -109,21 +111,20 @@ describe("OAuthProvider", () => {
     let provider: OAuthProvider;
     let storage: OnDiskOAuthStorage;
     const testProviderId = "test-provider";
-    const clientMetadata: OAuthClientMetadata = {
-      client_name: "Test OAuth Client",
-      redirect_uris: ["http://localhost:8080/callback"],
-      grant_types: ["authorization_code"],
-      response_types: ["code"],
-      token_endpoint_auth_method: "client_secret_post",
-      scope: "test:scope",
-    };
 
     beforeEach(async () => {
       tempDir = await fs.promises.mkdtemp(
         path.join(os.tmpdir(), "oauth-test-"),
       );
-      storage = new OnDiskOAuthStorage(testProviderId, tempDir, "test-oauth");
-      provider = new OAuthProvider("http://localhost:8080/callback", storage);
+      storage = new OnDiskOAuthStorage({
+        providerId: testProviderId,
+        directory: tempDir,
+        filePrefix: "test-oauth",
+      });
+      provider = new OAuthProvider({
+        redirectUrl: "http://localhost:8080/callback",
+        storage,
+      });
     });
 
     afterEach(async () => {

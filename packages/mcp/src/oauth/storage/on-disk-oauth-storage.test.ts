@@ -18,7 +18,11 @@ describe("OnDiskOAuthStorage", () => {
     // Create a temporary directory for testing
     tempDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "oauth-test-"));
 
-    storage = new OnDiskOAuthStorage(testProviderId, tempDir, "test-oauth");
+    storage = new OnDiskOAuthStorage({
+      providerId: testProviderId,
+      directory: tempDir,
+      filePrefix: "test-oauth",
+    });
   });
 
   afterEach(async () => {
@@ -126,11 +130,11 @@ describe("OnDiskOAuthStorage", () => {
     fs.chmodSync(filePath, 0o644);
 
     // Create a new storage instance to force reading from disk
-    const newStorage = new OnDiskOAuthStorage(
-      testProviderId,
-      tempDir,
-      "test-oauth",
-    );
+    const newStorage = new OnDiskOAuthStorage({
+      providerId: testProviderId,
+      directory: tempDir,
+      filePrefix: "test-oauth",
+    });
 
     // Try to read the file - should fail with permission error
     await expect(newStorage.getClientInformation()).rejects.toThrow(AppError);

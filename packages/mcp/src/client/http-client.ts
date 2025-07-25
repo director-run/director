@@ -148,6 +148,93 @@ export class HTTPClient extends AbstractClient {
     }
   }
 
+  async startAuthFlow(): Promise<
+    | {
+        result: "AUTHORIZED";
+      }
+    | {
+        result: "REDIRECT";
+        redirectUrl: URL;
+      }
+  > {
+    if (!this.oAuthHandler) {
+      throw new AppError(
+        ErrorCode.UNAUTHORIZED,
+        "OAuth authentication required but no authorization handler provided",
+      );
+    }
+
+    let redirectUrl: URL | undefined;
+
+    try {
+      await this.connectToTransport({
+        throwOnError: true,
+        transport: new StreamableHTTPClientTransport(new URL(this.url), {
+          requestInit: { headers: this.headers },
+          authProvider: this.oAuthHandler.getProvider(this.name, {
+            onRedirect: (url: URL) => {
+              redirectUrl = url;
+            },
+          }),
+        }),
+      });
+
+      return {
+        result: "AUTHORIZED",
+      };
+    } catch (error) {
+      if (isAppErrorWithCode(error, ErrorCode.UNAUTHORIZED)) {
+        logger.info(
+          `[${this.name}] OAuth authentication required for ${this.url}`,
+        );
+
+        if (redirectUrl) {
+          return {
+            result: "REDIRECT",
+            redirectUrl,
+          };
+        } else {
+          throw new AppError(
+            ErrorCode.UNEXPECTED_ERROR,
+            "OAuth authentication required but no redirect URL provided",
+          );
+        }
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  async completeAuthFlow(authCode: string): Promise<void> {
+    if (!this.oAuthHandler) {
+      throw new AppError(
+        ErrorCode.UNAUTHORIZED,
+        "OAuth authentication required but no authorization handler provided",
+      );
+    }
+
+    // Create a temporary transport just for OAuth flow
+    const oauthTransport = new StreamableHTTPClientTransport(
+      new URL(this.url),
+      {
+        requestInit: { headers: this.headers },
+        authProvider: this.oAuthHandler.getProvider(this.name),
+      },
+    );
+
+    // Complete OAuth flow
+    await oauthTransport.finishAuth(authCode);
+
+    logger.info(`[${this.name}] oAuth token exchange completed`);
+    await this.connectToTransport({
+      throwOnError: true,
+      transport: new StreamableHTTPClientTransport(new URL(this.url), {
+        requestInit: { headers: this.headers },
+        authProvider: this.oAuthHandler.getProvider(this.name),
+      }),
+    });
+  }
+
   // TODO: returns true if connected, false if not
   public async connectToTarget(
     {

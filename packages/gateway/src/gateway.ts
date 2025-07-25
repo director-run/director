@@ -62,7 +62,7 @@ export class Gateway {
 
     if (attribs.oauth && attribs.oauth.enabled) {
       if (attribs.oauth.storage === "disk") {
-        oAuthHandler = OAuthHandler.createDiskBackerHandler({
+        oAuthHandler = OAuthHandler.createDiskBackedHandler({
           directory: attribs.oauth.tokenDirectory,
         });
       } else if (attribs.oauth.storage === "memory") {

@@ -27,6 +27,7 @@ export enum ErrorCode {
   JSON_PARSE_ERROR = "JSON_PARSE_ERROR",
   INVALID_ARGUMENT = "INVALID_ARGUMENT",
   INSECURE_FILE_PERMISSIONS = "INSECURE_FILE_PERMISSIONS",
+  UNEXPECTED_ERROR = "UNEXPECTED_ERROR",
 }
 
 export function isAppError(error: unknown): error is AppError {

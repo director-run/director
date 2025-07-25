@@ -134,7 +134,7 @@ export class OAuthHandler {
     this._storage = params.storage;
   }
 
-  public static createDiskBackerHandler(params: {
+  public static createDiskBackedHandler(params: {
     directory: string;
     filePrefix?: string;
   }) {

@@ -8,18 +8,43 @@ import {
 import { ErrorCode, isAppErrorWithCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { openUrl } from "@director.run/utilities/os";
+import express from "express";
 import { HTTPClient } from "../src/client/http-client";
+import { createOauthCallbackRouter } from "../src/oauth/oauth-callback-router";
 import { OAuthHandler } from "../src/oauth/oauth-provider-factory";
 
 const logger = getLogger("examples/oauth");
 
 async function main(): Promise<void> {
+  const port = 8090;
   const httpTarget = new HTTPClient({
     name: "oauth-test-client",
     url: "https://mcp.notion.com/mcp",
-    oAuthHandler: OAuthHandler.createDiskBackerHandler({
+    oAuthHandler: OAuthHandler.createDiskBackedHandler({
       directory: path.join(__dirname, "tokens"),
     }),
+  });
+
+  const app = express();
+
+  app.use(
+    createOauthCallbackRouter({
+      onAuthorizationSuccess: async (code) => {
+        console.log("GOT THE TOKEN");
+        await httpTarget.completeAuthFlow(code);
+
+        console.log("--------------------------------");
+        console.log(">", httpTarget.status);
+        console.log("--------------------------------");
+      },
+      onAuthorizationError: (error) => {},
+    }),
+  );
+
+  const server = app.listen(port, () => {
+    console.log(
+      `OAuth callback server (Express) started on http://localhost:${port}`,
+    );
   });
 
   try {
@@ -35,12 +60,23 @@ async function main(): Promise<void> {
         message: "received unauthorized error, attempting oauth flow",
       });
       try {
-        await httpTarget.performOAuthFlow((url: URL) => {
-          openUrl(url.toString());
-        });
-        logger.info({
-          message: "oauth flow completed, trying again to connect to target",
-        });
+        const result = await httpTarget.startAuthFlow();
+
+        console.log("--------------------------------");
+        console.log("--------------------------------");
+        if (result.result === "REDIRECT") {
+          console.log(result.redirectUrl.toString());
+          openUrl(result.redirectUrl.toString());
+        } else {
+          console.log("----");
+        }
+
+        // await httpTarget.performOAuthFlow((url: URL) => {
+        //   openUrl(url.toString());
+        // });
+        // logger.info({
+        //   message: "oauth flow completed, trying again to connect to target",
+        // });
         // await httpTarget.connectToTarget({ throwOnError: true });
       } catch (error) {
         logger.error({
@@ -58,7 +94,13 @@ async function main(): Promise<void> {
     }
   }
 
-  await runNotionMCPChecks(httpTarget);
+  if (httpTarget.status === "connected") {
+    await runNotionMCPChecks(httpTarget);
+  } else {
+    console.log("xxxxxxxxxxxxxx NO HTTP CONNECTION xxxxxxxxxxxxxxxxx");
+    console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+    // process.exit(0);
+  }
 
   process.on("SIGINT", () => {
     console.log("\n\nTiding up...");

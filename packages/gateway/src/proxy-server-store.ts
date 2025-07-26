@@ -164,12 +164,13 @@ export class ProxyServerStore {
   public async addServer(
     proxyId: string,
     server: ProxyTargetAttributes,
+    params: { throwOnError: boolean } = { throwOnError: true },
   ): Promise<ProxyServer> {
     this.telemetry.trackEvent("server_added");
 
     const proxy = this.get(proxyId);
 
-    await proxy.addTarget(server, { throwOnError: true });
+    await proxy.addTarget(server, params);
     await this.db.updateProxy(proxyId, { servers: proxy.attributes.servers });
 
     return proxy;

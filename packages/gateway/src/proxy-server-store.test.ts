@@ -1,9 +1,14 @@
 import fs from "node:fs";
 import path from "node:path";
-import { beforeEach, describe, expect, it } from "vitest";
+import { HTTPClient } from "@director.run/mcp/client/http-client";
+import { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Database } from "./db";
 import { ProxyServerStore } from "./proxy-server-store";
-import { makeFooBarServerStdioConfig } from "./test/fixtures";
+import {
+  makeFooBarServerStdioConfig,
+  makeHTTPTargetConfig,
+} from "./test/fixtures";
 
 describe("ProxyServerStore", () => {
   let proxyServerStore: ProxyServerStore;
@@ -14,10 +19,38 @@ describe("ProxyServerStore", () => {
       await fs.promises.unlink(dbPath);
     }
     const db = await Database.connect(dbPath);
-    proxyServerStore = await ProxyServerStore.create({ db });
+    proxyServerStore = await ProxyServerStore.create({
+      db,
+      oAuthHandler: OAuthHandler.createMemoryBackedHandler({
+        baseCallbackUrl: "http://localhost:3000/callback",
+      }),
+    });
     await proxyServerStore.create({
       name: "test-proxy",
       servers: [],
+    });
+  });
+
+  describe("onAuthorizationSuccess", () => {
+    it("should properly update the targets with the new oauth token", async () => {
+      await proxyServerStore.purge();
+      await proxyServerStore.create({ name: "test-proxy", servers: [] });
+
+      const serverUrl = "https://example.com/api";
+      await proxyServerStore.addServer(
+        "test-proxy",
+        makeHTTPTargetConfig({ name: "http1", url: serverUrl }),
+        { throwOnError: false },
+      );
+
+      const httpClient = proxyServerStore
+        .get("test-proxy")
+        .getAllTargets()[0] as HTTPClient;
+      httpClient.completeAuthFlow = vi.fn();
+
+      await proxyServerStore.onAuthorizationSuccess(serverUrl, "some-code");
+
+      expect(httpClient.completeAuthFlow).toHaveBeenCalledWith("some-code");
     });
   });
 

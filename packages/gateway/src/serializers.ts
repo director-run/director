@@ -11,6 +11,17 @@ type SerializedTarget = {
   lastErrorMessage?: string;
   command: string;
   type: "http" | "stdio" | "in-memory";
+  transport:
+    | {
+        type: "http";
+        url: string;
+      }
+    | {
+        type: "stdio";
+        command: string;
+        args: string[];
+        env?: Record<string, string>;
+      };
 };
 
 export function serializeProxyServer(proxy: ProxyServer) {
@@ -55,6 +66,10 @@ export function serializeProxyServerTarget(
       lastErrorMessage: target.lastErrorMessage,
       command: target.url,
       type: "http",
+      transport: {
+        type: "http",
+        url: target.url,
+      },
     };
   } else if (target instanceof StdioClient) {
     return {
@@ -64,6 +79,12 @@ export function serializeProxyServerTarget(
       lastErrorMessage: target.lastErrorMessage,
       command: [target.command, ...(target.args ?? [])].join(" "),
       type: "stdio",
+      transport: {
+        type: "stdio",
+        command: target.command,
+        args: target.args,
+        env: target.env,
+      },
     };
   } else {
     throw new Error("Unknown target type");

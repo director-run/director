@@ -29,7 +29,7 @@ export class StdioClient extends AbstractClient {
         new StdioClientTransport({
           command: this.command,
           args: this.args,
-          env: this.env,
+          env: { ...this.env, ...(process.env as Record<string, string>) },
         }),
       );
       this.status = "connected";

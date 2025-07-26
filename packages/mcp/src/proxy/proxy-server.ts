@@ -204,10 +204,7 @@ function createClientForTarget(
         name: target.name,
         command: target.transport.command,
         args: target.transport.args,
-        env: {
-          ...(process.env as Record<string, string>),
-          ...target.transport.env,
-        },
+        env: target.transport.env,
       });
   }
 }

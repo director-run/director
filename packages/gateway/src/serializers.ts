@@ -2,6 +2,7 @@ import type { ClientStatus } from "@director.run/mcp/client/abstract-client";
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { StdioClient } from "@director.run/mcp/client/stdio-client";
 import { ProxyServer } from "@director.run/mcp/proxy/proxy-server";
+import type { ProxyTargetSource } from "@director.run/utilities/schema";
 import { getStreamablePathForProxy } from "./helpers";
 
 type SerializedTarget = {
@@ -22,6 +23,7 @@ type SerializedTarget = {
         args: string[];
         env?: Record<string, string>;
       };
+  source?: ProxyTargetSource;
 };
 
 export function serializeProxyServer(proxy: ProxyServer) {
@@ -31,18 +33,7 @@ export function serializeProxyServer(proxy: ProxyServer) {
     description: proxy.description,
     addToolPrefix: proxy.addToolPrefix,
     targets: proxy.targets.map((target) => serializeProxyServerTarget(target)),
-
-    //   servers: proxy.targets.map((target) => {
-    //     const serverDBEntry = proxyDbEntry.servers.find(
-    //       (s) => s.name.toLocaleLowerCase() === target.name.toLocaleLowerCase(),
-    //     );
-
-    //     return {
-    //       ...target,
-    //       source: serverDBEntry?.source,
-    //       transport: serverDBEntry?.transport,
-    //     };
-    //   }),
+    servers: proxy.targets.map((target) => serializeProxyServerTarget(target)),
     path: getStreamablePathForProxy(proxy.id),
   };
 }
@@ -70,6 +61,7 @@ export function serializeProxyServerTarget(
         type: "http",
         url: target.url,
       },
+      source: target.source,
     };
   } else if (target instanceof StdioClient) {
     return {
@@ -85,6 +77,7 @@ export function serializeProxyServerTarget(
         args: target.args,
         env: target.env,
       },
+      source: target.source,
     };
   } else {
     throw new Error("Unknown target type");

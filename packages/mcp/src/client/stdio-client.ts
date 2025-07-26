@@ -1,5 +1,6 @@
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
+import type { ProxyTargetSource } from "@director.run/utilities/schema";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { McpError } from "@modelcontextprotocol/sdk/types.js";
 import { AbstractClient } from "./abstract-client";
@@ -16,8 +17,9 @@ export class StdioClient extends AbstractClient {
     command: string;
     args: string[];
     env?: Record<string, string>;
+    source?: ProxyTargetSource;
   }) {
-    super({ name: params.name });
+    super({ name: params.name, source: params.source });
     this.command = params.command;
     this.args = params.args;
     this.env = params.env;

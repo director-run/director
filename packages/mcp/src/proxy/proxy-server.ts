@@ -198,6 +198,7 @@ function createClientForTarget(
         url: target.transport.url,
         name: target.name,
         oAuthHandler,
+        source: target.source,
       });
     case "stdio":
       return new StdioClient({
@@ -205,6 +206,7 @@ function createClientForTarget(
         command: target.transport.command,
         args: target.transport.args,
         env: target.transport.env,
+        source: target.source,
       });
   }
 }

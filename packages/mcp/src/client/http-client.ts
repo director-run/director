@@ -4,6 +4,7 @@ import {
   isAppErrorWithCode,
 } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
+import type { ProxyTargetSource } from "@director.run/utilities/schema";
 import { UnauthorizedError } from "@modelcontextprotocol/sdk/client/auth.js";
 import {
   SSEClientTransport,
@@ -25,8 +26,9 @@ export class HTTPClient extends AbstractClient {
     name: string;
     oAuthHandler?: OAuthHandler;
     headers?: Record<string, string>;
+    source?: ProxyTargetSource;
   }) {
-    super({ name: params.name });
+    super({ name: params.name, source: params.source });
     this._url = params.url;
     this.oAuthHandler = params.oAuthHandler;
     this.headers = params.headers;

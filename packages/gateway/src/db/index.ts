@@ -99,6 +99,7 @@ export class Database {
 
     Object.assign(proxy, {
       ...attributes,
+      name: attributes.name ?? proxy.name, // don't allow name to be set to undefined
       servers: (attributes.servers || proxy.servers || []).map((s) => ({
         ...s,
         name: slugify(s.name, { lower: true, trim: true }),

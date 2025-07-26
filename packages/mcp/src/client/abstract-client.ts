@@ -1,13 +1,5 @@
-import { getLogger } from "@director.run/utilities/logger";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import {
-  CompatibilityCallToolResultSchema,
-  ErrorCode,
-  McpError,
-} from "@modelcontextprotocol/sdk/types.js";
 import packageJson from "../../package.json";
-
-const logger = getLogger("client/abstract");
 
 export type ClientStatus =
   | "connected"
@@ -29,9 +21,9 @@ export abstract class AbstractClient extends Client {
   public status: ClientStatus = "disconnected";
   public lastConnectedAt?: Date;
   public lastErrorMessage?: string;
-  private readonly _toolPrefix?: string;
 
-  constructor(name: string, toolPrefix?: string) {
+  constructor(params: { name: string }) {
+    const { name } = params;
     super(
       {
         name,
@@ -46,7 +38,6 @@ export abstract class AbstractClient extends Client {
       },
     );
     this.name = name;
-    this._toolPrefix = toolPrefix;
   }
 
   public abstract toPlainObject(): SerializedClient;
@@ -56,58 +47,4 @@ export abstract class AbstractClient extends Client {
   }: {
     throwOnError: boolean;
   }): Promise<boolean>;
-
-  /**
-   * Call a tool on this client with automatic prefix handling
-   */
-  public async callToolWithPrefixing(
-    toolName: string,
-    arguments_: Record<string, unknown> = {},
-    requestMeta?: Record<string, unknown>,
-  ): Promise<{
-    [x: string]: unknown;
-    _meta?: { [x: string]: unknown } | undefined;
-  }> {
-    let originalToolName = toolName;
-    if (this._toolPrefix && toolName.startsWith(`${this._toolPrefix}__`)) {
-      originalToolName = toolName.substring(`${this._toolPrefix}__`.length);
-    }
-
-    try {
-      return await this.request(
-        {
-          method: "tools/call",
-          params: {
-            name: originalToolName,
-            arguments: arguments_,
-            _meta: requestMeta,
-          },
-        },
-        CompatibilityCallToolResultSchema,
-      );
-    } catch (error) {
-      if (
-        error instanceof McpError &&
-        error.code === ErrorCode.MethodNotFound
-      ) {
-        logger.warn(
-          {
-            clientName: this.name,
-            toolName,
-          },
-          "Target does not support tools/call",
-        );
-        throw error;
-      }
-      logger.error(
-        {
-          error,
-          clientName: this.name,
-          toolName,
-        },
-        "Error calling tool on client",
-      );
-      throw error;
-    }
-  }
 }

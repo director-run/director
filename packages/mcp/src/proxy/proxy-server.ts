@@ -57,11 +57,7 @@ export class ProxyServer extends Server {
     this._oAuthHandler = params?.oAuthHandler;
 
     for (const server of this.attributes.servers) {
-      const target = createClientForTarget(
-        server,
-        this._oAuthHandler,
-        this.attributes.addToolPrefix ? server.name : undefined,
-      );
+      const target = createClientForTarget(server, this._oAuthHandler);
       this._targets.push(target);
     }
 
@@ -111,11 +107,7 @@ export class ProxyServer extends Server {
         `Target ${target.name} already exists`,
       );
     }
-    const newTarget = createClientForTarget(
-      target,
-      this._oAuthHandler,
-      this.attributes.addToolPrefix ? target.name : undefined,
-    );
+    const newTarget = createClientForTarget(target, this._oAuthHandler);
 
     try {
       await newTarget.connectToTarget({ throwOnError: attribs.throwOnError });
@@ -193,7 +185,6 @@ export class ProxyServer extends Server {
 function createClientForTarget(
   target: ProxyTargetAttributes,
   oAuthHandler?: OAuthHandler,
-  toolPrefix?: string,
 ) {
   switch (target.transport.type) {
     case "http":
@@ -201,7 +192,6 @@ function createClientForTarget(
         url: target.transport.url,
         name: target.name,
         oAuthHandler,
-        toolPrefix,
       });
     case "stdio":
       return new StdioClient({
@@ -212,7 +202,6 @@ function createClientForTarget(
           ...(process.env as Record<string, string>),
           ...target.transport.env,
         },
-        toolPrefix,
       });
   }
 }

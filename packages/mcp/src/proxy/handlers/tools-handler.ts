@@ -6,6 +6,7 @@ import {
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import type { AbstractClient } from "../../client/abstract-client";
 import type { ProxyServer } from "../proxy-server";
+import { callTool } from "../tools/call-tool";
 import { listTools } from "../tools/list-tools";
 
 const logger = getLogger("proxy/handlers/toolsHandler");
@@ -57,10 +58,12 @@ export function setupToolHandlers(
     if (!client) {
       throw new Error(`Unknown tool: ${name}`);
     }
-    return await client.callToolWithPrefixing(
-      name,
-      request.params.arguments || {},
-      request.params._meta,
-    );
+    return await callTool({
+      client,
+      toolName: name,
+      arguments_: request.params.arguments || {},
+      requestMeta: request.params._meta,
+      toolPrefix: server.attributes.addToolPrefix ? client.name : undefined,
+    });
   });
 }

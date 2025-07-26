@@ -16,9 +16,8 @@ export class StdioClient extends AbstractClient {
     command: string;
     args: string[];
     env?: Record<string, string>;
-    toolPrefix?: string;
   }) {
-    super(params.name, params.toolPrefix);
+    super({ name: params.name });
     this.command = params.command;
     this.args = params.args;
     this.env = params.env;

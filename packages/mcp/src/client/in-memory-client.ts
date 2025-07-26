@@ -19,7 +19,7 @@ export class InMemoryClient extends AbstractClient {
     const [clientTransport, serverTransport] =
       InMemoryTransport.createLinkedPair();
 
-    super(params.name);
+    super({ name: params.name });
     this.server = params.server;
     this.serverTransport = serverTransport;
     this.clientTransport = clientTransport;

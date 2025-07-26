@@ -12,7 +12,6 @@ const logger = getLogger("proxy/handlers/toolsHandler");
 export function setupToolHandlers(
   server: ProxyServer,
   connectedClients: AbstractClient[],
-  addToolPrefix?: boolean,
 ) {
   const toolToClientMap = new Map<string, AbstractClient>();
   const prefixedToOriginalMap = new Map<string, string>();
@@ -25,7 +24,6 @@ export function setupToolHandlers(
 
     for (const connectedClient of connectedClients) {
       const result = await connectedClient.listToolsWithPrefix(
-        addToolPrefix,
         request.params?._meta,
       );
 

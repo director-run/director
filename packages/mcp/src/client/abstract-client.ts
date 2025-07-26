@@ -31,8 +31,9 @@ export abstract class AbstractClient extends Client {
   public status: ClientStatus = "disconnected";
   public lastConnectedAt?: Date;
   public lastErrorMessage?: string;
+  private readonly _toolPrefix?: string;
 
-  constructor(name: string) {
+  constructor(name: string, toolPrefix?: string) {
     super(
       {
         name,
@@ -47,6 +48,7 @@ export abstract class AbstractClient extends Client {
       },
     );
     this.name = name;
+    this._toolPrefix = toolPrefix;
   }
 
   public abstract toPlainObject(): SerializedClient;
@@ -58,10 +60,9 @@ export abstract class AbstractClient extends Client {
   }): Promise<boolean>;
 
   /**
-   * List tools from this client with optional prefixing
+   * List tools from this client with prefixing based on internal toolPrefix
    */
   public async listToolsWithPrefix(
-    addToolPrefix: boolean = false,
     requestMeta?: Record<string, unknown>,
   ): Promise<{
     tools: Tool[];
@@ -85,12 +86,12 @@ export abstract class AbstractClient extends Client {
 
       if (result.tools) {
         const toolsWithSource = result.tools.map((tool) => {
-          const toolName = addToolPrefix
-            ? `${this.name}__${tool.name}`
+          const toolName = this._toolPrefix
+            ? `${this._toolPrefix}__${tool.name}`
             : tool.name;
 
           toolToClientMap.set(toolName, this);
-          if (addToolPrefix) {
+          if (this._toolPrefix) {
             prefixedToOriginalMap.set(toolName, tool.name);
           }
 

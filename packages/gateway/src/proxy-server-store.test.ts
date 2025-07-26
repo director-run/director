@@ -43,9 +43,8 @@ describe("ProxyServerStore", () => {
         { throwOnError: false },
       );
 
-      const httpClient = proxyServerStore
-        .get("test-proxy")
-        .getAllTargets()[0] as HTTPClient;
+      const httpClient = proxyServerStore.get("test-proxy")
+        .targets[0] as HTTPClient;
       httpClient.completeAuthFlow = vi.fn();
 
       await proxyServerStore.onAuthorizationSuccess(serverUrl, "some-code");
@@ -60,8 +59,8 @@ describe("ProxyServerStore", () => {
         "test-proxy",
         makeFooBarServerStdioConfig(),
       );
-      expect(proxy.attributes.servers).toHaveLength(1);
-      expect(proxy.attributes.servers[0].name).toBe("foo");
+      expect(proxy.targets).toHaveLength(1);
+      expect(proxy.targets[0].name).toBe("foo");
 
       const db = await Database.connect(dbPath);
       const proxyEntry = await db.getProxy("test-proxy");
@@ -77,7 +76,7 @@ describe("ProxyServerStore", () => {
       );
 
       const proxy = await proxyServerStore.removeServer("test-proxy", "foo");
-      expect(proxy.attributes.servers).toHaveLength(0);
+      expect(proxy.targets).toHaveLength(0);
 
       const db = await Database.connect(dbPath);
       const proxyEntry = await db.getProxy("test-proxy");
@@ -95,8 +94,8 @@ describe("ProxyServerStore", () => {
         name: "test-proxy-updated",
         description: "test-proxy-updated",
       });
-      expect(proxy.attributes.name).toBe("test-proxy-updated");
-      expect(proxy.attributes.description).toBe("test-proxy-updated");
+      expect(proxy.name).toBe("test-proxy-updated");
+      expect(proxy.description).toBe("test-proxy-updated");
 
       const db = await Database.connect(dbPath);
       const proxyEntry = await db.getProxy("test-proxy");

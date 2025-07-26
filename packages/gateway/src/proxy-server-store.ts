@@ -110,7 +110,7 @@ export class ProxyServerStore {
   public async onAuthorizationSuccess(serverUrl: string, code: string) {
     const proxies = this.getAll();
     for (const proxy of proxies) {
-      const targets = proxy.getAllTargets();
+      const targets = proxy.targets;
       for (const target of targets) {
         if (target instanceof HTTPClient && target.url === serverUrl) {
           await target.completeAuthFlow(code);
@@ -171,7 +171,11 @@ export class ProxyServerStore {
     const proxy = this.get(proxyId);
 
     await proxy.addTarget(server, params);
-    await this.db.updateProxy(proxyId, { servers: proxy.attributes.servers });
+
+    const proxyDbEntry = await this.db.getProxy(proxyId);
+    await this.db.updateProxy(proxyId, {
+      servers: [...proxyDbEntry.servers, server],
+    });
 
     return proxy;
   }
@@ -185,7 +189,13 @@ export class ProxyServerStore {
     const proxy = this.get(proxyId);
 
     await proxy.removeTarget(serverName);
-    await this.db.updateProxy(proxyId, { servers: proxy.attributes.servers });
+
+    const proxyDbEntry = await this.db.getProxy(proxyId);
+    await this.db.updateProxy(proxyId, {
+      servers: proxyDbEntry.servers.filter(
+        (s) => s.name.toLocaleLowerCase() !== serverName.toLocaleLowerCase(),
+      ),
+    });
 
     return proxy;
   }

@@ -28,9 +28,7 @@ export function setupToolHandlers(
         const tools = await listTools({
           requestMeta: request.params?._meta,
           client: connectedClient,
-          toolPrefix: server.attributes.addToolPrefix
-            ? connectedClient.name
-            : undefined,
+          toolPrefix: server.addToolPrefix ? connectedClient.name : undefined,
         });
         for (const tool of tools) {
           allTools.push(tool);
@@ -63,7 +61,7 @@ export function setupToolHandlers(
       toolName: name,
       arguments_: request.params.arguments || {},
       requestMeta: request.params._meta,
-      toolPrefix: server.attributes.addToolPrefix ? client.name : undefined,
+      toolPrefix: server.addToolPrefix ? client.name : undefined,
     });
   });
 }

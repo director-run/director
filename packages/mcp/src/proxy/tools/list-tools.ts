@@ -32,7 +32,7 @@ export async function listTools(params: {
       return {
         ...tool,
         name: toolName,
-        description: `[${toolPrefix}] ${tool.description || ""}`,
+        description: `[${client.name}] ${tool.description || ""}`,
       };
     });
   } catch (error) {

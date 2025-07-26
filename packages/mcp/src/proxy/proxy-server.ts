@@ -27,11 +27,10 @@ const logger = getLogger(`ProxyServer`);
 export class ProxyServer extends Server {
   private _targets: (HTTPClient | StdioClient)[];
   private _oAuthHandler?: OAuthHandler;
-  public readonly attributes: ProxyServerAttributes;
-
-  public get targets(): (HTTPClient | StdioClient)[] {
-    return this._targets;
-  }
+  private _id: string;
+  private _name: string;
+  private _description?: string | null;
+  private _addToolPrefix?: boolean;
 
   constructor(
     attributes: ProxyServerAttributes,
@@ -53,10 +52,13 @@ export class ProxyServer extends Server {
       },
     );
     this._targets = [];
-    this.attributes = attributes;
     this._oAuthHandler = params?.oAuthHandler;
+    this._id = attributes.id;
+    this._name = attributes.name;
+    this._description = attributes.description;
+    this._addToolPrefix = attributes.addToolPrefix;
 
-    for (const server of this.attributes.servers) {
+    for (const server of attributes.servers) {
       const target = createClientForTarget(server, this._oAuthHandler);
       this._targets.push(target);
     }
@@ -90,8 +92,16 @@ export class ProxyServer extends Server {
     return target;
   }
 
-  public getAllTargets(): (HTTPClient | StdioClient)[] {
-    return this.targets;
+  public get targets(): (HTTPClient | StdioClient)[] {
+    return this._targets;
+  }
+
+  public get name() {
+    return this._name;
+  }
+
+  public get description() {
+    return this._description;
   }
 
   public async addTarget(
@@ -119,7 +129,6 @@ export class ProxyServer extends Server {
       }
     }
 
-    this.attributes.servers.push(target);
     this.targets.push(newTarget);
 
     return newTarget;
@@ -140,11 +149,11 @@ export class ProxyServer extends Server {
       );
     }
     await existingTarget.close();
-    this.attributes.servers = this.attributes.servers.filter(
-      (t) => t.name.toLocaleLowerCase() !== targetName.toLocaleLowerCase(),
-    );
 
-    _.remove(this.targets, (t) => t.name === targetName);
+    _.remove(
+      this.targets,
+      (t) => t.name.toLocaleLowerCase() === targetName.toLocaleLowerCase(),
+    );
 
     // TODO: send list changed events. need client to support this first
     // this.sendToolListChanged();
@@ -157,22 +166,28 @@ export class ProxyServer extends Server {
   ) {
     const { name, description } = attributes;
     if (name) {
-      this.attributes.name = name;
+      this._name = name;
     }
-    if (description && description !== this.attributes.description) {
-      this.attributes.description = description;
+    if (description && description !== this._description) {
+      this._description = description;
     }
   }
 
   public toPlainObject() {
     return {
-      ...this.attributes,
+      id: this._id,
+      name: this._name,
+      description: this._description,
       targets: this.targets.map((target) => target.toPlainObject()),
     };
   }
 
   get id() {
-    return this.attributes.id;
+    return this._id;
+  }
+
+  get addToolPrefix() {
+    return this._addToolPrefix;
   }
 
   async close(): Promise<void> {

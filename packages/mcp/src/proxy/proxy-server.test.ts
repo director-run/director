@@ -3,15 +3,15 @@ import { ErrorCode } from "@director.run/utilities/error";
 import { expectToThrowAppError } from "@director.run/utilities/test";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { InMemoryClient } from "./client/in-memory-client";
-import { OAuthHandler } from "./oauth/oauth-provider-factory";
-import { ProxyServer } from "./proxy-server";
+import { InMemoryClient } from "../client/in-memory-client";
+import { OAuthHandler } from "../oauth/oauth-provider-factory";
 import {
   makeEchoServer,
   makeFooBarServer,
   makeHTTPTargetConfig,
-} from "./test/fixtures";
-import { serveOverSSE, serveOverStreamable } from "./transport";
+} from "../test/fixtures";
+import { serveOverSSE, serveOverStreamable } from "../transport";
+import { ProxyServer } from "./proxy-server";
 
 describe("ProxyServer", () => {
   describe("toPlainObject", () => {

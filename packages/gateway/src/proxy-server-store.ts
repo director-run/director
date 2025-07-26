@@ -1,6 +1,6 @@
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
-import { ProxyServer } from "@director.run/mcp/proxy-server";
+import { ProxyServer } from "@director.run/mcp/proxy/proxy-server";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import type { ProxyTargetAttributes } from "@director.run/utilities/schema";

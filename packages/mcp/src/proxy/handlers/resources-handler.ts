@@ -8,7 +8,7 @@ import {
   ReadResourceResultSchema,
   type Resource,
 } from "@modelcontextprotocol/sdk/types.js";
-import type { AbstractClient } from "../client/abstract-client";
+import type { AbstractClient } from "../../client/abstract-client";
 import type { ProxyServer } from "../proxy-server";
 
 const logger = getLogger("proxy/handlers/resourcesHandler");

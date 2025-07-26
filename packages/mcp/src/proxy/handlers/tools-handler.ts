@@ -4,7 +4,7 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
-import type { AbstractClient } from "../client/abstract-client";
+import type { AbstractClient } from "../../client/abstract-client";
 import type { ProxyServer } from "../proxy-server";
 
 const logger = getLogger("proxy/handlers/toolsHandler");

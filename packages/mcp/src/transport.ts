@@ -6,7 +6,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 import express from "express";
-import { ProxyServer } from "./proxy-server";
+import { ProxyServer } from "./proxy/proxy-server";
 
 export function serveOverSSE(server: Server, port: number) {
   const app = express();

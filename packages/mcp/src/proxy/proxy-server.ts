@@ -11,14 +11,14 @@ import type {
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import * as eventsource from "eventsource";
 import _ from "lodash";
-import packageJson from "../package.json";
-import { HTTPClient } from "./client/http-client";
-import { StdioClient } from "./client/stdio-client";
+import packageJson from "../../package.json";
+import { HTTPClient } from "../client/http-client";
+import { StdioClient } from "../client/stdio-client";
+import { OAuthHandler } from "../oauth/oauth-provider-factory";
 import { setupPromptHandlers } from "./handlers/prompts-handler";
 import { setupResourceTemplateHandlers } from "./handlers/resource-templates-handler";
 import { setupResourceHandlers } from "./handlers/resources-handler";
 import { setupToolHandlers } from "./handlers/tools-handler";
-import { OAuthHandler } from "./oauth/oauth-provider-factory";
 
 global.EventSource = eventsource.EventSource;
 

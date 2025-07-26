@@ -3,10 +3,8 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import {
   CompatibilityCallToolResultSchema,
   ErrorCode,
-  ListToolsResultSchema,
   McpError,
 } from "@modelcontextprotocol/sdk/types.js";
-import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import packageJson from "../../package.json";
 
 const logger = getLogger("client/abstract");
@@ -58,51 +56,6 @@ export abstract class AbstractClient extends Client {
   }: {
     throwOnError: boolean;
   }): Promise<boolean>;
-
-  /**
-   * List tools from this client with automatic prefixing if toolPrefix is set
-   */
-  public async listToolsWithPrefixing(
-    requestMeta?: Record<string, unknown>,
-  ): Promise<Tool[]> {
-    try {
-      const result = await this.request(
-        {
-          method: "tools/list",
-          params: {
-            _meta: requestMeta,
-          },
-        },
-        ListToolsResultSchema,
-      );
-
-      if (!result.tools) {
-        return [];
-      }
-
-      // Apply prefixing if toolPrefix is set
-      return result.tools.map((tool) => {
-        const toolName = this._toolPrefix
-          ? `${this._toolPrefix}__${tool.name}`
-          : tool.name;
-
-        return {
-          ...tool,
-          name: toolName,
-          description: `[${this.name}] ${tool.description || ""}`,
-        };
-      });
-    } catch (error) {
-      logger.warn(
-        {
-          error,
-          clientName: this.name,
-        },
-        "Could not fetch tools from client.",
-      );
-      return [];
-    }
-  }
 
   /**
    * Call a tool on this client with automatic prefix handling

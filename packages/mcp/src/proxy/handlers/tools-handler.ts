@@ -6,6 +6,7 @@ import {
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import type { AbstractClient } from "../../client/abstract-client";
 import type { ProxyServer } from "../proxy-server";
+import { listTools } from "../tools/list-tools";
 
 const logger = getLogger("proxy/handlers/toolsHandler");
 
@@ -23,9 +24,13 @@ export function setupToolHandlers(
 
     for (const connectedClient of connectedClients) {
       try {
-        const tools = await connectedClient.listToolsWithPrefixing(
-          request.params?._meta,
-        );
+        const tools = await listTools({
+          requestMeta: request.params?._meta,
+          client: connectedClient,
+          toolPrefix: server.attributes.addToolPrefix
+            ? connectedClient.name
+            : undefined,
+        });
         for (const tool of tools) {
           allTools.push(tool);
           toolToClientMap.set(tool.name, connectedClient);

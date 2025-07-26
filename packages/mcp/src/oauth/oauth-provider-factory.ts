@@ -1,7 +1,5 @@
-import {} from "@director.run/utilities/env";
 import { getLogger } from "@director.run/utilities/logger";
-import {} from "@director.run/utilities/secure-json";
-import { joinURL } from "@director.run/utilities/url";
+import { encodeUrl, joinURL } from "@director.run/utilities/url";
 import { type OAuthClientProvider } from "@modelcontextprotocol/sdk/client/auth.js";
 import {
   type OAuthClientInformation,
@@ -156,12 +154,11 @@ export class OAuthHandler {
     });
   }
 
-  getProvider(
-    id: string,
-    params: {
-      onRedirect?: (url: URL) => void;
-    } = {},
-  ) {
+  getProvider(params: {
+    serverUrl: string;
+    onRedirect?: (url: URL) => void;
+  }) {
+    const id = encodeUrl(params.serverUrl);
     return new OAuthProvider({
       id,
       redirectUrl: joinURL(this._baseCallbackUrl, `${id}/callback`),

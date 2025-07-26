@@ -30,8 +30,9 @@ async function main(): Promise<void> {
 
   app.use(
     createOauthCallbackRouter({
-      onAuthorizationSuccess: async (clientId, code) => {
-        console.log("GOT THE TOKEN for", clientId);
+      onAuthorizationSuccess: async (serverUrl, code) => {
+        console.log("GOT THE TOKEN for", { serverUrl, code });
+
         await httpTarget.completeAuthFlow(code);
 
         console.log("--------------------------------");

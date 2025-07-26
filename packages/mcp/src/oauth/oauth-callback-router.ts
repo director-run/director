@@ -1,4 +1,5 @@
 import { getLogger } from "@director.run/utilities/logger";
+import { decodeUrl } from "@director.run/utilities/url";
 import express, { type Request, type Response } from "express";
 
 const logger = getLogger("oauth/callback-router");
@@ -13,6 +14,7 @@ export function createOauthCallbackRouter(params: {
     const code = req.query.code?.toString();
     const error = req.query.error?.toString();
     const clientId = req.params.clientId;
+    const serverUrl = decodeUrl(clientId);
 
     if (code) {
       logger.info({
@@ -25,7 +27,7 @@ export function createOauthCallbackRouter(params: {
           "Authorization successful, you can close this window and return to the terminal.",
       });
 
-      params.onAuthorizationSuccess(clientId, code);
+      params.onAuthorizationSuccess(serverUrl, code);
     } else if (error) {
       logger.error({
         message: "received oauth callback, authorization failed",
@@ -38,7 +40,7 @@ export function createOauthCallbackRouter(params: {
       });
 
       params.onAuthorizationError(
-        clientId,
+        serverUrl,
         new Error(`OAuth authorization failed: ${error}`),
       );
     } else {
@@ -52,7 +54,7 @@ export function createOauthCallbackRouter(params: {
       });
 
       params.onAuthorizationError(
-        clientId,
+        serverUrl,
         new Error("No authorization code provided"),
       );
     }

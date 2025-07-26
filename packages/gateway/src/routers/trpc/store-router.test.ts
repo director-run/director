@@ -82,6 +82,38 @@ describe("Store Router", () => {
     expect(await harness.client.store.getAll.query()).toHaveLength(0);
   });
 
+  it("should get a server from a proxy", async () => {
+    await harness.purge();
+    const testProxy = await harness.client.store.create.mutate({
+      name: "Test Proxy",
+      servers: [],
+    });
+
+    // Add a server to the proxy
+    const addedTarget = await harness.client.store.addServer.mutate({
+      proxyId: testProxy.id,
+      server: {
+        name: "notion",
+        transport: {
+          type: "http",
+          url: `https://mcp.notion.com/mcp`,
+        },
+      },
+    });
+
+    // Get the server using getServer
+    const retrievedTarget = await harness.client.store.getServer.query({
+      proxyId: testProxy.id,
+      serverName: "notion",
+    });
+
+    expect(retrievedTarget).toBeDefined();
+    expect(retrievedTarget.name).toBe("notion");
+    expect(retrievedTarget.status).toBe("unauthorized");
+    expect(retrievedTarget.command).toBe("https://mcp.notion.com/mcp");
+    expect(retrievedTarget.type).toBe("http");
+  });
+
   describe("addServer", () => {
     describe("oauth target", () => {
       it("should succeed on adding an unauthorized client", async () => {

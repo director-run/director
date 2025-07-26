@@ -178,6 +178,7 @@ export class ProxyServer extends Server {
       id: this._id,
       name: this._name,
       description: this._description,
+      addToolPrefix: this._addToolPrefix,
       targets: this.targets.map((target) => target.toPlainObject()),
     };
   }

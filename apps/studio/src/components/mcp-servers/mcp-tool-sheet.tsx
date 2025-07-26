@@ -177,9 +177,9 @@ export function McpToolSheet({ proxyId }: McpToolSheetProps) {
       onOpenChange={() => setProxyQuery({ toolId: null, serverId: null })}
     >
       <SheetContent>
-        {/* {server && proxy && toolId && (
+        {server && proxy && toolId && (
           <SheetInner toolId={toolId} server={server} proxy={proxy} />
-        )} */}
+        )}
       </SheetContent>
     </Sheet>
   );

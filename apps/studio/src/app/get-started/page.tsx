@@ -93,7 +93,7 @@ export default function GetStartedPage() {
   const addStepStatus =
     createStepStatus !== "completed" || !currentProxy
       ? "not-started"
-      : currentProxy.targets.length > 0
+      : currentProxy.servers.length > 0
         ? "completed"
         : "in-progress";
   const connectStepStatus =

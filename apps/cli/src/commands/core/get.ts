@@ -16,18 +16,26 @@ import { env } from "../../env";
 
 export function registerGetCommand(program: DirectorCommand) {
   program
-    .command("get <proxyId>")
+    .command("get <proxyId> [serverName]")
     .description("Show proxy details")
     .action(
-      actionWithErrorHandler(async (proxyId: string) => {
-        const proxy = await gatewayClient.store.get.query({ proxyId });
+      actionWithErrorHandler(async (proxyId: string, serverName?: string) => {
+        if (serverName) {
+          const target = await gatewayClient.store.getServer.query({
+            proxyId,
+            serverName,
+          });
+          console.log(target);
+        } else {
+          const proxy = await gatewayClient.store.get.query({ proxyId });
 
-        if (!proxy) {
-          console.error(`proxy ${proxyId} not found`);
-          return;
+          if (!proxy) {
+            console.error(`proxy ${proxyId} not found`);
+            return;
+          }
+
+          printProxyDetails(proxy);
         }
-
-        printProxyDetails(proxy);
       }),
     );
 }

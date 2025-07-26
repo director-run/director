@@ -190,7 +190,7 @@ export class ProxyServer extends Server {
   }
 }
 
-export function createClientForTarget(
+function createClientForTarget(
   target: ProxyTargetAttributes,
   oAuthHandler?: OAuthHandler,
   toolPrefix?: string,

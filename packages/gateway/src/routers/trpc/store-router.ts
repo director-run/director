@@ -4,10 +4,7 @@ import { z } from "zod";
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { proxyTargetAttributesSchema } from "@director.run/utilities/schema";
-import {
-  getStreamablePathForProxy,
-  restartConnectedClients,
-} from "../../helpers";
+import { restartConnectedClients } from "../../helpers";
 import { ProxyServerStore } from "../../proxy-server-store";
 
 const ProxyCreateSchema = z.object({
@@ -24,20 +21,14 @@ export function createProxyStoreRouter({
   proxyStore,
 }: { proxyStore: ProxyServerStore }) {
   return t.router({
-    getAll: t.procedure.query(async () => {
-      return (await proxyStore.getAll()).map((proxy) => ({
-        ...proxy.toPlainObject(),
-        path: getStreamablePathForProxy(proxy.id),
-      }));
+    getAll: t.procedure.query(() => {
+      return proxyStore.getAllProxyServersAsPlainObjects();
     }),
 
     get: t.procedure
       .input(z.object({ proxyId: z.string() }))
       .query(({ input }) => {
-        return {
-          ...proxyStore.get(input.proxyId).toPlainObject(),
-          path: getStreamablePathForProxy(input.proxyId),
-        };
+        return proxyStore.getProxyAsPlainObject(input.proxyId);
       }),
 
     create: t.procedure.input(ProxyCreateSchema).mutation(async ({ input }) => {

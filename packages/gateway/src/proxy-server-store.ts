@@ -6,6 +6,7 @@ import { getLogger } from "@director.run/utilities/logger";
 import type { ProxyTargetAttributes } from "@director.run/utilities/schema";
 import { Telemetry } from "@director.run/utilities/telemetry";
 import type { Database } from "./db";
+import { getStreamablePathForProxy } from "./helpers";
 
 const logger = getLogger("ProxyServerStore");
 
@@ -198,6 +199,35 @@ export class ProxyServerStore {
     });
 
     return proxy;
+  }
+
+  public async getAllProxyServersAsPlainObjects() {
+    const ret = [];
+    for (const proxy of this.getAll()) {
+      ret.push(await this.getProxyAsPlainObject(proxy.id));
+    }
+    return ret;
+  }
+
+  public async getProxyAsPlainObject(proxyId: string) {
+    const proxy = (await this.get(proxyId)).toPlainObject();
+    const proxyDbEntry = await this.db.getProxy(proxyId);
+
+    return {
+      ...proxy,
+      servers: proxy.targets.map((target) => {
+        const serverDBEntry = proxyDbEntry.servers.find(
+          (s) => s.name.toLocaleLowerCase() === target.name.toLocaleLowerCase(),
+        );
+
+        return {
+          ...target,
+          source: serverDBEntry?.source,
+          transport: serverDBEntry?.transport,
+        };
+      }),
+      path: getStreamablePathForProxy(proxy.id),
+    };
   }
 
   public async update(

@@ -149,7 +149,7 @@ export default function ProxyPage() {
               </SectionTitle>
             </SectionHeader>
 
-            <McpDescriptionList transport={mcp.transport} />
+            {mcp.transport && <McpDescriptionList transport={mcp.transport} />}
           </Section>
 
           <Section>

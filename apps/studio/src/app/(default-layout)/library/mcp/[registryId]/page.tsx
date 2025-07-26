@@ -49,6 +49,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/toast";
 import { useRegistryQuery } from "@/hooks/use-registry-query";
 import { trpc } from "@/trpc/client";
+import { ProxyServerAttributes } from "@director.run/utilities/schema";
 import {
   ArrowSquareOutIcon,
   BookOpenTextIcon,
@@ -96,12 +97,13 @@ export default function RegistryEntryPage() {
     }),
   );
 
-  const proxiesWithoutMcp = (storeQuery.data ?? [])?.filter(
-    (proxy) =>
-      !proxy.servers.find((it) => {
-        return it.name === entry.name;
-      }),
-  );
+  const proxiesWithoutMcp: ProxyServerAttributes[] = [];
+  // (storeQuery.data ?? [])?.filter(
+  //   (proxy) =>
+  //     !proxy.servers.find((it) => {
+  //       return it.name === entry.name;
+  //     }),
+  // );
 
   return (
     <LayoutView>

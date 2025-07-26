@@ -3,7 +3,7 @@ import { getLogger } from "@director.run/utilities/logger";
 import {} from "@modelcontextprotocol/sdk/client/auth.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { AbstractClient, type SerializedClient } from "./abstract-client";
+import { AbstractClient } from "./abstract-client";
 
 const logger = getLogger("client/in-memory");
 
@@ -44,16 +44,5 @@ export class InMemoryClient extends AbstractClient {
       this.server.connect(this.serverTransport),
     ]);
     return true;
-  }
-
-  public toPlainObject(): SerializedClient {
-    return {
-      name: this.name,
-      status: this.status,
-      lastConnectedAt: this.lastConnectedAt,
-      lastErrorMessage: this.lastErrorMessage,
-      command: "--",
-      type: "in-memory",
-    };
   }
 }

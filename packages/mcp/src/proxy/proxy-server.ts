@@ -173,16 +173,6 @@ export class ProxyServer extends Server {
     }
   }
 
-  public toPlainObject() {
-    return {
-      id: this._id,
-      name: this._name,
-      description: this._description,
-      addToolPrefix: this._addToolPrefix,
-      targets: this.targets.map((target) => target.toPlainObject()),
-    };
-  }
-
   get id() {
     return this._id;
   }

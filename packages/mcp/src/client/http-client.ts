@@ -11,7 +11,7 @@ import {
 } from "@modelcontextprotocol/sdk/client/sse.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { OAuthHandler } from "../oauth/oauth-provider-factory";
-import { AbstractClient, type SerializedClient } from "./abstract-client";
+import { AbstractClient } from "./abstract-client";
 
 const logger = getLogger("client/http");
 
@@ -221,17 +221,6 @@ export class HTTPClient extends AbstractClient {
     });
     await client.connectToTarget();
     return client;
-  }
-
-  public toPlainObject(): SerializedClient {
-    return {
-      name: this.name,
-      status: this.status,
-      lastConnectedAt: this.lastConnectedAt,
-      lastErrorMessage: this.lastErrorMessage,
-      command: this._url,
-      type: "http",
-    };
   }
 }
 

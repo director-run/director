@@ -14,49 +14,6 @@ import { serveOverSSE, serveOverStreamable } from "../transport";
 import { ProxyServer } from "./proxy-server";
 
 describe("ProxyServer", () => {
-  describe("toPlainObject", () => {
-    test("should properly serialize the proxy server attributes", () => {
-      const proxy = new ProxyServer({
-        id: "test-proxy",
-        name: "test-proxy",
-        servers: [
-          makeHTTPTargetConfig({
-            name: "streamable",
-            url: `http://localhost:4522/mcp`,
-          }),
-          makeHTTPTargetConfig({
-            name: "sse",
-            url: `http://localhost:4523/sse`,
-          }),
-        ],
-      });
-
-      const plainObject = proxy.toPlainObject();
-      expect(plainObject).toMatchObject({
-        id: "test-proxy",
-        name: "test-proxy",
-        targets: [
-          {
-            name: "streamable",
-            command: `http://localhost:4522/mcp`,
-            status: "disconnected",
-            lastConnectedAt: undefined,
-            lastErrorMessage: undefined,
-            type: "http",
-          },
-          {
-            name: "sse",
-            command: `http://localhost:4523/sse`,
-            status: "disconnected",
-            lastConnectedAt: undefined,
-            lastErrorMessage: undefined,
-            type: "http",
-          },
-        ],
-      });
-    });
-  });
-
   describe("getTarget", () => {
     test("should return the target or throw an error if it doesn't exist", async () => {
       const proxy = new ProxyServer({

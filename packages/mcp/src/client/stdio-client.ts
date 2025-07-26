@@ -2,7 +2,7 @@ import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { McpError } from "@modelcontextprotocol/sdk/types.js";
-import { AbstractClient, type SerializedClient } from "./abstract-client";
+import { AbstractClient } from "./abstract-client";
 
 const logger = getLogger("client/stdio");
 
@@ -66,17 +66,6 @@ export class StdioClient extends AbstractClient {
     });
     await client.connectToTarget({ throwOnError: true });
     return client;
-  }
-
-  public toPlainObject(): SerializedClient {
-    return {
-      name: this.name,
-      status: this.status,
-      lastConnectedAt: this.lastConnectedAt,
-      lastErrorMessage: this.lastErrorMessage,
-      command: [this.command, ...(this.args ?? [])].join(" "),
-      type: "stdio",
-    };
   }
 }
 

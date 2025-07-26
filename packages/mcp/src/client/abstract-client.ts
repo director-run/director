@@ -60,9 +60,172 @@ export abstract class AbstractClient extends Client {
   }): Promise<boolean>;
 
   /**
-   * List tools from this client with prefixing based on internal toolPrefix
+   * List tools from this client with automatic prefixing if toolPrefix is set
    */
-  public async listToolsWithPrefix(
+  public async listToolsWithPrefixing(
+    requestMeta?: Record<string, unknown>,
+  ): Promise<Tool[]> {
+    try {
+      const result = await this.request(
+        {
+          method: "tools/list",
+          params: {
+            _meta: requestMeta,
+          },
+        },
+        ListToolsResultSchema,
+      );
+
+      if (!result.tools) {
+        return [];
+      }
+
+      // Apply prefixing if toolPrefix is set
+      return result.tools.map((tool) => {
+        const toolName = this._toolPrefix
+          ? `${this._toolPrefix}__${tool.name}`
+          : tool.name;
+
+        return {
+          ...tool,
+          name: toolName,
+          description: `[${this.name}] ${tool.description || ""}`,
+        };
+      });
+    } catch (error) {
+      logger.warn(
+        {
+          error,
+          clientName: this.name,
+        },
+        "Could not fetch tools from client.",
+      );
+      return [];
+    }
+  }
+
+  /**
+   * Call a tool on this client with automatic prefix handling
+   */
+  public async callToolWithPrefixing(
+    toolName: string,
+    arguments_: Record<string, unknown> = {},
+    requestMeta?: Record<string, unknown>,
+  ): Promise<{
+    [x: string]: unknown;
+    _meta?: { [x: string]: unknown } | undefined;
+  }> {
+    // If toolPrefix is set, we need to extract the original tool name
+    let originalToolName = toolName;
+    if (this._toolPrefix && toolName.startsWith(`${this._toolPrefix}__`)) {
+      originalToolName = toolName.substring(`${this._toolPrefix}__`.length);
+    }
+
+    try {
+      return await this.request(
+        {
+          method: "tools/call",
+          params: {
+            name: originalToolName,
+            arguments: arguments_,
+            _meta: requestMeta,
+          },
+        },
+        CompatibilityCallToolResultSchema,
+      );
+    } catch (error) {
+      if (
+        error instanceof McpError &&
+        error.code === ErrorCode.MethodNotFound
+      ) {
+        logger.warn(
+          {
+            clientName: this.name,
+            toolName,
+          },
+          "Target does not support tools/call",
+        );
+        throw error;
+      }
+      logger.error(
+        {
+          error,
+          clientName: this.name,
+          toolName,
+        },
+        "Error calling tool on client",
+      );
+      throw error;
+    }
+  }
+
+  /**
+   * List tools from this client with prefixing based on internal toolPrefix
+   * @deprecated Use listTools() instead
+   */
+  public listToolsWithPrefix(requestMeta?: Record<string, unknown>): Promise<{
+    tools: Tool[];
+    toolToClientMap: Map<string, AbstractClient>;
+    prefixedToOriginalMap: Map<string, string>;
+  }> {
+    return this._listToolsInternal(requestMeta);
+  }
+
+  /**
+   * Call a tool on this client
+   * @deprecated Use callTool() instead
+   */
+  public async callToolWithName(
+    toolName: string,
+    originalToolName: string,
+    arguments_: Record<string, unknown> = {},
+    requestMeta?: Record<string, unknown>,
+  ): Promise<{
+    [x: string]: unknown;
+    _meta?: { [x: string]: unknown } | undefined;
+  }> {
+    try {
+      return await this.request(
+        {
+          method: "tools/call",
+          params: {
+            name: originalToolName,
+            arguments: arguments_,
+            _meta: requestMeta,
+          },
+        },
+        CompatibilityCallToolResultSchema,
+      );
+    } catch (error) {
+      if (
+        error instanceof McpError &&
+        error.code === ErrorCode.MethodNotFound
+      ) {
+        logger.warn(
+          {
+            clientName: this.name,
+            toolName,
+          },
+          "Target does not support tools/call",
+        );
+        throw error;
+      }
+      logger.error(
+        {
+          error,
+          clientName: this.name,
+          toolName,
+        },
+        "Error calling tool on client",
+      );
+      throw error;
+    }
+  }
+
+  /**
+   * Internal method to list tools from this client with prefixing
+   */
+  private async _listToolsInternal(
     requestMeta?: Record<string, unknown>,
   ): Promise<{
     tools: Tool[];
@@ -114,55 +277,5 @@ export abstract class AbstractClient extends Client {
     }
 
     return { tools, toolToClientMap, prefixedToOriginalMap };
-  }
-
-  /**
-   * Call a tool on this client
-   */
-  public async callToolWithName(
-    toolName: string,
-    originalToolName: string,
-    arguments_: Record<string, unknown> = {},
-    requestMeta?: Record<string, unknown>,
-  ): Promise<{
-    [x: string]: unknown;
-    _meta?: { [x: string]: unknown } | undefined;
-  }> {
-    try {
-      return await this.request(
-        {
-          method: "tools/call",
-          params: {
-            name: originalToolName,
-            arguments: arguments_,
-            _meta: requestMeta,
-          },
-        },
-        CompatibilityCallToolResultSchema,
-      );
-    } catch (error) {
-      if (
-        error instanceof McpError &&
-        error.code === ErrorCode.MethodNotFound
-      ) {
-        logger.warn(
-          {
-            clientName: this.name,
-            toolName,
-          },
-          "Target does not support tools/call",
-        );
-        throw error;
-      }
-      logger.error(
-        {
-          error,
-          clientName: this.name,
-          toolName,
-        },
-        "Error calling tool on client",
-      );
-      throw error;
-    }
   }
 }

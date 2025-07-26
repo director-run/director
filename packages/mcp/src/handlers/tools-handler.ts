@@ -13,28 +13,25 @@ export function setupToolHandlers(
   server: ProxyServer,
   connectedClients: AbstractClient[],
 ) {
-  const toolToClientMap = new Map<string, AbstractClient>();
-  const prefixedToOriginalMap = new Map<string, string>();
-
   // List Tools Handler
   server.setRequestHandler(ListToolsRequestSchema, async (request) => {
     const allTools: Tool[] = [];
-    toolToClientMap.clear();
-    prefixedToOriginalMap.clear();
 
     for (const connectedClient of connectedClients) {
-      const result = await connectedClient.listToolsWithPrefix(
-        request.params?._meta,
-      );
-
-      allTools.push(...result.tools);
-
-      // Merge the maps
-      for (const [key, value] of result.toolToClientMap) {
-        toolToClientMap.set(key, value);
-      }
-      for (const [key, value] of result.prefixedToOriginalMap) {
-        prefixedToOriginalMap.set(key, value);
+      try {
+        const tools = await connectedClient.listToolsWithPrefixing(
+          request.params?._meta,
+        );
+        allTools.push(...tools);
+      } catch (error) {
+        logger.warn(
+          {
+            error,
+            clientName: connectedClient.name,
+          },
+          "Could not fetch tools from client. Continuing with other clients.",
+        );
+        continue;
       }
     }
 
@@ -44,20 +41,27 @@ export function setupToolHandlers(
   // Call Tool Handler
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { name } = request.params;
-    const clientForTool = toolToClientMap.get(name);
 
-    if (!clientForTool) {
-      throw new Error(`Unknown tool: ${name}`);
+    // Find the client that has this tool
+    for (const connectedClient of connectedClients) {
+      try {
+        // Try to call the tool on this client - it will handle prefixing internally
+        return await connectedClient.callToolWithPrefixing(
+          name,
+          request.params.arguments || {},
+          request.params._meta,
+        );
+      } catch (error) {
+        // If this client doesn't have the tool, continue to the next one
+        if (error instanceof Error && error.message.includes("Unknown tool")) {
+          continue;
+        }
+        // If it's a different error, re-throw it
+        throw error;
+      }
     }
 
-    // Get the original tool name if this is a prefixed tool
-    const originalToolName = prefixedToOriginalMap.get(name) || name;
-
-    return await clientForTool.callToolWithName(
-      name,
-      originalToolName,
-      request.params.arguments || {},
-      request.params._meta,
-    );
+    // If we get here, no client had the tool
+    throw new Error(`Unknown tool: ${name}`);
   });
 }

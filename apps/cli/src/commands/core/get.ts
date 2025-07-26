@@ -25,7 +25,7 @@ export function registerGetCommand(program: DirectorCommand) {
             proxyId,
             serverName,
           });
-          console.log(target);
+          printTargetDetails(proxyId, target);
         } else {
           const proxy = await gatewayClient.store.get.query({ proxyId });
 
@@ -38,6 +38,37 @@ export function registerGetCommand(program: DirectorCommand) {
         }
       }),
     );
+}
+
+function printTargetDetails(
+  proxyId: string,
+  target: GatewayRouterOutputs["store"]["getServer"],
+) {
+  const {
+    name,
+    status,
+    command,
+    type,
+    lastConnectedAt,
+    lastErrorMessage,
+    source,
+  } = target;
+
+  console.log();
+  console.log(whiteBold(`PROXIES > ${proxyId} > ${blue(name)}`));
+  console.log();
+
+  console.log(`${whiteBold("name")} = ${name}`);
+  console.log(`${whiteBold("status")} = ${status}`);
+  console.log(`${whiteBold("command")} = ${command}`);
+  console.log(`${whiteBold("type")} = ${type}`);
+  console.log(
+    `${whiteBold("lastConnectedAt")} = ${lastConnectedAt?.toISOString() ?? "--"}`,
+  );
+  console.log(`${whiteBold("lastErrorMessage")} = ${lastErrorMessage ?? "--"}`);
+  console.log();
+  console.log(`${whiteBold("sourceName")} = ${source?.name}`);
+  console.log(`${whiteBold("sourceId")} = ${source?.entryId}`);
 }
 
 function printProxyDetails(proxy: GatewayRouterOutputs["store"]["get"]) {

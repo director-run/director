@@ -6,6 +6,7 @@ import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { proxyTargetAttributesSchema } from "@director.run/utilities/schema";
 import { restartConnectedClients } from "../../helpers";
 import { ProxyServerStore } from "../../proxy-server-store";
+import { serializeProxyServer, serializeProxyServers } from "../../serializers";
 
 const ProxyCreateSchema = z.object({
   name: z.string(),
@@ -21,24 +22,24 @@ export function createProxyStoreRouter({
   proxyStore,
 }: { proxyStore: ProxyServerStore }) {
   return t.router({
-    getAll: t.procedure.query(() => {
-      return proxyStore.getAllProxyServersAsPlainObjects();
+    getAll: t.procedure.query(async () => {
+      return await serializeProxyServers(await proxyStore.getAll());
     }),
 
     get: t.procedure
       .input(z.object({ proxyId: z.string() }))
-      .query(({ input }) => {
-        return proxyStore.getProxyAsPlainObject(input.proxyId);
+      .query(async ({ input }) => {
+        return await serializeProxyServer(await proxyStore.get(input.proxyId));
       }),
 
     create: t.procedure.input(ProxyCreateSchema).mutation(async ({ input }) => {
-      return (
+      return await serializeProxyServer(
         await proxyStore.create({
           name: input.name,
           description: input.description ?? undefined,
           servers: input.servers,
-        })
-      ).toPlainObject();
+        }),
+      );
     }),
 
     update: t.procedure
@@ -49,12 +50,12 @@ export function createProxyStoreRouter({
         }),
       )
       .mutation(async ({ input }) => {
-        return (
+        return await serializeProxyServer(
           await proxyStore.update(input.proxyId, {
             name: input.attributes.name,
             description: input.attributes.description ?? undefined,
-          })
-        ).toPlainObject();
+          }),
+        );
       }),
     delete: t.procedure
       .input(z.object({ proxyId: z.string() }))
@@ -72,7 +73,7 @@ export function createProxyStoreRouter({
       .mutation(async ({ input }) => {
         const proxy = await proxyStore.addServer(input.proxyId, input.server);
         await restartConnectedClients(proxy);
-        return proxy.toPlainObject();
+        return await serializeProxyServer(proxy);
       }),
 
     authenticate: t.procedure
@@ -113,7 +114,7 @@ export function createProxyStoreRouter({
           input.serverName,
         );
         await restartConnectedClients(proxy);
-        return proxy.toPlainObject();
+        return await serializeProxyServer(proxy);
       }),
   });
 }

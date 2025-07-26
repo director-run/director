@@ -1,4 +1,5 @@
 import { HTTPClient } from "@director.run/mcp/client/http-client";
+import { StdioClient } from "@director.run/mcp/client/stdio-client";
 import { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { ProxyServer } from "@director.run/mcp/proxy/proxy-server";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
@@ -165,19 +166,19 @@ export class ProxyServerStore {
     proxyId: string,
     server: ProxyTargetAttributes,
     params: { throwOnError: boolean } = { throwOnError: true },
-  ): Promise<ProxyServer> {
+  ): Promise<HTTPClient | StdioClient> {
     this.telemetry.trackEvent("server_added");
 
     const proxy = this.get(proxyId);
 
-    await proxy.addTarget(server, params);
+    const target = await proxy.addTarget(server, params);
 
     const proxyDbEntry = await this.db.getProxy(proxyId);
     await this.db.updateProxy(proxyId, {
       servers: [...proxyDbEntry.servers, server],
     });
 
-    return proxy;
+    return target;
   }
 
   public async removeServer(

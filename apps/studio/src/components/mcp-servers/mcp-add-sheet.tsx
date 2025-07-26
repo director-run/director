@@ -119,16 +119,16 @@ export function McpAddSheet({
   const proxies = proxyQuery.data ?? [];
 
   const addServerMutation = trpc.store.addServer.useMutation({
-    onSuccess: async (data) => {
+    onSuccess: async (data, variables) => {
       await utils.store.getAll.invalidate();
-      await utils.store.get.invalidate({ proxyId: data.id });
+      await utils.store.get.invalidate({ proxyId: variables.proxyId });
 
       toast({
         title: "Server added",
         description: "The server has been added to the proxy",
       });
       onOpenChange ? onOpenChange(false) : setIsOpen(false);
-      router.push(`/${data.id}`);
+      router.push(`/${variables.proxyId}`);
     },
     onError: () => {
       toast({

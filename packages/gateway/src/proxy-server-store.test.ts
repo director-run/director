@@ -55,12 +55,14 @@ describe("ProxyServerStore", () => {
 
   describe("addServer", () => {
     it("should persist changes to the config file", async () => {
-      const proxy = await proxyServerStore.addServer(
+      const target = await proxyServerStore.addServer(
         "test-proxy",
         makeFooBarServerStdioConfig(),
       );
+      expect(target.name).toBe("foo");
+
+      const proxy = proxyServerStore.get("test-proxy");
       expect(proxy.targets).toHaveLength(1);
-      expect(proxy.targets[0].name).toBe("foo");
 
       const db = await Database.connect(dbPath);
       const proxyEntry = await db.getProxy("test-proxy");

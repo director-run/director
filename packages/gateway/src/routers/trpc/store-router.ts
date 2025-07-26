@@ -6,7 +6,11 @@ import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { proxyTargetAttributesSchema } from "@director.run/utilities/schema";
 import { restartConnectedClients } from "../../helpers";
 import { ProxyServerStore } from "../../proxy-server-store";
-import { serializeProxyServer, serializeProxyServers } from "../../serializers";
+import {
+  serializeProxyServer,
+  serializeProxyServerTarget,
+  serializeProxyServers,
+} from "../../serializers";
 
 const ProxyCreateSchema = z.object({
   name: z.string(),
@@ -71,9 +75,11 @@ export function createProxyStoreRouter({
         }),
       )
       .mutation(async ({ input }) => {
-        const proxy = await proxyStore.addServer(input.proxyId, input.server);
+        const target = await proxyStore.addServer(input.proxyId, input.server);
+        const proxy = await proxyStore.get(input.proxyId);
+
         await restartConnectedClients(proxy);
-        return await serializeProxyServer(proxy);
+        return await serializeProxyServerTarget(target);
       }),
 
     authenticate: t.procedure

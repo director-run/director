@@ -102,9 +102,9 @@ describe("Store Router", () => {
           },
         });
 
-        expect(target.targets[0].status).toBe("unauthorized");
-        expect(target.targets[0].command).toBe("https://mcp.notion.com/mcp");
-        expect(target.targets[0].type).toBe("http");
+        expect(target.status).toBe("unauthorized");
+        expect(target.command).toBe("https://mcp.notion.com/mcp");
+        expect(target.type).toBe("http");
       });
     });
 

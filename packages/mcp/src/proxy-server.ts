@@ -18,7 +18,7 @@ import { setupPromptHandlers } from "./handlers/prompts-handler";
 import { setupResourceTemplateHandlers } from "./handlers/resource-templates-handler";
 import { setupResourceHandlers } from "./handlers/resources-handler";
 import { setupToolHandlers } from "./handlers/tools-handler";
-import { createInMemoryOAuthProvider } from "./oauth/oauth-provider-factory";
+import { OAuthHandler } from "./oauth/oauth-provider-factory";
 
 global.EventSource = eventsource.EventSource;
 
@@ -26,13 +26,19 @@ const logger = getLogger(`ProxyServer`);
 
 export class ProxyServer extends Server {
   private _targets: (HTTPClient | StdioClient)[];
+  private _oAuthHandler?: OAuthHandler;
   public readonly attributes: ProxyServerAttributes;
 
   public get targets(): (HTTPClient | StdioClient)[] {
     return this._targets;
   }
 
-  constructor(attributes: ProxyServerAttributes) {
+  constructor(
+    attributes: ProxyServerAttributes,
+    params?: {
+      oAuthHandler?: OAuthHandler;
+    },
+  ) {
     super(
       {
         name: attributes.name,
@@ -48,9 +54,10 @@ export class ProxyServer extends Server {
     );
     this._targets = [];
     this.attributes = attributes;
+    this._oAuthHandler = params?.oAuthHandler;
 
     for (const server of this.attributes.servers) {
-      const target = createClientForTarget(server);
+      const target = createClientForTarget(server, this._oAuthHandler);
       this._targets.push(target);
     }
 
@@ -68,6 +75,25 @@ export class ProxyServer extends Server {
     }
   }
 
+  public async getTarget(
+    targetName: string,
+  ): Promise<HTTPClient | StdioClient> {
+    const target = this.targets.find(
+      (t) => t.name.toLocaleLowerCase() === targetName.toLocaleLowerCase(),
+    );
+    if (!target) {
+      throw new AppError(
+        ErrorCode.NOT_FOUND,
+        `Target ${targetName} does not exists`,
+      );
+    }
+    return target;
+  }
+
+  public getAllTargets(): (HTTPClient | StdioClient)[] {
+    return this.targets;
+  }
+
   public async addTarget(
     target: ProxyTargetAttributes,
     attribs: { throwOnError: boolean } = { throwOnError: false },
@@ -81,7 +107,7 @@ export class ProxyServer extends Server {
         `Target ${target.name} already exists`,
       );
     }
-    const newTarget = createClientForTarget(target);
+    const newTarget = createClientForTarget(target, this._oAuthHandler);
 
     try {
       await newTarget.connectToTarget({ throwOnError: attribs.throwOnError });
@@ -156,16 +182,16 @@ export class ProxyServer extends Server {
   }
 }
 
-export function createClientForTarget(target: ProxyTargetAttributes) {
+export function createClientForTarget(
+  target: ProxyTargetAttributes,
+  oAuthHandler?: OAuthHandler,
+) {
   switch (target.transport.type) {
     case "http":
       return new HTTPClient({
         url: target.transport.url,
         name: target.name,
-        oauthProvider: createInMemoryOAuthProvider(
-          "http://localhost:2345/callback",
-          (redirectUrl: URL) => {},
-        ),
+        oAuthHandler,
       });
     case "stdio":
       return new StdioClient({

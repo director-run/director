@@ -4,6 +4,7 @@ import { expectToThrowAppError } from "@director.run/utilities/test";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { InMemoryClient } from "./client/in-memory-client";
+import { OAuthHandler } from "./oauth/oauth-provider-factory";
 import { ProxyServer } from "./proxy-server";
 import {
   makeEchoServer,
@@ -52,6 +53,35 @@ describe("ProxyServer", () => {
             type: "http",
           },
         ],
+      });
+    });
+  });
+
+  describe("getTarget", () => {
+    test("should return the target or throw an error if it doesn't exist", async () => {
+      const proxy = new ProxyServer({
+        id: "test-proxy",
+        name: "test-proxy",
+        servers: [],
+      });
+
+      await proxy.addTarget(
+        {
+          name: "streamable",
+          transport: {
+            type: "http",
+            url: `http://localhost/mcp`,
+          },
+        },
+        { throwOnError: false },
+      );
+
+      const target = await proxy.getTarget("streamable");
+      expect(target).toBeDefined();
+
+      await expectToThrowAppError(() => proxy.getTarget("random"), {
+        code: ErrorCode.NOT_FOUND,
+        props: {},
       });
     });
   });
@@ -118,11 +148,18 @@ describe("ProxyServer", () => {
           expect(proxy.targets.length).toBe(0);
         });
         test("should succeed when adding an unauthorized oauth target", async () => {
-          const proxy = new ProxyServer({
-            id: "test-proxy",
-            name: "test-proxy",
-            servers: [],
-          });
+          const proxy = new ProxyServer(
+            {
+              id: "test-proxy",
+              name: "test-proxy",
+              servers: [],
+            },
+            {
+              oAuthHandler: OAuthHandler.createMemoryBackedHandler({
+                baseCallbackUrl: "http://localhost:8999",
+              }),
+            },
+          );
 
           const target = await proxy.addTarget(
             {
@@ -139,11 +176,18 @@ describe("ProxyServer", () => {
       });
       describe("when throwOnError === false", () => {
         test("should succeed when adding a oauth target", async () => {
-          const proxy = new ProxyServer({
-            id: "test-proxy",
-            name: "test-proxy",
-            servers: [],
-          });
+          const proxy = new ProxyServer(
+            {
+              id: "test-proxy",
+              name: "test-proxy",
+              servers: [],
+            },
+            {
+              oAuthHandler: OAuthHandler.createMemoryBackedHandler({
+                baseCallbackUrl: "http://localhost:8999",
+              }),
+            },
+          );
 
           const target = await proxy.addTarget(
             {

@@ -13,6 +13,7 @@ import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../client";
 import { env } from "../env";
 import { registerAddCommand } from "./core/add";
+import { registerAuthCommand } from "./core/authenticate";
 import { registerConnectCommand } from "./core/connect";
 import { registerDebugCommands } from "./core/debug";
 import { registerEnvCommand } from "./core/env";
@@ -55,6 +56,7 @@ export function registerCoreCommands(program: DirectorCommand): void {
     );
 
   registerGetCommand(program);
+  registerAuthCommand(program);
 
   program
     .command("create <name>")

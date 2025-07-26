@@ -1,4 +1,6 @@
 import { Server } from "http";
+import { createOauthCallbackRouter } from "@director.run/mcp/oauth/oauth-callback-router";
+import { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { getLogger } from "@director.run/utilities/logger";
 import {
   errorRequestHandler,
@@ -39,6 +41,16 @@ export class Gateway {
       registryURL: string;
       allowedOrigins?: string[];
       telemetry?: Telemetry;
+      oauth?:
+        | {
+            enabled: boolean;
+            storage: "disk";
+            tokenDirectory: string;
+          }
+        | {
+            enabled: boolean;
+            storage: "memory";
+          };
     },
     successCallback?: () => void,
   ) {
@@ -46,7 +58,27 @@ export class Gateway {
 
     const db = await Database.connect(attribs.databaseFilePath);
     const telemetry = attribs.telemetry || Telemetry.noTelemetry();
-    const proxyStore = await ProxyServerStore.create({ db, telemetry });
+
+    let oAuthHandler: OAuthHandler | undefined;
+
+    if (attribs.oauth && attribs.oauth.enabled) {
+      if (attribs.oauth.storage === "disk") {
+        oAuthHandler = OAuthHandler.createDiskBackedHandler({
+          directory: attribs.oauth.tokenDirectory,
+          baseCallbackUrl: `http://localhost:${attribs.port}`,
+        });
+      } else if (attribs.oauth.storage === "memory") {
+        oAuthHandler = OAuthHandler.createMemoryBackedHandler({
+          baseCallbackUrl: `http://localhost:${attribs.port}`,
+        });
+      }
+    }
+
+    const proxyStore = await ProxyServerStore.create({
+      db,
+      telemetry,
+      oAuthHandler,
+    });
     const app = express();
     const registryURL = attribs.registryURL;
 
@@ -58,6 +90,20 @@ export class Gateway {
     app.use(logRequests());
     app.use("/", createSSERouter({ proxyStore, telemetry }));
     app.use("/", createStreamableRouter({ proxyStore, telemetry }));
+    app.use(
+      "/",
+      createOauthCallbackRouter({
+        onAuthorizationSuccess: (serverUrl, code) => {
+          proxyStore.onAuthorizationSuccess(serverUrl, code);
+        },
+        onAuthorizationError: (serverUrl, error) => {
+          logger.error(
+            `failed to authorize ${serverUrl}: ${error.message}`,
+            error,
+          );
+        },
+      }),
+    );
     // TODO: add a router to handle the incoming oauth tokens
     // onTokenReceived((token) => OauthBroker.registerToken(token))
     app.use("/trpc", createTRPCExpressMiddleware({ proxyStore, registryURL }));

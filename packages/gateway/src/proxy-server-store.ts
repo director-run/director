@@ -1,3 +1,5 @@
+import { HTTPClient } from "@director.run/mcp/client/http-client";
+import { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { ProxyServer } from "@director.run/mcp/proxy-server";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
@@ -11,23 +13,32 @@ export class ProxyServerStore {
   private proxyServers: Map<string, ProxyServer> = new Map();
   private db: Database;
   private telemetry: Telemetry;
+  private _oAuthHandler?: OAuthHandler;
 
-  private constructor(params: { db: Database; telemetry?: Telemetry }) {
+  private constructor(params: {
+    db: Database;
+    telemetry?: Telemetry;
+    oAuthHandler?: OAuthHandler;
+  }) {
     this.db = params.db;
     this.telemetry = params.telemetry || Telemetry.noTelemetry();
+    this._oAuthHandler = params.oAuthHandler;
   }
 
   public static async create({
     db,
     telemetry,
+    oAuthHandler,
   }: {
     db: Database;
     telemetry?: Telemetry;
+    oAuthHandler?: OAuthHandler;
   }): Promise<ProxyServerStore> {
     logger.debug("initializing ProxyServerStore");
     const store = new ProxyServerStore({
       db,
       telemetry,
+      oAuthHandler,
     });
     await store.initialize();
     logger.debug("initialization complete");
@@ -41,12 +52,17 @@ export class ProxyServerStore {
       const proxyId = proxyConfig.id;
       logger.debug({ message: `initializing ${proxyId}`, proxyId });
 
-      const proxyServer = new ProxyServer({
-        id: proxyId,
-        name: proxyConfig.name,
-        description: proxyConfig.description ?? undefined,
-        servers: proxyConfig.servers,
-      });
+      const proxyServer = new ProxyServer(
+        {
+          id: proxyId,
+          name: proxyConfig.name,
+          description: proxyConfig.description ?? undefined,
+          servers: proxyConfig.servers,
+        },
+        {
+          oAuthHandler: this._oAuthHandler,
+        },
+      );
       await proxyServer.connectTargets();
       this.proxyServers.set(proxyId, proxyServer);
     }
@@ -91,6 +107,18 @@ export class ProxyServerStore {
     return Array.from(this.proxyServers.values());
   }
 
+  public async onAuthorizationSuccess(serverUrl: string, code: string) {
+    const proxies = this.getAll();
+    for (const proxy of proxies) {
+      const targets = proxy.getAllTargets();
+      for (const target of targets) {
+        if (target instanceof HTTPClient && target.url === serverUrl) {
+          await target.completeAuthFlow(code);
+        }
+      }
+    }
+  }
+
   public async create({
     name,
     description,
@@ -116,12 +144,17 @@ export class ProxyServerStore {
       description,
       servers: servers ?? [],
     });
-    const proxyServer = new ProxyServer({
-      name: name,
-      id: newProxy.id,
-      servers: newProxy.servers,
-      description: newProxy.description ?? undefined,
-    });
+    const proxyServer = new ProxyServer(
+      {
+        name: name,
+        id: newProxy.id,
+        servers: newProxy.servers,
+        description: newProxy.description ?? undefined,
+      },
+      {
+        oAuthHandler: this._oAuthHandler,
+      },
+    );
     await proxyServer.connectTargets();
     this.proxyServers.set(newProxy.id, proxyServer);
     logger.info({ message: `Created new proxy`, proxyId: newProxy.id });
@@ -131,12 +164,13 @@ export class ProxyServerStore {
   public async addServer(
     proxyId: string,
     server: ProxyTargetAttributes,
+    params: { throwOnError: boolean } = { throwOnError: true },
   ): Promise<ProxyServer> {
     this.telemetry.trackEvent("server_added");
 
     const proxy = this.get(proxyId);
 
-    await proxy.addTarget(server, { throwOnError: true });
+    await proxy.addTarget(server, params);
     await this.db.updateProxy(proxyId, { servers: proxy.attributes.servers });
 
     return proxy;

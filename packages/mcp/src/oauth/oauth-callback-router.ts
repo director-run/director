@@ -10,7 +10,7 @@ export function createOauthCallbackRouter(params: {
 }) {
   const router = express.Router();
 
-  router.get("/:clientId/callback", (req: Request, res: Response) => {
+  router.get("/oauth/:clientId/callback", (req: Request, res: Response) => {
     const code = req.query.code?.toString();
     const error = req.query.error?.toString();
     const clientId = req.params.clientId;

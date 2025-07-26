@@ -3,7 +3,6 @@ import { z } from "zod";
 
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
-import { openUrl } from "@director.run/utilities/os";
 import { proxyTargetAttributesSchema } from "@director.run/utilities/schema";
 import {
   getStreamablePathForProxy,
@@ -98,9 +97,7 @@ export function createProxyStoreRouter({
               "target is alreadt connected",
             );
           } else {
-            await target.performOAuthFlow((url: URL) => {
-              openUrl(url.toString());
-            });
+            return await target.startAuthFlow();
           }
         } else {
           throw new AppError(
@@ -108,7 +105,6 @@ export function createProxyStoreRouter({
             "can only authenticate http clients",
           );
         }
-        return target.toPlainObject();
       }),
 
     purge: t.procedure.mutation(() => proxyStore.purge()),

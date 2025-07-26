@@ -90,6 +90,10 @@ export class ProxyServer extends Server {
     return target;
   }
 
+  public getAllTargets(): (HTTPClient | StdioClient)[] {
+    return this.targets;
+  }
+
   public async addTarget(
     target: ProxyTargetAttributes,
     attribs: { throwOnError: boolean } = { throwOnError: false },

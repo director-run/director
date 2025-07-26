@@ -1,4 +1,5 @@
 import { Server } from "http";
+import { createOauthCallbackRouter } from "@director.run/mcp/oauth/oauth-callback-router";
 import { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { getLogger } from "@director.run/utilities/logger";
 import {
@@ -89,6 +90,20 @@ export class Gateway {
     app.use(logRequests());
     app.use("/", createSSERouter({ proxyStore, telemetry }));
     app.use("/", createStreamableRouter({ proxyStore, telemetry }));
+    app.use(
+      "/",
+      createOauthCallbackRouter({
+        onAuthorizationSuccess: (serverUrl, code) => {
+          proxyStore.onAuthorizationSuccess(serverUrl, code);
+        },
+        onAuthorizationError: (serverUrl, error) => {
+          logger.error(
+            `failed to authorize ${serverUrl}: ${error.message}`,
+            error,
+          );
+        },
+      }),
+    );
     // TODO: add a router to handle the incoming oauth tokens
     // onTokenReceived((token) => OauthBroker.registerToken(token))
     app.use("/trpc", createTRPCExpressMiddleware({ proxyStore, registryURL }));

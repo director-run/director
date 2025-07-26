@@ -1,3 +1,4 @@
+import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { ProxyServer } from "@director.run/mcp/proxy-server";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
@@ -104,6 +105,18 @@ export class ProxyServerStore {
 
   public getAll(): ProxyServer[] {
     return Array.from(this.proxyServers.values());
+  }
+
+  public async onAuthorizationSuccess(serverUrl: string, code: string) {
+    const proxies = this.getAll();
+    for (const proxy of proxies) {
+      const targets = proxy.getAllTargets();
+      for (const target of targets) {
+        if (target instanceof HTTPClient && target.url === serverUrl) {
+          await target.completeAuthFlow(code);
+        }
+      }
+    }
   }
 
   public async create({

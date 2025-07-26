@@ -1,5 +1,6 @@
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
+import { openUrl } from "@director.run/utilities/os";
 import { gatewayClient } from "../../client";
 
 export function registerAuthCommand(program: DirectorCommand) {
@@ -12,7 +13,9 @@ export function registerAuthCommand(program: DirectorCommand) {
           proxyId,
           serverName,
         });
-        console.log("-->", res);
+        if (res.result === "REDIRECT") {
+          openUrl(res.redirectUrl);
+        }
       }),
     );
 }

@@ -161,7 +161,7 @@ export class OAuthHandler {
     const id = encodeUrl(params.serverUrl);
     return new OAuthProvider({
       id,
-      redirectUrl: joinURL(this._baseCallbackUrl, `${id}/callback`),
+      redirectUrl: joinURL(this._baseCallbackUrl, `oauth/${id}/callback`),
       storage: this._storage,
       onRedirect: params.onRedirect,
     });

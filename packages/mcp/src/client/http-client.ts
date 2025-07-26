@@ -159,7 +159,7 @@ export class HTTPClient extends AbstractClient {
       }
     | {
         result: "REDIRECT";
-        redirectUrl: URL;
+        redirectUrl: string;
       }
   > {
     if (!this.oAuthHandler) {
@@ -169,7 +169,7 @@ export class HTTPClient extends AbstractClient {
       );
     }
 
-    let redirectUrl: URL | undefined;
+    let redirectUrl: string | undefined;
 
     try {
       await this.connectToTransport({
@@ -179,7 +179,7 @@ export class HTTPClient extends AbstractClient {
           authProvider: this.oAuthHandler.getProvider({
             serverUrl: this._url,
             onRedirect: (url: URL) => {
-              redirectUrl = url;
+              redirectUrl = url.toString();
             },
           }),
         }),

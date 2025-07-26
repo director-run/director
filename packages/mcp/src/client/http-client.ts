@@ -96,63 +96,6 @@ export class HTTPClient extends AbstractClient {
     });
   }
 
-  async performOAuthFlow(onRedirect: (url: URL) => void): Promise<void> {
-    if (!this.oAuthHandler) {
-      throw new AppError(
-        ErrorCode.UNAUTHORIZED,
-        "OAuth authentication required but no authorization handler provided",
-      );
-    }
-
-    const oAuthProvider = this.oAuthHandler.getProvider({
-      serverUrl: this._url,
-      onRedirect,
-    });
-
-    try {
-      await this.connectToTransport({
-        throwOnError: true,
-        transport: new StreamableHTTPClientTransport(new URL(this._url), {
-          requestInit: { headers: this.headers },
-          authProvider: oAuthProvider,
-        }),
-      });
-    } catch (error) {
-      if (isAppErrorWithCode(error, ErrorCode.UNAUTHORIZED)) {
-        logger.info(
-          `[${this.name}] OAuth authentication required for ${this._url}`,
-        );
-
-        // Create a temporary transport just for OAuth flow
-        const oauthTransport = new StreamableHTTPClientTransport(
-          new URL(this._url),
-          {
-            requestInit: { headers: this.headers },
-            authProvider: oAuthProvider,
-          },
-        );
-
-        // Get authorization code from the handler
-        const authCode = await oAuthProvider.onAuthorizationRequired(
-          new URL(this._url),
-        );
-
-        // Complete OAuth flow
-        await oauthTransport.finishAuth(authCode);
-        logger.info(`[${this.name}] oAuth token exchange completed`);
-        await this.connectToTransport({
-          throwOnError: true,
-          transport: new StreamableHTTPClientTransport(new URL(this._url), {
-            requestInit: { headers: this.headers },
-            authProvider: oAuthProvider,
-          }),
-        });
-      } else {
-        throw error;
-      }
-    }
-  }
-
   async startAuthFlow(): Promise<
     | {
         result: "AUTHORIZED";

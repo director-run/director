@@ -3,7 +3,6 @@ import { blue, yellow } from "@director.run/utilities/cli/colors";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { makeTable } from "@director.run/utilities/cli/index";
-import {} from "@director.run/utilities/error";
 import { joinURL } from "@director.run/utilities/url";
 import { input } from "@inquirer/prompts";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";

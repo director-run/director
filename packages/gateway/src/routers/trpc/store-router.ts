@@ -94,7 +94,7 @@ export function createProxyStoreRouter({
           if (target.status === "connected") {
             throw new AppError(
               ErrorCode.BAD_REQUEST,
-              "target is alreadt connected",
+              "target is already connected",
             );
           } else {
             return await target.startAuthFlow();

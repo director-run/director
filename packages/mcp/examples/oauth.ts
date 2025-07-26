@@ -31,21 +31,18 @@ async function main(): Promise<void> {
   app.use(
     createOauthCallbackRouter({
       onAuthorizationSuccess: async (serverUrl, code) => {
-        console.log("GOT THE TOKEN for", { serverUrl, code });
-
+        logger.info("received authorization success", { serverUrl, code });
         await httpTarget.completeAuthFlow(code);
-
-        console.log("--------------------------------");
-        console.log(">", httpTarget.status);
-        runNotionMCPChecks(httpTarget);
-        console.log("--------------------------------");
+        await runNotionMCPChecks(httpTarget);
       },
-      onAuthorizationError: (error) => {},
+      onAuthorizationError: (error) => {
+        logger.error("received authorization error", { error });
+      },
     }),
   );
 
   const server = app.listen(port, () => {
-    console.log(
+    logger.info(
       `OAuth callback server (Express) started on http://localhost:${port}`,
     );
   });
@@ -65,22 +62,17 @@ async function main(): Promise<void> {
       try {
         const result = await httpTarget.startAuthFlow();
 
-        console.log("--------------------------------");
-        console.log("--------------------------------");
         if (result.result === "REDIRECT") {
-          console.log(result.redirectUrl.toString());
-          openUrl(result.redirectUrl.toString());
+          logger.info({
+            message: "redirecting to oauth flow",
+            redirectUrl: result.redirectUrl,
+          });
+          openUrl(result.redirectUrl);
         } else {
-          console.log("----");
+          logger.info({
+            message: "oauth flow completed, trying again to connect to target",
+          });
         }
-
-        // await httpTarget.performOAuthFlow((url: URL) => {
-        //   openUrl(url.toString());
-        // });
-        // logger.info({
-        //   message: "oauth flow completed, trying again to connect to target",
-        // });
-        // await httpTarget.connectToTarget({ throwOnError: true });
       } catch (error) {
         logger.error({
           message: "exhausted all attempts, connection failed",
@@ -100,9 +92,7 @@ async function main(): Promise<void> {
   if (httpTarget.status === "connected") {
     await runNotionMCPChecks(httpTarget);
   } else {
-    console.log("xxxxxxxxxxxxxx NO HTTP CONNECTION xxxxxxxxxxxxxxxxx");
-    console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-    // process.exit(0);
+    logger.info("waiting for oauth token...");
   }
 
   process.on("SIGINT", () => {

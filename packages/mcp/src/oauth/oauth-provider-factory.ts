@@ -107,14 +107,6 @@ export class OAuthProvider implements OAuthClientProvider {
     }
     return this._codeVerifier;
   }
-
-  onAuthorizationRequired(url: URL) {
-    logger.warn({
-      message: "oauth flow required, waiting for callback",
-    });
-    // return await waitForOAuthCallback(CALLBACK_PORT);
-    return "1234567890";
-  }
 }
 
 export interface OAuthHandlerParams {

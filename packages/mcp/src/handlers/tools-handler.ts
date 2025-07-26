@@ -1,11 +1,7 @@
 import { getLogger } from "@director.run/utilities/logger";
 import {
   CallToolRequestSchema,
-  CompatibilityCallToolResultSchema,
-  ErrorCode,
   ListToolsRequestSchema,
-  ListToolsResultSchema,
-  McpError,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import type { AbstractClient } from "../client/abstract-client";
@@ -28,46 +24,19 @@ export function setupToolHandlers(
     prefixedToOriginalMap.clear();
 
     for (const connectedClient of connectedClients) {
-      try {
-        const result = await connectedClient.request(
-          {
-            method: "tools/list",
-            params: {
-              _meta: request.params?._meta,
-            },
-          },
-          ListToolsResultSchema,
-        );
+      const result = await connectedClient.listToolsWithPrefix(
+        addToolPrefix,
+        request.params?._meta,
+      );
 
-        if (result.tools) {
-          const toolsWithSource = result.tools.map((tool) => {
-            const toolName = addToolPrefix
-              ? `${connectedClient.name}__${tool.name}`
-              : tool.name;
+      allTools.push(...result.tools);
 
-            toolToClientMap.set(toolName, connectedClient);
-            if (addToolPrefix) {
-              prefixedToOriginalMap.set(toolName, tool.name);
-            }
-
-            return {
-              ...tool,
-              name: toolName,
-              description: `[${connectedClient.name}] ${tool.description || ""}`,
-            };
-          });
-          allTools.push(...toolsWithSource);
-        }
-      } catch (error) {
-        logger.warn(
-          {
-            error,
-            clientName: connectedClient.name,
-            proxyId: server.id,
-          },
-          "Could not fetch tools from client. Continuing with other clients.",
-        );
-        continue;
+      // Merge the maps
+      for (const [key, value] of result.toolToClientMap) {
+        toolToClientMap.set(key, value);
+      }
+      for (const [key, value] of result.prefixedToOriginalMap) {
+        prefixedToOriginalMap.set(key, value);
       }
     }
 
@@ -86,43 +55,11 @@ export function setupToolHandlers(
     // Get the original tool name if this is a prefixed tool
     const originalToolName = prefixedToOriginalMap.get(name) || name;
 
-    try {
-      return await clientForTool.request(
-        {
-          method: "tools/call",
-          params: {
-            name: originalToolName,
-            arguments: request.params.arguments || {},
-            _meta: request.params._meta,
-          },
-        },
-        CompatibilityCallToolResultSchema,
-      );
-    } catch (error) {
-      if (
-        error instanceof McpError &&
-        error.code === ErrorCode.MethodNotFound
-      ) {
-        logger.warn(
-          {
-            clientName: clientForTool.name,
-            toolName: name,
-            proxyId: server.id,
-          },
-          "Target does not support tools/call",
-        );
-        throw error;
-      }
-      logger.error(
-        {
-          error,
-          clientName: clientForTool.name,
-          toolName: name,
-          proxyId: server.id,
-        },
-        "Error calling tool on client",
-      );
-      throw error;
-    }
+    return await clientForTool.callToolWithName(
+      name,
+      originalToolName,
+      request.params.arguments || {},
+      request.params._meta,
+    );
   });
 }

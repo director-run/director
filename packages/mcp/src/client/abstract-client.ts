@@ -1,5 +1,15 @@
+import { getLogger } from "@director.run/utilities/logger";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import {
+  CompatibilityCallToolResultSchema,
+  ErrorCode,
+  ListToolsResultSchema,
+  McpError,
+} from "@modelcontextprotocol/sdk/types.js";
+import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import packageJson from "../../package.json";
+
+const logger = getLogger("client/abstract");
 
 export type ClientStatus =
   | "connected"
@@ -46,4 +56,112 @@ export abstract class AbstractClient extends Client {
   }: {
     throwOnError: boolean;
   }): Promise<boolean>;
+
+  /**
+   * List tools from this client with optional prefixing
+   */
+  public async listToolsWithPrefix(
+    addToolPrefix: boolean = false,
+    requestMeta?: Record<string, unknown>,
+  ): Promise<{
+    tools: Tool[];
+    toolToClientMap: Map<string, AbstractClient>;
+    prefixedToOriginalMap: Map<string, string>;
+  }> {
+    const tools: Tool[] = [];
+    const toolToClientMap = new Map<string, AbstractClient>();
+    const prefixedToOriginalMap = new Map<string, string>();
+
+    try {
+      const result = await this.request(
+        {
+          method: "tools/list",
+          params: {
+            _meta: requestMeta,
+          },
+        },
+        ListToolsResultSchema,
+      );
+
+      if (result.tools) {
+        const toolsWithSource = result.tools.map((tool) => {
+          const toolName = addToolPrefix
+            ? `${this.name}__${tool.name}`
+            : tool.name;
+
+          toolToClientMap.set(toolName, this);
+          if (addToolPrefix) {
+            prefixedToOriginalMap.set(toolName, tool.name);
+          }
+
+          return {
+            ...tool,
+            name: toolName,
+            description: `[${this.name}] ${tool.description || ""}`,
+          };
+        });
+        tools.push(...toolsWithSource);
+      }
+    } catch (error) {
+      logger.warn(
+        {
+          error,
+          clientName: this.name,
+        },
+        "Could not fetch tools from client.",
+      );
+    }
+
+    return { tools, toolToClientMap, prefixedToOriginalMap };
+  }
+
+  /**
+   * Call a tool on this client
+   */
+  public async callToolWithName(
+    toolName: string,
+    originalToolName: string,
+    arguments_: Record<string, unknown> = {},
+    requestMeta?: Record<string, unknown>,
+  ): Promise<{
+    [x: string]: unknown;
+    _meta?: { [x: string]: unknown } | undefined;
+  }> {
+    try {
+      return await this.request(
+        {
+          method: "tools/call",
+          params: {
+            name: originalToolName,
+            arguments: arguments_,
+            _meta: requestMeta,
+          },
+        },
+        CompatibilityCallToolResultSchema,
+      );
+    } catch (error) {
+      if (
+        error instanceof McpError &&
+        error.code === ErrorCode.MethodNotFound
+      ) {
+        logger.warn(
+          {
+            clientName: this.name,
+            toolName,
+          },
+          "Target does not support tools/call",
+        );
+        throw error;
+      }
+      logger.error(
+        {
+          error,
+          clientName: this.name,
+          toolName,
+        },
+        "Error calling tool on client",
+      );
+      throw error;
+    }
+  }
 }

@@ -2,7 +2,7 @@ import {
   allTargets,
   getConfigurator,
 } from "@director.run/client-configurator/index";
-import type { ProxyServer } from "@director.run/mcp/proxy-server";
+import type { ProxyServer } from "@director.run/mcp/proxy/proxy-server";
 import { getLogger } from "@director.run/utilities/logger";
 
 const logger = getLogger("gateway/helpers");

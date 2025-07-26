@@ -56,16 +56,26 @@ export function makeOption({
   defaultValue,
   choices,
   mandatory,
+  variadic,
 }: {
   flags: string;
   description?: string;
   defaultValue?: string;
   choices?: string[];
   mandatory?: boolean;
+  variadic?: boolean;
 }) {
   const option = new Option(flags, description);
   mandatory && option.makeOptionMandatory();
   defaultValue && option.default(defaultValue);
   choices && option.choices(choices);
+  if (variadic) {
+    option.argParser((value, previous) => {
+      if (previous === undefined || previous === null) {
+        return [value];
+      }
+      return (previous as string[]).concat(value);
+    });
+  }
   return option;
 }

@@ -23,6 +23,7 @@ import { registerRemoveCommand } from "./core/remove";
 import { registerServeCommand } from "./core/serve";
 import { registerStatusCommand } from "./core/status";
 import { registerStudioCommand } from "./core/studio";
+import { registerUpdateCommand } from "./core/update";
 
 export function registerCoreCommands(program: DirectorCommand): void {
   registerQuickstartCommand(program);
@@ -110,6 +111,7 @@ export function registerCoreCommands(program: DirectorCommand): void {
 
   registerAddCommand(program);
   registerRemoveCommand(program);
+  registerUpdateCommand(program);
 
   program
     .command("http2stdio <url>")

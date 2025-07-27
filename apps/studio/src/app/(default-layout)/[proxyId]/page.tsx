@@ -1,6 +1,4 @@
 "use client";
-import { useParams, useRouter } from "next/navigation";
-
 import {
   LayoutView,
   LayoutViewContent,
@@ -48,6 +46,7 @@ import {
   TrashIcon,
 } from "@phosphor-icons/react";
 import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function ProxyPage() {

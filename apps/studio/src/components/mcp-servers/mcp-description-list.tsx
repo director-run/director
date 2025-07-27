@@ -1,7 +1,3 @@
-import type {
-  HTTPTransport,
-  STDIOTransport,
-} from "@director.run/utilities/schema";
 import { ComponentProps } from "react";
 
 import {
@@ -18,10 +14,11 @@ import {
   ListItemTitle,
 } from "@/components/ui/list";
 import { assertUnreachable } from "@/lib/assert-unreachable";
+import { GatewayRouterOutputs } from "@director.run/gateway/client";
 import { GlobeIcon, TerminalIcon } from "@phosphor-icons/react";
 
 interface McpDescriptionListProps extends ComponentProps<typeof List> {
-  transport: HTTPTransport | STDIOTransport;
+  transport: GatewayRouterOutputs["store"]["get"]["servers"][number]["transport"];
 }
 
 export function McpDescriptionList({
@@ -39,13 +36,17 @@ export function McpDescriptionList({
 }
 
 interface McpStdioDescriptionListProps extends ComponentProps<typeof List> {
-  transport: STDIOTransport;
+  transport: GatewayRouterOutputs["store"]["get"]["servers"][number]["transport"];
 }
 
 function McpStdioDescriptionList({
   transport,
   ...props
 }: McpStdioDescriptionListProps) {
+  if (transport.type !== "stdio") {
+    return null;
+  }
+
   const args = transport.args ?? [];
   const env = transport.env ?? [];
 
@@ -105,13 +106,17 @@ function McpStdioDescriptionList({
 }
 
 interface McpSseDescriptionListProps extends ComponentProps<typeof List> {
-  transport: HTTPTransport;
+  transport: GatewayRouterOutputs["store"]["get"]["servers"][number]["transport"];
 }
 
 function McpSseDescriptionList({
   transport,
   ...props
 }: McpSseDescriptionListProps) {
+  if (transport.type !== "http") {
+    return null;
+  }
+
   return (
     <List {...props}>
       <ListItem>

@@ -13,7 +13,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useProxy } from "@/hooks/use-proxy";
-import type { ProxyServerAttributes } from "@director.run/utilities/schema";
+import { GatewayRouterOutputs } from "@director.run/gateway/client";
 import { UpdateProxyForm } from "./proxy-form";
 
 interface ProxySettingsSheetProps {
@@ -45,7 +45,7 @@ export function ProxySettingsSheet({
           <Separator />
 
           <UpdateProxyForm
-            {...(proxy as ProxyServerAttributes)}
+            {...(proxy as GatewayRouterOutputs["store"]["get"])}
             onSuccess={() => setIsOpen(false)}
           />
         </SheetBody>

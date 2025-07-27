@@ -8,7 +8,7 @@ import { Loader } from "@/components/ui/loader";
 import { toast } from "@/components/ui/toast";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { trpc } from "@/trpc/client";
-import type { ProxyServerAttributes } from "@director.run/utilities/schema";
+import { GatewayRouterOutputs } from "@director.run/gateway/client";
 import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
 import { z } from "zod";
@@ -94,7 +94,7 @@ export function NewProxyForm() {
 }
 
 export function UpdateProxyForm(
-  props: ProxyServerAttributes & { onSuccess?: () => void },
+  props: GatewayRouterOutputs["store"]["get"] & { onSuccess?: () => void },
 ) {
   const router = useRouter();
 

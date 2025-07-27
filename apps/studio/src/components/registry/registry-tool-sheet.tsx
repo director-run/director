@@ -30,12 +30,14 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useRegistryQuery } from "@/hooks/use-registry-query";
-import type { Tool } from "@director.run/utilities/schema";
+import { GatewayRouterOutputs } from "@director.run/gateway/client";
 
 import Link from "next/link";
 
 interface RegistryToolSheetProps {
-  tool?: Tool;
+  tool: NonNullable<
+    GatewayRouterOutputs["registry"]["getEntryByName"]["tools"]
+  >[number];
   mcpName: string;
   mcpId: string;
 }
@@ -69,7 +71,7 @@ export function RegistryToolSheet({
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>{tool?.name}</BreadcrumbPage>
+                <BreadcrumbPage>{tool.name}</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -77,7 +79,7 @@ export function RegistryToolSheet({
 
         <SheetBody>
           <SheetHeader>
-            <SheetTitle>{tool?.name}</SheetTitle>
+            <SheetTitle>{tool.name}</SheetTitle>
             <SheetDescription className="text-sm">
               From{" "}
               <Link href={`/library/mcp/${mcpId}`} className="text-fg">
@@ -86,7 +88,7 @@ export function RegistryToolSheet({
             </SheetDescription>
           </SheetHeader>
 
-          <Markdown>{tool?.description}</Markdown>
+          <Markdown>{tool.description}</Markdown>
 
           <SectionSeparator />
 
@@ -96,7 +98,7 @@ export function RegistryToolSheet({
                 <h3>Input schema</h3>
               </SectionTitle>
             </SectionHeader>
-            {tool?.inputSchema ? (
+            {tool.inputSchema ? (
               <JSONSchema schema={tool.inputSchema as JsonSchema} />
             ) : (
               <EmptyState>

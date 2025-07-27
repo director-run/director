@@ -34,10 +34,7 @@ import {
 import { useInspectMcp } from "@/hooks/use-inspect-mcp";
 import { useProxy } from "@/hooks/use-proxy";
 import { proxyQuerySerializer, useProxyQuery } from "@/hooks/use-proxy-query";
-import type {
-  ProxyServerAttributes,
-  ProxyTargetAttributes,
-} from "@director.run/utilities/schema";
+import { GatewayRouterOutputs } from "@director.run/gateway/client";
 import Link from "next/link";
 
 function SheetInner({
@@ -46,8 +43,8 @@ function SheetInner({
   proxy,
 }: {
   toolId: string;
-  server: ProxyTargetAttributes;
-  proxy: ProxyServerAttributes;
+  server: GatewayRouterOutputs["store"]["get"]["servers"][number];
+  proxy: GatewayRouterOutputs["store"]["get"];
 }) {
   const { tools, isLoading } = useInspectMcp(proxy.id, server.name);
 

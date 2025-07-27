@@ -1,7 +1,7 @@
 import { allClientStatuses } from "@director.run/client-configurator/index";
 import { isCommandInPath } from "@director.run/utilities/os";
 
-export async function getStatus() {
+export async function getStatus(cliVersion: string | null) {
   return {
     platform: process.platform,
     dependencies: [
@@ -15,5 +15,6 @@ export async function getStatus() {
       },
     ],
     clients: await allClientStatuses(),
+    cliVersion,
   };
 }

@@ -9,7 +9,13 @@ import {
 import { textVariants } from "../ui/typography";
 import {} from "./connection-brands";
 
-export function ConnectionUpdateState() {
+export function ConnectionUpdateState({
+  cliVersion,
+  studioVersion,
+}: {
+  cliVersion: string;
+  studioVersion: string;
+}) {
   return (
     <div className="flex min-h-dvh w-full items-center justify-center">
       <Container size="xs" className="w-full py-12 lg:py-16">
@@ -39,6 +45,12 @@ export function ConnectionUpdateState() {
               </div>
               <pre className="self-start rounded-md border-[0.5px] border-fg/10 bg-fg/10 px-2.5 py-1 text-left font-mono text-sm selection:bg-fg selection:text-bg">
                 <code>npm install -g @director.run/cli@latest</code>
+              </pre>
+
+              <pre>
+                <code>
+                  {JSON.stringify({ cliVersion, studioVersion }, null, 2)}
+                </code>
               </pre>
             </div>
           </div>

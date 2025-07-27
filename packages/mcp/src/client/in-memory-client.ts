@@ -23,6 +23,7 @@ export class InMemoryClient extends AbstractClient {
       name: params.name,
       source: params.source,
       toolPrefix: params.toolPrefix,
+      disabledTools: params.disabledTools,
     });
     this.server = params.server;
     this.serverTransport = serverTransport;

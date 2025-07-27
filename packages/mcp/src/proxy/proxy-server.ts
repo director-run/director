@@ -62,6 +62,7 @@ export class ProxyServer extends Server {
         target: server,
         oAuthHandler: this._oAuthHandler,
         toolPrefix: server.toolPrefix,
+        disabledTools: server.disabledTools,
       });
       this._targets.push(target);
     }
@@ -124,6 +125,7 @@ export class ProxyServer extends Server {
       target,
       oAuthHandler: this._oAuthHandler,
       toolPrefix: target.toolPrefix,
+      disabledTools: target.disabledTools,
     });
 
     try {
@@ -215,8 +217,9 @@ function createClientForTarget(params: {
   target: ProxyTargetAttributes;
   oAuthHandler?: OAuthHandler;
   toolPrefix?: string;
+  disabledTools?: string[];
 }) {
-  const { target, oAuthHandler, toolPrefix } = params;
+  const { target, oAuthHandler, toolPrefix, disabledTools } = params;
   switch (target.transport.type) {
     case "http":
       return new HTTPClient({
@@ -225,6 +228,7 @@ function createClientForTarget(params: {
         oAuthHandler,
         source: target.source,
         toolPrefix,
+        disabledTools,
       });
     case "stdio":
       return new StdioClient({
@@ -234,6 +238,7 @@ function createClientForTarget(params: {
         env: target.transport.env,
         source: target.source,
         toolPrefix,
+        disabledTools,
       });
   }
 }

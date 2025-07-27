@@ -22,6 +22,7 @@ export class StdioClient extends AbstractClient {
       name: params.name,
       source: params.source,
       toolPrefix: params.toolPrefix,
+      disabledTools: params.disabledTools,
     });
     this.command = params.command;
     this.args = params.args;

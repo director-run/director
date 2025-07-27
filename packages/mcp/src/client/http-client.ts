@@ -31,6 +31,7 @@ export class HTTPClient extends AbstractClient {
       name: params.name,
       source: params.source,
       toolPrefix: params.toolPrefix,
+      disabledTools: params.disabledTools,
     });
     this._url = params.url;
     this.oAuthHandler = params.oAuthHandler;

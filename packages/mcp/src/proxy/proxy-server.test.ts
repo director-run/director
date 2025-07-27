@@ -229,6 +229,51 @@ describe("ProxyServer", () => {
     await sseServerInstance.close();
   });
 
+  describe("disabled tools", () => {
+    let echoServer: Server;
+    let fooServer: Server;
+    let client: InMemoryClient;
+
+    beforeAll(async () => {
+      echoServer = await serveOverStreamable(makeEchoServer(), 4528);
+      fooServer = await serveOverSSE(makeFooBarServer(), 4529);
+      const proxy = new ProxyServer({
+        id: "test-proxy",
+        name: "test-proxy",
+        servers: [
+          {
+            ...makeHTTPTargetConfig({
+              name: "echo",
+              url: `http://localhost:4528/mcp`,
+            }),
+            disabledTools: ["echo"],
+          },
+          {
+            ...makeHTTPTargetConfig({
+              name: "foo",
+              url: `http://localhost:4529/sse`,
+            }),
+          },
+        ],
+      });
+
+      await proxy.connectTargets();
+      client = await InMemoryClient.createAndConnectToServer(proxy);
+    });
+
+    afterAll(async () => {
+      await client.close();
+      await echoServer.close();
+      await fooServer.close();
+    });
+
+    test("should not return disabled tools", async () => {
+      const tools = await client.listTools();
+      expect(tools.tools).toHaveLength(1);
+      expect(tools.tools.map((t) => t.name).sort()).toEqual(["foo"]);
+    });
+  });
+
   describe("tool prefixing", () => {
     let echoServer: Server;
     let fooServer: Server;

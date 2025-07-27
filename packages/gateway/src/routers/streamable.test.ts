@@ -62,13 +62,6 @@ describe("Streamable Router", () => {
       expect(tool?.name).toBe(toolName);
     }
 
-    expect(
-      toolsResult.tools.find((t) => t.name === "foo")?.description,
-    ).toContain("[foo]");
-    expect(
-      toolsResult.tools.find((t) => t.name === "echo")?.description,
-    ).toContain("[echo]");
-
     await client.close();
   });
 

@@ -16,7 +16,7 @@ const ProxyCreateSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
   servers: z.array(proxyTargetAttributesSchema).optional(),
-  toolPrefix: z.boolean().optional(),
+  addToolPrefix: z.boolean().optional(),
 });
 
 const ProxyUpdateSchema = ProxyCreateSchema.omit({
@@ -42,7 +42,7 @@ export function createProxyStoreRouter({
         await proxyStore.create({
           name: input.name,
           description: input.description ?? undefined,
-          addToolPrefix: input.toolPrefix,
+          addToolPrefix: input.addToolPrefix,
           servers: input.servers,
         }),
       );
@@ -60,7 +60,7 @@ export function createProxyStoreRouter({
           await proxyStore.update(input.proxyId, {
             name: input.attributes.name,
             description: input.attributes.description ?? undefined,
-            addToolPrefix: input.attributes.toolPrefix,
+            addToolPrefix: input.attributes.addToolPrefix,
           }),
         );
       }),

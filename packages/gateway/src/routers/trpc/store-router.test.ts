@@ -76,7 +76,7 @@ describe("Store Router", () => {
     const updatedResponse = await harness.client.store.update.mutate({
       proxyId: prox.id,
       attributes: {
-        toolPrefix: true,
+        addToolPrefix: true,
       },
     });
     expect(updatedResponse.addToolPrefix).toBe(true);
@@ -89,7 +89,7 @@ describe("Store Router", () => {
     const newUpdatedResponse = await harness.client.store.update.mutate({
       proxyId: prox.id,
       attributes: {
-        toolPrefix: false,
+        addToolPrefix: false,
       },
     });
     expect(newUpdatedResponse.addToolPrefix).toBe(false);

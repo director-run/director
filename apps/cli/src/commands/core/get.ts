@@ -71,7 +71,7 @@ function printTargetDetails(
   console.log(`${whiteBold("sourceId")} = ${source?.entryId}`);
 }
 
-function printProxyDetails(proxy: GatewayRouterOutputs["store"]["get"]) {
+export function printProxyDetails(proxy: GatewayRouterOutputs["store"]["get"]) {
   const { id, name, description, addToolPrefix, path } = proxy;
   console.log();
   console.log(whiteBold(`PROXIES > ${blue(name)}`));
@@ -86,7 +86,7 @@ function printProxyDetails(proxy: GatewayRouterOutputs["store"]["get"]) {
   console.log(`${whiteBold("id")} = ${id}`);
   console.log(`${whiteBold("name")} = ${name}`);
   console.log(`${whiteBold("description")} = ${description}`);
-  console.log(`${whiteBold("addToolPreix")} = ${addToolPrefix}`);
+  console.log(`${whiteBold("addToolPrefix")} = ${addToolPrefix}`);
   console.log(`${whiteBold("streamableUrl")} = ${streamableURL}`);
   console.log(`${whiteBold("sseURL")} = ${sseURL}`);
 

@@ -1,4 +1,5 @@
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import { McpError } from "@modelcontextprotocol/sdk/types.js";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { z } from "zod";
 import { InMemoryClient } from "../client/in-memory-client";
@@ -42,6 +43,7 @@ describe("client integration tests", () => {
       client = new InMemoryClient({
         name: "test-client",
         server: testServer,
+        toolPrefix,
       });
       await client.connectToTarget({ throwOnError: true });
     });
@@ -50,59 +52,58 @@ describe("client integration tests", () => {
       await client.close();
     });
 
-    // test("callTool with original name should fail", async () => {
-    //   const result = (await client.callTool({
-    //     name: "echo",
-    //     arguments: {
-    //       message: "Hello, world!",
-    //     },
-    //   })) as CallToolResult;
-    //   expect(result.content?.[0].text).toContain("Hello, world!");
-    // });
+    describe("callTool", () => {
+      test("should fail if using original tool name when using a tool prefix", async () => {
+        await expect(
+          client.callTool({
+            name: "echo",
+            arguments: {
+              message: "Hello, world!",
+            },
+          }),
+        ).rejects.toThrow(McpError);
+      });
 
-    test("callTool should call prefixed tools", async () => {
-      client.toolPrefix = toolPrefix;
-      const result = (await client.callTool({
-        name: `${toolPrefix}__echo`,
-        arguments: {
-          message: "Hello, world!",
-        },
-      })) as CallToolResult;
+      test("should call prefixed tools", async () => {
+        const result = (await client.callTool({
+          name: `${toolPrefix}__echo`,
+          arguments: {
+            message: "Hello, world!",
+          },
+        })) as CallToolResult;
 
-      //   const failedResult = (await client.callTool({
-      //     name: "echo",
-      //     arguments: {
-      //       message: "Hello, world!",
-      //     },
-      //   })) as CallToolResult;
-      //   console.log("---", failedResult);
+        expect(result.content?.[0].text).toContain("Hello, world!");
+      });
 
-      expect(result.content?.[0].text).toContain("Hello, world!");
-
-      client.toolPrefix = undefined;
-      const result2 = (await client.callTool({
-        name: "echo",
-        arguments: {
-          message: "Hello, world!",
-        },
-      })) as CallToolResult;
-      expect(result2.content?.[0].text).toContain("Hello, world!");
+      test("should call original tools when tool prefix is undefined", async () => {
+        client.toolPrefix = undefined;
+        const result2 = (await client.callTool({
+          name: "echo",
+          arguments: {
+            message: "Hello, world!",
+          },
+        })) as CallToolResult;
+        expect(result2.content?.[0].text).toContain("Hello, world!");
+      });
     });
 
-    test("listTools should return prefixed tools", async () => {
-      client.toolPrefix = toolPrefix;
-      const tools = await client.listTools();
+    describe("listTools", () => {
+      test("should return prefixed tools", async () => {
+        const tools = await client.listTools();
 
-      expect(tools.tools).toHaveLength(3);
-      expect(tools.tools.map((t) => t.name).sort()).toEqual([
-        `${toolPrefix}__bar`,
-        `${toolPrefix}__echo`,
-        `${toolPrefix}__foo`,
-      ]);
+        expect(tools.tools).toHaveLength(3);
+        expect(tools.tools.map((t) => t.name).sort()).toEqual([
+          `${toolPrefix}__bar`,
+          `${toolPrefix}__echo`,
+          `${toolPrefix}__foo`,
+        ]);
+      });
 
-      client.toolPrefix = undefined;
-      const tools2 = await client.listTools();
-      expect(tools2.tools.map((t) => t.name)).toEqual(["echo", "foo", "bar"]);
+      test("should return original tools when tool prefix is undefined", async () => {
+        client.toolPrefix = undefined;
+        const tools = await client.listTools();
+        expect(tools.tools.map((t) => t.name)).toEqual(["echo", "foo", "bar"]);
+      });
     });
   });
 });

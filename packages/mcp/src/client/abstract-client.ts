@@ -7,6 +7,7 @@ import type {
   CompatibilityCallToolResultSchema,
   ListToolsRequest,
 } from "@modelcontextprotocol/sdk/types.js";
+import { ErrorCode, McpError } from "@modelcontextprotocol/sdk/types.js";
 import packageJson from "../../package.json";
 
 export type ClientStatus =
@@ -82,6 +83,14 @@ export abstract class AbstractClient extends Client {
       | typeof CompatibilityCallToolResultSchema,
     options?: RequestOptions,
   ) {
+    if (this.toolPrefix && !params.name.startsWith(`${this.toolPrefix}__`)) {
+      // Throw an error if trying to use the original tool name when using a tool prefix
+      throw new McpError(
+        ErrorCode.InternalError,
+        `Unknown tool: "${params.name}"`,
+      );
+    }
+
     const toolName =
       this.toolPrefix && params.name.startsWith(`${this.toolPrefix}__`)
         ? params.name.substring(`${this.toolPrefix}__`.length)

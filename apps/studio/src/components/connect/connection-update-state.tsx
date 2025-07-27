@@ -1,5 +1,6 @@
 import { Container } from "../ui/container";
 import { Logo } from "../ui/logo";
+import { SimpleMarkdown } from "../ui/markdown";
 import {
   Section,
   SectionDescription,
@@ -24,7 +25,7 @@ export function ConnectionUpdateState({
           <SectionHeader className="items-center gap-y-1.5 text-center">
             <SectionTitle>New version available</SectionTitle>
             <SectionDescription>
-              There is a new version of the Director CLI available.
+              <SimpleMarkdown>{`You’re running \`v${cliVersion}\` of the Director CLI, but \`v${studioVersion}\` is the latest version.`}</SimpleMarkdown>
             </SectionDescription>
           </SectionHeader>
 
@@ -32,7 +33,7 @@ export function ConnectionUpdateState({
             <div className="flex flex-col gap-y-4 rounded-xl bg-accent p-4">
               <div className="flex flex-col gap-y-1">
                 <h3 className={textVariants({ variant: "h2" })}>
-                  Updating your CLI
+                  To continue using Studio, please update your CLI.
                 </h3>
                 <p
                   className={textVariants({
@@ -45,12 +46,6 @@ export function ConnectionUpdateState({
               </div>
               <pre className="self-start rounded-md border-[0.5px] border-fg/10 bg-fg/10 px-2.5 py-1 text-left font-mono text-sm selection:bg-fg selection:text-bg">
                 <code>npm install -g @director.run/cli@latest</code>
-              </pre>
-
-              <pre>
-                <code>
-                  {JSON.stringify({ cliVersion, studioVersion }, null, 2)}
-                </code>
               </pre>
             </div>
           </div>

@@ -162,14 +162,19 @@ export class ProxyServer extends Server {
   }
 
   public update(
-    attributes: Partial<Pick<ProxyServerAttributes, "name" | "description">>,
+    attributes: Partial<
+      Pick<ProxyServerAttributes, "name" | "description" | "addToolPrefix">
+    >,
   ) {
-    const { name, description } = attributes;
+    const { name, description, addToolPrefix } = attributes;
     if (name) {
       this._name = name;
     }
-    if (description && description !== this._description) {
+    if (description !== undefined && description !== this._description) {
       this._description = description;
+    }
+    if (addToolPrefix !== undefined && addToolPrefix !== this._addToolPrefix) {
+      this._addToolPrefix = addToolPrefix;
     }
   }
 

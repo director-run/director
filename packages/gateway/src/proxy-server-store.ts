@@ -124,11 +124,13 @@ export class ProxyServerStore {
     name,
     description,
     servers,
+    addToolPrefix,
     source,
   }: {
     name: string;
     description?: string;
     servers?: ProxyTargetAttributes[];
+    addToolPrefix?: boolean;
     source?: {
       type: "registry";
       entry: {
@@ -143,6 +145,7 @@ export class ProxyServerStore {
     const newProxy = await this.db.addProxy({
       name,
       description,
+      addToolPrefix,
       servers: servers ?? [],
     });
     const proxyServer = new ProxyServer(
@@ -151,6 +154,7 @@ export class ProxyServerStore {
         id: newProxy.id,
         servers: newProxy.servers,
         description: newProxy.description ?? undefined,
+        addToolPrefix: newProxy.addToolPrefix,
       },
       {
         oAuthHandler: this._oAuthHandler,
@@ -206,6 +210,7 @@ export class ProxyServerStore {
     attributes: Partial<{
       name: string;
       description: string;
+      addToolPrefix: boolean;
     }>,
   ) {
     this.telemetry.trackEvent("proxy_updated");

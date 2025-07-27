@@ -48,8 +48,8 @@ export function registerUpdateCommand(program: DirectorCommand) {
 
 function parseKeyValueAttributes(
   attributeStrings: string[],
-): Record<string, string> {
-  const attributes: Record<string, string> = {};
+): Record<string, string | boolean> {
+  const attributes: Record<string, string | boolean> = {};
 
   for (const attr of attributeStrings) {
     const [key, ...valueParts] = attr.split("=");
@@ -59,7 +59,23 @@ function parseKeyValueAttributes(
       throw new Error(`Invalid attribute format: ${attr}. Expected key=value`);
     }
 
-    attributes[key] = value;
+    // Handle boolean values
+    if (
+      key.toLowerCase() === "addtoolprefix" ||
+      key.toLowerCase() === "toolprefix"
+    ) {
+      if (value.toLowerCase() === "true" || value === "1") {
+        attributes.toolPrefix = true;
+      } else if (value.toLowerCase() === "false" || value === "0") {
+        attributes.toolPrefix = false;
+      } else {
+        throw new Error(
+          `Invalid boolean value for ${key}: ${value}. Use true/false or 1/0`,
+        );
+      }
+    } else {
+      attributes[key] = value;
+    }
   }
 
   return attributes;

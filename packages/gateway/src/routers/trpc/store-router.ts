@@ -42,6 +42,7 @@ export function createProxyStoreRouter({
         await proxyStore.create({
           name: input.name,
           description: input.description ?? undefined,
+          addToolPrefix: input.toolPrefix,
           servers: input.servers,
         }),
       );
@@ -59,6 +60,7 @@ export function createProxyStoreRouter({
           await proxyStore.update(input.proxyId, {
             name: input.attributes.name,
             description: input.attributes.description ?? undefined,
+            addToolPrefix: input.attributes.toolPrefix,
           }),
         );
       }),

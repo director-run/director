@@ -335,4 +335,42 @@ describe("ProxyServer", () => {
       expect(tools.tools.map((t) => t.name).sort()).toEqual(["echo", "foo"]);
     });
   });
+
+  describe("update", () => {
+    test("should update addToolPrefix", () => {
+      const proxy = new ProxyServer({
+        id: "test-proxy",
+        name: "test-proxy",
+        addToolPrefix: false,
+        servers: [],
+      });
+
+      expect(proxy.addToolPrefix).toBe(false);
+
+      proxy.update({ addToolPrefix: true });
+      expect(proxy.addToolPrefix).toBe(true);
+
+      proxy.update({ addToolPrefix: false });
+      expect(proxy.addToolPrefix).toBe(false);
+    });
+
+    test("should update name and description", () => {
+      const proxy = new ProxyServer({
+        id: "test-proxy",
+        name: "test-proxy",
+        description: "old description",
+        servers: [],
+      });
+
+      expect(proxy.name).toBe("test-proxy");
+      expect(proxy.description).toBe("old description");
+
+      proxy.update({
+        name: "updated-proxy",
+        description: "new description",
+      });
+      expect(proxy.name).toBe("updated-proxy");
+      expect(proxy.description).toBe("new description");
+    });
+  });
 });

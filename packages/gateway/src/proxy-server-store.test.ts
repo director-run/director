@@ -88,6 +88,8 @@ describe("ProxyServerStore", () => {
 
   describe("update", () => {
     it("should persist changes to the config file", async () => {
+      expect(proxyServerStore.get("test-proxy").addToolPrefix).toBeFalsy();
+
       await proxyServerStore.addServer(
         "test-proxy",
         makeFooBarServerStdioConfig(),
@@ -95,15 +97,18 @@ describe("ProxyServerStore", () => {
       const proxy = await proxyServerStore.update("test-proxy", {
         name: "test-proxy-updated",
         description: "test-proxy-updated",
+        addToolPrefix: true,
       });
       expect(proxy.name).toBe("test-proxy-updated");
       expect(proxy.description).toBe("test-proxy-updated");
+      expect(proxy.addToolPrefix).toBe(true);
 
       const db = await Database.connect(dbPath);
       const proxyEntry = await db.getProxy("test-proxy");
 
       expect(proxyEntry.name).toBe("test-proxy-updated");
       expect(proxyEntry.description).toBe("test-proxy-updated");
+      expect(proxyEntry.addToolPrefix).toBe(true);
     });
   });
 });

@@ -66,6 +66,35 @@ describe("Store Router", () => {
     expect(proxy?.description).toBe(newDescription);
   });
 
+  it("should update addToolPrefix", async () => {
+    await harness.purge();
+    const prox = await harness.client.store.create.mutate({
+      name: "Test proxy",
+    });
+    expect(prox.addToolPrefix).toBeFalsy();
+
+    const updatedResponse = await harness.client.store.update.mutate({
+      proxyId: prox.id,
+      attributes: {
+        toolPrefix: true,
+      },
+    });
+    expect(updatedResponse.addToolPrefix).toBe(true);
+
+    const proxy = await harness.client.store.get.query({
+      proxyId: "test-proxy",
+    });
+    expect(proxy?.addToolPrefix).toBe(true);
+
+    const newUpdatedResponse = await harness.client.store.update.mutate({
+      proxyId: prox.id,
+      attributes: {
+        toolPrefix: false,
+      },
+    });
+    expect(newUpdatedResponse.addToolPrefix).toBe(false);
+  });
+
   it("should delete a proxy", async () => {
     await harness.purge();
     await harness.client.store.create.mutate({

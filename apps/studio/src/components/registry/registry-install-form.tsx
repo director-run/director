@@ -44,14 +44,14 @@ export function RegistryInstallForm({
         description: error.message,
       });
     },
-    onSuccess: (data) => {
-      utils.store.get.invalidate({ proxyId: data.id });
+    onSuccess: (data, variables) => {
+      utils.store.get.invalidate({ proxyId: variables.proxyId });
       utils.store.getAll.invalidate();
       toast({
         title: "Proxy installed",
         description: "This proxy was successfully installed.",
       });
-      router.push(`/${data.id}`);
+      router.push(`/${variables.proxyId}`);
     },
   });
 

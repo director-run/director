@@ -11,14 +11,14 @@ import type {
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import * as eventsource from "eventsource";
 import _ from "lodash";
-import packageJson from "../package.json";
-import { HTTPClient } from "./client/http-client";
-import { StdioClient } from "./client/stdio-client";
+import packageJson from "../../package.json";
+import { HTTPClient } from "../client/http-client";
+import { StdioClient } from "../client/stdio-client";
+import { OAuthHandler } from "../oauth/oauth-provider-factory";
 import { setupPromptHandlers } from "./handlers/prompts-handler";
 import { setupResourceTemplateHandlers } from "./handlers/resource-templates-handler";
 import { setupResourceHandlers } from "./handlers/resources-handler";
 import { setupToolHandlers } from "./handlers/tools-handler";
-import { OAuthHandler } from "./oauth/oauth-provider-factory";
 
 global.EventSource = eventsource.EventSource;
 
@@ -27,11 +27,10 @@ const logger = getLogger(`ProxyServer`);
 export class ProxyServer extends Server {
   private _targets: (HTTPClient | StdioClient)[];
   private _oAuthHandler?: OAuthHandler;
-  public readonly attributes: ProxyServerAttributes;
-
-  public get targets(): (HTTPClient | StdioClient)[] {
-    return this._targets;
-  }
+  private _id: string;
+  private _name: string;
+  private _description?: string | null;
+  private _addToolPrefix?: boolean;
 
   constructor(
     attributes: ProxyServerAttributes,
@@ -53,15 +52,18 @@ export class ProxyServer extends Server {
       },
     );
     this._targets = [];
-    this.attributes = attributes;
     this._oAuthHandler = params?.oAuthHandler;
+    this._id = attributes.id;
+    this._name = attributes.name;
+    this._description = attributes.description;
+    this._addToolPrefix = attributes.addToolPrefix;
 
-    for (const server of this.attributes.servers) {
+    for (const server of attributes.servers) {
       const target = createClientForTarget(server, this._oAuthHandler);
       this._targets.push(target);
     }
 
-    setupToolHandlers(this, this.targets, this.attributes.addToolPrefix);
+    setupToolHandlers(this, this.targets);
     setupPromptHandlers(this, this._targets);
     setupResourceHandlers(this, this._targets);
     setupResourceTemplateHandlers(this, this._targets);
@@ -90,8 +92,16 @@ export class ProxyServer extends Server {
     return target;
   }
 
-  public getAllTargets(): (HTTPClient | StdioClient)[] {
-    return this.targets;
+  public get targets(): (HTTPClient | StdioClient)[] {
+    return this._targets;
+  }
+
+  public get name() {
+    return this._name;
+  }
+
+  public get description() {
+    return this._description;
   }
 
   public async addTarget(
@@ -119,7 +129,6 @@ export class ProxyServer extends Server {
       }
     }
 
-    this.attributes.servers.push(target);
     this.targets.push(newTarget);
 
     return newTarget;
@@ -140,11 +149,11 @@ export class ProxyServer extends Server {
       );
     }
     await existingTarget.close();
-    this.attributes.servers = this.attributes.servers.filter(
-      (t) => t.name.toLocaleLowerCase() !== targetName.toLocaleLowerCase(),
-    );
 
-    _.remove(this.targets, (t) => t.name === targetName);
+    _.remove(
+      this.targets,
+      (t) => t.name.toLocaleLowerCase() === targetName.toLocaleLowerCase(),
+    );
 
     // TODO: send list changed events. need client to support this first
     // this.sendToolListChanged();
@@ -153,26 +162,28 @@ export class ProxyServer extends Server {
   }
 
   public update(
-    attributes: Partial<Pick<ProxyServerAttributes, "name" | "description">>,
+    attributes: Partial<
+      Pick<ProxyServerAttributes, "name" | "description" | "addToolPrefix">
+    >,
   ) {
-    const { name, description } = attributes;
+    const { name, description, addToolPrefix } = attributes;
     if (name) {
-      this.attributes.name = name;
+      this._name = name;
     }
-    if (description && description !== this.attributes.description) {
-      this.attributes.description = description;
+    if (description !== undefined && description !== this._description) {
+      this._description = description;
     }
-  }
-
-  public toPlainObject() {
-    return {
-      ...this.attributes,
-      targets: this.targets.map((target) => target.toPlainObject()),
-    };
+    if (addToolPrefix !== undefined && addToolPrefix !== this._addToolPrefix) {
+      this._addToolPrefix = addToolPrefix;
+    }
   }
 
   get id() {
-    return this.attributes.id;
+    return this._id;
+  }
+
+  get addToolPrefix() {
+    return this._addToolPrefix;
   }
 
   async close(): Promise<void> {
@@ -182,7 +193,7 @@ export class ProxyServer extends Server {
   }
 }
 
-export function createClientForTarget(
+function createClientForTarget(
   target: ProxyTargetAttributes,
   oAuthHandler?: OAuthHandler,
 ) {
@@ -192,16 +203,15 @@ export function createClientForTarget(
         url: target.transport.url,
         name: target.name,
         oAuthHandler,
+        source: target.source,
       });
     case "stdio":
       return new StdioClient({
         name: target.name,
         command: target.transport.command,
         args: target.transport.args,
-        env: {
-          ...(process.env as Record<string, string>),
-          ...target.transport.env,
-        },
+        env: target.transport.env,
+        source: target.source,
       });
   }
 }

@@ -1,6 +1,9 @@
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { blue, yellow } from "@director.run/utilities/cli/colors";
-import { DirectorCommand } from "@director.run/utilities/cli/director-command";
+import {
+  DirectorCommand,
+  makeOption,
+} from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { makeTable } from "@director.run/utilities/cli/index";
 import { joinURL } from "@director.run/utilities/url";
@@ -31,6 +34,14 @@ export function registerToolsCommands(program: DirectorCommand): void {
 
   command
     .command("call <proxyId> <toolName>")
+    .addOption(
+      makeOption({
+        flags: "-a,--argument <key=value>",
+        description:
+          "set arguments in key=value format (can be used multiple times)",
+        variadic: true,
+      }),
+    )
     .description("Call a tool on a proxy")
     .action(
       actionWithErrorHandler(async (proxyId: string, toolName: string) => {

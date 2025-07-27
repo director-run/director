@@ -3,60 +3,17 @@ import { ErrorCode } from "@director.run/utilities/error";
 import { expectToThrowAppError } from "@director.run/utilities/test";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { InMemoryClient } from "./client/in-memory-client";
-import { OAuthHandler } from "./oauth/oauth-provider-factory";
-import { ProxyServer } from "./proxy-server";
+import { InMemoryClient } from "../client/in-memory-client";
+import { OAuthHandler } from "../oauth/oauth-provider-factory";
 import {
   makeEchoServer,
   makeFooBarServer,
   makeHTTPTargetConfig,
-} from "./test/fixtures";
-import { serveOverSSE, serveOverStreamable } from "./transport";
+} from "../test/fixtures";
+import { serveOverSSE, serveOverStreamable } from "../transport";
+import { ProxyServer } from "./proxy-server";
 
 describe("ProxyServer", () => {
-  describe("toPlainObject", () => {
-    test("should properly serialize the proxy server attributes", () => {
-      const proxy = new ProxyServer({
-        id: "test-proxy",
-        name: "test-proxy",
-        servers: [
-          makeHTTPTargetConfig({
-            name: "streamable",
-            url: `http://localhost:4522/mcp`,
-          }),
-          makeHTTPTargetConfig({
-            name: "sse",
-            url: `http://localhost:4523/sse`,
-          }),
-        ],
-      });
-
-      const plainObject = proxy.toPlainObject();
-      expect(plainObject).toMatchObject({
-        id: "test-proxy",
-        name: "test-proxy",
-        targets: [
-          {
-            name: "streamable",
-            command: `http://localhost:4522/mcp`,
-            status: "disconnected",
-            lastConnectedAt: undefined,
-            lastErrorMessage: undefined,
-            type: "http",
-          },
-          {
-            name: "sse",
-            command: `http://localhost:4523/sse`,
-            status: "disconnected",
-            lastConnectedAt: undefined,
-            lastErrorMessage: undefined,
-            type: "http",
-          },
-        ],
-      });
-    });
-  });
-
   describe("getTarget", () => {
     test("should return the target or throw an error if it doesn't exist", async () => {
       const proxy = new ProxyServer({
@@ -376,6 +333,44 @@ describe("ProxyServer", () => {
 
       expect(tools.tools).toHaveLength(2);
       expect(tools.tools.map((t) => t.name).sort()).toEqual(["echo", "foo"]);
+    });
+  });
+
+  describe("update", () => {
+    test("should update addToolPrefix", () => {
+      const proxy = new ProxyServer({
+        id: "test-proxy",
+        name: "test-proxy",
+        addToolPrefix: false,
+        servers: [],
+      });
+
+      expect(proxy.addToolPrefix).toBe(false);
+
+      proxy.update({ addToolPrefix: true });
+      expect(proxy.addToolPrefix).toBe(true);
+
+      proxy.update({ addToolPrefix: false });
+      expect(proxy.addToolPrefix).toBe(false);
+    });
+
+    test("should update name and description", () => {
+      const proxy = new ProxyServer({
+        id: "test-proxy",
+        name: "test-proxy",
+        description: "old description",
+        servers: [],
+      });
+
+      expect(proxy.name).toBe("test-proxy");
+      expect(proxy.description).toBe("old description");
+
+      proxy.update({
+        name: "updated-proxy",
+        description: "new description",
+      });
+      expect(proxy.name).toBe("updated-proxy");
+      expect(proxy.description).toBe("new description");
     });
   });
 });

@@ -1,9 +1,10 @@
 import {} from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
+import type { ProxyTargetSource } from "@director.run/utilities/schema";
 import {} from "@modelcontextprotocol/sdk/client/auth.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { AbstractClient, type SerializedClient } from "./abstract-client";
+import { AbstractClient } from "./abstract-client";
 
 const logger = getLogger("client/in-memory");
 
@@ -15,11 +16,12 @@ export class InMemoryClient extends AbstractClient {
   constructor(params: {
     name: string;
     server: Server;
+    source?: ProxyTargetSource;
   }) {
     const [clientTransport, serverTransport] =
       InMemoryTransport.createLinkedPair();
 
-    super(params.name);
+    super({ name: params.name, source: params.source });
     this.server = params.server;
     this.serverTransport = serverTransport;
     this.clientTransport = clientTransport;
@@ -44,16 +46,5 @@ export class InMemoryClient extends AbstractClient {
       this.server.connect(this.serverTransport),
     ]);
     return true;
-  }
-
-  public toPlainObject(): SerializedClient {
-    return {
-      name: this.name,
-      status: this.status,
-      lastConnectedAt: this.lastConnectedAt,
-      lastErrorMessage: this.lastErrorMessage,
-      command: "--",
-      type: "in-memory",
-    };
   }
 }

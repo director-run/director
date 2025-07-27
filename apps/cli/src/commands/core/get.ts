@@ -16,23 +16,62 @@ import { env } from "../../env";
 
 export function registerGetCommand(program: DirectorCommand) {
   program
-    .command("get <proxyId>")
+    .command("get <proxyId> [serverName]")
     .description("Show proxy details")
     .action(
-      actionWithErrorHandler(async (proxyId: string) => {
-        const proxy = await gatewayClient.store.get.query({ proxyId });
+      actionWithErrorHandler(async (proxyId: string, serverName?: string) => {
+        if (serverName) {
+          const target = await gatewayClient.store.getServer.query({
+            proxyId,
+            serverName,
+          });
+          printTargetDetails(proxyId, target);
+        } else {
+          const proxy = await gatewayClient.store.get.query({ proxyId });
 
-        if (!proxy) {
-          console.error(`proxy ${proxyId} not found`);
-          return;
+          if (!proxy) {
+            console.error(`proxy ${proxyId} not found`);
+            return;
+          }
+
+          printProxyDetails(proxy);
         }
-
-        printProxyDetails(proxy);
       }),
     );
 }
 
-function printProxyDetails(proxy: GatewayRouterOutputs["store"]["get"]) {
+function printTargetDetails(
+  proxyId: string,
+  target: GatewayRouterOutputs["store"]["getServer"],
+) {
+  const {
+    name,
+    status,
+    command,
+    type,
+    lastConnectedAt,
+    lastErrorMessage,
+    source,
+  } = target;
+
+  console.log();
+  console.log(whiteBold(`PROXIES > ${proxyId} > ${blue(name)}`));
+  console.log();
+
+  console.log(`${whiteBold("name")} = ${name}`);
+  console.log(`${whiteBold("status")} = ${status}`);
+  console.log(`${whiteBold("command")} = ${command}`);
+  console.log(`${whiteBold("type")} = ${type}`);
+  console.log(
+    `${whiteBold("lastConnectedAt")} = ${lastConnectedAt?.toISOString() ?? "--"}`,
+  );
+  console.log(`${whiteBold("lastErrorMessage")} = ${lastErrorMessage ?? "--"}`);
+  console.log();
+  console.log(`${whiteBold("sourceName")} = ${source?.name}`);
+  console.log(`${whiteBold("sourceId")} = ${source?.entryId}`);
+}
+
+export function printProxyDetails(proxy: GatewayRouterOutputs["store"]["get"]) {
   const { id, name, description, addToolPrefix, path } = proxy;
   console.log();
   console.log(whiteBold(`PROXIES > ${blue(name)}`));
@@ -47,7 +86,7 @@ function printProxyDetails(proxy: GatewayRouterOutputs["store"]["get"]) {
   console.log(`${whiteBold("id")} = ${id}`);
   console.log(`${whiteBold("name")} = ${name}`);
   console.log(`${whiteBold("description")} = ${description}`);
-  console.log(`${whiteBold("addToolPreix")} = ${addToolPrefix}`);
+  console.log(`${whiteBold("addToolPrefix")} = ${addToolPrefix}`);
   console.log(`${whiteBold("streamableUrl")} = ${streamableURL}`);
   console.log(`${whiteBold("sseURL")} = ${sseURL}`);
 

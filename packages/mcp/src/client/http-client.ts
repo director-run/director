@@ -4,6 +4,7 @@ import {
   isAppErrorWithCode,
 } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
+import type { ProxyTargetSource } from "@director.run/utilities/schema";
 import { UnauthorizedError } from "@modelcontextprotocol/sdk/client/auth.js";
 import {
   SSEClientTransport,
@@ -11,7 +12,7 @@ import {
 } from "@modelcontextprotocol/sdk/client/sse.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { OAuthHandler } from "../oauth/oauth-provider-factory";
-import { AbstractClient, type SerializedClient } from "./abstract-client";
+import { AbstractClient } from "./abstract-client";
 
 const logger = getLogger("client/http");
 
@@ -25,8 +26,9 @@ export class HTTPClient extends AbstractClient {
     name: string;
     oAuthHandler?: OAuthHandler;
     headers?: Record<string, string>;
+    source?: ProxyTargetSource;
   }) {
-    super(params.name);
+    super({ name: params.name, source: params.source });
     this._url = params.url;
     this.oAuthHandler = params.oAuthHandler;
     this.headers = params.headers;
@@ -221,17 +223,6 @@ export class HTTPClient extends AbstractClient {
     });
     await client.connectToTarget();
     return client;
-  }
-
-  public toPlainObject(): SerializedClient {
-    return {
-      name: this.name,
-      status: this.status,
-      lastConnectedAt: this.lastConnectedAt,
-      lastErrorMessage: this.lastErrorMessage,
-      command: this._url,
-      type: "http",
-    };
   }
 }
 

@@ -66,6 +66,35 @@ describe("Store Router", () => {
     expect(proxy?.description).toBe(newDescription);
   });
 
+  it("should update addToolPrefix", async () => {
+    await harness.purge();
+    const prox = await harness.client.store.create.mutate({
+      name: "Test proxy",
+    });
+    expect(prox.addToolPrefix).toBeFalsy();
+
+    const updatedResponse = await harness.client.store.update.mutate({
+      proxyId: prox.id,
+      attributes: {
+        addToolPrefix: true,
+      },
+    });
+    expect(updatedResponse.addToolPrefix).toBe(true);
+
+    const proxy = await harness.client.store.get.query({
+      proxyId: "test-proxy",
+    });
+    expect(proxy?.addToolPrefix).toBe(true);
+
+    const newUpdatedResponse = await harness.client.store.update.mutate({
+      proxyId: prox.id,
+      attributes: {
+        addToolPrefix: false,
+      },
+    });
+    expect(newUpdatedResponse.addToolPrefix).toBe(false);
+  });
+
   it("should delete a proxy", async () => {
     await harness.purge();
     await harness.client.store.create.mutate({
@@ -80,6 +109,38 @@ describe("Store Router", () => {
     ).rejects.toThrowError(TRPCClientError);
 
     expect(await harness.client.store.getAll.query()).toHaveLength(0);
+  });
+
+  it("should get a server from a proxy", async () => {
+    await harness.purge();
+    const testProxy = await harness.client.store.create.mutate({
+      name: "Test Proxy",
+      servers: [],
+    });
+
+    // Add a server to the proxy
+    const addedTarget = await harness.client.store.addServer.mutate({
+      proxyId: testProxy.id,
+      server: {
+        name: "notion",
+        transport: {
+          type: "http",
+          url: `https://mcp.notion.com/mcp`,
+        },
+      },
+    });
+
+    // Get the server using getServer
+    const retrievedTarget = await harness.client.store.getServer.query({
+      proxyId: testProxy.id,
+      serverName: "notion",
+    });
+
+    expect(retrievedTarget).toBeDefined();
+    expect(retrievedTarget.name).toBe("notion");
+    expect(retrievedTarget.status).toBe("unauthorized");
+    expect(retrievedTarget.command).toBe("https://mcp.notion.com/mcp");
+    expect(retrievedTarget.type).toBe("http");
   });
 
   describe("addServer", () => {
@@ -102,9 +163,9 @@ describe("Store Router", () => {
           },
         });
 
-        expect(target.targets[0].status).toBe("unauthorized");
-        expect(target.targets[0].command).toBe("https://mcp.notion.com/mcp");
-        expect(target.targets[0].type).toBe("http");
+        expect(target.status).toBe("unauthorized");
+        expect(target.command).toBe("https://mcp.notion.com/mcp");
+        expect(target.type).toBe("http");
       });
     });
 

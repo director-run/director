@@ -1,6 +1,7 @@
 import { HTTPClient } from "@director.run/mcp/client/http-client";
+import { StdioClient } from "@director.run/mcp/client/stdio-client";
 import { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
-import { ProxyServer } from "@director.run/mcp/proxy-server";
+import { ProxyServer } from "@director.run/mcp/proxy/proxy-server";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import type { ProxyTargetAttributes } from "@director.run/utilities/schema";
@@ -110,7 +111,7 @@ export class ProxyServerStore {
   public async onAuthorizationSuccess(serverUrl: string, code: string) {
     const proxies = this.getAll();
     for (const proxy of proxies) {
-      const targets = proxy.getAllTargets();
+      const targets = proxy.targets;
       for (const target of targets) {
         if (target instanceof HTTPClient && target.url === serverUrl) {
           await target.completeAuthFlow(code);
@@ -123,11 +124,13 @@ export class ProxyServerStore {
     name,
     description,
     servers,
+    addToolPrefix,
     source,
   }: {
     name: string;
     description?: string;
     servers?: ProxyTargetAttributes[];
+    addToolPrefix?: boolean;
     source?: {
       type: "registry";
       entry: {
@@ -142,6 +145,7 @@ export class ProxyServerStore {
     const newProxy = await this.db.addProxy({
       name,
       description,
+      addToolPrefix,
       servers: servers ?? [],
     });
     const proxyServer = new ProxyServer(
@@ -150,6 +154,7 @@ export class ProxyServerStore {
         id: newProxy.id,
         servers: newProxy.servers,
         description: newProxy.description ?? undefined,
+        addToolPrefix: newProxy.addToolPrefix,
       },
       {
         oAuthHandler: this._oAuthHandler,
@@ -165,15 +170,19 @@ export class ProxyServerStore {
     proxyId: string,
     server: ProxyTargetAttributes,
     params: { throwOnError: boolean } = { throwOnError: true },
-  ): Promise<ProxyServer> {
+  ): Promise<HTTPClient | StdioClient> {
     this.telemetry.trackEvent("server_added");
 
     const proxy = this.get(proxyId);
 
-    await proxy.addTarget(server, params);
-    await this.db.updateProxy(proxyId, { servers: proxy.attributes.servers });
+    const target = await proxy.addTarget(server, params);
 
-    return proxy;
+    const proxyDbEntry = await this.db.getProxy(proxyId);
+    await this.db.updateProxy(proxyId, {
+      servers: [...proxyDbEntry.servers, server],
+    });
+
+    return target;
   }
 
   public async removeServer(
@@ -185,7 +194,13 @@ export class ProxyServerStore {
     const proxy = this.get(proxyId);
 
     await proxy.removeTarget(serverName);
-    await this.db.updateProxy(proxyId, { servers: proxy.attributes.servers });
+
+    const proxyDbEntry = await this.db.getProxy(proxyId);
+    await this.db.updateProxy(proxyId, {
+      servers: proxyDbEntry.servers.filter(
+        (s) => s.name.toLocaleLowerCase() !== serverName.toLocaleLowerCase(),
+      ),
+    });
 
     return proxy;
   }
@@ -195,6 +210,7 @@ export class ProxyServerStore {
     attributes: Partial<{
       name: string;
       description: string;
+      addToolPrefix: boolean;
     }>,
   ) {
     this.telemetry.trackEvent("proxy_updated");

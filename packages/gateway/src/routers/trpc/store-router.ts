@@ -4,16 +4,19 @@ import { z } from "zod";
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { proxyTargetAttributesSchema } from "@director.run/utilities/schema";
-import {
-  getStreamablePathForProxy,
-  restartConnectedClients,
-} from "../../helpers";
+import { restartConnectedClients } from "../../helpers";
 import { ProxyServerStore } from "../../proxy-server-store";
+import {
+  serializeProxyServer,
+  serializeProxyServerTarget,
+  serializeProxyServers,
+} from "../../serializers";
 
 const ProxyCreateSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
   servers: z.array(proxyTargetAttributesSchema).optional(),
+  addToolPrefix: z.boolean().optional(),
 });
 
 const ProxyUpdateSchema = ProxyCreateSchema.omit({
@@ -25,29 +28,24 @@ export function createProxyStoreRouter({
 }: { proxyStore: ProxyServerStore }) {
   return t.router({
     getAll: t.procedure.query(async () => {
-      return (await proxyStore.getAll()).map((proxy) => ({
-        ...proxy.toPlainObject(),
-        path: getStreamablePathForProxy(proxy.id),
-      }));
+      return await serializeProxyServers(await proxyStore.getAll());
     }),
 
     get: t.procedure
       .input(z.object({ proxyId: z.string() }))
-      .query(({ input }) => {
-        return {
-          ...proxyStore.get(input.proxyId).toPlainObject(),
-          path: getStreamablePathForProxy(input.proxyId),
-        };
+      .query(async ({ input }) => {
+        return await serializeProxyServer(await proxyStore.get(input.proxyId));
       }),
 
     create: t.procedure.input(ProxyCreateSchema).mutation(async ({ input }) => {
-      return (
+      return await serializeProxyServer(
         await proxyStore.create({
           name: input.name,
           description: input.description ?? undefined,
+          addToolPrefix: input.addToolPrefix,
           servers: input.servers,
-        })
-      ).toPlainObject();
+        }),
+      );
     }),
 
     update: t.procedure
@@ -58,12 +56,13 @@ export function createProxyStoreRouter({
         }),
       )
       .mutation(async ({ input }) => {
-        return (
+        return await serializeProxyServer(
           await proxyStore.update(input.proxyId, {
             name: input.attributes.name,
             description: input.attributes.description ?? undefined,
-          })
-        ).toPlainObject();
+            addToolPrefix: input.attributes.addToolPrefix,
+          }),
+        );
       }),
     delete: t.procedure
       .input(z.object({ proxyId: z.string() }))
@@ -79,9 +78,19 @@ export function createProxyStoreRouter({
         }),
       )
       .mutation(async ({ input }) => {
-        const proxy = await proxyStore.addServer(input.proxyId, input.server);
+        const target = await proxyStore.addServer(input.proxyId, input.server);
+        const proxy = await proxyStore.get(input.proxyId);
+
         await restartConnectedClients(proxy);
-        return proxy.toPlainObject();
+        return await serializeProxyServerTarget(target);
+      }),
+
+    getServer: t.procedure
+      .input(z.object({ proxyId: z.string(), serverName: z.string() }))
+      .query(async ({ input }) => {
+        const proxy = await proxyStore.get(input.proxyId);
+        const target = await proxy.getTarget(input.serverName);
+        return await serializeProxyServerTarget(target);
       }),
 
     authenticate: t.procedure
@@ -122,7 +131,7 @@ export function createProxyStoreRouter({
           input.serverName,
         );
         await restartConnectedClients(proxy);
-        return proxy.toPlainObject();
+        return await serializeProxyServer(proxy);
       }),
   });
 }

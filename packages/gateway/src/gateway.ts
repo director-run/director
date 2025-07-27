@@ -41,6 +41,7 @@ export class Gateway {
       registryURL: string;
       allowedOrigins?: string[];
       telemetry?: Telemetry;
+      headers?: Record<string, string>;
       oauth?:
         | {
             enabled: boolean;
@@ -81,6 +82,15 @@ export class Gateway {
     });
     const app = express();
     const registryURL = attribs.registryURL;
+
+    if (attribs.headers) {
+      app.use((req, res, next) => {
+        Object.entries(attribs.headers || {}).forEach(([key, value]) => {
+          res.setHeader(key, value);
+        });
+        next();
+      });
+    }
 
     app.use(
       cors({

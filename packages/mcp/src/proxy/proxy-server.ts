@@ -59,11 +59,15 @@ export class ProxyServer extends Server {
     this._addToolPrefix = attributes.addToolPrefix;
 
     for (const server of attributes.servers) {
-      const target = createClientForTarget(server, this._oAuthHandler);
+      const target = createClientForTarget(
+        server,
+        this._oAuthHandler,
+        this._addToolPrefix,
+      );
       this._targets.push(target);
     }
 
-    setupToolHandlers(this, this.targets);
+    setupToolHandlers(this);
     setupPromptHandlers(this, this._targets);
     setupResourceHandlers(this, this._targets);
     setupResourceTemplateHandlers(this, this._targets);
@@ -117,7 +121,11 @@ export class ProxyServer extends Server {
         `Target ${target.name} already exists`,
       );
     }
-    const newTarget = createClientForTarget(target, this._oAuthHandler);
+    const newTarget = createClientForTarget(
+      target,
+      this._oAuthHandler,
+      this._addToolPrefix,
+    );
 
     try {
       await newTarget.connectToTarget({ throwOnError: attribs.throwOnError });
@@ -196,6 +204,7 @@ export class ProxyServer extends Server {
 function createClientForTarget(
   target: ProxyTargetAttributes,
   oAuthHandler?: OAuthHandler,
+  addToolPrefix?: boolean,
 ) {
   switch (target.transport.type) {
     case "http":
@@ -204,6 +213,7 @@ function createClientForTarget(
         name: target.name,
         oAuthHandler,
         source: target.source,
+        toolPrefix: addToolPrefix ? target.name : undefined,
       });
     case "stdio":
       return new StdioClient({
@@ -212,6 +222,7 @@ function createClientForTarget(
         args: target.transport.args,
         env: target.transport.env,
         source: target.source,
+        toolPrefix: addToolPrefix ? target.name : undefined,
       });
   }
 }

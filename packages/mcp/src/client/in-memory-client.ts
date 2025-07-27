@@ -1,23 +1,21 @@
 import {} from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
-import type { ProxyTargetSource } from "@director.run/utilities/schema";
-import {} from "@modelcontextprotocol/sdk/client/auth.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { AbstractClient } from "./abstract-client";
+import { AbstractClient, type AbstractClientParams } from "./abstract-client";
 
 const logger = getLogger("client/in-memory");
+
+export type InMemoryClientParams = AbstractClientParams & {
+  server: Server;
+};
 
 export class InMemoryClient extends AbstractClient {
   private server: Server;
   private serverTransport: InMemoryTransport;
   private clientTransport: InMemoryTransport;
 
-  constructor(params: {
-    name: string;
-    server: Server;
-    source?: ProxyTargetSource;
-  }) {
+  constructor(params: InMemoryClientParams) {
     const [clientTransport, serverTransport] =
       InMemoryTransport.createLinkedPair();
 

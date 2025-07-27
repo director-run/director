@@ -75,7 +75,6 @@ export abstract class AbstractClient extends Client {
             name: this.toolPrefix
               ? `${this.toolPrefix}__${tool.name}`
               : tool.name,
-            description: `[${this.name}] ${tool.description || ""}`,
           };
         }),
     };

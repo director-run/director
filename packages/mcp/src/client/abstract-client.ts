@@ -28,7 +28,7 @@ export abstract class AbstractClient extends Client {
   public lastConnectedAt?: Date;
   public lastErrorMessage?: string;
   public readonly source?: ProxyTargetSource;
-  public readonly toolPrefix?: string;
+  public toolPrefix?: string;
 
   constructor(params: AbstractClientParams) {
     const { name, source, toolPrefix } = params;

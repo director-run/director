@@ -122,11 +122,6 @@ function GetStartedInstallForm({
           server: {
             name: mcp.name,
             transport,
-            source: {
-              name: "registry",
-              entryId: mcp.id,
-              entryData: mcp,
-            },
           },
         });
       }}

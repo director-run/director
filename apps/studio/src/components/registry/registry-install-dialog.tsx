@@ -116,11 +116,6 @@ export function RegistryInstallDialog({
               server: {
                 name: mcp.name,
                 transport,
-                source: {
-                  name: "registry",
-                  entryId: mcp.id,
-                  entryData: mcp,
-                },
               },
             });
           }}

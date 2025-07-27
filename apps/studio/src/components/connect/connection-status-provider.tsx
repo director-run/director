@@ -77,7 +77,12 @@ export function ConnectionStatusProvider({
   }, [isRefetchError, connected, isFetchedAfterMount]);
 
   if (needsUpdate) {
-    return <ConnectionUpdateState />;
+    return (
+      <ConnectionUpdateState
+        cliVersion={data?.cliVersion ?? null}
+        studioVersion={cliPackage.version}
+      />
+    );
   }
 
   return (

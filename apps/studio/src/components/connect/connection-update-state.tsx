@@ -13,8 +13,8 @@ export function ConnectionUpdateState({
   cliVersion,
   studioVersion,
 }: {
-  cliVersion: string;
-  studioVersion: string;
+  cliVersion: string | null;
+  studioVersion: string | null;
 }) {
   return (
     <div className="flex min-h-dvh w-full items-center justify-center">

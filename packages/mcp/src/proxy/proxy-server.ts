@@ -56,14 +56,13 @@ export class ProxyServer extends Server {
     this._id = attributes.id;
     this._name = attributes.name;
     this._description = attributes.description;
-    this._addToolPrefix = attributes.addToolPrefix;
 
     for (const server of attributes.servers) {
-      const target = createClientForTarget(
-        server,
-        this._oAuthHandler,
-        this._addToolPrefix,
-      );
+      const target = createClientForTarget({
+        target: server,
+        oAuthHandler: this._oAuthHandler,
+        toolPrefix: server.toolPrefix,
+      });
       this._targets.push(target);
     }
 
@@ -121,11 +120,11 @@ export class ProxyServer extends Server {
         `Target ${target.name} already exists`,
       );
     }
-    const newTarget = createClientForTarget(
+    const newTarget = createClientForTarget({
       target,
-      this._oAuthHandler,
-      this._addToolPrefix,
-    );
+      oAuthHandler: this._oAuthHandler,
+      toolPrefix: target.toolPrefix,
+    });
 
     try {
       await newTarget.connectToTarget({ throwOnError: attribs.throwOnError });
@@ -144,6 +143,22 @@ export class ProxyServer extends Server {
     // this.sendToolListChanged();
     // this.sendPromptListChanged();
     // this.sendResourceListChanged();
+  }
+
+  public async updateTarget(
+    targetName: string,
+
+    attributes: Partial<
+      Pick<ProxyTargetAttributes, "toolPrefix" | "disabledTools">
+    >,
+  ) {
+    const target = await this.getTarget(targetName);
+    if (attributes.toolPrefix !== undefined) {
+      target.toolPrefix = attributes.toolPrefix;
+    }
+    if (attributes.disabledTools !== undefined) {
+      target.disabledTools = attributes.disabledTools;
+    }
   }
 
   public async removeTarget(targetName: string) {
@@ -170,19 +185,14 @@ export class ProxyServer extends Server {
   }
 
   public update(
-    attributes: Partial<
-      Pick<ProxyServerAttributes, "name" | "description" | "addToolPrefix">
-    >,
+    attributes: Partial<Pick<ProxyServerAttributes, "name" | "description">>,
   ) {
-    const { name, description, addToolPrefix } = attributes;
+    const { name, description } = attributes;
     if (name) {
       this._name = name;
     }
     if (description !== undefined && description !== this._description) {
       this._description = description;
-    }
-    if (addToolPrefix !== undefined && addToolPrefix !== this._addToolPrefix) {
-      this._addToolPrefix = addToolPrefix;
     }
   }
 
@@ -201,11 +211,12 @@ export class ProxyServer extends Server {
   }
 }
 
-function createClientForTarget(
-  target: ProxyTargetAttributes,
-  oAuthHandler?: OAuthHandler,
-  addToolPrefix?: boolean,
-) {
+function createClientForTarget(params: {
+  target: ProxyTargetAttributes;
+  oAuthHandler?: OAuthHandler;
+  toolPrefix?: string;
+}) {
+  const { target, oAuthHandler, toolPrefix } = params;
   switch (target.transport.type) {
     case "http":
       return new HTTPClient({
@@ -213,7 +224,7 @@ function createClientForTarget(
         name: target.name,
         oAuthHandler,
         source: target.source,
-        toolPrefix: addToolPrefix ? target.name : undefined,
+        toolPrefix,
       });
     case "stdio":
       return new StdioClient({
@@ -222,7 +233,7 @@ function createClientForTarget(
         args: target.transport.args,
         env: target.transport.env,
         source: target.source,
-        toolPrefix: addToolPrefix ? target.name : undefined,
+        toolPrefix,
       });
   }
 }

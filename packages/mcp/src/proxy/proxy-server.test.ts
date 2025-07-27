@@ -232,38 +232,47 @@ describe("ProxyServer", () => {
   describe("tool prefixing", () => {
     let echoServer: Server;
     let fooServer: Server;
+    let client: InMemoryClient;
 
     beforeAll(async () => {
       echoServer = await serveOverStreamable(makeEchoServer(), 4524);
       fooServer = await serveOverSSE(makeFooBarServer(), 4525);
-    });
-
-    afterAll(async () => {
-      await echoServer.close();
-      await fooServer.close();
-    });
-
-    test("should call prefixed tools with original names", async () => {
       const proxy = new ProxyServer({
         id: "test-proxy",
         name: "test-proxy",
-        addToolPrefix: true,
         servers: [
           {
             ...makeHTTPTargetConfig({
-              name: "echo-service",
+              name: "echo",
               url: `http://localhost:4524/mcp`,
             }),
+            toolPrefix: "a__",
+          },
+          {
+            ...makeHTTPTargetConfig({
+              name: "foo",
+              url: `http://localhost:4525/sse`,
+            }),
+            toolPrefix: "b__",
           },
         ],
       });
 
       await proxy.connectTargets();
-      const client = await InMemoryClient.createAndConnectToServer(proxy);
+      client = await InMemoryClient.createAndConnectToServer(proxy);
+    });
+
+    afterAll(async () => {
+      await client.close();
+      await echoServer.close();
+      await fooServer.close();
+    });
+
+    test("should support calling prefixed tools", async () => {
       await client.listTools();
 
       const result = (await client.callTool({
-        name: "echo-service__echo",
+        name: "a__echo",
         arguments: {
           message: "Hello, world!",
         },
@@ -272,88 +281,18 @@ describe("ProxyServer", () => {
       expect(result.content?.[0].text).toContain("Hello, world!");
     });
 
-    test("should prefix tool names when addToolPrefix = true", async () => {
-      const proxy = new ProxyServer({
-        id: "test-proxy",
-        name: "test-proxy",
-        addToolPrefix: true,
-        servers: [
-          {
-            ...makeHTTPTargetConfig({
-              name: "service-a",
-              url: `http://localhost:4524/mcp`,
-            }),
-          },
-          {
-            ...makeHTTPTargetConfig({
-              name: "service-b",
-              url: `http://localhost:4525/sse`,
-            }),
-          },
-        ],
-      });
-
-      await proxy.connectTargets();
-
-      const client = await InMemoryClient.createAndConnectToServer(proxy);
+    test("should support listing prefixed tools", async () => {
       const tools = await client.listTools();
 
       expect(tools.tools).toHaveLength(2);
       expect(tools.tools.map((t) => t.name).sort()).toEqual([
-        "service-a__echo",
-        "service-b__foo",
+        "a__echo",
+        "b__foo",
       ]);
-    });
-
-    test("should not prefix tool names when addToolPrefix = false", async () => {
-      const proxy = new ProxyServer({
-        id: "test-proxy",
-        name: "test-proxy",
-        addToolPrefix: false,
-        servers: [
-          {
-            ...makeHTTPTargetConfig({
-              name: "service-a",
-              url: `http://localhost:4524/mcp`,
-            }),
-          },
-          {
-            ...makeHTTPTargetConfig({
-              name: "service-b",
-              url: `http://localhost:4525/sse`,
-            }),
-          },
-        ],
-      });
-
-      await proxy.connectTargets();
-
-      const client = await InMemoryClient.createAndConnectToServer(proxy);
-      const tools = await client.listTools();
-
-      expect(tools.tools).toHaveLength(2);
-      expect(tools.tools.map((t) => t.name).sort()).toEqual(["echo", "foo"]);
     });
   });
 
   describe("update", () => {
-    test("should update addToolPrefix", () => {
-      const proxy = new ProxyServer({
-        id: "test-proxy",
-        name: "test-proxy",
-        addToolPrefix: false,
-        servers: [],
-      });
-
-      expect(proxy.addToolPrefix).toBe(false);
-
-      proxy.update({ addToolPrefix: true });
-      expect(proxy.addToolPrefix).toBe(true);
-
-      proxy.update({ addToolPrefix: false });
-      expect(proxy.addToolPrefix).toBe(false);
-    });
-
     test("should update name and description", () => {
       const proxy = new ProxyServer({
         id: "test-proxy",
@@ -372,5 +311,9 @@ describe("ProxyServer", () => {
       expect(proxy.name).toBe("updated-proxy");
       expect(proxy.description).toBe("new description");
     });
+  });
+
+  describe("updateTarget", () => {
+    test.skip("should update tool prefix", () => {});
   });
 });

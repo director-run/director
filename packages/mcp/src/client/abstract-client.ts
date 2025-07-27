@@ -73,7 +73,7 @@ export abstract class AbstractClient extends Client {
           return {
             ...tool,
             name: this.toolPrefix
-              ? `${this.toolPrefix}__${tool.name}`
+              ? `${this.toolPrefix}${tool.name}`
               : tool.name,
           };
         }),
@@ -94,7 +94,7 @@ export abstract class AbstractClient extends Client {
       | typeof CompatibilityCallToolResultSchema,
     options?: RequestOptions,
   ) {
-    if (this.toolPrefix && !params.name.startsWith(`${this.toolPrefix}__`)) {
+    if (this.toolPrefix && !params.name.startsWith(this.toolPrefix)) {
       // Throw an error if trying to use the original tool name when using a tool prefix
       throw new McpError(
         ErrorCode.InternalError,
@@ -103,8 +103,8 @@ export abstract class AbstractClient extends Client {
     }
 
     const toolName =
-      this.toolPrefix && params.name.startsWith(`${this.toolPrefix}__`)
-        ? params.name.substring(`${this.toolPrefix}__`.length)
+      this.toolPrefix && params.name.startsWith(this.toolPrefix)
+        ? params.name.substring(this.toolPrefix.length)
         : params.name;
 
     if (this.disabledTools?.includes(toolName)) {

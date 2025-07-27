@@ -77,7 +77,7 @@ describe("client integration tests", () => {
       });
 
       test("should work with tool prefix", async () => {
-        client.toolPrefix = "prefix";
+        client.toolPrefix = "prefix__";
         await expect(
           client.callTool({
             name: "bar",
@@ -118,7 +118,7 @@ describe("client integration tests", () => {
       });
 
       test("should not return disabled tools when tool prefix is set", async () => {
-        client.toolPrefix = "prefix";
+        client.toolPrefix = "prefix__";
         const result = await client.listTools();
         expect(result.tools.map((t) => t.name)).toEqual(["prefix__bar"]);
       });
@@ -136,7 +136,7 @@ describe("client integration tests", () => {
   });
 
   describe("tool prefixing", () => {
-    const toolPrefix = "echo-service";
+    const toolPrefix = "echo-service__";
 
     beforeEach(() => {
       client.toolPrefix = toolPrefix;
@@ -179,7 +179,7 @@ describe("client integration tests", () => {
 
       test("should call prefixed tools", async () => {
         const result = (await client.callTool({
-          name: `${toolPrefix}__echo`,
+          name: `${toolPrefix}echo`,
           arguments: {
             message: "Hello, world!",
           },
@@ -206,9 +206,9 @@ describe("client integration tests", () => {
 
         expect(tools.tools).toHaveLength(3);
         expect(tools.tools.map((t) => t.name).sort()).toEqual([
-          `${toolPrefix}__bar`,
-          `${toolPrefix}__echo`,
-          `${toolPrefix}__foo`,
+          `${toolPrefix}bar`,
+          `${toolPrefix}echo`,
+          `${toolPrefix}foo`,
         ]);
       });
 

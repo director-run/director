@@ -20,6 +20,7 @@ export type AbstractClientParams = {
   name: string;
   source?: ProxyTargetSource;
   toolPrefix?: string;
+  disabledTools?: string[];
 };
 
 // TODO: use generic type for source so it makes a better sdk
@@ -30,9 +31,10 @@ export abstract class AbstractClient extends Client {
   public lastErrorMessage?: string;
   public readonly source?: ProxyTargetSource;
   public toolPrefix?: string;
+  public disabledTools?: string[];
 
   constructor(params: AbstractClientParams) {
-    const { name, source, toolPrefix } = params;
+    const { name, source, toolPrefix, disabledTools } = params;
     super(
       {
         name,
@@ -49,6 +51,7 @@ export abstract class AbstractClient extends Client {
     this.name = name;
     this.source = source;
     this.toolPrefix = toolPrefix;
+    this.disabledTools = disabledTools;
   }
 
   public abstract connectToTarget({
@@ -64,15 +67,17 @@ export abstract class AbstractClient extends Client {
     const result = await super.listTools(params, options);
     return {
       ...result,
-      tools: result.tools.map((tool) => {
-        return {
-          ...tool,
-          name: this.toolPrefix
-            ? `${this.toolPrefix}__${tool.name}`
-            : tool.name,
-          description: `[${this.name}] ${tool.description || ""}`,
-        };
-      }),
+      tools: result.tools
+        .filter((tool) => !this.disabledTools?.includes(tool.name))
+        .map((tool) => {
+          return {
+            ...tool,
+            name: this.toolPrefix
+              ? `${this.toolPrefix}__${tool.name}`
+              : tool.name,
+            description: `[${this.name}] ${tool.description || ""}`,
+          };
+        }),
     };
   }
 
@@ -102,6 +107,13 @@ export abstract class AbstractClient extends Client {
       this.toolPrefix && params.name.startsWith(`${this.toolPrefix}__`)
         ? params.name.substring(`${this.toolPrefix}__`.length)
         : params.name;
+
+    if (this.disabledTools?.includes(toolName)) {
+      throw new McpError(
+        ErrorCode.InternalError,
+        `Tool "${params.name}" is disabled`,
+      );
+    }
 
     return await super.callTool(
       {

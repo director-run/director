@@ -76,6 +76,13 @@ export abstract class AbstractClient extends Client {
     };
   }
 
+  public async originalListTools(
+    params?: ListToolsRequest["params"],
+    options?: RequestOptions,
+  ) {
+    return await super.listTools(params, options);
+  }
+
   public async callTool(
     params: CallToolRequest["params"],
     resultSchema?:
@@ -104,5 +111,15 @@ export abstract class AbstractClient extends Client {
       resultSchema,
       options,
     );
+  }
+
+  public async originalCallTool(
+    params: CallToolRequest["params"],
+    resultSchema?:
+      | typeof CallToolResultSchema
+      | typeof CompatibilityCallToolResultSchema,
+    options?: RequestOptions,
+  ) {
+    return await super.callTool(params, resultSchema, options);
   }
 }

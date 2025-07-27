@@ -52,6 +52,25 @@ describe("client integration tests", () => {
       await client.close();
     });
 
+    describe("originalCallTool", () => {
+      test("should call original tools", async () => {
+        const result = (await client.originalCallTool({
+          name: "echo",
+          arguments: {
+            message: "Hello, world!",
+          },
+        })) as CallToolResult;
+        expect(result.content?.[0].text).toContain("Hello, world!");
+      });
+    });
+
+    describe("originalListTools", () => {
+      test("should return original tools", async () => {
+        const tools = await client.originalListTools();
+        expect(tools.tools.map((t) => t.name)).toEqual(["echo", "foo", "bar"]);
+      });
+    });
+
     describe("callTool", () => {
       test("should fail if using original tool name when using a tool prefix", async () => {
         await expect(

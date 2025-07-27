@@ -33,11 +33,7 @@ export async function startGateway(successCallback?: () => void) {
       port: env.GATEWAY_PORT,
       databaseFilePath: env.CONFIG_FILE_PATH,
       registryURL: env.REGISTRY_API_URL,
-      allowedOrigins: [
-        env.STUDIO_URL,
-        /^https?:\/\/localhost(:\d+)?$/,
-        "https://director-studio-git-yoamomonstruos-dir-1670bf-director-eb4e28f3.vercel.app",
-      ],
+      allowedOrigins: [env.STUDIO_URL, /^https?:\/\/localhost(:\d+)?$/],
       telemetry: new Telemetry({
         writeKey: env.SEGMENT_WRITE_KEY,
         enabled: env.SEND_TELEMETRY,

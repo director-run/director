@@ -22,7 +22,7 @@ import { toast } from "@/components/ui/toast";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { cn } from "@/lib/cn";
 import { trpc } from "@/trpc/client";
-import { GatewayRouterOutputs } from "@director.run/gateway/client";
+import { RegistryGetEntriesEntry } from "@/trpc/types";
 import {
   ArrowSquareOutIcon,
   BookOpenTextIcon,
@@ -48,7 +48,7 @@ function GetStartedInstallForm({
   proxyId,
   className,
 }: {
-  mcp: GatewayRouterOutputs["registry"]["getEntryByName"];
+  mcp: RegistryGetEntriesEntry;
   proxyId: string;
   className?: string;
 }) {
@@ -164,7 +164,7 @@ function GetStartedInstallForm({
 
 interface GetStartedInstallServerDialogProps
   extends ComponentProps<typeof Dialog> {
-  mcp: GatewayRouterOutputs["registry"]["getEntryByName"];
+  mcp: RegistryGetEntriesEntry;
   proxyId: string;
 }
 
@@ -304,9 +304,7 @@ export function GetStartedInstallServerDialog({
                   </SectionHeader>
 
                   <GetStartedInstallForm
-                    mcp={
-                      entryQuery.data as GatewayRouterOutputs["registry"]["getEntryByName"]
-                    }
+                    mcp={entryQuery.data as RegistryGetEntriesEntry}
                     proxyId={proxyId}
                   />
                 </Section>
@@ -316,9 +314,7 @@ export function GetStartedInstallServerDialog({
         </Container>
         <div className="-bottom-5 sticky inset-x-0 px-4 pt-4 md:hidden">
           <GetStartedInstallForm
-            mcp={
-              entryQuery.data as GatewayRouterOutputs["registry"]["getEntryByName"]
-            }
+            mcp={entryQuery.data as RegistryGetEntriesEntry}
             proxyId={proxyId}
             className="shadow-[0_3px_9px_0px_rgba(55,50,46,0.1),0_0_20px_2px_rgba(55,50,46,0.07),_0_0_0_0.5px_rgba(55,50,46,0.2)]"
           />

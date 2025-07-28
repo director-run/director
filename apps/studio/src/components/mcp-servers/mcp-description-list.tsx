@@ -14,11 +14,11 @@ import {
   ListItemTitle,
 } from "@/components/ui/list";
 import { assertUnreachable } from "@/lib/assert-unreachable";
-import { GatewayRouterOutputs } from "@director.run/gateway/client";
+import { StoreServerTransport } from "@/trpc/types";
 import { GlobeIcon, TerminalIcon } from "@phosphor-icons/react";
 
 interface McpDescriptionListProps extends ComponentProps<typeof List> {
-  transport: GatewayRouterOutputs["store"]["get"]["servers"][number]["transport"];
+  transport: StoreServerTransport;
 }
 
 export function McpDescriptionList({
@@ -36,7 +36,7 @@ export function McpDescriptionList({
 }
 
 interface McpStdioDescriptionListProps extends ComponentProps<typeof List> {
-  transport: GatewayRouterOutputs["store"]["get"]["servers"][number]["transport"];
+  transport: StoreServerTransport;
 }
 
 function McpStdioDescriptionList({
@@ -106,7 +106,7 @@ function McpStdioDescriptionList({
 }
 
 interface McpSseDescriptionListProps extends ComponentProps<typeof List> {
-  transport: GatewayRouterOutputs["store"]["get"]["servers"][number]["transport"];
+  transport: StoreServerTransport;
 }
 
 function McpSseDescriptionList({

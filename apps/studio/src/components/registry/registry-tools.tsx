@@ -4,11 +4,11 @@ import {
   registryQuerySerializer,
   useRegistryQuery,
 } from "@/hooks/use-registry-query";
-import { GatewayRouterOutputs } from "@director.run/gateway/client";
+import { RegistryGetEntryTools } from "@/trpc/types";
 import { ListOfLinks } from "../list-of-links";
 
 interface RegistryToolsProps {
-  tools: GatewayRouterOutputs["registry"]["getEntryByName"]["tools"];
+  tools: RegistryGetEntryTools;
 }
 
 export function RegistryTools({ tools }: RegistryToolsProps) {

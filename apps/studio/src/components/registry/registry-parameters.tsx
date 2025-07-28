@@ -18,11 +18,11 @@ import {
   ListItemDetails,
   ListItemTitle,
 } from "@/components/ui/list";
-import { GatewayRouterOutputs } from "@director.run/gateway/client";
+import { RegistryGetEntryByName } from "@/trpc/types";
 import { AsteriskIcon, TextTIcon } from "@phosphor-icons/react";
 
 interface RegistryParametersProps extends ComponentProps<typeof List> {
-  parameters: GatewayRouterOutputs["registry"]["getEntryByName"]["parameters"];
+  parameters: RegistryGetEntryByName["parameters"];
 }
 
 export function RegistryParameters({

@@ -30,14 +30,12 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useRegistryQuery } from "@/hooks/use-registry-query";
-import { GatewayRouterOutputs } from "@director.run/gateway/client";
+import { RegistryGetEntryTool } from "@/trpc/types";
 
 import Link from "next/link";
 
 interface RegistryToolSheetProps {
-  tool: NonNullable<
-    GatewayRouterOutputs["registry"]["getEntryByName"]["tools"]
-  >[number];
+  tool: RegistryGetEntryTool;
   mcpName: string;
   mcpId: string;
 }

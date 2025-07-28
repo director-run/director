@@ -8,14 +8,14 @@ import { toast } from "@/components/ui/toast";
 import { useRegistryQuery } from "@/hooks/use-registry-query";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { trpc } from "@/trpc/client";
-import { GatewayRouterOutputs } from "@director.run/gateway/client";
+import { RegistryGetEntryByName, StoreGetAll } from "@/trpc/types";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { SimpleMarkdown } from "../ui/markdown";
 
 interface RegistryInstallFormProps {
-  mcp: GatewayRouterOutputs["registry"]["getEntryByName"];
-  proxies: GatewayRouterOutputs["store"]["getAll"];
+  mcp: RegistryGetEntryByName;
+  proxies: StoreGetAll;
 }
 
 export function RegistryInstallForm({

@@ -52,7 +52,7 @@ export function ConnectionStatusProvider({
   useEffect(() => {
     if (data) {
       setConnected(true);
-      if (data?.cliVersion !== cliPackage.version) {
+      if (data?.cliVersion && data.cliVersion !== cliPackage.version) {
         setNeedsUpdate(true);
       }
     } else {

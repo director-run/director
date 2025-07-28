@@ -41,7 +41,7 @@ export function SimpleMarkdown({
         u: ({ children }) => <u className="underline">{children}</u>,
         s: ({ children }) => <s className="line-through">{children}</s>,
         code: ({ children }) => (
-          <code className="font-mono before:inline-block before:content-['`'] after:inline-block after:content-['`']">
+          <code className="bg-accent font-mono rounded-md px-1">
             {children}
           </code>
         ),

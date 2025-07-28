@@ -8,6 +8,9 @@ import { trpc } from "@/trpc/client";
 import { ConnectionEmptyState } from "./connection-empty-state";
 import { ConnectionLostDialog } from "./connection-lost-dialog";
 
+import cliPackage from "@director.run/cli/package.json";
+import { ConnectionUpdateState } from "./connection-update-state";
+
 const [useContext, ContextProvider] = createCtx<{
   connected: boolean;
   lostConnection: boolean;
@@ -21,6 +24,7 @@ const [useContext, ContextProvider] = createCtx<{
     configExists: boolean;
     configPath: string;
   }[];
+  cliVersion: string | null;
 }>("connectionStatus");
 
 export function ConnectionStatusProvider({
@@ -28,10 +32,12 @@ export function ConnectionStatusProvider({
 }: { children: React.ReactNode }) {
   const isClient = useIsClient();
 
+  const [needsUpdate, setNeedsUpdate] = useState(false);
   const [connected, setConnected] = useState(false);
   const [lostConnection, setLostConnection] = useState(false);
 
   const utils = trpc.useUtils();
+
   const { data, isRefetchError, isFetchedAfterMount } = trpc.health.useQuery(
     undefined,
     {
@@ -46,8 +52,12 @@ export function ConnectionStatusProvider({
   useEffect(() => {
     if (data) {
       setConnected(true);
+      if (data?.cliVersion !== cliPackage.version) {
+        setNeedsUpdate(true);
+      }
     } else {
       setConnected(false);
+      setNeedsUpdate(false);
     }
   }, [data]);
 
@@ -66,6 +76,15 @@ export function ConnectionStatusProvider({
     }
   }, [isRefetchError, connected, isFetchedAfterMount]);
 
+  if (needsUpdate) {
+    return (
+      <ConnectionUpdateState
+        cliVersion={data?.cliVersion ?? null}
+        studioVersion={cliPackage.version}
+      />
+    );
+  }
+
   return (
     <ContextProvider
       value={{
@@ -73,6 +92,7 @@ export function ConnectionStatusProvider({
         lostConnection,
         dependencies: data?.dependencies ?? [],
         clients: data?.clients ?? [],
+        cliVersion: data?.cliVersion ?? null,
       }}
     >
       {connected ? (

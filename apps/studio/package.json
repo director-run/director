@@ -63,6 +63,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@director.run/cli": "workspace:*",
     "@director.run/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "^4.1.7",
     "@types/node": "^22.15.21",

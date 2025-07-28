@@ -14,7 +14,9 @@ export function createAppRouter({
   registryURL: string;
 }) {
   return t.router({
-    health: t.procedure.query(() => getStatus()),
+    health: t.procedure.query(({ ctx }) => {
+      return getStatus(ctx.cliVersion);
+    }),
     store: createProxyStoreRouter({ proxyStore }),
     installer: createInstallerRouter({ proxyStore }),
     registry: createRegistryRouter({ registryURL, proxyStore }),
@@ -30,6 +32,13 @@ export function createTRPCExpressMiddleware({
 }) {
   return trpcExpress.createExpressMiddleware({
     router: createAppRouter({ proxyStore, registryURL }),
+    createContext: ({ res }) => {
+      const cliVersion = res.getHeader("x-cli-version") ?? null;
+
+      return {
+        cliVersion,
+      };
+    },
   });
 }
 

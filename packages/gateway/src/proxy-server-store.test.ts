@@ -36,7 +36,7 @@ describe("ProxyServerStore", () => {
       await proxyServerStore.purge();
       await proxyServerStore.create({ name: "test-proxy", servers: [] });
 
-      const serverUrl = "https://example.com/api";
+      const serverUrl = "https://nothing-here.com/api";
       await proxyServerStore.addServer(
         "test-proxy",
         makeHTTPTargetConfig({ name: "http1", url: serverUrl }),

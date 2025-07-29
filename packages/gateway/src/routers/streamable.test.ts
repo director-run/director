@@ -95,22 +95,6 @@ describe("Streamable Router", () => {
       expect(toolsResult2.tools.map((t) => t.name)).toContain("foo");
       expect(toolsResult2.tools.map((t) => t.name)).toContain("echo");
     });
-
-    test("should fail if server already exists", async () => {
-      await harness.purge();
-      const testServerConfig = makeFooBarServerStdioConfig();
-      const testProxy = await harness.client.store.create.mutate({
-        name: "Test Proxy",
-        servers: [testServerConfig],
-      });
-
-      await expect(
-        harness.client.store.addServer.mutate({
-          proxyId: testProxy.id,
-          server: testServerConfig,
-        }),
-      ).rejects.toThrow();
-    });
   });
 
   describe("removeServer", () => {
@@ -141,20 +125,6 @@ describe("Streamable Router", () => {
 
       expect(toolsResult2.tools.map((t) => t.name)).toContain("foo");
       expect(toolsResult2.tools.map((t) => t.name)).not.toContain("echo");
-    });
-    test("should fail if server does not exist", async () => {
-      await harness.purge();
-      const testProxy = await harness.client.store.create.mutate({
-        name: "Test Proxy",
-        servers: [],
-      });
-
-      await expect(
-        harness.client.store.removeServer.mutate({
-          proxyId: testProxy.id,
-          serverName: "echo",
-        }),
-      ).rejects.toThrow();
     });
   });
 });

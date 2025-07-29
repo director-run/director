@@ -287,6 +287,19 @@ describe("Proxy Target CRUD operations", () => {
         });
         expect(target).toEqual(addServerResponse);
       });
+
+      it("should fail if server already exists", async () => {
+        await expect(
+          harness.client.store.addServer.mutate({
+            proxyId: proxy.id,
+            server: {
+              ...echoServerSSEConfig,
+              toolPrefix: "echo",
+              disabledTools: ["echo"],
+            },
+          }),
+        ).rejects.toThrow();
+      });
     });
   });
 
@@ -315,6 +328,15 @@ describe("Proxy Target CRUD operations", () => {
       });
 
       expect(proxyResponse.servers).toEqual([]);
+    });
+
+    it("should fail if server does not exist", async () => {
+      await expect(
+        harness.client.store.removeServer.mutate({
+          proxyId: proxy.id,
+          serverName: "not_existing_server",
+        }),
+      ).rejects.toThrow();
     });
   });
 

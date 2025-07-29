@@ -2,11 +2,11 @@ import { Gateway } from "../gateway";
 import { createGatewayClient } from "../client";
 import path from "node:path";
 
-const TEST_PORT = 4673;
 
 export class IntegrationTestHarness {
     public readonly gateway: Gateway;
     public readonly client: ReturnType<typeof createGatewayClient>;
+    public static gatewayPort: number = 4673;
 
     private constructor(params: {
         gateway: Gateway;
@@ -29,7 +29,7 @@ export class IntegrationTestHarness {
 
     public static async start() {
         const gateway = await Gateway.start({
-            port: TEST_PORT,
+            port: IntegrationTestHarness.gatewayPort,
             databaseFilePath: path.join(__dirname, "config.test.json"),
             registryURL: "http://localhost:3000",
             oauth: {

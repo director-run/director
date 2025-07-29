@@ -39,6 +39,7 @@ export function setupToolHandlers(server: ProxyServer) {
   });
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    // TODO: populate the toolToTarget map here if it's not already populated
     const { name } = request.params;
     const client = toolToTarget.get(name);
     if (!client) {

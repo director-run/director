@@ -36,7 +36,7 @@ describe("ProxyServerStore", () => {
       await proxyServerStore.purge();
       await proxyServerStore.create({ name: "test-proxy", servers: [] });
 
-      const serverUrl = "https://nothing-here.com/api";
+      const serverUrl = "https://mcp.notion.com/mcp";
       await proxyServerStore.addServer(
         "test-proxy",
         makeHTTPTargetConfig({ name: "http1", url: serverUrl }),

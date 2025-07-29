@@ -5,6 +5,7 @@ import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { loader } from "@director.run/utilities/cli/loader";
 import { getLogger } from "@director.run/utilities/logger";
 import { select } from "@inquirer/prompts";
+import cliPackage from "../../../package.json";
 import { env } from "../../env";
 import { startGateway } from "./serve";
 import { openStudio } from "./studio";
@@ -31,7 +32,7 @@ export function registerQuickstartCommand(program: DirectorCommand) {
 async function checkPrerequisites() {
   const spinner = loader();
   spinner.start("checking prerequisites...");
-  const status = await getStatus();
+  const status = await getStatus(cliPackage.version);
   spinner.stop();
 
   const lines = [];

@@ -1,15 +1,14 @@
 "use client";
 
-import type { Tool } from "@director.run/utilities/schema";
-
 import {
   registryQuerySerializer,
   useRegistryQuery,
 } from "@/hooks/use-registry-query";
+import { RegistryGetEntryTools } from "@/trpc/types";
 import { ListOfLinks } from "../list-of-links";
 
 interface RegistryToolsProps {
-  tools: Tool[];
+  tools: RegistryGetEntryTools;
 }
 
 export function RegistryTools({ tools }: RegistryToolsProps) {
@@ -18,7 +17,7 @@ export function RegistryTools({ tools }: RegistryToolsProps) {
   return (
     <ListOfLinks
       isLoading={false}
-      links={tools
+      links={(tools ?? [])
         .sort((a, b) => a.name.localeCompare(b.name))
         .map((it) => {
           return {

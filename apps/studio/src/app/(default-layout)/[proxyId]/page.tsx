@@ -1,5 +1,4 @@
 "use client";
-import { useParams, useRouter } from "next/navigation";
 
 import {
   LayoutView,
@@ -42,13 +41,13 @@ import {
 } from "@/components/ui/section";
 import { toast } from "@/components/ui/toast";
 import { useProxy } from "@/hooks/use-proxy";
-import { RegistryEntry } from "@director.run/utilities/schema";
 import {
   DotsThreeOutlineVerticalIcon,
   GearIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
 import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function ProxyPage() {
@@ -154,16 +153,12 @@ export default function ProxyPage() {
                 return (
                   <MCPLinkCard
                     key={it.name}
-                    entry={
-                      it.source
-                        ? (it.source.entryData as RegistryEntry)
-                        : {
-                            title: it.name,
-                            description: null,
-                            icon: null,
-                            isOfficial: false,
-                          }
-                    }
+                    entry={{
+                      title: it.name,
+                      description: null,
+                      icon: null,
+                      isOfficial: false,
+                    }}
                     href={`/${proxy.id}/mcp/${it.name}`}
                   />
                 );

@@ -18,11 +18,11 @@ import {
   ListItemDetails,
   ListItemTitle,
 } from "@/components/ui/list";
-import type { EntryParameter } from "@director.run/utilities/schema";
+import { RegistryGetEntryByName } from "@/trpc/types";
 import { AsteriskIcon, TextTIcon } from "@phosphor-icons/react";
 
 interface RegistryParametersProps extends ComponentProps<typeof List> {
-  parameters: EntryParameter[];
+  parameters: RegistryGetEntryByName["parameters"];
 }
 
 export function RegistryParameters({

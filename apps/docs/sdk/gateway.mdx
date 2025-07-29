@@ -17,7 +17,7 @@ await Gateway.start(
   port: 8080, // which port to listen to
   databaseFilePath: '~/.director/config.json', // config file location
   registryURL: 'https://registry.director.run', // registry API URL
-  allowedOrigins: ['https://studio.director.run',  /^https?:\/\/localhost(:\d+)?$/], // CORS
+  allowedOrigins: ['https://studio.director.run',  /^https?:\/\/localhost(:\d+)?$/, /^https?:\/\/vercel.app/], // CORS
 });
 ```
 

@@ -3,7 +3,6 @@
 import {
   BookOpenTextIcon,
   GithubLogoIcon,
-  MegaphoneSimpleIcon,
   PlusIcon,
   SidebarIcon,
 } from "@phosphor-icons/react";
@@ -144,18 +143,6 @@ export function SidebarContent() {
               <BookOpenTextIcon weight="fill" />
             </MenuItemIcon>
             <MenuItemLabel>Documentation</MenuItemLabel>
-          </Link>
-        </MenuItem>
-        <MenuItem asChild>
-          <Link
-            href="https://github.com/director-run/director/issues/new"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <MenuItemIcon>
-              <MegaphoneSimpleIcon />
-            </MenuItemIcon>
-            <MenuItemLabel>Give feedback</MenuItemLabel>
           </Link>
         </MenuItem>
         <MenuItem asChild>

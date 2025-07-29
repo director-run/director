@@ -44,12 +44,22 @@ import {
 } from "@/components/ui/section";
 import { toast } from "@/components/ui/toast";
 import { useProxy } from "@/hooks/use-proxy";
+import { trpc } from "@/trpc/client";
 
 export default function ProxyPage() {
   const router = useRouter();
   const params = useParams<{ proxyId: string; mcpId: string }>();
 
   const { proxy, isLoading } = useProxy(params.proxyId);
+
+  const registryEntryQuery = trpc.registry.getEntryByName.useQuery(
+    {
+      name: params.mcpId,
+    },
+    {
+      throwOnError: false,
+    },
+  );
 
   const mcp = proxy?.servers.find((server) => server.name === params.mcpId);
 
@@ -70,12 +80,12 @@ export default function ProxyPage() {
     }
   }, [proxy, isLoading]);
 
-  if (isLoading || !proxy || !mcp) {
+  if (isLoading || registryEntryQuery.isLoading || !proxy || !mcp) {
     return <ProxySkeleton />;
   }
 
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  const entryData: any = mcp.source?.entryData ?? ({} as unknown);
+  const entryData: any = registryEntryQuery.data ?? {};
   const description =
     typeof entryData === "object" &&
     entryData !== null &&

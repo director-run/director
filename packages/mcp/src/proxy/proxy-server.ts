@@ -161,6 +161,8 @@ export class ProxyServer extends Server {
     if (attributes.disabledTools !== undefined) {
       target.disabledTools = attributes.disabledTools;
     }
+
+    return target;
   }
 
   public async removeTarget(targetName: string) {

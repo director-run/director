@@ -2,8 +2,9 @@ import type { Server } from "node:http";
 import {
   makeEchoServer,
   makeHTTPTargetConfig,
+  makeKitchenSinkServer,
 } from "@director.run/mcp/test/fixtures";
-import { serveOverSSE } from "@director.run/mcp/transport";
+import { serveOverSSE, serveOverStreamable } from "@director.run/mcp/transport";
 import type {
   HTTPTransport,
   ProxyServerAttributes,
@@ -19,9 +20,15 @@ const echoServerSSEConfig = makeHTTPTargetConfig({
   url: `http://localhost:${PROXY_TARGET_PORT}/sse`,
 });
 
+const kitchenSinkServerConfig = makeHTTPTargetConfig({
+  name: "kitchen-sink",
+  url: `http://localhost:${PROXY_TARGET_PORT + 1}/sse`,
+});
+
 describe("Proxy Target CRUD operations", () => {
   let harness: IntegrationTestHarness;
   let echoServerSSEInstance: Server;
+  let kitchenSinkServerInstance: Server;
 
   beforeAll(async () => {
     harness = await IntegrationTestHarness.start();
@@ -29,11 +36,16 @@ describe("Proxy Target CRUD operations", () => {
       makeEchoServer(),
       PROXY_TARGET_PORT,
     );
+    kitchenSinkServerInstance = await serveOverStreamable(
+      makeKitchenSinkServer(),
+      PROXY_TARGET_PORT + 1,
+    );
   });
 
   afterAll(async () => {
     await harness.stop();
     await echoServerSSEInstance?.close();
+    await kitchenSinkServerInstance?.close();
   });
 
   describe("read", () => {
@@ -229,7 +241,11 @@ describe("Proxy Target CRUD operations", () => {
       beforeEach(async () => {
         addServerResponse = await harness.client.store.addServer.mutate({
           proxyId: proxy.id,
-          server: echoServerSSEConfig,
+          server: {
+            ...echoServerSSEConfig,
+            toolPrefix: "echo",
+            disabledTools: ["echo"],
+          },
         });
       });
 
@@ -242,7 +258,11 @@ describe("Proxy Target CRUD operations", () => {
 
       it("should update the configuration file", async () => {
         expect(await harness.database.getServer(proxy.id, "echo")).toEqual(
-          echoServerSSEConfig,
+          expect.objectContaining({
+            ...echoServerSSEConfig,
+            toolPrefix: "echo",
+            disabledTools: ["echo"],
+          }),
         );
       });
 
@@ -254,6 +274,8 @@ describe("Proxy Target CRUD operations", () => {
           expect.objectContaining({
             ...echoServerSSEConfig,
             status: "connected",
+            toolPrefix: "echo",
+            disabledTools: ["echo"],
           }),
         );
       });
@@ -297,45 +319,70 @@ describe("Proxy Target CRUD operations", () => {
   });
 
   describe("update", () => {
-    it("should support adding, removing and updating servers", async () => {
-      // create a proxy with a server
-      // add a server
-      // remove a server
-      // update a server
-      // get a server
-      // get all servers
-      // get all proxies
-      // get all servers from a proxy
-      // tool prefix
-      // disabled tools
+    let proxy: ProxyServerAttributes;
+    let updatedResponse: GatewayRouterOutputs["store"]["updateServer"];
+    const toolPrefix = "prefix__";
+    const disabledTools = ["ping", "add"];
+
+    beforeEach(async () => {
+      await harness.purge();
+      proxy = await harness.client.store.create.mutate({
+        name: "Test Proxy",
+        servers: [echoServerSSEConfig, kitchenSinkServerConfig],
+      });
+      updatedResponse = await harness.client.store.updateServer.mutate({
+        proxyId: proxy.id,
+        serverName: "echo",
+        attributes: {
+          toolPrefix: toolPrefix,
+          disabledTools: disabledTools,
+        },
+      });
+    });
+
+    it("should return the updated target", () => {
+      expect(updatedResponse.toolPrefix).toBe(toolPrefix);
+      expect(updatedResponse.disabledTools).toMatchObject(disabledTools);
+      expect(updatedResponse.name).toBe("echo");
+    });
+
+    it("should update the target", async () => {
+      const target = await harness.client.store.getServer.query({
+        proxyId: proxy.id,
+        serverName: "echo",
+      });
+      expect(target.toolPrefix).toBe(toolPrefix);
+      expect(target.disabledTools).toMatchObject(disabledTools);
+    });
+    it("should update the configuration file", async () => {
+      const configEntry = (await harness.database.getServer(
+        proxy.id,
+        "echo",
+      )) as ProxyTargetAttributes;
+      expect(configEntry.toolPrefix).toBe(toolPrefix);
+      expect(configEntry.disabledTools).toMatchObject(disabledTools);
+    });
+
+    it("should be able to unset attributes", async () => {
+      updatedResponse = await harness.client.store.updateServer.mutate({
+        proxyId: proxy.id,
+        serverName: "echo",
+        attributes: { toolPrefix: "", disabledTools: [] },
+      });
+      expect(updatedResponse.toolPrefix).toBe("");
+      expect(updatedResponse.disabledTools).toMatchObject([]);
+      const target = await harness.client.store.getServer.query({
+        proxyId: proxy.id,
+        serverName: "echo",
+      });
+      expect(target.toolPrefix).toBe("");
+      expect(target.disabledTools).toMatchObject([]);
+      const configEntry = (await harness.database.getServer(
+        proxy.id,
+        "echo",
+      )) as ProxyTargetAttributes;
+      expect(configEntry.toolPrefix).toBe("");
+      expect(configEntry.disabledTools).toMatchObject([]);
     });
   });
-  // it("should update addToolPrefix", async () => {
-  //   await harness.purge();
-  //   const prox = await harness.client.store.create.mutate({
-  //     name: "Test proxy",
-  //   });
-  //   expect(prox.addToolPrefix).toBeFalsy();
-
-  //   const updatedResponse = await harness.client.store.update.mutate({
-  //     proxyId: prox.id,
-  //     attributes: {
-  //       addToolPrefix: true,
-  //     },
-  //   });
-  //   expect(updatedResponse.addToolPrefix).toBe(true);
-
-  //   const proxy = await harness.client.store.get.query({
-  //     proxyId: "test-proxy",
-  //   });
-  //   expect(proxy?.addToolPrefix).toBe(true);
-
-  //   const newUpdatedResponse = await harness.client.store.update.mutate({
-  //     proxyId: prox.id,
-  //     attributes: {
-  //       addToolPrefix: false,
-  //     },
-  //   });
-  //   expect(newUpdatedResponse.addToolPrefix).toBe(false);
-  // });
 });

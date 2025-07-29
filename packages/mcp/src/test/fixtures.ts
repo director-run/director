@@ -26,6 +26,48 @@ export function makeFooBarServer() {
   return server;
 }
 
+
+export function makeKitchenSinkServer() {
+  const server = new SimpleServer("kitchen-sink-server");
+  server
+    .tool("ping")
+    .description("returns a pong message")
+    .schema(z.object({}))
+    .handle(async () => {
+      return { message: "pong" };
+    });
+
+  server
+    .tool("add")
+    .description("adds two numbers")
+    .schema(z.object({ a: z.number(), b: z.number() }))
+    .handle(async ({ a, b }) => {
+      return { result: a + b };
+        });
+
+  server
+    .tool("subtract")
+    .description("subtracts two numbers")
+    .schema(z.object({ a: z.number(), b: z.number() }))
+    .handle(async ({ a, b }) => {
+      return { result: a - b };
+    });
+
+
+  server
+    .tool("multiply")
+    .description("multiplies two numbers")
+    .schema(z.object({ a: z.number(), b: z.number() }))
+    .handle(async ({ a, b }) => {
+      return { result: a * b };
+    });
+
+  return server;
+}
+
+
+
+
 export function makeHTTPTargetConfig(params: { name: string; url: string }): ProxyTargetAttributes {
   return {
     name: params.name,

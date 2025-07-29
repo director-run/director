@@ -24,6 +24,8 @@ type SerializedTarget = {
         env?: Record<string, string>;
       };
   source?: ProxyTargetSource;
+  toolPrefix?: string;
+  disabledTools?: string[];
 };
 
 export function serializeProxyServer(proxy: ProxyServer) {
@@ -62,6 +64,8 @@ export function serializeProxyServerTarget(
         url: target.url,
       },
       source: target.source,
+      toolPrefix: target.toolPrefix,
+      disabledTools: target.disabledTools,
     };
   } else if (target instanceof StdioClient) {
     return {
@@ -78,6 +82,8 @@ export function serializeProxyServerTarget(
         env: target.env,
       },
       source: target.source,
+      toolPrefix: target.toolPrefix,
+      disabledTools: target.disabledTools,
     };
   } else {
     throw new Error("Unknown target type");

@@ -225,9 +225,9 @@ export class ProxyServerStore {
     attributes: Partial<
       Pick<ProxyTargetAttributes, "toolPrefix" | "disabledTools">
     >,
-  ) {
+  ): Promise<HTTPClient | StdioClient> {
     const proxy = this.get(proxyId);
-    await proxy.updateTarget(serverName, attributes);
+    const target = await proxy.updateTarget(serverName, attributes);
 
     const proxyDbEntry = await this.db.getProxy(proxyId);
     await this.db.updateProxy(proxyId, {
@@ -238,6 +238,6 @@ export class ProxyServerStore {
       ),
     });
 
-    return proxy;
+    return target;
   }
 }

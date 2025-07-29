@@ -22,6 +22,7 @@ export class Gateway {
   public readonly proxyStore: ProxyServerStore;
   public readonly port: number;
   private server: Server;
+  public readonly db: Database;
 
   private constructor(attribs: {
     proxyStore: ProxyServerStore;
@@ -32,6 +33,7 @@ export class Gateway {
     this.port = attribs.port;
     this.proxyStore = attribs.proxyStore;
     this.server = attribs.server;
+    this.db = attribs.db;
   }
 
   public static async start(

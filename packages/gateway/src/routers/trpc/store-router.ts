@@ -128,8 +128,8 @@ export function createProxyStoreRouter({
           input.proxyId,
           input.serverName,
         );
-        await restartConnectedClients(proxy);
-        return await serializeProxyServer(proxy);
+        // await restartConnectedClients(proxy);
+        return await serializeProxyServerTarget(proxy);
       }),
   });
 }

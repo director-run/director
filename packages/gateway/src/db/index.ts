@@ -3,6 +3,7 @@ import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
 import {
   type DatabaseAttributes,
   type ProxyServerAttributes,
+  type ProxyTargetAttributes,
   databaseAttributesSchema,
 } from "@director.run/utilities/schema";
 import slugify from "slugify";
@@ -109,6 +110,54 @@ export class Database {
     await writeDB(this.filePath, store);
 
     return proxy;
+  }
+
+  async countProxies(): Promise<number> {
+    const store = await readDB(this.filePath);
+    return store.proxies.length;
+  }
+
+  async updateServer(
+    proxyId: string,
+    serverName: string,
+    attributes: Partial<ProxyTargetAttributes>,
+  ): Promise<ProxyTargetAttributes> {
+    const store = await readDB(this.filePath);
+    const proxy = store.proxies.find((p) => p.id === proxyId);
+
+    if (!proxy) {
+      throw new Error("Proxy not found");
+    }
+
+    const server = proxy.servers.find((s) => s.name === serverName);
+    if (!server) {
+      throw new Error("Server not found");
+    }
+
+    Object.assign(server, attributes);
+
+    await writeDB(this.filePath, store);
+
+    return server;
+  }
+
+  async getServer(
+    proxyId: string,
+    serverName: string,
+  ): Promise<ProxyTargetAttributes> {
+    const store = await readDB(this.filePath);
+    const proxy = store.proxies.find((p) => p.id === proxyId);
+
+    if (!proxy) {
+      throw new Error("Proxy not found");
+    }
+
+    const server = proxy.servers.find((s) => s.name === serverName);
+    if (!server) {
+      throw new Error("Server not found");
+    }
+
+    return server;
   }
 
   async getAll(): Promise<ProxyServerAttributes[]> {

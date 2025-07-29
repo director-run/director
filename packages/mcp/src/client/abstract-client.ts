@@ -133,4 +133,12 @@ export abstract class AbstractClient extends Client {
   ) {
     return await super.callTool(params, resultSchema, options);
   }
+
+  public async close(): Promise<void> {
+    await super.close();
+    // if status is unauthorized, don't change it
+    this.status = ["unauthorized", "error"].includes(this.status)
+      ? this.status
+      : "disconnected";
+  }
 }

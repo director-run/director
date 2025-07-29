@@ -114,7 +114,7 @@ export type ProxyTargetAttributes = z.infer<typeof proxyTargetAttributesSchema>;
 export const proxyServerAttributesSchema = z.object({
   id: requiredStringSchema,
   name: requiredStringSchema,
-  description: optionalStringSchema,
+  description: z.string().trim().nullish(),
   servers: z.array(proxyTargetAttributesSchema),
 });
 

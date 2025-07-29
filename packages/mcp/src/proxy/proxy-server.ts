@@ -180,6 +180,7 @@ export class ProxyServer extends Server {
       (t) => t.name.toLocaleLowerCase() === targetName.toLocaleLowerCase(),
     );
 
+    return existingTarget;
     // TODO: send list changed events. need client to support this first
     // this.sendToolListChanged();
     // this.sendPromptListChanged();
@@ -190,7 +191,11 @@ export class ProxyServer extends Server {
     attributes: Partial<Pick<ProxyServerAttributes, "name" | "description">>,
   ) {
     const { name, description } = attributes;
-    if (name) {
+    if (name !== undefined && name !== this._name) {
+      if (name.trim() === "") {
+        throw new AppError(ErrorCode.BAD_REQUEST, `Name cannot be empty`);
+      }
+
       this._name = name;
     }
     if (description !== undefined && description !== this._description) {

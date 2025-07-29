@@ -20,6 +20,13 @@ export class IntegrationTestHarness {
         await this.gateway.proxyStore.purge();
     }
 
+
+
+    public get database() {
+        return this.gateway.db;
+    }
+
+
     public static async start() {
         const gateway = await Gateway.start({
             port: TEST_PORT,

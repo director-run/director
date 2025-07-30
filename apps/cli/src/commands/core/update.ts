@@ -33,14 +33,7 @@ export function registerUpdateCommand(program: DirectorCommand) {
             );
           }
 
-          const attributes = parseKeyValueAttributes(options.attribute, {
-            allowedAttributes: [
-              "name",
-              "description",
-              "toolPrefix",
-              "disabledTools",
-            ],
-          });
+          const attributes = parseKeyValueAttributes(options.attribute);
 
           if (proxyId && !serverName) {
             console.log("updating proxy", proxyId);

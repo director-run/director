@@ -43,12 +43,16 @@ export async function expectListToolsToReturnToolNames(
     toolName: string;
     arguments: Record<string, unknown>;
   }) {
+    // TODO: this needs to be called first otherwise the tool is not available as it's lazy caching
+    await params.client.listTools()
+
     const error = await params.client
       .callTool({
         name: params.toolName,
         arguments: params.arguments,
       })
       .catch((e) => e);
+
     expect(error).toBeInstanceOf(McpError);
     expect((error as McpError).code).toEqual(ErrorCode.InternalError);
     expect((error as McpError).message).toContain("Unknown tool");

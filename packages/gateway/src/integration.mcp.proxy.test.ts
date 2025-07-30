@@ -4,7 +4,6 @@ import {
   expectToolCallToHaveResult,
   expectUnknownToolError,
 } from "@director.run/mcp/test/helpers";
-import {} from "@director.run/mcp/transport";
 import type { ProxyServerAttributes } from "@director.run/utilities/schema";
 import {
   afterAll,
@@ -90,6 +89,109 @@ describe("MCP Proxy", () => {
             toolName: "ping",
             arguments: {},
             expectedResult: { message: "pong" },
+          });
+        });
+
+        describe("tool prefixing", () => {
+          beforeEach(async () => {
+            await harness.client.store.updateServer.mutate({
+              proxyId: proxy.id,
+              serverName: "echo",
+              attributes: {
+                toolPrefix: "prefix__",
+              },
+            });
+          });
+
+          it("should return prefixed tools in list tools", async () => {
+            await expectListToolsToReturnToolNames(proxyClient, [
+              "prefix__echo",
+              "ping",
+              "add",
+              "subtract",
+              "multiply",
+            ]);
+          });
+
+          it("should be able to call a tool with a prefix", async () => {
+            await expectToolCallToHaveResult({
+              client: proxyClient,
+              toolName: "prefix__echo",
+              arguments: { message: "Hello" },
+              expectedResult: { message: "Hello" },
+            });
+          });
+
+          it("should fail to call the tool without the prefix", async () => {
+            await expectUnknownToolError({
+              client: proxyClient,
+              toolName: "echo",
+              arguments: { message: "Hello" },
+            });
+          });
+
+          it("should be able to remove the prefix", async () => {
+            await harness.client.store.updateServer.mutate({
+              proxyId: proxy.id,
+              serverName: "echo",
+              attributes: {
+                toolPrefix: "",
+              },
+            });
+
+            await expectListToolsToReturnToolNames(proxyClient, [
+              "echo",
+              "ping",
+              "add",
+              "subtract",
+              "multiply",
+            ]);
+          });
+        });
+
+        describe("tool disabling", () => {
+          beforeEach(async () => {
+            await harness.client.store.updateServer.mutate({
+              proxyId: proxy.id,
+              serverName: "kitchen-sink",
+              attributes: {
+                disabledTools: ["ping", "add"],
+              },
+            });
+          });
+
+          it("should not return disabled tools in list tools", async () => {
+            await expectListToolsToReturnToolNames(proxyClient, [
+              "echo",
+              "subtract",
+              "multiply",
+            ]);
+          });
+
+          it("should fail to call a disabled tool", async () => {
+            await expectUnknownToolError({
+              client: proxyClient,
+              toolName: "ping",
+              arguments: {},
+            });
+          });
+
+          it("should be able to re-enable a tool", async () => {
+            await harness.client.store.updateServer.mutate({
+              proxyId: proxy.id,
+              serverName: "kitchen-sink",
+              attributes: {
+                disabledTools: [],
+              },
+            });
+
+            await expectListToolsToReturnToolNames(proxyClient, [
+              "echo",
+              "ping",
+              "add",
+              "subtract",
+              "multiply",
+            ]);
           });
         });
       });

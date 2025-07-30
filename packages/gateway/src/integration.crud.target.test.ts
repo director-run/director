@@ -1,10 +1,5 @@
-import type { Server } from "node:http";
-import {
-  makeEchoServer,
-  makeHTTPTargetConfig,
-  makeKitchenSinkServer,
-} from "@director.run/mcp/test/fixtures";
-import { serveOverSSE, serveOverStreamable } from "@director.run/mcp/transport";
+import {} from "@director.run/mcp/test/fixtures";
+import {} from "@director.run/mcp/transport";
 import type {
   HTTPTransport,
   ProxyServerAttributes,
@@ -14,38 +9,15 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { GatewayRouterOutputs } from "./client";
 import { IntegrationTestHarness } from "./test/integration";
 
-const PROXY_TARGET_PORT = 4521;
-const echoServerSSEConfig = makeHTTPTargetConfig({
-  name: "echo",
-  url: `http://localhost:${PROXY_TARGET_PORT}/sse`,
-});
-
-const kitchenSinkServerConfig = makeHTTPTargetConfig({
-  name: "kitchen-sink",
-  url: `http://localhost:${PROXY_TARGET_PORT + 1}/sse`,
-});
-
 describe("Proxy Target CRUD operations", () => {
   let harness: IntegrationTestHarness;
-  let echoServerSSEInstance: Server;
-  let kitchenSinkServerInstance: Server;
 
   beforeAll(async () => {
     harness = await IntegrationTestHarness.start();
-    echoServerSSEInstance = await serveOverSSE(
-      makeEchoServer(),
-      PROXY_TARGET_PORT,
-    );
-    kitchenSinkServerInstance = await serveOverStreamable(
-      makeKitchenSinkServer(),
-      PROXY_TARGET_PORT + 1,
-    );
   });
 
   afterAll(async () => {
     await harness.stop();
-    await echoServerSSEInstance?.close();
-    await kitchenSinkServerInstance?.close();
   });
 
   describe("read", () => {
@@ -54,7 +26,7 @@ describe("Proxy Target CRUD operations", () => {
       await harness.purge();
       proxy = await harness.client.store.create.mutate({
         name: "Test Proxy",
-        servers: [echoServerSSEConfig],
+        servers: [harness.getConfigForTarget("echo")],
       });
     });
     it("should be able to retrieve a target", async () => {
@@ -67,7 +39,7 @@ describe("Proxy Target CRUD operations", () => {
       expect(retrievedTarget.name).toBe("echo");
       expect(retrievedTarget.status).toBe("connected");
       expect(retrievedTarget.command).toBe(
-        (echoServerSSEConfig.transport as HTTPTransport).url,
+        (harness.getConfigForTarget("echo").transport as HTTPTransport).url,
       );
       expect(retrievedTarget.type).toBe("http");
     });
@@ -242,7 +214,7 @@ describe("Proxy Target CRUD operations", () => {
         addServerResponse = await harness.client.store.addServer.mutate({
           proxyId: proxy.id,
           server: {
-            ...echoServerSSEConfig,
+            ...harness.getConfigForTarget("echo"),
             toolPrefix: "echo",
             disabledTools: ["echo"],
           },
@@ -252,14 +224,14 @@ describe("Proxy Target CRUD operations", () => {
       it("should succeed", () => {
         expect(addServerResponse.status).toBe("connected");
         expect(addServerResponse.command).toBe(
-          `http://localhost:${PROXY_TARGET_PORT}/sse`,
+          (harness.getConfigForTarget("echo").transport as HTTPTransport).url,
         );
       });
 
       it("should update the configuration file", async () => {
         expect(await harness.database.getServer(proxy.id, "echo")).toEqual(
           expect.objectContaining({
-            ...echoServerSSEConfig,
+            ...harness.getConfigForTarget("echo"),
             toolPrefix: "echo",
             disabledTools: ["echo"],
           }),
@@ -272,7 +244,7 @@ describe("Proxy Target CRUD operations", () => {
         });
         expect(proxyResponse.servers[0]).toEqual(
           expect.objectContaining({
-            ...echoServerSSEConfig,
+            ...harness.getConfigForTarget("echo"),
             status: "connected",
             toolPrefix: "echo",
             disabledTools: ["echo"],
@@ -293,7 +265,7 @@ describe("Proxy Target CRUD operations", () => {
           harness.client.store.addServer.mutate({
             proxyId: proxy.id,
             server: {
-              ...echoServerSSEConfig,
+              ...harness.getConfigForTarget("echo"),
               toolPrefix: "echo",
               disabledTools: ["echo"],
             },
@@ -310,7 +282,7 @@ describe("Proxy Target CRUD operations", () => {
       await harness.purge();
       proxy = await harness.client.store.create.mutate({
         name: "Test Proxy",
-        servers: [echoServerSSEConfig],
+        servers: [harness.getConfigForTarget("echo")],
       });
     });
 
@@ -350,7 +322,10 @@ describe("Proxy Target CRUD operations", () => {
       await harness.purge();
       proxy = await harness.client.store.create.mutate({
         name: "Test Proxy",
-        servers: [echoServerSSEConfig, kitchenSinkServerConfig],
+        servers: [
+          harness.getConfigForTarget("echo"),
+          harness.getConfigForTarget("kitchenSink"),
+        ],
       });
       updatedResponse = await harness.client.store.updateServer.mutate({
         proxyId: proxy.id,

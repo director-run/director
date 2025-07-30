@@ -6,13 +6,13 @@ import {
   makeHTTPTargetConfig,
   makeKitchenSinkServer,
 } from "@director.run/mcp/test/fixtures";
+import {
+  expectListToolsToReturnToolNames,
+  expectToolCallToHaveResult,
+  expectUnknownToolError,
+} from "@director.run/mcp/test/helpers";
 import { serveOverSSE, serveOverStreamable } from "@director.run/mcp/transport";
 import type { ProxyServerAttributes } from "@director.run/utilities/schema";
-import {
-  type CallToolResult,
-  ErrorCode,
-  McpError,
-} from "@modelcontextprotocol/sdk/types.js";
 import {
   afterAll,
   afterEach,
@@ -53,51 +53,6 @@ async function createProxyClient(transport: Transport, proxyId: string) {
   return await HTTPClient.createAndConnectToHTTP(
     getProxyUrl(transport, proxyId),
   );
-}
-
-async function expectListToolsToReturnToolNames(
-  client: HTTPClient,
-  expectedToolNames: string[],
-) {
-  const toolsResult = await client.listTools();
-  const actualToolNames = toolsResult.tools.map((t) => t.name);
-
-  expect(actualToolNames.sort()).toEqual(expectedToolNames.sort());
-}
-
-async function expectToolCallToHaveResult(params: {
-  client: HTTPClient;
-  toolName: string;
-  arguments: Record<string, unknown>;
-  expectedResult: unknown;
-}) {
-  // TODO: this needs to be called first otherwise the tool is not available as it's lazy caching
-  await params.client.listTools();
-
-  const result = (await params.client.callTool({
-    name: params.toolName,
-    arguments: params.arguments,
-  })) as CallToolResult;
-
-  expect(JSON.parse(result.content?.[0].text as string)).toEqual(
-    params.expectedResult,
-  );
-}
-
-async function expectUnknownToolError(params: {
-  client: HTTPClient;
-  toolName: string;
-  arguments: Record<string, unknown>;
-}) {
-  const error = await params.client
-    .callTool({
-      name: params.toolName,
-      arguments: params.arguments,
-    })
-    .catch((e) => e);
-  expect(error).toBeInstanceOf(McpError);
-  expect((error as McpError).code).toEqual(ErrorCode.InternalError);
-  expect((error as McpError).message).toContain("Unknown tool");
 }
 
 describe("MCP Proxy", () => {

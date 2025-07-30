@@ -1,20 +1,20 @@
+import { parseKeyValueAttributes } from "@director.run/utilities/cli/attribute-parser";
 import {
   DirectorCommand,
   makeOption,
 } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { gatewayClient } from "../../client";
-import { printProxyDetails } from "./get";
 
 export function registerUpdateCommand(program: DirectorCommand) {
   return program
-    .command("update <proxyId>")
+    .command("update <proxyId> [serverName]")
     .description("Update proxy attributes")
     .addOption(
       makeOption({
         flags: "-a,--attribute <key=value>",
         description:
-          "set attribute in key=value format (can be used multiple times)",
+          "set attribute in key=value format (can be used multiple times). Supports strings, booleans, arrays, and empty values.",
         variadic: true,
       }),
     )
@@ -22,6 +22,7 @@ export function registerUpdateCommand(program: DirectorCommand) {
       actionWithErrorHandler(
         async (
           proxyId: string,
+          serverName: string,
           options: {
             attribute?: string[];
           },
@@ -33,55 +34,36 @@ export function registerUpdateCommand(program: DirectorCommand) {
           }
 
           const attributes = parseKeyValueAttributes(options.attribute, {
-            booleanAttributes: ["addToolPrefix", "toolPrefix"],
+            allowedAttributes: [
+              "name",
+              "description",
+              "toolPrefix",
+              "disabledTools",
+            ],
           });
 
-          console.log("updating attributes", attributes);
-
-          const updatedProxy = await gatewayClient.store.update.mutate({
-            proxyId,
-            attributes,
-          });
-
-          printProxyDetails(updatedProxy);
+          if (proxyId && !serverName) {
+            console.log("updating proxy", proxyId);
+            const updatedProxy = await gatewayClient.store.updateServer.mutate({
+              proxyId,
+              serverName,
+              attributes,
+            });
+            console.log("updated proxy", updatedProxy);
+          } else if (proxyId && serverName) {
+            console.log("updating proxy target", proxyId, serverName);
+            const updatedServer = await gatewayClient.store.updateServer.mutate(
+              {
+                proxyId,
+                serverName,
+                attributes,
+              },
+            );
+            console.log("updated server", updatedServer);
+          } else {
+            throw new Error("<proxyId> or <proxyId> <serverName> is required");
+          }
         },
       ),
     );
-}
-
-export function parseKeyValueAttributes(
-  attributeStrings: string[],
-  options: {
-    booleanAttributes: string[];
-  } = {
-    booleanAttributes: [],
-  },
-): Record<string, string | boolean> {
-  const attributes: Record<string, string | boolean> = {};
-
-  for (const attr of attributeStrings) {
-    const [key, ...valueParts] = attr.split("=");
-    const value = valueParts.join("="); // Rejoin in case value contains '='
-
-    if (!value) {
-      throw new Error(`Invalid attribute format: ${attr}. Expected key=value`);
-    }
-
-    // Handle boolean values
-    if (options.booleanAttributes.includes(key)) {
-      if (value.toLowerCase() === "true" || value === "1") {
-        attributes[key] = true;
-      } else if (value.toLowerCase() === "false" || value === "0") {
-        attributes[key] = false;
-      } else {
-        throw new Error(
-          `Invalid boolean value for ${key}: ${value}. Use true/false or 1/0`,
-        );
-      }
-    } else {
-      attributes[key] = value;
-    }
-  }
-
-  return attributes;
 }

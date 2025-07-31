@@ -96,6 +96,10 @@ export abstract class AbstractClient extends Client {
     }
   }
 
+  public isConnected(): boolean {
+    return this.status === "connected";
+  }
+
   public async originalListTools(
     params?: ListToolsRequest["params"],
     options?: RequestOptions,

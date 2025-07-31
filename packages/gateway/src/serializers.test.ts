@@ -5,7 +5,7 @@ import { serializeProxyServer } from "./serializers";
 
 describe("serializers", () => {
   describe("serializeProxyServer", () => {
-    test("should properly serialize the proxy server attributes", () => {
+    test("should properly serialize the proxy server attributes", async () => {
       const proxy = new ProxyServer({
         id: "test-proxy",
         name: "test-proxy",
@@ -21,7 +21,7 @@ describe("serializers", () => {
         ],
       });
 
-      const plainObject = serializeProxyServer(proxy);
+      const plainObject = await serializeProxyServer(proxy);
       expect(plainObject).toMatchObject({
         id: "test-proxy",
         name: "test-proxy",

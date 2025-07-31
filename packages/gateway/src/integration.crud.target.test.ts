@@ -2,7 +2,6 @@ import {} from "@director.run/mcp/test/fixtures";
 import {} from "@director.run/mcp/transport";
 import type {
   HTTPTransport,
-  ProxyServerAttributes,
   ProxyTargetAttributes,
 } from "@director.run/utilities/schema";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -21,7 +20,7 @@ describe("Proxy Target CRUD operations", () => {
   });
 
   describe("read", () => {
-    let proxy: ProxyServerAttributes;
+    let proxy: GatewayRouterOutputs["store"]["create"];
     beforeAll(async () => {
       await harness.purge();
       proxy = await harness.client.store.create.mutate({
@@ -43,10 +42,21 @@ describe("Proxy Target CRUD operations", () => {
       );
       expect(retrievedTarget.type).toBe("http");
     });
+
+    it("should return tools if includeTools is true", async () => {
+      const retrievedTarget = await harness.client.store.getServer.query({
+        proxyId: proxy.id,
+        serverName: "echo",
+        queryParams: { includeTools: true },
+      });
+      expect(retrievedTarget.tools).toBeDefined();
+      expect(retrievedTarget.tools?.length).toBeGreaterThan(0);
+      expect(retrievedTarget.tools?.[0].name).toBe("echo");
+    });
   });
 
   describe("create", () => {
-    let proxy: ProxyServerAttributes;
+    let proxy: GatewayRouterOutputs["store"]["create"];
     beforeEach(async () => {
       await harness.purge();
       proxy = await harness.client.store.create.mutate({
@@ -208,6 +218,19 @@ describe("Proxy Target CRUD operations", () => {
       });
     });
 
+    it("should return tools if includeTools is true", async () => {
+      const retrievedTarget = await harness.client.store.addServer.mutate({
+        proxyId: proxy.id,
+        server: {
+          ...harness.getConfigForTarget("echo"),
+        },
+        queryParams: { includeTools: true },
+      });
+      expect(retrievedTarget.tools).toBeDefined();
+      expect(retrievedTarget.tools?.length).toBeGreaterThan(0);
+      expect(retrievedTarget.tools?.[0].name).toBe("echo");
+    });
+
     describe("valid target", () => {
       let addServerResponse: GatewayRouterOutputs["store"]["addServer"];
       beforeEach(async () => {
@@ -276,7 +299,7 @@ describe("Proxy Target CRUD operations", () => {
   });
 
   describe("delete", () => {
-    let proxy: ProxyServerAttributes;
+    let proxy: GatewayRouterOutputs["store"]["create"];
 
     beforeAll(async () => {
       await harness.purge();
@@ -314,7 +337,7 @@ describe("Proxy Target CRUD operations", () => {
 
   describe("update", () => {
     describe("target attributes", () => {
-      let proxy: ProxyServerAttributes;
+      let proxy: GatewayRouterOutputs["store"]["create"];
       let updatedResponse: GatewayRouterOutputs["store"]["updateServer"];
       const toolPrefix = "prefix__";
       const disabledTools = ["ping", "add"];
@@ -342,6 +365,21 @@ describe("Proxy Target CRUD operations", () => {
         expect(updatedResponse.toolPrefix).toBe(toolPrefix);
         expect(updatedResponse.disabledTools).toMatchObject(disabledTools);
         expect(updatedResponse.name).toBe("echo");
+      });
+
+      it("should return tools if includeTools is true", async () => {
+        const retrievedTarget = await harness.client.store.updateServer.mutate({
+          proxyId: proxy.id,
+          serverName: "echo",
+          attributes: {
+            toolPrefix: "",
+            disabledTools: [],
+          },
+          queryParams: { includeTools: true },
+        });
+        expect(retrievedTarget.tools).toBeDefined();
+        expect(retrievedTarget.tools?.length).toBeGreaterThan(0);
+        expect(retrievedTarget.tools?.[0].name).toBe("echo");
       });
 
       it("should update the target", async () => {
@@ -384,7 +422,7 @@ describe("Proxy Target CRUD operations", () => {
       });
     });
     describe("disabling targets", () => {
-      let proxy: ProxyServerAttributes;
+      let proxy: GatewayRouterOutputs["store"]["create"];
       beforeEach(async () => {
         await harness.purge();
         proxy = await harness.client.store.create.mutate({

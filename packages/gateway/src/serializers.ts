@@ -3,6 +3,7 @@ import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { StdioClient } from "@director.run/mcp/client/stdio-client";
 import { ProxyServer } from "@director.run/mcp/proxy/proxy-server";
 import type { ProxyTargetSource } from "@director.run/utilities/schema";
+import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { getStreamablePathForProxy } from "./helpers";
 
 type SerializedTarget = {
@@ -27,31 +28,45 @@ type SerializedTarget = {
   toolPrefix?: string;
   disabledTools?: string[];
   disabled?: boolean;
+  tools?: Tool[];
 };
 
-export function serializeProxyServer(proxy: ProxyServer) {
+export async function serializeProxyServer(proxy: ProxyServer) {
+  const targets: SerializedTarget[] = [];
+  for (const target of proxy.targets) {
+    targets.push(await serializeProxyServerTarget(target));
+  }
+
   return {
     id: proxy.id,
     name: proxy.name,
     description: proxy.description,
     addToolPrefix: proxy.addToolPrefix,
-    targets: proxy.targets.map((target) => serializeProxyServerTarget(target)),
-    servers: proxy.targets.map((target) => serializeProxyServerTarget(target)),
+    targets,
+    servers: targets,
     path: getStreamablePathForProxy(proxy.id),
   };
 }
 
-export function serializeProxyServers(proxies: ProxyServer[]) {
+export async function serializeProxyServers(proxies: ProxyServer[]) {
   const ret = [];
   for (const proxy of proxies) {
-    ret.push(serializeProxyServer(proxy));
+    ret.push(await serializeProxyServer(proxy));
   }
   return ret;
 }
 
-export function serializeProxyServerTarget(
+export async function serializeProxyServerTarget(
   target: HTTPClient | StdioClient,
-): SerializedTarget {
+  params?: {
+    includeTools?: boolean;
+  },
+): Promise<SerializedTarget> {
+  let tools: Tool[] | undefined;
+  if (params?.includeTools && target.isConnected()) {
+    tools = (await target.originalListTools()).tools;
+  }
+
   if (target instanceof HTTPClient) {
     return {
       name: target.name,
@@ -68,6 +83,7 @@ export function serializeProxyServerTarget(
       toolPrefix: target.toolPrefix,
       disabledTools: target.disabledTools,
       disabled: target.disabled,
+      tools,
     };
   } else if (target instanceof StdioClient) {
     return {
@@ -87,6 +103,7 @@ export function serializeProxyServerTarget(
       toolPrefix: target.toolPrefix,
       disabledTools: target.disabledTools,
       disabled: target.disabled,
+      tools,
     };
   } else {
     throw new Error("Unknown target type");

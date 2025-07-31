@@ -79,6 +79,11 @@ export function createProxyStoreRouter({
         z.object({
           proxyId: z.string(),
           server: proxyTargetAttributesSchema,
+          queryParams: z
+            .object({
+              includeTools: z.boolean().optional(),
+            })
+            .optional(),
         }),
       )
       .mutation(async ({ input }) => {
@@ -86,7 +91,7 @@ export function createProxyStoreRouter({
         const proxy = await proxyStore.get(input.proxyId);
 
         await restartConnectedClients(proxy);
-        return await serializeProxyServerTarget(target);
+        return await serializeProxyServerTarget(target, input.queryParams);
       }),
 
     updateServer: t.procedure
@@ -95,6 +100,11 @@ export function createProxyStoreRouter({
           proxyId: z.string(),
           serverName: z.string(),
           attributes: TargetUpdateSchema,
+          queryParams: z
+            .object({
+              includeTools: z.boolean().optional(),
+            })
+            .optional(),
         }),
       )
       .mutation(async ({ input }) => {
@@ -105,15 +115,26 @@ export function createProxyStoreRouter({
           input.attributes,
         );
         await restartConnectedClients(proxy);
-        return await serializeProxyServerTarget(server);
+        return await serializeProxyServerTarget(server, input.queryParams);
       }),
 
     getServer: t.procedure
-      .input(z.object({ proxyId: z.string(), serverName: z.string() }))
+      .input(
+        z.object({
+          proxyId: z.string(),
+          serverName: z.string(),
+          queryParams: z
+            .object({
+              includeTools: z.boolean().optional(),
+            })
+            .optional(),
+        }),
+      )
       .query(async ({ input }) => {
         const proxy = await proxyStore.get(input.proxyId);
         const target = await proxy.getTarget(input.serverName);
-        return await serializeProxyServerTarget(target);
+
+        return await serializeProxyServerTarget(target, input.queryParams);
       }),
 
     authenticate: t.procedure

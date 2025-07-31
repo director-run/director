@@ -1,6 +1,6 @@
-import type { ProxyServerAttributes } from "@director.run/utilities/schema";
 import { TRPCClientError } from "@trpc/client";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import type { GatewayRouterOutputs } from "./client";
 import { IntegrationTestHarness } from "./test/integration";
 
 describe("Proxy CRUD operations", () => {
@@ -65,7 +65,7 @@ describe("Proxy CRUD operations", () => {
   });
 
   describe("update", () => {
-    let proxy: ProxyServerAttributes;
+    let proxy: GatewayRouterOutputs["store"]["create"];
     beforeEach(async () => {
       await harness.purge();
       proxy = await harness.client.store.create.mutate({

@@ -25,6 +25,7 @@ describe("InMemoryClient", () => {
       expect(client.status).toBe("disconnected");
       expect(await client.connectToTarget({ throwOnError: true })).toBe(true);
       expect(client.status).toBe("connected");
+      expect(client.isConnected()).toBe(true);
       expect(client.lastConnectedAt).toBeInstanceOf(Date);
       expect(client.lastErrorMessage).toBeUndefined();
     });

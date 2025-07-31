@@ -15,6 +15,7 @@ describe("StdioClient", () => {
       });
       await client.connectToTarget({ throwOnError: true });
       expect(client.status).toBe("connected");
+      expect(client.isConnected()).toBe(true);
       expect(client.lastErrorMessage).toBeUndefined();
       expect(client.lastConnectedAt).toBeInstanceOf(Date);
 

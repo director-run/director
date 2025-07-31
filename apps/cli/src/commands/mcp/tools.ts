@@ -9,17 +9,12 @@ import { makeTable } from "@director.run/utilities/cli/index";
 import { joinURL } from "@director.run/utilities/url";
 import { input } from "@inquirer/prompts";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { env } from "../env";
+import { title } from "../../common";
+import { env } from "../../env";
 
-export function registerToolsCommands(program: DirectorCommand): void {
-  const command = new DirectorCommand("tools").description(
-    "Get, list and call tools on a proxy or a target",
-  );
-  program.addCommand(command);
-
-  command
-    .command("ls <proxyId>")
-    .alias("list")
+export function registerToolsCommand(program: DirectorCommand) {
+  program
+    .command("list-tools <proxyId>")
     .description("List tools on a proxy")
     .action(
       actionWithErrorHandler(async (proxyId: string) => {
@@ -32,8 +27,22 @@ export function registerToolsCommands(program: DirectorCommand): void {
       }),
     );
 
-  command
-    .command("call <proxyId> <toolName>")
+  program
+    .command("get-tool <proxyId> <toolName>")
+    .description("Get the details of a tool")
+    .action(
+      actionWithErrorHandler(async (proxyId: string, toolName: string) => {
+        const client = await HTTPClient.createAndConnectToHTTP(
+          joinURL(env.GATEWAY_URL, `${proxyId}/mcp`),
+        );
+
+        await printTool(client, toolName);
+        await client.close();
+      }),
+    );
+
+  program
+    .command("call-tool <proxyId> <toolName>")
     .addOption(
       makeOption({
         flags: "-a,--argument <key=value>",
@@ -56,37 +65,62 @@ export function registerToolsCommands(program: DirectorCommand): void {
 
 async function printTools(client: Client) {
   console.log("");
-  console.log(yellow("******************"));
-  console.log(yellow("*     TOOLS     *"));
-  console.log(yellow("******************"));
+  console.log(title("tools"));
   console.log("");
 
   const { tools } = await client.listTools();
 
-  for (const tool of tools) {
-    console.log(blue(tool.name), ": ", tool?.description?.slice(0, 80));
-    if (tool.inputSchema.type === "object" && tool.inputSchema.properties) {
-      const table = makeTable(["property", "type", "required", "description"]);
-      for (const [key, value] of Object.entries(tool.inputSchema.properties)) {
-        const typedValue = value as {
-          type?: string;
-          description?: string;
-        };
-        table.push([
-          key,
-          typedValue?.type || "--",
-          tool.inputSchema.required?.includes(key) ? yellow("yes") : "no",
-          typedValue?.description || "--",
-        ]);
-      }
-      console.log(table.toString());
-    } else {
-      console.log(tool.inputSchema);
-    }
-    console.log("");
+  if (tools.length === 0) {
+    console.log(yellow("no tools found"));
+    return;
   }
+
+  const table = makeTable(["name", "description", "required args?"]);
+
+  for (const tool of tools) {
+    table.push([
+      tool.name,
+      tool?.description?.slice(0, 80),
+      (tool.inputSchema.required?.length ?? 0) > 0 ? yellow("yes") : "no",
+    ]);
+  }
+  console.log(table.toString());
   console.log("");
-  console.log("");
+}
+
+async function printTool(client: Client, toolName: string) {
+  const { tools } = await client.listTools();
+
+  const tool = tools.find((tool) => tool.name === toolName);
+
+  if (!tool) {
+    throw new Error("Tool not found");
+  }
+
+  console.log();
+  console.log(blue(tool.name));
+  console.log(tool?.description);
+  console.log();
+
+  if (tool.inputSchema.type === "object" && tool.inputSchema.properties) {
+    const table = makeTable(["property", "type", "required", "description"]);
+    for (const [key, value] of Object.entries(tool.inputSchema.properties)) {
+      const typedValue = value as {
+        type?: string;
+        description?: string;
+      };
+      table.push([
+        key,
+        typedValue?.type || "--",
+        tool.inputSchema.required?.includes(key) ? yellow("yes") : "no",
+        typedValue?.description || "--",
+      ]);
+    }
+    console.log(table.toString());
+  } else {
+    console.log(tool.inputSchema);
+  }
+  console.log();
 }
 
 async function callTool(client: Client, toolName: string) {

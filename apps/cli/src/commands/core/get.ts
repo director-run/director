@@ -15,6 +15,7 @@ import {
 import { makeTable } from "@director.run/utilities/cli/index";
 import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../../client";
+import { subtitle } from "../../common";
 import { env } from "../../env";
 
 export function registerGetCommand(program: DirectorCommand) {
@@ -100,7 +101,7 @@ export function printProxyDetails(proxy: GatewayRouterOutputs["store"]["get"]) {
   );
 
   console.log();
-  console.log(whiteBold(`TARGETS`));
+  console.log(subtitle(`targets`));
   console.log();
 
   const table = makeTable([

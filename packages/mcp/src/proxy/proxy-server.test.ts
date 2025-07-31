@@ -1,9 +1,9 @@
 import { Server } from "node:http";
 import { ErrorCode } from "@director.run/utilities/error";
 import { expectToThrowAppError } from "@director.run/utilities/test";
-import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import {
   afterAll,
+  afterEach,
   beforeAll,
   beforeEach,
   describe,
@@ -14,9 +14,14 @@ import { InMemoryClient } from "../client/in-memory-client";
 import { OAuthHandler } from "../oauth/oauth-provider-factory";
 import {
   makeEchoServer,
-  makeFooBarServer,
   makeHTTPTargetConfig,
+  makeKitchenSinkServer,
 } from "../test/fixtures";
+import {
+  expectListToolsToReturnToolNames,
+  expectToolCallToHaveResult,
+  expectUnknownToolError,
+} from "../test/helpers";
 import { serveOverSSE, serveOverStreamable } from "../transport";
 import { ProxyServer } from "./proxy-server";
 
@@ -32,7 +37,7 @@ describe("ProxyServer", () => {
       makeEchoServer(),
       STREAMABLE_PORT,
     );
-    sseInstance = await serveOverSSE(makeFooBarServer(), SSE_PORT);
+    sseInstance = await serveOverSSE(makeKitchenSinkServer(), SSE_PORT);
   });
 
   afterAll(async () => {
@@ -223,129 +228,256 @@ describe("ProxyServer", () => {
     });
   });
 
-  test("should proxy all transports", async () => {
-    const proxy = new ProxyServer({
-      id: "test-proxy",
-      name: "test-proxy",
-      servers: [
-        makeHTTPTargetConfig({
-          name: "streamable",
-          url: `http://localhost:${STREAMABLE_PORT}/mcp`,
-        }),
-        makeHTTPTargetConfig({
-          name: "sse",
-          url: `http://localhost:${SSE_PORT}/sse`,
-        }),
-      ],
-    });
+  describe("proxying", () => {
+    let proxy: ProxyServer;
 
-    await proxy.connectTargets();
-
-    const client = await InMemoryClient.createAndConnectToServer(proxy);
-    const tools = await client.listTools();
-
-    expect(tools.tools).toHaveLength(2);
-    expect(tools.tools.some((tool) => tool.name === "echo")).toBe(true);
-    expect(tools.tools.some((tool) => tool.name === "foo")).toBe(true);
-  });
-
-  describe("disabled tools", () => {
-    let client: InMemoryClient;
-
-    beforeAll(async () => {
-      const proxy = new ProxyServer({
+    beforeEach(() => {
+      proxy = new ProxyServer({
         id: "test-proxy",
         name: "test-proxy",
         servers: [
-          {
-            ...makeHTTPTargetConfig({
-              name: "echo",
-              url: `http://localhost:${STREAMABLE_PORT}/mcp`,
-            }),
-            disabledTools: ["echo"],
-          },
-          {
-            ...makeHTTPTargetConfig({
-              name: "foo",
-              url: `http://localhost:${SSE_PORT}/sse`,
-            }),
-          },
+          makeHTTPTargetConfig({
+            name: "streamable",
+            url: `http://localhost:${STREAMABLE_PORT}/mcp`,
+          }),
+          makeHTTPTargetConfig({
+            name: "sse",
+            url: `http://localhost:${SSE_PORT}/sse`,
+          }),
         ],
       });
+    });
 
+    test("should proxy all transports", async () => {
       await proxy.connectTargets();
-      client = await InMemoryClient.createAndConnectToServer(proxy);
-    });
+      const client = await InMemoryClient.createAndConnectToServer(proxy);
 
-    afterAll(async () => {
-      await client.close();
-    });
-
-    test("should not return disabled tools", async () => {
-      const tools = await client.listTools();
-      expect(tools.tools).toHaveLength(1);
-      expect(tools.tools.map((t) => t.name).sort()).toEqual(["foo"]);
-    });
-  });
-
-  describe("tool prefixing", () => {
-    let client: InMemoryClient;
-
-    beforeAll(async () => {
-      const proxy = new ProxyServer({
-        id: "test-proxy",
-        name: "test-proxy",
-        servers: [
-          {
-            ...makeHTTPTargetConfig({
-              name: "echo",
-              url: `http://localhost:${STREAMABLE_PORT}/mcp`,
-            }),
-            toolPrefix: "a__",
-          },
-          {
-            ...makeHTTPTargetConfig({
-              name: "foo",
-              url: `http://localhost:${SSE_PORT}/sse`,
-            }),
-            toolPrefix: "b__",
-          },
-        ],
-      });
-
-      await proxy.connectTargets();
-      client = await InMemoryClient.createAndConnectToServer(proxy);
-    });
-
-    afterAll(async () => {
-      await client.close();
-    });
-
-    test("should support calling prefixed tools", async () => {
-      await client.listTools();
-
-      const result = (await client.callTool({
-        name: "a__echo",
-        arguments: {
-          message: "Hello, world!",
-        },
-      })) as CallToolResult;
-
-      expect(result.content?.[0].text).toContain("Hello, world!");
-    });
-
-    test("should support listing prefixed tools", async () => {
-      const tools = await client.listTools();
-
-      expect(tools.tools).toHaveLength(2);
-      expect(tools.tools.map((t) => t.name).sort()).toEqual([
-        "a__echo",
-        "b__foo",
+      await expectListToolsToReturnToolNames(client, [
+        "echo",
+        "add",
+        "subtract",
+        "multiply",
+        "ping",
       ]);
-    });
-  });
 
-  describe("updateTarget", () => {
-    test.skip("should update tool prefix", () => {});
+      await client.close();
+    });
+
+    describe("disabled tools", () => {
+      let proxy: ProxyServer;
+      let client: InMemoryClient;
+
+      beforeEach(async () => {
+        proxy = new ProxyServer({
+          id: "test-proxy",
+          name: "test-proxy",
+          servers: [
+            {
+              ...makeHTTPTargetConfig({
+                name: "echo",
+                url: `http://localhost:${STREAMABLE_PORT}/mcp`,
+              }),
+            },
+            {
+              ...makeHTTPTargetConfig({
+                name: "kitchen-sink",
+                url: `http://localhost:${SSE_PORT}/sse`,
+              }),
+              disabledTools: ["add", "subtract"],
+            },
+          ],
+        });
+        await proxy.connectTargets();
+        client = await InMemoryClient.createAndConnectToServer(proxy);
+      });
+
+      afterEach(async () => {
+        await client.close();
+        await proxy.close();
+      });
+
+      test("should not return disabled tools", async () => {
+        await expectListToolsToReturnToolNames(client, [
+          "echo",
+          "multiply",
+          "ping",
+        ]);
+      });
+
+      test("should be able to re-enable disabled tools", async () => {
+        await proxy.updateTarget("kitchen-sink", {
+          disabledTools: [],
+        });
+        await expectListToolsToReturnToolNames(client, [
+          "echo",
+          "add",
+          "subtract",
+          "multiply",
+          "ping",
+        ]);
+      });
+
+      test("should fail when calling disabled tools", async () => {
+        await expectUnknownToolError({
+          client,
+          toolName: "add",
+          arguments: {},
+        });
+      });
+    });
+
+    describe("tool prefixing", () => {
+      let client: InMemoryClient;
+      let proxy: ProxyServer;
+
+      beforeEach(async () => {
+        proxy = new ProxyServer({
+          id: "test-proxy",
+          name: "test-proxy",
+          servers: [
+            {
+              ...makeHTTPTargetConfig({
+                name: "echo",
+                url: `http://localhost:${STREAMABLE_PORT}/mcp`,
+              }),
+              toolPrefix: "a__",
+            },
+            {
+              ...makeHTTPTargetConfig({
+                name: "kitchen-sink",
+                url: `http://localhost:${SSE_PORT}/sse`,
+              }),
+              toolPrefix: "b__",
+            },
+          ],
+        });
+
+        await proxy.connectTargets();
+        client = await InMemoryClient.createAndConnectToServer(proxy);
+      });
+
+      afterEach(async () => {
+        await client.close();
+        await proxy.close();
+      });
+
+      test("should be able to remove the prefix", async () => {
+        await proxy.updateTarget("echo", {
+          toolPrefix: "",
+        });
+        await expectListToolsToReturnToolNames(client, [
+          "echo",
+          "b__add",
+          "b__subtract",
+          "b__multiply",
+          "b__ping",
+        ]);
+      });
+
+      test("should support calling prefixed tools", async () => {
+        await expectToolCallToHaveResult({
+          client,
+          toolName: "a__echo",
+          arguments: {
+            message: "Hello, world!",
+          },
+          expectedResult: {
+            message: "Hello, world!",
+          },
+        });
+      });
+
+      test("should list prefixed tools", async () => {
+        await expectListToolsToReturnToolNames(client, [
+          "a__echo",
+          "b__add",
+          "b__subtract",
+          "b__multiply",
+          "b__ping",
+        ]);
+      });
+    });
+
+    describe("disabled targets", () => {
+      let client: InMemoryClient;
+      let proxy: ProxyServer;
+
+      beforeEach(async () => {
+        proxy = new ProxyServer({
+          id: "test-proxy",
+          name: "test-proxy",
+          servers: [
+            {
+              ...makeHTTPTargetConfig({
+                name: "echo",
+                url: `http://localhost:${STREAMABLE_PORT}/mcp`,
+              }),
+            },
+            {
+              ...makeHTTPTargetConfig({
+                name: "kitchen-sink",
+                url: `http://localhost:${SSE_PORT}/sse`,
+              }),
+              disabled: true,
+            },
+          ],
+        });
+
+        await proxy.connectTargets();
+        client = await InMemoryClient.createAndConnectToServer(proxy);
+      });
+
+      afterEach(async () => {
+        await client.close();
+        await proxy.close();
+      });
+
+      test("should not connect disabled targets", async () => {
+        const target = await proxy.getTarget("kitchen-sink");
+        expect(target.status).toBe("disconnected");
+      });
+
+      test("should fail when calling tools on a disabled target", async () => {
+        await expectUnknownToolError({
+          client,
+          toolName: "add",
+          arguments: {},
+        });
+      });
+
+      test("should not list tools on a disabled target", async () => {
+        await expectListToolsToReturnToolNames(client, ["echo"]);
+      });
+
+      test("should disconnect when disabling a target", async () => {
+        const result = await proxy.updateTarget("echo", {
+          disabled: true,
+        });
+        expect(result.status).toBe("disconnected");
+        expect((await proxy.getTarget("echo")).status).toBe("disconnected");
+      });
+
+      test("should be able to re-enable a disabled target", async () => {
+        await proxy.updateTarget("kitchen-sink", {
+          disabled: false,
+        });
+        await expectListToolsToReturnToolNames(client, [
+          "echo",
+          "add",
+          "subtract",
+          "multiply",
+          "ping",
+        ]);
+      });
+
+      test("should reconnect when re-enabling a disabled target", async () => {
+        const result = await proxy.updateTarget("kitchen-sink", {
+          disabled: false,
+        });
+        expect(result.status).toBe("connected");
+        const target = await proxy.getTarget("kitchen-sink");
+        expect(target.status).toBe("connected");
+      });
+    });
   });
 });

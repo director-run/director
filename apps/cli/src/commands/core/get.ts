@@ -58,6 +58,7 @@ export function printTargetDetails(
     source,
     toolPrefix,
     disabledTools,
+    disabled,
   } = target;
 
   console.log();
@@ -74,8 +75,9 @@ export function printTargetDetails(
       lastErrorMessage: lastErrorMessage ?? "--",
       sourceName: source?.name ?? "--",
       sourceId: source?.entryId ?? "--",
-      toolPrefix: toolPrefix ?? "--",
-      disabledTools: disabledTools ?? "--",
+      toolPrefix: toolPrefix ?? "''",
+      disabledTools: disabledTools ?? "[]",
+      disabled: disabled ? "yes" : "no",
     }),
   );
   console.log();

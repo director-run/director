@@ -107,6 +107,7 @@ export const proxyTargetAttributesSchema = z.object({
   source: ProxyTargetSourceSchema.optional(),
   toolPrefix: z.string().trim().optional(),
   disabledTools: z.array(requiredStringSchema).optional(),
+  disabled: z.boolean().optional(),
 });
 
 export type ProxyTargetAttributes = z.infer<typeof proxyTargetAttributesSchema>;

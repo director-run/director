@@ -13,7 +13,26 @@ import {
 import { serveOverSSE, serveOverStreamable } from "../transport";
 import { ProxyServer } from "./proxy-server";
 
+const STREAMABLE_PORT = 2345;
+const SSE_PORT = STREAMABLE_PORT + 1;
+
 describe("ProxyServer", () => {
+  let streamableInstance: Server;
+  let sseInstance: Server;
+
+  beforeAll(async () => {
+    streamableInstance = await serveOverStreamable(
+      makeEchoServer(),
+      STREAMABLE_PORT,
+    );
+    sseInstance = await serveOverSSE(makeFooBarServer(), SSE_PORT);
+  });
+
+  afterAll(async () => {
+    await streamableInstance.close();
+    await sseInstance.close();
+  });
+
   describe("getTarget", () => {
     test("should return the target or throw an error if it doesn't exist", async () => {
       const proxy = new ProxyServer({
@@ -198,21 +217,18 @@ describe("ProxyServer", () => {
   });
 
   test("should proxy all transports", async () => {
-    const streamableServerInstance = await serveOverStreamable(
-      makeEchoServer(),
-      4522,
-    );
-    const sseServerInstance = await serveOverSSE(makeFooBarServer(), 4523);
-
     const proxy = new ProxyServer({
       id: "test-proxy",
       name: "test-proxy",
       servers: [
         makeHTTPTargetConfig({
           name: "streamable",
-          url: `http://localhost:4522/mcp`,
+          url: `http://localhost:${STREAMABLE_PORT}/mcp`,
         }),
-        makeHTTPTargetConfig({ name: "sse", url: `http://localhost:4523/sse` }),
+        makeHTTPTargetConfig({
+          name: "sse",
+          url: `http://localhost:${SSE_PORT}/sse`,
+        }),
       ],
     });
 
@@ -224,9 +240,6 @@ describe("ProxyServer", () => {
     expect(tools.tools).toHaveLength(2);
     expect(tools.tools.some((tool) => tool.name === "echo")).toBe(true);
     expect(tools.tools.some((tool) => tool.name === "foo")).toBe(true);
-
-    await streamableServerInstance.close();
-    await sseServerInstance.close();
   });
 
   describe("disabled tools", () => {
@@ -275,13 +288,9 @@ describe("ProxyServer", () => {
   });
 
   describe("tool prefixing", () => {
-    let echoServer: Server;
-    let fooServer: Server;
     let client: InMemoryClient;
 
     beforeAll(async () => {
-      echoServer = await serveOverStreamable(makeEchoServer(), 4524);
-      fooServer = await serveOverSSE(makeFooBarServer(), 4525);
       const proxy = new ProxyServer({
         id: "test-proxy",
         name: "test-proxy",
@@ -289,14 +298,14 @@ describe("ProxyServer", () => {
           {
             ...makeHTTPTargetConfig({
               name: "echo",
-              url: `http://localhost:4524/mcp`,
+              url: `http://localhost:${STREAMABLE_PORT}/mcp`,
             }),
             toolPrefix: "a__",
           },
           {
             ...makeHTTPTargetConfig({
               name: "foo",
-              url: `http://localhost:4525/sse`,
+              url: `http://localhost:${SSE_PORT}/sse`,
             }),
             toolPrefix: "b__",
           },
@@ -309,8 +318,6 @@ describe("ProxyServer", () => {
 
     afterAll(async () => {
       await client.close();
-      await echoServer.close();
-      await fooServer.close();
     });
 
     test("should support calling prefixed tools", async () => {

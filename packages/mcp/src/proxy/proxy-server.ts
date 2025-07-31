@@ -151,7 +151,7 @@ export class ProxyServer extends Server {
     targetName: string,
 
     attributes: Partial<
-      Pick<ProxyTargetAttributes, "toolPrefix" | "disabledTools">
+      Pick<ProxyTargetAttributes, "toolPrefix" | "disabledTools" | "disabled">
     >,
   ) {
     const target = await this.getTarget(targetName);
@@ -161,6 +161,9 @@ export class ProxyServer extends Server {
     }
     if (attributes.disabledTools !== undefined) {
       target.disabledTools = attributes.disabledTools;
+    }
+    if (attributes.disabled !== undefined) {
+      await target.setDisabled(attributes.disabled);
     }
 
     return target;

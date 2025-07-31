@@ -9,6 +9,7 @@ import { makeTable } from "@director.run/utilities/cli/index";
 import { joinURL } from "@director.run/utilities/url";
 import { input } from "@inquirer/prompts";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { title } from "../../common";
 import { env } from "../../env";
 
@@ -75,6 +76,11 @@ async function printTools(client: Client) {
     return;
   }
 
+  console.log(makeToolTable(tools).toString());
+  console.log("");
+}
+
+export function makeToolTable(tools: Tool[]) {
   const table = makeTable(["name", "description", "required args?"]);
 
   for (const tool of tools) {
@@ -84,8 +90,7 @@ async function printTools(client: Client) {
       (tool.inputSchema.required?.length ?? 0) > 0 ? yellow("yes") : "no",
     ]);
   }
-  console.log(table.toString());
-  console.log("");
+  return table;
 }
 
 async function printTool(client: Client, toolName: string) {

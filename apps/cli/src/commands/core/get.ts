@@ -17,6 +17,7 @@ import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../../client";
 import { subtitle } from "../../common";
 import { env } from "../../env";
+import { makeToolTable } from "../mcp/tools";
 
 export function registerGetCommand(program: DirectorCommand) {
   program
@@ -28,6 +29,7 @@ export function registerGetCommand(program: DirectorCommand) {
           const target = await gatewayClient.store.getServer.query({
             proxyId,
             serverName,
+            queryParams: { includeTools: true },
           });
           printTargetDetails(proxyId, target);
         } else {
@@ -59,6 +61,7 @@ export function printTargetDetails(
     toolPrefix,
     disabledTools,
     disabled,
+    tools,
   } = target;
 
   console.log();
@@ -81,6 +84,13 @@ export function printTargetDetails(
     }),
   );
   console.log();
+
+  if (tools) {
+    console.log(subtitle(`tools`));
+    console.log();
+    console.log(makeToolTable(tools).toString());
+    console.log();
+  }
 }
 
 export function printProxyDetails(proxy: GatewayRouterOutputs["store"]["get"]) {

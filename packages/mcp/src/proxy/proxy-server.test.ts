@@ -82,6 +82,24 @@ describe("ProxyServer", () => {
     });
 
     describe("addTarget", () => {
+      test("should support adding InMemoryClient instances", async () => {
+        const client = new InMemoryClient({
+          name: "test-client",
+          server: makeKitchenSinkServer(),
+        });
+        await proxy.addTarget(client);
+        expect(client.status).toBe("connected");
+        expect(proxy.targets.length).toBe(1);
+        expect(proxy.targets[0]).toBe(client);
+        expect(await proxy.getTarget("test-client")).toEqual(client);
+        expectListToolsToReturnToolNames(client, [
+          "add",
+          "subtract",
+          "multiply",
+          "ping",
+        ]);
+      });
+
       test("should throw an error if the target already exists", async () => {
         await proxy.addTarget(
           {

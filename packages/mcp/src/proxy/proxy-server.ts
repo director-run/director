@@ -13,6 +13,7 @@ import * as eventsource from "eventsource";
 import _ from "lodash";
 import packageJson from "../../package.json";
 import { HTTPClient } from "../client/http-client";
+import { InMemoryClient } from "../client/in-memory-client";
 import { StdioClient } from "../client/stdio-client";
 import { OAuthHandler } from "../oauth/oauth-provider-factory";
 import { setupPromptHandlers } from "./handlers/prompts-handler";
@@ -23,6 +24,8 @@ import { setupToolHandlers } from "./handlers/tools-handler";
 global.EventSource = eventsource.EventSource;
 
 const logger = getLogger(`ProxyServer`);
+
+type ProxyTarget = HTTPClient | StdioClient | InMemoryClient;
 
 export class ProxyServer extends Server {
   private _targets: (HTTPClient | StdioClient)[];
@@ -82,9 +85,7 @@ export class ProxyServer extends Server {
     }
   }
 
-  public async getTarget(
-    targetName: string,
-  ): Promise<HTTPClient | StdioClient> {
+  public async getTarget(targetName: string): Promise<ProxyTarget> {
     const target = this.targets.find(
       (t) => t.name.toLocaleLowerCase() === targetName.toLocaleLowerCase(),
     );
@@ -97,7 +98,7 @@ export class ProxyServer extends Server {
     return target;
   }
 
-  public get targets(): (HTTPClient | StdioClient)[] {
+  public get targets(): ProxyTarget[] {
     return this._targets;
   }
 
@@ -110,25 +111,37 @@ export class ProxyServer extends Server {
   }
 
   public async addTarget(
-    target: ProxyTargetAttributes,
+    target: ProxyTargetAttributes | ProxyTarget,
     attribs: { throwOnError: boolean } = { throwOnError: false },
-  ): Promise<HTTPClient | StdioClient> {
+  ): Promise<ProxyTarget> {
     const existingTarget = this.targets.find(
       (t) => t.name.toLocaleLowerCase() === target.name.toLocaleLowerCase(),
     );
+
     if (existingTarget) {
       throw new AppError(
         ErrorCode.DUPLICATE,
         `Target ${target.name} already exists`,
       );
     }
-    const newTarget = createClientForTarget({
-      target,
-      oAuthHandler: this._oAuthHandler,
-      toolPrefix: target.toolPrefix,
-      disabledTools: target.disabledTools,
-      disabled: target.disabled,
-    });
+
+    let newTarget: ProxyTarget;
+
+    if (
+      target instanceof HTTPClient ||
+      target instanceof StdioClient ||
+      target instanceof InMemoryClient
+    ) {
+      newTarget = target;
+    } else {
+      newTarget = createClientForTarget({
+        target,
+        oAuthHandler: this._oAuthHandler,
+        toolPrefix: target.toolPrefix,
+        disabledTools: target.disabledTools,
+        disabled: target.disabled,
+      });
+    }
 
     try {
       await newTarget.connectToTarget({ throwOnError: attribs.throwOnError });

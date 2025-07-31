@@ -8,7 +8,10 @@ import {
   whiteBold,
 } from "@director.run/utilities/cli/colors";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
-import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
+import {
+  actionWithErrorHandler,
+  attributeTable,
+} from "@director.run/utilities/cli/index";
 import { makeTable } from "@director.run/utilities/cli/index";
 import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../../client";
@@ -40,7 +43,7 @@ export function registerGetCommand(program: DirectorCommand) {
     );
 }
 
-function printTargetDetails(
+export function printTargetDetails(
   proxyId: string,
   target: GatewayRouterOutputs["store"]["getServer"],
 ) {
@@ -52,48 +55,58 @@ function printTargetDetails(
     lastConnectedAt,
     lastErrorMessage,
     source,
+    toolPrefix,
+    disabledTools,
   } = target;
 
   console.log();
   console.log(whiteBold(`PROXIES > ${proxyId} > ${blue(name)}`));
   console.log();
 
-  console.log(`${whiteBold("name")} = ${name}`);
-  console.log(`${whiteBold("status")} = ${status}`);
-  console.log(`${whiteBold("command")} = ${command}`);
-  console.log(`${whiteBold("type")} = ${type}`);
   console.log(
-    `${whiteBold("lastConnectedAt")} = ${lastConnectedAt?.toISOString() ?? "--"}`,
+    attributeTable({
+      name,
+      status: targetStatus(status),
+      command,
+      type,
+      lastConnectedAt: lastConnectedAt?.toISOString() ?? "--",
+      lastErrorMessage: lastErrorMessage ?? "--",
+      sourceName: source?.name ?? "--",
+      sourceId: source?.entryId ?? "--",
+      toolPrefix: toolPrefix ?? "--",
+      disabledTools: disabledTools ?? "--",
+    }),
   );
-  console.log(`${whiteBold("lastErrorMessage")} = ${lastErrorMessage ?? "--"}`);
   console.log();
-  console.log(`${whiteBold("sourceName")} = ${source?.name}`);
-  console.log(`${whiteBold("sourceId")} = ${source?.entryId}`);
 }
 
 export function printProxyDetails(proxy: GatewayRouterOutputs["store"]["get"]) {
-  const { id, name, description, addToolPrefix, path } = proxy;
+  const { id, name, description } = proxy;
   console.log();
   console.log(whiteBold(`PROXIES > ${blue(name)}`));
   console.log();
 
-  const sseURL = joinURL(env.GATEWAY_URL, getSSEPathForProxy(proxy.id));
-  const streamableURL = joinURL(
-    env.GATEWAY_URL,
-    getStreamablePathForProxy(proxy.id),
+  console.log(
+    attributeTable({
+      id,
+      name,
+      description: description ?? "--",
+      streamableURL: joinURL(
+        env.GATEWAY_URL,
+        getStreamablePathForProxy(proxy.id),
+      ),
+      sseURL: joinURL(env.GATEWAY_URL, getSSEPathForProxy(proxy.id)),
+    }),
   );
 
-  console.log(`${whiteBold("id")} = ${id}`);
-  console.log(`${whiteBold("name")} = ${name}`);
-  console.log(`${whiteBold("description")} = ${description}`);
-  console.log(`${whiteBold("addToolPrefix")} = ${addToolPrefix}`);
-  console.log(`${whiteBold("streamableUrl")} = ${streamableURL}`);
-  console.log(`${whiteBold("sseURL")} = ${sseURL}`);
+  console.log();
+  console.log(whiteBold(`TARGETS`));
+  console.log();
 
   const table = makeTable([
     "name",
     "type",
-    "url/command",
+    // "url/command",
     "status",
     "lastConnectedAt",
     "lastErrorMessage",
@@ -102,13 +115,16 @@ export function printProxyDetails(proxy: GatewayRouterOutputs["store"]["get"]) {
     ...proxy.targets.map((target) => [
       target.name,
       target.type,
-      target.command,
-      target.status === "connected" ? green(target.status) : red(target.status),
+      // target.command,
+      targetStatus(target.status),
       target.lastConnectedAt?.toISOString() ?? "--",
       target.lastErrorMessage ?? "--",
     ]),
   );
-  console.log();
   console.log(table.toString());
   console.log();
+}
+
+function targetStatus(status: string) {
+  return status === "connected" ? green(status) : red(status);
 }

@@ -5,6 +5,7 @@ import {
 } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { gatewayClient } from "../../client";
+import { printProxyDetails, printTargetDetails } from "./get";
 
 export function registerUpdateCommand(program: DirectorCommand) {
   return program
@@ -36,15 +37,20 @@ export function registerUpdateCommand(program: DirectorCommand) {
           const attributes = parseKeyValueAttributes(options.attribute);
 
           if (proxyId && !serverName) {
-            console.log("updating proxy", proxyId);
-            const updatedProxy = await gatewayClient.store.updateServer.mutate({
+            console.log(
+              `updating proxy '${proxyId}' with attributes`,
+              attributes,
+            );
+            const updatedProxy = await gatewayClient.store.update.mutate({
               proxyId,
-              serverName,
               attributes,
             });
-            console.log("updated proxy", updatedProxy);
+            printProxyDetails(updatedProxy);
           } else if (proxyId && serverName) {
-            console.log("updating proxy target", proxyId, serverName);
+            console.log(
+              `updating proxy target '${proxyId} > ${serverName}' with attributes`,
+              attributes,
+            );
             const updatedServer = await gatewayClient.store.updateServer.mutate(
               {
                 proxyId,
@@ -52,7 +58,7 @@ export function registerUpdateCommand(program: DirectorCommand) {
                 attributes,
               },
             );
-            console.log("updated server", updatedServer);
+            printTargetDetails(proxyId, updatedServer);
           } else {
             throw new Error("<proxyId> or <proxyId> <serverName> is required");
           }

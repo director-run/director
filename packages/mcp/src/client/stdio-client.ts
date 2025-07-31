@@ -23,6 +23,7 @@ export class StdioClient extends AbstractClient {
       source: params.source,
       toolPrefix: params.toolPrefix,
       disabledTools: params.disabledTools,
+      disabled: params.disabled,
     });
     this.command = params.command;
     this.args = params.args;
@@ -30,6 +31,11 @@ export class StdioClient extends AbstractClient {
   }
 
   public async connectToTarget({ throwOnError }: { throwOnError: boolean }) {
+    if (this._disabled) {
+      this.status = "disconnected";
+      return false;
+    }
+
     try {
       await this.connect(
         new StdioClientTransport({

@@ -21,6 +21,7 @@ export type AbstractClientParams = {
   source?: ProxyTargetSource;
   toolPrefix?: string;
   disabledTools?: string[];
+  disabled?: boolean; // if true, the client will not connect
 };
 
 // TODO: use generic type for source so it makes a better sdk
@@ -32,9 +33,10 @@ export abstract class AbstractClient extends Client {
   public readonly source?: ProxyTargetSource;
   public toolPrefix?: string;
   public disabledTools?: string[];
+  protected _disabled: boolean = false;
 
   constructor(params: AbstractClientParams) {
-    const { name, source, toolPrefix, disabledTools } = params;
+    const { name, source, toolPrefix, disabledTools, disabled } = params;
     super(
       {
         name,
@@ -52,6 +54,7 @@ export abstract class AbstractClient extends Client {
     this.source = source;
     this.toolPrefix = toolPrefix;
     this.disabledTools = disabledTools;
+    this._disabled = disabled ?? false;
   }
 
   public abstract connectToTarget({
@@ -78,6 +81,19 @@ export abstract class AbstractClient extends Client {
           };
         }),
     };
+  }
+
+  public get disabled() {
+    return this._disabled;
+  }
+
+  public async setDisabled(disabled: boolean) {
+    this._disabled = disabled;
+    if (disabled) {
+      await this.close();
+    } else {
+      await this.connectToTarget({ throwOnError: true });
+    }
   }
 
   public async originalListTools(

@@ -24,6 +24,7 @@ export class InMemoryClient extends AbstractClient {
       source: params.source,
       toolPrefix: params.toolPrefix,
       disabledTools: params.disabledTools,
+      disabled: params.disabled,
     });
     this.server = params.server;
     this.serverTransport = serverTransport;
@@ -44,10 +45,19 @@ export class InMemoryClient extends AbstractClient {
   }
 
   public async connectToTarget({ throwOnError }: { throwOnError: boolean }) {
+    if (this._disabled) {
+      this.status = "disconnected";
+      return false;
+    }
+
     await Promise.all([
       this.connect(this.clientTransport),
       this.server.connect(this.serverTransport),
     ]);
+
+    this.status = "connected";
+    this.lastConnectedAt = new Date();
+    this.lastErrorMessage = undefined;
     return true;
   }
 }

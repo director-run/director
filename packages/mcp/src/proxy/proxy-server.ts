@@ -155,6 +155,7 @@ export class ProxyServer extends Server {
     >,
   ) {
     const target = await this.getTarget(targetName);
+
     if (attributes.toolPrefix !== undefined) {
       target.toolPrefix = attributes.toolPrefix;
     }

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { SimpleServer } from "../simple-server";
-import type { ProxyTargetAttributes } from "@director.run/utilities/schema";
+import type { ProxyTargetAttributes, STDIOTransport } from "@director.run/utilities/schema";
+import path from "path";
 
 export function makeEchoServer() {
   const server = new SimpleServer("echo-server");
@@ -65,9 +66,6 @@ export function makeKitchenSinkServer() {
   return server;
 }
 
-
-
-
 export function makeHTTPTargetConfig(params: { name: string; url: string }): ProxyTargetAttributes {
   return {
     name: params.name,
@@ -78,3 +76,17 @@ export function makeHTTPTargetConfig(params: { name: string; url: string }): Pro
   };
 }
 
+export function makeEchoServerOverStdio(): STDIOTransport {
+  return {
+    type: "stdio",
+    command: "bun",
+    args: [
+      "-e",
+      `
+          import { makeEchoServer } from '${path.join(__dirname, "fixtures.ts")}'; 
+          import { serveOverStdio } from '${path.join(__dirname, "../transport.ts")}'; 
+          serveOverStdio(makeEchoServer());
+      `,
+    ],
+  };
+}

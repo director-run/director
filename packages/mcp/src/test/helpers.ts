@@ -1,5 +1,5 @@
 
-import { HTTPClient } from "@director.run/mcp/client/http-client";
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import {
   type CallToolResult,
   ErrorCode,
@@ -10,7 +10,7 @@ import {
 } from "vitest";
 
 export async function expectListToolsToReturnToolNames(
-    client: HTTPClient,
+    client: Client,
     expectedToolNames: string[],
   ) {
     const toolsResult = await client.listTools();
@@ -20,7 +20,7 @@ export async function expectListToolsToReturnToolNames(
   }
   
   export async function expectToolCallToHaveResult(params: {
-    client: HTTPClient;
+    client: Client;
     toolName: string;
     arguments: Record<string, unknown>;
     expectedResult: unknown;
@@ -39,7 +39,7 @@ export async function expectListToolsToReturnToolNames(
   }
   
   export async function expectUnknownToolError(params: {
-    client: HTTPClient;
+    client: Client;
     toolName: string;
     arguments: Record<string, unknown>;
   }) {

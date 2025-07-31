@@ -1,64 +1,77 @@
-import { describe, expect, it } from "vitest";
-import { z } from "zod";
-import { SimpleServer } from "../simple-server";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { makeKitchenSinkServer } from "../test/fixtures";
+import {
+  expectListToolsToReturnToolNames,
+  expectToolCallToHaveResult,
+} from "../test/helpers";
 import { InMemoryClient } from "./in-memory-client";
 
-interface ToolResponse {
-  content: Array<{
-    type: string;
-    text: string;
-  }>;
-}
-
 describe("InMemoryClient", () => {
-  describe("createAndConnectToServer", () => {
-    it("should create a server with a tool", async () => {
-      const server = new SimpleServer();
+  let client: InMemoryClient;
+  const server = makeKitchenSinkServer();
+  beforeEach(() => {
+    client = new InMemoryClient({
+      name: "test-client",
+      server,
+    });
+  });
 
-      const TestSchema = z.object({
-        name: z.string(),
-        age: z.number(),
+  afterEach(async () => {
+    await client.close();
+  });
+
+  describe("connectToTarget", () => {
+    it("should update the client status to connected", async () => {
+      expect(client.status).toBe("disconnected");
+      expect(await client.connectToTarget({ throwOnError: true })).toBe(true);
+      expect(client.status).toBe("connected");
+      expect(client.lastConnectedAt).toBeInstanceOf(Date);
+      expect(client.lastErrorMessage).toBeUndefined();
+    });
+  });
+
+  describe("tools", () => {
+    it("should be able to list and call tools", async () => {
+      await client.connectToTarget({ throwOnError: true });
+
+      await expectListToolsToReturnToolNames(client, [
+        "ping",
+        "add",
+        "subtract",
+        "multiply",
+      ]);
+
+      await expectToolCallToHaveResult({
+        client,
+        toolName: "ping",
+        arguments: {},
+        expectedResult: { message: "pong" },
       });
+    });
+  });
 
-      server
-        .tool("test_tool")
-        .schema(TestSchema)
-        .description("A test tool")
-        .handle(({ name, age }) => {
-          return Promise.resolve({
-            status: "success",
-            data: {
-              name,
-              age,
-              message: `Hello ${name}, you are ${age} years old`,
-            },
-          });
-        });
+  describe("disabled behaviour", () => {
+    it("when the client is connected, it should disconnect when disabled", async () => {
+      await client.connectToTarget({ throwOnError: true });
+      expect(client.status).toBe("connected");
+      expect(client.lastErrorMessage).toBeUndefined();
+      expect(client.lastConnectedAt).toBeInstanceOf(Date);
 
-      const client = await InMemoryClient.createAndConnectToServer(server);
-      const tools = await client.listTools();
+      await client.setDisabled(true);
+      expect(client.status).toBe("disconnected");
+      expect(client.lastErrorMessage).toBeUndefined();
+    });
 
-      expect(tools.tools).toHaveLength(1);
-      expect(tools.tools[0].name).toBe("test_tool");
-      expect(tools.tools[0].description).toBe("A test tool");
-
-      // Test calling the tool
-      const result = (await client.callTool({
-        name: "test_tool",
-        arguments: {
-          name: "John",
-          age: 30,
-        },
-      })) as ToolResponse;
-
-      expect(JSON.parse(result.content[0].text)).toEqual({
-        status: "success",
-        data: {
-          name: "John",
-          age: 30,
-          message: "Hello John, you are 30 years old",
-        },
+    it("trying to connect a disabled client should not work", async () => {
+      const client = new InMemoryClient({
+        name: "test-client",
+        server,
+        disabled: true,
       });
+      expect(await client.connectToTarget({ throwOnError: true })).toBe(false);
+      expect(client.status).toBe("disconnected");
+      expect(client.lastErrorMessage).toBeUndefined();
+      expect(client.lastConnectedAt).toBeUndefined();
     });
   });
 });

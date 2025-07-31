@@ -26,6 +26,7 @@ type SerializedTarget = {
   source?: ProxyTargetSource;
   toolPrefix?: string;
   disabledTools?: string[];
+  disabled?: boolean;
 };
 
 export function serializeProxyServer(proxy: ProxyServer) {
@@ -66,6 +67,7 @@ export function serializeProxyServerTarget(
       source: target.source,
       toolPrefix: target.toolPrefix,
       disabledTools: target.disabledTools,
+      disabled: target.disabled,
     };
   } else if (target instanceof StdioClient) {
     return {
@@ -84,6 +86,7 @@ export function serializeProxyServerTarget(
       source: target.source,
       toolPrefix: target.toolPrefix,
       disabledTools: target.disabledTools,
+      disabled: target.disabled,
     };
   } else {
     throw new Error("Unknown target type");

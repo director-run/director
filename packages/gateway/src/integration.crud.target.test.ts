@@ -313,73 +313,138 @@ describe("Proxy Target CRUD operations", () => {
   });
 
   describe("update", () => {
-    let proxy: ProxyServerAttributes;
-    let updatedResponse: GatewayRouterOutputs["store"]["updateServer"];
-    const toolPrefix = "prefix__";
-    const disabledTools = ["ping", "add"];
+    describe("target attributes", () => {
+      let proxy: ProxyServerAttributes;
+      let updatedResponse: GatewayRouterOutputs["store"]["updateServer"];
+      const toolPrefix = "prefix__";
+      const disabledTools = ["ping", "add"];
 
-    beforeEach(async () => {
-      await harness.purge();
-      proxy = await harness.client.store.create.mutate({
-        name: "Test Proxy",
-        servers: [
-          harness.getConfigForTarget("echo"),
-          harness.getConfigForTarget("kitchenSink"),
-        ],
+      beforeEach(async () => {
+        await harness.purge();
+        proxy = await harness.client.store.create.mutate({
+          name: "Test Proxy",
+          servers: [
+            harness.getConfigForTarget("echo"),
+            harness.getConfigForTarget("kitchenSink"),
+          ],
+        });
+        updatedResponse = await harness.client.store.updateServer.mutate({
+          proxyId: proxy.id,
+          serverName: "echo",
+          attributes: {
+            toolPrefix: toolPrefix,
+            disabledTools: disabledTools,
+          },
+        });
       });
-      updatedResponse = await harness.client.store.updateServer.mutate({
-        proxyId: proxy.id,
-        serverName: "echo",
-        attributes: {
-          toolPrefix: toolPrefix,
-          disabledTools: disabledTools,
-        },
+
+      it("should return the updated target", () => {
+        expect(updatedResponse.toolPrefix).toBe(toolPrefix);
+        expect(updatedResponse.disabledTools).toMatchObject(disabledTools);
+        expect(updatedResponse.name).toBe("echo");
+      });
+
+      it("should update the target", async () => {
+        const target = await harness.client.store.getServer.query({
+          proxyId: proxy.id,
+          serverName: "echo",
+        });
+        expect(target.toolPrefix).toBe(toolPrefix);
+        expect(target.disabledTools).toMatchObject(disabledTools);
+      });
+      it("should update the configuration file", async () => {
+        const configEntry = (await harness.database.getServer(
+          proxy.id,
+          "echo",
+        )) as ProxyTargetAttributes;
+        expect(configEntry.toolPrefix).toBe(toolPrefix);
+        expect(configEntry.disabledTools).toMatchObject(disabledTools);
+      });
+
+      it("should be able to unset attributes", async () => {
+        updatedResponse = await harness.client.store.updateServer.mutate({
+          proxyId: proxy.id,
+          serverName: "echo",
+          attributes: { toolPrefix: "", disabledTools: [] },
+        });
+        expect(updatedResponse.toolPrefix).toBe("");
+        expect(updatedResponse.disabledTools).toMatchObject([]);
+        const target = await harness.client.store.getServer.query({
+          proxyId: proxy.id,
+          serverName: "echo",
+        });
+        expect(target.toolPrefix).toBe("");
+        expect(target.disabledTools).toMatchObject([]);
+        const configEntry = (await harness.database.getServer(
+          proxy.id,
+          "echo",
+        )) as ProxyTargetAttributes;
+        expect(configEntry.toolPrefix).toBe("");
+        expect(configEntry.disabledTools).toMatchObject([]);
       });
     });
-
-    it("should return the updated target", () => {
-      expect(updatedResponse.toolPrefix).toBe(toolPrefix);
-      expect(updatedResponse.disabledTools).toMatchObject(disabledTools);
-      expect(updatedResponse.name).toBe("echo");
-    });
-
-    it("should update the target", async () => {
-      const target = await harness.client.store.getServer.query({
-        proxyId: proxy.id,
-        serverName: "echo",
+    describe("disabling targets", () => {
+      let proxy: ProxyServerAttributes;
+      beforeEach(async () => {
+        await harness.purge();
+        proxy = await harness.client.store.create.mutate({
+          name: "Test Proxy",
+          servers: [
+            { ...harness.getConfigForTarget("echo"), disabled: true },
+            harness.getConfigForTarget("kitchenSink"),
+          ],
+        });
       });
-      expect(target.toolPrefix).toBe(toolPrefix);
-      expect(target.disabledTools).toMatchObject(disabledTools);
-    });
-    it("should update the configuration file", async () => {
-      const configEntry = (await harness.database.getServer(
-        proxy.id,
-        "echo",
-      )) as ProxyTargetAttributes;
-      expect(configEntry.toolPrefix).toBe(toolPrefix);
-      expect(configEntry.disabledTools).toMatchObject(disabledTools);
-    });
 
-    it("should be able to unset attributes", async () => {
-      updatedResponse = await harness.client.store.updateServer.mutate({
-        proxyId: proxy.id,
-        serverName: "echo",
-        attributes: { toolPrefix: "", disabledTools: [] },
+      it("should return the disabled target correctly", async () => {
+        const disabledTarget = await harness.client.store.getServer.query({
+          proxyId: proxy.id,
+          serverName: "echo",
+        });
+        expect(disabledTarget.disabled).toBe(true);
+        expect(disabledTarget.status).toBe("disconnected");
+        const enabledTarget = await harness.client.store.getServer.query({
+          proxyId: proxy.id,
+          serverName: "kitchen-sink",
+        });
+        expect(enabledTarget.disabled).toBeFalsy();
+        expect(enabledTarget.status).toBe("connected");
       });
-      expect(updatedResponse.toolPrefix).toBe("");
-      expect(updatedResponse.disabledTools).toMatchObject([]);
-      const target = await harness.client.store.getServer.query({
-        proxyId: proxy.id,
-        serverName: "echo",
+
+      it("should be stored in the configuration file", async () => {
+        const configEntry = await harness.database.getServer(proxy.id, "echo");
+        expect(configEntry.disabled).toBe(true);
       });
-      expect(target.toolPrefix).toBe("");
-      expect(target.disabledTools).toMatchObject([]);
-      const configEntry = (await harness.database.getServer(
-        proxy.id,
-        "echo",
-      )) as ProxyTargetAttributes;
-      expect(configEntry.toolPrefix).toBe("");
-      expect(configEntry.disabledTools).toMatchObject([]);
+
+      describe("enabling disabled targets", () => {
+        let updatedResponse: GatewayRouterOutputs["store"]["updateServer"];
+        beforeEach(async () => {
+          updatedResponse = await harness.client.store.updateServer.mutate({
+            proxyId: proxy.id,
+            serverName: "echo",
+            attributes: { disabled: false },
+          });
+        });
+        it("should return the updated target", () => {
+          expect(updatedResponse.disabled).toBe(false);
+          expect(updatedResponse.status).toBe("connected");
+        });
+        it("should be reflected in the proxy", async () => {
+          const target = await harness.client.store.getServer.query({
+            proxyId: proxy.id,
+            serverName: "echo",
+          });
+          expect(target.disabled).toBe(false);
+          expect(target.status).toBe("connected");
+        });
+        it("should be reflected in the configuration file", async () => {
+          const configEntry = await harness.database.getServer(
+            proxy.id,
+            "echo",
+          );
+          expect(configEntry.disabled).toBe(false);
+        });
+      });
     });
   });
 });

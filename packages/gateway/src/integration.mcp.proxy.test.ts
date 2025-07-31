@@ -238,6 +238,28 @@ describe("MCP Proxy", () => {
           });
         });
       });
+
+      describe("disabling targets", () => {
+        beforeEach(async () => {
+          await harness.client.store.updateServer.mutate({
+            proxyId: proxy.id,
+            serverName: "kitchen-sink",
+            attributes: { disabled: true },
+          });
+        });
+
+        it("should not return tools in list tools on a disabled target", async () => {
+          await expectListToolsToReturnToolNames(proxyClient, ["echo"]);
+        });
+
+        it("should fail to call tools on a disabled target", async () => {
+          await expectUnknownToolError({
+            client: proxyClient,
+            toolName: "ping",
+            arguments: {},
+          });
+        });
+      });
     });
   });
 });

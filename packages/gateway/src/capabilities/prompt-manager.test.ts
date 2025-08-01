@@ -158,4 +158,166 @@ describe("PromptManager", () => {
       );
     });
   });
+
+  describe("updatePrompt", () => {
+    test("should update an existing prompt with partial data", async () => {
+      const originalPrompt = makePrompt();
+      await promptManager.addPromptEntry(originalPrompt);
+
+      const updateData = {
+        title: "Updated Title",
+        description: "Updated Description",
+      };
+
+      const updatedPrompt = await promptManager.updatePrompt(
+        originalPrompt.name,
+        updateData,
+      );
+
+      expect(updatedPrompt).toEqual({
+        ...originalPrompt,
+        ...updateData,
+      });
+
+      // Verify the prompt is actually updated in the manager
+      const retrievedPrompt = promptManager.getPromptEntry(originalPrompt.name);
+      expect(retrievedPrompt).toEqual({
+        ...originalPrompt,
+        ...updateData,
+      });
+
+      // Verify the prompt is updated in the MCP server
+      await expectGetPromptToReturn({
+        client: promptManager,
+        promptName: originalPrompt.name,
+        expectedBody: originalPrompt.body, // body should remain unchanged
+      });
+    });
+
+    test("should update only the body of an existing prompt", async () => {
+      const originalPrompt = makePrompt();
+      await promptManager.addPromptEntry(originalPrompt);
+
+      const newBody = "This is a completely new body content";
+      const updateData = { body: newBody };
+
+      const updatedPrompt = await promptManager.updatePrompt(
+        originalPrompt.name,
+        updateData,
+      );
+
+      expect(updatedPrompt).toEqual({
+        ...originalPrompt,
+        ...updateData,
+      });
+
+      // Verify the prompt is updated in the MCP server
+      await expectGetPromptToReturn({
+        client: promptManager,
+        promptName: originalPrompt.name,
+        expectedBody: newBody,
+      });
+    });
+
+    test("should update multiple fields of an existing prompt", async () => {
+      const originalPrompt = makePrompt();
+      await promptManager.addPromptEntry(originalPrompt);
+
+      const updateData = {
+        title: "New Title",
+        description: "New Description",
+        body: "New body content",
+      };
+
+      const updatedPrompt = await promptManager.updatePrompt(
+        originalPrompt.name,
+        updateData,
+      );
+
+      expect(updatedPrompt).toEqual({
+        ...originalPrompt,
+        ...updateData,
+      });
+
+      // Verify the prompt is updated in the MCP server
+      await expectGetPromptToReturn({
+        client: promptManager,
+        promptName: originalPrompt.name,
+        expectedBody: updateData.body,
+      });
+    });
+
+    test("should throw error when updating non-existent prompt", async () => {
+      const updateData = {
+        title: "Updated Title",
+        description: "Updated Description",
+      };
+
+      await expect(
+        promptManager.updatePrompt("non-existent", updateData),
+      ).rejects.toThrow(
+        new AppError(ErrorCode.NOT_FOUND, "Prompt non-existent not found"),
+      );
+    });
+
+    test("should handle empty update object", async () => {
+      const originalPrompt = makePrompt();
+      await promptManager.addPromptEntry(originalPrompt);
+
+      const updatedPrompt = await promptManager.updatePrompt(
+        originalPrompt.name,
+        {},
+      );
+
+      expect(updatedPrompt).toEqual(originalPrompt);
+
+      // Verify the prompt remains unchanged in the MCP server
+      await expectGetPromptToReturn({
+        client: promptManager,
+        promptName: originalPrompt.name,
+        expectedBody: originalPrompt.body,
+      });
+    });
+
+    test("should preserve other prompts when updating one prompt", async () => {
+      const firstPrompt = makePrompt();
+      const secondPrompt = makePrompt();
+
+      await promptManager.addPromptEntry(firstPrompt);
+      await promptManager.addPromptEntry(secondPrompt);
+
+      const updateData = { title: "Updated First Prompt" };
+      await promptManager.updatePrompt(firstPrompt.name, updateData);
+
+      // Verify first prompt is updated
+      const updatedFirstPrompt = promptManager.getPromptEntry(firstPrompt.name);
+      expect(updatedFirstPrompt).toEqual({
+        ...firstPrompt,
+        ...updateData,
+      });
+
+      // Verify second prompt remains unchanged
+      const unchangedSecondPrompt = promptManager.getPromptEntry(
+        secondPrompt.name,
+      );
+      expect(unchangedSecondPrompt).toEqual(secondPrompt);
+
+      // Verify both prompts are still available in the MCP server
+      await expectListPromptsToReturn({
+        client: promptManager,
+        expectedPrompts: [
+          {
+            name: firstPrompt.name,
+            title: updateData.title,
+            description: firstPrompt.description,
+          },
+          {
+            name: secondPrompt.name,
+            title: secondPrompt.title,
+            description: secondPrompt.description,
+          },
+        ],
+      });
+    });
+  });
 });

@@ -2,6 +2,7 @@ import { InMemoryClient } from "@director.run/mcp/client/in-memory-client";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { GetPromptResult } from "@modelcontextprotocol/sdk/types.js";
+import _ from "lodash";
 
 export const PROMPT_MANAGER_TARGET_NAME = "__prompts__";
 
@@ -11,9 +12,9 @@ export class PromptManager extends InMemoryClient {
   constructor(prompts: Prompt[]) {
     super({
       name: PROMPT_MANAGER_TARGET_NAME,
-      server: makePromptServer(prompts),
+      server: makePromptServer(_.cloneDeep(prompts)),
     });
-    this._prompts = [];
+    this._prompts = _.cloneDeep(prompts);
   }
 
   async addPromptEntry(prompt: Prompt) {
@@ -29,6 +30,19 @@ export class PromptManager extends InMemoryClient {
     this._prompts.push(prompt);
     await this.reconnectToServer();
     return prompt;
+  }
+
+  async updatePrompt(
+    promptId: string,
+    prompt: Partial<Pick<Prompt, "title" | "description" | "body">>,
+  ) {
+    const index = this._prompts.findIndex((p) => p.name === promptId);
+    if (index === -1) {
+      throw new AppError(ErrorCode.NOT_FOUND, `Prompt ${promptId} not found`);
+    }
+    this._prompts[index] = { ...this._prompts[index], ...prompt };
+    await this.reconnectToServer();
+    return this._prompts[index];
   }
 
   async removePromptEntry(promptId: string) {

@@ -4,9 +4,22 @@ import {
   expectMCPError,
 } from "@director.run/mcp/test/helpers";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
+import { faker } from "@faker-js/faker";
 import { ErrorCode as MCPErrorCode } from "@modelcontextprotocol/sdk/types.js";
 import { beforeEach, describe, expect, test } from "vitest";
-import { PromptManager } from "./prompt-manager";
+import { type Prompt, PromptManager } from "./prompt-manager";
+
+function makePrompt(params: Partial<Prompt> = {}) {
+  return {
+    name: [faker.company.buzzNoun(), faker.company.buzzVerb()]
+      .map((w) => w.toLowerCase())
+      .join("-"),
+    title: faker.lorem.sentence(),
+    description: faker.lorem.sentence(),
+    body: faker.lorem.paragraph(),
+    ...params,
+  };
+}
 
 describe("PromptManager", () => {
   let promptManager: PromptManager;
@@ -27,12 +40,7 @@ describe("PromptManager", () => {
 
   describe("addPromptEntry", () => {
     test("should add a new prompt successfully", async () => {
-      const firstPrompt = {
-        name: "test-prompt",
-        title: "Test Prompt",
-        description: "A test prompt",
-        body: "This is a test prompt body",
-      };
+      const firstPrompt = makePrompt();
 
       const firstAddedPrompt = await promptManager.addPromptEntry(firstPrompt);
       expect(firstAddedPrompt).toEqual(firstPrompt);
@@ -54,12 +62,7 @@ describe("PromptManager", () => {
         expectedBody: firstPrompt.body,
       });
 
-      const secondPrompt = {
-        name: "test-prompt-2",
-        title: "Test Prompt 2",
-        description: "A test prompt 2",
-        body: "This is a test prompt body 2",
-      };
+      const secondPrompt = makePrompt();
 
       const secondAddedPrompt =
         await promptManager.addPromptEntry(secondPrompt);
@@ -89,19 +92,14 @@ describe("PromptManager", () => {
     });
 
     test("should throw error when adding duplicate prompt", async () => {
-      const prompt = {
-        name: "duplicate-prompt",
-        title: "Duplicate Prompt",
-        description: "A duplicate prompt",
-        body: "This is a duplicate prompt body",
-      };
+      const prompt = makePrompt();
 
       await promptManager.addPromptEntry(prompt);
 
       await expect(promptManager.addPromptEntry(prompt)).rejects.toThrow(
         new AppError(
           ErrorCode.DUPLICATE,
-          "Prompt duplicate-prompt already exists",
+          `Prompt ${prompt.name} already exists`,
         ),
       );
     });
@@ -109,20 +107,30 @@ describe("PromptManager", () => {
 
   describe("removePromptEntry", () => {
     test("should remove an existing prompt", async () => {
-      const prompt = {
-        name: "prompt-to-remove",
-        title: "Prompt to Remove",
-        description: "A prompt to remove",
-        body: "This prompt will be removed",
-      };
+      const firstPrompt = makePrompt();
+      const secondPrompt = makePrompt();
 
-      await promptManager.addPromptEntry(prompt);
-      await promptManager.removePromptEntry("prompt-to-remove");
+      await promptManager.addPromptEntry(firstPrompt);
+      await promptManager.addPromptEntry(secondPrompt);
+      await promptManager.removePromptEntry(firstPrompt.name);
 
-      // Verify it's removed by trying to get it
-      expect(() => promptManager.getPromptEntry("prompt-to-remove")).toThrow(
-        new AppError(ErrorCode.NOT_FOUND, "Prompt prompt-to-remove not found"),
+      expect(() => promptManager.getPromptEntry(firstPrompt.name)).toThrow(
+        new AppError(
+          ErrorCode.NOT_FOUND,
+          `Prompt ${firstPrompt.name} not found`,
+        ),
       );
+
+      await expectListPromptsToReturn({
+        client: promptManager,
+        expectedPrompts: [
+          {
+            name: secondPrompt.name,
+            title: secondPrompt.title,
+            description: secondPrompt.description,
+          },
+        ],
+      });
     });
 
     test("should throw error when removing non-existent prompt", async () => {
@@ -136,15 +144,10 @@ describe("PromptManager", () => {
 
   describe("getPromptEntry", () => {
     test("should retrieve an existing prompt", async () => {
-      const prompt = {
-        name: "test-prompt",
-        title: "Test Prompt",
-        description: "A test prompt",
-        body: "This is a test prompt body",
-      };
+      const prompt = makePrompt();
 
       await promptManager.addPromptEntry(prompt);
-      const retrievedPrompt = promptManager.getPromptEntry("test-prompt");
+      const retrievedPrompt = promptManager.getPromptEntry(prompt.name);
 
       expect(retrievedPrompt).toEqual(prompt);
     });

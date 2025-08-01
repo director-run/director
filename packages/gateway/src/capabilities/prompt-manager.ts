@@ -1,50 +1,7 @@
 import { InMemoryClient } from "@director.run/mcp/client/in-memory-client";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
-
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { GetPromptResult } from "@modelcontextprotocol/sdk/types.js";
-
-function makePromptServer(prompts: Prompt[]) {
-  const server = new McpServer(
-    {
-      name: "prompt-manager",
-      version: "1.0.0",
-    },
-    { capabilities: { logging: {} } },
-  );
-
-  for (const prompt of prompts) {
-    server.registerPrompt(
-      prompt.name,
-      {
-        title: prompt.title,
-        description: prompt.description,
-      },
-      async (): Promise<GetPromptResult> => {
-        return await {
-          messages: [
-            {
-              role: "user",
-              content: {
-                type: "text",
-                text: prompt.body,
-              },
-            },
-          ],
-        };
-      },
-    );
-  }
-
-  return server.server;
-}
-
-type Prompt = {
-  name: string;
-  title: string;
-  description?: string;
-  body: string;
-};
 
 export class PromptManager extends InMemoryClient {
   private _prompts: Prompt[];
@@ -96,3 +53,45 @@ export class PromptManager extends InMemoryClient {
     await this.connectToTarget({ throwOnError: true });
   }
 }
+
+function makePromptServer(prompts: Prompt[]) {
+  const server = new McpServer(
+    {
+      name: "prompt-manager",
+      version: "1.0.0",
+    },
+    { capabilities: { logging: {} } },
+  );
+
+  for (const prompt of prompts) {
+    server.registerPrompt(
+      prompt.name,
+      {
+        title: prompt.title,
+        description: prompt.description,
+      },
+      async (): Promise<GetPromptResult> => {
+        return await {
+          messages: [
+            {
+              role: "user",
+              content: {
+                type: "text",
+                text: prompt.body,
+              },
+            },
+          ],
+        };
+      },
+    );
+  }
+
+  return server.server;
+}
+
+export type Prompt = {
+  name: string;
+  title: string;
+  description?: string;
+  body: string;
+};

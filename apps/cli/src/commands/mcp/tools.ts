@@ -81,13 +81,13 @@ async function printTools(client: Client) {
 }
 
 export function makeToolTable(tools: Tool[]) {
-  const table = makeTable(["name", "description", "required args?"]);
+  const table = makeTable(["name", "required args?", "description"]);
 
   for (const tool of tools) {
     table.push([
       tool.name,
-      tool?.description?.slice(0, 80),
       (tool.inputSchema.required?.length ?? 0) > 0 ? yellow("yes") : "no",
+      tool?.description?.slice(0, 80),
     ]);
   }
   return table;
@@ -137,7 +137,8 @@ async function callTool(client: Client, toolName: string) {
   const toolToRun = tools.find((tool) => tool.name === toolName);
 
   if (!toolToRun) {
-    throw new Error("Tool not found");
+    console.log(yellow("Tool not found"));
+    return;
   }
 
   console.log(yellow(`* INPUT SCHEMA *`));

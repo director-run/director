@@ -1,5 +1,7 @@
+import { InMemoryClient } from "@director.run/mcp/client/in-memory-client";
+import { makeEchoServer } from "@director.run/mcp/test/fixtures";
 import { type CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { GatewayRouterOutputs } from "../../client";
 import { IntegrationTestHarness } from "../../test/integration";
 
@@ -9,16 +11,50 @@ describe("Installer Router", () => {
 
   beforeAll(async () => {
     harness = await IntegrationTestHarness.start();
-    proxy = await harness.client.store.create.mutate({
-      name: "Test Proxy",
-      servers: [harness.getConfigForTarget("echo")],
-    });
   });
 
   afterAll(async () => {
     await harness.stop();
   });
 
+  beforeEach(async () => {
+    await harness.purge();
+    proxy = await harness.client.store.create.mutate({
+      name: "Test Proxy",
+      servers: [harness.getConfigForTarget("echo")],
+    });
+  });
+
+  describe("get", () => {
+    beforeEach(async () => {
+      await harness.gateway.proxyStore.get(proxy.id).addTarget(
+        new InMemoryClient({
+          name: "__prompts__",
+          server: makeEchoServer(),
+        }),
+      );
+    });
+
+    it("should not return in memory targets by default", async () => {
+      const ret = await harness.client.store.get.query({
+        proxyId: proxy.id,
+      });
+      expect(proxy.targets).toHaveLength(1);
+      expect(proxy.targets).not.toContainEqual(
+        expect.objectContaining({ name: "__prompts__" }),
+      );
+    });
+    it("should return in memory targets when includeInMemoryTargets is true", async () => {
+      const ret = await harness.client.store.get.query({
+        proxyId: proxy.id,
+        queryParams: { includeInMemoryTargets: true },
+      });
+      expect(ret.targets).toHaveLength(2);
+      expect(ret.targets).toContainEqual(
+        expect.objectContaining({ name: "__prompts__" }),
+      );
+    });
+  });
   describe("callTool", () => {
     it("should call a tool", async () => {
       const result = (await harness.client.store.callTool.mutate({

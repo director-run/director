@@ -33,7 +33,10 @@ export function registerGetCommand(program: DirectorCommand) {
           });
           printTargetDetails(proxyId, target);
         } else {
-          const proxy = await gatewayClient.store.get.query({ proxyId });
+          const proxy = await gatewayClient.store.get.query({
+            proxyId,
+            queryParams: { includeInMemoryTargets: true },
+          });
 
           if (!proxy) {
             console.error(`proxy ${proxyId} not found`);

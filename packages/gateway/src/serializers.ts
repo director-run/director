@@ -36,9 +36,15 @@ type SerializedTarget = {
   tools?: Tool[];
 };
 
-export async function serializeProxyServer(proxy: ProxyServer) {
+export async function serializeProxyServer(
+  proxy: ProxyServer,
+  params?: { includeInMemoryTargets?: boolean },
+) {
   const targets: SerializedTarget[] = [];
   for (const target of proxy.targets) {
+    if (!params?.includeInMemoryTargets && target instanceof InMemoryClient) {
+      continue;
+    }
     targets.push(await serializeProxyServerTarget(target));
   }
 
@@ -53,10 +59,13 @@ export async function serializeProxyServer(proxy: ProxyServer) {
   };
 }
 
-export async function serializeProxyServers(proxies: ProxyServer[]) {
+export async function serializeProxyServers(
+  proxies: ProxyServer[],
+  params?: { includeInMemoryTargets?: boolean },
+) {
   const ret = [];
   for (const proxy of proxies) {
-    ret.push(await serializeProxyServer(proxy));
+    ret.push(await serializeProxyServer(proxy, params));
   }
   return ret;
 }

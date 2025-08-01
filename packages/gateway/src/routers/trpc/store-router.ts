@@ -38,9 +38,21 @@ export function createProxyStoreRouter({
     }),
 
     get: t.procedure
-      .input(z.object({ proxyId: z.string() }))
+      .input(
+        z.object({
+          proxyId: z.string(),
+          queryParams: z
+            .object({
+              includeInMemoryTargets: z.boolean().optional(),
+            })
+            .optional(),
+        }),
+      )
       .query(async ({ input }) => {
-        return await serializeProxyServer(await proxyStore.get(input.proxyId));
+        return await serializeProxyServer(
+          await proxyStore.get(input.proxyId),
+          input.queryParams,
+        );
       }),
 
     create: t.procedure.input(ProxyCreateSchema).mutation(async ({ input }) => {

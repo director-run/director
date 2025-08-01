@@ -11,6 +11,11 @@ import type {
   ProxyTargetAttributes,
 } from "@director.run/utilities/schema";
 import { Telemetry } from "@director.run/utilities/telemetry";
+import {
+  PROMPT_MANAGER_TARGET_NAME,
+  type Prompt,
+  PromptManager,
+} from "./capabilities/prompt-manager";
 import type { Database } from "./db";
 
 const logger = getLogger("ProxyServerStore");
@@ -215,5 +220,29 @@ export class ProxyServerStore {
     await this.db.updateServer(proxyId, serverName, attributes);
 
     return target;
+  }
+
+  public async addPrompt(proxyId: string, prompt: Prompt) {
+    const proxy = this.get(proxyId);
+    const promptManager = (await proxy.getTarget(
+      PROMPT_MANAGER_TARGET_NAME,
+    )) as PromptManager;
+    return await promptManager.addPromptEntry(prompt);
+  }
+
+  public async removePrompt(proxyId: string, promptName: string) {
+    const proxy = this.get(proxyId);
+    const promptManager = (await proxy.getTarget(
+      PROMPT_MANAGER_TARGET_NAME,
+    )) as PromptManager;
+    return await promptManager.removePromptEntry(promptName);
+  }
+
+  public async listPrompts(proxyId: string) {
+    const proxy = this.get(proxyId);
+    const promptManager = (await proxy.getTarget(
+      PROMPT_MANAGER_TARGET_NAME,
+    )) as PromptManager;
+    return await promptManager.listPrompts();
   }
 }

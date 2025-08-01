@@ -3,12 +3,14 @@ import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { GetPromptResult } from "@modelcontextprotocol/sdk/types.js";
 
+export const PROMPT_MANAGER_TARGET_NAME = "__prompts__";
+
 export class PromptManager extends InMemoryClient {
   private _prompts: Prompt[];
 
   constructor(prompts: Prompt[]) {
     super({
-      name: "__prompts__",
+      name: PROMPT_MANAGER_TARGET_NAME,
       server: makePromptServer(prompts),
     });
     this._prompts = [];

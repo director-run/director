@@ -129,21 +129,10 @@ export class ProxyServerStore {
     name,
     description,
     servers,
-    addToolPrefix,
-    source,
   }: {
     name: string;
     description?: string;
     servers?: ProxyTargetAttributes[];
-    addToolPrefix?: boolean;
-    source?: {
-      type: "registry";
-      entry: {
-        id: string;
-        name: string;
-        title: string;
-      };
-    };
   }): Promise<ProxyServer> {
     this.telemetry.trackEvent("proxy_created");
 
@@ -177,13 +166,8 @@ export class ProxyServerStore {
     this.telemetry.trackEvent("server_added");
 
     const proxy = this.get(proxyId);
-
     const target = await proxy.addTarget(server, params);
-
-    const proxyDbEntry = await this.db.getProxy(proxyId);
-    await this.db.updateProxy(proxyId, {
-      servers: [...proxyDbEntry.servers, server],
-    });
+    await this.db.addServer(proxyId, server);
 
     return target;
   }
@@ -195,15 +179,8 @@ export class ProxyServerStore {
     this.telemetry.trackEvent("server_removed");
 
     const proxy = this.get(proxyId);
-
     const removedTarget = await proxy.removeTarget(serverName);
-
-    const proxyDbEntry = await this.db.getProxy(proxyId);
-    await this.db.updateProxy(proxyId, {
-      servers: proxyDbEntry.servers.filter(
-        (s) => s.name.toLocaleLowerCase() !== serverName.toLocaleLowerCase(),
-      ),
-    });
+    await this.db.removeServer(proxyId, serverName);
 
     return removedTarget;
   }
@@ -216,8 +193,8 @@ export class ProxyServerStore {
 
     const proxy = this.get(proxyId);
     await proxy.update(attributes);
-
     await this.db.updateProxy(proxyId, attributes);
+
     return proxy;
   }
 
@@ -230,15 +207,7 @@ export class ProxyServerStore {
   ): Promise<ProxyTarget> {
     const proxy = this.get(proxyId);
     const target = await proxy.updateTarget(serverName, attributes);
-
-    const proxyDbEntry = await this.db.getProxy(proxyId);
-    await this.db.updateProxy(proxyId, {
-      servers: proxyDbEntry.servers.map((s) =>
-        s.name.toLocaleLowerCase() === serverName.toLocaleLowerCase()
-          ? { ...s, ...attributes }
-          : s,
-      ),
-    });
+    await this.db.updateServer(proxyId, serverName, attributes);
 
     return target;
   }

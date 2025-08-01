@@ -160,6 +160,28 @@ export class Database {
     return server;
   }
 
+  async addServer(
+    proxyId: string,
+    server: ProxyTargetAttributes,
+  ): Promise<ProxyTargetAttributes> {
+    const proxyDbEntry = await this.getProxy(proxyId);
+    await this.updateProxy(proxyId, {
+      servers: [...proxyDbEntry.servers, server],
+    });
+    return server;
+  }
+
+  async removeServer(proxyId: string, serverName: string): Promise<boolean> {
+    const proxyDbEntry = await this.getProxy(proxyId);
+    await this.updateProxy(proxyId, {
+      servers: proxyDbEntry.servers.filter(
+        (s) => s.name.toLocaleLowerCase() !== serverName.toLocaleLowerCase(),
+      ),
+    });
+
+    return true;
+  }
+
   async getAll(): Promise<ProxyServerAttributes[]> {
     const store = await readDB(this.filePath);
     return store.proxies;

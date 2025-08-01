@@ -30,6 +30,8 @@ export function McpDescriptionList({
       return <McpSseDescriptionList transport={transport} {...props} />;
     case "stdio":
       return <McpStdioDescriptionList transport={transport} {...props} />;
+    case "mem":
+      return <div>In Memory Special Case</div>;
     default:
       assertUnreachable(transport);
   }

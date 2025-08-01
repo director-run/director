@@ -1,7 +1,11 @@
 import type { ClientStatus } from "@director.run/mcp/client/abstract-client";
 import { HTTPClient } from "@director.run/mcp/client/http-client";
+import { InMemoryClient } from "@director.run/mcp/client/in-memory-client";
 import { StdioClient } from "@director.run/mcp/client/stdio-client";
-import { ProxyServer } from "@director.run/mcp/proxy/proxy-server";
+import {
+  ProxyServer,
+  type ProxyTarget,
+} from "@director.run/mcp/proxy/proxy-server";
 import type { ProxyTargetSource } from "@director.run/utilities/schema";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { getStreamablePathForProxy } from "./helpers";
@@ -11,8 +15,6 @@ type SerializedTarget = {
   status: ClientStatus;
   lastConnectedAt?: Date;
   lastErrorMessage?: string;
-  command: string;
-  type: "http" | "stdio" | "in-memory";
   transport:
     | {
         type: "http";
@@ -23,6 +25,9 @@ type SerializedTarget = {
         command: string;
         args: string[];
         env?: Record<string, string>;
+      }
+    | {
+        type: "mem";
       };
   source?: ProxyTargetSource;
   toolPrefix?: string;
@@ -57,7 +62,7 @@ export async function serializeProxyServers(proxies: ProxyServer[]) {
 }
 
 export async function serializeProxyServerTarget(
-  target: HTTPClient | StdioClient,
+  target: ProxyTarget,
   params?: {
     includeTools?: boolean;
   },
@@ -66,15 +71,12 @@ export async function serializeProxyServerTarget(
   if (params?.includeTools && target.isConnected()) {
     tools = (await target.originalListTools()).tools;
   }
-
   if (target instanceof HTTPClient) {
     return {
       name: target.name,
       status: target.status,
       lastConnectedAt: target.lastConnectedAt,
       lastErrorMessage: target.lastErrorMessage,
-      command: target.url,
-      type: "http",
       transport: {
         type: "http",
         url: target.url,
@@ -91,13 +93,26 @@ export async function serializeProxyServerTarget(
       status: target.status,
       lastConnectedAt: target.lastConnectedAt,
       lastErrorMessage: target.lastErrorMessage,
-      command: [target.command, ...(target.args ?? [])].join(" "),
-      type: "stdio",
       transport: {
         type: "stdio",
         command: target.command,
         args: target.args,
         env: target.env,
+      },
+      source: target.source,
+      toolPrefix: target.toolPrefix,
+      disabledTools: target.disabledTools,
+      disabled: target.disabled,
+      tools,
+    };
+  } else if (target instanceof InMemoryClient) {
+    return {
+      name: target.name,
+      status: target.status,
+      lastConnectedAt: target.lastConnectedAt,
+      lastErrorMessage: target.lastErrorMessage,
+      transport: {
+        type: "mem",
       },
       source: target.source,
       toolPrefix: target.toolPrefix,

@@ -53,8 +53,7 @@ export function printTargetDetails(
   const {
     name,
     status,
-    command,
-    type,
+    transport,
     lastConnectedAt,
     lastErrorMessage,
     source,
@@ -72,8 +71,8 @@ export function printTargetDetails(
     attributeTable({
       name,
       status: targetStatus(status),
-      command,
-      type,
+      type: transport.type,
+      transport: JSON.stringify(transport, null, 2),
       lastConnectedAt: lastConnectedAt?.toISOString() ?? "--",
       lastErrorMessage: lastErrorMessage ?? "--",
       sourceName: source?.name ?? "--",
@@ -119,7 +118,6 @@ export function printProxyDetails(proxy: GatewayRouterOutputs["store"]["get"]) {
   const table = makeTable([
     "name",
     "type",
-    // "url/command",
     "status",
     "lastConnectedAt",
     "lastErrorMessage",
@@ -127,8 +125,7 @@ export function printProxyDetails(proxy: GatewayRouterOutputs["store"]["get"]) {
   table.push(
     ...proxy.targets.map((target) => [
       target.name,
-      target.type,
-      // target.command,
+      target.transport.type,
       targetStatus(target.status),
       target.lastConnectedAt?.toISOString() ?? "--",
       target.lastErrorMessage ?? "--",

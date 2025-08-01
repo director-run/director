@@ -25,7 +25,7 @@ global.EventSource = eventsource.EventSource;
 
 const logger = getLogger(`ProxyServer`);
 
-type ProxyTarget = HTTPClient | StdioClient | InMemoryClient;
+export type ProxyTarget = HTTPClient | StdioClient | InMemoryClient;
 
 export class ProxyServer extends Server {
   private _targets: (HTTPClient | StdioClient)[];

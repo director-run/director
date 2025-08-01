@@ -1,7 +1,9 @@
 import { HTTPClient } from "@director.run/mcp/client/http-client";
-import { StdioClient } from "@director.run/mcp/client/stdio-client";
 import { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
-import { ProxyServer } from "@director.run/mcp/proxy/proxy-server";
+import {
+  ProxyServer,
+  type ProxyTarget,
+} from "@director.run/mcp/proxy/proxy-server";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import type {
@@ -171,7 +173,7 @@ export class ProxyServerStore {
     proxyId: string,
     server: ProxyTargetAttributes,
     params: { throwOnError: boolean } = { throwOnError: true },
-  ): Promise<HTTPClient | StdioClient> {
+  ): Promise<ProxyTarget> {
     this.telemetry.trackEvent("server_added");
 
     const proxy = this.get(proxyId);
@@ -189,7 +191,7 @@ export class ProxyServerStore {
   public async removeServer(
     proxyId: string,
     serverName: string,
-  ): Promise<HTTPClient | StdioClient> {
+  ): Promise<ProxyTarget> {
     this.telemetry.trackEvent("server_removed");
 
     const proxy = this.get(proxyId);
@@ -225,7 +227,7 @@ export class ProxyServerStore {
     attributes: Partial<
       Pick<ProxyTargetAttributes, "toolPrefix" | "disabledTools">
     >,
-  ): Promise<HTTPClient | StdioClient> {
+  ): Promise<ProxyTarget> {
     const proxy = this.get(proxyId);
     const target = await proxy.updateTarget(serverName, attributes);
 

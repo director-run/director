@@ -11,14 +11,9 @@ export type InMemoryClientParams = AbstractClientParams & {
 };
 
 export class InMemoryClient extends AbstractClient {
-  private server: Server;
-  private serverTransport: InMemoryTransport;
-  private clientTransport: InMemoryTransport;
+  protected server: Server;
 
   constructor(params: InMemoryClientParams) {
-    const [clientTransport, serverTransport] =
-      InMemoryTransport.createLinkedPair();
-
     super({
       name: params.name,
       source: params.source,
@@ -27,8 +22,6 @@ export class InMemoryClient extends AbstractClient {
       disabled: params.disabled,
     });
     this.server = params.server;
-    this.serverTransport = serverTransport;
-    this.clientTransport = clientTransport;
   }
 
   public static async createAndConnectToServer(
@@ -50,9 +43,12 @@ export class InMemoryClient extends AbstractClient {
       return false;
     }
 
+    const [clientTransport, serverTransport] =
+      InMemoryTransport.createLinkedPair();
+
     await Promise.all([
-      this.connect(this.clientTransport),
-      this.server.connect(this.serverTransport),
+      this.connect(clientTransport),
+      this.server.connect(serverTransport),
     ]);
 
     this.status = "connected";

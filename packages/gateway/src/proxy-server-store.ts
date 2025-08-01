@@ -58,19 +58,12 @@ export class ProxyServerStore {
       const proxyId = proxyConfig.id;
       logger.debug({ message: `initializing ${proxyId}`, proxyId });
 
-      const proxyServer = new ProxyServer(
-        {
-          id: proxyId,
-          name: proxyConfig.name,
-          description: proxyConfig.description ?? undefined,
-          servers: proxyConfig.servers,
-        },
-        {
-          oAuthHandler: this._oAuthHandler,
-        },
-      );
-      await proxyServer.connectTargets();
-      this.proxyServers.set(proxyId, proxyServer);
+      await this.initializeAndAddProxy({
+        id: proxyId,
+        name: proxyConfig.name,
+        description: proxyConfig.description ?? undefined,
+        servers: proxyConfig.servers,
+      });
     }
   }
 
@@ -136,25 +129,37 @@ export class ProxyServerStore {
   }): Promise<ProxyServer> {
     this.telemetry.trackEvent("proxy_created");
 
-    const newProxy = await this.db.addProxy({
+    const configEntry = await this.db.addProxy({
       name,
       description,
       servers: servers ?? [],
     });
+
+    const proxyServer = await this.initializeAndAddProxy({
+      name,
+      description,
+      servers: servers ?? [],
+      id: configEntry.id,
+    });
+    logger.info({ message: `Created new proxy`, proxyId: configEntry.id });
+    return proxyServer;
+  }
+
+  private async initializeAndAddProxy(proxy: ProxyServerAttributes) {
     const proxyServer = new ProxyServer(
       {
-        name: name,
-        id: newProxy.id,
-        servers: newProxy.servers,
-        description: newProxy.description ?? undefined,
+        name: proxy.name,
+        id: proxy.id,
+        servers: proxy.servers,
+        description: proxy.description ?? undefined,
       },
       {
         oAuthHandler: this._oAuthHandler,
       },
     );
     await proxyServer.connectTargets();
-    this.proxyServers.set(newProxy.id, proxyServer);
-    logger.info({ message: `Created new proxy`, proxyId: newProxy.id });
+    this.proxyServers.set(proxyServer.id, proxyServer);
+
     return proxyServer;
   }
 

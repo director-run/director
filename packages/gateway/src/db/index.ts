@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
 import {
   type DatabaseAttributes,
+  type PromptAttributes,
   type ProxyServerAttributes,
   type ProxyTargetAttributes,
   databaseAttributesSchema,
@@ -193,5 +194,72 @@ export class Database {
       version: "1.0.0",
       proxies: [],
     });
+  }
+
+  async addPrompt(proxyId: string, prompt: PromptAttributes) {
+    const proxy = await this.getProxy(proxyId);
+    await this.updateProxy(proxyId, {
+      prompts: [...(proxy.prompts || []), prompt],
+    });
+    return prompt;
+  }
+
+  async getPrompts(proxyId: string): Promise<PromptAttributes[]> {
+    const proxy = await this.getProxy(proxyId);
+    return proxy.prompts || [];
+  }
+
+  async removePrompt(proxyId: string, promptName: string): Promise<boolean> {
+    const proxy = await this.getProxy(proxyId);
+    const updatedPrompts = (proxy.prompts || []).filter(
+      (p) => p.name !== promptName,
+    );
+
+    if (updatedPrompts.length === (proxy.prompts || []).length) {
+      throw new Error(`Prompt ${promptName} not found`);
+    }
+
+    await this.updateProxy(proxyId, {
+      prompts: updatedPrompts,
+    });
+    return true;
+  }
+
+  async updatePrompt(
+    proxyId: string,
+    promptName: string,
+    prompt: Partial<PromptAttributes>,
+  ): Promise<PromptAttributes> {
+    const proxy = await this.getProxy(proxyId);
+    const promptIndex = (proxy.prompts || []).findIndex(
+      (p) => p.name === promptName,
+    );
+
+    if (promptIndex === -1) {
+      throw new Error(`Prompt ${promptName} not found`);
+    }
+
+    const currentPrompt = proxy.prompts?.[promptIndex];
+    if (!currentPrompt) {
+      throw new Error(`Prompt ${promptName} not found`);
+    }
+
+    const updatedPrompt: PromptAttributes = {
+      ...currentPrompt,
+      ...(prompt.title && { title: prompt.title }),
+      ...(prompt.description !== undefined && {
+        description: prompt.description,
+      }),
+      ...(prompt.body && { body: prompt.body }),
+    };
+
+    const updatedPrompts = [...(proxy.prompts || [])];
+    updatedPrompts[promptIndex] = updatedPrompt;
+
+    await this.updateProxy(proxyId, {
+      prompts: updatedPrompts,
+    });
+
+    return updatedPrompt;
   }
 }

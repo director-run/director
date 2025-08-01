@@ -112,10 +112,18 @@ export const proxyTargetAttributesSchema = z.object({
 
 export type ProxyTargetAttributes = z.infer<typeof proxyTargetAttributesSchema>;
 
+export const promptSchema = z.object({
+  id: requiredStringSchema,
+  title: requiredStringSchema,
+  description: z.string().trim().optional(),
+  body: requiredStringSchema,
+});
+
 export const proxyServerAttributesSchema = z.object({
   id: requiredStringSchema,
   name: requiredStringSchema,
   description: z.string().trim().optional(),
+  prompts: z.array(promptSchema).optional(),
   servers: z.array(proxyTargetAttributesSchema),
 });
 

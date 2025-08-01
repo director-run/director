@@ -115,13 +115,14 @@ export type ProxyTargetAttributes = z.infer<typeof proxyTargetAttributesSchema>;
 export const proxyServerAttributesSchema = z.object({
   id: requiredStringSchema,
   name: requiredStringSchema,
-  description: z.string().trim().nullish(),
+  description: z.string().trim().optional(),
   servers: z.array(proxyTargetAttributesSchema),
 });
 
 export type ProxyServerAttributes = z.infer<typeof proxyServerAttributesSchema>;
 
 export const databaseAttributesSchema = z.object({
+  version: z.string().optional(),
   proxies: z.array(proxyServerAttributesSchema),
 });
 

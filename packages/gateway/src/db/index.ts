@@ -32,6 +32,7 @@ export class Database {
 
     if (!existsSync(filePath)) {
       await writeDB(filePath, {
+        version: "1.0.0",
         proxies: [],
       });
     }
@@ -189,6 +190,7 @@ export class Database {
 
   async purge(): Promise<void> {
     await writeDB(this.filePath, {
+      version: "1.0.0",
       proxies: [],
     });
   }

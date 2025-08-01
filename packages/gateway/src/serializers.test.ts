@@ -28,19 +28,23 @@ describe("serializers", () => {
         targets: [
           {
             name: "streamable",
-            command: `http://localhost:4522/mcp`,
             status: "disconnected",
             lastConnectedAt: undefined,
             lastErrorMessage: undefined,
-            type: "http",
+            transport: {
+              type: "http",
+              url: `http://localhost:4522/mcp`,
+            },
           },
           {
             name: "sse",
-            command: `http://localhost:4523/sse`,
             status: "disconnected",
             lastConnectedAt: undefined,
             lastErrorMessage: undefined,
-            type: "http",
+            transport: {
+              type: "http",
+              url: `http://localhost:4523/sse`,
+            },
           },
         ],
       });

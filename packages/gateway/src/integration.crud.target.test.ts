@@ -37,10 +37,10 @@ describe("Proxy Target CRUD operations", () => {
       expect(retrievedTarget).toBeDefined();
       expect(retrievedTarget.name).toBe("echo");
       expect(retrievedTarget.status).toBe("connected");
-      expect(retrievedTarget.command).toBe(
-        (harness.getConfigForTarget("echo").transport as HTTPTransport).url,
+      expect(retrievedTarget.transport.type).toBe("http");
+      expect(retrievedTarget.transport).toEqual(
+        harness.getConfigForTarget("echo").transport,
       );
-      expect(retrievedTarget.type).toBe("http");
     });
 
     it("should return tools if includeTools is true", async () => {
@@ -79,8 +79,11 @@ describe("Proxy Target CRUD operations", () => {
         });
 
         expect(target.status).toBe("unauthorized");
-        expect(target.command).toBe("https://mcp.notion.com/mcp");
-        expect(target.type).toBe("http");
+
+        expect(target.transport).toEqual({
+          type: "http",
+          url: `https://mcp.notion.com/mcp`,
+        });
       });
 
       it("should update the configuration file", async () => {
@@ -246,8 +249,8 @@ describe("Proxy Target CRUD operations", () => {
 
       it("should succeed", () => {
         expect(addServerResponse.status).toBe("connected");
-        expect(addServerResponse.command).toBe(
-          (harness.getConfigForTarget("echo").transport as HTTPTransport).url,
+        expect(addServerResponse.transport).toEqual(
+          harness.getConfigForTarget("echo").transport,
         );
       });
 

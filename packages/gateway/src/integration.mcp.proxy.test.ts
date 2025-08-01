@@ -4,7 +4,6 @@ import {
   expectToolCallToHaveResult,
   expectUnknownToolError,
 } from "@director.run/mcp/test/helpers";
-import type { ProxyServerAttributes } from "@director.run/utilities/schema";
 import {
   afterAll,
   afterEach,
@@ -14,6 +13,7 @@ import {
   expect,
   it,
 } from "vitest";
+import { type GatewayRouterOutputs } from "./client";
 import { IntegrationTestHarness } from "./test/integration";
 
 enum Transport {
@@ -33,7 +33,7 @@ async function createProxyClient(transport: Transport, proxyId: string) {
 
 describe("MCP Proxy", () => {
   let harness: IntegrationTestHarness;
-  let proxy: ProxyServerAttributes;
+  let proxy: GatewayRouterOutputs["store"]["create"];
 
   beforeAll(async () => {
     harness = await IntegrationTestHarness.start();

@@ -5,6 +5,10 @@ import {
   expectUnknownToolError,
 } from "@director.run/mcp/test/helpers";
 import {
+  expectGetPromptToReturn,
+  expectListPromptsToReturn,
+} from "@director.run/mcp/test/helpers";
+import {
   afterAll,
   afterEach,
   beforeAll,
@@ -14,6 +18,7 @@ import {
   it,
 } from "vitest";
 import { type GatewayRouterOutputs } from "./client";
+import { makePrompt } from "./test/fixtures";
 import { IntegrationTestHarness } from "./test/integration";
 
 enum Transport {
@@ -257,6 +262,78 @@ describe("MCP Proxy", () => {
             client: proxyClient,
             toolName: "ping",
             arguments: {},
+          });
+        });
+      });
+
+      describe("prompts", () => {
+        const prompt = makePrompt();
+
+        beforeEach(async () => {
+          await harness.client.store.addPrompt.mutate({
+            proxyId: proxy.id,
+            prompt,
+          });
+        });
+
+        it("should return the prompt", async () => {
+          await expectGetPromptToReturn({
+            client: proxyClient,
+            promptName: prompt.name,
+            expectedBody: prompt.body,
+          });
+        });
+
+        it("should be able to list prompts", async () => {
+          await expectListPromptsToReturn({
+            client: proxyClient,
+            expectedPrompts: [
+              {
+                name: prompt.name,
+                title: prompt.title,
+                description: prompt.description,
+              },
+            ],
+          });
+        });
+
+        it("should be able to update a prompt", async () => {
+          await harness.client.store.updatePrompt.mutate({
+            proxyId: proxy.id,
+            promptName: prompt.name,
+            prompt: {
+              title: "Updated Title",
+              description: "Updated description",
+              body: "Updated body",
+            },
+          });
+
+          await expectGetPromptToReturn({
+            client: proxyClient,
+            promptName: prompt.name,
+            expectedBody: "Updated body",
+          });
+
+          await expectListPromptsToReturn({
+            client: proxyClient,
+            expectedPrompts: [
+              {
+                name: prompt.name,
+                title: "Updated Title",
+                description: "Updated description",
+              },
+            ],
+          });
+        });
+
+        it("should be able to remove a prompt", async () => {
+          await harness.client.store.removePrompt.mutate({
+            proxyId: proxy.id,
+            promptName: prompt.name,
+          });
+          await expectListPromptsToReturn({
+            client: proxyClient,
+            expectedPrompts: [],
           });
         });
       });

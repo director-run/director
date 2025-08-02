@@ -83,7 +83,7 @@ export function setupPromptHandlers(
             promptToClientMap.set(prompt.name, connectedClient);
             return {
               ...prompt,
-              description: `[${connectedClient.name}] ${prompt.description || ""}`,
+              description: prompt.description || "",
             };
           });
           allPrompts.push(...promptsWithSource);

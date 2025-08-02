@@ -42,6 +42,8 @@ export async function expectListPromptsToReturn(params: {
   }) {
     const { client, promptName, expectedBody } = params;
 
+    // TODO: this needs to be called first otherwise the prompt is not available as it's lazy caching
+    await client.listPrompts();
     const result = await client.getPrompt({
       name: promptName,
     });

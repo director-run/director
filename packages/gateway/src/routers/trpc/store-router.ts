@@ -29,6 +29,13 @@ const TargetUpdateSchema = proxyTargetAttributesSchema
   })
   .partial();
 
+const PromptSchema = z.object({
+  name: z.string(),
+  title: z.string(),
+  description: z.string().optional(),
+  body: z.string(),
+});
+
 export function createProxyStoreRouter({
   proxyStore,
 }: { proxyStore: ProxyServerStore }) {
@@ -207,6 +214,66 @@ export function createProxyStoreRouter({
         );
         await restartConnectedClients(proxy);
         return await serializeProxyServerTarget(server);
+      }),
+
+    addPrompt: t.procedure
+      .input(
+        z.object({
+          proxyId: z.string(),
+          prompt: PromptSchema,
+        }),
+      )
+      .mutation(async ({ input }) => {
+        const proxy = await proxyStore.get(input.proxyId);
+        const prompt = await proxyStore.addPrompt(input.proxyId, input.prompt);
+        await restartConnectedClients(proxy);
+        return prompt;
+      }),
+
+    removePrompt: t.procedure
+      .input(
+        z.object({
+          proxyId: z.string(),
+          promptName: z.string(),
+        }),
+      )
+      .mutation(async ({ input }) => {
+        const proxy = await proxyStore.get(input.proxyId);
+        const result = await proxyStore.removePrompt(
+          input.proxyId,
+          input.promptName,
+        );
+        await restartConnectedClients(proxy);
+        return result;
+      }),
+
+    updatePrompt: t.procedure
+      .input(
+        z.object({
+          proxyId: z.string(),
+          promptName: z.string(),
+          prompt: PromptSchema.partial(),
+        }),
+      )
+      .mutation(async ({ input }) => {
+        const proxy = await proxyStore.get(input.proxyId);
+        const prompt = await proxyStore.updatePrompt(
+          input.proxyId,
+          input.promptName,
+          input.prompt,
+        );
+        await restartConnectedClients(proxy);
+        return prompt;
+      }),
+
+    listPrompts: t.procedure
+      .input(
+        z.object({
+          proxyId: z.string(),
+        }),
+      )
+      .query(async ({ input }) => {
+        return await proxyStore.listPrompts(input.proxyId);
       }),
   });
 }

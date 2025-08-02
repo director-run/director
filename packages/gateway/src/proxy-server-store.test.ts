@@ -43,8 +43,9 @@ describe("ProxyServerStore", () => {
         { throwOnError: false },
       );
 
-      const httpClient = proxyServerStore.get("test-proxy")
-        .targets[0] as HTTPClient;
+      const httpClient = (await proxyServerStore
+        .get("test-proxy")
+        .getTarget("http1")) as HTTPClient;
       httpClient.completeAuthFlow = vi.fn();
 
       await proxyServerStore.onAuthorizationSuccess(serverUrl, "some-code");
@@ -62,7 +63,7 @@ describe("ProxyServerStore", () => {
       expect(target.name).toBe("foo");
 
       const proxy = proxyServerStore.get("test-proxy");
-      expect(proxy.targets).toHaveLength(1);
+      expect(proxy.targets).toHaveLength(2); // 1 server + 1 prompt manager
 
       const db = await Database.connect(dbPath);
       const proxyEntry = await db.getProxy("test-proxy");
@@ -82,7 +83,7 @@ describe("ProxyServerStore", () => {
         "foo",
       );
       const proxy = await proxyServerStore.get("test-proxy");
-      expect(proxy.targets).toHaveLength(0);
+      expect(proxy.targets).toHaveLength(1); // Only prompt manager remains
       expect(removedTarget.status).toBe("disconnected");
 
       const db = await Database.connect(dbPath);

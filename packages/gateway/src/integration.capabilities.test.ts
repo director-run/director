@@ -1,0 +1,473 @@
+import {} from "@director.run/mcp/test/fixtures";
+import {} from "@director.run/mcp/transport";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import type { Prompt } from "./capabilities/prompt-manager";
+import type { GatewayRouterOutputs } from "./client";
+import { IntegrationTestHarness } from "./test/integration";
+
+describe("Prompt Capabilities", () => {
+  let harness: IntegrationTestHarness;
+
+  beforeAll(async () => {
+    harness = await IntegrationTestHarness.start();
+  });
+
+  afterAll(async () => {
+    await harness.stop();
+  });
+
+  describe("addPrompt", () => {
+    let proxy: GatewayRouterOutputs["store"]["create"];
+
+    beforeEach(async () => {
+      await harness.purge();
+      proxy = await harness.client.store.create.mutate({
+        name: "Test Proxy",
+        servers: [],
+      });
+    });
+
+    it("should add a prompt successfully", async () => {
+      const prompt: Prompt = {
+        name: "test-prompt",
+        title: "Test Prompt",
+        description: "A test prompt",
+        body: "This is a test prompt body",
+      };
+
+      const addedPrompt = await harness.client.store.addPrompt.mutate({
+        proxyId: proxy.id,
+        prompt,
+      });
+
+      expect(addedPrompt).toEqual(prompt);
+    });
+
+    it("should add multiple prompts to a proxy", async () => {
+      const prompt1: Prompt = {
+        name: "prompt-1",
+        title: "First Prompt",
+        description: "First test prompt",
+        body: "First prompt body",
+      };
+
+      const prompt2: Prompt = {
+        name: "prompt-2",
+        title: "Second Prompt",
+        description: "Second test prompt",
+        body: "Second prompt body",
+      };
+
+      await harness.client.store.addPrompt.mutate({
+        proxyId: proxy.id,
+        prompt: prompt1,
+      });
+
+      await harness.client.store.addPrompt.mutate({
+        proxyId: proxy.id,
+        prompt: prompt2,
+      });
+
+      const prompts = await harness.client.store.listPrompts.query({
+        proxyId: proxy.id,
+      });
+
+      expect(prompts).toHaveLength(2);
+      expect(prompts).toEqual([prompt1, prompt2]);
+    });
+
+    it("should throw error when proxy doesn't exist", async () => {
+      const prompt: Prompt = {
+        name: "test-prompt",
+        title: "Test Prompt",
+        description: "A test prompt",
+        body: "This is a test prompt body",
+      };
+
+      await expect(
+        harness.client.store.addPrompt.mutate({
+          proxyId: "non-existent",
+          prompt,
+        }),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("listPrompts", () => {
+    let proxy: GatewayRouterOutputs["store"]["create"];
+
+    beforeEach(async () => {
+      await harness.purge();
+      proxy = await harness.client.store.create.mutate({
+        name: "Test Proxy",
+        servers: [],
+      });
+    });
+
+    it("should return empty array when proxy has no prompts", async () => {
+      const prompts = await harness.client.store.listPrompts.query({
+        proxyId: proxy.id,
+      });
+
+      expect(prompts).toEqual([]);
+    });
+
+    it("should return all prompts for a proxy", async () => {
+      const prompt1: Prompt = {
+        name: "prompt-1",
+        title: "First Prompt",
+        description: "First test prompt",
+        body: "First prompt body",
+      };
+
+      const prompt2: Prompt = {
+        name: "prompt-2",
+        title: "Second Prompt",
+        description: "Second test prompt",
+        body: "Second prompt body",
+      };
+
+      await harness.client.store.addPrompt.mutate({
+        proxyId: proxy.id,
+        prompt: prompt1,
+      });
+
+      await harness.client.store.addPrompt.mutate({
+        proxyId: proxy.id,
+        prompt: prompt2,
+      });
+
+      const prompts = await harness.client.store.listPrompts.query({
+        proxyId: proxy.id,
+      });
+
+      expect(prompts).toHaveLength(2);
+      expect(prompts).toEqual([prompt1, prompt2]);
+    });
+
+    it("should throw error when proxy doesn't exist", async () => {
+      await expect(
+        harness.client.store.listPrompts.query({
+          proxyId: "non-existent",
+        }),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("removePrompt", () => {
+    let proxy: GatewayRouterOutputs["store"]["create"];
+
+    beforeEach(async () => {
+      await harness.purge();
+      proxy = await harness.client.store.create.mutate({
+        name: "Test Proxy",
+        servers: [],
+      });
+    });
+
+    it("should remove a prompt from a proxy", async () => {
+      const prompt: Prompt = {
+        name: "prompt-to-remove",
+        title: "Prompt to Remove",
+        description: "A prompt to remove",
+        body: "This prompt will be removed",
+      };
+
+      await harness.client.store.addPrompt.mutate({
+        proxyId: proxy.id,
+        prompt,
+      });
+
+      const result = await harness.client.store.removePrompt.mutate({
+        proxyId: proxy.id,
+        promptName: "prompt-to-remove",
+      });
+
+      expect(result).toBe(true);
+
+      // Verify the prompt was removed
+      const prompts = await harness.client.store.listPrompts.query({
+        proxyId: proxy.id,
+      });
+      expect(prompts).toHaveLength(0);
+    });
+
+    it("should remove specific prompt when multiple prompts exist", async () => {
+      const prompt1: Prompt = {
+        name: "prompt-1",
+        title: "First Prompt",
+        description: "First test prompt",
+        body: "First prompt body",
+      };
+
+      const prompt2: Prompt = {
+        name: "prompt-2",
+        title: "Second Prompt",
+        description: "Second test prompt",
+        body: "Second prompt body",
+      };
+
+      await harness.client.store.addPrompt.mutate({
+        proxyId: proxy.id,
+        prompt: prompt1,
+      });
+
+      await harness.client.store.addPrompt.mutate({
+        proxyId: proxy.id,
+        prompt: prompt2,
+      });
+
+      const result = await harness.client.store.removePrompt.mutate({
+        proxyId: proxy.id,
+        promptName: "prompt-1",
+      });
+
+      expect(result).toBe(true);
+
+      // Verify only the specified prompt was removed
+      const prompts = await harness.client.store.listPrompts.query({
+        proxyId: proxy.id,
+      });
+      expect(prompts).toHaveLength(1);
+      expect(prompts[0]).toEqual(prompt2);
+    });
+
+    it("should throw error when prompt doesn't exist", async () => {
+      await expect(
+        harness.client.store.removePrompt.mutate({
+          proxyId: proxy.id,
+          promptName: "non-existent",
+        }),
+      ).rejects.toThrow();
+    });
+
+    it("should throw error when proxy doesn't exist", async () => {
+      await expect(
+        harness.client.store.removePrompt.mutate({
+          proxyId: "non-existent",
+          promptName: "test-prompt",
+        }),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("updatePrompt", () => {
+    let proxy: GatewayRouterOutputs["store"]["create"];
+
+    beforeEach(async () => {
+      await harness.purge();
+      proxy = await harness.client.store.create.mutate({
+        name: "Test Proxy",
+        servers: [],
+      });
+    });
+
+    it("should update prompt title", async () => {
+      const originalPrompt: Prompt = {
+        name: "test-prompt",
+        title: "Original Title",
+        description: "Original description",
+        body: "Original body",
+      };
+
+      await harness.client.store.addPrompt.mutate({
+        proxyId: proxy.id,
+        prompt: originalPrompt,
+      });
+
+      const updatedPrompt = await harness.client.store.updatePrompt.mutate({
+        proxyId: proxy.id,
+        promptName: "test-prompt",
+        prompt: {
+          title: "Updated Title",
+        },
+      });
+
+      expect(updatedPrompt).toEqual({
+        ...originalPrompt,
+        title: "Updated Title",
+      });
+
+      // Verify the prompt was updated in the database
+      const prompts = await harness.client.store.listPrompts.query({
+        proxyId: proxy.id,
+      });
+      expect(prompts).toHaveLength(1);
+      expect((prompts[0] as Prompt).title).toBe("Updated Title");
+      expect((prompts[0] as Prompt).description).toBe("Original description");
+      expect((prompts[0] as Prompt).body).toBe("Original body");
+    });
+
+    it("should update prompt description", async () => {
+      const originalPrompt: Prompt = {
+        name: "test-prompt",
+        title: "Test Title",
+        description: "Original description",
+        body: "Original body",
+      };
+
+      await harness.client.store.addPrompt.mutate({
+        proxyId: proxy.id,
+        prompt: originalPrompt,
+      });
+
+      const updatedPrompt = await harness.client.store.updatePrompt.mutate({
+        proxyId: proxy.id,
+        promptName: "test-prompt",
+        prompt: {
+          description: "Updated description",
+        },
+      });
+
+      expect(updatedPrompt).toEqual({
+        ...originalPrompt,
+        description: "Updated description",
+      });
+    });
+
+    it("should update prompt body", async () => {
+      const originalPrompt: Prompt = {
+        name: "test-prompt",
+        title: "Test Title",
+        description: "Test description",
+        body: "Original body",
+      };
+
+      await harness.client.store.addPrompt.mutate({
+        proxyId: proxy.id,
+        prompt: originalPrompt,
+      });
+
+      const updatedPrompt = await harness.client.store.updatePrompt.mutate({
+        proxyId: proxy.id,
+        promptName: "test-prompt",
+        prompt: {
+          body: "Updated body content",
+        },
+      });
+
+      expect(updatedPrompt).toEqual({
+        ...originalPrompt,
+        body: "Updated body content",
+      });
+    });
+
+    it("should update multiple fields at once", async () => {
+      const originalPrompt: Prompt = {
+        name: "test-prompt",
+        title: "Original Title",
+        description: "Original description",
+        body: "Original body",
+      };
+
+      await harness.client.store.addPrompt.mutate({
+        proxyId: proxy.id,
+        prompt: originalPrompt,
+      });
+
+      const updatedPrompt = await harness.client.store.updatePrompt.mutate({
+        proxyId: proxy.id,
+        promptName: "test-prompt",
+        prompt: {
+          title: "Updated Title",
+          description: "Updated description",
+          body: "Updated body",
+        },
+      });
+
+      expect(updatedPrompt).toEqual({
+        ...originalPrompt,
+        title: "Updated Title",
+        description: "Updated description",
+        body: "Updated body",
+      });
+    });
+
+    it("should handle empty update object", async () => {
+      const originalPrompt: Prompt = {
+        name: "test-prompt",
+        title: "Test Title",
+        description: "Test description",
+        body: "Test body",
+      };
+
+      await harness.client.store.addPrompt.mutate({
+        proxyId: proxy.id,
+        prompt: originalPrompt,
+      });
+
+      const updatedPrompt = await harness.client.store.updatePrompt.mutate({
+        proxyId: proxy.id,
+        promptName: "test-prompt",
+        prompt: {},
+      });
+
+      expect(updatedPrompt).toEqual(originalPrompt);
+    });
+
+    it("should throw error when prompt doesn't exist", async () => {
+      await expect(
+        harness.client.store.updatePrompt.mutate({
+          proxyId: proxy.id,
+          promptName: "non-existent",
+          prompt: { title: "Updated" },
+        }),
+      ).rejects.toThrow();
+    });
+
+    it("should throw error when proxy doesn't exist", async () => {
+      await expect(
+        harness.client.store.updatePrompt.mutate({
+          proxyId: "non-existent",
+          promptName: "test-prompt",
+          prompt: { title: "Updated" },
+        }),
+      ).rejects.toThrow();
+    });
+
+    it("should preserve other prompts when updating one", async () => {
+      const prompt1: Prompt = {
+        name: "prompt-1",
+        title: "First Prompt",
+        description: "First description",
+        body: "First body",
+      };
+
+      const prompt2: Prompt = {
+        name: "prompt-2",
+        title: "Second Prompt",
+        description: "Second description",
+        body: "Second body",
+      };
+
+      await harness.client.store.addPrompt.mutate({
+        proxyId: proxy.id,
+        prompt: prompt1,
+      });
+
+      await harness.client.store.addPrompt.mutate({
+        proxyId: proxy.id,
+        prompt: prompt2,
+      });
+
+      await harness.client.store.updatePrompt.mutate({
+        proxyId: proxy.id,
+        promptName: "prompt-1",
+        prompt: {
+          title: "Updated First Prompt",
+        },
+      });
+
+      // Verify prompt1 was updated
+      const prompts = await harness.client.store.listPrompts.query({
+        proxyId: proxy.id,
+      });
+      expect(prompts).toHaveLength(2);
+      expect(prompts[0]).toEqual({
+        ...prompt1,
+        title: "Updated First Prompt",
+      });
+      expect(prompts[1]).toEqual(prompt2); // prompt2 should remain unchanged
+    });
+  });
+});

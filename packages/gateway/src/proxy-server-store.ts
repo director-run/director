@@ -162,6 +162,11 @@ export class ProxyServerStore {
         oAuthHandler: this._oAuthHandler,
       },
     );
+
+    // Add any existing prompts to the proxy server
+    const prompts = await this.db.getPrompts(proxy.id);
+    await proxyServer.addTarget(new PromptManager(prompts));
+
     await proxyServer.connectTargets();
     this.proxyServers.set(proxyServer.id, proxyServer);
 
@@ -227,6 +232,7 @@ export class ProxyServerStore {
     const promptManager = (await proxy.getTarget(
       PROMPT_MANAGER_TARGET_NAME,
     )) as PromptManager;
+    await this.db.addPrompt(proxyId, prompt);
     return await promptManager.addPromptEntry(prompt);
   }
 
@@ -235,14 +241,29 @@ export class ProxyServerStore {
     const promptManager = (await proxy.getTarget(
       PROMPT_MANAGER_TARGET_NAME,
     )) as PromptManager;
-    return await promptManager.removePromptEntry(promptName);
+    await this.db.removePrompt(proxyId, promptName);
+    await promptManager.removePromptEntry(promptName);
+    return true;
   }
 
-  public async listPrompts(proxyId: string) {
+  public async updatePrompt(
+    proxyId: string,
+    promptName: string,
+    prompt: Partial<Pick<Prompt, "title" | "description" | "body">>,
+  ) {
     const proxy = this.get(proxyId);
     const promptManager = (await proxy.getTarget(
       PROMPT_MANAGER_TARGET_NAME,
     )) as PromptManager;
-    return await promptManager.listPrompts();
+    await this.db.updatePrompt(proxyId, promptName, prompt);
+    return await promptManager.updatePrompt(promptName, prompt);
+  }
+
+  public async listPrompts(proxyId: string): Promise<Prompt[]> {
+    const proxy = this.get(proxyId);
+    const promptManager = (await proxy.getTarget(
+      PROMPT_MANAGER_TARGET_NAME,
+    )) as PromptManager;
+    return promptManager.prompts;
   }
 }

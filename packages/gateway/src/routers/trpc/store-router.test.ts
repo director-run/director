@@ -1,5 +1,3 @@
-import { InMemoryClient } from "@director.run/mcp/client/in-memory-client";
-import { makeEchoServer } from "@director.run/mcp/test/fixtures";
 import { type CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { GatewayRouterOutputs } from "../../client";
@@ -26,21 +24,12 @@ describe("Installer Router", () => {
   });
 
   describe("get", () => {
-    beforeEach(async () => {
-      await harness.gateway.proxyStore.get(proxy.id).addTarget(
-        new InMemoryClient({
-          name: "__prompts__",
-          server: makeEchoServer(),
-        }),
-      );
-    });
-
     it("should not return in memory targets by default", async () => {
       const ret = await harness.client.store.get.query({
         proxyId: proxy.id,
       });
-      expect(proxy.targets).toHaveLength(1);
-      expect(proxy.targets).not.toContainEqual(
+      expect(ret.targets).toHaveLength(1); // Only echo server, prompt manager is filtered out
+      expect(ret.targets).not.toContainEqual(
         expect.objectContaining({ name: "__prompts__" }),
       );
     });

@@ -17,6 +17,10 @@ export class PromptManager extends InMemoryClient {
     this._prompts = _.cloneDeep(prompts);
   }
 
+  get prompts() {
+    return this._prompts;
+  }
+
   async addPromptEntry(prompt: Prompt) {
     const existingPrompt = this._prompts.find((p) => p.name === prompt.name);
 

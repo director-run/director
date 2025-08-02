@@ -308,6 +308,27 @@ describe("Prompt Capabilities", () => {
       });
     });
 
+    it("should update the config file when a prompt is updated", async () => {
+      const updatedPrompt = await harness.client.store.updatePrompt.mutate({
+        proxyId: proxy.id,
+        promptName: originalPrompt.name,
+        prompt: {
+          title: "Updated Title",
+          description: "Updated description",
+          body: "Updated body",
+        },
+      });
+      const config = await harness.database.getPrompts(proxy.id);
+      expect(config).toEqual([
+        {
+          name: originalPrompt.name,
+          title: "Updated Title",
+          description: "Updated description",
+          body: "Updated body",
+        },
+      ]);
+    });
+
     it("should handle empty update object", async () => {
       const updatedPrompt = await harness.client.store.updatePrompt.mutate({
         proxyId: proxy.id,

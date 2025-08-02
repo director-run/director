@@ -19,6 +19,8 @@ describe("Prompt Capabilities", () => {
 
   describe("addPrompt", () => {
     let proxy: GatewayRouterOutputs["store"]["create"];
+    let prompt: Prompt;
+    let addedPrompt: GatewayRouterOutputs["store"]["addPrompt"];
 
     beforeEach(async () => {
       await harness.purge();
@@ -26,27 +28,25 @@ describe("Prompt Capabilities", () => {
         name: "Test Proxy",
         servers: [],
       });
-    });
+      prompt = makePrompt();
 
-    it("should add a prompt successfully", async () => {
-      const prompt = makePrompt();
-
-      const addedPrompt = await harness.client.store.addPrompt.mutate({
+      addedPrompt = await harness.client.store.addPrompt.mutate({
         proxyId: proxy.id,
         prompt,
       });
+    });
 
+    it("should add a prompt successfully", () => {
       expect(addedPrompt).toEqual(prompt);
     });
 
-    it("should add multiple prompts to a proxy", async () => {
-      const prompt1 = makePrompt();
-      const prompt2 = makePrompt();
+    it("should update the config file when a prompt is added", async () => {
+      const config = await harness.database.getPrompts(proxy.id);
+      expect(config).toEqual([prompt]);
+    });
 
-      await harness.client.store.addPrompt.mutate({
-        proxyId: proxy.id,
-        prompt: prompt1,
-      });
+    it("should add multiple prompts to a proxy", async () => {
+      const prompt2 = makePrompt();
 
       await harness.client.store.addPrompt.mutate({
         proxyId: proxy.id,
@@ -58,12 +58,10 @@ describe("Prompt Capabilities", () => {
       });
 
       expect(prompts).toHaveLength(2);
-      expect(prompts).toEqual([prompt1, prompt2]);
+      expect(prompts).toEqual([prompt, prompt2]);
     });
 
     it("should throw error when proxy doesn't exist", async () => {
-      const prompt = makePrompt();
-
       await expect(
         harness.client.store.addPrompt.mutate({
           proxyId: "non-existent",
@@ -125,6 +123,8 @@ describe("Prompt Capabilities", () => {
 
   describe("removePrompt", () => {
     let proxy: GatewayRouterOutputs["store"]["create"];
+    let prompt: Prompt;
+    let result: GatewayRouterOutputs["store"]["removePrompt"];
 
     beforeEach(async () => {
       await harness.purge();
@@ -132,33 +132,29 @@ describe("Prompt Capabilities", () => {
         name: "Test Proxy",
         servers: [],
       });
-    });
-
-    it("should remove a prompt from a proxy", async () => {
-      const prompt: Prompt = {
-        name: "prompt-to-remove",
-        title: "Prompt to Remove",
-        description: "A prompt to remove",
-        body: "This prompt will be removed",
-      };
-
+      prompt = makePrompt();
       await harness.client.store.addPrompt.mutate({
         proxyId: proxy.id,
         prompt,
       });
 
-      const result = await harness.client.store.removePrompt.mutate({
+      result = await harness.client.store.removePrompt.mutate({
         proxyId: proxy.id,
-        promptName: "prompt-to-remove",
+        promptName: prompt.name,
       });
+    });
 
+    it("should remove a prompt from a proxy", async () => {
       expect(result).toBe(true);
-
-      // Verify the prompt was removed
       const prompts = await harness.client.store.listPrompts.query({
         proxyId: proxy.id,
       });
       expect(prompts).toHaveLength(0);
+    });
+
+    it("should update the config file when a prompt is removed", async () => {
+      const config = await harness.database.getPrompts(proxy.id);
+      expect(config).toEqual([]);
     });
 
     it("should remove specific prompt when multiple prompts exist", async () => {
@@ -252,10 +248,10 @@ describe("Prompt Capabilities", () => {
         title: "Updated Title",
       });
 
-      // Verify the prompt was updated in the database
       const prompts = await harness.client.store.listPrompts.query({
         proxyId: proxy.id,
       });
+
       expect(prompts).toHaveLength(1);
       expect((prompts[0] as Prompt).title).toBe("Updated Title");
       expect((prompts[0] as Prompt).description).toBe(

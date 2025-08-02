@@ -1,3 +1,6 @@
+import type { Prompt } from "../capabilities/prompt-manager";
+import { faker } from "@faker-js/faker";
+
 export const makeHTTPTargetConfig = (params: { name: string; url: string; headers?: Record<string, string> }) => ({
   name: params.name,
   transport: {
@@ -35,3 +38,14 @@ export function makeFooBarServerStdioConfig() {
   });
 }
 
+export function makePrompt(params: Partial<Prompt> = {}) {
+  return {
+    name: [faker.company.buzzNoun(), faker.company.buzzVerb()]
+      .map((w) => w.toLowerCase())
+      .join("-"),
+    title: faker.lorem.sentence(),
+    description: faker.lorem.sentence(),
+    body: faker.lorem.paragraph(),
+    ...params,
+  };
+}

@@ -4,22 +4,10 @@ import {
   expectMCPError,
 } from "@director.run/mcp/test/helpers";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
-import { faker } from "@faker-js/faker";
 import { ErrorCode as MCPErrorCode } from "@modelcontextprotocol/sdk/types.js";
 import { beforeEach, describe, expect, test } from "vitest";
-import { type Prompt, PromptManager } from "./prompt-manager";
-
-function makePrompt(params: Partial<Prompt> = {}) {
-  return {
-    name: [faker.company.buzzNoun(), faker.company.buzzVerb()]
-      .map((w) => w.toLowerCase())
-      .join("-"),
-    title: faker.lorem.sentence(),
-    description: faker.lorem.sentence(),
-    body: faker.lorem.paragraph(),
-    ...params,
-  };
-}
+import { makePrompt } from "../test/fixtures";
+import { PromptManager } from "./prompt-manager";
 
 describe("PromptManager", () => {
   let promptManager: PromptManager;

@@ -3,6 +3,7 @@ import {} from "@director.run/mcp/transport";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { Prompt } from "./capabilities/prompt-manager";
 import type { GatewayRouterOutputs } from "./client";
+import { makePrompt } from "./test/fixtures";
 import { IntegrationTestHarness } from "./test/integration";
 
 describe("Prompt Capabilities", () => {
@@ -28,12 +29,7 @@ describe("Prompt Capabilities", () => {
     });
 
     it("should add a prompt successfully", async () => {
-      const prompt: Prompt = {
-        name: "test-prompt",
-        title: "Test Prompt",
-        description: "A test prompt",
-        body: "This is a test prompt body",
-      };
+      const prompt = makePrompt();
 
       const addedPrompt = await harness.client.store.addPrompt.mutate({
         proxyId: proxy.id,
@@ -44,19 +40,8 @@ describe("Prompt Capabilities", () => {
     });
 
     it("should add multiple prompts to a proxy", async () => {
-      const prompt1: Prompt = {
-        name: "prompt-1",
-        title: "First Prompt",
-        description: "First test prompt",
-        body: "First prompt body",
-      };
-
-      const prompt2: Prompt = {
-        name: "prompt-2",
-        title: "Second Prompt",
-        description: "Second test prompt",
-        body: "Second prompt body",
-      };
+      const prompt1 = makePrompt();
+      const prompt2 = makePrompt();
 
       await harness.client.store.addPrompt.mutate({
         proxyId: proxy.id,
@@ -77,12 +62,7 @@ describe("Prompt Capabilities", () => {
     });
 
     it("should throw error when proxy doesn't exist", async () => {
-      const prompt: Prompt = {
-        name: "test-prompt",
-        title: "Test Prompt",
-        description: "A test prompt",
-        body: "This is a test prompt body",
-      };
+      const prompt = makePrompt();
 
       await expect(
         harness.client.store.addPrompt.mutate({
@@ -113,19 +93,8 @@ describe("Prompt Capabilities", () => {
     });
 
     it("should return all prompts for a proxy", async () => {
-      const prompt1: Prompt = {
-        name: "prompt-1",
-        title: "First Prompt",
-        description: "First test prompt",
-        body: "First prompt body",
-      };
-
-      const prompt2: Prompt = {
-        name: "prompt-2",
-        title: "Second Prompt",
-        description: "Second test prompt",
-        body: "Second prompt body",
-      };
+      const prompt1 = makePrompt();
+      const prompt2 = makePrompt();
 
       await harness.client.store.addPrompt.mutate({
         proxyId: proxy.id,
@@ -263,12 +232,7 @@ describe("Prompt Capabilities", () => {
     });
 
     it("should update prompt title", async () => {
-      const originalPrompt: Prompt = {
-        name: "test-prompt",
-        title: "Original Title",
-        description: "Original description",
-        body: "Original body",
-      };
+      const originalPrompt: Prompt = makePrompt();
 
       await harness.client.store.addPrompt.mutate({
         proxyId: proxy.id,
@@ -277,7 +241,7 @@ describe("Prompt Capabilities", () => {
 
       const updatedPrompt = await harness.client.store.updatePrompt.mutate({
         proxyId: proxy.id,
-        promptName: "test-prompt",
+        promptName: originalPrompt.name,
         prompt: {
           title: "Updated Title",
         },
@@ -294,17 +258,14 @@ describe("Prompt Capabilities", () => {
       });
       expect(prompts).toHaveLength(1);
       expect((prompts[0] as Prompt).title).toBe("Updated Title");
-      expect((prompts[0] as Prompt).description).toBe("Original description");
-      expect((prompts[0] as Prompt).body).toBe("Original body");
+      expect((prompts[0] as Prompt).description).toBe(
+        originalPrompt.description,
+      );
+      expect((prompts[0] as Prompt).body).toBe(originalPrompt.body);
     });
 
     it("should update prompt description", async () => {
-      const originalPrompt: Prompt = {
-        name: "test-prompt",
-        title: "Test Title",
-        description: "Original description",
-        body: "Original body",
-      };
+      const originalPrompt: Prompt = makePrompt();
 
       await harness.client.store.addPrompt.mutate({
         proxyId: proxy.id,
@@ -313,7 +274,7 @@ describe("Prompt Capabilities", () => {
 
       const updatedPrompt = await harness.client.store.updatePrompt.mutate({
         proxyId: proxy.id,
-        promptName: "test-prompt",
+        promptName: originalPrompt.name,
         prompt: {
           description: "Updated description",
         },
@@ -326,12 +287,7 @@ describe("Prompt Capabilities", () => {
     });
 
     it("should update prompt body", async () => {
-      const originalPrompt: Prompt = {
-        name: "test-prompt",
-        title: "Test Title",
-        description: "Test description",
-        body: "Original body",
-      };
+      const originalPrompt: Prompt = makePrompt();
 
       await harness.client.store.addPrompt.mutate({
         proxyId: proxy.id,
@@ -340,7 +296,7 @@ describe("Prompt Capabilities", () => {
 
       const updatedPrompt = await harness.client.store.updatePrompt.mutate({
         proxyId: proxy.id,
-        promptName: "test-prompt",
+        promptName: originalPrompt.name,
         prompt: {
           body: "Updated body content",
         },
@@ -353,12 +309,7 @@ describe("Prompt Capabilities", () => {
     });
 
     it("should update multiple fields at once", async () => {
-      const originalPrompt: Prompt = {
-        name: "test-prompt",
-        title: "Original Title",
-        description: "Original description",
-        body: "Original body",
-      };
+      const originalPrompt: Prompt = makePrompt();
 
       await harness.client.store.addPrompt.mutate({
         proxyId: proxy.id,
@@ -367,7 +318,7 @@ describe("Prompt Capabilities", () => {
 
       const updatedPrompt = await harness.client.store.updatePrompt.mutate({
         proxyId: proxy.id,
-        promptName: "test-prompt",
+        promptName: originalPrompt.name,
         prompt: {
           title: "Updated Title",
           description: "Updated description",
@@ -384,12 +335,7 @@ describe("Prompt Capabilities", () => {
     });
 
     it("should handle empty update object", async () => {
-      const originalPrompt: Prompt = {
-        name: "test-prompt",
-        title: "Test Title",
-        description: "Test description",
-        body: "Test body",
-      };
+      const originalPrompt: Prompt = makePrompt();
 
       await harness.client.store.addPrompt.mutate({
         proxyId: proxy.id,
@@ -398,7 +344,7 @@ describe("Prompt Capabilities", () => {
 
       const updatedPrompt = await harness.client.store.updatePrompt.mutate({
         proxyId: proxy.id,
-        promptName: "test-prompt",
+        promptName: originalPrompt.name,
         prompt: {},
       });
 
@@ -426,19 +372,8 @@ describe("Prompt Capabilities", () => {
     });
 
     it("should preserve other prompts when updating one", async () => {
-      const prompt1: Prompt = {
-        name: "prompt-1",
-        title: "First Prompt",
-        description: "First description",
-        body: "First body",
-      };
-
-      const prompt2: Prompt = {
-        name: "prompt-2",
-        title: "Second Prompt",
-        description: "Second description",
-        body: "Second body",
-      };
+      const prompt1: Prompt = makePrompt();
+      const prompt2: Prompt = makePrompt();
 
       await harness.client.store.addPrompt.mutate({
         proxyId: proxy.id,
@@ -452,7 +387,7 @@ describe("Prompt Capabilities", () => {
 
       await harness.client.store.updatePrompt.mutate({
         proxyId: proxy.id,
-        promptName: "prompt-1",
+        promptName: prompt1.name,
         prompt: {
           title: "Updated First Prompt",
         },

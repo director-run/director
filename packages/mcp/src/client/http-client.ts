@@ -4,7 +4,6 @@ import {
   isAppErrorWithCode,
 } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
-import type { ProxyTargetSource } from "@director.run/utilities/schema";
 import { UnauthorizedError } from "@modelcontextprotocol/sdk/client/auth.js";
 import {
   SSEClientTransport,
@@ -12,23 +11,29 @@ import {
 } from "@modelcontextprotocol/sdk/client/sse.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { OAuthHandler } from "../oauth/oauth-provider-factory";
-import { AbstractClient } from "./abstract-client";
+import { AbstractClient, type AbstractClientParams } from "./abstract-client";
 
 const logger = getLogger("client/http");
+
+export type HTTPClientParams = AbstractClientParams & {
+  url: string;
+  headers?: Record<string, string>;
+  oAuthHandler?: OAuthHandler;
+};
 
 export class HTTPClient extends AbstractClient {
   private _url: string;
   private headers?: Record<string, string>;
   private oAuthHandler?: OAuthHandler;
 
-  constructor(params: {
-    url: string;
-    name: string;
-    oAuthHandler?: OAuthHandler;
-    headers?: Record<string, string>;
-    source?: ProxyTargetSource;
-  }) {
-    super({ name: params.name, source: params.source });
+  constructor(params: HTTPClientParams) {
+    super({
+      name: params.name,
+      source: params.source,
+      toolPrefix: params.toolPrefix,
+      disabledTools: params.disabledTools,
+      disabled: params.disabled,
+    });
     this._url = params.url;
     this.oAuthHandler = params.oAuthHandler;
     this.headers = params.headers;
@@ -45,6 +50,11 @@ export class HTTPClient extends AbstractClient {
     throwOnError: boolean;
     transport: StreamableHTTPClientTransport | SSEClientTransport;
   }): Promise<boolean> {
+    if (this._disabled) {
+      this.status = "disconnected";
+      return false;
+    }
+
     try {
       await this.connect(transport);
       logger.info(
@@ -107,6 +117,13 @@ export class HTTPClient extends AbstractClient {
         redirectUrl: string;
       }
   > {
+    if (this._disabled) {
+      throw new AppError(
+        ErrorCode.BAD_REQUEST,
+        "client is disabled, re-enable it to start auth flow",
+      );
+    }
+
     if (!this.oAuthHandler) {
       throw new AppError(
         ErrorCode.UNAUTHORIZED,
@@ -157,6 +174,13 @@ export class HTTPClient extends AbstractClient {
   }
 
   async completeAuthFlow(authCode: string): Promise<void> {
+    if (this._disabled) {
+      throw new AppError(
+        ErrorCode.BAD_REQUEST,
+        "client is disabled, re-enable it to complete auth flow",
+      );
+    }
+
     if (!this.oAuthHandler) {
       throw new AppError(
         ErrorCode.UNAUTHORIZED,
@@ -194,6 +218,11 @@ export class HTTPClient extends AbstractClient {
       throwOnError: boolean;
     } = { throwOnError: true },
   ) {
+    if (this._disabled) {
+      this.status = "disconnected";
+      return false;
+    }
+
     try {
       return await this.connectToStreamable({ throwOnError: true });
     } catch (error) {

@@ -23,6 +23,12 @@ const ProxyUpdateSchema = ProxyCreateSchema.omit({
   servers: true,
 }).partial();
 
+const TargetUpdateSchema = proxyTargetAttributesSchema
+  .omit({
+    transport: true,
+  })
+  .partial();
+
 export function createProxyStoreRouter({
   proxyStore,
 }: { proxyStore: ProxyServerStore }) {
@@ -32,9 +38,21 @@ export function createProxyStoreRouter({
     }),
 
     get: t.procedure
-      .input(z.object({ proxyId: z.string() }))
+      .input(
+        z.object({
+          proxyId: z.string(),
+          queryParams: z
+            .object({
+              includeInMemoryTargets: z.boolean().optional(),
+            })
+            .optional(),
+        }),
+      )
       .query(async ({ input }) => {
-        return await serializeProxyServer(await proxyStore.get(input.proxyId));
+        return await serializeProxyServer(
+          await proxyStore.get(input.proxyId),
+          input.queryParams,
+        );
       }),
 
     create: t.procedure.input(ProxyCreateSchema).mutation(async ({ input }) => {
@@ -42,7 +60,6 @@ export function createProxyStoreRouter({
         await proxyStore.create({
           name: input.name,
           description: input.description ?? undefined,
-          addToolPrefix: input.addToolPrefix,
           servers: input.servers,
         }),
       );
@@ -60,7 +77,6 @@ export function createProxyStoreRouter({
           await proxyStore.update(input.proxyId, {
             name: input.attributes.name,
             description: input.attributes.description ?? undefined,
-            addToolPrefix: input.attributes.addToolPrefix,
           }),
         );
       }),
@@ -75,6 +91,11 @@ export function createProxyStoreRouter({
         z.object({
           proxyId: z.string(),
           server: proxyTargetAttributesSchema,
+          queryParams: z
+            .object({
+              includeTools: z.boolean().optional(),
+            })
+            .optional(),
         }),
       )
       .mutation(async ({ input }) => {
@@ -82,15 +103,68 @@ export function createProxyStoreRouter({
         const proxy = await proxyStore.get(input.proxyId);
 
         await restartConnectedClients(proxy);
-        return await serializeProxyServerTarget(target);
+        return await serializeProxyServerTarget(target, input.queryParams);
+      }),
+
+    callTool: t.procedure
+      .input(
+        z.object({
+          proxyId: z.string(),
+          serverName: z.string(),
+          toolName: z.string(),
+          arguments: z.any(),
+        }),
+      )
+      .mutation(async ({ input }) => {
+        const proxy = await proxyStore.get(input.proxyId);
+        const target = await proxy.getTarget(input.serverName);
+        return await target.originalCallTool({
+          name: input.toolName,
+          arguments: input.arguments,
+        });
+      }),
+
+    updateServer: t.procedure
+      .input(
+        z.object({
+          proxyId: z.string(),
+          serverName: z.string(),
+          attributes: TargetUpdateSchema,
+          queryParams: z
+            .object({
+              includeTools: z.boolean().optional(),
+            })
+            .optional(),
+        }),
+      )
+      .mutation(async ({ input }) => {
+        const proxy = await proxyStore.get(input.proxyId);
+        const server = await proxyStore.updateServer(
+          input.proxyId,
+          input.serverName,
+          input.attributes,
+        );
+        await restartConnectedClients(proxy);
+        return await serializeProxyServerTarget(server, input.queryParams);
       }),
 
     getServer: t.procedure
-      .input(z.object({ proxyId: z.string(), serverName: z.string() }))
+      .input(
+        z.object({
+          proxyId: z.string(),
+          serverName: z.string(),
+          queryParams: z
+            .object({
+              includeTools: z.boolean().optional(),
+            })
+            .optional(),
+        }),
+      )
       .query(async ({ input }) => {
         const proxy = await proxyStore.get(input.proxyId);
         const target = await proxy.getTarget(input.serverName);
-        return await serializeProxyServerTarget(target);
+
+        return await serializeProxyServerTarget(target, input.queryParams);
       }),
 
     authenticate: t.procedure
@@ -126,12 +200,13 @@ export function createProxyStoreRouter({
         }),
       )
       .mutation(async ({ input }) => {
-        const proxy = await proxyStore.removeServer(
+        const proxy = await proxyStore.get(input.proxyId);
+        const server = await proxyStore.removeServer(
           input.proxyId,
           input.serverName,
         );
         await restartConnectedClients(proxy);
-        return await serializeProxyServer(proxy);
+        return await serializeProxyServerTarget(server);
       }),
   });
 }

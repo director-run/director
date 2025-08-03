@@ -1,6 +1,5 @@
 "use client";
 
-import type { RegistryEntry } from "@director.run/utilities/schema";
 import { useEffect, useState } from "react";
 
 import { useConnectionStatus } from "@/components/connect/connection-status-provider";
@@ -30,6 +29,7 @@ import {
   SectionTitle,
 } from "@/components/ui/section";
 import { trpc } from "@/trpc/client";
+import { RegistryGetEntriesEntry } from "@/trpc/types";
 
 export default function GetStartedPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -163,7 +163,7 @@ export default function GetStartedPage() {
                   return (
                     <GetStartedInstallServerDialog
                       key={it.id}
-                      mcp={it as RegistryEntry}
+                      mcp={it as RegistryGetEntriesEntry}
                       proxyId={currentProxy ? currentProxy.id : ""}
                     >
                       <div className="flex flex-row items-center gap-x-3 rounded-lg bg-accent-subtle/60 px-2.5 py-1.5 hover:bg-accent">

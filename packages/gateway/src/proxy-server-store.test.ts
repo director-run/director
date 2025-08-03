@@ -36,7 +36,7 @@ describe("ProxyServerStore", () => {
       await proxyServerStore.purge();
       await proxyServerStore.create({ name: "test-proxy", servers: [] });
 
-      const serverUrl = "https://example.com/api";
+      const serverUrl = "https://mcp.notion.com/mcp";
       await proxyServerStore.addServer(
         "test-proxy",
         makeHTTPTargetConfig({ name: "http1", url: serverUrl }),
@@ -77,8 +77,13 @@ describe("ProxyServerStore", () => {
         makeFooBarServerStdioConfig(),
       );
 
-      const proxy = await proxyServerStore.removeServer("test-proxy", "foo");
+      const removedTarget = await proxyServerStore.removeServer(
+        "test-proxy",
+        "foo",
+      );
+      const proxy = await proxyServerStore.get("test-proxy");
       expect(proxy.targets).toHaveLength(0);
+      expect(removedTarget.status).toBe("disconnected");
 
       const db = await Database.connect(dbPath);
       const proxyEntry = await db.getProxy("test-proxy");
@@ -97,18 +102,15 @@ describe("ProxyServerStore", () => {
       const proxy = await proxyServerStore.update("test-proxy", {
         name: "test-proxy-updated",
         description: "test-proxy-updated",
-        addToolPrefix: true,
       });
       expect(proxy.name).toBe("test-proxy-updated");
       expect(proxy.description).toBe("test-proxy-updated");
-      expect(proxy.addToolPrefix).toBe(true);
 
       const db = await Database.connect(dbPath);
       const proxyEntry = await db.getProxy("test-proxy");
 
       expect(proxyEntry.name).toBe("test-proxy-updated");
       expect(proxyEntry.description).toBe("test-proxy-updated");
-      expect(proxyEntry.addToolPrefix).toBe(true);
     });
   });
 });

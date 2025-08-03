@@ -1,4 +1,5 @@
 import { TRPCClientError } from "@trpc/client";
+import chalk from "chalk";
 import Table from "cli-table3";
 import { getLogger } from "../logger";
 
@@ -30,9 +31,25 @@ export function makeTable(head: string[]) {
       border: [],
       compact: true,
     },
-
     chars: { mid: "", "left-mid": "", "mid-mid": "", "right-mid": "" },
   });
+}
+
+export function attributeTable(
+  attributes: Record<string, string | boolean | number | string[]>,
+) {
+  const table = new Table({
+    style: {
+      head: ["blue", "bold"],
+      border: [],
+      compact: true,
+    },
+    chars: { mid: "", "left-mid": "", "mid-mid": "", "right-mid": "" },
+  });
+  for (const [key, value] of Object.entries(attributes)) {
+    table.push([chalk.blue(key), value.toString()]);
+  }
+  return table.toString();
 }
 
 export function printDirectorAscii(): void {

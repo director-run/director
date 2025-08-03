@@ -7,7 +7,7 @@ import { HTTPClient } from "./client/http-client";
 import { StdioClient } from "./client/stdio-client";
 
 import { SimpleServer } from "./simple-server";
-import { makeEchoServer } from "./test/fixtures";
+import { makeEchoServer, makeEchoServerOverStdio } from "./test/fixtures";
 import { serveOverSSE, serveOverStreamable } from "./transport";
 
 describe("transport", () => {
@@ -38,18 +38,12 @@ describe("transport", () => {
 
   describe("serveOverStdio", () => {
     test("should expose a server over stdio", async () => {
-      const basePath = __dirname;
-      const client = await StdioClient.createAndConnectToStdio("bun", [
-        "-e",
-        `
-            import { makeEchoServer } from '${path.join(basePath, "test/fixtures.ts")}'; 
-            import { serveOverStdio } from '${path.join(basePath, "transport.ts")}'; 
-            serveOverStdio(makeEchoServer());
-        `,
-      ]);
+      const { command, args } = makeEchoServerOverStdio();
+      const client = await StdioClient.createAndConnectToStdio(command, args);
       const tools = await client.listTools();
       expect(tools.tools).toHaveLength(1);
       expect(tools.tools[0].name).toBe("echo");
+      await client.close();
     });
   });
 
@@ -63,6 +57,7 @@ describe("transport", () => {
       const tools = await client.listTools();
       expect(tools.tools).toHaveLength(1);
       expect(tools.tools[0].name).toBe("echo");
+      await client.close();
     });
   });
 

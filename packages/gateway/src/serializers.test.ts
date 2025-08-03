@@ -1,12 +1,18 @@
+import { InMemoryClient } from "@director.run/mcp/client/in-memory-client";
 import { ProxyServer } from "@director.run/mcp/proxy/proxy-server";
-import { makeHTTPTargetConfig } from "@director.run/mcp/test/fixtures";
-import { describe, expect, test } from "vitest";
+import {
+  makeEchoServer,
+  makeHTTPTargetConfig,
+} from "@director.run/mcp/test/fixtures";
+import { beforeAll, describe, expect, test } from "vitest";
 import { serializeProxyServer } from "./serializers";
 
 describe("serializers", () => {
   describe("serializeProxyServer", () => {
-    test("should properly serialize the proxy server attributes", () => {
-      const proxy = new ProxyServer({
+    let proxy: ProxyServer;
+
+    beforeAll(async () => {
+      proxy = new ProxyServer({
         id: "test-proxy",
         name: "test-proxy",
         servers: [
@@ -20,27 +26,54 @@ describe("serializers", () => {
           }),
         ],
       });
+      await proxy.addTarget(
+        new InMemoryClient({
+          name: "prompt-store",
+          server: makeEchoServer(),
+        }),
+      );
+    });
 
-      const plainObject = serializeProxyServer(proxy);
+    test("should not include the in-memory targets by default", async () => {
+      const serializedProxies = await serializeProxyServer(proxy);
+      expect(serializedProxies.targets).toHaveLength(2);
+      expect(serializedProxies.targets).not.toContainEqual(
+        expect.objectContaining({ name: "prompt-store" }),
+      );
+      const serializedProxiesWithMem = await serializeProxyServer(proxy, {
+        includeInMemoryTargets: true,
+      });
+      expect(serializedProxiesWithMem.targets).toHaveLength(3);
+      expect(serializedProxiesWithMem.targets).toContainEqual(
+        expect.objectContaining({ name: "prompt-store" }),
+      );
+    });
+
+    test("should properly serialize the proxy server attributes", async () => {
+      const plainObject = await serializeProxyServer(proxy);
       expect(plainObject).toMatchObject({
         id: "test-proxy",
         name: "test-proxy",
         targets: [
           {
             name: "streamable",
-            command: `http://localhost:4522/mcp`,
             status: "disconnected",
             lastConnectedAt: undefined,
             lastErrorMessage: undefined,
-            type: "http",
+            transport: {
+              type: "http",
+              url: `http://localhost:4522/mcp`,
+            },
           },
           {
             name: "sse",
-            command: `http://localhost:4523/sse`,
             status: "disconnected",
             lastConnectedAt: undefined,
             lastErrorMessage: undefined,
-            type: "http",
+            transport: {
+              type: "http",
+              url: `http://localhost:4523/sse`,
+            },
           },
         ],
       });

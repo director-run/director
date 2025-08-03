@@ -6,33 +6,22 @@ import {
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import type { AbstractClient } from "../../client/abstract-client";
 import type { ProxyServer } from "../proxy-server";
-import { callTool } from "../tools/call-tool";
-import { listTools } from "../tools/list-tools";
 
 const logger = getLogger("proxy/handlers/toolsHandler");
 
-export function setupToolHandlers(
-  server: ProxyServer,
-  connectedClients: AbstractClient[],
-) {
-  // Map of toolName -> client instance
-  let toolToClientMap: Map<string, AbstractClient> = new Map();
+export function setupToolHandlers(server: ProxyServer) {
+  let toolToTarget: Map<string, AbstractClient> = new Map();
 
-  // List Tools Handler
   server.setRequestHandler(ListToolsRequestSchema, async (request) => {
     const allTools: Tool[] = [];
-    toolToClientMap = new Map(); // Reset map each time
+    toolToTarget = new Map();
 
-    for (const connectedClient of connectedClients) {
+    for (const connectedClient of server.targets) {
       try {
-        const tools = await listTools({
-          requestMeta: request.params?._meta,
-          client: connectedClient,
-          toolPrefix: server.addToolPrefix ? connectedClient.name : undefined,
-        });
+        const { tools } = await connectedClient.listTools(request.params);
         for (const tool of tools) {
           allTools.push(tool);
-          toolToClientMap.set(tool.name, connectedClient);
+          toolToTarget.set(tool.name, connectedClient);
         }
       } catch (error) {
         logger.warn(
@@ -49,19 +38,14 @@ export function setupToolHandlers(
     return { tools: allTools };
   });
 
-  // Call Tool Handler
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    // TODO: populate the toolToTarget map here if it's not already populated
     const { name } = request.params;
-    const client = toolToClientMap.get(name);
+    const client = toolToTarget.get(name);
     if (!client) {
       throw new Error(`Unknown tool: ${name}`);
     }
-    return await callTool({
-      client,
-      toolName: name,
-      arguments_: request.params.arguments || {},
-      requestMeta: request.params._meta,
-      toolPrefix: server.addToolPrefix ? client.name : undefined,
-    });
+
+    return await client.callTool(request.params);
   });
 }

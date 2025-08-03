@@ -1,8 +1,13 @@
 import type { ClientStatus } from "@director.run/mcp/client/abstract-client";
 import { HTTPClient } from "@director.run/mcp/client/http-client";
+import { InMemoryClient } from "@director.run/mcp/client/in-memory-client";
 import { StdioClient } from "@director.run/mcp/client/stdio-client";
-import { ProxyServer } from "@director.run/mcp/proxy/proxy-server";
+import {
+  ProxyServer,
+  type ProxyTarget,
+} from "@director.run/mcp/proxy/proxy-server";
 import type { ProxyTargetSource } from "@director.run/utilities/schema";
+import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { getStreamablePathForProxy } from "./helpers";
 
 type SerializedTarget = {
@@ -10,8 +15,6 @@ type SerializedTarget = {
   status: ClientStatus;
   lastConnectedAt?: Date;
   lastErrorMessage?: string;
-  command: string;
-  type: "http" | "stdio" | "in-memory";
   transport:
     | {
         type: "http";
@@ -22,46 +25,76 @@ type SerializedTarget = {
         command: string;
         args: string[];
         env?: Record<string, string>;
+      }
+    | {
+        type: "mem";
       };
   source?: ProxyTargetSource;
+  toolPrefix?: string;
+  disabledTools?: string[];
+  disabled?: boolean;
+  tools?: Tool[];
 };
 
-export function serializeProxyServer(proxy: ProxyServer) {
+export async function serializeProxyServer(
+  proxy: ProxyServer,
+  params?: { includeInMemoryTargets?: boolean },
+) {
+  const targets: SerializedTarget[] = [];
+  for (const target of proxy.targets) {
+    if (!params?.includeInMemoryTargets && target instanceof InMemoryClient) {
+      continue;
+    }
+    targets.push(await serializeProxyServerTarget(target));
+  }
+
   return {
     id: proxy.id,
     name: proxy.name,
     description: proxy.description,
     addToolPrefix: proxy.addToolPrefix,
-    targets: proxy.targets.map((target) => serializeProxyServerTarget(target)),
-    servers: proxy.targets.map((target) => serializeProxyServerTarget(target)),
+    targets,
+    servers: targets,
     path: getStreamablePathForProxy(proxy.id),
   };
 }
 
-export function serializeProxyServers(proxies: ProxyServer[]) {
+export async function serializeProxyServers(
+  proxies: ProxyServer[],
+  params?: { includeInMemoryTargets?: boolean },
+) {
   const ret = [];
   for (const proxy of proxies) {
-    ret.push(serializeProxyServer(proxy));
+    ret.push(await serializeProxyServer(proxy, params));
   }
   return ret;
 }
 
-export function serializeProxyServerTarget(
-  target: HTTPClient | StdioClient,
-): SerializedTarget {
+export async function serializeProxyServerTarget(
+  target: ProxyTarget,
+  params?: {
+    includeTools?: boolean;
+  },
+): Promise<SerializedTarget> {
+  let tools: Tool[] | undefined;
+  if (params?.includeTools && target.isConnected()) {
+    tools = (await target.originalListTools()).tools;
+  }
   if (target instanceof HTTPClient) {
     return {
       name: target.name,
       status: target.status,
       lastConnectedAt: target.lastConnectedAt,
       lastErrorMessage: target.lastErrorMessage,
-      command: target.url,
-      type: "http",
       transport: {
         type: "http",
         url: target.url,
       },
       source: target.source,
+      toolPrefix: target.toolPrefix,
+      disabledTools: target.disabledTools,
+      disabled: target.disabled,
+      tools,
     };
   } else if (target instanceof StdioClient) {
     return {
@@ -69,8 +102,6 @@ export function serializeProxyServerTarget(
       status: target.status,
       lastConnectedAt: target.lastConnectedAt,
       lastErrorMessage: target.lastErrorMessage,
-      command: [target.command, ...(target.args ?? [])].join(" "),
-      type: "stdio",
       transport: {
         type: "stdio",
         command: target.command,
@@ -78,6 +109,25 @@ export function serializeProxyServerTarget(
         env: target.env,
       },
       source: target.source,
+      toolPrefix: target.toolPrefix,
+      disabledTools: target.disabledTools,
+      disabled: target.disabled,
+      tools,
+    };
+  } else if (target instanceof InMemoryClient) {
+    return {
+      name: target.name,
+      status: target.status,
+      lastConnectedAt: target.lastConnectedAt,
+      lastErrorMessage: target.lastErrorMessage,
+      transport: {
+        type: "mem",
+      },
+      source: target.source,
+      toolPrefix: target.toolPrefix,
+      disabledTools: target.disabledTools,
+      disabled: target.disabled,
+      tools,
     };
   } else {
     throw new Error("Unknown target type");

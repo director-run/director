@@ -13,6 +13,7 @@ import * as eventsource from "eventsource";
 import _ from "lodash";
 import packageJson from "../../package.json";
 import { HTTPClient } from "../client/http-client";
+import { InMemoryClient } from "../client/in-memory-client";
 import { StdioClient } from "../client/stdio-client";
 import { OAuthHandler } from "../oauth/oauth-provider-factory";
 import { setupPromptHandlers } from "./handlers/prompts-handler";
@@ -23,6 +24,8 @@ import { setupToolHandlers } from "./handlers/tools-handler";
 global.EventSource = eventsource.EventSource;
 
 const logger = getLogger(`ProxyServer`);
+
+export type ProxyTarget = HTTPClient | StdioClient | InMemoryClient;
 
 export class ProxyServer extends Server {
   private _targets: (HTTPClient | StdioClient)[];
@@ -56,14 +59,19 @@ export class ProxyServer extends Server {
     this._id = attributes.id;
     this._name = attributes.name;
     this._description = attributes.description;
-    this._addToolPrefix = attributes.addToolPrefix;
 
     for (const server of attributes.servers) {
-      const target = createClientForTarget(server, this._oAuthHandler);
+      const target = createClientForTarget({
+        target: server,
+        oAuthHandler: this._oAuthHandler,
+        toolPrefix: server.toolPrefix,
+        disabledTools: server.disabledTools,
+        disabled: server.disabled,
+      });
       this._targets.push(target);
     }
 
-    setupToolHandlers(this, this.targets);
+    setupToolHandlers(this);
     setupPromptHandlers(this, this._targets);
     setupResourceHandlers(this, this._targets);
     setupResourceTemplateHandlers(this, this._targets);
@@ -77,9 +85,7 @@ export class ProxyServer extends Server {
     }
   }
 
-  public async getTarget(
-    targetName: string,
-  ): Promise<HTTPClient | StdioClient> {
+  public async getTarget(targetName: string): Promise<ProxyTarget> {
     const target = this.targets.find(
       (t) => t.name.toLocaleLowerCase() === targetName.toLocaleLowerCase(),
     );
@@ -92,7 +98,7 @@ export class ProxyServer extends Server {
     return target;
   }
 
-  public get targets(): (HTTPClient | StdioClient)[] {
+  public get targets(): ProxyTarget[] {
     return this._targets;
   }
 
@@ -105,19 +111,37 @@ export class ProxyServer extends Server {
   }
 
   public async addTarget(
-    target: ProxyTargetAttributes,
+    target: ProxyTargetAttributes | ProxyTarget,
     attribs: { throwOnError: boolean } = { throwOnError: false },
-  ): Promise<HTTPClient | StdioClient> {
+  ): Promise<ProxyTarget> {
     const existingTarget = this.targets.find(
       (t) => t.name.toLocaleLowerCase() === target.name.toLocaleLowerCase(),
     );
+
     if (existingTarget) {
       throw new AppError(
         ErrorCode.DUPLICATE,
         `Target ${target.name} already exists`,
       );
     }
-    const newTarget = createClientForTarget(target, this._oAuthHandler);
+
+    let newTarget: ProxyTarget;
+
+    if (
+      target instanceof HTTPClient ||
+      target instanceof StdioClient ||
+      target instanceof InMemoryClient
+    ) {
+      newTarget = target;
+    } else {
+      newTarget = createClientForTarget({
+        target,
+        oAuthHandler: this._oAuthHandler,
+        toolPrefix: target.toolPrefix,
+        disabledTools: target.disabledTools,
+        disabled: target.disabled,
+      });
+    }
 
     try {
       await newTarget.connectToTarget({ throwOnError: attribs.throwOnError });
@@ -138,6 +162,28 @@ export class ProxyServer extends Server {
     // this.sendResourceListChanged();
   }
 
+  public async updateTarget(
+    targetName: string,
+
+    attributes: Partial<
+      Pick<ProxyTargetAttributes, "toolPrefix" | "disabledTools" | "disabled">
+    >,
+  ) {
+    const target = await this.getTarget(targetName);
+
+    if (attributes.toolPrefix !== undefined) {
+      target.toolPrefix = attributes.toolPrefix;
+    }
+    if (attributes.disabledTools !== undefined) {
+      target.disabledTools = attributes.disabledTools;
+    }
+    if (attributes.disabled !== undefined) {
+      await target.setDisabled(attributes.disabled);
+    }
+
+    return target;
+  }
+
   public async removeTarget(targetName: string) {
     const existingTarget = this.targets.find(
       (t) => t.name.toLocaleLowerCase() === targetName.toLocaleLowerCase(),
@@ -155,6 +201,7 @@ export class ProxyServer extends Server {
       (t) => t.name.toLocaleLowerCase() === targetName.toLocaleLowerCase(),
     );
 
+    return existingTarget;
     // TODO: send list changed events. need client to support this first
     // this.sendToolListChanged();
     // this.sendPromptListChanged();
@@ -162,19 +209,18 @@ export class ProxyServer extends Server {
   }
 
   public update(
-    attributes: Partial<
-      Pick<ProxyServerAttributes, "name" | "description" | "addToolPrefix">
-    >,
+    attributes: Partial<Pick<ProxyServerAttributes, "name" | "description">>,
   ) {
-    const { name, description, addToolPrefix } = attributes;
-    if (name) {
+    const { name, description } = attributes;
+    if (name !== undefined && name !== this._name) {
+      if (name.trim() === "") {
+        throw new AppError(ErrorCode.BAD_REQUEST, `Name cannot be empty`);
+      }
+
       this._name = name;
     }
     if (description !== undefined && description !== this._description) {
       this._description = description;
-    }
-    if (addToolPrefix !== undefined && addToolPrefix !== this._addToolPrefix) {
-      this._addToolPrefix = addToolPrefix;
     }
   }
 
@@ -193,10 +239,14 @@ export class ProxyServer extends Server {
   }
 }
 
-function createClientForTarget(
-  target: ProxyTargetAttributes,
-  oAuthHandler?: OAuthHandler,
-) {
+function createClientForTarget(params: {
+  target: ProxyTargetAttributes;
+  oAuthHandler?: OAuthHandler;
+  toolPrefix?: string;
+  disabledTools?: string[];
+  disabled?: boolean;
+}) {
+  const { target, oAuthHandler, toolPrefix, disabledTools, disabled } = params;
   switch (target.transport.type) {
     case "http":
       return new HTTPClient({
@@ -204,6 +254,9 @@ function createClientForTarget(
         name: target.name,
         oAuthHandler,
         source: target.source,
+        toolPrefix,
+        disabledTools,
+        disabled,
       });
     case "stdio":
       return new StdioClient({
@@ -212,6 +265,9 @@ function createClientForTarget(
         args: target.transport.args,
         env: target.transport.env,
         source: target.source,
+        toolPrefix,
+        disabledTools,
+        disabled,
       });
   }
 }

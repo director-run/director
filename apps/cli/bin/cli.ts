@@ -9,6 +9,7 @@ import { checkForUpdates } from "../src/check-for-updates";
 import { registerClientCommands } from "../src/commands/client";
 import { registerCoreCommands } from "../src/commands/core";
 import { registerMCPCommands } from "../src/commands/mcp";
+import { registerPromptsCommands } from "../src/commands/prompts";
 import { registerRegistryCommands } from "../src/commands/registry";
 import { env } from "../src/env";
 
@@ -29,6 +30,7 @@ registerCoreCommands(program);
 env.ENABLE_DEBUG_COMMANDS && registerClientCommands(program);
 registerRegistryCommands(program);
 registerMCPCommands(program);
+registerPromptsCommands(program);
 
 program.addExamples(`
   $ director create my-proxy # Create a new proxy

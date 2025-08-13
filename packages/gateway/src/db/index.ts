@@ -7,12 +7,15 @@ import {
   type ProxyTargetAttributes,
   databaseAttributesSchema,
 } from "@director.run/utilities/schema";
+import _ from "lodash";
 import slugify from "slugify";
 
-const DEFAULT_DB: DatabaseAttributes = {
-  version: "1.0.0",
-  proxies: [],
-};
+function makeDefaultDB(): DatabaseAttributes {
+  return {
+    version: "1.0.0",
+    proxies: [],
+  };
+}
 
 async function readDB(filePath: string): Promise<DatabaseAttributes> {
   const store = await readJSONFile(filePath);
@@ -36,8 +39,8 @@ export class Database {
 
   private async init() {
     if (!existsSync(this.filePath)) {
-      this._data = DEFAULT_DB;
-      await writeDB(this.filePath, DEFAULT_DB);
+      this._data = makeDefaultDB();
+      await writeDB(this.filePath, this._data);
     } else {
       // this._data = await readDB(this.filePath);
       const store = await readJSONFile(this.filePath);
@@ -52,11 +55,16 @@ export class Database {
   }
 
   private async getStore(): Promise<DatabaseAttributes> {
-    return await readDB(this.filePath);
+    if (!this._data) {
+      const store = await readJSONFile(this.filePath);
+      this._data = databaseAttributesSchema.parse(store);
+    }
+    return this._data;
   }
 
   private async saveStore(store: DatabaseAttributes): Promise<void> {
     await writeDB(this.filePath, store);
+    this._data = _.cloneDeep(store);
   }
 
   private findProxy(
@@ -206,7 +214,7 @@ export class Database {
   }
 
   async purge(): Promise<void> {
-    await this.saveStore(DEFAULT_DB);
+    await this.saveStore(makeDefaultDB());
   }
 
   async addPrompt(

@@ -5,19 +5,29 @@ import {
   type PromptAttributes,
   type ProxyTargetAttributes,
 } from "@director.run/utilities/schema";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { Database } from "./index";
 
 describe("Database", () => {
   let db: Database;
   const dbPath = path.join(__dirname, "./test-db.test.json");
 
-  beforeEach(async () => {
-    // Clean up any existing test database
+  beforeAll(async () => {
     if (fs.existsSync(dbPath)) {
       await fs.promises.unlink(dbPath);
     }
     db = await Database.connect(dbPath);
+  });
+
+  beforeEach(async () => {
+    await db.purge();
+    console.log("-----", await db.countProxies());
+    // Clean up any existing test database
+    // if (fs.existsSync(dbPath)) {
+    //   await fs.promises.unlink(dbPath);
+    // }
+    // db = await Database.connect(dbPath);
+    // console.log(db._data);
   });
 
   afterEach(async () => {

@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { JSONPath } from "jsonpath-plus";
 import _ from "lodash";
 import YAML from "yaml";
 
@@ -25,12 +26,18 @@ function main() {
   const config = new Config({
     configFilePath: path.join(__dirname, "../../../../config.yaml"),
   });
-  console.log(config.get("playbooks[0]"));
+  // console.log(_.find(config.get("playbooks"), { id: "test" }));
   console.log("--------------------------------");
+  console.log(config.get("playbooks[id=test]"));
+
+  JSONPath({
+    path: "$.playbooks[?(@.id == 'test')].name",
+    json: config,
+  });
 
   // change the name of a playbook with the id of "test"
   //   config.set("$.playbooks[?(@.id == 'test')].name", "test2");
-  console.log(config.get<Array<unknown>>("$.playbooks[?(@.id == 'test')]"));
+  // console.log(config.get<Array<unknown>>("$.playbooks[?(@.id == 'test')]"));
 }
 
 main();

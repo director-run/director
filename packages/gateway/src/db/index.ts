@@ -56,20 +56,9 @@ export class Database {
     return this._data;
   }
 
-  private async saveStore(store: DatabaseAttributes): Promise<void> {
+  private async writeData(store: DatabaseAttributes): Promise<void> {
     await writeDB(this.filePath, store);
     this._data = _.cloneDeep(store);
-  }
-
-  private findProxy(
-    proxies: ProxyServerAttributes[],
-    id: string,
-  ): ProxyServerAttributes {
-    const proxy = proxies.find((p) => p.id === id);
-    if (!proxy) {
-      throw new Error("Proxy not found");
-    }
-    return proxy;
   }
 
   private findServer(
@@ -117,20 +106,24 @@ export class Database {
     };
 
     store.proxies.push(newProxy);
-    await this.saveStore(store);
+    await this.writeData(store);
     return newProxy;
   }
 
   async getProxy(id: string): Promise<ProxyServerAttributes> {
     const store = await this.readData();
-    return this.findProxy(store.proxies, id);
+    const proxy = store.proxies.find((p) => p.id === id);
+    if (!proxy) {
+      throw new Error("Proxy not found");
+    }
+    return proxy;
   }
 
   async deleteProxy(id: string): Promise<void> {
+    await this.getProxy(id); // Verify exists
     const store = await this.readData();
-    this.findProxy(store.proxies, id); // Verify exists
     store.proxies = store.proxies.filter((p) => p.id !== id);
-    await this.saveStore(store);
+    await this.writeData(store);
   }
 
   async updateProxy(
@@ -138,18 +131,20 @@ export class Database {
     attributes: Partial<ProxyServerAttributes>,
   ): Promise<ProxyServerAttributes> {
     const store = await this.readData();
-    const proxy = this.findProxy(store.proxies, id);
+    const proxy = await this.getProxy(id);
 
     Object.assign(proxy, {
       ...attributes,
       name: attributes.name ?? proxy.name,
-      servers: (attributes.servers || proxy.servers || []).map((s) => ({
-        ...s,
-        name: this.slugifyName(s.name),
-      })),
+      servers: (attributes.servers || proxy.servers || []).map(
+        (s: ProxyTargetAttributes) => ({
+          ...s,
+          name: this.slugifyName(s.name),
+        }),
+      ),
     });
 
-    await this.saveStore(store);
+    await this.writeData(store);
     return proxy;
   }
 
@@ -164,11 +159,11 @@ export class Database {
     attributes: Partial<ProxyTargetAttributes>,
   ): Promise<ProxyTargetAttributes> {
     const store = await this.readData();
-    const proxy = this.findProxy(store.proxies, proxyId);
+    const proxy = await this.getProxy(proxyId);
     const server = this.findServer(proxy.servers, serverName);
 
     Object.assign(server, attributes);
-    await this.saveStore(store);
+    await this.writeData(store);
     return server;
   }
 
@@ -176,8 +171,7 @@ export class Database {
     proxyId: string,
     serverName: string,
   ): Promise<ProxyTargetAttributes> {
-    const store = await this.readData();
-    const proxy = this.findProxy(store.proxies, proxyId);
+    const proxy = await this.getProxy(proxyId);
     return this.findServer(proxy.servers, serverName);
   }
 
@@ -208,7 +202,7 @@ export class Database {
   }
 
   async purge(): Promise<void> {
-    await this.saveStore(makeDefaultDB());
+    await this.writeData(makeDefaultDB());
   }
 
   async addPrompt(

@@ -17,13 +17,6 @@ function makeDefaultDB(): DatabaseAttributes {
   };
 }
 
-// async function writeDB(
-//   filePath: string,
-//   data: DatabaseAttributes,
-// ): Promise<void> {
-//   return await writeJSONFile(filePath, data);
-// }
-
 export class Database {
   public readonly filePath: string;
   private _data?: DatabaseAttributes;
@@ -63,7 +56,7 @@ export class Database {
     servers: ProxyTargetAttributes[],
     name: string,
   ): ProxyTargetAttributes {
-    const server = servers.find((s) => s.name === name);
+    const server = _.find(servers, { name });
     if (!server) {
       throw new Error("Server not found");
     }
@@ -74,7 +67,7 @@ export class Database {
     prompts: PromptAttributes[],
     name: string,
   ): { prompt: PromptAttributes; index: number } {
-    const index = prompts.findIndex((p) => p.name === name);
+    const index = _.findIndex(prompts, { name });
     if (index === -1) {
       throw new Error(`Prompt ${name} not found`);
     }
@@ -90,14 +83,14 @@ export class Database {
   ): Promise<ProxyServerAttributes> {
     const store = await this.readData();
 
-    if (store.proxies.find((p) => p.name === proxy.name)) {
+    if (_.find(store.proxies, { name: proxy.name })) {
       throw new Error("Proxy already exists");
     }
 
     const newProxy: ProxyServerAttributes = {
       ...proxy,
       id: this.slugifyName(proxy.name),
-      servers: (proxy.servers || []).map((s) => ({
+      servers: _.map(proxy.servers || [], (s) => ({
         ...s,
         name: this.slugifyName(s.name),
       })),
@@ -110,7 +103,7 @@ export class Database {
 
   async getProxy(id: string): Promise<ProxyServerAttributes> {
     const store = await this.readData();
-    const proxy = store.proxies.find((p) => p.id === id);
+    const proxy = _.find(store.proxies, { id });
     if (!proxy) {
       throw new Error("Proxy not found");
     }
@@ -120,7 +113,7 @@ export class Database {
   async deleteProxy(id: string): Promise<void> {
     await this.getProxy(id); // Verify exists
     const store = await this.readData();
-    store.proxies = store.proxies.filter((p) => p.id !== id);
+    store.proxies = _.reject(store.proxies, { id });
     await this.writeData(store);
   }
 
@@ -131,10 +124,11 @@ export class Database {
     const store = await this.readData();
     const proxy = await this.getProxy(id);
 
-    Object.assign(proxy, {
+    _.assign(proxy, {
       ...attributes,
       name: attributes.name ?? proxy.name,
-      servers: (attributes.servers || proxy.servers || []).map(
+      servers: _.map(
+        attributes.servers || proxy.servers || [],
         (s: ProxyTargetAttributes) => ({
           ...s,
           name: this.slugifyName(s.name),
@@ -148,7 +142,7 @@ export class Database {
 
   async countProxies(): Promise<number> {
     const store = await this.readData();
-    return store.proxies.length;
+    return _.size(store.proxies);
   }
 
   async updateServer(
@@ -160,7 +154,7 @@ export class Database {
     const proxy = await this.getProxy(proxyId);
     const server = this.findServer(proxy.servers, serverName);
 
-    Object.assign(server, attributes);
+    _.assign(server, attributes);
     await this.writeData(store);
     return server;
   }
@@ -179,7 +173,7 @@ export class Database {
   ): Promise<ProxyTargetAttributes> {
     const proxy = await this.getProxy(proxyId);
     await this.updateProxy(proxyId, {
-      servers: [...proxy.servers, server],
+      servers: _.concat(proxy.servers, server),
     });
     return server;
   }
@@ -187,8 +181,9 @@ export class Database {
   async removeServer(proxyId: string, serverName: string): Promise<boolean> {
     const proxy = await this.getProxy(proxyId);
     await this.updateProxy(proxyId, {
-      servers: proxy.servers.filter(
-        (s) => s.name.toLowerCase() !== serverName.toLowerCase(),
+      servers: _.reject(
+        proxy.servers,
+        (s) => _.toLower(s.name) === _.toLower(serverName),
       ),
     });
     return true;
@@ -209,23 +204,21 @@ export class Database {
   ): Promise<PromptAttributes> {
     const proxy = await this.getProxy(proxyId);
     await this.updateProxy(proxyId, {
-      prompts: [...(proxy.prompts || []), prompt],
+      prompts: _.concat(proxy.prompts || [], prompt),
     });
     return prompt;
   }
 
   async getPrompts(proxyId: string): Promise<PromptAttributes[]> {
     const proxy = await this.getProxy(proxyId);
-    return proxy.prompts || [];
+    return _.get(proxy, "prompts", []);
   }
 
   async removePrompt(proxyId: string, promptName: string): Promise<boolean> {
     const proxy = await this.getProxy(proxyId);
-    const updatedPrompts = (proxy.prompts || []).filter(
-      (p) => p.name !== promptName,
-    );
+    const updatedPrompts = _.reject(proxy.prompts || [], { name: promptName });
 
-    if (updatedPrompts.length === (proxy.prompts || []).length) {
+    if (_.size(updatedPrompts) === _.size(proxy.prompts || [])) {
       throw new Error(`Prompt ${promptName} not found`);
     }
 
@@ -244,16 +237,9 @@ export class Database {
       promptName,
     );
 
-    const updatedPrompt: PromptAttributes = {
-      ...currentPrompt,
-      ...(prompt.title && { title: prompt.title }),
-      ...(prompt.description !== undefined && {
-        description: prompt.description,
-      }),
-      ...(prompt.body && { body: prompt.body }),
-    };
+    const updatedPrompt: PromptAttributes = _.merge({}, currentPrompt, prompt);
 
-    const updatedPrompts = [...(proxy.prompts || [])];
+    const updatedPrompts = _.clone(proxy.prompts || []);
     updatedPrompts[index] = updatedPrompt;
 
     await this.updateProxy(proxyId, { prompts: updatedPrompts });

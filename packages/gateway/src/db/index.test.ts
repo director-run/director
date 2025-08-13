@@ -22,9 +22,10 @@ describe("Database", () => {
 
   afterEach(async () => {
     // Clean up after each test
-    if (fs.existsSync(dbPath)) {
-      await fs.promises.unlink(dbPath);
-    }
+    await db.purge();
+    // if (fs.existsSync(dbPath)) {
+    //   await fs.promises.unlink(dbPath);
+    // }
   });
 
   describe("connect", () => {

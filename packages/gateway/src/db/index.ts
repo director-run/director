@@ -17,6 +17,10 @@ function makeDefaultDB(): DatabaseAttributes {
   };
 }
 
+function slugifyName(name: string): string {
+  return slugify(name, { lower: true, strict: true, trim: true });
+}
+
 export class Database {
   public readonly filePath: string;
   private _data?: DatabaseAttributes;
@@ -74,10 +78,6 @@ export class Database {
     return { prompt: prompts[index], index };
   }
 
-  private slugifyName(name: string): string {
-    return slugify(name, { lower: true, strict: true, trim: true });
-  }
-
   async addProxy(
     proxy: Omit<ProxyServerAttributes, "id">,
   ): Promise<ProxyServerAttributes> {
@@ -89,10 +89,10 @@ export class Database {
 
     const newProxy: ProxyServerAttributes = {
       ...proxy,
-      id: this.slugifyName(proxy.name),
+      id: slugifyName(proxy.name),
       servers: _.map(proxy.servers || [], (s) => ({
         ...s,
-        name: this.slugifyName(s.name),
+        name: slugifyName(s.name),
       })),
     };
 
@@ -131,7 +131,7 @@ export class Database {
         attributes.servers || proxy.servers || [],
         (s: ProxyTargetAttributes) => ({
           ...s,
-          name: this.slugifyName(s.name),
+          name: slugifyName(s.name),
         }),
       ),
     });

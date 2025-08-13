@@ -8,6 +8,7 @@ import {
 } from "@director.run/mcp/proxy/proxy-server";
 import type { ProxyTargetSource } from "@director.run/utilities/schema";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
+import type { Prompt } from "./capabilities/prompt-manager";
 import { getStreamablePathForProxy } from "./helpers";
 
 type SerializedTarget = {
@@ -38,7 +39,7 @@ type SerializedTarget = {
 
 export async function serializeProxyServer(
   proxy: ProxyServer,
-  params?: { includeInMemoryTargets?: boolean },
+  params?: { includeInMemoryTargets?: boolean; prompts?: Prompt[] },
 ) {
   const targets: SerializedTarget[] = [];
   for (const target of proxy.targets) {
@@ -52,6 +53,7 @@ export async function serializeProxyServer(
     id: proxy.id,
     name: proxy.name,
     description: proxy.description,
+    prompts: params?.prompts,
     addToolPrefix: proxy.addToolPrefix,
     targets,
     servers: targets,

@@ -56,10 +56,13 @@ export function createProxyStoreRouter({
         }),
       )
       .query(async ({ input }) => {
-        return await serializeProxyServer(
-          await proxyStore.get(input.proxyId),
-          input.queryParams,
-        );
+        const proxy = await proxyStore.get(input.proxyId);
+        const prompts = await proxyStore.listPrompts(input.proxyId);
+
+        return await serializeProxyServer(proxy, {
+          ...input.queryParams,
+          prompts,
+        });
       }),
 
     create: t.procedure.input(ProxyCreateSchema).mutation(async ({ input }) => {

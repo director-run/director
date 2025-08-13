@@ -17,6 +17,7 @@ import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../../client";
 import { subtitle } from "../../common";
 import { env } from "../../env";
+import { listPrompts } from "../../views/prompts-list";
 import { makeToolTable } from "../mcp/tools";
 
 export function registerGetCommand(program: DirectorCommand) {
@@ -35,7 +36,9 @@ export function registerGetCommand(program: DirectorCommand) {
         } else {
           const proxy = await gatewayClient.store.get.query({
             proxyId,
-            queryParams: { includeInMemoryTargets: true },
+            queryParams: {
+              includeInMemoryTargets: true,
+            },
           });
 
           if (!proxy) {
@@ -96,7 +99,7 @@ export function printTargetDetails(
 }
 
 export function printProxyDetails(proxy: GatewayRouterOutputs["store"]["get"]) {
-  const { id, name, description } = proxy;
+  const { id, name, description, prompts } = proxy;
   console.log();
   console.log(whiteBold(`PROXIES > ${blue(name)}`));
   console.log();
@@ -135,7 +138,12 @@ export function printProxyDetails(proxy: GatewayRouterOutputs["store"]["get"]) {
     ]),
   );
   console.log(table.toString());
+
   console.log();
+  console.log(subtitle(`prompts`));
+  console.log();
+
+  listPrompts(prompts);
 }
 
 function targetStatus(status: string) {

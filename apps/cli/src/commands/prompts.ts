@@ -1,8 +1,8 @@
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
-import { makeTable } from "@director.run/utilities/cli/index";
 import { confirm, editor, input } from "@inquirer/prompts";
 import { gatewayClient } from "../client";
+import { listPrompts } from "../views/prompts-list";
 
 export function registerPromptsCommands(program: DirectorCommand): void {
   const command = new DirectorCommand("prompts").description(
@@ -11,7 +11,8 @@ export function registerPromptsCommands(program: DirectorCommand): void {
   program.addCommand(command);
 
   command
-    .command("list <proxyId>")
+    .command("ls <proxyId>")
+    .alias("list")
     .description("List all prompts for a proxy")
     .action(
       actionWithErrorHandler(async (proxyId: string) => {
@@ -19,19 +20,7 @@ export function registerPromptsCommands(program: DirectorCommand): void {
           proxyId,
         });
 
-        if (prompts.length === 0) {
-          console.log("No prompts configured for this proxy.");
-        } else {
-          const table = makeTable(["name", "title", "description"]);
-          table.push(
-            ...prompts.map((prompt) => [
-              prompt.name,
-              prompt.title,
-              prompt.description || "",
-            ]),
-          );
-          console.log(table.toString());
-        }
+        listPrompts(prompts);
       }),
     );
 
@@ -179,7 +168,7 @@ export function registerPromptsCommands(program: DirectorCommand): void {
     );
 
   command
-    .command("show <proxyId> <promptName>")
+    .command("get <proxyId> <promptName>")
     .description("Show the details of a specific prompt")
     .action(
       actionWithErrorHandler(async (proxyId: string, promptName: string) => {

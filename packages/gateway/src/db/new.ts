@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { JSONPath } from "jsonpath-plus";
+import _ from "lodash";
 import YAML from "yaml";
 
 class Config {
@@ -9,28 +9,15 @@ class Config {
     this._configFilePath = params.configFilePath;
   }
 
-  get(jsonPath: string): unknown {
+  get<T = unknown>(jsonPath: string): T {
     const config = YAML.parse(fs.readFileSync(this._configFilePath, "utf8"));
-    return JSONPath({
-      path: jsonPath,
-      json: config,
-    });
+    return _.get(config, jsonPath);
   }
 
-  set(jsonPath: string, value: unknown) {
+  set<T = unknown>(jsonPath: string, value: T) {
     const config = YAML.parse(fs.readFileSync(this._configFilePath, "utf8"));
-    const result = JSONPath({
-      path: jsonPath,
-      json: config,
-    });
-    if (result.length === 0) {
-      throw new Error(`JSONPath ${jsonPath} not found`);
-    }
-    result[0] = value;
-    fs.writeFileSync(
-      path.join(__dirname, "../../../../config.yaml"),
-      YAML.stringify(config),
-    );
+    const result = _.set(config, jsonPath, value);
+    fs.writeFileSync(this._configFilePath, YAML.stringify(result));
   }
 }
 
@@ -38,9 +25,12 @@ function main() {
   const config = new Config({
     configFilePath: path.join(__dirname, "../../../../config.yaml"),
   });
-  console.log(config.get("$.playbooks[*]"));
-  //   config.writeValue("$.playbooks[0].name", "test");
-  //   console.log(config.readValue("$.playbooks[0]"));
+  console.log(config.get("playbooks[0]"));
+  console.log("--------------------------------");
+
+  // change the name of a playbook with the id of "test"
+  //   config.set("$.playbooks[?(@.id == 'test')].name", "test2");
+  console.log(config.get<Array<unknown>>("$.playbooks[?(@.id == 'test')]"));
 }
 
 main();

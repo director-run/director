@@ -17,12 +17,12 @@ function makeDefaultDB(): DatabaseAttributes {
   };
 }
 
-async function writeDB(
-  filePath: string,
-  data: DatabaseAttributes,
-): Promise<void> {
-  return await writeJSONFile(filePath, data);
-}
+// async function writeDB(
+//   filePath: string,
+//   data: DatabaseAttributes,
+// ): Promise<void> {
+//   return await writeJSONFile(filePath, data);
+// }
 
 export class Database {
   public readonly filePath: string;
@@ -34,8 +34,7 @@ export class Database {
 
   private async init() {
     if (!existsSync(this.filePath)) {
-      this._data = makeDefaultDB();
-      await writeDB(this.filePath, this._data);
+      await this.writeData(makeDefaultDB());
     } else {
       const store = await readJSONFile(this.filePath);
       this._data = databaseAttributesSchema.parse(store);
@@ -50,15 +49,14 @@ export class Database {
 
   private async readData(): Promise<DatabaseAttributes> {
     if (!this._data) {
-      const store = await readJSONFile(this.filePath);
-      this._data = databaseAttributesSchema.parse(store);
+      await this.init();
     }
-    return this._data;
+    return this._data as DatabaseAttributes;
   }
 
-  private async writeData(store: DatabaseAttributes): Promise<void> {
-    await writeDB(this.filePath, store);
-    this._data = _.cloneDeep(store);
+  private async writeData(data: DatabaseAttributes): Promise<void> {
+    await writeJSONFile(this.filePath, data);
+    this._data = _.cloneDeep(data);
   }
 
   private findServer(

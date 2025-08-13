@@ -17,11 +17,6 @@ function makeDefaultDB(): DatabaseAttributes {
   };
 }
 
-async function readDB(filePath: string): Promise<DatabaseAttributes> {
-  const store = await readJSONFile(filePath);
-  return databaseAttributesSchema.parse(store);
-}
-
 async function writeDB(
   filePath: string,
   data: DatabaseAttributes,
@@ -42,7 +37,6 @@ export class Database {
       this._data = makeDefaultDB();
       await writeDB(this.filePath, this._data);
     } else {
-      // this._data = await readDB(this.filePath);
       const store = await readJSONFile(this.filePath);
       this._data = databaseAttributesSchema.parse(store);
     }
@@ -54,7 +48,7 @@ export class Database {
     return db;
   }
 
-  private async getStore(): Promise<DatabaseAttributes> {
+  private async readData(): Promise<DatabaseAttributes> {
     if (!this._data) {
       const store = await readJSONFile(this.filePath);
       this._data = databaseAttributesSchema.parse(store);
@@ -107,7 +101,7 @@ export class Database {
   async addProxy(
     proxy: Omit<ProxyServerAttributes, "id">,
   ): Promise<ProxyServerAttributes> {
-    const store = await this.getStore();
+    const store = await this.readData();
 
     if (store.proxies.find((p) => p.name === proxy.name)) {
       throw new Error("Proxy already exists");
@@ -128,12 +122,12 @@ export class Database {
   }
 
   async getProxy(id: string): Promise<ProxyServerAttributes> {
-    const store = await this.getStore();
+    const store = await this.readData();
     return this.findProxy(store.proxies, id);
   }
 
   async deleteProxy(id: string): Promise<void> {
-    const store = await this.getStore();
+    const store = await this.readData();
     this.findProxy(store.proxies, id); // Verify exists
     store.proxies = store.proxies.filter((p) => p.id !== id);
     await this.saveStore(store);
@@ -143,7 +137,7 @@ export class Database {
     id: string,
     attributes: Partial<ProxyServerAttributes>,
   ): Promise<ProxyServerAttributes> {
-    const store = await this.getStore();
+    const store = await this.readData();
     const proxy = this.findProxy(store.proxies, id);
 
     Object.assign(proxy, {
@@ -160,7 +154,7 @@ export class Database {
   }
 
   async countProxies(): Promise<number> {
-    const store = await this.getStore();
+    const store = await this.readData();
     return store.proxies.length;
   }
 
@@ -169,7 +163,7 @@ export class Database {
     serverName: string,
     attributes: Partial<ProxyTargetAttributes>,
   ): Promise<ProxyTargetAttributes> {
-    const store = await this.getStore();
+    const store = await this.readData();
     const proxy = this.findProxy(store.proxies, proxyId);
     const server = this.findServer(proxy.servers, serverName);
 
@@ -182,7 +176,7 @@ export class Database {
     proxyId: string,
     serverName: string,
   ): Promise<ProxyTargetAttributes> {
-    const store = await this.getStore();
+    const store = await this.readData();
     const proxy = this.findProxy(store.proxies, proxyId);
     return this.findServer(proxy.servers, serverName);
   }
@@ -209,7 +203,7 @@ export class Database {
   }
 
   async getAll(): Promise<ProxyServerAttributes[]> {
-    const store = await this.getStore();
+    const store = await this.readData();
     return store.proxies;
   }
 

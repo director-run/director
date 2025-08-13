@@ -28,16 +28,26 @@ async function writeDB(
 
 export class Database {
   public readonly filePath: string;
+  private _data?: DatabaseAttributes;
 
   private constructor(filePath: string) {
     this.filePath = filePath;
   }
 
+  private async init() {
+    if (!existsSync(this.filePath)) {
+      this._data = DEFAULT_DB;
+      await writeDB(this.filePath, DEFAULT_DB);
+    } else {
+      // this._data = await readDB(this.filePath);
+      const store = await readJSONFile(this.filePath);
+      this._data = databaseAttributesSchema.parse(store);
+    }
+  }
+
   static async connect(filePath: string): Promise<Database> {
     const db = new Database(filePath);
-    if (!existsSync(filePath)) {
-      await writeDB(filePath, DEFAULT_DB);
-    }
+    await db.init();
     return db;
   }
 

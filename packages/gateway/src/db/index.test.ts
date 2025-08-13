@@ -10,7 +10,7 @@ import { Database } from "./index";
 
 describe("Database", () => {
   let db: Database;
-  const dbPath = path.join(__dirname, "./test-db.test.json");
+  const dbPath = path.join(__dirname, "./config.test.json");
 
   beforeAll(async () => {
     if (fs.existsSync(dbPath)) {

@@ -4,7 +4,6 @@ import {
   actionWithErrorHandler,
   printDirectorAscii,
 } from "@director.run/utilities/cli/index";
-import { Telemetry } from "@director.run/utilities/telemetry";
 import packageJson from "../../../package.json";
 import { env } from "../../env";
 
@@ -31,16 +30,19 @@ export async function startGateway(successCallback?: () => void) {
   await Gateway.start(
     {
       port: env.GATEWAY_PORT,
-      databaseFilePath: env.CONFIG_FILE_PATH,
+      configuration: {
+        type: "yaml",
+        filePath: env.CONFIG_FILE_PATH,
+      },
       registryURL: env.REGISTRY_API_URL,
       allowedOrigins: [env.STUDIO_URL, /^https?:\/\/localhost(:\d+)?$/],
-      telemetry: new Telemetry({
+      telemetry: {
         writeKey: env.SEGMENT_WRITE_KEY,
         enabled: env.SEND_TELEMETRY,
         traits: {
           cliVersion: packageJson.version,
         },
-      }),
+      },
       headers: {
         "X-Cli-Version": packageJson.version,
       },

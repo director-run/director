@@ -16,18 +16,18 @@ import {
   type Prompt,
   PromptManager,
 } from "./capabilities/prompt-manager";
-import type { Configuration } from "./config";
+import type { Config } from "./config";
 
 const logger = getLogger("ProxyServerStore");
 
 export class ProxyServerStore {
   private proxyServers: Map<string, ProxyServer> = new Map();
-  private db: Configuration;
+  private db: Config;
   private telemetry: Telemetry;
   private _oAuthHandler?: OAuthHandler;
 
   private constructor(params: {
-    db: Configuration;
+    db: Config;
     telemetry?: Telemetry;
     oAuthHandler?: OAuthHandler;
   }) {
@@ -41,7 +41,7 @@ export class ProxyServerStore {
     telemetry,
     oAuthHandler,
   }: {
-    db: Configuration;
+    db: Config;
     telemetry?: Telemetry;
     oAuthHandler?: OAuthHandler;
   }): Promise<ProxyServerStore> {

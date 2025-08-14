@@ -1,6 +1,6 @@
 import fs from "fs";
 import { existsSync } from "node:fs";
-import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
+import {} from "@director.run/utilities/json";
 import {
   type ConfigurationData,
   type PromptAttributes,
@@ -12,7 +12,7 @@ import _ from "lodash";
 import slugify from "slugify";
 import YAML from "yaml";
 
-abstract class AbstractConfig {
+export abstract class Config {
   public readonly filePath: string;
   protected _data?: ConfigurationData;
 
@@ -210,38 +210,41 @@ abstract class AbstractConfig {
   }
 }
 
-export class Configuration extends AbstractConfig {
-  static async connect(filePath: string): Promise<Configuration> {
-    const db = new Configuration(filePath);
-    await db.init();
-    return db;
-  }
+//
+// Deprecated
+//
+// class JSONConfiguration extends Config {
+//   static async connect(filePath: string): Promise<JSONConfiguration> {
+//     const db = new JSONConfiguration(filePath);
+//     await db.init();
+//     return db;
+//   }
 
-  async init() {
-    if (!existsSync(this.filePath)) {
-      await this.writeData(defaultConfiguration());
-    } else {
-      const store = await readJSONFile(this.filePath);
-      this._data = databaseAttributesSchema.parse(store);
-    }
-  }
+//   async init() {
+//     if (!existsSync(this.filePath)) {
+//       await this.writeData(defaultConfiguration());
+//     } else {
+//       const store = await readJSONFile(this.filePath);
+//       this._data = databaseAttributesSchema.parse(store);
+//     }
+//   }
 
-  async readData(): Promise<ConfigurationData> {
-    if (!this._data) {
-      await this.init();
-    }
-    return this._data as ConfigurationData;
-  }
+//   async readData(): Promise<ConfigurationData> {
+//     if (!this._data) {
+//       await this.init();
+//     }
+//     return this._data as ConfigurationData;
+//   }
 
-  async writeData(data: ConfigurationData): Promise<void> {
-    await writeJSONFile(this.filePath, data);
-    this._data = _.cloneDeep(data);
-  }
-}
+//   async writeData(data: ConfigurationData): Promise<void> {
+//     await writeJSONFile(this.filePath, data);
+//     this._data = _.cloneDeep(data);
+//   }
+// }
 
-export class YAMLConfiguration extends AbstractConfig {
-  static async connect(filePath: string): Promise<YAMLConfiguration> {
-    const db = new YAMLConfiguration(filePath);
+export class YAMLConfig extends Config {
+  static async connect(filePath: string): Promise<YAMLConfig> {
+    const db = new YAMLConfig(filePath);
     await db.init();
     return db;
   }

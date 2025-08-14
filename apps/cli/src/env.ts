@@ -30,7 +30,7 @@ export const env = createEnv({
     CONFIG_FILE_PATH: z
       .string()
       .optional()
-      .default(path.join(getDataDir(), "config.json")),
+      .default(path.join(getDataDir(), "config.yaml")),
     ENABLE_DEBUG_COMMANDS: z
       .string()
       .default("false")

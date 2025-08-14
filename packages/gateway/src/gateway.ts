@@ -10,7 +10,7 @@ import { logRequests } from "@director.run/utilities/middleware";
 import { Telemetry } from "@director.run/utilities/telemetry";
 import cors from "cors";
 import express from "express";
-import { Configuration } from "./config";
+import { Config, YAMLConfig } from "./config";
 import { ProxyServerStore } from "./proxy-server-store";
 import { createSSERouter } from "./routers/sse";
 import { createStreamableRouter } from "./routers/streamable";
@@ -22,12 +22,12 @@ export class Gateway {
   public readonly proxyStore: ProxyServerStore;
   public readonly port: number;
   private server: Server;
-  public readonly db: Configuration;
+  public readonly db: Config;
 
   private constructor(attribs: {
     proxyStore: ProxyServerStore;
     port: number;
-    db: Configuration;
+    db: Config;
     server: Server;
   }) {
     this.port = attribs.port;
@@ -39,10 +39,17 @@ export class Gateway {
   public static async start(
     attribs: {
       port: number;
-      databaseFilePath: string;
+      configuration: {
+        type: "yaml";
+        filePath: string;
+      };
       registryURL: string;
       allowedOrigins?: string[];
-      telemetry?: Telemetry;
+      telemetry?: {
+        enabled: boolean;
+        writeKey: string;
+        traits: Record<string, string>;
+      };
       headers?: Record<string, string>;
       oauth?:
         | {
@@ -59,8 +66,14 @@ export class Gateway {
   ) {
     logger.info(`starting director gateway`);
 
-    const db = await Configuration.connect(attribs.databaseFilePath);
-    const telemetry = attribs.telemetry || Telemetry.noTelemetry();
+    const db = await YAMLConfig.connect(attribs.configuration.filePath);
+    const telemetry = attribs.telemetry
+      ? new Telemetry({
+          writeKey: attribs.telemetry.writeKey,
+          enabled: attribs.telemetry.enabled,
+          traits: attribs.telemetry.traits,
+        })
+      : Telemetry.noTelemetry();
 
     let oAuthHandler: OAuthHandler | undefined;
 

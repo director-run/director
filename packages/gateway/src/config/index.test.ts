@@ -6,17 +6,17 @@ import {
   type ProxyTargetAttributes,
 } from "@director.run/utilities/schema";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { Configuration } from "./index";
+import { YAMLConfig } from "./index";
 
 describe("Database", () => {
-  let db: Configuration;
-  const dbPath = path.join(__dirname, "./config.test.json");
+  let db: YAMLConfig;
+  const dbPath = path.join(__dirname, "./config.test.yaml");
 
   beforeAll(async () => {
     if (fs.existsSync(dbPath)) {
       await fs.promises.unlink(dbPath);
     }
-    db = await Configuration.connect(dbPath);
+    db = await YAMLConfig.connect(dbPath);
   });
 
   beforeEach(async () => {
@@ -36,7 +36,7 @@ describe("Database", () => {
         await fs.promises.unlink(newDbPath);
       }
 
-      const newDb = await Configuration.connect(newDbPath);
+      const newDb = await YAMLConfig.connect(newDbPath);
 
       expect(fs.existsSync(newDbPath)).toBe(true);
       expect(newDb.filePath).toBe(newDbPath);
@@ -47,7 +47,7 @@ describe("Database", () => {
 
     it("should connect to existing database file", async () => {
       // Create a database first
-      const existingDb = await Configuration.connect(dbPath);
+      const existingDb = await YAMLConfig.connect(dbPath);
       await existingDb.addProxy({
         name: "test-proxy",
         description: "Test proxy",
@@ -55,7 +55,7 @@ describe("Database", () => {
       });
 
       // Connect to the same file
-      const connectedDb = await Configuration.connect(dbPath);
+      const connectedDb = await YAMLConfig.connect(dbPath);
       const proxies = await connectedDb.getAll();
 
       expect(proxies).toHaveLength(1);

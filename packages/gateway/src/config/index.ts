@@ -103,21 +103,27 @@ export abstract class Config {
     attributes: Partial<ProxyTargetAttributes>,
   ): Promise<ProxyTargetAttributes> {
     const store = await this.readData();
-    const proxy = await this.getProxy(proxyId);
+    const proxyIndex = _.findIndex(store.proxies, { id: proxyId });
+
+    if (proxyIndex === -1) {
+      throw new Error("Proxy not found");
+    }
+
+    const proxy = store.proxies[proxyIndex];
     const serverIndex = _.findIndex(proxy.servers, { name: serverName });
 
     if (serverIndex === -1) {
       throw new Error("Server not found");
     }
 
-    const updatedServer = _.merge({}, proxy.servers[serverIndex], attributes);
-    const updatedProxy = _.merge({}, proxy, {
+    const updatedServer = { ...proxy.servers[serverIndex], ...attributes };
+    const updatedProxy = {
+      ...proxy,
       servers: proxy.servers.map((s, index) =>
         index === serverIndex ? updatedServer : s,
       ),
-    });
+    };
 
-    const proxyIndex = _.findIndex(store.proxies, { id: proxyId });
     store.proxies[proxyIndex] = updatedProxy;
     await this.writeData(store);
     return updatedServer;

@@ -8,7 +8,7 @@ import {
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { YAMLConfig } from "./index";
 
-describe("Database", () => {
+describe("Config", () => {
   let db: YAMLConfig;
   const dbPath = path.join(__dirname, "./config.test.yaml");
 
@@ -358,6 +358,46 @@ describe("Database", () => {
       await expect(
         db.updateServer(addedProxy.id, "non-existent", {}),
       ).rejects.toThrow("Server not found");
+    });
+
+    it("should be able to unset attributes", async () => {
+      const proxyData = {
+        name: "test-proxy",
+        description: "A test proxy",
+        servers: [
+          {
+            name: "server-1",
+            transport: {
+              type: "http" as const,
+              url: "https://example.com",
+            },
+            toolPrefix: "test-prefix",
+            disabledTools: ["tool1", "tool2"],
+          },
+        ],
+      };
+
+      const addedProxy = await db.addProxy(proxyData);
+
+      // First, verify the server has the initial attributes
+      const initialServer = await db.getServer(addedProxy.id, "server-1");
+      expect(initialServer.toolPrefix).toBe("test-prefix");
+      expect(initialServer.disabledTools).toEqual(["tool1", "tool2"]);
+
+      // Now unset the attributes
+      const updatedServer = await db.updateServer(addedProxy.id, "server-1", {
+        toolPrefix: "",
+        disabledTools: [],
+      });
+
+      // Verify the attributes were unset
+      expect(updatedServer.toolPrefix).toBe("");
+      expect(updatedServer.disabledTools).toEqual([]);
+
+      // Verify the changes are persisted by retrieving the server again
+      const retrievedServer = await db.getServer(addedProxy.id, "server-1");
+      expect(retrievedServer.toolPrefix).toBe("");
+      expect(retrievedServer.disabledTools).toEqual([]);
     });
   });
 

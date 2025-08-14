@@ -10,40 +10,17 @@ import {
 import _ from "lodash";
 import slugify from "slugify";
 
-export class Configuration {
+abstract class AbstractConfig {
   public readonly filePath: string;
-  private _data?: ConfigurationData;
+  protected _data?: ConfigurationData;
 
-  private constructor(filePath: string) {
+  protected constructor(filePath: string) {
     this.filePath = filePath;
   }
 
-  private async init() {
-    if (!existsSync(this.filePath)) {
-      await this.writeData(defaultConfiguration());
-    } else {
-      const store = await readJSONFile(this.filePath);
-      this._data = databaseAttributesSchema.parse(store);
-    }
-  }
-
-  static async connect(filePath: string): Promise<Configuration> {
-    const db = new Configuration(filePath);
-    await db.init();
-    return db;
-  }
-
-  private async readData(): Promise<ConfigurationData> {
-    if (!this._data) {
-      await this.init();
-    }
-    return this._data as ConfigurationData;
-  }
-
-  private async writeData(data: ConfigurationData): Promise<void> {
-    await writeJSONFile(this.filePath, data);
-    this._data = _.cloneDeep(data);
-  }
+  protected abstract init(): Promise<void>;
+  protected abstract readData(): Promise<ConfigurationData>;
+  protected abstract writeData(data: ConfigurationData): Promise<void>;
 
   async addProxy(
     proxy: Omit<ProxyServerAttributes, "id">,
@@ -228,6 +205,35 @@ export class Configuration {
 
     await this.updateProxy(proxyId, { prompts: updatedPrompts });
     return updatedPrompt;
+  }
+}
+
+export class Configuration extends AbstractConfig {
+  static async connect(filePath: string): Promise<Configuration> {
+    const db = new Configuration(filePath);
+    await db.init();
+    return db;
+  }
+
+  async init() {
+    if (!existsSync(this.filePath)) {
+      await this.writeData(defaultConfiguration());
+    } else {
+      const store = await readJSONFile(this.filePath);
+      this._data = databaseAttributesSchema.parse(store);
+    }
+  }
+
+  async readData(): Promise<ConfigurationData> {
+    if (!this._data) {
+      await this.init();
+    }
+    return this._data as ConfigurationData;
+  }
+
+  async writeData(data: ConfigurationData): Promise<void> {
+    await writeJSONFile(this.filePath, data);
+    this._data = _.cloneDeep(data);
   }
 }
 

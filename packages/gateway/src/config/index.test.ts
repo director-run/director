@@ -21,21 +21,10 @@ describe("Database", () => {
 
   beforeEach(async () => {
     await db.purge();
-    console.log("-----", await db.countProxies());
-    // Clean up any existing test database
-    // if (fs.existsSync(dbPath)) {
-    //   await fs.promises.unlink(dbPath);
-    // }
-    // db = await Database.connect(dbPath);
-    // console.log(db._data);
   });
 
   afterEach(async () => {
-    // Clean up after each test
     await db.purge();
-    // if (fs.existsSync(dbPath)) {
-    //   await fs.promises.unlink(dbPath);
-    // }
   });
 
   describe("connect", () => {

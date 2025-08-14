@@ -1,3 +1,4 @@
+import fs from "fs";
 import { existsSync } from "node:fs";
 import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
 import {
@@ -9,6 +10,7 @@ import {
 } from "@director.run/utilities/schema";
 import _ from "lodash";
 import slugify from "slugify";
+import YAML from "yaml";
 
 abstract class AbstractConfig {
   public readonly filePath: string;
@@ -233,6 +235,35 @@ export class Configuration extends AbstractConfig {
 
   async writeData(data: ConfigurationData): Promise<void> {
     await writeJSONFile(this.filePath, data);
+    this._data = _.cloneDeep(data);
+  }
+}
+
+export class YAMLConfiguration extends AbstractConfig {
+  static async connect(filePath: string): Promise<YAMLConfiguration> {
+    const db = new YAMLConfiguration(filePath);
+    await db.init();
+    return db;
+  }
+
+  async init() {
+    if (!existsSync(this.filePath)) {
+      await this.writeData(defaultConfiguration());
+    } else {
+      const data = await fs.promises.readFile(this.filePath, "utf8");
+      this._data = databaseAttributesSchema.parse(YAML.parse(data));
+    }
+  }
+
+  async readData(): Promise<ConfigurationData> {
+    if (!this._data) {
+      await this.init();
+    }
+    return this._data as ConfigurationData;
+  }
+
+  async writeData(data: ConfigurationData): Promise<void> {
+    await fs.promises.writeFile(this.filePath, YAML.stringify(data));
     this._data = _.cloneDeep(data);
   }
 }

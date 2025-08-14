@@ -3,7 +3,7 @@ import path from "node:path";
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { Database } from "./config";
+import { Configuration } from "./config";
 import { ProxyServerStore } from "./proxy-server-store";
 import {
   makeFooBarServerStdioConfig,
@@ -18,7 +18,7 @@ describe("ProxyServerStore", () => {
     if (fs.existsSync(dbPath)) {
       await fs.promises.unlink(dbPath);
     }
-    const db = await Database.connect(dbPath);
+    const db = await Configuration.connect(dbPath);
     proxyServerStore = await ProxyServerStore.create({
       db,
       oAuthHandler: OAuthHandler.createMemoryBackedHandler({
@@ -65,7 +65,7 @@ describe("ProxyServerStore", () => {
       const proxy = proxyServerStore.get("test-proxy");
       expect(proxy.targets).toHaveLength(2); // 1 server + 1 prompt manager
 
-      const db = await Database.connect(dbPath);
+      const db = await Configuration.connect(dbPath);
       const proxyEntry = await db.getProxy("test-proxy");
       expect(proxyEntry.servers).toHaveLength(1);
       expect(proxyEntry.servers[0].name).toBe("foo");
@@ -86,7 +86,7 @@ describe("ProxyServerStore", () => {
       expect(proxy.targets).toHaveLength(1); // Only prompt manager remains
       expect(removedTarget.status).toBe("disconnected");
 
-      const db = await Database.connect(dbPath);
+      const db = await Configuration.connect(dbPath);
       const proxyEntry = await db.getProxy("test-proxy");
       expect(proxyEntry.servers).toHaveLength(0);
     });
@@ -107,7 +107,7 @@ describe("ProxyServerStore", () => {
       expect(proxy.name).toBe("test-proxy-updated");
       expect(proxy.description).toBe("test-proxy-updated");
 
-      const db = await Database.connect(dbPath);
+      const db = await Configuration.connect(dbPath);
       const proxyEntry = await db.getProxy("test-proxy");
 
       expect(proxyEntry.name).toBe("test-proxy-updated");

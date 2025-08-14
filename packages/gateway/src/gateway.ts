@@ -10,7 +10,7 @@ import { logRequests } from "@director.run/utilities/middleware";
 import { Telemetry } from "@director.run/utilities/telemetry";
 import cors from "cors";
 import express from "express";
-import { Database } from "./config";
+import { Configuration } from "./config";
 import { ProxyServerStore } from "./proxy-server-store";
 import { createSSERouter } from "./routers/sse";
 import { createStreamableRouter } from "./routers/streamable";
@@ -22,12 +22,12 @@ export class Gateway {
   public readonly proxyStore: ProxyServerStore;
   public readonly port: number;
   private server: Server;
-  public readonly db: Database;
+  public readonly db: Configuration;
 
   private constructor(attribs: {
     proxyStore: ProxyServerStore;
     port: number;
-    db: Database;
+    db: Configuration;
     server: Server;
   }) {
     this.port = attribs.port;
@@ -59,7 +59,7 @@ export class Gateway {
   ) {
     logger.info(`starting director gateway`);
 
-    const db = await Database.connect(attribs.databaseFilePath);
+    const db = await Configuration.connect(attribs.databaseFilePath);
     const telemetry = attribs.telemetry || Telemetry.noTelemetry();
 
     let oAuthHandler: OAuthHandler | undefined;

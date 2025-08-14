@@ -10,18 +10,7 @@ import {
 import _ from "lodash";
 import slugify from "slugify";
 
-function makeDefaultDB(): DatabaseAttributes {
-  return {
-    version: "1.0.0",
-    proxies: [],
-  };
-}
-
-function slugifyName(name: string): string {
-  return slugify(name, { lower: true, strict: true, trim: true });
-}
-
-export class Database {
+export class Configuration {
   public readonly filePath: string;
   private _data?: DatabaseAttributes;
 
@@ -38,8 +27,8 @@ export class Database {
     }
   }
 
-  static async connect(filePath: string): Promise<Database> {
-    const db = new Database(filePath);
+  static async connect(filePath: string): Promise<Configuration> {
+    const db = new Configuration(filePath);
     await db.init();
     return db;
   }
@@ -245,4 +234,15 @@ export class Database {
     await this.updateProxy(proxyId, { prompts: updatedPrompts });
     return updatedPrompt;
   }
+}
+
+function makeDefaultDB(): DatabaseAttributes {
+  return {
+    version: "1.0.0",
+    proxies: [],
+  };
+}
+
+function slugifyName(name: string): string {
+  return slugify(name, { lower: true, strict: true, trim: true });
 }

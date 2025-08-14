@@ -1,6 +1,5 @@
 import fs from "fs";
 import { existsSync } from "node:fs";
-import {} from "@director.run/utilities/json";
 import {
   type ConfigurationData,
   type PromptAttributes,
@@ -29,7 +28,7 @@ export abstract class Config {
   ): Promise<ProxyServerAttributes> {
     const store = await this.readData();
 
-    if (_.find(store.proxies, { name: proxy.name })) {
+    if (_.find(store.playbooks, { name: proxy.name })) {
       throw new Error("Proxy already exists");
     }
 
@@ -42,14 +41,14 @@ export abstract class Config {
       })),
     };
 
-    store.proxies.push(newProxy);
+    store.playbooks.push(newProxy);
     await this.writeData(store);
     return newProxy;
   }
 
   async getProxy(id: string): Promise<ProxyServerAttributes> {
     const store = await this.readData();
-    const proxy = _.find(store.proxies, { id });
+    const proxy = _.find(store.playbooks, { id });
     if (!proxy) {
       throw new Error("Proxy not found");
     }
@@ -59,7 +58,7 @@ export abstract class Config {
   async deleteProxy(id: string): Promise<void> {
     await this.getProxy(id);
     const store = await this.readData();
-    store.proxies = _.reject(store.proxies, { id });
+    store.playbooks = _.reject(store.playbooks, { id });
     await this.writeData(store);
   }
 
@@ -86,15 +85,15 @@ export abstract class Config {
         attributes.prompts !== undefined ? attributes.prompts : proxy.prompts,
     };
 
-    const proxyIndex = _.findIndex(store.proxies, { id });
-    store.proxies[proxyIndex] = updatedProxy;
+    const proxyIndex = _.findIndex(store.playbooks, { id });
+    store.playbooks[proxyIndex] = updatedProxy;
     await this.writeData(store);
     return updatedProxy;
   }
 
   async countProxies(): Promise<number> {
     const store = await this.readData();
-    return _.size(store.proxies);
+    return _.size(store.playbooks);
   }
 
   async updateServer(
@@ -103,13 +102,13 @@ export abstract class Config {
     attributes: Partial<ProxyTargetAttributes>,
   ): Promise<ProxyTargetAttributes> {
     const store = await this.readData();
-    const proxyIndex = _.findIndex(store.proxies, { id: proxyId });
+    const proxyIndex = _.findIndex(store.playbooks, { id: proxyId });
 
     if (proxyIndex === -1) {
       throw new Error("Proxy not found");
     }
 
-    const proxy = store.proxies[proxyIndex];
+    const proxy = store.playbooks[proxyIndex];
     const serverIndex = _.findIndex(proxy.servers, { name: serverName });
 
     if (serverIndex === -1) {
@@ -124,7 +123,7 @@ export abstract class Config {
       ),
     };
 
-    store.proxies[proxyIndex] = updatedProxy;
+    store.playbooks[proxyIndex] = updatedProxy;
     await this.writeData(store);
     return updatedServer;
   }
@@ -165,7 +164,7 @@ export abstract class Config {
 
   async getAll(): Promise<ProxyServerAttributes[]> {
     const store = await this.readData();
-    return store.proxies;
+    return store.playbooks;
   }
 
   async purge(): Promise<void> {
@@ -298,7 +297,7 @@ export class YAMLConfig extends Config {
 function defaultConfiguration(): ConfigurationData {
   return {
     version: "1.0.0",
-    proxies: [],
+    playbooks: [],
   };
 }
 

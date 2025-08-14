@@ -133,7 +133,7 @@ export type ProxyServerAttributes = z.infer<typeof proxyServerAttributesSchema>;
 
 export const databaseAttributesSchema = z.object({
   version: z.string().optional(),
-  proxies: z.array(proxyServerAttributesSchema),
+  playbooks: z.array(proxyServerAttributesSchema),
 });
 
 export type ConfigurationData = z.infer<typeof databaseAttributesSchema>;

@@ -70,20 +70,26 @@ export abstract class Config {
     const store = await this.readData();
     const proxy = await this.getProxy(id);
 
-    _.assign(proxy, {
+    // Create a new proxy object with the updated attributes
+    const updatedProxy = {
+      ...proxy,
       ...attributes,
       name: attributes.name ?? proxy.name,
-      servers: _.map(
-        attributes.servers || proxy.servers || [],
-        (s: ProxyTargetAttributes) => ({
-          ...s,
-          name: slugifyName(s.name),
-        }),
-      ),
-    });
+      servers:
+        attributes.servers !== undefined
+          ? _.map(attributes.servers, (s: ProxyTargetAttributes) => ({
+              ...s,
+              name: slugifyName(s.name),
+            }))
+          : proxy.servers,
+      prompts:
+        attributes.prompts !== undefined ? attributes.prompts : proxy.prompts,
+    };
 
+    const proxyIndex = _.findIndex(store.proxies, { id });
+    store.proxies[proxyIndex] = updatedProxy;
     await this.writeData(store);
-    return proxy;
+    return updatedProxy;
   }
 
   async countProxies(): Promise<number> {
@@ -97,12 +103,24 @@ export abstract class Config {
     attributes: Partial<ProxyTargetAttributes>,
   ): Promise<ProxyTargetAttributes> {
     const store = await this.readData();
-    const server = await this.getServer(proxyId, serverName);
+    const proxy = await this.getProxy(proxyId);
+    const serverIndex = _.findIndex(proxy.servers, { name: serverName });
 
-    _.assign(server, attributes);
+    if (serverIndex === -1) {
+      throw new Error("Server not found");
+    }
 
+    const updatedServer = _.merge({}, proxy.servers[serverIndex], attributes);
+    const updatedProxy = _.merge({}, proxy, {
+      servers: proxy.servers.map((s, index) =>
+        index === serverIndex ? updatedServer : s,
+      ),
+    });
+
+    const proxyIndex = _.findIndex(store.proxies, { id: proxyId });
+    store.proxies[proxyIndex] = updatedProxy;
     await this.writeData(store);
-    return server;
+    return updatedServer;
   }
 
   async getServer(
@@ -262,7 +280,7 @@ export class YAMLConfig extends Config {
     if (!this._data) {
       await this.init();
     }
-    return this._data as ConfigurationData;
+    return _.cloneDeep(this._data) as ConfigurationData;
   }
 
   async writeData(data: ConfigurationData): Promise<void> {

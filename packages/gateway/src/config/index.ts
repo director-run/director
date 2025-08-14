@@ -1,5 +1,6 @@
 import fs from "fs";
 import { existsSync } from "node:fs";
+import { AppError, ErrorCode } from "@director.run/utilities/error";
 import {
   type ConfigurationData,
   type PromptAttributes,
@@ -10,6 +11,7 @@ import {
 import _ from "lodash";
 import slugify from "slugify";
 import YAML from "yaml";
+import { ZodError } from "zod";
 
 export abstract class Config {
   public readonly filePath: string;
@@ -33,8 +35,8 @@ export abstract class Config {
     }
 
     const newProxy: ProxyServerAttributes = {
-      ...proxy,
       id: slugifyName(proxy.name),
+      ...proxy,
       servers: _.map(proxy.servers || [], (s) => ({
         ...s,
         name: slugifyName(s.name),
@@ -277,7 +279,22 @@ export class YAMLConfig extends Config {
       await this.writeData(defaultConfiguration());
     } else {
       const data = await fs.promises.readFile(this.filePath, "utf8");
-      this._data = databaseAttributesSchema.parse(YAML.parse(data));
+      try {
+        this._data = databaseAttributesSchema.parse(YAML.parse(data));
+      } catch (e) {
+        if (e instanceof ZodError) {
+          throw new AppError(
+            ErrorCode.INVALID_CONFIGURATION,
+            "Invalid configuration file",
+            {
+              filePath: this.filePath,
+              parseErrors: e.errors,
+            },
+          );
+        } else {
+          throw e;
+        }
+      }
     }
   }
 

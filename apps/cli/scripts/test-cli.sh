@@ -13,14 +13,18 @@ echo
 
 bun cli create test
 bun cli add test --entry hackernews
+bun cli update test hackernews -a toolPrefix="h_" -a disabledTools='["get_story_info", "get_user_info", "search_stories"]'
+
 # bun cli connect test -t claude
 # bun cli add test --entry fetch
 bun cli add test --name custom-fetch --command "uvx mcp-server-fetch"
+bun cli update test custom-fetch -a disabled=true
 # 
 # Oauth
 # 
 # Step 1: Add an oauth target to the proxy
 bun cli add test --name notion --url https://mcp.notion.com/mcp
+bun cli update test notion -a toolPrefix="n___" 
 
 # Step 2: authenticate
 # bun cli auth test notion

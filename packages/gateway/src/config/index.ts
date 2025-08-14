@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
 import {
-  type DatabaseAttributes,
+  type ConfigurationData,
   type PromptAttributes,
   type ProxyServerAttributes,
   type ProxyTargetAttributes,
@@ -12,7 +12,7 @@ import slugify from "slugify";
 
 export class Configuration {
   public readonly filePath: string;
-  private _data?: DatabaseAttributes;
+  private _data?: ConfigurationData;
 
   private constructor(filePath: string) {
     this.filePath = filePath;
@@ -20,7 +20,7 @@ export class Configuration {
 
   private async init() {
     if (!existsSync(this.filePath)) {
-      await this.writeData(makeDefaultDB());
+      await this.writeData(defaultConfiguration());
     } else {
       const store = await readJSONFile(this.filePath);
       this._data = databaseAttributesSchema.parse(store);
@@ -33,14 +33,14 @@ export class Configuration {
     return db;
   }
 
-  private async readData(): Promise<DatabaseAttributes> {
+  private async readData(): Promise<ConfigurationData> {
     if (!this._data) {
       await this.init();
     }
-    return this._data as DatabaseAttributes;
+    return this._data as ConfigurationData;
   }
 
-  private async writeData(data: DatabaseAttributes): Promise<void> {
+  private async writeData(data: ConfigurationData): Promise<void> {
     await writeJSONFile(this.filePath, data);
     this._data = _.cloneDeep(data);
   }
@@ -78,7 +78,7 @@ export class Configuration {
   }
 
   async deleteProxy(id: string): Promise<void> {
-    await this.getProxy(id); // Verify exists
+    await this.getProxy(id);
     const store = await this.readData();
     store.proxies = _.reject(store.proxies, { id });
     await this.writeData(store);
@@ -166,7 +166,7 @@ export class Configuration {
   }
 
   async purge(): Promise<void> {
-    await this.writeData(makeDefaultDB());
+    await this.writeData(defaultConfiguration());
   }
 
   async addPrompt(
@@ -231,7 +231,7 @@ export class Configuration {
   }
 }
 
-function makeDefaultDB(): DatabaseAttributes {
+function defaultConfiguration(): ConfigurationData {
   return {
     version: "1.0.0",
     proxies: [],

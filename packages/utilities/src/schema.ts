@@ -136,4 +136,4 @@ export const databaseAttributesSchema = z.object({
   proxies: z.array(proxyServerAttributesSchema),
 });
 
-export type DatabaseAttributes = z.infer<typeof databaseAttributesSchema>;
+export type ConfigurationData = z.infer<typeof databaseAttributesSchema>;

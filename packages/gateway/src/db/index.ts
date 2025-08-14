@@ -215,10 +215,10 @@ export class Database {
   }
 
   async removePrompt(proxyId: string, promptName: string): Promise<boolean> {
-    const proxy = await this.getProxy(proxyId);
-    const updatedPrompts = _.reject(proxy.prompts || [], { name: promptName });
+    const prompts = await this.getPrompts(proxyId);
+    const updatedPrompts = _.reject(prompts, { name: promptName });
 
-    if (_.size(updatedPrompts) === _.size(proxy.prompts || [])) {
+    if (updatedPrompts.length === prompts.length) {
       throw new Error(`Prompt ${promptName} not found`);
     }
 

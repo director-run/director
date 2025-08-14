@@ -45,28 +45,6 @@ export class Configuration {
     this._data = _.cloneDeep(data);
   }
 
-  private findServer(
-    servers: ProxyTargetAttributes[],
-    name: string,
-  ): ProxyTargetAttributes {
-    const server = _.find(servers, { name });
-    if (!server) {
-      throw new Error("Server not found");
-    }
-    return server;
-  }
-
-  private findPrompt(
-    prompts: PromptAttributes[],
-    name: string,
-  ): { prompt: PromptAttributes; index: number } {
-    const index = _.findIndex(prompts, { name });
-    if (index === -1) {
-      throw new Error(`Prompt ${name} not found`);
-    }
-    return { prompt: prompts[index], index };
-  }
-
   async addProxy(
     proxy: Omit<ProxyServerAttributes, "id">,
   ): Promise<ProxyServerAttributes> {
@@ -140,10 +118,10 @@ export class Configuration {
     attributes: Partial<ProxyTargetAttributes>,
   ): Promise<ProxyTargetAttributes> {
     const store = await this.readData();
-    const proxy = await this.getProxy(proxyId);
-    const server = this.findServer(proxy.servers, serverName);
+    const server = await this.getServer(proxyId, serverName);
 
     _.assign(server, attributes);
+
     await this.writeData(store);
     return server;
   }
@@ -153,7 +131,11 @@ export class Configuration {
     serverName: string,
   ): Promise<ProxyTargetAttributes> {
     const proxy = await this.getProxy(proxyId);
-    return this.findServer(proxy.servers, serverName);
+    const server = _.find(proxy.servers, { name: serverName });
+    if (!server) {
+      throw new Error("Server not found");
+    }
+    return server;
   }
 
   async addServer(
@@ -203,6 +185,19 @@ export class Configuration {
     return _.get(proxy, "prompts", []);
   }
 
+  async getPrompt(
+    proxyId: string,
+    promptName: string,
+  ): Promise<{ prompt: PromptAttributes; index: number }> {
+    const proxy = await this.getProxy(proxyId);
+    const prompts = proxy.prompts || [];
+    const index = _.findIndex(prompts, { name: promptName });
+    if (index === -1) {
+      throw new Error(`Prompt ${promptName} not found`);
+    }
+    return { prompt: prompts[index], index };
+  }
+
   async removePrompt(proxyId: string, promptName: string): Promise<boolean> {
     const prompts = await this.getPrompts(proxyId);
     const updatedPrompts = _.reject(prompts, { name: promptName });
@@ -221,8 +216,8 @@ export class Configuration {
     prompt: Partial<PromptAttributes>,
   ): Promise<PromptAttributes> {
     const proxy = await this.getProxy(proxyId);
-    const { prompt: currentPrompt, index } = this.findPrompt(
-      proxy.prompts || [],
+    const { prompt: currentPrompt, index } = await this.getPrompt(
+      proxyId,
       promptName,
     );
 

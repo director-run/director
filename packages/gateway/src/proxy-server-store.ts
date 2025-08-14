@@ -16,7 +16,7 @@ import {
   type Prompt,
   PromptManager,
 } from "./capabilities/prompt-manager";
-import type { Database } from "./db";
+import type { Database } from "./config";
 
 const logger = getLogger("ProxyServerStore");
 

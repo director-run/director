@@ -10,7 +10,7 @@ import { logRequests } from "@director.run/utilities/middleware";
 import { Telemetry } from "@director.run/utilities/telemetry";
 import cors from "cors";
 import express from "express";
-import { Database } from "./db";
+import { Database } from "./config";
 import { ProxyServerStore } from "./proxy-server-store";
 import { createSSERouter } from "./routers/sse";
 import { createStreamableRouter } from "./routers/streamable";

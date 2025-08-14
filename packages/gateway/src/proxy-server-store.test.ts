@@ -3,7 +3,7 @@ import path from "node:path";
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { Database } from "./db";
+import { Database } from "./config";
 import { ProxyServerStore } from "./proxy-server-store";
 import {
   makeFooBarServerStdioConfig,

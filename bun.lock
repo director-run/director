@@ -32,6 +32,7 @@
         "superjson": "^2.2.2",
         "type-fest": "^4.40.0",
         "update-notifier": "^7.3.1",
+        "zx": "^8.8.0",
       },
       "peerDependencies": {
         "typescript": "^5",
@@ -2631,7 +2632,7 @@
 
     "zwitch": ["zwitch@2.0.4", "", {}, "sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A=="],
 
-    "zx": ["zx@8.7.1", "", { "bin": { "zx": "build/cli.js" } }, "sha512-28u1w2LlIfvyvJvYe6pmCipesk8oL5AFMVp+P/U445LcaPgzrU5lNDtAPd6nJvWmoCNyXZz37R/xKOGokccjsw=="],
+    "zx": ["zx@8.8.0", "", { "bin": { "zx": "build/cli.js" } }, "sha512-v0VZXgSHusDvTtZROno3Ws8xkE1uNSSwH/yF8Fm+ZwBrYhr+bRNNpsnTJ32eR/t6umc7lAz5WqdP800ugW9zFA=="],
 
     "@alcalzone/ansi-tokenize/is-fullwidth-code-point": ["is-fullwidth-code-point@4.0.0", "", {}, "sha512-O4L094N2/dZ7xqVdrXhh9r1KODPJpFms8B5sGdJLPy664AgvXsreZUyCQQNItZRDlYug4xStLjNp/sz3HvBowQ=="],
 

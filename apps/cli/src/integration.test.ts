@@ -1,22 +1,39 @@
 import { ChildProcess, spawn } from "node:child_process";
 import path from "node:path";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
-import { afterAll, beforeAll, describe, test } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, test } from "vitest";
+import { $ } from "zx";
+import { gatewayClient } from "./client";
 
 describe("CLI integration tests", () => {
   let serveProcess: ChildProcess;
   beforeAll(async () => {
-    serveProcess = await runCLIServe({ verbose: true });
+    serveProcess = await runCLIServe({ verbose: false });
   }, 30000);
 
   afterAll(() => {
     serveProcess.kill();
   });
 
-  test("should proxy an SSE server to stdio", () => {
-    console.log("Hello, world!");
+  beforeEach(async () => {
+    await gatewayClient.store.purge.mutate();
+  });
+
+  test("should proxy an SSE server to stdio", async () => {
+    const result1 = await runCLICommand("list");
+    console.log("result1", result1.stdout);
   });
 });
+
+function runCLICommand(...command: string[]) {
+  const cmd = ["bun", path.join(__dirname, "../bin/cli.ts"), ...command];
+  return $({
+    env: {
+      ...process.env,
+      LOG_LEVEL: "debug",
+    },
+  })`${cmd[0]} ${cmd.slice(1)}`;
+}
 
 function runCLIServe({
   timeout = 10000,

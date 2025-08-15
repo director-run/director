@@ -1,7 +1,14 @@
 import { ChildProcess, spawn } from "node:child_process";
 import path from "node:path";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
-import { afterAll, beforeAll, beforeEach, describe, test } from "vitest";
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  test,
+} from "vitest";
 import { $ } from "zx";
 import { gatewayClient } from "./client";
 
@@ -19,9 +26,14 @@ describe("CLI integration tests", () => {
     await gatewayClient.store.purge.mutate();
   });
 
-  test("should proxy an SSE server to stdio", async () => {
-    const result1 = await runCLICommand("list");
-    console.log("result1", result1.stdout);
+  test("should be able to create a proxy server", async () => {
+    await runCLICommand("create", "test");
+    expect(await gatewayClient.store.getAll.query()).toContainEqual(
+      expect.objectContaining({
+        id: "test",
+        name: "test",
+      }),
+    );
   });
 });
 

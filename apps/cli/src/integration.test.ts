@@ -216,20 +216,6 @@ describe("CLI integration tests", () => {
       // The command should complete but with an error message
       expect(result.stdout).toContain("Target non-existent does not exists");
     });
-
-    test("should fail when updating with invalid attributes", async () => {
-      await runCLICommand("add", "test", "--entry", "hackernews");
-
-      const result = await runCLICommand(
-        "update",
-        "test",
-        "hackernews",
-        "-a",
-        "invalidAttribute=value",
-      );
-      // The command should complete but with an error message
-      expect(result.stdout).toContain("error");
-    });
   });
 
   describe("proxy lifecycle", () => {

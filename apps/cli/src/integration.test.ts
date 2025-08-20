@@ -33,4 +33,15 @@ describe("CLI integration tests", () => {
       }),
     );
   });
+
+  describe("adding a server to a proxy", () => {
+    test("should be able to add a server from the registry", async () => {});
+    test("should be able to add a server using a command", async () => {});
+    test("should be able to add an oauth authenticated server", async () => {});
+  });
+
+  describe("updating a proxy", () => {
+    test("should be able to update multiple attributes", async () => {});
+    test("should be able to disable a server", async () => {});
+  });
 });

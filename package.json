@@ -27,6 +27,7 @@
     "inspector": "npx @modelcontextprotocol/inspector",
     "changeset": "changeset",
     "version-packages": "changeset version",
+    "version-packages-formatted": "changeset version && bun run format",
     "release-packages": "bun run build && changeset publish"
   },
   "devDependencies": {

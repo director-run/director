@@ -41,7 +41,7 @@ export function SimpleMarkdown({
         u: ({ children }) => <u className="underline">{children}</u>,
         s: ({ children }) => <s className="line-through">{children}</s>,
         code: ({ children }) => (
-          <code className="bg-accent font-mono rounded-md px-1">
+          <code className="rounded-md bg-accent px-1 font-mono">
             {children}
           </code>
         ),

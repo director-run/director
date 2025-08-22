@@ -111,9 +111,10 @@ The following secrets must be configured in GitHub repository settings:
 #### Package Release Targets
 
 - `@director.run/cli`: Published to npm as public package
-- `@director.run/sdk`: Published to npm as public package  
+- `@director.run/sdk`: Published to npm as public package (bundles gateway and registry internally)
 - `@director.run/docker`: Published to Docker Hub as `barnaby/director` with version tags
-- Other packages (`@director.run/studio`, `@director.run/sandbox`, `@director.run/registry`): Ignored in releases
+- Private packages (`@director.run/gateway`, `@director.run/registry`): Versioned but not published (bundled into SDK)
+- Ignored packages (`@director.run/studio`, `@director.run/sandbox`): Not versioned or published
 
 #### Changelog Format
 

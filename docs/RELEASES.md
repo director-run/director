@@ -6,7 +6,7 @@ This document describes the release process for the Director monorepo using [Cha
 
 Director uses Changesets for automated release management, supporting:
 
-- **NPM Publishing**: `@director.run/cli` and `@director.run/sdk` 
+- **NPM Publishing**: `@director.run/cli` and `@director.run/sdk` (SDK bundles internal dependencies)
 - **Docker Registry**: `@director.run/docker` to Docker Hub as `barnaby/director`
 - **Automated Changelogs**: Mintlify-compatible format with GitHub integration
 
@@ -53,6 +53,14 @@ The release happens automatically when changesets are merged to `main`:
 Both packages are configured with:
 - `"publishConfig": { "access": "public" }` in package.json
 - Build process runs before publishing via `prepare` script
+- SDK bundles internal dependencies (gateway, registry) using tsup
+
+### Private Dependencies (`@director.run/gateway`, `@director.run/registry`)
+
+These packages are:
+- Marked as `"private": true` so they won't be published to npm
+- Tracked by Changesets for versioning purposes
+- Bundled into the SDK at build time using tsup's bundling capabilities
 
 ### Docker Package (`@director.run/docker`)
 

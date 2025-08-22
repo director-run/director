@@ -2,6 +2,7 @@
   "name": "@director.run/gateway",
   "type": "module",
   "version": "0.0.1",
+  "private": true,
   "scripts": {
     "lint": "biome check .",
     "format": "biome format --write .",

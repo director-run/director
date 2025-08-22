@@ -23,8 +23,8 @@ jobs:
         with:
           # This makes Actions fetch all Git history so that Changesets can generate changelogs with the correct commits
           fetch-depth: 0
-          # This is required for changesets to work with git tags
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # Use PAT to allow CI workflows to trigger on the created PRs
+          token: ${{ secrets.GH_RELEASE_TOKEN }}
           persist-credentials: true
 
       - name: Setup Bun
@@ -47,7 +47,7 @@ jobs:
           commit: "chore: release packages"
           title: "chore: release packages"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Build and publish Docker image

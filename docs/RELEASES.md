@@ -74,6 +74,12 @@ These packages are:
 
 Configure these in GitHub repository settings (`Settings > Secrets and variables > Actions`):
 
+- **`GH_RELEASE_TOKEN`**: Personal Access Token (PAT) with repository access
+  - Required to allow CI workflows to run on changesets release PRs
+  - Create at https://github.com/settings/tokens (Classic tokens recommended)
+  - Select scopes: `repo` (full repository access) and `workflow`
+  - Add to repository secrets
+
 - **`NPM_TOKEN`**: npm authentication token with publish access to `@director.run` organization
   - Create at https://www.npmjs.com/settings/tokens
   - Select "Automation" token type
@@ -88,7 +94,14 @@ Configure these in GitHub repository settings (`Settings > Secrets and variables
 
 ### Token Creation Steps
 
-1. **NPM Token**:
+1. **GitHub PAT (GH_RELEASE_TOKEN)**:
+   - Go to https://github.com/settings/tokens
+   - Click "Generate new token" → "Generate new token (classic)"
+   - Name: `director-changesets` (or similar)
+   - Select scopes: `repo` (full repository access) and `workflow`
+   - Copy the generated token
+
+2. **NPM Token**:
    ```bash
    # Login to npm
    npm login
@@ -97,16 +110,17 @@ Configure these in GitHub repository settings (`Settings > Secrets and variables
    # Web: https://www.npmjs.com/settings/tokens -> Generate New Token -> Automation
    ```
 
-2. **Docker Hub Token**:
+3. **Docker Hub Token**:
    - Go to https://hub.docker.com/settings/security
    - Click "New Access Token"
    - Name: `director-releases` (or similar)
    - Access Permissions: Read, Write, Delete
    - Copy the generated token
 
-3. **Add to GitHub**:
+4. **Add to GitHub**:
    - Go to repository Settings → Secrets and variables → Actions
    - Add these secrets:
+     - Name: `CHANGESETS_TOKEN`, Value: Your GitHub PAT
      - Name: `NPM_TOKEN`, Value: Your npm token
      - Name: `DOCKER_USERNAME`, Value: `barnaby`
      - Name: `DOCKER_PASSWORD`, Value: Your Docker Hub access token
@@ -124,16 +138,22 @@ A single changelog is maintained at the root of the repository (`CHANGELOG.md`) 
 
 ### Common Issues
 
-1. **NPM Token Invalid**: 
+1. **CI Not Running on Release PRs**:
+   - This happens when using the default `GITHUB_TOKEN` 
+   - GitHub's security model prevents workflows from triggering on bot-created PRs
+   - Solution: Use `CHANGESETS_TOKEN` (Personal Access Token) instead
+   - Ensure the PAT has `repo` and `workflow` scopes
+
+2. **NPM Token Invalid**: 
    - Ensure token has correct permissions for `@director.run` organization
    - Check token hasn't expired
 
-2. **Docker Build Fails**:
+3. **Docker Build Fails**:
    - Verify Dockerfile exists in `apps/docker/`
    - Check Docker Hub access token permissions
    - Ensure `DOCKER_USERNAME` and `DOCKER_PASSWORD` are correctly set
 
-3. **Version PR Not Created**:
+4. **Version PR Not Created**:
    - Ensure changesets exist (check `.changeset/` directory)
    - Verify GitHub Actions are enabled
 

@@ -7,7 +7,7 @@
     }
   ],
   "commit": false,
-  "fixed": [],
+  "fixed": [["@director.run/cli", "@director.run/sdk", "@director.run/docker"]],
   "linked": [],
   "access": "public",
   "baseBranch": "main",

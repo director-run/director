@@ -118,10 +118,11 @@ The following secrets must be configured in GitHub repository settings:
 
 #### Changelog Format
 
-Changelogs are automatically generated using GitHub integration with:
-- GitHub PR and user attribution links
+A single changelog is generated at the root of the repository using:
+- GitHub integration for PR and user attribution links
 - Commit hash references
-- Release notes for each version
+- Consolidated release notes for all packages in each version
+- Fixed versioning ensures all public packages are released together
 
 ### Key Patterns
 

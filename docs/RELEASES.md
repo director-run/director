@@ -113,11 +113,12 @@ Configure these in GitHub repository settings (`Settings > Secrets and variables
 
 ## Changelog Format
 
-Changelogs are automatically generated using the standard GitHub changelog format with:
+A single changelog is maintained at the root of the repository (`CHANGELOG.md`) with:
 - Links to GitHub pull requests and commits
 - User attribution for contributions
-- Organized by package and version
+- Consolidated entries for all packages in each release
 - Semantic versioning change types (Major, Minor, Patch)
+- Fixed versioning ensures all public packages are released together
 
 ## Troubleshooting
 
@@ -171,9 +172,10 @@ Certain packages are ignored from releases in `.changeset/config.json`:
 }
 ```
 
-### Changelog Configuration
+### Fixed Package Configuration
 
-The changelog uses the standard `@changesets/changelog-github` generator which automatically:
-- Links to GitHub PRs and commits
-- Attributes changes to contributors
-- Organizes changes by semantic version type
+The packages are configured with "fixed" versioning, meaning:
+- All public packages (`@director.run/cli`, `@director.run/sdk`, `@director.run/docker`) are released together
+- They share the same version number for consistency
+- A single changelog at the root consolidates all changes
+- Uses `@changesets/changelog-github` for proper GitHub integration

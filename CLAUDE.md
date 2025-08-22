@@ -21,6 +21,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `bun run typecheck` - Run TypeScript type checking
 - `bun run test` - Run tests with Vitest (uses `--fileParallelism=false`)
 
+### Release Management
+- `bun run changeset` - Create a new changeset to declare package changes
+- `bun run version-packages` - Version packages and update changelogs based on changesets
+- `bun run release-packages` - Build and publish packages to registries
+
 ### Local Development
 - `bun run cli` - Run CLI in development mode
 - `bun run cli:dev` - Run CLI with watch mode
@@ -82,6 +87,40 @@ Director is MCP (Model Context Protocol) middleware that acts as a proxy between
 - **Linting**: Biome with strict rules (no default exports, no explicit any)
 - **Testing**: Vitest with file parallelism disabled
 - **TypeScript**: Strict configuration across all packages
+
+### Release Process
+
+Director uses [Changesets](https://github.com/changesets/changesets) for automated release management with the following workflow:
+
+#### Creating Releases
+
+1. **Add Changeset**: Run `bun run changeset` to declare package changes and version bumps
+2. **Version Packages**: Changesets automatically creates versioning PRs when changes are merged to main
+3. **Automated Publishing**: 
+   - **npm**: `@director.run/cli` and `@director.run/sdk` are published to npm with public access
+   - **Docker**: `@director.run/docker` is published to Docker Hub as `barnaby/director`
+
+#### GitHub Configuration Required
+
+The following secrets must be configured in GitHub repository settings:
+
+- `NPM_TOKEN`: npm authentication token with publish access to `@director.run` org
+- `DOCKER_USERNAME`: Docker Hub username (`barnaby`)
+- `DOCKER_PASSWORD`: Docker Hub access token or password
+
+#### Package Release Targets
+
+- `@director.run/cli`: Published to npm as public package
+- `@director.run/sdk`: Published to npm as public package  
+- `@director.run/docker`: Published to Docker Hub as `barnaby/director` with version tags
+- Other packages (`@director.run/studio`, `@director.run/sandbox`, `@director.run/registry`): Ignored in releases
+
+#### Changelog Format
+
+Changelogs are automatically generated in Mintlify-compatible format with:
+- Emoji prefixes for change types (🚀 Major, ✨ Minor, 🐛 Patch)
+- GitHub PR and user attribution links
+- Commit hash references
 
 ### Key Patterns
 

@@ -1,23 +1,58 @@
-name: 'Release'
+name: Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   release:
     name: Release
-    timeout-minutes: 10
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - name: Install dependencies
+
+      - name: Install Dependencies
         run: bun install
-      - name: Release
-        run: bun run release
+
+      - name: Build packages
+        run: bun run build
+
+      - name: Create Release Pull Request or Publish packages
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: bun run release-packages
+          version: bun run version-packages
+          commit: "chore: release packages"
+          title: "chore: release packages"
         env:
-          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Build and publish Docker image
+        if: steps.changesets.outputs.published == 'true'
+        run: |
+          cd apps/docker
+          
+          # Extract version from apps/docker/package.json
+          VERSION=$(node -p "require('./package.json').version")
+          
+          # Build Docker image
+          docker build -t barnaby/director:$VERSION -t barnaby/director:latest .
+          
+          # Login to Docker Hub
+          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          
+          # Push Docker images
+          docker push barnaby/director:$VERSION
+          docker push barnaby/director:latest

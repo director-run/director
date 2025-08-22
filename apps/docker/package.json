@@ -1,0 +1,13 @@
+{
+  "name": "@director.run/docker",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Docker image for Director",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/director-run/director"
+  },
+  "author": "Barnaby Malet <barnaby@director.run>",
+  "license": "AGPL-3.0",
+  "homepage": "https://director.run"
+}

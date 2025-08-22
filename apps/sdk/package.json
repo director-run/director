@@ -20,6 +20,9 @@
   },
   "description": "Director SDK for managing MCP servers programmatically",
   "homepage": "https://director.run",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "lint": "biome check .",
     "format": "biome format --write .",
@@ -27,7 +30,7 @@
     "test": "echo 'no tests'",
     "typecheck": "tsc --noEmit",
     "build": "bun run clean && tsup",
-    "release": "bun publish --access public --omit=peer",
+    "release": "changeset publish",
     "prepare": "bun run build",
     "dev": "bun --watch bin/cli.ts"
   },

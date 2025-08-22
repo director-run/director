@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  director:
+    build: .
+    image: director:latest
+    container_name: director
+    ports:
+      - "${GATEWAY_PORT:-8080}:${GATEWAY_PORT:-8080}"
+    environment:
+      - GATEWAY_PORT=${GATEWAY_PORT:-8080}
+    volumes:
+      - ./data:/root/.director
+    restart: unless-stopped
+    networks:
+      - director-network
+
+networks:
+  director-network:
+    driver: bridge

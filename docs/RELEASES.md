@@ -113,19 +113,11 @@ Configure these in GitHub repository settings (`Settings > Secrets and variables
 
 ## Changelog Format
 
-Changelogs are generated with Mintlify-compatible formatting:
-
-```markdown
-## @director.run/cli@1.2.0
-
-### Minor Changes
-
-- ✨ **Minor**: Add new authentication features ([a1b2c3d](https://github.com/director-run/director/commit/a1b2c3d)) [#123](https://github.com/director-run/director/pull/123) Thanks @username!
-
-### Patch Changes
-
-- 🐛 **Patch**: Fix token validation bug ([d4e5f6g](https://github.com/director-run/director/commit/d4e5f6g)) [#124](https://github.com/director-run/director/pull/124)
-```
+Changelogs are automatically generated using the standard GitHub changelog format with:
+- Links to GitHub pull requests and commits
+- User attribution for contributions
+- Organized by package and version
+- Semantic versioning change types (Major, Minor, Patch)
 
 ## Troubleshooting
 
@@ -175,10 +167,13 @@ Certain packages are ignored from releases in `.changeset/config.json`:
 
 ```json
 {
-  "ignore": ["@director.run/studio", "@director.run/sandbox", "@director.run/registry"]
+  "ignore": ["@director.run/studio", "@director.run/sandbox"]
 }
 ```
 
-### Custom Changelog
+### Changelog Configuration
 
-The changelog generator is located at `scripts/changelog.js` and can be customized for different formatting requirements.
+The changelog uses the standard `@changesets/changelog-github` generator which automatically:
+- Links to GitHub PRs and commits
+- Attributes changes to contributors
+- Organizes changes by semantic version type

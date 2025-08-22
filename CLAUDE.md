@@ -118,10 +118,10 @@ The following secrets must be configured in GitHub repository settings:
 
 #### Changelog Format
 
-Changelogs are automatically generated in Mintlify-compatible format with:
-- Emoji prefixes for change types (🚀 Major, ✨ Minor, 🐛 Patch)
+Changelogs are automatically generated using GitHub integration with:
 - GitHub PR and user attribution links
 - Commit hash references
+- Release notes for each version
 
 ### Key Patterns
 

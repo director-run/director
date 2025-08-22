@@ -6,7 +6,6 @@
   "author": "Barnaby Malet <barnaby@director.run>",
   "license": "AGPL-3.0",
   "private": true,
-
   "scripts": {
     "lint": "biome check .",
     "format": "biome format --write .",

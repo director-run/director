@@ -14,11 +14,12 @@
 
 </div>
 
-# Overview
 
 Director is a **context engine** that packages MCP servers, prompts, and configuration into **workspaces** — portable contexts accessible through a single endpoint.
 
 Instead of configuring MCP servers individually for each agent, Director lets you define context workspaces once and use them everywhere. Share complete AI contexts between Claude, Cursor, VSCode or any MCP enabled client. Distribute workspaces to your team. Switch between development and production contexts instantly. Run untrusted servers in isolation. All without cloud dependencies, API keys or accounts.
+
+<img src="https://github.com/director-run/director/blob/main/apps/docs/images/context-engine.svg" />
 
 ## Quickstart
 

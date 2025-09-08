@@ -8,7 +8,7 @@ import { t } from "@director.run/utilities/trpc";
 import { joinURL } from "@director.run/utilities/url";
 import { z } from "zod";
 import { getSSEPathForProxy } from "../../helpers";
-import type { ProxyServerStore } from "../../proxy-server-store";
+import type { ProxyServerStore } from "../../workspaces/proxy-server-store";
 
 export function createInstallerRouter({
   proxyStore,

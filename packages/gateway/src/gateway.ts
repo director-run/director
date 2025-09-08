@@ -11,10 +11,10 @@ import { Telemetry } from "@director.run/utilities/telemetry";
 import cors from "cors";
 import express from "express";
 import { Config, YAMLConfig } from "./config";
-import { ProxyServerStore } from "./proxy-server-store";
 import { createSSERouter } from "./routers/sse";
 import { createStreamableRouter } from "./routers/streamable";
 import { createTRPCExpressMiddleware } from "./routers/trpc";
+import { ProxyServerStore } from "./workspaces/proxy-server-store";
 
 const logger = getLogger("Gateway");
 

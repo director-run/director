@@ -1,7 +1,7 @@
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
 import {
-  ProxyServer,
+  // ProxyServer,
   type ProxyTarget,
 } from "@director.run/mcp/proxy/proxy-server";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
@@ -15,13 +15,14 @@ import {
   PROMPT_MANAGER_TARGET_NAME,
   type Prompt,
   PromptManager,
-} from "./capabilities/prompt-manager";
-import type { Config } from "./config";
+} from "../capabilities/prompt-manager";
+import type { Config } from "../config";
+import { Workspace } from "./workspace";
 
 const logger = getLogger("ProxyServerStore");
 
 export class ProxyServerStore {
-  private proxyServers: Map<string, ProxyServer> = new Map();
+  private proxyServers: Map<string, Workspace> = new Map();
   private db: Config;
   private telemetry: Telemetry;
   private _oAuthHandler?: OAuthHandler;
@@ -107,7 +108,7 @@ export class ProxyServerStore {
     logger.info("finished cleaning up all proxy servers.");
   }
 
-  public getAll(): ProxyServer[] {
+  public getAll(): Workspace[] {
     return Array.from(this.proxyServers.values());
   }
 
@@ -131,7 +132,7 @@ export class ProxyServerStore {
     name: string;
     description?: string;
     servers?: ProxyTargetAttributes[];
-  }): Promise<ProxyServer> {
+  }): Promise<Workspace> {
     this.telemetry.trackEvent("proxy_created");
 
     const configEntry = await this.db.addProxy({
@@ -151,7 +152,7 @@ export class ProxyServerStore {
   }
 
   private async initializeAndAddProxy(proxy: ProxyServerAttributes) {
-    const proxyServer = new ProxyServer(
+    const proxyServer = new Workspace(
       {
         name: proxy.name,
         id: proxy.id,

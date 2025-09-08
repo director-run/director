@@ -6,7 +6,7 @@ import { Telemetry } from "@director.run/utilities/telemetry";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 import express from "express";
-import type { ProxyServerStore } from "../proxy-server-store";
+import type { ProxyServerStore } from "../workspaces/proxy-server-store";
 
 const logger = getLogger("mcp/streamable");
 

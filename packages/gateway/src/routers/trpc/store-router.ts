@@ -5,12 +5,12 @@ import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { proxyTargetAttributesSchema } from "@director.run/utilities/schema";
 import { restartConnectedClients } from "../../helpers";
-import { ProxyServerStore } from "../../proxy-server-store";
 import {
   serializeProxyServer,
   serializeProxyServerTarget,
   serializeProxyServers,
 } from "../../serializers";
+import { ProxyServerStore } from "../../workspaces/proxy-server-store";
 
 const ProxyCreateSchema = z.object({
   name: z.string(),

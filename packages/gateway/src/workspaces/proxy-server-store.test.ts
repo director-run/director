@@ -3,16 +3,16 @@ import path from "node:path";
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { YAMLConfig } from "./config";
-import { ProxyServerStore } from "./proxy-server-store";
+import { YAMLConfig } from "../config";
 import {
   makeFooBarServerStdioConfig,
   makeHTTPTargetConfig,
-} from "./test/fixtures";
+} from "../test/fixtures";
+import { ProxyServerStore } from "./proxy-server-store";
 
 describe("ProxyServerStore", () => {
   let proxyServerStore: ProxyServerStore;
-  const dbPath = path.join(__dirname, "./test/config.test.yaml");
+  const dbPath = path.join(__dirname, "../test/config.test.yaml");
 
   beforeEach(async () => {
     if (fs.existsSync(dbPath)) {

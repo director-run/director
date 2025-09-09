@@ -5,7 +5,7 @@ import { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { YAMLConfig } from "../config";
 import { makeHTTPTargetConfig } from "../test/fixtures";
-import { ProxyServerStore } from "./proxy-server-store";
+import { ProxyServerStore } from "./workspace-store";
 
 describe("WorkspaceStore", () => {
   let workspaceStore: ProxyServerStore;

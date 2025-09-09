@@ -1,7 +1,7 @@
 import { t } from "@director.run/utilities/trpc";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { getStatus } from "../../status";
-import { ProxyServerStore } from "../../workspaces/proxy-server-store";
+import { ProxyServerStore } from "../../workspaces/workspace-store";
 import { createInstallerRouter } from "./installer-router";
 import { createRegistryRouter } from "./registry-router";
 import { createProxyStoreRouter } from "./store-router";

@@ -10,7 +10,7 @@ import {
   serializeProxyServerTarget,
   serializeProxyServers,
 } from "../../serializers";
-import { ProxyServerStore } from "../../workspaces/proxy-server-store";
+import { ProxyServerStore } from "../../workspaces/workspace-store";
 
 const ProxyCreateSchema = z.object({
   name: z.string(),

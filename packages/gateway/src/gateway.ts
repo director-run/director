@@ -14,7 +14,7 @@ import { Config, YAMLConfig } from "./config";
 import { createSSERouter } from "./routers/sse";
 import { createStreamableRouter } from "./routers/streamable";
 import { createTRPCExpressMiddleware } from "./routers/trpc";
-import { ProxyServerStore } from "./workspaces/proxy-server-store";
+import { ProxyServerStore } from "./workspaces/workspace-store";
 
 const logger = getLogger("Gateway");
 

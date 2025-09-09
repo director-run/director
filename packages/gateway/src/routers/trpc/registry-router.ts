@@ -1,7 +1,7 @@
 import { createRegistryClient } from "@director.run/registry/client";
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
-import type { ProxyServerStore } from "../../workspaces/proxy-server-store";
+import type { ProxyServerStore } from "../../workspaces/workspace-store";
 
 export function createRegistryRouter({
   registryURL,

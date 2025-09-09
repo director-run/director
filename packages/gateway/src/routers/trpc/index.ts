@@ -1,7 +1,7 @@
 import { t } from "@director.run/utilities/trpc";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { getStatus } from "../../status";
-import { ProxyServerStore } from "../../workspaces/workspace-store";
+import { WorkspaceStore } from "../../workspaces/workspace-store";
 import { createInstallerRouter } from "./installer-router";
 import { createRegistryRouter } from "./registry-router";
 import { createProxyStoreRouter } from "./store-router";
@@ -10,7 +10,7 @@ export function createAppRouter({
   proxyStore,
   registryURL,
 }: {
-  proxyStore: ProxyServerStore;
+  proxyStore: WorkspaceStore;
   registryURL: string;
 }) {
   return t.router({
@@ -27,7 +27,7 @@ export function createTRPCExpressMiddleware({
   proxyStore,
   registryURL,
 }: {
-  proxyStore: ProxyServerStore;
+  proxyStore: WorkspaceStore;
   registryURL: string;
 }) {
   return trpcExpress.createExpressMiddleware({

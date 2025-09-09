@@ -1,12 +1,12 @@
 import { createRegistryClient } from "@director.run/registry/client";
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
-import type { ProxyServerStore } from "../../workspaces/workspace-store";
+import type { WorkspaceStore } from "../../workspaces/workspace-store";
 
 export function createRegistryRouter({
   registryURL,
   proxyStore,
-}: { proxyStore: ProxyServerStore; registryURL: string }) {
+}: { proxyStore: WorkspaceStore; registryURL: string }) {
   const registryClient = createRegistryClient(registryURL);
 
   return t.router({

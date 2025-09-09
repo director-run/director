@@ -6,7 +6,7 @@ import { Telemetry } from "@director.run/utilities/telemetry";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 import express from "express";
-import type { ProxyServerStore } from "../workspaces/workspace-store";
+import type { WorkspaceStore } from "../workspaces/workspace-store";
 
 const logger = getLogger("mcp/streamable");
 
@@ -14,7 +14,7 @@ export const createStreamableRouter = ({
   proxyStore,
   telemetry,
 }: {
-  proxyStore: ProxyServerStore;
+  proxyStore: WorkspaceStore;
   telemetry: Telemetry;
 }) => {
   const router = express.Router();

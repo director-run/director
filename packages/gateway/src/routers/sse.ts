@@ -6,7 +6,7 @@ import { asyncHandler } from "@director.run/utilities/middleware";
 import { Telemetry } from "@director.run/utilities/telemetry";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
-import type { ProxyServerStore } from "../workspaces/workspace-store";
+import type { WorkspaceStore } from "../workspaces/workspace-store";
 
 const logger = getLogger("mcp/sse");
 
@@ -14,7 +14,7 @@ export const createSSERouter = ({
   proxyStore,
   telemetry,
 }: {
-  proxyStore: ProxyServerStore;
+  proxyStore: WorkspaceStore;
   telemetry: Telemetry;
 }) => {
   const router = express.Router();

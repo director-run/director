@@ -8,11 +8,11 @@ import { t } from "@director.run/utilities/trpc";
 import { joinURL } from "@director.run/utilities/url";
 import { z } from "zod";
 import { getSSEPathForProxy } from "../../helpers";
-import type { ProxyServerStore } from "../../workspaces/workspace-store";
+import type { WorkspaceStore } from "../../workspaces/workspace-store";
 
 export function createInstallerRouter({
   proxyStore,
-}: { proxyStore: ProxyServerStore }) {
+}: { proxyStore: WorkspaceStore }) {
   return t.router({
     allClients: t.procedure.query(() => allClientStatuses()),
     byProxy: t.router({

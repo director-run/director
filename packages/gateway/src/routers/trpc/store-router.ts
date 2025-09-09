@@ -10,7 +10,7 @@ import {
   serializeProxyServerTarget,
   serializeProxyServers,
 } from "../../serializers";
-import { ProxyServerStore } from "../../workspaces/workspace-store";
+import { WorkspaceStore } from "../../workspaces/workspace-store";
 
 const ProxyCreateSchema = z.object({
   name: z.string(),
@@ -38,7 +38,7 @@ const PromptSchema = z.object({
 
 export function createProxyStoreRouter({
   proxyStore,
-}: { proxyStore: ProxyServerStore }) {
+}: { proxyStore: WorkspaceStore }) {
   return t.router({
     getAll: t.procedure.query(async () => {
       return await serializeProxyServers(await proxyStore.getAll());

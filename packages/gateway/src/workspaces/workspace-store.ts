@@ -15,9 +15,9 @@ import { type Prompt } from "../capabilities/prompt-manager";
 import type { Config } from "../config";
 import { Workspace } from "./workspace";
 
-const logger = getLogger("ProxyServerStore");
+const logger = getLogger("WorkspaceStore");
 
-export class ProxyServerStore {
+export class WorkspaceStore {
   private proxyServers: Map<string, Workspace> = new Map();
   private config: Config;
   private telemetry: Telemetry;
@@ -41,9 +41,9 @@ export class ProxyServerStore {
     config: Config;
     telemetry?: Telemetry;
     oAuthHandler?: OAuthHandler;
-  }): Promise<ProxyServerStore> {
-    logger.debug("initializing ProxyServerStore");
-    const store = new ProxyServerStore({
+  }): Promise<WorkspaceStore> {
+    logger.debug("initializing WorkspaceStore");
+    const store = new WorkspaceStore({
       config: db,
       telemetry,
       oAuthHandler,

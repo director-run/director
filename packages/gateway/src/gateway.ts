@@ -14,18 +14,18 @@ import { Config, YAMLConfig } from "./config";
 import { createSSERouter } from "./routers/sse";
 import { createStreamableRouter } from "./routers/streamable";
 import { createTRPCExpressMiddleware } from "./routers/trpc";
-import { ProxyServerStore } from "./workspaces/workspace-store";
+import { WorkspaceStore } from "./workspaces/workspace-store";
 
 const logger = getLogger("Gateway");
 
 export class Gateway {
-  public readonly proxyStore: ProxyServerStore;
+  public readonly proxyStore: WorkspaceStore;
   public readonly port: number;
   private server: Server;
   public readonly db: Config;
 
   private constructor(attribs: {
-    proxyStore: ProxyServerStore;
+    proxyStore: WorkspaceStore;
     port: number;
     db: Config;
     server: Server;
@@ -90,7 +90,7 @@ export class Gateway {
       }
     }
 
-    const proxyStore = await ProxyServerStore.create({
+    const proxyStore = await WorkspaceStore.create({
       config: db,
       telemetry,
       oAuthHandler,

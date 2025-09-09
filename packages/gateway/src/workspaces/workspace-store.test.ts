@@ -5,10 +5,10 @@ import { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { YAMLConfig } from "../config";
 import { makeHTTPTargetConfig } from "../test/fixtures";
-import { ProxyServerStore } from "./workspace-store";
+import { WorkspaceStore } from "./workspace-store";
 
 describe("WorkspaceStore", () => {
-  let workspaceStore: ProxyServerStore;
+  let workspaceStore: WorkspaceStore;
   const dbPath = path.join(__dirname, "../test/config.test.yaml");
 
   beforeEach(async () => {
@@ -16,7 +16,7 @@ describe("WorkspaceStore", () => {
       await fs.promises.unlink(dbPath);
     }
     const db = await YAMLConfig.connect(dbPath);
-    workspaceStore = await ProxyServerStore.create({
+    workspaceStore = await WorkspaceStore.create({
       config: db,
       oAuthHandler: OAuthHandler.createMemoryBackedHandler({
         baseCallbackUrl: "http://localhost:3000/callback",

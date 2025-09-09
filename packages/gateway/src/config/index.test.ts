@@ -63,6 +63,72 @@ describe("Config", () => {
     });
   });
 
+  describe("workspaces", () => {
+    const workspaceAttribs1 = {
+      id: "test-workspace",
+      name: "test-proxy-with-servers",
+      description: "A test proxy with servers",
+      servers: [
+        {
+          name: "server-1",
+          transport: {
+            type: "http" as const,
+            url: "https://example.com",
+          },
+        },
+        {
+          name: "server-2",
+          transport: {
+            type: "stdio" as const,
+            command: "echo",
+            args: ["hello"],
+          },
+        },
+      ],
+    };
+    const workspaceAttribs2 = {
+      id: "test-workspace-2",
+      name: "test-proxy-with-servers-2",
+      description: "A test proxy with servers 2",
+      servers: [],
+    };
+    describe("set", () => {
+      it("should add a workspace", async () => {
+        await db.setWorkspace(workspaceAttribs1.id, workspaceAttribs1);
+        const retrievedProxy = await db.getWorkspace(workspaceAttribs1.id);
+        expect(retrievedProxy).toEqual(workspaceAttribs1);
+      });
+      it("should throw an error if there is an id mismatch", async () => {
+        await expect(
+          db.setWorkspace(workspaceAttribs2.id, workspaceAttribs1),
+        ).rejects.toThrow("Id mismatch");
+      });
+    });
+    describe("unset", () => {
+      it("should delete a workspace", async () => {
+        await db.setWorkspace(workspaceAttribs2.id, workspaceAttribs2);
+        await db.setWorkspace(workspaceAttribs1.id, workspaceAttribs1);
+        await db.unsetWorkspace(workspaceAttribs2.id);
+        await expect(db.getWorkspace(workspaceAttribs2.id)).rejects.toThrow(
+          "Workspace not found",
+        );
+      });
+    });
+    describe("count", () => {
+      it("should count the number of workspaces", async () => {
+        expect(await db.countWorkspaces()).toBe(0);
+        await db.setWorkspace(workspaceAttribs1.id, workspaceAttribs1);
+        expect(await db.countWorkspaces()).toBe(1);
+        await db.setWorkspace(workspaceAttribs2.id, workspaceAttribs2);
+        expect(await db.countWorkspaces()).toBe(2);
+        await db.unsetWorkspace(workspaceAttribs2.id);
+        expect(await db.countWorkspaces()).toBe(1);
+        await db.unsetWorkspace(workspaceAttribs1.id);
+        expect(await db.countWorkspaces()).toBe(0);
+      });
+    });
+  });
+
   describe("addProxy", () => {
     it("should add a new proxy successfully", async () => {
       const proxyData = {

@@ -57,6 +57,40 @@ export abstract class Config {
     return proxy;
   }
 
+  async getWorkspace(id: string): Promise<ProxyServerAttributes> {
+    const store = await this.readData();
+    const proxy = _.find(store.playbooks, { id });
+    if (!proxy) {
+      throw new Error("Workspace not found");
+    }
+    return proxy;
+  }
+
+  async setWorkspace(id: string, proxy: ProxyServerAttributes): Promise<void> {
+    if (proxy.id !== id) {
+      throw new Error("Id mismatch");
+    }
+    const store = await this.readData();
+    const proxyIndex = _.findIndex(store.playbooks, { id });
+    if (proxyIndex === -1) {
+      store.playbooks.push(proxy);
+    } else {
+      store.playbooks[proxyIndex] = proxy;
+    }
+    await this.writeData(store);
+  }
+
+  async unsetWorkspace(id: string): Promise<void> {
+    const store = await this.readData();
+    store.playbooks = _.reject(store.playbooks, { id });
+    await this.writeData(store);
+  }
+
+  async countWorkspaces(): Promise<number> {
+    const store = await this.readData();
+    return store.playbooks.length;
+  }
+
   async deleteProxy(id: string): Promise<void> {
     await this.getProxy(id);
     const store = await this.readData();

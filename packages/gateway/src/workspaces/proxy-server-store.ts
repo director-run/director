@@ -152,26 +152,13 @@ export class ProxyServerStore {
   }
 
   private async initializeAndAddProxy(proxy: ProxyServerAttributes) {
-    const proxyServer = new Workspace(
-      {
-        name: proxy.name,
-        id: proxy.id,
-        servers: proxy.servers,
-        description: proxy.description ?? undefined,
-      },
-      {
-        oAuthHandler: this._oAuthHandler,
-      },
-    );
+    const workspace = await Workspace.fromConfig(proxy, {
+      oAuthHandler: this._oAuthHandler,
+    });
 
-    // Add any existing prompts to the proxy server
-    const prompts = await this.db.getPrompts(proxy.id);
-    await proxyServer.addTarget(new PromptManager(prompts));
+    this.proxyServers.set(workspace.id, workspace);
 
-    await proxyServer.connectTargets();
-    this.proxyServers.set(proxyServer.id, proxyServer);
-
-    return proxyServer;
+    return workspace;
   }
 
   public async addServer(

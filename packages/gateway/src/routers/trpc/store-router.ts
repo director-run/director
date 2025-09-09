@@ -57,7 +57,7 @@ export function createProxyStoreRouter({
       )
       .query(async ({ input }) => {
         const proxy = await proxyStore.get(input.proxyId);
-        const prompts = await proxyStore.listPrompts(input.proxyId);
+        const prompts = await proxy.listPrompts();
 
         return await serializeProxyServer(proxy, {
           ...input.queryParams,
@@ -83,12 +83,12 @@ export function createProxyStoreRouter({
         }),
       )
       .mutation(async ({ input }) => {
-        return await serializeProxyServer(
-          await proxyStore.update(input.proxyId, {
-            name: input.attributes.name,
-            description: input.attributes.description ?? undefined,
-          }),
-        );
+        const workspace = await proxyStore.get(input.proxyId);
+        const updated = await workspace.update({
+          name: input.attributes.name,
+          description: input.attributes.description ?? undefined,
+        });
+        return await serializeProxyServer(updated);
       }),
     delete: t.procedure
       .input(z.object({ proxyId: z.string() }))
@@ -109,9 +109,8 @@ export function createProxyStoreRouter({
         }),
       )
       .mutation(async ({ input }) => {
-        const target = await proxyStore.addServer(input.proxyId, input.server);
         const proxy = await proxyStore.get(input.proxyId);
-
+        const target = await proxy.addTarget(input.server);
         await restartConnectedClients(proxy);
         return await serializeProxyServerTarget(target, input.queryParams);
       }),
@@ -149,8 +148,7 @@ export function createProxyStoreRouter({
       )
       .mutation(async ({ input }) => {
         const proxy = await proxyStore.get(input.proxyId);
-        const server = await proxyStore.updateServer(
-          input.proxyId,
+        const server = await proxy.updateTarget(
           input.serverName,
           input.attributes,
         );
@@ -211,10 +209,7 @@ export function createProxyStoreRouter({
       )
       .mutation(async ({ input }) => {
         const proxy = await proxyStore.get(input.proxyId);
-        const server = await proxyStore.removeServer(
-          input.proxyId,
-          input.serverName,
-        );
+        const server = await proxy.removeTarget(input.serverName);
         await restartConnectedClients(proxy);
         return await serializeProxyServerTarget(server);
       }),
@@ -228,7 +223,7 @@ export function createProxyStoreRouter({
       )
       .mutation(async ({ input }) => {
         const proxy = await proxyStore.get(input.proxyId);
-        const prompt = await proxyStore.addPrompt(input.proxyId, input.prompt);
+        const prompt = await proxy.addPrompt(input.prompt);
         await restartConnectedClients(proxy);
         return prompt;
       }),
@@ -242,10 +237,7 @@ export function createProxyStoreRouter({
       )
       .mutation(async ({ input }) => {
         const proxy = await proxyStore.get(input.proxyId);
-        const result = await proxyStore.removePrompt(
-          input.proxyId,
-          input.promptName,
-        );
+        const result = await proxy.removePrompt(input.promptName);
         await restartConnectedClients(proxy);
         return result;
       }),
@@ -260,11 +252,7 @@ export function createProxyStoreRouter({
       )
       .mutation(async ({ input }) => {
         const proxy = await proxyStore.get(input.proxyId);
-        const prompt = await proxyStore.updatePrompt(
-          input.proxyId,
-          input.promptName,
-          input.prompt,
-        );
+        const prompt = await proxy.updatePrompt(input.promptName, input.prompt);
         await restartConnectedClients(proxy);
         return prompt;
       }),
@@ -276,7 +264,8 @@ export function createProxyStoreRouter({
         }),
       )
       .query(async ({ input }) => {
-        return await proxyStore.listPrompts(input.proxyId);
+        const proxy = await proxyStore.get(input.proxyId);
+        return await proxy.listPrompts();
       }),
   });
 }

@@ -1,9 +1,5 @@
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
-import {
-  // ProxyServer,
-  type ProxyTarget,
-} from "@director.run/mcp/proxy/proxy-server";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import type {
@@ -11,7 +7,6 @@ import type {
   ProxyTargetAttributes,
 } from "@director.run/utilities/schema";
 import { Telemetry } from "@director.run/utilities/telemetry";
-import { type Prompt } from "../capabilities/prompt-manager";
 import type { Config } from "../config";
 import { Workspace } from "./workspace";
 
@@ -156,70 +151,5 @@ export class WorkspaceStore {
     this.workspaces.set(workspace.id, workspace);
 
     return workspace;
-  }
-
-  public async addServer(
-    proxyId: string,
-    server: ProxyTargetAttributes,
-    params: { throwOnError: boolean } = { throwOnError: true },
-  ): Promise<ProxyTarget> {
-    const workspace = this.get(proxyId);
-    const target = await workspace.addTarget(server, params);
-    return target;
-  }
-
-  public async removeServer(
-    proxyId: string,
-    serverName: string,
-  ): Promise<ProxyTarget> {
-    const workspace = this.get(proxyId);
-    const removedTarget = await workspace.removeTarget(serverName);
-    return removedTarget;
-  }
-
-  public async update(
-    proxyId: string,
-    attributes: Partial<Pick<ProxyServerAttributes, "name" | "description">>,
-  ) {
-    const workspace = this.get(proxyId);
-    await workspace.update(attributes);
-    return workspace;
-  }
-
-  public async updateServer(
-    proxyId: string,
-    serverName: string,
-    attributes: Partial<
-      Pick<ProxyTargetAttributes, "toolPrefix" | "disabledTools">
-    >,
-  ): Promise<ProxyTarget> {
-    const workspace = this.get(proxyId);
-    const target = await workspace.updateTarget(serverName, attributes);
-    return target;
-  }
-
-  public async addPrompt(proxyId: string, prompt: Prompt) {
-    const workspace = this.get(proxyId);
-    return await workspace.addPrompt(prompt);
-  }
-
-  public async removePrompt(proxyId: string, promptName: string) {
-    const workspace = this.get(proxyId);
-    await workspace.removePrompt(promptName);
-    return true;
-  }
-
-  public async updatePrompt(
-    proxyId: string,
-    promptName: string,
-    prompt: Partial<Pick<Prompt, "title" | "description" | "body">>,
-  ) {
-    const workspace = this.get(proxyId);
-    return await workspace.updatePrompt(promptName, prompt);
-  }
-
-  public async listPrompts(proxyId: string): Promise<Prompt[]> {
-    const workspace = this.get(proxyId);
-    return await workspace.listPrompts();
   }
 }

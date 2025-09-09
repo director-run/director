@@ -91,7 +91,7 @@ export abstract class Config {
 }
 
 //
-// Deprecated
+// JSONConfiguration
 //
 // class JSONConfiguration extends Config {
 //   static async connect(filePath: string): Promise<JSONConfiguration> {

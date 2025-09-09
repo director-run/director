@@ -168,7 +168,7 @@ export class ProxyServerStore {
     params: { throwOnError: boolean } = { throwOnError: true },
   ): Promise<ProxyTarget> {
     const workspace = this.get(proxyId);
-    const target = await workspace.addServer(proxyId, server, params);
+    const target = await workspace.addServer(server, params);
     return target;
   }
 
@@ -177,7 +177,7 @@ export class ProxyServerStore {
     serverName: string,
   ): Promise<ProxyTarget> {
     const workspace = this.get(proxyId);
-    const removedTarget = await workspace.removeServer(proxyId, serverName);
+    const removedTarget = await workspace.removeServer(serverName);
     return removedTarget;
   }
 
@@ -185,13 +185,9 @@ export class ProxyServerStore {
     proxyId: string,
     attributes: Partial<Pick<ProxyServerAttributes, "name" | "description">>,
   ) {
-    this.telemetry.trackEvent("proxy_updated");
-
-    const proxy = this.get(proxyId);
-    await proxy.update(attributes);
-    await this.db.updateProxy(proxyId, attributes);
-
-    return proxy;
+    const workspace = this.get(proxyId);
+    await workspace.update(attributes);
+    return workspace;
   }
 
   public async updateServer(

@@ -27,26 +27,32 @@ export class Workspace extends ProxyServer {
   }
 
   public async addServer(
-    proxyId: string,
     server: ProxyTargetAttributes,
     params: { throwOnError: boolean } = { throwOnError: true },
   ): Promise<ProxyTarget> {
     await this.trackEvent("server_added");
-    const target = await this.addTarget(server, params);
+    const target = await super.addTarget(server, params);
 
     await this.persistToConfig();
     return target;
   }
 
-  public async removeServer(
-    proxyId: string,
-    serverName: string,
-  ): Promise<ProxyTarget> {
+  public async removeServer(serverName: string): Promise<ProxyTarget> {
     await this.trackEvent("server_removed");
-    const removedTarget = await this.removeTarget(serverName);
+    const removedTarget = await super.removeTarget(serverName);
 
     await this.persistToConfig();
     return removedTarget;
+  }
+
+  public async update(
+    attributes: Partial<Pick<ProxyServerAttributes, "name" | "description">>,
+  ) {
+    await this.trackEvent("proxy_updated");
+    await super.update(attributes);
+    await this.persistToConfig();
+
+    return this;
   }
 
   static async fromConfig(

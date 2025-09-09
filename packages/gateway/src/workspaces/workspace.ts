@@ -2,23 +2,59 @@ import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { StdioClient } from "@director.run/mcp/client/stdio-client";
 import type { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { ProxyServer } from "@director.run/mcp/proxy/proxy-server";
+import { type ProxyTarget } from "@director.run/mcp/proxy/proxy-server";
 import type { ProxyServerAttributes } from "@director.run/utilities/schema";
+import type { ProxyTargetAttributes } from "@director.run/utilities/schema";
+import { Telemetry } from "@director.run/utilities/telemetry";
 import { PromptManager } from "../capabilities/prompt-manager";
+import { Config } from "../config";
 
 export class Workspace extends ProxyServer {
+  private _config?: Config;
+  private _telemetry?: Telemetry;
+
   constructor(
     attributes: ProxyServerAttributes,
     params?: {
       oAuthHandler?: OAuthHandler;
+      config?: Config;
+      telemetry?: Telemetry;
     },
   ) {
     super(attributes, params);
+    this._config = params?.config;
+    this._telemetry = params?.telemetry;
+  }
+
+  public async addServer(
+    proxyId: string,
+    server: ProxyTargetAttributes,
+    params: { throwOnError: boolean } = { throwOnError: true },
+  ): Promise<ProxyTarget> {
+    await this.trackEvent("server_added");
+    const target = await this.addTarget(server, params);
+
+    await this.persistToConfig();
+    return target;
+  }
+
+  public async removeServer(
+    proxyId: string,
+    serverName: string,
+  ): Promise<ProxyTarget> {
+    await this.trackEvent("server_removed");
+    const removedTarget = await this.removeTarget(serverName);
+
+    await this.persistToConfig();
+    return removedTarget;
   }
 
   static async fromConfig(
     config: ProxyServerAttributes,
     params?: {
       oAuthHandler?: OAuthHandler;
+      config?: Config;
+      telemetry?: Telemetry;
     },
   ): Promise<Workspace> {
     const workspace = new Workspace(
@@ -30,6 +66,8 @@ export class Workspace extends ProxyServer {
       },
       {
         oAuthHandler: params?.oAuthHandler,
+        config: params?.config,
+        telemetry: params?.telemetry,
       },
     );
 
@@ -37,6 +75,18 @@ export class Workspace extends ProxyServer {
     await workspace.connectTargets();
 
     return workspace;
+  }
+
+  private async trackEvent(event: string): Promise<void> {
+    if (this._telemetry) {
+      await this._telemetry.trackEvent(event);
+    }
+  }
+
+  private async persistToConfig(): Promise<void> {
+    if (this._config) {
+      await this._config.setWorkspace(this.id, this.toConfig());
+    }
   }
 
   toConfig(): ProxyServerAttributes {

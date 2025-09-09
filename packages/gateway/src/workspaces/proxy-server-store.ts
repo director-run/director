@@ -154,6 +154,7 @@ export class ProxyServerStore {
   private async initializeAndAddProxy(proxy: ProxyServerAttributes) {
     const workspace = await Workspace.fromConfig(proxy, {
       oAuthHandler: this._oAuthHandler,
+      config: this.db,
     });
 
     this.proxyServers.set(workspace.id, workspace);
@@ -166,12 +167,8 @@ export class ProxyServerStore {
     server: ProxyTargetAttributes,
     params: { throwOnError: boolean } = { throwOnError: true },
   ): Promise<ProxyTarget> {
-    this.telemetry.trackEvent("server_added");
-
-    const proxy = this.get(proxyId);
-    const target = await proxy.addTarget(server, params);
-    await this.db.addServer(proxyId, server);
-
+    const workspace = this.get(proxyId);
+    const target = await workspace.addServer(proxyId, server, params);
     return target;
   }
 
@@ -179,12 +176,8 @@ export class ProxyServerStore {
     proxyId: string,
     serverName: string,
   ): Promise<ProxyTarget> {
-    this.telemetry.trackEvent("server_removed");
-
-    const proxy = this.get(proxyId);
-    const removedTarget = await proxy.removeTarget(serverName);
-    await this.db.removeServer(proxyId, serverName);
-
+    const workspace = this.get(proxyId);
+    const removedTarget = await workspace.removeServer(proxyId, serverName);
     return removedTarget;
   }
 

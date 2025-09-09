@@ -19,32 +19,32 @@ const logger = getLogger("ProxyServerStore");
 
 export class ProxyServerStore {
   private proxyServers: Map<string, Workspace> = new Map();
-  private db: Config;
+  private config: Config;
   private telemetry: Telemetry;
   private _oAuthHandler?: OAuthHandler;
 
   private constructor(params: {
-    db: Config;
+    config: Config;
     telemetry?: Telemetry;
     oAuthHandler?: OAuthHandler;
   }) {
-    this.db = params.db;
+    this.config = params.config;
     this.telemetry = params.telemetry || Telemetry.noTelemetry();
     this._oAuthHandler = params.oAuthHandler;
   }
 
   public static async create({
-    db,
+    config: db,
     telemetry,
     oAuthHandler,
   }: {
-    db: Config;
+    config: Config;
     telemetry?: Telemetry;
     oAuthHandler?: OAuthHandler;
   }): Promise<ProxyServerStore> {
     logger.debug("initializing ProxyServerStore");
     const store = new ProxyServerStore({
-      db,
+      config: db,
       telemetry,
       oAuthHandler,
     });
@@ -54,7 +54,7 @@ export class ProxyServerStore {
   }
 
   private async initialize(): Promise<void> {
-    let proxies = await this.db.getAll();
+    let proxies = await this.config.getAll();
 
     for (const proxyConfig of proxies) {
       const proxyId = proxyConfig.id;
@@ -85,14 +85,14 @@ export class ProxyServerStore {
 
     const proxy = this.get(proxyId);
     await proxy.close();
-    await this.db.deleteProxy(proxyId);
+    await this.config.deleteProxy(proxyId);
     this.proxyServers.delete(proxyId);
     logger.info(`successfully deleted proxy server configuration: ${proxyId}`);
   }
 
   async purge() {
     await this.closeAll();
-    await this.db.purge();
+    await this.config.purge();
     this.proxyServers.clear();
   }
 
@@ -131,7 +131,7 @@ export class ProxyServerStore {
   }): Promise<Workspace> {
     this.telemetry.trackEvent("proxy_created");
 
-    const configEntry = await this.db.addProxy({
+    const configEntry = await this.config.addProxy({
       name,
       description,
       servers: servers ?? [],
@@ -150,7 +150,7 @@ export class ProxyServerStore {
   private async initializeAndAddProxy(proxy: ProxyServerAttributes) {
     const workspace = await Workspace.fromConfig(proxy, {
       oAuthHandler: this._oAuthHandler,
-      config: this.db,
+      config: this.config,
     });
 
     this.proxyServers.set(workspace.id, workspace);

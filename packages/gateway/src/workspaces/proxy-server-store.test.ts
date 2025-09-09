@@ -17,7 +17,7 @@ describe("WorkspaceStore", () => {
     }
     const db = await YAMLConfig.connect(dbPath);
     workspaceStore = await ProxyServerStore.create({
-      db,
+      config: db,
       oAuthHandler: OAuthHandler.createMemoryBackedHandler({
         baseCallbackUrl: "http://localhost:3000/callback",
       }),

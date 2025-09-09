@@ -91,7 +91,7 @@ export class Gateway {
     }
 
     const proxyStore = await ProxyServerStore.create({
-      db,
+      config: db,
       telemetry,
       oAuthHandler,
     });

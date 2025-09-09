@@ -6,7 +6,11 @@ import { type ProxyTarget } from "@director.run/mcp/proxy/proxy-server";
 import type { ProxyServerAttributes } from "@director.run/utilities/schema";
 import type { ProxyTargetAttributes } from "@director.run/utilities/schema";
 import { Telemetry } from "@director.run/utilities/telemetry";
-import { PromptManager } from "../capabilities/prompt-manager";
+import {
+  PROMPT_MANAGER_TARGET_NAME,
+  type Prompt,
+  PromptManager,
+} from "../capabilities/prompt-manager";
 import { Config } from "../config";
 
 export class Workspace extends ProxyServer {
@@ -43,6 +47,57 @@ export class Workspace extends ProxyServer {
 
     await this.persistToConfig();
     return removedTarget;
+  }
+
+  public async updateTarget(
+    serverName: string,
+    attributes: Partial<
+      Pick<ProxyTargetAttributes, "toolPrefix" | "disabledTools">
+    >,
+  ): Promise<ProxyTarget> {
+    const target = await super.updateTarget(serverName, attributes);
+    await this.persistToConfig();
+
+    return target;
+  }
+
+  public async addPrompt(prompt: Prompt) {
+    const promptManager = (await super.getTarget(
+      PROMPT_MANAGER_TARGET_NAME,
+    )) as PromptManager;
+    const newPrompt = await promptManager.addPromptEntry(prompt);
+    await this.persistToConfig();
+    return newPrompt;
+  }
+
+  public async removePrompt(promptName: string) {
+    const promptManager = (await super.getTarget(
+      PROMPT_MANAGER_TARGET_NAME,
+    )) as PromptManager;
+    await promptManager.removePromptEntry(promptName);
+    await this.persistToConfig();
+
+    return true;
+  }
+
+  public async updatePrompt(
+    promptName: string,
+    prompt: Partial<Pick<Prompt, "title" | "description" | "body">>,
+  ) {
+    const promptManager = (await super.getTarget(
+      PROMPT_MANAGER_TARGET_NAME,
+    )) as PromptManager;
+    const updatedPrompt = await promptManager.updatePrompt(promptName, prompt);
+    await this.persistToConfig();
+
+    return updatedPrompt;
+  }
+
+  public async listPrompts(): Promise<Prompt[]> {
+    const promptManager = (await super.getTarget(
+      PROMPT_MANAGER_TARGET_NAME,
+    )) as PromptManager;
+    return promptManager.prompts;
   }
 
   public async update(
@@ -95,15 +150,16 @@ export class Workspace extends ProxyServer {
 
   private async persistToConfig(): Promise<void> {
     if (this._config) {
-      await this._config.setWorkspace(this.id, this.toConfig());
+      await this._config.setWorkspace(this.id, await this.toConfig());
     }
   }
 
-  toConfig(): ProxyServerAttributes {
+  private async toConfig(): Promise<ProxyServerAttributes> {
     return {
       id: this.id,
       name: this.name,
       description: this.description ?? undefined,
+      prompts: await this.listPrompts(),
       servers: this.targets
         .filter(
           (target) =>

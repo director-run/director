@@ -11,11 +11,7 @@ import type {
   ProxyTargetAttributes,
 } from "@director.run/utilities/schema";
 import { Telemetry } from "@director.run/utilities/telemetry";
-import {
-  PROMPT_MANAGER_TARGET_NAME,
-  type Prompt,
-  PromptManager,
-} from "../capabilities/prompt-manager";
+import { type Prompt } from "../capabilities/prompt-manager";
 import type { Config } from "../config";
 import { Workspace } from "./workspace";
 
@@ -197,29 +193,19 @@ export class ProxyServerStore {
       Pick<ProxyTargetAttributes, "toolPrefix" | "disabledTools">
     >,
   ): Promise<ProxyTarget> {
-    const proxy = this.get(proxyId);
-    const target = await proxy.updateTarget(serverName, attributes);
-    await this.db.updateServer(proxyId, serverName, attributes);
-
+    const workspace = this.get(proxyId);
+    const target = await workspace.updateTarget(serverName, attributes);
     return target;
   }
 
   public async addPrompt(proxyId: string, prompt: Prompt) {
-    const proxy = this.get(proxyId);
-    const promptManager = (await proxy.getTarget(
-      PROMPT_MANAGER_TARGET_NAME,
-    )) as PromptManager;
-    await this.db.addPrompt(proxyId, prompt);
-    return await promptManager.addPromptEntry(prompt);
+    const workspace = this.get(proxyId);
+    return await workspace.addPrompt(prompt);
   }
 
   public async removePrompt(proxyId: string, promptName: string) {
-    const proxy = this.get(proxyId);
-    const promptManager = (await proxy.getTarget(
-      PROMPT_MANAGER_TARGET_NAME,
-    )) as PromptManager;
-    await this.db.removePrompt(proxyId, promptName);
-    await promptManager.removePromptEntry(promptName);
+    const workspace = this.get(proxyId);
+    await workspace.removePrompt(promptName);
     return true;
   }
 
@@ -228,19 +214,12 @@ export class ProxyServerStore {
     promptName: string,
     prompt: Partial<Pick<Prompt, "title" | "description" | "body">>,
   ) {
-    const proxy = this.get(proxyId);
-    const promptManager = (await proxy.getTarget(
-      PROMPT_MANAGER_TARGET_NAME,
-    )) as PromptManager;
-    await this.db.updatePrompt(proxyId, promptName, prompt);
-    return await promptManager.updatePrompt(promptName, prompt);
+    const workspace = this.get(proxyId);
+    return await workspace.updatePrompt(promptName, prompt);
   }
 
   public async listPrompts(proxyId: string): Promise<Prompt[]> {
-    const proxy = this.get(proxyId);
-    const promptManager = (await proxy.getTarget(
-      PROMPT_MANAGER_TARGET_NAME,
-    )) as PromptManager;
-    return promptManager.prompts;
+    const workspace = this.get(proxyId);
+    return await workspace.listPrompts();
   }
 }

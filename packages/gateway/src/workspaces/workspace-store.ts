@@ -18,7 +18,7 @@ import { Workspace } from "./workspace";
 const logger = getLogger("WorkspaceStore");
 
 export class WorkspaceStore {
-  private proxyServers: Map<string, Workspace> = new Map();
+  private workspaces: Map<string, Workspace> = new Map();
   private config: Config;
   private telemetry: Telemetry;
   private _oAuthHandler?: OAuthHandler;
@@ -34,7 +34,7 @@ export class WorkspaceStore {
   }
 
   public static async create({
-    config: db,
+    config,
     telemetry,
     oAuthHandler,
   }: {
@@ -44,7 +44,7 @@ export class WorkspaceStore {
   }): Promise<WorkspaceStore> {
     logger.debug("initializing WorkspaceStore");
     const store = new WorkspaceStore({
-      config: db,
+      config,
       telemetry,
       oAuthHandler,
     });
@@ -70,7 +70,7 @@ export class WorkspaceStore {
   }
 
   public get(proxyId: string) {
-    const server = this.proxyServers.get(proxyId);
+    const server = this.workspaces.get(proxyId);
     if (!server) {
       throw new AppError(
         ErrorCode.NOT_FOUND,
@@ -86,26 +86,26 @@ export class WorkspaceStore {
     const proxy = this.get(proxyId);
     await proxy.close();
     await this.config.deleteProxy(proxyId);
-    this.proxyServers.delete(proxyId);
+    this.workspaces.delete(proxyId);
     logger.info(`successfully deleted proxy server configuration: ${proxyId}`);
   }
 
   async purge() {
     await this.closeAll();
     await this.config.purge();
-    this.proxyServers.clear();
+    this.workspaces.clear();
   }
 
   async closeAll() {
     logger.info("cleaning up all proxy servers...");
     await Promise.all(
-      Array.from(this.proxyServers.values()).map((proxy) => proxy.close()),
+      Array.from(this.workspaces.values()).map((proxy) => proxy.close()),
     );
     logger.info("finished cleaning up all proxy servers.");
   }
 
   public getAll(): Workspace[] {
-    return Array.from(this.proxyServers.values());
+    return Array.from(this.workspaces.values());
   }
 
   public async onAuthorizationSuccess(serverUrl: string, code: string) {
@@ -153,7 +153,7 @@ export class WorkspaceStore {
       config: this.config,
     });
 
-    this.proxyServers.set(workspace.id, workspace);
+    this.workspaces.set(workspace.id, workspace);
 
     return workspace;
   }

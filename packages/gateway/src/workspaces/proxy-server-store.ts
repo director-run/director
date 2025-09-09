@@ -168,7 +168,7 @@ export class ProxyServerStore {
     params: { throwOnError: boolean } = { throwOnError: true },
   ): Promise<ProxyTarget> {
     const workspace = this.get(proxyId);
-    const target = await workspace.addServer(server, params);
+    const target = await workspace.addTarget(server, params);
     return target;
   }
 
@@ -177,7 +177,7 @@ export class ProxyServerStore {
     serverName: string,
   ): Promise<ProxyTarget> {
     const workspace = this.get(proxyId);
-    const removedTarget = await workspace.removeServer(serverName);
+    const removedTarget = await workspace.removeTarget(serverName);
     return removedTarget;
   }
 

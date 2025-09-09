@@ -26,7 +26,7 @@ export class Workspace extends ProxyServer {
     this._telemetry = params?.telemetry;
   }
 
-  public async addServer(
+  public async addTarget(
     server: ProxyTargetAttributes,
     params: { throwOnError: boolean } = { throwOnError: true },
   ): Promise<ProxyTarget> {
@@ -37,7 +37,7 @@ export class Workspace extends ProxyServer {
     return target;
   }
 
-  public async removeServer(serverName: string): Promise<ProxyTarget> {
+  public async removeTarget(serverName: string): Promise<ProxyTarget> {
     await this.trackEvent("server_removed");
     const removedTarget = await super.removeTarget(serverName);
 
@@ -53,6 +53,10 @@ export class Workspace extends ProxyServer {
     await this.persistToConfig();
 
     return this;
+  }
+
+  protected async addSystemTarget(target: ProxyTarget) {
+    await super.addTarget(target);
   }
 
   static async fromConfig(
@@ -77,7 +81,7 @@ export class Workspace extends ProxyServer {
       },
     );
 
-    await workspace.addTarget(new PromptManager(config.prompts || []));
+    await workspace.addSystemTarget(new PromptManager(config.prompts || []));
     await workspace.connectTargets();
 
     return workspace;

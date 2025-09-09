@@ -56,8 +56,8 @@ describe("Proxy CRUD operations", () => {
     });
 
     it("update the configuration file", async () => {
-      expect(await harness.database.countProxies()).toBe(1);
-      const configEntry = await harness.database.getProxy("test-proxy");
+      expect(await harness.database.countWorkspaces()).toBe(1);
+      const configEntry = await harness.database.getWorkspace("test-proxy");
       expect(configEntry).toBeDefined();
       expect(configEntry?.name).toBe("Test proxy");
       expect(configEntry?.description).toBe("Test description");
@@ -100,7 +100,7 @@ describe("Proxy CRUD operations", () => {
           proxyId: "test-proxy",
         });
         expect(updatedProxy?.description).toBe("");
-        const configEntry = await harness.database.getProxy("test-proxy");
+        const configEntry = await harness.database.getWorkspace("test-proxy");
         expect(configEntry?.description).toBe("");
       });
     });
@@ -132,7 +132,7 @@ describe("Proxy CRUD operations", () => {
           proxyId: "test-proxy",
         });
         expect(updatedProxy?.name).toBe(proxy.name);
-        const configEntry = await harness.database.getProxy("test-proxy");
+        const configEntry = await harness.database.getWorkspace("test-proxy");
         expect(configEntry?.name).toBe(proxy.name);
       });
     });
@@ -148,7 +148,7 @@ describe("Proxy CRUD operations", () => {
           name: newName,
         },
       });
-      const configEntry = await harness.database.getProxy("test-proxy");
+      const configEntry = await harness.database.getWorkspace("test-proxy");
       expect(configEntry?.description).toBe(newDescription);
       expect(configEntry?.name).toBe(newName);
     });
@@ -174,7 +174,7 @@ describe("Proxy CRUD operations", () => {
     });
 
     it("should delete the proxy from the configuration file", async () => {
-      expect(await harness.database.countProxies()).toBe(0);
+      expect(await harness.database.countWorkspaces()).toBe(0);
     });
   });
 });

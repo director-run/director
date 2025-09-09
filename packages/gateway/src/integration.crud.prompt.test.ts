@@ -41,8 +41,8 @@ describe("Prompt Capabilities", () => {
     });
 
     it("should update the config file when a prompt is added", async () => {
-      const config = await harness.database.getPrompts(proxy.id);
-      expect(config).toEqual([prompt]);
+      const config = await harness.database.getWorkspace(proxy.id);
+      expect(config.prompts).toEqual([prompt]);
     });
 
     it("should add multiple prompts to a proxy", async () => {
@@ -153,8 +153,8 @@ describe("Prompt Capabilities", () => {
     });
 
     it("should update the config file when a prompt is removed", async () => {
-      const config = await harness.database.getPrompts(proxy.id);
-      expect(config).toEqual([]);
+      const config = await harness.database.getWorkspace(proxy.id);
+      expect(config.prompts).toEqual([]);
     });
 
     it("should remove specific prompt when multiple prompts exist", async () => {
@@ -318,8 +318,8 @@ describe("Prompt Capabilities", () => {
           body: "Updated body",
         },
       });
-      const config = await harness.database.getPrompts(proxy.id);
-      expect(config).toEqual([
+      const config = await harness.database.getWorkspace(proxy.id);
+      expect(config.prompts).toEqual([
         {
           name: originalPrompt.name,
           title: "Updated Title",

@@ -80,7 +80,7 @@ export class WorkspaceStore {
 
     const proxy = this.get(proxyId);
     await proxy.close();
-    await this.config.deleteProxy(proxyId);
+    await this.config.unsetWorkspace(proxyId);
     this.workspaces.delete(proxyId);
     logger.info(`successfully deleted proxy server configuration: ${proxyId}`);
   }

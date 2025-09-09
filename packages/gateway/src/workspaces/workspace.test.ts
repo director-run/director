@@ -18,8 +18,8 @@ describe("Workspace", () => {
     await config.purge();
     workspace = await Workspace.fromConfig(
       {
-        id: "test-proxy",
-        name: "test-proxy",
+        id: "test-workspace",
+        name: "test-workspace",
         servers: [],
       },
       {
@@ -35,9 +35,9 @@ describe("Workspace", () => {
 
       expect(workspace.targets).toHaveLength(2); // 1 server + 1 prompt manager
 
-      const proxyEntry = await config.getWorkspace("test-proxy");
-      expect(proxyEntry.servers).toHaveLength(1);
-      expect(proxyEntry.servers[0].name).toBe("foo");
+      const workspaceEntry = await config.getWorkspace("test-workspace");
+      expect(workspaceEntry.servers).toHaveLength(1);
+      expect(workspaceEntry.servers[0].name).toBe("foo");
     });
   });
 
@@ -50,8 +50,8 @@ describe("Workspace", () => {
       expect(removedTarget.status).toBe("disconnected");
 
       const db = await YAMLConfig.connect(dbPath);
-      const proxyEntry = await db.getWorkspace("test-proxy");
-      expect(proxyEntry.servers).toHaveLength(0);
+      const workspaceEntry = await db.getWorkspace("test-workspace");
+      expect(workspaceEntry.servers).toHaveLength(0);
     });
   });
 
@@ -60,17 +60,17 @@ describe("Workspace", () => {
       expect(workspace.addToolPrefix).toBeFalsy();
 
       await workspace.addTarget(makeFooBarServerStdioConfig());
-      const proxy = await workspace.update({
-        name: "test-proxy-updated",
-        description: "test-proxy-updated",
+      await workspace.update({
+        name: "test-workspace-updated",
+        description: "test-workspace-updated",
       });
-      expect(proxy.name).toBe("test-proxy-updated");
-      expect(proxy.description).toBe("test-proxy-updated");
+      expect(workspace.name).toBe("test-workspace-updated");
+      expect(workspace.description).toBe("test-workspace-updated");
 
-      const proxyEntry = await config.getWorkspace("test-proxy");
+      const workspaceEntry = await config.getWorkspace("test-workspace");
 
-      expect(proxyEntry.name).toBe("test-proxy-updated");
-      expect(proxyEntry.description).toBe("test-proxy-updated");
+      expect(workspaceEntry.name).toBe("test-workspace-updated");
+      expect(workspaceEntry.description).toBe("test-workspace-updated");
     });
   });
 });

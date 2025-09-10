@@ -47,7 +47,6 @@ describe("ProxyServer", () => {
 
     beforeEach(() => {
       proxy = new ProxyServer({
-        id: "test-proxy",
         name: "test-proxy",
         servers: [],
       });
@@ -134,7 +133,6 @@ describe("ProxyServer", () => {
           });
           test("should succeed when adding an unauthorized oauth target", async () => {
             const proxy = new ProxyServer({
-              id: "test-proxy",
               name: "test-proxy",
               servers: [],
             });
@@ -155,7 +153,6 @@ describe("ProxyServer", () => {
         describe("when throwOnError === false", () => {
           test("should succeed when adding a oauth target", async () => {
             const proxy = new ProxyServer({
-              id: "test-proxy",
               name: "test-proxy",
               servers: [],
             });
@@ -174,7 +171,6 @@ describe("ProxyServer", () => {
           });
           test("should not throw an exception when adding a broken target", async () => {
             const proxy = new ProxyServer({
-              id: "test-proxy",
               name: "test-proxy",
               servers: [],
             });
@@ -191,27 +187,6 @@ describe("ProxyServer", () => {
         });
       });
     });
-
-    describe("update", () => {
-      test("should update name and description", () => {
-        const proxy = new ProxyServer({
-          id: "test-proxy",
-          name: "test-proxy",
-          description: "old description",
-          servers: [],
-        });
-
-        expect(proxy.name).toBe("test-proxy");
-        expect(proxy.description).toBe("old description");
-
-        proxy.update({
-          name: "updated-proxy",
-          description: "new description",
-        });
-        expect(proxy.name).toBe("updated-proxy");
-        expect(proxy.description).toBe("new description");
-      });
-    });
   });
 
   describe("proxying", () => {
@@ -219,7 +194,6 @@ describe("ProxyServer", () => {
 
     beforeEach(() => {
       proxy = new ProxyServer({
-        id: "test-proxy",
         name: "test-proxy",
         servers: [
           new HTTPClient({
@@ -255,7 +229,6 @@ describe("ProxyServer", () => {
 
       beforeEach(async () => {
         proxy = new ProxyServer({
-          id: "test-proxy",
           name: "test-proxy",
           servers: [
             new HTTPClient({
@@ -314,7 +287,6 @@ describe("ProxyServer", () => {
 
       beforeEach(async () => {
         proxy = new ProxyServer({
-          id: "test-proxy",
           name: "test-proxy",
           servers: [
             new HTTPClient({
@@ -382,7 +354,6 @@ describe("ProxyServer", () => {
 
       beforeEach(async () => {
         proxy = new ProxyServer({
-          id: "test-proxy",
           name: "test-proxy",
           servers: [
             new HTTPClient({

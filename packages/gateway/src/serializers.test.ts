@@ -1,27 +1,32 @@
-import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { InMemoryClient } from "@director.run/mcp/client/in-memory-client";
-import { ProxyServer } from "@director.run/mcp/proxy/proxy-server";
 import { makeEchoServer } from "@director.run/mcp/test/fixtures";
 import { beforeAll, describe, expect, test } from "vitest";
 import { serializeProxyServer } from "./serializers";
+import { Workspace } from "./workspaces/workspace";
 
 describe("serializers", () => {
   describe("serializeProxyServer", () => {
-    let proxy: ProxyServer;
+    let proxy: Workspace;
 
     beforeAll(async () => {
-      proxy = new ProxyServer({
+      proxy = new Workspace({
         id: "test-proxy",
         name: "test-proxy",
         servers: [
-          new HTTPClient({
+          {
             name: "streamable",
-            url: `http://localhost:4522/mcp`,
-          }),
-          new HTTPClient({
+            transport: {
+              type: "http",
+              url: `http://localhost:4522/mcp`,
+            },
+          },
+          {
             name: "sse",
-            url: `http://localhost:4523/sse`,
-          }),
+            transport: {
+              type: "http",
+              url: `http://localhost:4523/sse`,
+            },
+          },
         ],
       });
       await proxy.addTarget(

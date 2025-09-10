@@ -3,6 +3,7 @@ import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { StdioClient } from "@director.run/mcp/client/stdio-client";
 import type { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { ProxyServer } from "@director.run/mcp/proxy/proxy-server";
+import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { Telemetry } from "@director.run/utilities/telemetry";
 import {
   PROMPT_MANAGER_TARGET_NAME,
@@ -15,10 +16,17 @@ import type {
   ProxyTargetAttributes,
 } from "../config/schema";
 
+export type WorkspaceAttributes = ProxyServerAttributes & {
+  id: string;
+  description?: string;
+};
+
 export class Workspace extends ProxyServer {
   private _config?: Config;
   private _telemetry?: Telemetry;
   private _oAuthHandler?: OAuthHandler;
+  private _description?: string | null;
+  private _id: string;
 
   constructor(
     attributes: ProxyServerAttributes,
@@ -29,7 +37,6 @@ export class Workspace extends ProxyServer {
     },
   ) {
     super({
-      id: attributes.id,
       name: attributes.name,
       servers: attributes.servers.map((server) =>
         createClientForTarget({
@@ -37,12 +44,21 @@ export class Workspace extends ProxyServer {
           oAuthHandler: params?.oAuthHandler,
         }),
       ),
-      description: attributes.description ?? undefined,
     });
 
+    this._id = attributes.id;
+    this._description = attributes.description;
     this._oAuthHandler = params?.oAuthHandler;
     this._config = params?.config;
     this._telemetry = params?.telemetry;
+  }
+
+  public get description() {
+    return this._description;
+  }
+
+  get id() {
+    return this._id;
   }
 
   public async addTarget(
@@ -131,7 +147,18 @@ export class Workspace extends ProxyServer {
     attributes: Partial<Pick<ProxyServerAttributes, "name" | "description">>,
   ) {
     await this.trackEvent("proxy_updated");
-    await super.update(attributes);
+
+    const { name, description } = attributes;
+    if (name !== undefined && name !== this._name) {
+      if (name.trim() === "") {
+        throw new AppError(ErrorCode.BAD_REQUEST, `Name cannot be empty`);
+      }
+
+      this._name = name;
+    }
+    if (description !== undefined && description !== this._description) {
+      this._description = description;
+    }
     await this.persistToConfig();
 
     return this;

@@ -2,8 +2,8 @@ import {
   allTargets,
   getConfigurator,
 } from "@director.run/client-configurator/index";
-import type { ProxyServer } from "@director.run/mcp/proxy/proxy-server";
 import { getLogger } from "@director.run/utilities/logger";
+import { Workspace } from "./workspaces/workspace";
 
 const logger = getLogger("gateway/helpers");
 
@@ -15,8 +15,8 @@ export function getSSEPathForProxy(proxyId: string) {
   return `/${proxyId}/sse`;
 }
 
-export async function restartConnectedClients(proxy: ProxyServer) {
-  logger.info(`restarting connected clients for ${proxy.id}`);
+export async function restartConnectedClients(proxy: Workspace) {
+  logger.info(`restarting connected clients for ${proxy.name}`);
 
   for (const target of allTargets()) {
     const configurator = getConfigurator(target);

@@ -56,9 +56,15 @@ describe("Workspace", () => {
   });
 
   describe("update", () => {
-    it("should persist changes to the config file", async () => {
-      expect(workspace.addToolPrefix).toBeFalsy();
+    it("should persist target changes to the config", async () => {
+      await workspace.addTarget(makeFooBarServerStdioConfig());
+      const workspaceEntry = await config.getWorkspace("test-workspace");
 
+      expect(workspaceEntry.servers).toHaveLength(1);
+      expect(workspaceEntry.servers[0].name).toBe("foo");
+    });
+
+    it("should persist workspace changes to the config", async () => {
       await workspace.addTarget(makeFooBarServerStdioConfig());
       await workspace.update({
         name: "test-workspace-updated",

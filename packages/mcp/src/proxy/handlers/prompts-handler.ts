@@ -50,7 +50,7 @@ export function setupPromptHandlers(
           error,
           clientName: clientForPrompt.name,
           promptName: name,
-          proxyId: server.id,
+          proxyName: server.name,
         },
         "Error getting prompt from client",
       );
@@ -96,7 +96,7 @@ export function setupPromptHandlers(
           logger.warn(
             {
               clientName: connectedClient.name,
-              proxyId: server.id,
+              proxyName: server.name,
             },
             "Target does not support prompts/list",
           );
@@ -106,7 +106,7 @@ export function setupPromptHandlers(
             {
               error,
               clientName: connectedClient.name,
-              proxyId: server.id,
+              proxyName: server.name,
             },
             "Could not fetch prompts from client. Continuing with other clients.",
           );

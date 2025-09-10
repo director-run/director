@@ -22,18 +22,13 @@ global.EventSource = eventsource.EventSource;
 const logger = getLogger(`ProxyServer`);
 
 export type ProxyServerAttributes = {
-  id: string;
   name: string;
-  description?: string;
   servers: AbstractClient[];
 };
 
 export class ProxyServer extends Server {
   private _targets: AbstractClient[];
-  private _id: string;
-  private _name: string;
-  private _description?: string | null;
-  private _addToolPrefix?: boolean;
+  protected _name: string;
 
   constructor(attributes: ProxyServerAttributes) {
     super(
@@ -50,9 +45,7 @@ export class ProxyServer extends Server {
       },
     );
     this._targets = [];
-    this._id = attributes.id;
     this._name = attributes.name;
-    this._description = attributes.description;
 
     for (const server of attributes.servers) {
       this._targets.push(server);
@@ -91,10 +84,6 @@ export class ProxyServer extends Server {
 
   public get name() {
     return this._name;
-  }
-
-  public get description() {
-    return this._description;
   }
 
   public async addTarget(
@@ -177,32 +166,8 @@ export class ProxyServer extends Server {
     // this.sendResourceListChanged();
   }
 
-  public update(
-    attributes: Partial<Pick<ProxyServerAttributes, "name" | "description">>,
-  ) {
-    const { name, description } = attributes;
-    if (name !== undefined && name !== this._name) {
-      if (name.trim() === "") {
-        throw new AppError(ErrorCode.BAD_REQUEST, `Name cannot be empty`);
-      }
-
-      this._name = name;
-    }
-    if (description !== undefined && description !== this._description) {
-      this._description = description;
-    }
-  }
-
-  get id() {
-    return this._id;
-  }
-
-  get addToolPrefix() {
-    return this._addToolPrefix;
-  }
-
   async close(): Promise<void> {
-    logger.info({ message: `shutting down`, proxyId: this.id });
+    logger.info({ message: `shutting down`, proxyName: this.name });
     await Promise.all(this.targets.map((target) => target.close()));
     await super.close();
   }

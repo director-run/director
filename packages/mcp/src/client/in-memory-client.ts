@@ -6,14 +6,15 @@ import { AbstractClient, type AbstractClientParams } from "./abstract-client";
 
 const logger = getLogger("client/in-memory");
 
-export type InMemoryClientParams = AbstractClientParams & {
+export type InMemoryClientParams = AbstractClientParams;
+export type InMemoryClientOptions = {
   server: Server;
 };
 
 export class InMemoryClient extends AbstractClient<InMemoryClientParams> {
   protected server: Server;
 
-  constructor(params: InMemoryClientParams) {
+  constructor(params: InMemoryClientParams, options: InMemoryClientOptions) {
     super({
       name: params.name,
       source: params.source,
@@ -21,16 +22,20 @@ export class InMemoryClient extends AbstractClient<InMemoryClientParams> {
       disabledTools: params.disabledTools,
       disabled: params.disabled,
     });
-    this.server = params.server;
+    this.server = options.server;
   }
 
   public static async createAndConnectToServer(
     server: Server,
   ): Promise<InMemoryClient> {
-    const client = new InMemoryClient({
-      name: "test client",
-      server,
-    });
+    const client = new InMemoryClient(
+      {
+        name: "test client",
+      },
+      {
+        server,
+      },
+    );
 
     await client.connectToTarget({ throwOnError: true });
 

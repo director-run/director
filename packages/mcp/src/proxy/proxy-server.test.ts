@@ -76,10 +76,14 @@ describe("ProxyServer", () => {
 
     describe("addTarget", () => {
       test("should support adding InMemoryClient instances", async () => {
-        const client = new InMemoryClient({
-          name: "test-client",
-          server: makeKitchenSinkServer(),
-        });
+        const client = new InMemoryClient(
+          {
+            name: "test-client",
+          },
+          {
+            server: makeKitchenSinkServer(),
+          },
+        );
         await proxy.addTarget(client);
         expect(client.status).toBe("connected");
         expect(proxy.targets.length).toBe(1);

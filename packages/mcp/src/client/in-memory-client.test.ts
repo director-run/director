@@ -10,10 +10,14 @@ describe("InMemoryClient", () => {
   let client: InMemoryClient;
   const server = makeKitchenSinkServer();
   beforeEach(() => {
-    client = new InMemoryClient({
-      name: "test-client",
-      server,
-    });
+    client = new InMemoryClient(
+      {
+        name: "test-client",
+      },
+      {
+        server,
+      },
+    );
   });
 
   afterEach(async () => {
@@ -64,11 +68,15 @@ describe("InMemoryClient", () => {
     });
 
     it("trying to connect a disabled client should not work", async () => {
-      const client = new InMemoryClient({
-        name: "test-client",
-        server,
-        disabled: true,
-      });
+      const client = new InMemoryClient(
+        {
+          name: "test-client",
+          disabled: true,
+        },
+        {
+          server,
+        },
+      );
       expect(await client.connectToTarget({ throwOnError: true })).toBe(false);
       expect(client.status).toBe("disconnected");
       expect(client.lastErrorMessage).toBeUndefined();

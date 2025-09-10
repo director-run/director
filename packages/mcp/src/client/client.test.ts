@@ -38,10 +38,14 @@ describe("client integration tests", () => {
 
   beforeEach(async () => {
     const testServer = makeTestServer();
-    client = new InMemoryClient({
-      name: "test-client",
-      server: testServer,
-    });
+    client = new InMemoryClient(
+      {
+        name: "test-client",
+      },
+      {
+        server: testServer,
+      },
+    );
     await client.connectToTarget({ throwOnError: true });
   });
 

@@ -1,10 +1,11 @@
+import type { AppRouter } from "@director.run/registry/routers/trpc/index";
 import { whiteBold } from "@director.run/utilities/cli/colors";
 import { makeTable } from "@director.run/utilities/cli/index";
-import type {
-  EntryParameter,
-  RegistryEntry,
-} from "@director.run/utilities/schema";
+import type { inferRouterOutputs } from "@trpc/server";
 import chalk from "chalk";
+
+type RegistryEntry = inferRouterOutputs<AppRouter>["entries"]["getEntryByName"];
+type EntryParameter = RegistryEntry["parameters"][number];
 
 export function printRegistryEntry(entry: RegistryEntry) {
   console.log(`

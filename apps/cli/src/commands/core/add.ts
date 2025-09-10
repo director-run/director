@@ -1,3 +1,4 @@
+import type { AppRouter } from "@director.run/registry/routers/trpc/index";
 import { whiteBold } from "@director.run/utilities/cli/colors";
 import {
   DirectorCommand,
@@ -5,10 +6,12 @@ import {
 } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { spinnerWrap } from "@director.run/utilities/cli/loader";
-import type { RegistryEntry } from "@director.run/utilities/schema";
 import { input, password } from "@inquirer/prompts";
+import type { inferRouterOutputs } from "@trpc/server";
 import { gatewayClient, registryClient } from "../../client";
 import { env } from "../../env";
+
+type RegistryEntry = inferRouterOutputs<AppRouter>["entries"]["getEntryByName"];
 
 export function registerAddCommand(program: DirectorCommand) {
   return program

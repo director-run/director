@@ -13,7 +13,10 @@ import {
   type ProxyTarget,
 } from "@director.run/mcp/proxy/proxy-server";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
-import { requiredStringSchema } from "@director.run/utilities/schema";
+import {
+  optionalStringSchema,
+  requiredStringSchema,
+} from "@director.run/utilities/schema";
 import { Telemetry } from "@director.run/utilities/telemetry";
 import { z } from "zod";
 import {
@@ -27,8 +30,8 @@ import type { ServerConfigEntry, WorkspaceConfigEntry } from "../config/schema";
 
 export const WorkspaceSchema = z.object({
   id: requiredStringSchema,
-  name: requiredStringSchema,
-  description: z.string().trim().optional(),
+  name: optionalStringSchema,
+  description: optionalStringSchema,
   prompts: z.array(PromptSchema).optional(),
   servers: z.array(
     z.union([

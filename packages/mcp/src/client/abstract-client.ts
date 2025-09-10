@@ -1,4 +1,3 @@
-import type { ProxyTargetSource } from "@director.run/utilities/schema";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import type { RequestOptions } from "@modelcontextprotocol/sdk/shared/protocol.js";
 import type {
@@ -16,9 +15,16 @@ export type ClientStatus =
   | "unauthorized"
   | "error";
 
+// TODO: deprecate this as soon as clients no longer use it
+export type SourceData = {
+  name: string;
+  entryId: string;
+  entryData: Record<string, unknown>;
+};
+
 export type AbstractClientParams = {
   name: string;
-  source?: ProxyTargetSource;
+  source?: SourceData;
   toolPrefix?: string;
   disabledTools?: string[];
   disabled?: boolean; // if true, the client will not connect
@@ -30,7 +36,7 @@ export abstract class AbstractClient extends Client {
   public status: ClientStatus = "disconnected";
   public lastConnectedAt?: Date;
   public lastErrorMessage?: string;
-  public readonly source?: ProxyTargetSource;
+  public readonly source?: SourceData;
   public toolPrefix?: string;
   public disabledTools?: string[];
   protected _disabled: boolean = false;

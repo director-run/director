@@ -66,16 +66,6 @@ export function makeKitchenSinkServer() {
   return server;
 }
 
-export function makeHTTPTargetConfig(params: { name: string; url: string }): ProxyTargetAttributes {
-  return {
-    name: params.name,
-    transport: {
-      type: "http",
-      url: params.url,
-    },
-  };
-}
-
 export function makeEchoServerOverStdio(): STDIOTransport {
   return {
     type: "stdio",

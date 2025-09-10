@@ -2,11 +2,9 @@ import { Gateway } from "../gateway";
 import { createGatewayClient } from "../client";
 import path from "node:path";
 import type { Server } from "node:http";
-import { makeEchoServer, makeFooBarServer, makeHTTPTargetConfig, makeKitchenSinkServer } from "@director.run/mcp/test/fixtures";
+import { makeEchoServer, makeFooBarServer, makeKitchenSinkServer } from "@director.run/mcp/test/fixtures";
 import { serveOverSSE, serveOverStreamable } from "@director.run/mcp/transport";
 import type { ProxyTargetAttributes } from "@director.run/utilities/schema";
-import { HTTPClient } from "@director.run/mcp/client/http-client";
-import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 
 const PROXY_TARGET_PORT = 4521;
 
@@ -112,3 +110,14 @@ export class IntegrationTestHarness {
         return config;
     }
 }
+
+export function makeHTTPTargetConfig(params: { name: string; url: string }): ProxyTargetAttributes {
+    return {
+      name: params.name,
+      transport: {
+        type: "http",
+        url: params.url,
+      },
+    };
+  }
+  

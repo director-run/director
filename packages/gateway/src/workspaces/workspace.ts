@@ -1,8 +1,8 @@
+import { AbstractClient } from "@director.run/mcp/client/abstract-client";
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { StdioClient } from "@director.run/mcp/client/stdio-client";
 import type { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { ProxyServer } from "@director.run/mcp/proxy/proxy-server";
-import { type ProxyTarget } from "@director.run/mcp/proxy/proxy-server";
 import type { ProxyServerAttributes } from "@director.run/utilities/schema";
 import type { ProxyTargetAttributes } from "@director.run/utilities/schema";
 import { Telemetry } from "@director.run/utilities/telemetry";
@@ -16,6 +16,7 @@ import { Config } from "../config";
 export class Workspace extends ProxyServer {
   private _config?: Config;
   private _telemetry?: Telemetry;
+  private _oAuthHandler?: OAuthHandler;
 
   constructor(
     attributes: ProxyServerAttributes,
@@ -25,23 +26,47 @@ export class Workspace extends ProxyServer {
       telemetry?: Telemetry;
     },
   ) {
-    super(attributes, params);
+    super({
+      id: attributes.id,
+      name: attributes.name,
+      servers: attributes.servers.map((server) =>
+        createClientForTarget({
+          target: server,
+          oAuthHandler: params?.oAuthHandler,
+        }),
+      ),
+      description: attributes.description ?? undefined,
+    });
+
+    this._oAuthHandler = params?.oAuthHandler;
     this._config = params?.config;
     this._telemetry = params?.telemetry;
   }
 
   public async addTarget(
-    server: ProxyTargetAttributes,
+    server: ProxyTargetAttributes | AbstractClient,
     params: { throwOnError: boolean } = { throwOnError: true },
-  ): Promise<ProxyTarget> {
+  ): Promise<AbstractClient> {
     await this.trackEvent("server_added");
-    const target = await super.addTarget(server, params);
 
+    let target: AbstractClient;
+
+    if (server instanceof AbstractClient) {
+      target = server;
+    } else {
+      target = createClientForTarget({
+        target: server,
+        oAuthHandler: this._oAuthHandler,
+      });
+    }
+
+    await super.addTarget(target, params);
     await this.persistToConfig();
+
     return target;
   }
 
-  public async removeTarget(serverName: string): Promise<ProxyTarget> {
+  public async removeTarget(serverName: string): Promise<AbstractClient> {
     await this.trackEvent("server_removed");
     const removedTarget = await super.removeTarget(serverName);
 
@@ -54,7 +79,7 @@ export class Workspace extends ProxyServer {
     attributes: Partial<
       Pick<ProxyTargetAttributes, "toolPrefix" | "disabledTools">
     >,
-  ): Promise<ProxyTarget> {
+  ): Promise<AbstractClient> {
     const target = await super.updateTarget(serverName, attributes);
     await this.persistToConfig();
 
@@ -110,7 +135,7 @@ export class Workspace extends ProxyServer {
     return this;
   }
 
-  protected async addSystemTarget(target: ProxyTarget) {
+  protected async addSystemTarget(target: AbstractClient) {
     await super.addTarget(target);
   }
 
@@ -192,5 +217,35 @@ export class Workspace extends ProxyServer {
           }
         }),
     };
+  }
+}
+
+function createClientForTarget(params: {
+  target: ProxyTargetAttributes;
+  oAuthHandler?: OAuthHandler;
+}) {
+  const { target, oAuthHandler } = params;
+  switch (target.transport.type) {
+    case "http":
+      return new HTTPClient({
+        url: target.transport.url,
+        name: target.name,
+        oAuthHandler,
+        source: target.source,
+        toolPrefix: target.toolPrefix,
+        disabledTools: target.disabledTools,
+        disabled: target.disabled,
+      });
+    case "stdio":
+      return new StdioClient({
+        name: target.name,
+        command: target.transport.command,
+        args: target.transport.args,
+        env: target.transport.env,
+        source: target.source,
+        toolPrefix: target.toolPrefix,
+        disabledTools: target.disabledTools,
+        disabled: target.disabled,
+      });
   }
 }

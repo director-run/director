@@ -4,18 +4,14 @@ import {
   isAppErrorWithCode,
 } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
-import type {
-  ProxyServerAttributes,
-  ProxyTargetAttributes,
-} from "@director.run/utilities/schema";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import * as eventsource from "eventsource";
 import _ from "lodash";
 import packageJson from "../../package.json";
-import { HTTPClient } from "../client/http-client";
-import { InMemoryClient } from "../client/in-memory-client";
-import { StdioClient } from "../client/stdio-client";
-import { OAuthHandler } from "../oauth/oauth-provider-factory";
+import type {
+  AbstractClient,
+  AbstractClientParams,
+} from "../client/abstract-client";
 import { setupPromptHandlers } from "./handlers/prompts-handler";
 import { setupResourceTemplateHandlers } from "./handlers/resource-templates-handler";
 import { setupResourceHandlers } from "./handlers/resources-handler";
@@ -25,22 +21,21 @@ global.EventSource = eventsource.EventSource;
 
 const logger = getLogger(`ProxyServer`);
 
-export type ProxyTarget = HTTPClient | StdioClient | InMemoryClient;
+export type ProxyServerAttributes = {
+  id: string;
+  name: string;
+  description?: string;
+  servers: AbstractClient[];
+};
 
 export class ProxyServer extends Server {
-  private _targets: (HTTPClient | StdioClient)[];
-  private _oAuthHandler?: OAuthHandler;
+  private _targets: AbstractClient[];
   private _id: string;
   private _name: string;
   private _description?: string | null;
   private _addToolPrefix?: boolean;
 
-  constructor(
-    attributes: ProxyServerAttributes,
-    params?: {
-      oAuthHandler?: OAuthHandler;
-    },
-  ) {
+  constructor(attributes: ProxyServerAttributes) {
     super(
       {
         name: attributes.name,
@@ -55,20 +50,12 @@ export class ProxyServer extends Server {
       },
     );
     this._targets = [];
-    this._oAuthHandler = params?.oAuthHandler;
     this._id = attributes.id;
     this._name = attributes.name;
     this._description = attributes.description;
 
     for (const server of attributes.servers) {
-      const target = createClientForTarget({
-        target: server,
-        oAuthHandler: this._oAuthHandler,
-        toolPrefix: server.toolPrefix,
-        disabledTools: server.disabledTools,
-        disabled: server.disabled,
-      });
-      this._targets.push(target);
+      this._targets.push(server);
     }
 
     setupToolHandlers(this);
@@ -85,7 +72,7 @@ export class ProxyServer extends Server {
     }
   }
 
-  public async getTarget(targetName: string): Promise<ProxyTarget> {
+  public async getTarget(targetName: string): Promise<AbstractClient> {
     const target = this.targets.find(
       (t) => t.name.toLocaleLowerCase() === targetName.toLocaleLowerCase(),
     );
@@ -98,7 +85,7 @@ export class ProxyServer extends Server {
     return target;
   }
 
-  public get targets(): ProxyTarget[] {
+  public get targets(): AbstractClient[] {
     return this._targets;
   }
 
@@ -111,9 +98,9 @@ export class ProxyServer extends Server {
   }
 
   public async addTarget(
-    target: ProxyTargetAttributes | ProxyTarget,
+    target: AbstractClient,
     attribs: { throwOnError: boolean } = { throwOnError: false },
-  ): Promise<ProxyTarget> {
+  ): Promise<AbstractClient> {
     const existingTarget = this.targets.find(
       (t) => t.name.toLocaleLowerCase() === target.name.toLocaleLowerCase(),
     );
@@ -125,26 +112,8 @@ export class ProxyServer extends Server {
       );
     }
 
-    let newTarget: ProxyTarget;
-
-    if (
-      target instanceof HTTPClient ||
-      target instanceof StdioClient ||
-      target instanceof InMemoryClient
-    ) {
-      newTarget = target;
-    } else {
-      newTarget = createClientForTarget({
-        target,
-        oAuthHandler: this._oAuthHandler,
-        toolPrefix: target.toolPrefix,
-        disabledTools: target.disabledTools,
-        disabled: target.disabled,
-      });
-    }
-
     try {
-      await newTarget.connectToTarget({ throwOnError: attribs.throwOnError });
+      await target.connectToTarget({ throwOnError: attribs.throwOnError });
     } catch (error) {
       if (isAppErrorWithCode(error, ErrorCode.UNAUTHORIZED)) {
         // Oauth error, so we supress the exception
@@ -153,9 +122,9 @@ export class ProxyServer extends Server {
       }
     }
 
-    this.targets.push(newTarget);
+    this.targets.push(target);
 
-    return newTarget;
+    return target;
     // TODO: send list changed events. need client to support this first
     // this.sendToolListChanged();
     // this.sendPromptListChanged();
@@ -166,7 +135,7 @@ export class ProxyServer extends Server {
     targetName: string,
 
     attributes: Partial<
-      Pick<ProxyTargetAttributes, "toolPrefix" | "disabledTools" | "disabled">
+      Pick<AbstractClientParams, "toolPrefix" | "disabledTools" | "disabled">
     >,
   ) {
     const target = await this.getTarget(targetName);
@@ -236,38 +205,5 @@ export class ProxyServer extends Server {
     logger.info({ message: `shutting down`, proxyId: this.id });
     await Promise.all(this.targets.map((target) => target.close()));
     await super.close();
-  }
-}
-
-function createClientForTarget(params: {
-  target: ProxyTargetAttributes;
-  oAuthHandler?: OAuthHandler;
-  toolPrefix?: string;
-  disabledTools?: string[];
-  disabled?: boolean;
-}) {
-  const { target, oAuthHandler, toolPrefix, disabledTools, disabled } = params;
-  switch (target.transport.type) {
-    case "http":
-      return new HTTPClient({
-        url: target.transport.url,
-        name: target.name,
-        oAuthHandler,
-        source: target.source,
-        toolPrefix,
-        disabledTools,
-        disabled,
-      });
-    case "stdio":
-      return new StdioClient({
-        name: target.name,
-        command: target.transport.command,
-        args: target.transport.args,
-        env: target.transport.env,
-        source: target.source,
-        toolPrefix,
-        disabledTools,
-        disabled,
-      });
   }
 }

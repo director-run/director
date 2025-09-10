@@ -1,9 +1,7 @@
+import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { InMemoryClient } from "@director.run/mcp/client/in-memory-client";
 import { ProxyServer } from "@director.run/mcp/proxy/proxy-server";
-import {
-  makeEchoServer,
-  makeHTTPTargetConfig,
-} from "@director.run/mcp/test/fixtures";
+import { makeEchoServer } from "@director.run/mcp/test/fixtures";
 import { beforeAll, describe, expect, test } from "vitest";
 import { serializeProxyServer } from "./serializers";
 
@@ -16,11 +14,11 @@ describe("serializers", () => {
         id: "test-proxy",
         name: "test-proxy",
         servers: [
-          makeHTTPTargetConfig({
+          new HTTPClient({
             name: "streamable",
             url: `http://localhost:4522/mcp`,
           }),
-          makeHTTPTargetConfig({
+          new HTTPClient({
             name: "sse",
             url: `http://localhost:4523/sse`,
           }),

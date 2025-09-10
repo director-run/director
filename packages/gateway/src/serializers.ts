@@ -1,12 +1,12 @@
-import type { ClientStatus } from "@director.run/mcp/client/abstract-client";
+import type {
+  AbstractClient,
+  ClientStatus,
+} from "@director.run/mcp/client/abstract-client";
+import type { SourceData } from "@director.run/mcp/client/abstract-client";
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { InMemoryClient } from "@director.run/mcp/client/in-memory-client";
 import { StdioClient } from "@director.run/mcp/client/stdio-client";
-import {
-  ProxyServer,
-  type ProxyTarget,
-} from "@director.run/mcp/proxy/proxy-server";
-import type { ProxyTargetSource } from "@director.run/utilities/schema";
+import { ProxyServer } from "@director.run/mcp/proxy/proxy-server";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import type { Prompt } from "./capabilities/prompt-manager";
 import { getStreamablePathForProxy } from "./helpers";
@@ -30,7 +30,7 @@ type SerializedTarget = {
     | {
         type: "mem";
       };
-  source?: ProxyTargetSource;
+  source?: SourceData;
   toolPrefix?: string;
   disabledTools?: string[];
   disabled?: boolean;
@@ -73,7 +73,7 @@ export async function serializeProxyServers(
 }
 
 export async function serializeProxyServerTarget(
-  target: ProxyTarget,
+  target: AbstractClient,
   params?: {
     includeTools?: boolean;
   },

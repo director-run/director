@@ -17,7 +17,7 @@ export class Workspace extends ProxyServer {
   private _config?: Config;
   private _telemetry?: Telemetry;
   private _oAuthHandler?: OAuthHandler;
-  private _description?: string | null;
+  private _description?: string;
   private _id: string;
 
   constructor(
@@ -196,7 +196,7 @@ export class Workspace extends ProxyServer {
     return {
       id: this.id,
       name: this.name,
-      description: this.description ?? undefined,
+      description: this.description,
       prompts: await this.listPrompts(),
       servers: this.targets
         .filter(

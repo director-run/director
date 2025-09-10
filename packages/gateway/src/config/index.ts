@@ -1,15 +1,15 @@
 import fs from "fs";
 import { existsSync } from "node:fs";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
-import {
-  type ConfigurationData,
-  type ProxyServerAttributes,
-  databaseAttributesSchema,
-} from "@director.run/utilities/schema";
 import _ from "lodash";
 import slugify from "slugify";
 import YAML from "yaml";
 import { ZodError } from "zod";
+import {
+  type ConfigurationData,
+  type ProxyServerAttributes,
+  databaseAttributesSchema,
+} from "./schema";
 
 export abstract class Config {
   public readonly filePath: string;

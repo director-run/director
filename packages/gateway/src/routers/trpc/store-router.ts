@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
-import { proxyTargetAttributesSchema } from "@director.run/utilities/schema";
+import { proxyTargetAttributesSchema } from "../../config/schema";
 import { restartConnectedClients } from "../../helpers";
 import {
   serializeProxyServer,

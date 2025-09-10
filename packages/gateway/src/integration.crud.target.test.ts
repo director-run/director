@@ -1,8 +1,8 @@
 import {} from "@director.run/mcp/test/fixtures";
 import {} from "@director.run/mcp/transport";
-import type { HTTPTransport } from "@director.run/utilities/schema";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { GatewayRouterOutputs } from "./client";
+import type { HTTPTransport } from "./config/schema";
 import { IntegrationTestHarness } from "./test/integration";
 
 describe("Proxy Target CRUD operations", () => {

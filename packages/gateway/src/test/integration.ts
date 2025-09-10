@@ -4,7 +4,7 @@ import path from "node:path";
 import type { Server } from "node:http";
 import { makeEchoServer, makeFooBarServer, makeKitchenSinkServer } from "@director.run/mcp/test/fixtures";
 import { serveOverSSE, serveOverStreamable } from "@director.run/mcp/transport";
-import type { ProxyTargetAttributes } from "@director.run/utilities/schema";
+import type { ProxyTargetAttributes } from "../config/schema";
 
 const PROXY_TARGET_PORT = 4521;
 

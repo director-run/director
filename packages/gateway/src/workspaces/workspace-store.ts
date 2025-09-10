@@ -2,12 +2,12 @@ import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
+import { Telemetry } from "@director.run/utilities/telemetry";
+import type { Config } from "../config";
 import type {
   ProxyServerAttributes,
   ProxyTargetAttributes,
-} from "@director.run/utilities/schema";
-import { Telemetry } from "@director.run/utilities/telemetry";
-import type { Config } from "../config";
+} from "../config/schema";
 import { Workspace } from "./workspace";
 
 const logger = getLogger("WorkspaceStore");

@@ -3,8 +3,6 @@ import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { StdioClient } from "@director.run/mcp/client/stdio-client";
 import type { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { ProxyServer } from "@director.run/mcp/proxy/proxy-server";
-import type { ProxyServerAttributes } from "@director.run/utilities/schema";
-import type { ProxyTargetAttributes } from "@director.run/utilities/schema";
 import { Telemetry } from "@director.run/utilities/telemetry";
 import {
   PROMPT_MANAGER_TARGET_NAME,
@@ -12,6 +10,10 @@ import {
   PromptManager,
 } from "../capabilities/prompt-manager";
 import { Config } from "../config";
+import type {
+  ProxyServerAttributes,
+  ProxyTargetAttributes,
+} from "../config/schema";
 
 export class Workspace extends ProxyServer {
   private _config?: Config;

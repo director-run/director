@@ -30,7 +30,7 @@ import type { ServerConfigEntry, WorkspaceConfigEntry } from "../config/schema";
 
 export const WorkspaceSchema = z.object({
   id: requiredStringSchema,
-  name: optionalStringSchema,
+  name: requiredStringSchema,
   description: optionalStringSchema,
   prompts: z.array(PromptSchema).optional(),
   servers: z.record(

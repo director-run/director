@@ -11,14 +11,13 @@ import {
   PromptManager,
 } from "../capabilities/prompt-manager";
 import { Config } from "../config";
-import type {
-  ProxyServerAttributes,
-  ProxyTargetAttributes,
-} from "../config/schema";
+import type { ServerConfigEntry, WorkspaceConfigEntry } from "../config/schema";
 
-export type WorkspaceAttributes = ProxyServerAttributes & {
+export type WorkspaceAttributes = {
   id: string;
   description?: string;
+  name: string;
+  servers: ServerConfigEntry[];
 };
 
 export class Workspace extends ProxyServer {
@@ -29,7 +28,7 @@ export class Workspace extends ProxyServer {
   private _id: string;
 
   constructor(
-    attributes: ProxyServerAttributes,
+    attributes: WorkspaceAttributes,
     params?: {
       oAuthHandler?: OAuthHandler;
       config?: Config;
@@ -62,7 +61,7 @@ export class Workspace extends ProxyServer {
   }
 
   public async addTarget(
-    server: ProxyTargetAttributes | AbstractClient,
+    server: ServerConfigEntry | AbstractClient,
     params: { throwOnError: boolean } = { throwOnError: true },
   ): Promise<AbstractClient> {
     await this.trackEvent("server_added");
@@ -95,7 +94,7 @@ export class Workspace extends ProxyServer {
   public async updateTarget(
     serverName: string,
     attributes: Partial<
-      Pick<ProxyTargetAttributes, "toolPrefix" | "disabledTools">
+      Pick<ServerConfigEntry, "toolPrefix" | "disabledTools">
     >,
   ): Promise<AbstractClient> {
     const target = await super.updateTarget(serverName, attributes);
@@ -144,7 +143,7 @@ export class Workspace extends ProxyServer {
   }
 
   public async update(
-    attributes: Partial<Pick<ProxyServerAttributes, "name" | "description">>,
+    attributes: Partial<Pick<WorkspaceAttributes, "name" | "description">>,
   ) {
     await this.trackEvent("proxy_updated");
 
@@ -169,7 +168,7 @@ export class Workspace extends ProxyServer {
   }
 
   static async fromConfig(
-    config: ProxyServerAttributes,
+    config: WorkspaceConfigEntry,
     params?: {
       oAuthHandler?: OAuthHandler;
       config?: Config;
@@ -208,7 +207,7 @@ export class Workspace extends ProxyServer {
     }
   }
 
-  private async toConfig(): Promise<ProxyServerAttributes> {
+  private async toConfig(): Promise<WorkspaceConfigEntry> {
     return {
       id: this.id,
       name: this.name,
@@ -250,7 +249,7 @@ export class Workspace extends ProxyServer {
 }
 
 function createClientForTarget(params: {
-  target: ProxyTargetAttributes;
+  target: ServerConfigEntry;
   oAuthHandler?: OAuthHandler;
 }) {
   const { target, oAuthHandler } = params;

@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
-import { proxyTargetAttributesSchema } from "../../config/schema";
+import { ServerConfigEntrySchema } from "../../config/schema";
 import { restartConnectedClients } from "../../helpers";
 import {
   serializeProxyServer,
@@ -15,7 +15,7 @@ import { WorkspaceStore } from "../../workspaces/workspace-store";
 const ProxyCreateSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
-  servers: z.array(proxyTargetAttributesSchema).optional(),
+  servers: z.array(ServerConfigEntrySchema).optional(),
   addToolPrefix: z.boolean().optional(),
 });
 
@@ -23,11 +23,9 @@ const ProxyUpdateSchema = ProxyCreateSchema.omit({
   servers: true,
 }).partial();
 
-const TargetUpdateSchema = proxyTargetAttributesSchema
-  .omit({
-    transport: true,
-  })
-  .partial();
+const TargetUpdateSchema = ServerConfigEntrySchema.omit({
+  transport: true,
+}).partial();
 
 const PromptSchema = z.object({
   name: z.string(),
@@ -100,7 +98,7 @@ export function createProxyStoreRouter({
       .input(
         z.object({
           proxyId: z.string(),
-          server: proxyTargetAttributesSchema,
+          server: ServerConfigEntrySchema,
           queryParams: z
             .object({
               includeTools: z.boolean().optional(),

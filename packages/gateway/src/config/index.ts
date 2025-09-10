@@ -7,7 +7,7 @@ import YAML from "yaml";
 import { ZodError } from "zod";
 import {
   type ConfigurationData,
-  type ProxyServerAttributes,
+  type WorkspaceConfigEntry,
   databaseAttributesSchema,
 } from "./schema";
 
@@ -24,15 +24,15 @@ export abstract class Config {
   protected abstract writeData(data: ConfigurationData): Promise<void>;
 
   async addProxy(
-    proxy: Omit<ProxyServerAttributes, "id">,
-  ): Promise<ProxyServerAttributes> {
+    proxy: Omit<WorkspaceConfigEntry, "id">,
+  ): Promise<WorkspaceConfigEntry> {
     const store = await this.readData();
 
     if (_.find(store.playbooks, { name: proxy.name })) {
       throw new Error("Proxy already exists");
     }
 
-    const newProxy: ProxyServerAttributes = {
+    const newProxy: WorkspaceConfigEntry = {
       id: slugifyName(proxy.name),
       ...proxy,
       servers: _.map(proxy.servers || [], (s) => ({
@@ -46,7 +46,7 @@ export abstract class Config {
     return newProxy;
   }
 
-  async getWorkspace(id: string): Promise<ProxyServerAttributes> {
+  async getWorkspace(id: string): Promise<WorkspaceConfigEntry> {
     const store = await this.readData();
     const proxy = _.find(store.playbooks, { id });
     if (!proxy) {
@@ -55,7 +55,7 @@ export abstract class Config {
     return proxy;
   }
 
-  async setWorkspace(id: string, proxy: ProxyServerAttributes): Promise<void> {
+  async setWorkspace(id: string, proxy: WorkspaceConfigEntry): Promise<void> {
     if (proxy.id !== id) {
       throw new Error("Id mismatch");
     }
@@ -80,7 +80,7 @@ export abstract class Config {
     return store.playbooks.length;
   }
 
-  async getAll(): Promise<ProxyServerAttributes[]> {
+  async getAll(): Promise<WorkspaceConfigEntry[]> {
     const store = await this.readData();
     return store.playbooks;
   }

@@ -101,7 +101,7 @@ export const ProxyTargetSourceSchema = z.object({
 
 export type ProxyTargetSource = z.infer<typeof ProxyTargetSourceSchema>;
 
-export const proxyTargetAttributesSchema = z.object({
+export const ServerConfigEntrySchema = z.object({
   name: slugStringSchema,
   transport: proxyTransport,
   source: ProxyTargetSourceSchema.optional(),
@@ -110,7 +110,7 @@ export const proxyTargetAttributesSchema = z.object({
   disabled: z.boolean().optional(),
 });
 
-export type ProxyTargetAttributes = z.infer<typeof proxyTargetAttributesSchema>;
+export type ServerConfigEntry = z.infer<typeof ServerConfigEntrySchema>;
 
 export const promptSchema = z.object({
   name: requiredStringSchema,
@@ -121,19 +121,19 @@ export const promptSchema = z.object({
 
 export type PromptAttributes = z.infer<typeof promptSchema>;
 
-export const proxyServerAttributesSchema = z.object({
+export const WorkspaceConfigEntrySchema = z.object({
   id: requiredStringSchema,
   name: requiredStringSchema,
   description: z.string().trim().optional(),
   prompts: z.array(promptSchema).optional(),
-  servers: z.array(proxyTargetAttributesSchema),
+  servers: z.array(ServerConfigEntrySchema),
 });
 
-export type ProxyServerAttributes = z.infer<typeof proxyServerAttributesSchema>;
+export type WorkspaceConfigEntry = z.infer<typeof WorkspaceConfigEntrySchema>;
 
 export const databaseAttributesSchema = z.object({
   version: z.string().optional(),
-  playbooks: z.array(proxyServerAttributesSchema),
+  playbooks: z.array(WorkspaceConfigEntrySchema),
 });
 
 export type ConfigurationData = z.infer<typeof databaseAttributesSchema>;

@@ -4,7 +4,7 @@ import path from "node:path";
 import type { Server } from "node:http";
 import { makeEchoServer, makeFooBarServer, makeKitchenSinkServer } from "@director.run/mcp/test/fixtures";
 import { serveOverSSE, serveOverStreamable } from "@director.run/mcp/transport";
-import type { ProxyTargetAttributes } from "../config/schema";
+import type { ServerConfigEntry } from "../config/schema";
 
 const PROXY_TARGET_PORT = 4521;
 
@@ -87,8 +87,8 @@ export class IntegrationTestHarness {
 
 
 
-    public getConfigForTarget(targetName: string): ProxyTargetAttributes {
-        const configs: Record<string, ProxyTargetAttributes> = {
+    public getConfigForTarget(targetName: string): ServerConfigEntry {
+        const configs: Record<string, ServerConfigEntry> = {
             "echo": makeHTTPTargetConfig({
                 name: "echo",
                 url: `http://localhost:${PROXY_TARGET_PORT}/sse`,
@@ -111,7 +111,7 @@ export class IntegrationTestHarness {
     }
 }
 
-export function makeHTTPTargetConfig(params: { name: string; url: string }): ProxyTargetAttributes {
+export function makeHTTPTargetConfig(params: { name: string; url: string }): ServerConfigEntry {
     return {
       name: params.name,
       transport: {

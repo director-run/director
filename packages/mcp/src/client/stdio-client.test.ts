@@ -1,18 +1,13 @@
 import { ErrorCode } from "@director.run/utilities/error";
 import { expectToThrowAppError } from "@director.run/utilities/test";
 import { describe, expect, it } from "vitest";
-import { makeEchoServerOverStdio } from "../test/fixtures";
+import { makeEchoServerStdioClient } from "../test/fixtures";
 import { StdioClient } from "./stdio-client";
 
 describe("StdioClient", () => {
   describe("disabled behaviour", () => {
-    const { command, args } = makeEchoServerOverStdio();
     it("when the client is connected, it should disconnect when disabled", async () => {
-      const client = new StdioClient({
-        name: "test-client",
-        command,
-        args,
-      });
+      const client = makeEchoServerStdioClient();
       await client.connectToTarget({ throwOnError: true });
       expect(client.status).toBe("connected");
       expect(client.isConnected()).toBe(true);
@@ -25,12 +20,8 @@ describe("StdioClient", () => {
     });
 
     it("trying to connect a disabled client should not work", async () => {
-      const client = new StdioClient({
-        name: "test-client",
-        command,
-        args,
-        disabled: true,
-      });
+      const client = makeEchoServerStdioClient();
+      client.setDisabled(true);
       expect(await client.connectToTarget({ throwOnError: true })).toBe(false);
       expect(client.status).toBe("disconnected");
       expect(client.lastErrorMessage).toBeUndefined();

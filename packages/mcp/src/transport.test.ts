@@ -7,7 +7,7 @@ import { HTTPClient } from "./client/http-client";
 import { StdioClient } from "./client/stdio-client";
 
 import { SimpleServer } from "./simple-server";
-import { makeEchoServer, makeEchoServerOverStdio } from "./test/fixtures";
+import { makeEchoServer, makeEchoServerStdioClient } from "./test/fixtures";
 import { serveOverSSE, serveOverStreamable } from "./transport";
 
 describe("transport", () => {
@@ -38,8 +38,8 @@ describe("transport", () => {
 
   describe("serveOverStdio", () => {
     test("should expose a server over stdio", async () => {
-      const { command, args } = makeEchoServerOverStdio();
-      const client = await StdioClient.createAndConnectToStdio(command, args);
+      const client = makeEchoServerStdioClient();
+      await client.connectToTarget({ throwOnError: true });
       const tools = await client.listTools();
       expect(tools.tools).toHaveLength(1);
       expect(tools.tools[0].name).toBe("echo");

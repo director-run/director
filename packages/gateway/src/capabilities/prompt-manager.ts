@@ -9,12 +9,12 @@ export const PROMPT_MANAGER_TARGET_NAME = "__prompts__";
 export class PromptManager extends InMemoryClient {
   private _prompts: Prompt[];
 
-  constructor(prompts: Prompt[]) {
+  constructor(prompts?: Prompt[]) {
     super({
       name: PROMPT_MANAGER_TARGET_NAME,
-      server: makePromptServer(_.cloneDeep(prompts)),
+      server: makePromptServer(_.cloneDeep(prompts || [])),
     });
-    this._prompts = _.cloneDeep(prompts);
+    this._prompts = _.cloneDeep(prompts || []);
   }
 
   get prompts() {

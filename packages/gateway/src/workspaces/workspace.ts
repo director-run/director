@@ -13,13 +13,6 @@ import {
 import { Config } from "../config";
 import type { ServerConfigEntry, WorkspaceConfigEntry } from "../config/schema";
 
-export type WorkspaceAttributes = {
-  id: string;
-  description?: string;
-  name: string;
-  servers: ServerConfigEntry[];
-};
-
 export class Workspace extends ProxyServer {
   private _config?: Config;
   private _telemetry?: Telemetry;
@@ -28,7 +21,7 @@ export class Workspace extends ProxyServer {
   private _id: string;
 
   constructor(
-    attributes: WorkspaceAttributes,
+    attributes: WorkspaceConfigEntry,
     params?: {
       oAuthHandler?: OAuthHandler;
       config?: Config;
@@ -37,12 +30,15 @@ export class Workspace extends ProxyServer {
   ) {
     super({
       name: attributes.name,
-      servers: attributes.servers.map((server) =>
-        createClientForTarget({
-          target: server,
-          oAuthHandler: params?.oAuthHandler,
-        }),
-      ),
+      servers: [
+        ...attributes.servers.map((server) =>
+          createClientForTarget({
+            target: server,
+            oAuthHandler: params?.oAuthHandler,
+          }),
+        ),
+        new PromptManager(attributes.prompts),
+      ],
     });
 
     this._id = attributes.id;
@@ -143,7 +139,7 @@ export class Workspace extends ProxyServer {
   }
 
   public async update(
-    attributes: Partial<Pick<WorkspaceAttributes, "name" | "description">>,
+    attributes: Partial<Pick<WorkspaceConfigEntry, "name" | "description">>,
   ) {
     await this.trackEvent("proxy_updated");
 
@@ -168,30 +164,19 @@ export class Workspace extends ProxyServer {
   }
 
   static async fromConfig(
-    config: WorkspaceConfigEntry,
+    attributes: WorkspaceConfigEntry,
     params?: {
       oAuthHandler?: OAuthHandler;
       config?: Config;
       telemetry?: Telemetry;
     },
   ): Promise<Workspace> {
-    const workspace = new Workspace(
-      {
-        name: config.name,
-        id: config.id,
-        servers: config.servers,
-        description: config.description ?? undefined,
-      },
-      {
-        oAuthHandler: params?.oAuthHandler,
-        config: params?.config,
-        telemetry: params?.telemetry,
-      },
-    );
-
-    await workspace.addSystemTarget(new PromptManager(config.prompts || []));
+    const workspace = new Workspace(attributes, {
+      oAuthHandler: params?.oAuthHandler,
+      config: params?.config,
+      telemetry: params?.telemetry,
+    });
     await workspace.connectTargets();
-
     return workspace;
   }
 

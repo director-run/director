@@ -41,7 +41,7 @@ export async function serveOverStdio(server: Server) {
 export async function proxyHTTPToStdio(url: string) {
   try {
     const proxy = new ProxyServer({
-      name: "http2stdio",
+      id: "http2stdio",
       servers: [
         new HTTPClient({
           name: "director-http",

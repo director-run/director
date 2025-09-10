@@ -53,7 +53,7 @@ export class Workspace extends ProxyServer {
   private _telemetry?: Telemetry;
   private _oAuthHandler?: OAuthHandler;
   private _description?: string;
-  private _id: string;
+  private _name: string; // TODO: change to 'displayName'
 
   constructor(
     attributes: WorkspaceConfigEntry,
@@ -64,7 +64,7 @@ export class Workspace extends ProxyServer {
     },
   ) {
     super({
-      name: attributes.name,
+      id: attributes.id,
       servers: [
         ...attributes.servers.map((server) =>
           createClientForTarget({
@@ -78,7 +78,7 @@ export class Workspace extends ProxyServer {
       ],
     });
 
-    this._id = attributes.id;
+    this._name = attributes.name;
     this._description = attributes.description;
     this._oAuthHandler = params?.oAuthHandler;
     this._config = params?.config;
@@ -89,8 +89,8 @@ export class Workspace extends ProxyServer {
     return this._description;
   }
 
-  get id() {
-    return this._id;
+  get name() {
+    return this._name;
   }
 
   public async addTarget(
@@ -181,7 +181,7 @@ export class Workspace extends ProxyServer {
     await this.trackEvent("proxy_updated");
 
     const { name, description } = attributes;
-    if (name !== undefined && name !== this._name) {
+    if (name !== undefined && name !== this._id) {
       if (name.trim() === "") {
         throw new AppError(ErrorCode.BAD_REQUEST, `Name cannot be empty`);
       }

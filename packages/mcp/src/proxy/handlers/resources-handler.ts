@@ -54,7 +54,7 @@ export function setupResourceHandlers(
           logger.warn(
             {
               clientName: connectedClient.name,
-              proxyName: server.name,
+              proxyId: server.id,
             },
             "Target does not support resources/list",
           );
@@ -63,7 +63,7 @@ export function setupResourceHandlers(
             {
               error,
               clientName: connectedClient.name,
-              proxyName: server.name,
+              proxyId: server.id,
             },
             "Could not fetch resources from client. Continuing with other clients.",
           );
@@ -106,7 +106,7 @@ export function setupResourceHandlers(
           {
             clientName: clientForResource.name,
             uri,
-            proxyName: server.name,
+            proxyId: server.id,
           },
           "Target does not support resources/read",
         );
@@ -116,7 +116,7 @@ export function setupResourceHandlers(
           error,
           clientName: clientForResource.name,
           uri,
-          proxyName: server.name,
+          proxyId: server.id,
         },
         "Error reading resource from client",
       );

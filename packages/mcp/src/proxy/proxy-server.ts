@@ -24,18 +24,18 @@ const logger = getLogger(`ProxyServer`);
 export type ProxyTarget = InMemoryClient | StdioClient | HTTPClient;
 
 export type ProxyServerAttributes = {
-  name: string;
+  id: string;
   servers: ProxyTarget[];
 };
 
 export class ProxyServer extends Server {
   private _targets: ProxyTarget[];
-  protected _name: string;
+  protected _id: string;
 
   constructor(attributes: ProxyServerAttributes) {
     super(
       {
-        name: attributes.name,
+        name: attributes.id, // MCP server name is now a logical name, so we use the id
         version: packageJson.version,
       },
       {
@@ -47,7 +47,7 @@ export class ProxyServer extends Server {
       },
     );
     this._targets = [];
-    this._name = attributes.name;
+    this._id = attributes.id;
 
     for (const server of attributes.servers) {
       this._targets.push(server);
@@ -85,7 +85,7 @@ export class ProxyServer extends Server {
   }
 
   public get name() {
-    return this._name;
+    return this._id;
   }
 
   public async addTarget(
@@ -144,6 +144,10 @@ export class ProxyServer extends Server {
     return target;
   }
 
+  public get id() {
+    return this._id;
+  }
+
   public async removeTarget(targetName: string) {
     const existingTarget = this.targets.find(
       (t) => t.name.toLocaleLowerCase() === targetName.toLocaleLowerCase(),
@@ -169,7 +173,7 @@ export class ProxyServer extends Server {
   }
 
   async close(): Promise<void> {
-    logger.info({ message: `shutting down`, proxyName: this.name });
+    logger.info({ message: `shutting down`, proxyId: this._id });
     await Promise.all(this.targets.map((target) => target.close()));
     await super.close();
   }

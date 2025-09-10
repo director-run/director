@@ -55,7 +55,7 @@ export function setupResourceTemplateHandlers(
             logger.warn(
               {
                 clientName: connectedClient.name,
-                proxyName: server.name,
+                proxyId: server.id,
               },
               "Target does not support resources/templates/list",
             );
@@ -65,7 +65,7 @@ export function setupResourceTemplateHandlers(
             {
               error,
               clientName: connectedClient.name,
-              proxyName: server.name,
+              proxyId: server.id,
             },
             "Error fetching resource templates from client",
           );

@@ -47,7 +47,7 @@ describe("ProxyServer", () => {
 
     beforeEach(() => {
       proxy = new ProxyServer({
-        name: "test-proxy",
+        id: "test-proxy",
         servers: [],
       });
     });
@@ -137,7 +137,7 @@ describe("ProxyServer", () => {
           });
           test("should succeed when adding an unauthorized oauth target", async () => {
             const proxy = new ProxyServer({
-              name: "test-proxy",
+              id: "test-proxy",
               servers: [],
             });
 
@@ -161,7 +161,7 @@ describe("ProxyServer", () => {
         describe("when throwOnError === false", () => {
           test("should succeed when adding a oauth target", async () => {
             const proxy = new ProxyServer({
-              name: "test-proxy",
+              id: "test-proxy",
               servers: [],
             });
 
@@ -183,7 +183,7 @@ describe("ProxyServer", () => {
           });
           test("should not throw an exception when adding a broken target", async () => {
             const proxy = new ProxyServer({
-              name: "test-proxy",
+              id: "test-proxy",
               servers: [],
             });
 
@@ -206,7 +206,7 @@ describe("ProxyServer", () => {
 
     beforeEach(() => {
       proxy = new ProxyServer({
-        name: "test-proxy",
+        id: "test-proxy",
         servers: [
           new HTTPClient({
             name: "streamable",
@@ -241,7 +241,7 @@ describe("ProxyServer", () => {
 
       beforeEach(async () => {
         proxy = new ProxyServer({
-          name: "test-proxy",
+          id: "test-proxy",
           servers: [
             new HTTPClient({
               name: "echo",
@@ -299,7 +299,7 @@ describe("ProxyServer", () => {
 
       beforeEach(async () => {
         proxy = new ProxyServer({
-          name: "test-proxy",
+          id: "test-proxy",
           servers: [
             new HTTPClient({
               name: "echo",
@@ -366,7 +366,7 @@ describe("ProxyServer", () => {
 
       beforeEach(async () => {
         proxy = new ProxyServer({
-          name: "test-proxy",
+          id: "test-proxy",
           servers: [
             new HTTPClient({
               name: "echo",

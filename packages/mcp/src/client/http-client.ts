@@ -11,9 +11,11 @@ import {
   SseError,
 } from "@modelcontextprotocol/sdk/client/sse.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 import { OAuthHandler } from "../oauth/oauth-provider-factory";
 import { AbsractClientSchema, AbstractClient } from "./abstract-client";
+import type { ClientStatus } from "./abstract-client";
 
 const logger = getLogger("client/http");
 
@@ -255,6 +257,40 @@ export class HTTPClient extends AbstractClient<HTTPClientParams> {
     );
     await client.connectToTarget();
     return client;
+  }
+
+  public async toPlainObject(include?: {
+    tools?: boolean;
+    connectionInfo?: boolean;
+  }): Promise<
+    HTTPClientParams & {
+      tools?: Tool[];
+      connectionInfo?: {
+        status: ClientStatus;
+        lastConnectedAt?: Date;
+        lastErrorMessage?: string;
+      };
+    }
+  > {
+    return {
+      name: this.name,
+      source: this.source,
+      toolPrefix: this.toolPrefix,
+      disabledTools: this.disabledTools,
+      disabled: this.disabled,
+      url: this.url,
+      headers: this.headers,
+      tools: include?.tools
+        ? (await this.originalListTools()).tools
+        : undefined,
+      connectionInfo: include?.connectionInfo
+        ? {
+            status: this.status,
+            lastConnectedAt: this.lastConnectedAt,
+            lastErrorMessage: this.lastErrorMessage,
+          }
+        : undefined,
+    };
   }
 }
 

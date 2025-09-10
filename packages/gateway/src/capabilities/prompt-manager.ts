@@ -1,24 +1,41 @@
 import { InMemoryClient } from "@director.run/mcp/client/in-memory-client";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
+import { requiredStringSchema } from "@director.run/utilities/schema";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { GetPromptResult } from "@modelcontextprotocol/sdk/types.js";
 import _ from "lodash";
+import { z } from "zod";
 
 export const PROMPT_MANAGER_TARGET_NAME = "__prompts__";
+
+export const PromptSchema = z.object({
+  name: requiredStringSchema,
+  title: requiredStringSchema,
+  description: z.string().trim().optional(),
+  body: requiredStringSchema,
+});
+
+export type Prompt = z.infer<typeof PromptSchema>;
+
+export const PromptManagerSchema = z.object({
+  prompts: z.array(PromptSchema).optional(),
+});
+
+export type PromptManagerParams = z.infer<typeof PromptManagerSchema>;
 
 export class PromptManager extends InMemoryClient {
   private _prompts: Prompt[];
 
-  constructor(prompts?: Prompt[]) {
+  constructor(params: PromptManagerParams) {
     super(
       {
         name: PROMPT_MANAGER_TARGET_NAME,
       },
       {
-        server: makePromptServer(_.cloneDeep(prompts || [])),
+        server: makePromptServer(_.cloneDeep(params?.prompts || [])),
       },
     );
-    this._prompts = _.cloneDeep(prompts || []);
+    this._prompts = _.cloneDeep(params?.prompts || []);
   }
 
   get prompts() {
@@ -112,10 +129,3 @@ function makePromptServer(prompts: Prompt[]) {
 
   return server.server;
 }
-
-export type Prompt = {
-  name: string;
-  title: string;
-  description?: string;
-  body: string;
-};

@@ -1,20 +1,48 @@
 import { AbstractClient } from "@director.run/mcp/client/abstract-client";
-import { HTTPClient } from "@director.run/mcp/client/http-client";
-import { StdioClient } from "@director.run/mcp/client/stdio-client";
+import {
+  HTTPClient,
+  HTTPClientSchema,
+} from "@director.run/mcp/client/http-client";
+import {
+  StdioClient,
+  StdioClientSchema,
+} from "@director.run/mcp/client/stdio-client";
 import type { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
 import {
   ProxyServer,
   type ProxyTarget,
 } from "@director.run/mcp/proxy/proxy-server";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
+import { requiredStringSchema } from "@director.run/utilities/schema";
 import { Telemetry } from "@director.run/utilities/telemetry";
+import { z } from "zod";
 import {
   PROMPT_MANAGER_TARGET_NAME,
   type Prompt,
   PromptManager,
+  PromptSchema,
 } from "../capabilities/prompt-manager";
 import { Config } from "../config";
 import type { ServerConfigEntry, WorkspaceConfigEntry } from "../config/schema";
+
+export const WorkspaceSchema = z.object({
+  id: requiredStringSchema,
+  name: requiredStringSchema,
+  description: z.string().trim().optional(),
+  prompts: z.array(PromptSchema).optional(),
+  servers: z.array(
+    z.union([
+      HTTPClientSchema.extend({
+        type: z.literal("http"),
+      }),
+      StdioClientSchema.extend({
+        type: z.literal("stdio"),
+      }),
+    ]),
+  ),
+});
+
+export type WorkspaceParams = z.infer<typeof WorkspaceSchema>;
 
 export class Workspace extends ProxyServer {
   private _config?: Config;
@@ -40,7 +68,9 @@ export class Workspace extends ProxyServer {
             oAuthHandler: params?.oAuthHandler,
           }),
         ),
-        new PromptManager(attributes.prompts),
+        new PromptManager({
+          prompts: attributes.prompts,
+        }),
       ],
     });
 
@@ -206,16 +236,16 @@ export class Workspace extends ProxyServer {
           if (target instanceof HTTPClient) {
             return {
               name: target.name,
-              toolPrefix: target.toolPrefix ?? undefined,
-              disabledTools: target.disabledTools ?? undefined,
+              toolPrefix: target.toolPrefix,
+              disabledTools: target.disabledTools,
               disabled: target.disabled,
               transport: { type: "http", url: target.url },
             };
           } else if (target instanceof StdioClient) {
             return {
               name: target.name,
-              toolPrefix: target.toolPrefix ?? undefined,
-              disabledTools: target.disabledTools ?? undefined,
+              toolPrefix: target.toolPrefix,
+              disabledTools: target.disabledTools,
               disabled: target.disabled,
               transport: {
                 type: "stdio",

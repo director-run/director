@@ -8,6 +8,7 @@ import type {
   ListToolsRequest,
 } from "@modelcontextprotocol/sdk/types.js";
 import { ErrorCode, McpError } from "@modelcontextprotocol/sdk/types.js";
+import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 import packageJson from "../../package.json";
 
@@ -174,4 +175,18 @@ export abstract class AbstractClient<
       ? this.status
       : "disconnected";
   }
+
+  public abstract toPlainObject(include?: {
+    tools?: boolean;
+    connectionInfo?: boolean;
+  }): Promise<
+    Params & {
+      tools?: Tool[];
+      connectionInfo?: {
+        status: ClientStatus;
+        lastConnectedAt?: Date;
+        lastErrorMessage?: string;
+      };
+    }
+  >;
 }

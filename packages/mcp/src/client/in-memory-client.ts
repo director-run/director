@@ -1,7 +1,9 @@
 import { getLogger } from "@director.run/utilities/logger";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
+import type { ClientStatus } from "./abstract-client";
 import { AbsractClientSchema, AbstractClient } from "./abstract-client";
 
 const logger = getLogger("client/in-memory");
@@ -56,5 +58,37 @@ export class InMemoryClient extends AbstractClient<InMemoryClientParams> {
     this.lastConnectedAt = new Date();
     this.lastErrorMessage = undefined;
     return true;
+  }
+
+  public async toPlainObject(include?: {
+    tools?: boolean;
+    connectionInfo?: boolean;
+  }): Promise<
+    InMemoryClientParams & {
+      tools?: Tool[];
+      connectionInfo?: {
+        status: ClientStatus;
+        lastConnectedAt?: Date;
+        lastErrorMessage?: string;
+      };
+    }
+  > {
+    return {
+      name: this.name,
+      source: this.source,
+      toolPrefix: this.toolPrefix,
+      disabledTools: this.disabledTools,
+      disabled: this.disabled,
+      tools: include?.tools
+        ? (await this.originalListTools()).tools
+        : undefined,
+      connectionInfo: include?.connectionInfo
+        ? {
+            status: this.status,
+            lastConnectedAt: this.lastConnectedAt,
+            lastErrorMessage: this.lastErrorMessage,
+          }
+        : undefined,
+    };
   }
 }

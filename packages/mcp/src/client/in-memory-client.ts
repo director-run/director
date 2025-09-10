@@ -1,12 +1,14 @@
-import {} from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { AbstractClient, type AbstractClientParams } from "./abstract-client";
+import { z } from "zod";
+import { AbsractClientSchema, AbstractClient } from "./abstract-client";
 
 const logger = getLogger("client/in-memory");
 
-export type InMemoryClientParams = AbstractClientParams;
+export const InMemoryClientSchema = AbsractClientSchema.extend({});
+
+export type InMemoryClientParams = z.infer<typeof InMemoryClientSchema>;
 export type InMemoryClientOptions = {
   server: Server;
 };
@@ -15,13 +17,7 @@ export class InMemoryClient extends AbstractClient<InMemoryClientParams> {
   protected server: Server;
 
   constructor(params: InMemoryClientParams, options: InMemoryClientOptions) {
-    super({
-      name: params.name,
-      source: params.source,
-      toolPrefix: params.toolPrefix,
-      disabledTools: params.disabledTools,
-      disabled: params.disabled,
-    });
+    super(params);
     this.server = options.server;
   }
 

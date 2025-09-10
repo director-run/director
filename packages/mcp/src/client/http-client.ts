@@ -4,21 +4,25 @@ import {
   isAppErrorWithCode,
 } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
+import { requiredStringSchema } from "@director.run/utilities/schema";
 import { UnauthorizedError } from "@modelcontextprotocol/sdk/client/auth.js";
 import {
   SSEClientTransport,
   SseError,
 } from "@modelcontextprotocol/sdk/client/sse.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+import { z } from "zod";
 import { OAuthHandler } from "../oauth/oauth-provider-factory";
-import { AbstractClient, type AbstractClientParams } from "./abstract-client";
+import { AbsractClientSchema, AbstractClient } from "./abstract-client";
 
 const logger = getLogger("client/http");
 
-export type HTTPClientParams = AbstractClientParams & {
-  url: string;
-  headers?: Record<string, string>;
-};
+export const HTTPClientSchema = AbsractClientSchema.extend({
+  url: requiredStringSchema,
+  headers: z.record(requiredStringSchema, z.string()).optional(),
+});
+
+export type HTTPClientParams = z.infer<typeof HTTPClientSchema>;
 
 export type HTTPClientOptions = {
   oAuthHandler?: OAuthHandler;
@@ -30,13 +34,7 @@ export class HTTPClient extends AbstractClient<HTTPClientParams> {
   private oAuthHandler?: OAuthHandler;
 
   constructor(params: HTTPClientParams, options?: HTTPClientOptions) {
-    super({
-      name: params.name,
-      source: params.source,
-      toolPrefix: params.toolPrefix,
-      disabledTools: params.disabledTools,
-      disabled: params.disabled,
-    });
+    super(params);
     this._url = params.url;
     this.oAuthHandler = options?.oAuthHandler;
     this.headers = params.headers;

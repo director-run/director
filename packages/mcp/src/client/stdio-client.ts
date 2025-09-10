@@ -1,16 +1,20 @@
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
+import { requiredStringSchema } from "@director.run/utilities/schema";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { McpError } from "@modelcontextprotocol/sdk/types.js";
-import { AbstractClient, type AbstractClientParams } from "./abstract-client";
+import { z } from "zod";
+import { AbsractClientSchema, AbstractClient } from "./abstract-client";
 
 const logger = getLogger("client/stdio");
 
-export type StdioClientParams = AbstractClientParams & {
-  command: string;
-  args: string[];
-  env?: Record<string, string>;
-};
+export const StdioClientSchema = AbsractClientSchema.extend({
+  command: requiredStringSchema,
+  args: z.array(z.string()),
+  env: z.record(requiredStringSchema, z.string()).optional(),
+});
+
+export type StdioClientParams = z.infer<typeof StdioClientSchema>;
 
 export class StdioClient extends AbstractClient<StdioClientParams> {
   public readonly command: string;
@@ -18,13 +22,7 @@ export class StdioClient extends AbstractClient<StdioClientParams> {
   public readonly env?: Record<string, string>;
 
   constructor(params: StdioClientParams) {
-    super({
-      name: params.name,
-      source: params.source,
-      toolPrefix: params.toolPrefix,
-      disabledTools: params.disabledTools,
-      disabled: params.disabled,
-    });
+    super(params);
     this.command = params.command;
     this.args = params.args;
     this.env = params.env;

@@ -33,12 +33,13 @@ export const WorkspaceSchema = z.object({
   name: optionalStringSchema,
   description: optionalStringSchema,
   prompts: z.array(PromptSchema).optional(),
-  servers: z.array(
+  servers: z.record(
+    requiredStringSchema,
     z.union([
-      HTTPClientSchema.extend({
+      HTTPClientSchema.omit({ name: true }).extend({
         type: z.literal("http"),
       }),
-      StdioClientSchema.extend({
+      StdioClientSchema.omit({ name: true }).extend({
         type: z.literal("stdio"),
       }),
     ]),

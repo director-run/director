@@ -138,13 +138,17 @@ describe("ProxyServer", () => {
             });
 
             const target = await proxy.addTarget(
-              new HTTPClient({
-                name: "streamable",
-                url: `https://mcp.notion.com/mcp`,
-                oAuthHandler: OAuthHandler.createMemoryBackedHandler({
-                  baseCallbackUrl: "http://localhost:8999",
-                }),
-              }),
+              new HTTPClient(
+                {
+                  name: "streamable",
+                  url: `https://mcp.notion.com/mcp`,
+                },
+                {
+                  oAuthHandler: OAuthHandler.createMemoryBackedHandler({
+                    baseCallbackUrl: "http://localhost:8999",
+                  }),
+                },
+              ),
               { throwOnError: true },
             );
             expect(target.status).toBe("unauthorized");
@@ -158,13 +162,17 @@ describe("ProxyServer", () => {
             });
 
             const target = await proxy.addTarget(
-              new HTTPClient({
-                name: "streamable",
-                url: `https://mcp.notion.com/mcp`,
-                oAuthHandler: OAuthHandler.createMemoryBackedHandler({
-                  baseCallbackUrl: "http://localhost:8999",
-                }),
-              }),
+              new HTTPClient(
+                {
+                  name: "streamable",
+                  url: `https://mcp.notion.com/mcp`,
+                },
+                {
+                  oAuthHandler: OAuthHandler.createMemoryBackedHandler({
+                    baseCallbackUrl: "http://localhost:8999",
+                  }),
+                },
+              ),
               { throwOnError: false },
             );
             expect(target.status).toBe("unauthorized");

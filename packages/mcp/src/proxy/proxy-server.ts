@@ -8,10 +8,10 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import * as eventsource from "eventsource";
 import _ from "lodash";
 import packageJson from "../../package.json";
-import type {
-  AbstractClient,
-  AbstractClientParams,
-} from "../client/abstract-client";
+import type { AbstractClientParams } from "../client/abstract-client";
+import type { HTTPClient } from "../client/http-client";
+import type { InMemoryClient } from "../client/in-memory-client";
+import type { StdioClient } from "../client/stdio-client";
 import { setupPromptHandlers } from "./handlers/prompts-handler";
 import { setupResourceTemplateHandlers } from "./handlers/resource-templates-handler";
 import { setupResourceHandlers } from "./handlers/resources-handler";
@@ -21,13 +21,15 @@ global.EventSource = eventsource.EventSource;
 
 const logger = getLogger(`ProxyServer`);
 
+export type ProxyTarget = InMemoryClient | StdioClient | HTTPClient;
+
 export type ProxyServerAttributes = {
   name: string;
-  servers: AbstractClient[];
+  servers: ProxyTarget[];
 };
 
 export class ProxyServer extends Server {
-  private _targets: AbstractClient[];
+  private _targets: ProxyTarget[];
   protected _name: string;
 
   constructor(attributes: ProxyServerAttributes) {
@@ -65,7 +67,7 @@ export class ProxyServer extends Server {
     }
   }
 
-  public async getTarget(targetName: string): Promise<AbstractClient> {
+  public async getTarget(targetName: string): Promise<ProxyTarget> {
     const target = this.targets.find(
       (t) => t.name.toLocaleLowerCase() === targetName.toLocaleLowerCase(),
     );
@@ -78,7 +80,7 @@ export class ProxyServer extends Server {
     return target;
   }
 
-  public get targets(): AbstractClient[] {
+  public get targets(): ProxyTarget[] {
     return this._targets;
   }
 
@@ -87,9 +89,9 @@ export class ProxyServer extends Server {
   }
 
   public async addTarget(
-    target: AbstractClient,
+    target: ProxyTarget,
     attribs: { throwOnError: boolean } = { throwOnError: false },
-  ): Promise<AbstractClient> {
+  ): Promise<ProxyTarget> {
     const existingTarget = this.targets.find(
       (t) => t.name.toLocaleLowerCase() === target.name.toLocaleLowerCase(),
     );

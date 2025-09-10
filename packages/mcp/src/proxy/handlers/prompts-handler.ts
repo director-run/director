@@ -8,16 +8,15 @@ import {
   McpError,
   type Prompt,
 } from "@modelcontextprotocol/sdk/types.js";
-import type { AbstractClient } from "../../client/abstract-client";
-import type { ProxyServer } from "../proxy-server";
+import type { ProxyServer, ProxyTarget } from "../proxy-server";
 
 const logger = getLogger("proxy/handlers/promptsHandler");
 
 export function setupPromptHandlers(
   server: ProxyServer,
-  connectedClients: AbstractClient[],
+  connectedClients: ProxyTarget[],
 ) {
-  const promptToClientMap = new Map<string, AbstractClient>();
+  const promptToClientMap = new Map<string, ProxyTarget>();
   // Get Prompt Handler
   server.setRequestHandler(GetPromptRequestSchema, async (request) => {
     const { name } = request.params;

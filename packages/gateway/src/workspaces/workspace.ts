@@ -2,7 +2,10 @@ import { AbstractClient } from "@director.run/mcp/client/abstract-client";
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { StdioClient } from "@director.run/mcp/client/stdio-client";
 import type { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
-import { ProxyServer } from "@director.run/mcp/proxy/proxy-server";
+import {
+  ProxyServer,
+  type ProxyTarget,
+} from "@director.run/mcp/proxy/proxy-server";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { Telemetry } from "@director.run/utilities/telemetry";
 import {
@@ -57,12 +60,12 @@ export class Workspace extends ProxyServer {
   }
 
   public async addTarget(
-    server: ServerConfigEntry | AbstractClient,
+    server: ServerConfigEntry | ProxyTarget,
     params: { throwOnError: boolean } = { throwOnError: true },
-  ): Promise<AbstractClient> {
+  ): Promise<ProxyTarget> {
     await this.trackEvent("server_added");
 
-    let target: AbstractClient;
+    let target: ProxyTarget;
 
     if (server instanceof AbstractClient) {
       target = server;
@@ -79,7 +82,7 @@ export class Workspace extends ProxyServer {
     return target;
   }
 
-  public async removeTarget(serverName: string): Promise<AbstractClient> {
+  public async removeTarget(serverName: string): Promise<ProxyTarget> {
     await this.trackEvent("server_removed");
     const removedTarget = await super.removeTarget(serverName);
 
@@ -92,7 +95,7 @@ export class Workspace extends ProxyServer {
     attributes: Partial<
       Pick<ServerConfigEntry, "toolPrefix" | "disabledTools">
     >,
-  ): Promise<AbstractClient> {
+  ): Promise<ProxyTarget> {
     const target = await super.updateTarget(serverName, attributes);
     await this.persistToConfig();
 
@@ -157,10 +160,6 @@ export class Workspace extends ProxyServer {
     await this.persistToConfig();
 
     return this;
-  }
-
-  protected async addSystemTarget(target: AbstractClient) {
-    await super.addTarget(target);
   }
 
   static async fromConfig(
@@ -240,15 +239,17 @@ function createClientForTarget(params: {
   const { target, oAuthHandler } = params;
   switch (target.transport.type) {
     case "http":
-      return new HTTPClient({
-        url: target.transport.url,
-        name: target.name,
-        oAuthHandler,
-        source: target.source,
-        toolPrefix: target.toolPrefix,
-        disabledTools: target.disabledTools,
-        disabled: target.disabled,
-      });
+      return new HTTPClient(
+        {
+          url: target.transport.url,
+          name: target.name,
+          source: target.source,
+          toolPrefix: target.toolPrefix,
+          disabledTools: target.disabledTools,
+          disabled: target.disabled,
+        },
+        { oAuthHandler },
+      );
     case "stdio":
       return new StdioClient({
         name: target.name,

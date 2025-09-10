@@ -6,14 +6,13 @@ import {
   McpError,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { ResourceTemplate } from "@modelcontextprotocol/sdk/types.js";
-import type { AbstractClient } from "../../client/abstract-client";
-import type { ProxyServer } from "../proxy-server";
+import type { ProxyServer, ProxyTarget } from "../proxy-server";
 
 const logger = getLogger("proxy/handlers/resourceTemplatesHandler");
 
 export function setupResourceTemplateHandlers(
   server: ProxyServer,
-  connectedClients: AbstractClient[],
+  connectedClients: ProxyTarget[],
 ) {
   // List Resource Templates Handler
   server.setRequestHandler(

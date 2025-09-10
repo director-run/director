@@ -31,7 +31,9 @@ export type AbstractClientParams = {
 };
 
 // TODO: use generic type for source so it makes a better sdk
-export abstract class AbstractClient extends Client {
+export abstract class AbstractClient<
+  Params extends AbstractClientParams,
+> extends Client {
   public readonly name: string;
   public status: ClientStatus = "disconnected";
   public lastConnectedAt?: Date;

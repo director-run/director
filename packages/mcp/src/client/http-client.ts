@@ -18,15 +18,18 @@ const logger = getLogger("client/http");
 export type HTTPClientParams = AbstractClientParams & {
   url: string;
   headers?: Record<string, string>;
+};
+
+export type HTTPClientOptions = {
   oAuthHandler?: OAuthHandler;
 };
 
-export class HTTPClient extends AbstractClient {
+export class HTTPClient extends AbstractClient<HTTPClientParams> {
   private _url: string;
   private headers?: Record<string, string>;
   private oAuthHandler?: OAuthHandler;
 
-  constructor(params: HTTPClientParams) {
+  constructor(params: HTTPClientParams, options?: HTTPClientOptions) {
     super({
       name: params.name,
       source: params.source,
@@ -35,7 +38,7 @@ export class HTTPClient extends AbstractClient {
       disabled: params.disabled,
     });
     this._url = params.url;
-    this.oAuthHandler = params.oAuthHandler;
+    this.oAuthHandler = options?.oAuthHandler;
     this.headers = params.headers;
   }
 
@@ -244,12 +247,14 @@ export class HTTPClient extends AbstractClient {
     headers?: Record<string, string>,
     oAuthHandler?: OAuthHandler,
   ) {
-    const client = new HTTPClient({
-      name: "test streamable client",
-      url,
-      headers,
-      oAuthHandler,
-    });
+    const client = new HTTPClient(
+      {
+        name: "test streamable client",
+        url,
+        headers,
+      },
+      { oAuthHandler },
+    );
     await client.connectToTarget();
     return client;
   }

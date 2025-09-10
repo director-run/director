@@ -4,13 +4,12 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
-import type { AbstractClient } from "../../client/abstract-client";
-import type { ProxyServer } from "../proxy-server";
+import type { ProxyServer, ProxyTarget } from "../proxy-server";
 
 const logger = getLogger("proxy/handlers/toolsHandler");
 
 export function setupToolHandlers(server: ProxyServer) {
-  let toolToTarget: Map<string, AbstractClient> = new Map();
+  let toolToTarget: Map<string, ProxyTarget> = new Map();
 
   server.setRequestHandler(ListToolsRequestSchema, async (request) => {
     const allTools: Tool[] = [];

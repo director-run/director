@@ -10,7 +10,7 @@ export type InMemoryClientParams = AbstractClientParams & {
   server: Server;
 };
 
-export class InMemoryClient extends AbstractClient {
+export class InMemoryClient extends AbstractClient<InMemoryClientParams> {
   protected server: Server;
 
   constructor(params: InMemoryClientParams) {

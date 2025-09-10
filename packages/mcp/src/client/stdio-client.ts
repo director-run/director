@@ -12,7 +12,7 @@ export type StdioClientParams = AbstractClientParams & {
   env?: Record<string, string>;
 };
 
-export class StdioClient extends AbstractClient {
+export class StdioClient extends AbstractClient<StdioClientParams> {
   public readonly command: string;
   public readonly args: string[];
   public readonly env?: Record<string, string>;

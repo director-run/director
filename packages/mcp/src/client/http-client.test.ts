@@ -93,13 +93,17 @@ describe("HTTPClient", () => {
 
     describe("error handling", () => {
       test("oauth unauthorized", async () => {
-        const client = new HTTPClient({
-          name: "test-client",
-          url: "https://mcp.notion.com/mcp",
-          oAuthHandler: OAuthHandler.createMemoryBackedHandler({
-            baseCallbackUrl: "http://localhost:8999",
-          }),
-        });
+        const client = new HTTPClient(
+          {
+            name: "test-client",
+            url: "https://mcp.notion.com/mcp",
+          },
+          {
+            oAuthHandler: OAuthHandler.createMemoryBackedHandler({
+              baseCallbackUrl: "http://localhost:8999",
+            }),
+          },
+        );
 
         const result = await client.connectToTarget({
           throwOnError: false,

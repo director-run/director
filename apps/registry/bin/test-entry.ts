@@ -5,12 +5,12 @@ import { blue, yellow } from "@director.run/utilities/cli/colors";
 import { makeTable } from "@director.run/utilities/cli/index";
 import { getLogger } from "@director.run/utilities/logger";
 import { openUrl } from "@director.run/utilities/os";
-import type { RegistryEntry } from "@director.run/utilities/schema";
 import { joinURL } from "@director.run/utilities/url";
 import { input, select } from "@inquirer/prompts";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import type { EntryCreateParams } from "../src/db/schema";
 import { substituteParameters } from "../src/routers/trpc/entries-router";
+import type { RegistryEntry } from "../src/schemas";
 import { entries } from "../src/seed/entries";
 
 const logger = getLogger("registry-qa-test");

@@ -1,8 +1,3 @@
-import type {
-  EntryParameter,
-  ProxyTransport,
-  Tool,
-} from "@director.run/utilities/schema";
 import type { InferInsertModel } from "drizzle-orm";
 import {
   boolean,
@@ -13,6 +8,7 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
+import type { EntryParameter, ProxyTransport, Tool } from "../schemas";
 
 export type EntryState = "draft" | "published" | "archived";
 

@@ -2,11 +2,6 @@ import {
   makeFooBarServerStdioConfig,
   makeHTTPTargetConfig,
 } from "@director.run/gateway/test/fixtures";
-import type {
-  HTTPTransport,
-  RegistryEntry,
-  STDIOTransport,
-} from "@director.run/utilities/schema";
 import {
   afterAll,
   beforeAll,
@@ -19,6 +14,11 @@ import {
 import { type RegistryClient, createRegistryClient } from "../../client";
 import { env } from "../../config";
 import { Registry } from "../../registry";
+import type {
+  HTTPTransport,
+  RegistryEntry,
+  STDIOTransport,
+} from "../../schemas";
 import { makeTestEntries, makeTestEntry } from "../../test/fixtures/entries";
 
 describe("Entries Router", () => {

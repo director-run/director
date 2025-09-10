@@ -1,17 +1,17 @@
-import {
-  type EntryParameter,
-  type ProxyTransport,
-  type RegistryEntry,
-  optionalStringSchema,
-  requiredStringSchema,
-  toolSchema,
-} from "@director.run/utilities/schema";
-import { proxyTransport } from "@director.run/utilities/schema";
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
 import { protectedProcedure } from ".";
 import type { Store } from "../../db/store";
 import { enrichEntries } from "../../enrichment/enrich";
+import {
+  type EntryParameter,
+  type ProxyTransport,
+  type RegistryEntry,
+  optionalStringSchema,
+  proxyTransport,
+  requiredStringSchema,
+  toolSchema,
+} from "../../schemas";
 import { entries } from "../../seed/entries";
 
 const parameterToZodSchema = (parameter: EntryParameter) => {

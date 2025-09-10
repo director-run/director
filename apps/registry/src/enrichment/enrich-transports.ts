@@ -1,8 +1,8 @@
 import { getLogger } from "@director.run/utilities/logger";
-import { type ProxyTransport } from "@director.run/utilities/schema";
 import type { inferRouterOutputs } from "@trpc/server";
 import type { RegistryClient } from "../client";
 import { type AppRouter } from "../routers/trpc";
+import { type ProxyTransport } from "../schemas";
 
 type Entry =
   inferRouterOutputs<AppRouter>["entries"]["getEntries"]["entries"][number];

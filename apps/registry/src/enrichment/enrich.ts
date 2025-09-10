@@ -1,6 +1,6 @@
 import { getLogger } from "@director.run/utilities/logger";
-import type { RegistryEntry } from "@director.run/utilities/schema";
 import { type Store } from "../db/store";
+import type { RegistryEntry } from "../schemas";
 import { getGithubRawReadmeUrl, isGithubRepo } from "./github";
 
 const logger = getLogger("enrich");

@@ -21,10 +21,6 @@ import {
 } from "@/components/ui/sheet";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { trpc } from "@/trpc/client";
-import {
-  proxyTargetAttributesSchema,
-  requiredStringSchema,
-} from "@director.run/utilities/schema";
 import { PlusIcon, TrashIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -38,6 +34,53 @@ import { SelectNativeField } from "../ui/form/select-native-field";
 import { TextareaField } from "../ui/form/textarea-field";
 import { Label } from "../ui/label";
 import { toast } from "../ui/toast";
+
+export const requiredStringSchema = z.string().trim().min(1, "Required");
+
+export const slugStringSchema = z
+  .string()
+  .trim()
+  .min(1, "Required")
+  .regex(
+    /^[a-z0-9._-]+$/,
+    "Only lowercase ASCII letters, digits, and characters ., -, _ are allowed",
+  );
+
+export const httpTransportSchema = z.object({
+  type: z.literal("http"),
+  url: requiredStringSchema.url(),
+  headers: z.record(requiredStringSchema, z.string()).optional(),
+});
+
+export type HTTPTransport = z.infer<typeof httpTransportSchema>;
+
+export const stdioTransportSchema = z.object({
+  type: z.literal("stdio"),
+  command: requiredStringSchema,
+  args: z.array(z.string()).default([]),
+  env: z.record(requiredStringSchema, z.string()).optional(),
+});
+
+export type STDIOTransport = z.infer<typeof stdioTransportSchema>;
+
+export const proxyTransport = z.discriminatedUnion("type", [
+  httpTransportSchema,
+  stdioTransportSchema,
+]);
+
+export const ProxyTargetSourceSchema = z.object({
+  name: z.literal("registry"),
+  entryId: requiredStringSchema,
+});
+
+export const proxyTargetAttributesSchema = z.object({
+  name: slugStringSchema,
+  transport: proxyTransport,
+  source: ProxyTargetSourceSchema.optional(),
+  toolPrefix: z.string().trim().optional(),
+  disabledTools: z.array(requiredStringSchema).optional(),
+  disabled: z.boolean().optional(),
+});
 
 const nonEmptyTupleSchema = z
   .array(z.tuple([z.string(), z.string()]))

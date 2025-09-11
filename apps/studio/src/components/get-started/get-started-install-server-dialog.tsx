@@ -1,28 +1,5 @@
 "use client";
 
-import { McpLogo } from "@/components/mcp-logo";
-import { Container } from "@/components/ui/container";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { EmptyState, EmptyStateTitle } from "@/components/ui/empty-state";
-import { Markdown, SimpleMarkdown } from "@/components/ui/markdown";
-import {
-  Section,
-  SectionDescription,
-  SectionHeader,
-  SectionTitle,
-} from "@/components/ui/section";
-import { toast } from "@/components/ui/toast";
-import { useZodForm } from "@/hooks/use-zod-form";
-import { cn } from "@/lib/cn";
-import { trpc } from "@/trpc/client";
-import { RegistryGetEntriesEntry } from "@/trpc/types";
 import {
   ArrowSquareOutIcon,
   BookOpenTextIcon,
@@ -33,15 +10,38 @@ import {
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { ComponentProps } from "react";
 import { z } from "zod";
+import { useZodForm } from "../../hooks/use-zod-form";
+import { cn } from "../../lib/cn";
+import { trpc } from "../../trpc/client";
+import { RegistryGetEntriesEntry } from "../../trpc/types";
+import { McpLogo } from "../mcp-logo";
 import { McpDescriptionList } from "../mcp-servers/mcp-description-list";
 import { RegistryParameters } from "../registry/registry-parameters";
 import { RegistryTools } from "../registry/registry-tools";
 import { Badge, BadgeGroup, BadgeIcon, BadgeLabel } from "../ui/badge";
 import { Button } from "../ui/button";
+import { Container } from "../ui/container";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import { EmptyState, EmptyStateTitle } from "../ui/empty-state";
 import { Form } from "../ui/form";
 import { HiddenField } from "../ui/form/hidden-field";
 import { InputField } from "../ui/form/input-field";
+import { Markdown, SimpleMarkdown } from "../ui/markdown";
+import {
+  Section,
+  SectionDescription,
+  SectionHeader,
+  SectionTitle,
+} from "../ui/section";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { toast } from "../ui/toast";
 
 function GetStartedInstallForm({
   mcp,

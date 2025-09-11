@@ -1,14 +1,26 @@
 "use client";
 
 import { GetStartedCompleteDialog } from "@/components/get-started/get-started-complete-dialog";
-import { ClientId } from "@/components/get-started/get-started-installers";
+import { GetStartedHeader } from "@/components/get-started/get-started-header";
+import { GetStartedInstallServerDialog } from "@/components/get-started/get-started-install-server-dialog";
 import {
+  ClientId,
+  GetStartedInstallers,
+} from "@/components/get-started/get-started-installers";
+import {
+  GetStartedList,
+  GetStartedListItem,
+} from "@/components/get-started/get-started-list";
+import { GetStartedMcpServerList } from "@/components/get-started/get-started-mcp-server-list";
+import {
+  GetStartedProxyForm,
   FormValues as ProxyFormValues,
   proxySchema,
 } from "@/components/get-started/get-started-proxy-form";
-import { GetStartedPageView } from "@/components/pages/get-started-page-view";
 import { FullScreenLoader } from "@/components/pages/global/loader";
 import { RegistryGetEntriesEntry } from "@/components/types";
+import { Container } from "@/components/ui/container";
+import { Section } from "@/components/ui/section";
 import { toast } from "@/components/ui/toast";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { DIRECTOR_URL } from "@/lib/urls";
@@ -204,35 +216,74 @@ export default function GetStartedPage() {
 
   return (
     <>
-      <GetStartedPageView
-        searchQuery={searchQuery}
-        onSearchQueryChange={setSearchQuery}
-        registryEntries={registryEntriesQuery.data?.entries ?? []}
-        currentProxy={currentProxy}
-        steps={steps}
-        // Proxy form props
-        proxyForm={proxyForm}
-        isProxyFormPending={createProxyMutation.isPending}
-        onProxySubmit={handleProxySubmit}
-        // Installer props
-        selectedClient={selectedClient}
-        onClientSelect={setSelectedClient}
-        availableClients={listClientsQuery.data ?? []}
-        isClientsLoading={listClientsQuery.isLoading}
-        isInstalling={installationMutation.isPending}
-        onClientInstall={handleClientInstall}
-        // MCP selection props
-        onMcpSelect={handleMcpSelect}
-        // MCP install dialog props
-        selectedMcp={selectedMcp}
-        isInstallDialogOpen={isInstallDialogOpen}
-        onInstallDialogOpenChange={setIsInstallDialogOpen}
-        entryData={entryQuery.data}
-        isEntryLoading={entryQuery.isLoading}
-        onMcpFormSubmit={handleMcpFormSubmit}
-        isFormSubmitting={transportMutation.isPending}
-        isFormInstalling={installServerMutation.isPending}
-      />
+      <Container size="sm" className="py-12 lg:py-16">
+        <Section className="gap-y-8">
+          <GetStartedHeader
+            title="Get started"
+            description="Let's get you started with MCP using Director."
+          />
+
+          <GetStartedList>
+            <GetStartedListItem
+              status={steps.create}
+              title="Create an MCP Proxy Server"
+              disabled={steps.create === "completed"}
+              open={steps.create === "in-progress"}
+            >
+              <div className="py-4 pr-4 pl-11.5">
+                <GetStartedProxyForm
+                  form={proxyForm}
+                  isPending={createProxyMutation.isPending}
+                  onSubmit={handleProxySubmit}
+                />
+              </div>
+            </GetStartedListItem>
+            <GetStartedListItem
+              status={steps.add}
+              title="Add your first MCP server"
+              open={steps.add === "in-progress"}
+              disabled={steps.add !== "in-progress"}
+            >
+              <GetStartedMcpServerList
+                searchQuery={searchQuery}
+                onSearchQueryChange={setSearchQuery}
+                registryEntries={registryEntriesQuery.data?.entries ?? []}
+                onMcpSelect={handleMcpSelect}
+              />
+            </GetStartedListItem>
+            <GetStartedListItem
+              status={steps.connect}
+              title="Connect your first client"
+              open={steps.connect === "in-progress"}
+              disabled={steps.connect !== "in-progress"}
+            >
+              <GetStartedInstallers
+                selectedClient={selectedClient}
+                onClientSelect={setSelectedClient}
+                availableClients={listClientsQuery.data ?? []}
+                isLoading={listClientsQuery.isLoading}
+                isInstalling={installationMutation.isPending}
+                onInstall={handleClientInstall}
+              />
+            </GetStartedListItem>
+          </GetStartedList>
+        </Section>
+
+        {/* MCP Install Dialog */}
+        {selectedMcp && (
+          <GetStartedInstallServerDialog
+            mcp={selectedMcp}
+            proxyId={currentProxy?.id ?? ""}
+            open={isInstallDialogOpen}
+            onOpenChange={setIsInstallDialogOpen}
+            entryData={entryQuery.data}
+            isLoading={entryQuery.isLoading}
+            onFormSubmit={handleMcpFormSubmit}
+            isFormSubmitting={transportMutation.isPending}
+            isFormInstalling={installServerMutation.isPending}
+          />
+        )}
+      </Container>
       <GetStartedCompleteDialog open={isCompleted} />
     </>
   );

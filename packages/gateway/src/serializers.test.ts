@@ -14,17 +14,13 @@ describe("serializers", () => {
         servers: [
           {
             name: "streamable",
-            transport: {
-              type: "http",
-              url: `http://localhost:4522/mcp`,
-            },
+            type: "http",
+            url: `http://localhost:4522/mcp`,
           },
           {
             name: "sse",
-            transport: {
-              type: "http",
-              url: `http://localhost:4523/sse`,
-            },
+            type: "http",
+            url: `http://localhost:4523/sse`,
           },
         ],
       });

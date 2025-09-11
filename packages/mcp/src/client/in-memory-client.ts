@@ -65,6 +65,7 @@ export class InMemoryClient extends AbstractClient<InMemoryClientParams> {
     connectionInfo?: boolean;
   }): Promise<
     InMemoryClientParams & {
+      type: "mem";
       tools?: Tool[];
       connectionInfo?: {
         status: ClientStatus;
@@ -74,6 +75,7 @@ export class InMemoryClient extends AbstractClient<InMemoryClientParams> {
     }
   > {
     return {
+      type: "mem",
       name: this.name,
       source: this.source,
       toolPrefix: this.toolPrefix,

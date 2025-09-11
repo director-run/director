@@ -4,8 +4,11 @@ import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { Telemetry } from "@director.run/utilities/telemetry";
 import type { Config } from "../config";
-import type { ServerConfigEntry, WorkspaceConfigEntry } from "../config/schema";
-import { Workspace } from "./workspace";
+import {
+  Workspace,
+  type WorkspaceParams,
+  type WorkspaceTarget,
+} from "./workspace";
 
 const logger = getLogger("WorkspaceStore");
 
@@ -119,7 +122,7 @@ export class WorkspaceStore {
   }: {
     name: string;
     description?: string;
-    servers?: ServerConfigEntry[];
+    servers?: WorkspaceTarget[];
   }): Promise<Workspace> {
     this.telemetry.trackEvent("proxy_created");
 
@@ -139,7 +142,7 @@ export class WorkspaceStore {
     return proxyServer;
   }
 
-  private async initializeAndAddProxy(proxy: WorkspaceConfigEntry) {
+  private async initializeAndAddProxy(proxy: WorkspaceParams) {
     const workspace = await Workspace.fromConfig(proxy, {
       oAuthHandler: this._oAuthHandler,
       config: this.config,

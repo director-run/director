@@ -2,7 +2,6 @@ import {} from "@director.run/mcp/test/fixtures";
 import {} from "@director.run/mcp/transport";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { GatewayRouterOutputs } from "./client";
-import type { HTTPTransport } from "./config/schema";
 import { IntegrationTestHarness } from "./test/integration";
 
 describe("Proxy Target CRUD operations", () => {
@@ -99,10 +98,12 @@ describe("Proxy Target CRUD operations", () => {
           await harness.database.getWorkspace(proxy.id)
         ).servers.find((server) => server.name === "notion");
 
-        expect((configEntry?.transport as HTTPTransport).url).toBe(
-          "https://mcp.notion.com/mcp",
+        expect(configEntry).toEqual(
+          expect.objectContaining({
+            type: "http",
+            url: "https://mcp.notion.com/mcp",
+          }),
         );
-        expect(configEntry?.transport.type).toBe("http");
       });
     });
 
@@ -251,13 +252,16 @@ describe("Proxy Target CRUD operations", () => {
       });
 
       it("should update the configuration file", async () => {
+        const echoConfig = harness.getConfigForTarget("echo");
         expect(
           (await harness.database.getWorkspace(proxy.id)).servers.find(
             (server) => server.name === "echo",
           ),
         ).toEqual(
           expect.objectContaining({
-            ...harness.getConfigForTarget("echo"),
+            type: "http",
+            url: (echoConfig as { transport: { url: string } }).transport.url,
+            name: echoConfig.name,
             toolPrefix: "echo",
             disabledTools: ["echo"],
           }),
@@ -344,7 +348,6 @@ describe("Proxy Target CRUD operations", () => {
       let updatedResponse: GatewayRouterOutputs["store"]["updateServer"];
       const toolPrefix = "prefix__";
       const disabledTools = ["ping", "add"];
-
       beforeEach(async () => {
         await harness.purge();
         proxy = await harness.client.store.create.mutate({
@@ -363,13 +366,11 @@ describe("Proxy Target CRUD operations", () => {
           },
         });
       });
-
       it("should return the updated target", () => {
         expect(updatedResponse.toolPrefix).toBe(toolPrefix);
         expect(updatedResponse.disabledTools).toMatchObject(disabledTools);
         expect(updatedResponse.name).toBe("echo");
       });
-
       it("should return tools if includeTools is true", async () => {
         const retrievedTarget = await harness.client.store.updateServer.mutate({
           proxyId: proxy.id,
@@ -384,7 +385,6 @@ describe("Proxy Target CRUD operations", () => {
         expect(retrievedTarget.tools?.length).toBeGreaterThan(0);
         expect(retrievedTarget.tools?.[0].name).toBe("echo");
       });
-
       it("should update the target", async () => {
         const target = await harness.client.store.getServer.query({
           proxyId: proxy.id,
@@ -400,7 +400,6 @@ describe("Proxy Target CRUD operations", () => {
         expect(configEntry?.toolPrefix).toBe(toolPrefix);
         expect(configEntry?.disabledTools).toMatchObject(disabledTools);
       });
-
       it("should be able to unset attributes", async () => {
         updatedResponse = await harness.client.store.updateServer.mutate({
           proxyId: proxy.id,
@@ -422,6 +421,7 @@ describe("Proxy Target CRUD operations", () => {
         expect(configEntry?.disabledTools).toMatchObject([]);
       });
     });
+
     describe("disabling targets", () => {
       let proxy: GatewayRouterOutputs["store"]["create"];
       beforeEach(async () => {
@@ -434,7 +434,6 @@ describe("Proxy Target CRUD operations", () => {
           ],
         });
       });
-
       it("should return the disabled target correctly", async () => {
         const disabledTarget = await harness.client.store.getServer.query({
           proxyId: proxy.id,
@@ -449,14 +448,12 @@ describe("Proxy Target CRUD operations", () => {
         expect(enabledTarget.disabled).toBeFalsy();
         expect(enabledTarget.status).toBe("connected");
       });
-
       it("should be stored in the configuration file", async () => {
         const configEntry = (
           await harness.database.getWorkspace(proxy.id)
         ).servers.find((server) => server.name === "echo");
         expect(configEntry?.disabled).toBe(true);
       });
-
       describe("enabling disabled targets", () => {
         let updatedResponse: GatewayRouterOutputs["store"]["updateServer"];
         beforeEach(async () => {
@@ -482,7 +479,6 @@ describe("Proxy Target CRUD operations", () => {
           const configEntry = (
             await harness.database.getWorkspace(proxy.id)
           ).servers.find((server) => server.name === "echo");
-
           expect(configEntry?.disabled).toBe(false);
         });
       });

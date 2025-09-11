@@ -264,6 +264,7 @@ export class HTTPClient extends AbstractClient<HTTPClientParams> {
     connectionInfo?: boolean;
   }): Promise<
     HTTPClientParams & {
+      type: "http";
       tools?: Tool[];
       connectionInfo?: {
         status: ClientStatus;
@@ -273,6 +274,7 @@ export class HTTPClient extends AbstractClient<HTTPClientParams> {
     }
   > {
     return {
+      type: "http",
       name: this.name,
       source: this.source,
       toolPrefix: this.toolPrefix,

@@ -44,7 +44,7 @@ export const entryParameterSchema = z.object({
   password: z.boolean().optional(),
 });
 
-export type EntryParameter = z.infer<typeof entryParameterSchema>;
+// export type EntryParameter = z.infer<typeof entryParameterSchema>;
 
 export const toolSchema = z.object({
   name: requiredStringSchema,
@@ -67,7 +67,7 @@ export const toolSchema = z.object({
   }),
 });
 
-export type Tool = z.infer<typeof toolSchema>;
+// export type Tool = z.infer<typeof toolSchema>;
 
 export const registryEntrySchema = z.object({
   id: requiredStringSchema,
@@ -99,7 +99,7 @@ export const ProxyTargetSourceSchema = z.object({
   entryData: registryEntrySchema,
 });
 
-export type ProxyTargetSource = z.infer<typeof ProxyTargetSourceSchema>;
+// export type ProxyTargetSource = z.infer<typeof ProxyTargetSourceSchema>;
 
 export const ServerConfigEntrySchema = z.object({
   name: slugStringSchema,
@@ -112,28 +112,28 @@ export const ServerConfigEntrySchema = z.object({
 
 export type ServerConfigEntry = z.infer<typeof ServerConfigEntrySchema>;
 
-export const promptSchema = z.object({
-  name: requiredStringSchema,
-  title: requiredStringSchema,
-  description: z.string().trim().optional(),
-  body: requiredStringSchema,
-});
+// export const promptSchema = z.object({
+//   name: requiredStringSchema,
+//   title: requiredStringSchema,
+//   description: z.string().trim().optional(),
+//   body: requiredStringSchema,
+// });
 
-export type PromptAttributes = z.infer<typeof promptSchema>;
+// export type PromptAttributes = z.infer<typeof promptSchema>;
 
-export const WorkspaceConfigEntrySchema = z.object({
-  id: requiredStringSchema,
-  name: requiredStringSchema,
-  description: z.string().trim().optional(),
-  prompts: z.array(promptSchema).optional(),
-  servers: z.array(ServerConfigEntrySchema),
-});
+// export const WorkspaceConfigEntrySchema = z.object({
+//   id: requiredStringSchema,
+//   name: requiredStringSchema,
+//   description: z.string().trim().optional(),
+//   prompts: z.array(promptSchema).optional(),
+//   servers: z.array(ServerConfigEntrySchema),
+// });
 
-export type WorkspaceConfigEntry = z.infer<typeof WorkspaceConfigEntrySchema>;
+// export type WorkspaceConfigEntry = z.infer<typeof WorkspaceConfigEntrySchema>;
 
-export const databaseAttributesSchema = z.object({
-  version: z.string().optional(),
-  playbooks: z.array(WorkspaceConfigEntrySchema),
-});
+// export const databaseAttributesSchema = z.object({
+//   version: z.string().optional(),
+//   playbooks: z.array(WorkspaceConfigEntrySchema),
+// });
 
-export type ConfigurationData = z.infer<typeof databaseAttributesSchema>;
+// export type ConfigurationData = z.infer<typeof databaseAttributesSchema>;

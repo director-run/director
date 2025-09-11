@@ -26,24 +26,32 @@ import {
   PromptSchema,
 } from "../capabilities/prompt-manager";
 import { Config } from "../config";
-import type { ServerConfigEntry, WorkspaceConfigEntry } from "../config/schema";
+
+export const WorkspaceHTTPTargetSchema = HTTPClientSchema.extend({
+  type: z.literal("http"),
+});
+
+export type WorkspaceHTTPTarget = z.infer<typeof WorkspaceHTTPTargetSchema>;
+
+export const WorkspaceStdioTargetSchema = StdioClientSchema.extend({
+  type: z.literal("stdio"),
+});
+
+export type WorkspaceStdioTarget = z.infer<typeof WorkspaceStdioTargetSchema>;
+
+const WorkspaceTargetSchema = z.union([
+  WorkspaceHTTPTargetSchema,
+  WorkspaceStdioTargetSchema,
+]);
+
+export type WorkspaceTarget = z.infer<typeof WorkspaceTargetSchema>;
 
 export const WorkspaceSchema = z.object({
   id: requiredStringSchema,
   name: requiredStringSchema,
   description: optionalStringSchema,
   prompts: z.array(PromptSchema).optional(),
-  servers: z.record(
-    requiredStringSchema,
-    z.union([
-      HTTPClientSchema.omit({ name: true }).extend({
-        type: z.literal("http"),
-      }),
-      StdioClientSchema.omit({ name: true }).extend({
-        type: z.literal("stdio"),
-      }),
-    ]),
-  ),
+  servers: z.array(WorkspaceTargetSchema),
 });
 
 export type WorkspaceParams = z.infer<typeof WorkspaceSchema>;
@@ -56,7 +64,7 @@ export class Workspace extends ProxyServer {
   private _name: string; // TODO: change to 'displayName'
 
   constructor(
-    attributes: WorkspaceConfigEntry,
+    attributes: WorkspaceParams,
     params?: {
       oAuthHandler?: OAuthHandler;
       config?: Config;
@@ -94,7 +102,7 @@ export class Workspace extends ProxyServer {
   }
 
   public async addTarget(
-    server: ServerConfigEntry | ProxyTarget,
+    server: WorkspaceTarget | ProxyTarget,
     params: { throwOnError: boolean } = { throwOnError: true },
   ): Promise<ProxyTarget> {
     await this.trackEvent("server_added");
@@ -126,9 +134,7 @@ export class Workspace extends ProxyServer {
 
   public async updateTarget(
     serverName: string,
-    attributes: Partial<
-      Pick<ServerConfigEntry, "toolPrefix" | "disabledTools">
-    >,
+    attributes: Partial<Pick<WorkspaceTarget, "toolPrefix" | "disabledTools">>,
   ): Promise<ProxyTarget> {
     const target = await super.updateTarget(serverName, attributes);
     await this.persistToConfig();
@@ -176,7 +182,7 @@ export class Workspace extends ProxyServer {
   }
 
   public async update(
-    attributes: Partial<Pick<WorkspaceConfigEntry, "name" | "description">>,
+    attributes: Partial<Pick<WorkspaceParams, "name" | "description">>,
   ) {
     await this.trackEvent("proxy_updated");
 
@@ -197,7 +203,7 @@ export class Workspace extends ProxyServer {
   }
 
   static async fromConfig(
-    attributes: WorkspaceConfigEntry,
+    attributes: WorkspaceParams,
     params?: {
       oAuthHandler?: OAuthHandler;
       config?: Config;
@@ -225,57 +231,34 @@ export class Workspace extends ProxyServer {
     }
   }
 
-  private async toConfig(): Promise<WorkspaceConfigEntry> {
+  private async toConfig(): Promise<WorkspaceParams> {
     return {
       id: this.id,
       name: this.name,
       description: this.description,
       prompts: await this.listPrompts(),
-      servers: this.targets
-        .filter(
-          (target) =>
-            target instanceof HTTPClient || target instanceof StdioClient,
-        )
-        .map((target) => {
-          if (target instanceof HTTPClient) {
-            return {
-              name: target.name,
-              toolPrefix: target.toolPrefix,
-              disabledTools: target.disabledTools,
-              disabled: target.disabled,
-              transport: { type: "http", url: target.url },
-            };
-          } else if (target instanceof StdioClient) {
-            return {
-              name: target.name,
-              toolPrefix: target.toolPrefix,
-              disabledTools: target.disabledTools,
-              disabled: target.disabled,
-              transport: {
-                type: "stdio",
-                command: target.command,
-                args: target.args,
-                env: target.env,
-              },
-            };
-          } else {
-            throw new Error("Unknown target type");
-          }
-        }),
+      servers: await Promise.all(
+        this.targets
+          .filter(
+            (target) =>
+              target instanceof HTTPClient || target instanceof StdioClient,
+          )
+          .map((target) => target.toPlainObject()),
+      ),
     };
   }
 }
 
 function createClientForTarget(params: {
-  target: ServerConfigEntry;
+  target: WorkspaceTarget;
   oAuthHandler?: OAuthHandler;
 }) {
   const { target, oAuthHandler } = params;
-  switch (target.transport.type) {
+  switch (target.type) {
     case "http":
       return new HTTPClient(
         {
-          url: target.transport.url,
+          url: target.url,
           name: target.name,
           source: target.source,
           toolPrefix: target.toolPrefix,
@@ -287,9 +270,9 @@ function createClientForTarget(params: {
     case "stdio":
       return new StdioClient({
         name: target.name,
-        command: target.transport.command,
-        args: target.transport.args,
-        env: target.transport.env,
+        command: target.command,
+        args: target.args,
+        env: target.env,
         source: target.source,
         toolPrefix: target.toolPrefix,
         disabledTools: target.disabledTools,

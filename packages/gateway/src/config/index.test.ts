@@ -66,18 +66,14 @@ describe("Config", () => {
       servers: [
         {
           name: "server-1",
-          transport: {
-            type: "http" as const,
-            url: "https://example.com",
-          },
+          type: "http" as const,
+          url: "https://example.com",
         },
         {
           name: "server-2",
-          transport: {
-            type: "stdio" as const,
-            command: "echo",
-            args: ["hello"],
-          },
+          type: "stdio" as const,
+          command: "echo",
+          args: ["hello"],
         },
       ],
     };
@@ -147,18 +143,14 @@ describe("Config", () => {
         servers: [
           {
             name: "server-1",
-            transport: {
-              type: "http" as const,
-              url: "https://example.com",
-            },
+            type: "http" as const,
+            url: "https://example.com",
           },
           {
             name: "server-2",
-            transport: {
-              type: "stdio" as const,
-              command: "echo",
-              args: ["hello"],
-            },
+            type: "stdio" as const,
+            command: "echo",
+            args: ["hello"],
           },
         ],
       };
@@ -178,10 +170,8 @@ describe("Config", () => {
         servers: [
           {
             name: "Server Name With Spaces",
-            transport: {
-              type: "http" as const,
-              url: "https://example.com",
-            },
+            type: "http" as const,
+            url: "https://example.com",
           },
         ],
       };
@@ -225,10 +215,8 @@ describe("Config", () => {
         servers: [
           {
             name: "server-1",
-            transport: {
-              type: "http" as const,
-              url: "https://example.com",
-            },
+            type: "http" as const,
+            url: "https://example.com",
           },
         ],
       });

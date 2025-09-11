@@ -181,6 +181,7 @@ export abstract class AbstractClient<
     connectionInfo?: boolean;
   }): Promise<
     Params & {
+      type: string;
       tools?: Tool[];
       connectionInfo?: {
         status: ClientStatus;

@@ -85,6 +85,7 @@ export class StdioClient extends AbstractClient<StdioClientParams> {
     connectionInfo?: boolean;
   }): Promise<
     StdioClientParams & {
+      type: "stdio";
       tools?: Tool[];
       connectionInfo?: {
         status: ClientStatus;
@@ -94,6 +95,7 @@ export class StdioClient extends AbstractClient<StdioClientParams> {
     }
   > {
     return {
+      type: "stdio",
       name: this.name,
       source: this.source,
       toolPrefix: this.toolPrefix,

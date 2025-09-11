@@ -1,14 +1,14 @@
 "use client";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
 import { HiddenField } from "@/components/ui/form/hidden-field";
-import { InputField } from "@/components/ui/form/input-field";
-import { Loader } from "@/components/ui/loader";
-import { toast } from "@/components/ui/toast";
-import { useZodForm } from "@/hooks/use-zod-form";
 import { trpc } from "@/trpc/client";
+import { useZodForm } from "../../hooks/use-zod-form";
+import { Button } from "../ui/button";
+import { Form } from "../ui/form";
+import { InputField } from "../ui/form/input-field";
+import { Loader } from "../ui/loader";
+import { toast } from "../ui/toast";
 
 const proxySchema = z.object({
   name: z.string().trim().min(1, "Required"),

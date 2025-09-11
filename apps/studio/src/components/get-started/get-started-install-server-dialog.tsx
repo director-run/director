@@ -9,11 +9,15 @@ import {
 } from "@phosphor-icons/react";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { ComponentProps } from "react";
+import { SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { useZodForm } from "../../hooks/use-zod-form";
 import { cn } from "../../lib/cn";
 import { trpc } from "../../trpc/client";
-import { RegistryGetEntriesEntry } from "../../trpc/types";
+import {
+  RegistryGetEntriesEntry,
+  RegistryGetEntryByName,
+} from "../../trpc/types";
 import { McpLogo } from "../mcp-logo";
 import { McpDescriptionList } from "../mcp-servers/mcp-description-list";
 import { RegistryParameters } from "../registry/registry-parameters";
@@ -43,15 +47,38 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { toast } from "../ui/toast";
 
+// Types for the presentational component
+type GetStartedInstallFormProps = {
+  mcp: RegistryGetEntriesEntry | RegistryGetEntryByName;
+  proxyId: string;
+  className?: string;
+  onSubmit: SubmitHandler<{
+    proxyId: string;
+    parameters: Record<string, string>;
+  }>;
+  isSubmitting: boolean;
+  isInstalling: boolean;
+};
+
+type GetStartedInstallServerDialogProps = {
+  mcp: RegistryGetEntriesEntry;
+  proxyId: string;
+  children?: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  entryData?: RegistryGetEntryByName | null;
+  isLoading?: boolean;
+};
+
+// Presentational component - no state management or tRPC calls
 function GetStartedInstallForm({
   mcp,
   proxyId,
   className,
-}: {
-  mcp: RegistryGetEntriesEntry;
-  proxyId: string;
-  className?: string;
-}) {
+  onSubmit,
+  isSubmitting,
+  isInstalling,
+}: GetStartedInstallFormProps) {
   const parameters = (mcp.parameters ?? []).filter(
     (parameter, index, array) =>
       array.findIndex((p) => p.name === parameter.name) === index,
@@ -83,27 +110,7 @@ function GetStartedInstallForm({
     },
   });
 
-  const utils = trpc.useUtils();
-
-  const transportMutation = trpc.registry.getTransportForEntry.useMutation();
-
-  const installMutation = trpc.store.addServer.useMutation({
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error.message,
-      });
-    },
-    onSuccess: (data) => {
-      utils.store.getAll.invalidate();
-      toast({
-        title: "Proxy installed",
-        description: "This proxy was successfully installed.",
-      });
-    },
-  });
-
-  const isDisabled = form.formState.isSubmitting || installMutation.isPending;
+  const isDisabled = isSubmitting || isInstalling;
 
   return (
     <Form
@@ -112,19 +119,7 @@ function GetStartedInstallForm({
         "gap-y-0 overflow-hidden rounded-xl bg-accent-subtle shadow-[0_0_0_0.5px_rgba(55,50,46,0.2)]",
         className,
       )}
-      onSubmit={async (values) => {
-        const transport = await transportMutation.mutateAsync({
-          entryName: mcp.name,
-          parameters: values.parameters,
-        });
-        installMutation.mutate({
-          proxyId: values.proxyId,
-          server: {
-            name: mcp.name,
-            transport,
-          },
-        });
-      }}
+      onSubmit={onSubmit}
     >
       <HiddenField name="proxyId" />
       {parameters.length > 0 && (
@@ -146,7 +141,7 @@ function GetStartedInstallForm({
 
       <div className="flex flex-col gap-y-1 border-fg/7 border-t-[0.5px] bg-accent px-4 py-2.5">
         <Button type="submit" disabled={isDisabled} className="w-full">
-          {installMutation.isPending ? "Installing..." : "Add to proxy"}
+          {isInstalling ? "Installing..." : "Add to proxy"}
         </Button>
         <DialogClose asChild>
           <Button
@@ -162,29 +157,28 @@ function GetStartedInstallForm({
   );
 }
 
-interface GetStartedInstallServerDialogProps
-  extends ComponentProps<typeof Dialog> {
-  mcp: RegistryGetEntriesEntry;
-  proxyId: string;
-}
-
-export function GetStartedInstallServerDialog({
+// Presentational component - no state management or tRPC calls
+function GetStartedInstallServerDialogPresentation({
   mcp,
   proxyId,
   children,
-  ...props
-}: GetStartedInstallServerDialogProps) {
-  const entryQuery = trpc.registry.getEntryByName.useQuery(
-    {
-      name: mcp.name,
-    },
-    {
-      enabled: props.open,
-    },
-  );
-
+  open,
+  onOpenChange,
+  entryData,
+  isLoading,
+  onFormSubmit,
+  isFormSubmitting,
+  isFormInstalling,
+}: GetStartedInstallServerDialogProps & {
+  onFormSubmit: SubmitHandler<{
+    proxyId: string;
+    parameters: Record<string, string>;
+  }>;
+  isFormSubmitting: boolean;
+  isFormInstalling: boolean;
+}) {
   return (
-    <Dialog {...props}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       {children && <DialogTrigger asChild>{children}</DialogTrigger>}
       <DialogContent className="!max-w-none !inset-1 !translate-0 !w-auto flex flex-col py-10">
         <VisuallyHidden>
@@ -245,9 +239,9 @@ export function GetStartedInstallServerDialog({
                 </TabsList>
 
                 <TabsContent value="readme">
-                  {entryQuery.data?.readme ? (
+                  {entryData?.readme ? (
                     <Markdown className="!max-w-none rounded-xl border-[0.5px] bg-accent-subtle/20 p-6">
-                      {entryQuery.data?.readme}
+                      {entryData.readme}
                     </Markdown>
                   ) : (
                     <EmptyState>
@@ -304,8 +298,11 @@ export function GetStartedInstallServerDialog({
                   </SectionHeader>
 
                   <GetStartedInstallForm
-                    mcp={entryQuery.data as RegistryGetEntriesEntry}
+                    mcp={entryData || mcp}
                     proxyId={proxyId}
+                    onSubmit={onFormSubmit}
+                    isSubmitting={isFormSubmitting}
+                    isInstalling={isFormInstalling}
                   />
                 </Section>
               </div>
@@ -314,12 +311,90 @@ export function GetStartedInstallServerDialog({
         </Container>
         <div className="-bottom-5 sticky inset-x-0 px-4 pt-4 md:hidden">
           <GetStartedInstallForm
-            mcp={entryQuery.data as RegistryGetEntriesEntry}
+            mcp={entryData || mcp}
             proxyId={proxyId}
+            onSubmit={onFormSubmit}
+            isSubmitting={isFormSubmitting}
+            isInstalling={isFormInstalling}
             className="shadow-[0_3px_9px_0px_rgba(55,50,46,0.1),0_0_20px_2px_rgba(55,50,46,0.07),_0_0_0_0.5px_rgba(55,50,46,0.2)]"
           />
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+// Smart component - manages state and tRPC calls
+interface GetStartedInstallServerDialogSmartProps
+  extends ComponentProps<typeof Dialog> {
+  mcp: RegistryGetEntriesEntry;
+  proxyId: string;
+}
+
+export function GetStartedInstallServerDialog({
+  mcp,
+  proxyId,
+  children,
+  ...props
+}: GetStartedInstallServerDialogSmartProps) {
+  const entryQuery = trpc.registry.getEntryByName.useQuery(
+    {
+      name: mcp.name,
+    },
+    {
+      enabled: props.open,
+    },
+  );
+
+  const utils = trpc.useUtils();
+
+  const transportMutation = trpc.registry.getTransportForEntry.useMutation();
+
+  const installMutation = trpc.store.addServer.useMutation({
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+      });
+    },
+    onSuccess: (data) => {
+      utils.store.getAll.invalidate();
+      toast({
+        title: "Proxy installed",
+        description: "This proxy was successfully installed.",
+      });
+    },
+  });
+
+  const handleFormSubmit: SubmitHandler<{
+    proxyId: string;
+    parameters: Record<string, string>;
+  }> = async (values) => {
+    const transport = await transportMutation.mutateAsync({
+      entryName: mcp.name,
+      parameters: values.parameters,
+    });
+    installMutation.mutate({
+      proxyId: values.proxyId,
+      server: {
+        name: mcp.name,
+        transport,
+      },
+    });
+  };
+
+  return (
+    <GetStartedInstallServerDialogPresentation
+      mcp={mcp}
+      proxyId={proxyId}
+      children={children}
+      open={props.open}
+      onOpenChange={props.onOpenChange}
+      entryData={entryQuery.data}
+      isLoading={entryQuery.isLoading}
+      onFormSubmit={handleFormSubmit}
+      isFormSubmitting={transportMutation.isPending}
+      isFormInstalling={installMutation.isPending}
+    />
   );
 }

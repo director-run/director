@@ -19,6 +19,50 @@ const proxySchema = z.object({
     .transform((val) => (val === "" ? undefined : val)),
 });
 
+// tRPC types
+type CreateMutation = typeof trpc.store.create.useMutation;
+type CreateMutationData = NonNullable<ReturnType<CreateMutation>["data"]>;
+
+// Form values type
+type FormValues = z.infer<typeof proxySchema>;
+
+// Presentational component props
+interface GetStartedProxyFormViewProps {
+  form: ReturnType<typeof useZodForm<typeof proxySchema>>;
+  isPending: boolean;
+  onSubmit: (values: FormValues) => void;
+}
+
+// Presentational component
+function GetStartedProxyFormView({
+  form,
+  isPending,
+  onSubmit,
+}: GetStartedProxyFormViewProps) {
+  return (
+    <Form
+      className="gap-y-4"
+      form={form}
+      onSubmit={async (values) => {
+        await onSubmit(values);
+      }}
+    >
+      <InputField label="Name" name="name" placeholder="My Proxy" />
+      <HiddenField name="description" />
+
+      <Button
+        size="default"
+        className="self-start"
+        type="submit"
+        disabled={isPending}
+      >
+        {isPending ? <Loader className="text-fg-subtle" /> : "Create proxy"}
+      </Button>
+    </Form>
+  );
+}
+
+// Smart component that manages state and tRPC calls
 export function GetStartedProxyForm() {
   const form = useZodForm({
     schema: proxySchema,
@@ -38,25 +82,15 @@ export function GetStartedProxyForm() {
 
   const isPending = mutation.isPending;
 
-  return (
-    <Form
-      className="gap-y-4"
-      form={form}
-      onSubmit={async (values) => {
-        await mutation.mutateAsync({ ...values, servers: [] });
-      }}
-    >
-      <InputField label="Name" name="name" placeholder="My Proxy" />
-      <HiddenField name="description" />
+  const handleSubmit = async (values: FormValues) => {
+    await mutation.mutateAsync({ ...values, servers: [] });
+  };
 
-      <Button
-        size="default"
-        className="self-start"
-        type="submit"
-        disabled={isPending}
-      >
-        {isPending ? <Loader className="text-fg-subtle" /> : "Create proxy"}
-      </Button>
-    </Form>
+  return (
+    <GetStartedProxyFormView
+      form={form}
+      isPending={isPending}
+      onSubmit={handleSubmit}
+    />
   );
 }

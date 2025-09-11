@@ -1,8 +1,8 @@
 "use client";
 
-import { Sheet } from "@/components/ui/sheet";
-import { cn } from "@/lib/cn";
 import type { ComponentProps, ReactNode } from "react";
+import { cn } from "../../lib/cn";
+import { Sheet } from "../components/ui/sheet";
 import { LayoutNavigation, SidebarContent } from "./navigation";
 
 interface SidebarSheetProps extends ComponentProps<typeof Sheet> {
@@ -78,4 +78,4 @@ export function LayoutViewContent({
   );
 }
 
-export { LayoutNavigation, SidebarContent };
+export { LayoutNavigation };

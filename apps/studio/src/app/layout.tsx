@@ -1,6 +1,6 @@
-import { ConnectionStatusProvider } from "@/components/connect/connection-status-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toast";
+import { ConnectionStatusProvider } from "@/lib/connection-status-provider";
 import { TRPCProvider } from "@/trpc/client";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";

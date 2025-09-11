@@ -5,6 +5,7 @@ import { LayoutNavigation } from "@/components/layout/navigation";
 import { McpToolSheet } from "@/components/mcp-servers/mcp-tool-sheet";
 import { ProxyDetail } from "@/components/pages/workspace-detail";
 import { ProxyActionsDropdown } from "@/components/proxies/proxy-actions-dropdown";
+import { Client } from "@/components/proxies/proxy-installers";
 import { ProxySkeleton } from "@/components/proxies/proxy-skeleton";
 import {
   Breadcrumb,
@@ -14,9 +15,49 @@ import {
 } from "@/components/ui/breadcrumb";
 import { toast } from "@/components/ui/toast";
 import { useProxy } from "@/hooks/use-proxy";
+import { DIRECTOR_URL } from "@/lib/urls";
 import { trpc } from "@/trpc/client";
+import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import claudeIconImage from "../../../../public/icons/claude-icon.png";
+import vscodeIconImage from "../../../../public/icons/code-icon.png";
+import cursorIconImage from "../../../../public/icons/cursor-icon.png";
+import gooseIconImage from "../../../../public/icons/goose-icon.png";
+import raycastIconImage from "../../../../public/icons/raycast-icon.png";
+
+const clients: Client[] = [
+  {
+    id: "claude",
+    label: "Claude",
+    image: claudeIconImage,
+    type: "installer",
+  },
+  {
+    id: "cursor",
+    label: "Cursor",
+    image: cursorIconImage,
+    type: "installer",
+  },
+  {
+    id: "vscode",
+    label: "VSCode",
+    image: vscodeIconImage,
+    type: "installer",
+  },
+  {
+    id: "goose",
+    label: "Goose",
+    image: gooseIconImage,
+    type: "deep-link",
+  },
+  {
+    id: "raycast",
+    label: "Raycast",
+    image: raycastIconImage,
+    type: "deep-link",
+  },
+];
 
 export default function ProxyPage() {
   const router = useRouter();
@@ -24,12 +65,15 @@ export default function ProxyPage() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
-  const { proxy, isLoading } = useProxy(params.proxyId);
+  const { proxy, isLoading, installers } = useProxy(params.proxyId);
   const {
     data: servers,
     isLoading: serversLoading,
     error: serversError,
   } = trpc.store.getAll.useQuery();
+
+  const { data: availableClients, isLoading: isClientsLoading } =
+    trpc.installer.allClients.useQuery();
 
   const utils = trpc.useUtils();
 
@@ -58,6 +102,32 @@ export default function ProxyPage() {
     },
   });
 
+  const installationMutation = trpc.installer.byProxy.install.useMutation({
+    onSuccess: () => {
+      utils.installer.byProxy.list.invalidate();
+      toast({
+        title: "Proxy installed",
+        description: `This proxy was successfully installed`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+      });
+    },
+  });
+
+  const uninstallationMutation = trpc.installer.byProxy.uninstall.useMutation({
+    onSuccess: () => {
+      utils.installer.byProxy.list.invalidate();
+      toast({
+        title: "Proxy uninstalled",
+        description: `This proxy was successfully uninstalled`,
+      });
+    },
+  });
+
   const handleUpdateProxy = async (values: {
     name: string;
     description?: string;
@@ -70,6 +140,21 @@ export default function ProxyPage() {
 
   const handleDeleteProxy = async () => {
     await deleteProxyMutation.mutateAsync({ proxyId: params.proxyId });
+  };
+
+  const handleInstall = (proxyId: string, client: ConfiguratorTarget) => {
+    installationMutation.mutate({
+      proxyId,
+      client,
+      baseUrl: DIRECTOR_URL,
+    });
+  };
+
+  const handleUninstall = (proxyId: string, client: ConfiguratorTarget) => {
+    uninstallationMutation.mutate({
+      proxyId,
+      client,
+    });
   };
 
   useEffect(() => {
@@ -113,7 +198,17 @@ export default function ProxyPage() {
       </LayoutNavigation>
 
       <LayoutViewContent>
-        <ProxyDetail proxy={proxy} />
+        <ProxyDetail
+          proxy={proxy}
+          clients={clients}
+          installers={installers}
+          availableClients={availableClients ?? []}
+          isClientsLoading={isClientsLoading}
+          onInstall={handleInstall}
+          onUninstall={handleUninstall}
+          isInstalling={installationMutation.isPending}
+          isUninstalling={uninstallationMutation.isPending}
+        />
       </LayoutViewContent>
 
       <McpToolSheet proxyId={proxy.id} />

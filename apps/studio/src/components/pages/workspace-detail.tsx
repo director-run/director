@@ -3,7 +3,11 @@ import {
   MCPLinkCardList,
 } from "@/components/mcp-servers/mcp-link-card";
 import { McpToolsTable } from "@/components/mcp-servers/mcp-tools-table";
-import { ProxyInstallers } from "@/components/proxies/proxy-installers";
+import {
+  AvailableClient,
+  Client,
+  ProxyInstallers,
+} from "@/components/proxies/proxy-installers";
 import { ProxyManualDialog } from "@/components/proxies/proxy-manual-dialog";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
@@ -16,6 +20,7 @@ import {
 } from "@/components/ui/section";
 import { toast } from "@/components/ui/toast";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
+import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import Link from "next/link";
 
 interface ProxyDetailProps {
@@ -27,9 +32,27 @@ interface ProxyDetailProps {
       name: string;
     }>;
   };
+  clients: Client[];
+  installers: Record<string, boolean>;
+  availableClients: AvailableClient[];
+  isClientsLoading: boolean;
+  onInstall: (proxyId: string, client: ConfiguratorTarget) => void;
+  onUninstall: (proxyId: string, client: ConfiguratorTarget) => void;
+  isInstalling: boolean;
+  isUninstalling: boolean;
 }
 
-export function ProxyDetail({ proxy }: ProxyDetailProps) {
+export function ProxyDetail({
+  proxy,
+  clients,
+  installers,
+  availableClients,
+  isClientsLoading,
+  onInstall,
+  onUninstall,
+  isInstalling,
+  isUninstalling,
+}: ProxyDetailProps) {
   const [_, copy] = useCopyToClipboard();
 
   const handleCopy = async (text: string) => {
@@ -59,7 +82,17 @@ export function ProxyDetail({ proxy }: ProxyDetailProps) {
             <Button size="sm">Connect manually</Button>
           </ProxyManualDialog>
         </SectionHeader>
-        <ProxyInstallers proxyId={proxy.id} />
+        <ProxyInstallers
+          proxyId={proxy.id}
+          clients={clients}
+          installers={installers}
+          availableClients={availableClients}
+          isLoading={isClientsLoading}
+          onInstall={onInstall}
+          onUninstall={onUninstall}
+          isInstalling={isInstalling}
+          isUninstalling={isUninstalling}
+        />
       </Section>
 
       <SectionSeparator />

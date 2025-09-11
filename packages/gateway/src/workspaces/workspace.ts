@@ -187,7 +187,7 @@ export class Workspace extends ProxyServer {
     await this.trackEvent("proxy_updated");
 
     const { name, description } = attributes;
-    if (name !== undefined && name !== this._id) {
+    if (name !== undefined && name !== this._name) {
       if (name.trim() === "") {
         throw new AppError(ErrorCode.BAD_REQUEST, `Name cannot be empty`);
       }

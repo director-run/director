@@ -1,4 +1,4 @@
-import { LayoutRoot } from "@/components/layout";
+import { LayoutRoot } from "@/components/layout/layout";
 
 export default function DefaultLayout({
   children,

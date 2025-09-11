@@ -5,7 +5,7 @@ import {
   LayoutNavigation,
   LayoutView,
   LayoutViewContent,
-} from "@/components/layout";
+} from "@/components/layout/layout";
 import { McpAddSheet } from "@/components/mcp-servers/mcp-add-sheet";
 import {
   MCPLinkCard,

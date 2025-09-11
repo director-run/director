@@ -9,7 +9,7 @@ import {
   LayoutNavigation,
   LayoutView,
   LayoutViewContent,
-} from "@/components/layout";
+} from "@/components/layout/layout";
 import { McpLogo } from "@/components/mcp-logo";
 import { McpDeleteConfirmation } from "@/components/mcp-servers/mcp-delete-confirmation";
 import { McpDescriptionList } from "@/components/mcp-servers/mcp-description-list";

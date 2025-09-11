@@ -4,7 +4,7 @@ import {
   LayoutNavigation,
   LayoutView,
   LayoutViewContent,
-} from "@/components/layout";
+} from "@/components/layout/layout";
 import { ListOfLinks } from "@/components/list-of-links";
 import { Badge, BadgeIcon, BadgeLabel } from "@/components/ui/badge";
 import { BadgeGroup } from "@/components/ui/badge";

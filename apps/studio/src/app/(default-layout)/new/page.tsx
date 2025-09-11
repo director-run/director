@@ -2,7 +2,7 @@ import {
   LayoutNavigation,
   LayoutView,
   LayoutViewContent,
-} from "@/components/layout";
+} from "@/components/layout/layout";
 import { NewProxyForm } from "@/components/proxies/proxy-form";
 import {
   Breadcrumb,

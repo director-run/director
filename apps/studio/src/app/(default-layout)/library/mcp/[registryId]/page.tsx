@@ -4,7 +4,7 @@ import {
   LayoutNavigation,
   LayoutView,
   LayoutViewContent,
-} from "@/components/layout";
+} from "@/components/layout/layout";
 import { McpLogo } from "@/components/mcp-logo";
 import { McpDescriptionList } from "@/components/mcp-servers/mcp-description-list";
 import { RegistryEntrySkeleton } from "@/components/registry/registry-entry-skeleton";

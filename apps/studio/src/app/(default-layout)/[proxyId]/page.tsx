@@ -4,7 +4,7 @@ import {
   LayoutNavigation,
   LayoutView,
   LayoutViewContent,
-} from "@/components/layout";
+} from "@/components/layout/layout";
 import {
   MCPLinkCard,
   MCPLinkCardList,

@@ -49,7 +49,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/toast";
 import { useRegistryQuery } from "@/hooks/use-registry-query";
 import { trpc } from "@/trpc/client";
-import { RegistryGetEntryTool } from "@/trpc/types";
 import {
   ArrowSquareOutIcon,
   BookOpenTextIcon,
@@ -290,12 +289,13 @@ export default function RegistryEntryPage() {
           </div>
         </Container>
       </LayoutViewContent>
-
-      <RegistryToolSheet
-        tool={selectedTool as RegistryGetEntryTool}
-        mcpName={entry.title}
-        mcpId={entry.name}
-      />
+      {selectedTool && (
+        <RegistryToolSheet
+          tool={selectedTool}
+          mcpName={entry.title}
+          mcpId={entry.name}
+        />
+      )}
     </LayoutView>
   );
 }

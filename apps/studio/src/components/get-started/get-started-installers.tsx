@@ -1,33 +1,8 @@
-import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
-import Image from "next/image";
-
 import { Button } from "@/components/ui/button";
 import { ListItemTitle } from "@/components/ui/list";
 import { cn } from "@/lib/cn";
-
-import claudeIconImage from "../../../public/icons/claude-icon.png";
-import vscodeIconImage from "../../../public/icons/code-icon.png";
-import cursorIconImage from "../../../public/icons/cursor-icon.png";
-
-const clients = [
-  {
-    id: "claude",
-    label: "Claude",
-    image: claudeIconImage,
-  },
-  {
-    id: "cursor",
-    label: "Cursor",
-    image: cursorIconImage,
-  },
-  {
-    id: "vscode",
-    label: "VSCode",
-    image: vscodeIconImage,
-  },
-] as const;
-
-export type ClientId = (typeof clients)[number]["id"];
+import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
+import Image from "next/image";
 
 // tRPC types - using the actual return type from the query
 export type ClientStatus = {
@@ -42,9 +17,14 @@ interface GetStartedInstallersProps {
   selectedClient: ClientId | undefined;
   onClientSelect: (client: ClientId) => void;
   availableClients: ClientStatus[];
+  clients: Array<{
+    id: string;
+    label: string;
+    image: string;
+  }>;
   isLoading: boolean;
   isInstalling: boolean;
-  onInstall: (client: ClientId) => void;
+  onInstall: (client: string) => void;
 }
 
 // Presentational component
@@ -52,6 +32,7 @@ export function GetStartedInstallers({
   selectedClient,
   onClientSelect,
   availableClients,
+  clients,
   isLoading,
   isInstalling,
   onInstall,

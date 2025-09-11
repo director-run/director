@@ -3,10 +3,7 @@
 import { GetStartedCompleteDialog } from "@/components/get-started/get-started-complete-dialog";
 import { GetStartedHeader } from "@/components/get-started/get-started-header";
 import { GetStartedInstallServerDialog } from "@/components/get-started/get-started-install-server-dialog";
-import {
-  ClientId,
-  GetStartedInstallers,
-} from "@/components/get-started/get-started-installers";
+import { GetStartedInstallers } from "@/components/get-started/get-started-installers";
 import {
   GetStartedList,
   GetStartedListItem,
@@ -29,6 +26,10 @@ import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import { useEffect, useState } from "react";
 import { SubmitHandler } from "react-hook-form";
 
+import claudeIconImage from "../../../public/icons/claude-icon.png";
+import vscodeIconImage from "../../../public/icons/code-icon.png";
+import cursorIconImage from "../../../public/icons/cursor-icon.png";
+
 type StepStatus = "not-started" | "in-progress" | "completed";
 
 interface Steps {
@@ -36,6 +37,26 @@ interface Steps {
   add: StepStatus;
   connect: StepStatus;
 }
+
+const clients = [
+  {
+    id: "claude",
+    label: "Claude",
+    image: claudeIconImage,
+  },
+  {
+    id: "cursor",
+    label: "Cursor",
+    image: cursorIconImage,
+  },
+  {
+    id: "vscode",
+    label: "VSCode",
+    image: vscodeIconImage,
+  },
+] as const;
+
+export type ClientId = (typeof clients)[number]["id"];
 
 export default function GetStartedPage() {
   // Search and proxy state
@@ -261,6 +282,7 @@ export default function GetStartedPage() {
                 selectedClient={selectedClient}
                 onClientSelect={setSelectedClient}
                 availableClients={listClientsQuery.data ?? []}
+                clients={clients}
                 isLoading={listClientsQuery.isLoading}
                 isInstalling={installationMutation.isPending}
                 onInstall={handleClientInstall}

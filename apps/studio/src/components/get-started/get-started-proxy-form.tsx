@@ -1,14 +1,11 @@
-"use client";
 import { z } from "zod";
 
 import { HiddenField } from "@/components/ui/form/hidden-field";
-import { trpc } from "@/trpc/client";
 import { useZodForm } from "../../hooks/use-zod-form";
 import { Button } from "../ui/button";
 import { Form } from "../ui/form";
 import { InputField } from "../ui/form/input-field";
 import { Loader } from "../ui/loader";
-import { toast } from "../ui/toast";
 
 const proxySchema = z.object({
   name: z.string().trim().min(1, "Required"),
@@ -19,26 +16,22 @@ const proxySchema = z.object({
     .transform((val) => (val === "" ? undefined : val)),
 });
 
-// tRPC types
-type CreateMutation = typeof trpc.store.create.useMutation;
-type CreateMutationData = NonNullable<ReturnType<CreateMutation>["data"]>;
-
 // Form values type
-type FormValues = z.infer<typeof proxySchema>;
+export type FormValues = z.infer<typeof proxySchema>;
 
 // Presentational component props
-interface GetStartedProxyFormViewProps {
+interface GetStartedProxyFormProps {
   form: ReturnType<typeof useZodForm<typeof proxySchema>>;
   isPending: boolean;
   onSubmit: (values: FormValues) => void;
 }
 
 // Presentational component
-function GetStartedProxyFormView({
+export function GetStartedProxyForm({
   form,
   isPending,
   onSubmit,
-}: GetStartedProxyFormViewProps) {
+}: GetStartedProxyFormProps) {
   return (
     <Form
       className="gap-y-4"
@@ -62,35 +55,4 @@ function GetStartedProxyFormView({
   );
 }
 
-// Smart component that manages state and tRPC calls
-export function GetStartedProxyForm() {
-  const form = useZodForm({
-    schema: proxySchema,
-    defaultValues: { name: "", description: "A proxy for getting started" },
-  });
-
-  const utils = trpc.useUtils();
-  const mutation = trpc.store.create.useMutation({
-    onSuccess: async () => {
-      await utils.store.getAll.refetch();
-      toast({
-        title: "Proxy created",
-        description: "This proxy was successfully created.",
-      });
-    },
-  });
-
-  const isPending = mutation.isPending;
-
-  const handleSubmit = async (values: FormValues) => {
-    await mutation.mutateAsync({ ...values, servers: [] });
-  };
-
-  return (
-    <GetStartedProxyFormView
-      form={form}
-      isPending={isPending}
-      onSubmit={handleSubmit}
-    />
-  );
-}
+export { proxySchema };

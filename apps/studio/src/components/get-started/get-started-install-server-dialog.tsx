@@ -1,5 +1,3 @@
-"use client";
-
 import {
   ArrowSquareOutIcon,
   BookOpenTextIcon,
@@ -8,12 +6,10 @@ import {
   ToolboxIcon,
 } from "@phosphor-icons/react";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { ComponentProps } from "react";
 import { SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { useZodForm } from "../../hooks/use-zod-form";
 import { cn } from "../../lib/cn";
-import { trpc } from "../../trpc/client";
 import {
   RegistryGetEntriesEntry,
   RegistryGetEntryByName,
@@ -45,7 +41,6 @@ import {
   SectionTitle,
 } from "../ui/section";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { toast } from "../ui/toast";
 
 // Types for the presentational component
 type GetStartedInstallFormProps = {
@@ -324,77 +319,38 @@ function GetStartedInstallServerDialogPresentation({
   );
 }
 
-// Smart component - manages state and tRPC calls
-interface GetStartedInstallServerDialogSmartProps
-  extends ComponentProps<typeof Dialog> {
-  mcp: RegistryGetEntriesEntry;
-  proxyId: string;
-}
-
+// Main dialog component - presentational only
 export function GetStartedInstallServerDialog({
   mcp,
   proxyId,
   children,
-  ...props
-}: GetStartedInstallServerDialogSmartProps) {
-  const entryQuery = trpc.registry.getEntryByName.useQuery(
-    {
-      name: mcp.name,
-    },
-    {
-      enabled: props.open,
-    },
-  );
-
-  const utils = trpc.useUtils();
-
-  const transportMutation = trpc.registry.getTransportForEntry.useMutation();
-
-  const installMutation = trpc.store.addServer.useMutation({
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error.message,
-      });
-    },
-    onSuccess: (data) => {
-      utils.store.getAll.invalidate();
-      toast({
-        title: "Proxy installed",
-        description: "This proxy was successfully installed.",
-      });
-    },
-  });
-
-  const handleFormSubmit: SubmitHandler<{
+  open,
+  onOpenChange,
+  entryData,
+  isLoading,
+  onFormSubmit,
+  isFormSubmitting,
+  isFormInstalling,
+}: GetStartedInstallServerDialogProps & {
+  onFormSubmit: SubmitHandler<{
     proxyId: string;
     parameters: Record<string, string>;
-  }> = async (values) => {
-    const transport = await transportMutation.mutateAsync({
-      entryName: mcp.name,
-      parameters: values.parameters,
-    });
-    installMutation.mutate({
-      proxyId: values.proxyId,
-      server: {
-        name: mcp.name,
-        transport,
-      },
-    });
-  };
-
+  }>;
+  isFormSubmitting: boolean;
+  isFormInstalling: boolean;
+}) {
   return (
     <GetStartedInstallServerDialogPresentation
       mcp={mcp}
       proxyId={proxyId}
       children={children}
-      open={props.open}
-      onOpenChange={props.onOpenChange}
-      entryData={entryQuery.data}
-      isLoading={entryQuery.isLoading}
-      onFormSubmit={handleFormSubmit}
-      isFormSubmitting={transportMutation.isPending}
-      isFormInstalling={installMutation.isPending}
+      open={open}
+      onOpenChange={onOpenChange}
+      entryData={entryData}
+      isLoading={isLoading}
+      onFormSubmit={onFormSubmit}
+      isFormSubmitting={isFormSubmitting}
+      isFormInstalling={isFormInstalling}
     />
   );
 }

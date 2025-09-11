@@ -1,17 +1,10 @@
-"use client";
-
 import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
 import Image from "next/image";
-import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { ListItemTitle } from "@/components/ui/list";
-import { toast } from "@/components/ui/toast";
 import { cn } from "@/lib/cn";
-import { trpc } from "@/trpc/client";
 
-import { DIRECTOR_URL } from "@/lib/urls";
-import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import claudeIconImage from "../../../public/icons/claude-icon.png";
 import vscodeIconImage from "../../../public/icons/code-icon.png";
 import cursorIconImage from "../../../public/icons/cursor-icon.png";
@@ -34,10 +27,10 @@ const clients = [
   },
 ] as const;
 
-type ClientId = (typeof clients)[number]["id"];
+export type ClientId = (typeof clients)[number]["id"];
 
 // tRPC types - using the actual return type from the query
-type ClientStatus = {
+export type ClientStatus = {
   name: string;
   installed: boolean;
   configExists: boolean;
@@ -45,7 +38,7 @@ type ClientStatus = {
 };
 
 // Presentational component props
-interface GetStartedInstallersViewProps {
+interface GetStartedInstallersProps {
   selectedClient: ClientId | undefined;
   onClientSelect: (client: ClientId) => void;
   availableClients: ClientStatus[];
@@ -55,14 +48,14 @@ interface GetStartedInstallersViewProps {
 }
 
 // Presentational component
-function GetStartedInstallersView({
+export function GetStartedInstallers({
   selectedClient,
   onClientSelect,
   availableClients,
   isLoading,
   isInstalling,
   onInstall,
-}: GetStartedInstallersViewProps) {
+}: GetStartedInstallersProps) {
   return (
     <div className="flex flex-col gap-y-4 p-4">
       <ToggleGroupPrimitive.Root
@@ -113,57 +106,5 @@ function GetStartedInstallersView({
         {isInstalling ? "Connecting…" : "Connect"}
       </Button>
     </div>
-  );
-}
-
-// Smart component that manages state and tRPC calls
-interface GetStartedInstallersProps {
-  proxyId: string;
-}
-
-export function GetStartedInstallers({ proxyId }: GetStartedInstallersProps) {
-  const [selectedClient, setSelectedClient] = useState<ClientId | undefined>(
-    undefined,
-  );
-
-  const utils = trpc.useUtils();
-
-  const listClientsQuery = trpc.installer.allClients.useQuery();
-
-  const installationMutation = trpc.installer.byProxy.install.useMutation({
-    onSuccess: () => {
-      utils.installer.byProxy.list.invalidate();
-      toast({
-        title: "Proxy installed",
-        description: `This proxy was successfully installed`,
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error.message,
-      });
-    },
-  });
-
-  const availableClients = listClientsQuery.data ?? [];
-
-  const handleInstall = (client: ClientId) => {
-    installationMutation.mutate({
-      proxyId,
-      client: client as ConfiguratorTarget,
-      baseUrl: DIRECTOR_URL,
-    });
-  };
-
-  return (
-    <GetStartedInstallersView
-      selectedClient={selectedClient}
-      onClientSelect={setSelectedClient}
-      availableClients={availableClients}
-      isLoading={listClientsQuery.isLoading}
-      isInstalling={installationMutation.isPending}
-      onInstall={handleInstall}
-    />
   );
 }

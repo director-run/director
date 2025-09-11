@@ -1,4 +1,3 @@
-import { GetStartedCompleteDialog } from "@/components/get-started/get-started-complete-dialog";
 import { GetStartedInstallServerDialog } from "@/components/get-started/get-started-install-server-dialog";
 import { GetStartedInstallers } from "@/components/get-started/get-started-installers";
 import {
@@ -7,7 +6,6 @@ import {
 } from "@/components/get-started/get-started-list";
 import { GetStartedProxyForm } from "@/components/get-started/get-started-proxy-form";
 import { McpLogo } from "@/components/mcp-logo";
-import { FullScreenLoader } from "@/components/pages/global/loader";
 import { Container } from "@/components/ui/container";
 import { EmptyState, EmptyStateTitle } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
@@ -34,28 +32,20 @@ interface Steps {
 }
 
 interface GetStartedPageViewProps {
-  isLoading: boolean;
   searchQuery: string;
   onSearchQueryChange: (query: string) => void;
   registryEntries: RegistryGetEntriesEntry[];
   currentProxy: StoreGetAll[number] | null;
   steps: Steps;
-  isCompleted: boolean;
 }
 
 export function GetStartedPageView({
-  isLoading,
   searchQuery,
   onSearchQueryChange,
   registryEntries,
   currentProxy,
   steps,
-  isCompleted,
 }: GetStartedPageViewProps) {
-  if (isLoading) {
-    return <FullScreenLoader />;
-  }
-
   return (
     <Container size="sm" className="py-12 lg:py-16">
       <Section className="gap-y-8">
@@ -134,8 +124,6 @@ export function GetStartedPageView({
           </GetStartedListItem>
         </GetStartedList>
       </Section>
-
-      <GetStartedCompleteDialog open={isCompleted} />
     </Container>
   );
 }

@@ -1,6 +1,8 @@
 "use client";
 
+import { GetStartedCompleteDialog } from "@/components/get-started/get-started-complete-dialog";
 import { GetStartedPageView } from "@/components/pages/get-started-page-view";
+import { FullScreenLoader } from "@/components/pages/global/loader";
 import { trpc } from "@/trpc/client";
 import { useEffect, useState } from "react";
 
@@ -60,15 +62,20 @@ export default function GetStartedPage() {
     steps.add === "completed" &&
     steps.connect === "completed";
 
+  if (!hasData) {
+    return <FullScreenLoader />;
+  }
+
   return (
-    <GetStartedPageView
-      isLoading={!hasData}
-      searchQuery={searchQuery}
-      onSearchQueryChange={setSearchQuery}
-      registryEntries={registryEntriesQuery.data?.entries ?? []}
-      currentProxy={currentProxy}
-      steps={steps}
-      isCompleted={isCompleted}
-    />
+    <>
+      <GetStartedPageView
+        searchQuery={searchQuery}
+        onSearchQueryChange={setSearchQuery}
+        registryEntries={registryEntriesQuery.data?.entries ?? []}
+        currentProxy={currentProxy}
+        steps={steps}
+      />
+      <GetStartedCompleteDialog open={isCompleted} />
+    </>
   );
 }

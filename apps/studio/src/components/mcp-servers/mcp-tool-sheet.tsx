@@ -1,5 +1,6 @@
 "use client";
 
+import { StoreGet, StoreServer } from "@/components/types";
 import { Badge } from "@/components/ui/badge";
 import {
   Breadcrumb,
@@ -34,7 +35,6 @@ import {
 import { useInspectMcp } from "@/hooks/use-inspect-mcp";
 import { useProxy } from "@/hooks/use-proxy";
 import { proxyQuerySerializer, useProxyQuery } from "@/hooks/use-proxy-query";
-import { StoreGet, StoreServer } from "@/trpc/types";
 import Link from "next/link";
 
 function SheetInner({

@@ -1,4 +1,5 @@
 "use client";
+import { RegistryGetEntryTool } from "@/components/types";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -30,7 +31,6 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useRegistryQuery } from "@/hooks/use-registry-query";
-import { RegistryGetEntryTool } from "@/trpc/types";
 
 import Link from "next/link";
 

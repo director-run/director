@@ -1,10 +1,10 @@
 "use client";
 
+import { RegistryGetEntryTools } from "@/components/types";
 import {
   registryQuerySerializer,
   useRegistryQuery,
 } from "@/hooks/use-registry-query";
-import { RegistryGetEntryTools } from "@/trpc/types";
 import { ListOfLinks } from "../list-of-links";
 
 interface RegistryToolsProps {

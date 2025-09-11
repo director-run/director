@@ -1,5 +1,6 @@
 "use client";
 
+import { StoreGet } from "@/components/types";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { InputField } from "@/components/ui/form/input-field";
@@ -8,7 +9,6 @@ import { Loader } from "@/components/ui/loader";
 import { toast } from "@/components/ui/toast";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { trpc } from "@/trpc/client";
-import { StoreGet } from "@/trpc/types";
 import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
 import { z } from "zod";

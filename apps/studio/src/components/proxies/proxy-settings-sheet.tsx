@@ -1,6 +1,7 @@
 "use client";
 import { ReactNode, useState } from "react";
 
+import { StoreGet } from "@/components/types";
 import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
@@ -13,7 +14,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useProxy } from "@/hooks/use-proxy";
-import { StoreGet } from "@/trpc/types";
 import { UpdateProxyForm } from "./proxy-form";
 
 interface ProxySettingsSheetProps {

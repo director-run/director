@@ -1,5 +1,6 @@
 import { ComponentProps } from "react";
 
+import { StoreServerTransport } from "@/components/types";
 import {
   Badge,
   BadgeGroup,
@@ -14,7 +15,6 @@ import {
   ListItemTitle,
 } from "@/components/ui/list";
 import { assertUnreachable } from "@/lib/assert-unreachable";
-import { StoreServerTransport } from "@/trpc/types";
 import { GlobeIcon, TerminalIcon } from "@phosphor-icons/react";
 
 interface McpDescriptionListProps extends ComponentProps<typeof List> {

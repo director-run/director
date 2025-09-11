@@ -10,14 +10,11 @@ import { SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { useZodForm } from "../../hooks/use-zod-form";
 import { cn } from "../../lib/cn";
-import {
-  RegistryGetEntriesEntry,
-  RegistryGetEntryByName,
-} from "../../trpc/types";
 import { McpLogo } from "../mcp-logo";
 import { McpDescriptionList } from "../mcp-servers/mcp-description-list";
 import { RegistryParameters } from "../registry/registry-parameters";
 import { RegistryTools } from "../registry/registry-tools";
+import { RegistryGetEntriesEntry, RegistryGetEntryByName } from "../types";
 import { Badge, BadgeGroup, BadgeIcon, BadgeLabel } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Container } from "../ui/container";

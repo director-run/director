@@ -15,6 +15,7 @@ import {
   proxySchema,
 } from "@/components/get-started/get-started-proxy-form";
 import { McpLogo } from "@/components/mcp-logo";
+import { RegistryGetEntriesEntry, StoreGetAll } from "@/components/types";
 import { Container } from "@/components/ui/container";
 import { EmptyState, EmptyStateTitle } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
@@ -34,7 +35,6 @@ import { toast } from "@/components/ui/toast";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { DIRECTOR_URL } from "@/lib/urls";
 import { trpc } from "@/trpc/client";
-import { RegistryGetEntriesEntry, StoreGetAll } from "@/trpc/types";
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import { useState } from "react";
 import { SubmitHandler } from "react-hook-form";

@@ -47,6 +47,11 @@ export default function ProxyPage() {
   const params = useParams<{ proxyId: string; mcpId: string }>();
 
   const { proxy, isLoading } = useProxy(params.proxyId);
+  const {
+    data: servers,
+    isLoading: serversLoading,
+    error: serversError,
+  } = trpc.store.getAll.useQuery();
 
   const registryEntryQuery = trpc.registry.getEntryByName.useQuery(
     {
@@ -91,7 +96,11 @@ export default function ProxyPage() {
 
   return (
     <LayoutView>
-      <LayoutNavigation>
+      <LayoutNavigation
+        servers={servers}
+        isLoading={serversLoading}
+        error={serversError?.message}
+      >
         <Breadcrumb className="grow">
           <BreadcrumbList>
             <BreadcrumbItem>

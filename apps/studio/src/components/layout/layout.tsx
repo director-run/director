@@ -1,18 +1,32 @@
 "use client";
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "../../lib/cn";
-import { Sheet } from "../components/ui/sheet";
+import { Sheet } from "../ui/sheet";
 import { SidebarContent } from "./navigation";
 
 interface SidebarSheetProps extends ComponentProps<typeof Sheet> {
   children?: ReactNode;
 }
 
+interface Server {
+  id: string;
+  name: string;
+}
+
+interface LayoutRootProps extends ComponentProps<"div"> {
+  servers?: Server[];
+  isLoading?: boolean;
+  error?: string | null;
+}
+
 export function LayoutRoot({
   className,
   children,
+  servers,
+  isLoading,
+  error,
   ...props
-}: ComponentProps<"div">) {
+}: LayoutRootProps) {
   return (
     <div
       data-slot="layout"
@@ -28,7 +42,7 @@ export function LayoutRoot({
           "hidden w-full max-w-[220px] shrink-0 overflow-y-auto overflow-x-hidden md:flex",
         )}
       >
-        <SidebarContent />
+        <SidebarContent servers={servers} isLoading={isLoading} error={error} />
       </div>
       <div
         data-slot="layout-content"

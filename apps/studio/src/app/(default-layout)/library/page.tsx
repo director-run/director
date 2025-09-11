@@ -46,6 +46,12 @@ export default function RegistryPage() {
     },
   );
 
+  const {
+    data: servers,
+    isLoading: serversLoading,
+    error: serversError,
+  } = trpc.store.getAll.useQuery();
+
   if (isLoading) {
     return <RegistryLibrarySkeleton />;
   }
@@ -65,7 +71,11 @@ export default function RegistryPage() {
 
   return (
     <LayoutView>
-      <LayoutNavigation>
+      <LayoutNavigation
+        servers={servers}
+        isLoading={serversLoading}
+        error={serversError?.message}
+      >
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>

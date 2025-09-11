@@ -102,7 +102,11 @@ export default function RegistryEntryPage() {
 
   return (
     <LayoutView>
-      <LayoutNavigation>
+      <LayoutNavigation
+        servers={storeQuery.data}
+        isLoading={storeQuery.isLoading}
+        error={storeQuery.error?.message}
+      >
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>

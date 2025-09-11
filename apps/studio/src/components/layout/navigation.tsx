@@ -12,7 +12,6 @@ import {
 import { ScrambleText } from "@/components/ui/scramble-text";
 import { Sheet, SheetPortal, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/cn";
-import { trpc } from "@/trpc/client";
 import {
   BookOpenTextIcon,
   GithubLogoIcon,
@@ -25,11 +24,20 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import type { ComponentProps, ReactNode } from "react";
 
+interface LayoutNavigationProps extends ComponentProps<"div"> {
+  servers?: Server[];
+  isLoading?: boolean;
+  error?: string | null;
+}
+
 export function LayoutNavigation({
   className,
   children,
+  servers,
+  isLoading,
+  error,
   ...props
-}: ComponentProps<"div">) {
+}: LayoutNavigationProps) {
   return (
     <div
       className={cn(
@@ -39,7 +47,7 @@ export function LayoutNavigation({
       )}
       {...props}
     >
-      <SidebarSheet>
+      <SidebarSheet servers={servers} isLoading={isLoading} error={error}>
         <Button size="icon" variant="ghost">
           <SidebarIcon weight="fill" className="!size-5 shrink-0" />
           <span className="sr-only">Open sidebar</span>
@@ -52,9 +60,18 @@ export function LayoutNavigation({
 
 interface SidebarSheetProps extends ComponentProps<typeof Sheet> {
   children?: ReactNode;
+  servers?: Server[];
+  isLoading?: boolean;
+  error?: string | null;
 }
 
-export function SidebarSheet({ children, ...props }: SidebarSheetProps) {
+function SidebarSheet({
+  children,
+  servers,
+  isLoading,
+  error,
+  ...props
+}: SidebarSheetProps) {
   return (
     <Sheet {...props}>
       {children && (
@@ -79,19 +96,37 @@ export function SidebarSheet({ children, ...props }: SidebarSheetProps) {
               A sidebar containing global navigation for Director studio.
             </SheetPrimitive.DialogDescription>
           </VisuallyHidden>
-          <SidebarContent />
+          <SidebarContent
+            servers={servers}
+            isLoading={isLoading}
+            error={error}
+          />
         </SheetPrimitive.Content>
       </SheetPortal>
     </Sheet>
   );
 }
 
-export function SidebarContent() {
+interface Server {
+  id: string;
+  name: string;
+}
+
+interface SidebarContentProps {
+  servers?: Server[];
+  isLoading?: boolean;
+  error?: string | null;
+}
+
+export function SidebarContent({
+  servers,
+  isLoading,
+  error,
+}: SidebarContentProps) {
   const pathname = usePathname();
   const { proxyId } = useParams<{ proxyId?: string }>();
-  const { data, isLoading, error } = trpc.store.getAll.useQuery();
 
-  const showLoading = isLoading || error?.message === "Failed to fetch";
+  const showLoading = isLoading || error === "Failed to fetch";
 
   return (
     <div className="flex h-full w-full shrink-0 flex-col gap-y-6 px-4 pt-6 *:last:pb-4">
@@ -129,7 +164,7 @@ export function SidebarContent() {
                 </MenuItemLabel>
               </MenuItem>
             ))
-          : data?.map((server) => {
+          : servers?.map((server) => {
               const isActive = server.id === proxyId;
               return (
                 <MenuItem

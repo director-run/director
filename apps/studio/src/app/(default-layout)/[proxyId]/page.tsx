@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/section";
 import { toast } from "@/components/ui/toast";
 import { useProxy } from "@/hooks/use-proxy";
+import { trpc } from "@/trpc/client";
 import {
   DotsThreeOutlineVerticalIcon,
   GearIcon,
@@ -52,6 +53,11 @@ export default function ProxyPage() {
   const params = useParams<{ proxyId: string }>();
 
   const { proxy, isLoading } = useProxy(params.proxyId);
+  const {
+    data: servers,
+    isLoading: serversLoading,
+    error: serversError,
+  } = trpc.store.getAll.useQuery();
 
   useEffect(() => {
     if (!isLoading && !proxy) {
@@ -69,7 +75,11 @@ export default function ProxyPage() {
 
   return (
     <LayoutView>
-      <LayoutNavigation>
+      <LayoutNavigation
+        servers={servers}
+        isLoading={serversLoading}
+        error={serversError?.message}
+      >
         <Breadcrumb className="grow">
           <BreadcrumbList>
             <BreadcrumbItem>

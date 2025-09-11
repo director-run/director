@@ -1,3 +1,5 @@
+"use client";
+
 import { LayoutView, LayoutViewContent } from "@/components/layout/layout";
 import { LayoutNavigation } from "@/components/layout/navigation";
 import { NewProxyForm } from "@/components/proxies/proxy-form";
@@ -15,11 +17,18 @@ import {
   SectionSeparator,
   SectionTitle,
 } from "@/components/ui/section";
+import { trpc } from "@/trpc/client";
 
 export default function NewProxyPage() {
+  const { data: servers, isLoading, error } = trpc.store.getAll.useQuery();
+
   return (
     <LayoutView>
-      <LayoutNavigation>
+      <LayoutNavigation
+        servers={servers}
+        isLoading={isLoading}
+        error={error?.message}
+      >
         <Breadcrumb className="grow">
           <BreadcrumbList>
             <BreadcrumbItem>

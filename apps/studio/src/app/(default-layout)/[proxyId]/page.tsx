@@ -3,7 +3,7 @@
 import { LayoutView, LayoutViewContent } from "@/components/layout/layout";
 import { LayoutNavigation } from "@/components/layout/navigation";
 import { McpToolSheet } from "@/components/mcp-servers/mcp-tool-sheet";
-import { ProxyDetail } from "@/components/pages/ProxyDetail";
+import { ProxyDetail } from "@/components/pages/workspace-detail";
 import { ProxyActionsDropdown } from "@/components/proxies/proxy-actions-dropdown";
 import { ProxySkeleton } from "@/components/proxies/proxy-skeleton";
 import {

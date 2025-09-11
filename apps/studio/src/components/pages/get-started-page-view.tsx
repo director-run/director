@@ -1,5 +1,6 @@
 "use client";
 
+import { GetStartedHeader } from "@/components/get-started/get-started-header";
 import { GetStartedInstallServerDialog } from "@/components/get-started/get-started-install-server-dialog";
 import {
   ClientId,
@@ -21,13 +22,7 @@ import {
   StoreGetAll,
 } from "@/components/types";
 import { Container } from "@/components/ui/container";
-import { Logo } from "@/components/ui/logo";
-import {
-  Section,
-  SectionDescription,
-  SectionHeader,
-  SectionTitle,
-} from "@/components/ui/section";
+import { Section } from "@/components/ui/section";
 import { UseFormReturn } from "react-hook-form";
 import { SubmitHandler } from "react-hook-form";
 
@@ -104,15 +99,10 @@ export function GetStartedPageView({
   return (
     <Container size="sm" className="py-12 lg:py-16">
       <Section className="gap-y-8">
-        <Logo className="mx-auto" />
-        <SectionHeader className="items-center gap-y-1.5 text-center">
-          <SectionTitle className="font-medium text-2xl">
-            Get started
-          </SectionTitle>
-          <SectionDescription className="text-base">
-            Let&apos;s get your started with MCP using Director.
-          </SectionDescription>
-        </SectionHeader>
+        <GetStartedHeader
+          title="Get started"
+          description="Let's get you started with MCP using Director."
+        />
 
         <GetStartedList>
           <GetStartedListItem

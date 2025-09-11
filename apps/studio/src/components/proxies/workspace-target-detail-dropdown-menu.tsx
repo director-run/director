@@ -11,13 +11,13 @@ import { MenuItemIcon, MenuItemLabel } from "@/components/ui/menu";
 import { DotsThreeOutlineVerticalIcon, TrashIcon } from "@phosphor-icons/react";
 
 interface WorkspaceTargetDetailDropDownMenuProps {
-  onConfirm: () => void;
+  onDelete: () => void;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 export function WorkspaceTargetDetailDropDownMenu({
-  onConfirm,
+  onDelete: onConfirm,
   open,
   onOpenChange,
 }: WorkspaceTargetDetailDropDownMenuProps) {
@@ -44,7 +44,9 @@ export function WorkspaceTargetDetailDropDownMenu({
               <MenuItemIcon>
                 <TrashIcon />
               </MenuItemIcon>
-              <MenuItemLabel onClick={() => onOpenChange(true)}>Delete</MenuItemLabel>
+              <MenuItemLabel onClick={() => onOpenChange(true)}>
+                Delete
+              </MenuItemLabel>
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>

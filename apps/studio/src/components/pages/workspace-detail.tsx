@@ -14,6 +14,8 @@ import {
   SectionSeparator,
   SectionTitle,
 } from "@/components/ui/section";
+import { toast } from "@/components/ui/toast";
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import Link from "next/link";
 
 interface ProxyDetailProps {
@@ -25,10 +27,18 @@ interface ProxyDetailProps {
       name: string;
     }>;
   };
-  onCopy: (text: string) => Promise<void>;
 }
 
-export function ProxyDetail({ proxy, onCopy }: ProxyDetailProps) {
+export function ProxyDetail({ proxy }: ProxyDetailProps) {
+  const [_, copy] = useCopyToClipboard();
+
+  const handleCopy = async (text: string) => {
+    await copy(text);
+    toast({
+      title: "Copied to clipboard",
+      description: "The endpoint has been copied to your clipboard.",
+    });
+  };
   return (
     <Container size="lg">
       <Section>
@@ -45,7 +55,7 @@ export function ProxyDetail({ proxy, onCopy }: ProxyDetailProps) {
           <SectionTitle variant="h2" asChild>
             <h2>Clients</h2>
           </SectionTitle>
-          <ProxyManualDialog proxyId={proxy.id} onCopy={onCopy}>
+          <ProxyManualDialog proxyId={proxy.id} onCopy={handleCopy}>
             <Button size="sm">Connect manually</Button>
           </ProxyManualDialog>
         </SectionHeader>

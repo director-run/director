@@ -13,7 +13,6 @@ import {
   BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
 import { toast } from "@/components/ui/toast";
-import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { useProxy } from "@/hooks/use-proxy";
 import { trpc } from "@/trpc/client";
 import { useParams, useRouter } from "next/navigation";
@@ -22,7 +21,6 @@ import { useEffect, useState } from "react";
 export default function ProxyPage() {
   const router = useRouter();
   const params = useParams<{ proxyId: string }>();
-  const [_, copy] = useCopyToClipboard();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
@@ -59,14 +57,6 @@ export default function ProxyPage() {
       router.push("/");
     },
   });
-
-  const handleCopy = async (text: string) => {
-    await copy(text);
-    toast({
-      title: "Copied to clipboard",
-      description: "The endpoint has been copied to your clipboard.",
-    });
-  };
 
   const handleUpdateProxy = async (values: {
     name: string;
@@ -123,7 +113,7 @@ export default function ProxyPage() {
       </LayoutNavigation>
 
       <LayoutViewContent>
-        <ProxyDetail proxy={proxy} onCopy={handleCopy} />
+        <ProxyDetail proxy={proxy} />
       </LayoutViewContent>
 
       <McpToolSheet proxyId={proxy.id} />

@@ -3,7 +3,7 @@
 import { LayoutView, LayoutViewContent } from "@/components/layout/layout";
 import { LayoutNavigation } from "@/components/layout/navigation";
 import { McpToolSheet } from "@/components/mcp-servers/mcp-tool-sheet";
-import { McpServerDetail } from "@/components/pages/worspace-target-detail";
+import { McpServerDetail } from "@/components/pages/workspace-target-detail";
 import { ProxySkeleton } from "@/components/proxies/proxy-skeleton";
 import { WorkspaceTargetDetailDropDownMenu } from "@/components/proxies/workspace-target-detail-dropdown-menu";
 import {
@@ -119,7 +119,7 @@ export default function McpServerPage() {
           </BreadcrumbList>
         </Breadcrumb>
         <WorkspaceTargetDetailDropDownMenu
-          onConfirm={handleDeleteServer}
+          onDelete={handleDeleteServer}
           open={deleteOpen}
           onOpenChange={setDeleteOpen}
         />

@@ -1,15 +1,7 @@
 "use client";
 
-import { DotsThreeOutlineVerticalIcon, TrashIcon } from "@phosphor-icons/react";
-import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
-
-import {
-  LayoutNavigation,
-  LayoutView,
-  LayoutViewContent,
-} from "@/components/layout/layout";
+import { LayoutView, LayoutViewContent } from "@/components/layout/layout";
+import { LayoutNavigation } from "@/components/layout/navigation";
 import { McpLogo } from "@/components/mcp-logo";
 import { McpDeleteConfirmation } from "@/components/mcp-servers/mcp-delete-confirmation";
 import { McpDescriptionList } from "@/components/mcp-servers/mcp-description-list";
@@ -45,6 +37,10 @@ import {
 import { toast } from "@/components/ui/toast";
 import { useProxy } from "@/hooks/use-proxy";
 import { trpc } from "@/trpc/client";
+import { DotsThreeOutlineVerticalIcon, TrashIcon } from "@phosphor-icons/react";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function ProxyPage() {
   const router = useRouter();

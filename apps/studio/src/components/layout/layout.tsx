@@ -1,9 +1,10 @@
 "use client";
 
+import { LayoutNavigation } from "@/components/layout/navigation";
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "../../lib/cn";
 import { Sheet } from "../components/ui/sheet";
-import { LayoutNavigation, SidebarContent } from "./navigation";
+import { SidebarContent } from "./navigation";
 
 interface SidebarSheetProps extends ComponentProps<typeof Sheet> {
   children?: ReactNode;

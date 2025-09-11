@@ -1,8 +1,5 @@
-import {
-  LayoutNavigation,
-  LayoutView,
-  LayoutViewContent,
-} from "@/components/layout/layout";
+import { LayoutView, LayoutViewContent } from "@/components/layout/layout";
+import { LayoutNavigation } from "@/components/layout/navigation";
 import { NewProxyForm } from "@/components/proxies/proxy-form";
 import {
   Breadcrumb,

@@ -1,11 +1,8 @@
 "use client";
 import { useState } from "react";
 
-import {
-  LayoutNavigation,
-  LayoutView,
-  LayoutViewContent,
-} from "@/components/layout/layout";
+import { LayoutView, LayoutViewContent } from "@/components/layout/layout";
+import { LayoutNavigation } from "@/components/layout/navigation";
 import { McpAddSheet } from "@/components/mcp-servers/mcp-add-sheet";
 import {
   MCPLinkCard,

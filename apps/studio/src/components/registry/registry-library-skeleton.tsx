@@ -1,10 +1,7 @@
 "use client";
 
-import {
-  LayoutNavigation,
-  LayoutView,
-  LayoutViewContent,
-} from "@/components/layout/layout";
+import { LayoutView, LayoutViewContent } from "@/components/layout/layout";
+import { LayoutNavigation } from "@/components/layout/navigation";
 import { ListOfLinks } from "@/components/list-of-links";
 import {
   Breadcrumb,

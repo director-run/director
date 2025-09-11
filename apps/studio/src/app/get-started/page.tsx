@@ -9,7 +9,7 @@ import {
 } from "@/components/get-started/get-started-list";
 import { GetStartedProxyForm } from "@/components/get-started/get-started-proxy-form";
 import { McpLogo } from "@/components/mcp-logo";
-import { FullScreenLoader } from "@/components/pages/loader";
+import { FullScreenLoader } from "@/components/pages/global/loader";
 import { Container } from "@/components/ui/container";
 import { EmptyState, EmptyStateTitle } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";

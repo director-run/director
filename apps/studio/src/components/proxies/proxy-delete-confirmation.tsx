@@ -1,44 +1,26 @@
-"use client";
-
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { toast } from "@/components/ui/toast";
-import { trpc } from "@/trpc/client";
-import { useRouter } from "next/navigation";
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 
 interface ProxyDeleteConfirmationProps {
-  proxyId: string;
   children: ReactNode;
+  onConfirm: () => Promise<void>;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export function ProxyDeleteConfirmation({
-  proxyId,
   children,
+  onConfirm,
+  open,
+  onOpenChange,
 }: ProxyDeleteConfirmationProps) {
-  const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
-
-  const utils = trpc.useUtils();
-
-  const mutation = trpc.store.delete.useMutation({
-    onSuccess: async () => {
-      await utils.store.getAll.invalidate();
-      toast({
-        title: "Proxy deleted",
-        description: "This proxy was successfully deleted.",
-      });
-      setIsOpen(false);
-      router.push("/");
-    },
-  });
-
   return (
     <ConfirmDialog
       title="Delete proxy server"
       description="Are you sure you want to delete this proxy server? This action cannot be undone."
-      open={isOpen}
-      onOpenChange={setIsOpen}
-      onConfirm={() => mutation.mutateAsync({ proxyId })}
+      open={open}
+      onOpenChange={onOpenChange}
+      onConfirm={onConfirm}
     >
       {children}
     </ConfirmDialog>

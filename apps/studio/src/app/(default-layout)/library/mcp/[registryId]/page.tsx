@@ -44,6 +44,7 @@ import {
 } from "@/components/ui/section";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/toast";
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { useRegistryQuery } from "@/hooks/use-registry-query";
 import { trpc } from "@/trpc/client";
 import {
@@ -55,12 +56,15 @@ import {
 } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function RegistryEntryPage() {
   const router = useRouter();
   const { registryId } = useParams<{ registryId: string }>();
-  const { toolId } = useRegistryQuery();
+  const { toolId, serverId } = useRegistryQuery();
+  const [_, copy] = useCopyToClipboard();
+  const [installFormOpen, setInstallFormOpen] = useState(false);
+
   const [entryQuery, storeQuery] = trpc.useQueries((t) => [
     t.registry.getEntryByName({
       name: registryId,
@@ -68,8 +72,51 @@ export default function RegistryEntryPage() {
     t.store.getAll(),
   ]);
 
+  const utils = trpc.useUtils();
+
+  const transportMutation = trpc.registry.getTransportForEntry.useMutation();
+
+  const installMutation = trpc.store.addServer.useMutation({
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+      });
+    },
+    onSuccess: (data, variables) => {
+      utils.store.get.invalidate({ proxyId: variables.proxyId });
+      utils.store.getAll.invalidate();
+      toast({
+        title: "Proxy installed",
+        description: "This proxy was successfully installed.",
+      });
+      router.push(`/${variables.proxyId}`);
+    },
+  });
+
   const isLoading = entryQuery.isLoading || storeQuery.isLoading;
   const entry = entryQuery.data;
+
+  const handleInstall = async (values: {
+    proxyId: string;
+    parameters: Record<string, string>;
+  }) => {
+    if (!entry) {
+      return;
+    }
+
+    const transport = await transportMutation.mutateAsync({
+      entryName: entry.name,
+      parameters: values.parameters,
+    });
+    installMutation.mutate({
+      proxyId: values.proxyId,
+      server: {
+        name: entry.name,
+        transport,
+      },
+    });
+  };
 
   useEffect(() => {
     if (!isLoading && !entry) {
@@ -121,7 +168,7 @@ export default function RegistryEntryPage() {
           </BreadcrumbList>
         </Breadcrumb>
 
-        <Popover>
+        <Popover open={installFormOpen} onOpenChange={setInstallFormOpen}>
           <PopoverTrigger asChild>
             <Button className="ml-auto lg:hidden">Add to proxy</Button>
           </PopoverTrigger>
@@ -131,7 +178,13 @@ export default function RegistryEntryPage() {
             sideOffset={8}
             className="w-sm max-w-[80dvw] rounded-[20px] lg:hidden"
           >
-            <RegistryInstallForm mcp={entry} proxies={proxiesWithoutMcp} />
+            <RegistryInstallForm
+              mcp={entry}
+              proxies={proxiesWithoutMcp}
+              defaultProxyId={serverId}
+              onSubmit={handleInstall}
+              isSubmitting={installMutation.isPending}
+            />
           </PopoverContent>
         </Popover>
       </LayoutNavigation>
@@ -276,6 +329,9 @@ export default function RegistryEntryPage() {
                     <RegistryInstallForm
                       mcp={entry}
                       proxies={proxiesWithoutMcp}
+                      defaultProxyId={serverId}
+                      onSubmit={handleInstall}
+                      isSubmitting={installMutation.isPending}
                     />
                   ) : (
                     <EmptyState>

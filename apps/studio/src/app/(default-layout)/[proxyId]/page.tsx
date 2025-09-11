@@ -37,6 +37,7 @@ import {
   SectionTitle,
 } from "@/components/ui/section";
 import { toast } from "@/components/ui/toast";
+import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { useProxy } from "@/hooks/use-proxy";
 import { trpc } from "@/trpc/client";
 import {
@@ -46,11 +47,14 @@ import {
 } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function ProxyPage() {
   const router = useRouter();
   const params = useParams<{ proxyId: string }>();
+  const [_, copy] = useCopyToClipboard();
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const { proxy, isLoading } = useProxy(params.proxyId);
   const {
@@ -58,6 +62,55 @@ export default function ProxyPage() {
     isLoading: serversLoading,
     error: serversError,
   } = trpc.store.getAll.useQuery();
+
+  const utils = trpc.useUtils();
+
+  const updateProxyMutation = trpc.store.update.useMutation({
+    onSuccess: async () => {
+      await utils.store.getAll.invalidate();
+      await utils.store.get.invalidate({ proxyId: params.proxyId });
+      toast({
+        title: "Proxy updated",
+        description: "This proxy was successfully updated.",
+      });
+      router.refresh();
+      setSettingsOpen(false);
+    },
+  });
+
+  const deleteProxyMutation = trpc.store.delete.useMutation({
+    onSuccess: async () => {
+      await utils.store.getAll.invalidate();
+      toast({
+        title: "Proxy deleted",
+        description: "This proxy was successfully deleted.",
+      });
+      setDeleteOpen(false);
+      router.push("/");
+    },
+  });
+
+  const handleCopy = async (text: string) => {
+    await copy(text);
+    toast({
+      title: "Copied to clipboard",
+      description: "The endpoint has been copied to your clipboard.",
+    });
+  };
+
+  const handleUpdateProxy = async (values: {
+    name: string;
+    description?: string;
+  }) => {
+    await updateProxyMutation.mutateAsync({
+      proxyId: params.proxyId,
+      attributes: values,
+    });
+  };
+
+  const handleDeleteProxy = async () => {
+    await deleteProxyMutation.mutateAsync({ proxyId: params.proxyId });
+  };
 
   useEffect(() => {
     if (!isLoading && !proxy) {
@@ -100,7 +153,13 @@ export default function ProxyPage() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuGroup>
-              <ProxySettingsSheet proxyId={proxy.id}>
+              <ProxySettingsSheet
+                proxy={proxy}
+                onSubmit={handleUpdateProxy}
+                isSubmitting={updateProxyMutation.isPending}
+                open={settingsOpen}
+                onOpenChange={setSettingsOpen}
+              >
                 <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
                   <MenuItemIcon>
                     <GearIcon />
@@ -108,7 +167,11 @@ export default function ProxyPage() {
                   <MenuItemLabel>Settings</MenuItemLabel>
                 </DropdownMenuItem>
               </ProxySettingsSheet>
-              <ProxyDeleteConfirmation proxyId={proxy.id}>
+              <ProxyDeleteConfirmation
+                onConfirm={handleDeleteProxy}
+                open={deleteOpen}
+                onOpenChange={setDeleteOpen}
+              >
                 <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
                   <MenuItemIcon>
                     <TrashIcon />
@@ -137,7 +200,7 @@ export default function ProxyPage() {
               <SectionTitle variant="h2" asChild>
                 <h2>Clients</h2>
               </SectionTitle>
-              <ProxyManualDialog proxyId={proxy.id}>
+              <ProxyManualDialog proxyId={proxy.id} onCopy={handleCopy}>
                 <Button size="sm">Connect manually</Button>
               </ProxyManualDialog>
             </SectionHeader>

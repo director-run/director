@@ -40,11 +40,12 @@ import { trpc } from "@/trpc/client";
 import { DotsThreeOutlineVerticalIcon, TrashIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-export default function ProxyPage() {
+export default function McpServerPage() {
   const router = useRouter();
   const params = useParams<{ proxyId: string; mcpId: string }>();
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const { proxy, isLoading } = useProxy(params.proxyId);
   const {
@@ -62,7 +63,30 @@ export default function ProxyPage() {
     },
   );
 
+  const utils = trpc.useUtils();
+
+  const deleteServerMutation = trpc.store.removeServer.useMutation({
+    onSuccess: async () => {
+      await utils.store.get.invalidate({ proxyId: params.proxyId });
+      await utils.store.getAll.invalidate();
+
+      toast({
+        title: "Server deleted",
+        description: "This server was successfully deleted.",
+      });
+      setDeleteOpen(false);
+      router.push(`/${params.proxyId}`);
+    },
+  });
+
   const mcp = proxy?.servers.find((server) => server.name === params.mcpId);
+
+  const handleDeleteServer = async () => {
+    await deleteServerMutation.mutateAsync({
+      proxyId: params.proxyId,
+      serverName: params.mcpId,
+    });
+  };
 
   useEffect(() => {
     if (!isLoading && (!proxy || !mcp)) {
@@ -127,7 +151,11 @@ export default function ProxyPage() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuGroup>
-              <McpDeleteConfirmation proxyId={proxy.id} serverId={mcp.name}>
+              <McpDeleteConfirmation
+                onConfirm={handleDeleteServer}
+                open={deleteOpen}
+                onOpenChange={setDeleteOpen}
+              >
                 <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
                   <MenuItemIcon>
                     <TrashIcon />

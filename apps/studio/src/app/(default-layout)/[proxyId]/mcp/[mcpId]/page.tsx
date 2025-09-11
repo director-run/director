@@ -3,11 +3,11 @@
 import { LayoutView, LayoutViewContent } from "@/components/layout/layout";
 import { LayoutNavigation } from "@/components/layout/navigation";
 import { McpLogo } from "@/components/mcp-logo";
-import { McpDeleteConfirmation } from "@/components/mcp-servers/mcp-delete-confirmation";
 import { McpDescriptionList } from "@/components/mcp-servers/mcp-description-list";
 import { McpToolSheet } from "@/components/mcp-servers/mcp-tool-sheet";
 import { McpToolsTable } from "@/components/mcp-servers/mcp-tools-table";
 import { ProxySkeleton } from "@/components/proxies/proxy-skeleton";
+import { WorkspaceTargetDetailDropDownMenu } from "@/components/proxies/workspace-target-detail-dropdown-menu";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -16,18 +16,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { EmptyState, EmptyStateTitle } from "@/components/ui/empty-state";
 import { Markdown } from "@/components/ui/markdown";
-import { MenuItemIcon, MenuItemLabel } from "@/components/ui/menu";
 import {
   Section,
   SectionDescription,
@@ -37,7 +28,6 @@ import {
 import { toast } from "@/components/ui/toast";
 import { useProxy } from "@/hooks/use-proxy";
 import { trpc } from "@/trpc/client";
-import { DotsThreeOutlineVerticalIcon, TrashIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -138,34 +128,11 @@ export default function McpServerPage() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="radix-state-[open]:bg-accent-subtle"
-            >
-              <DotsThreeOutlineVerticalIcon weight="fill" className="!size-4" />
-              <span className="sr-only">Settings</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuGroup>
-              <McpDeleteConfirmation
-                onConfirm={handleDeleteServer}
-                open={deleteOpen}
-                onOpenChange={setDeleteOpen}
-              >
-                <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
-                  <MenuItemIcon>
-                    <TrashIcon />
-                  </MenuItemIcon>
-                  <MenuItemLabel>Delete</MenuItemLabel>
-                </DropdownMenuItem>
-              </McpDeleteConfirmation>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <WorkspaceTargetDetailDropDownMenu
+          onConfirm={handleDeleteServer}
+          open={deleteOpen}
+          onOpenChange={setDeleteOpen}
+        />
       </LayoutNavigation>
 
       <LayoutViewContent>

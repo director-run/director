@@ -8,10 +8,9 @@ import {
 } from "@/components/mcp-servers/mcp-link-card";
 import { McpToolSheet } from "@/components/mcp-servers/mcp-tool-sheet";
 import { McpToolsTable } from "@/components/mcp-servers/mcp-tools-table";
-import { ProxyDeleteConfirmation } from "@/components/proxies/proxy-delete-confirmation";
+import { ProxyActionsDropdown } from "@/components/proxies/proxy-actions-dropdown";
 import { ProxyInstallers } from "@/components/proxies/proxy-installers";
 import { ProxyManualDialog } from "@/components/proxies/proxy-manual-dialog";
-import { ProxySettingsSheet } from "@/components/proxies/proxy-settings-sheet";
 import { ProxySkeleton } from "@/components/proxies/proxy-skeleton";
 import {
   Breadcrumb,
@@ -21,14 +20,6 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { MenuItemIcon, MenuItemLabel } from "@/components/ui/menu";
 import {
   Section,
   SectionDescription,
@@ -40,11 +31,6 @@ import { toast } from "@/components/ui/toast";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { useProxy } from "@/hooks/use-proxy";
 import { trpc } from "@/trpc/client";
-import {
-  DotsThreeOutlineVerticalIcon,
-  GearIcon,
-  TrashIcon,
-} from "@phosphor-icons/react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -140,48 +126,16 @@ export default function ProxyPage() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="radix-state-[open]:bg-accent-subtle"
-            >
-              <DotsThreeOutlineVerticalIcon weight="fill" className="!size-4" />
-              <span className="sr-only">Settings</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuGroup>
-              <ProxySettingsSheet
-                proxy={proxy}
-                onSubmit={handleUpdateProxy}
-                isSubmitting={updateProxyMutation.isPending}
-                open={settingsOpen}
-                onOpenChange={setSettingsOpen}
-              >
-                <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
-                  <MenuItemIcon>
-                    <GearIcon />
-                  </MenuItemIcon>
-                  <MenuItemLabel>Settings</MenuItemLabel>
-                </DropdownMenuItem>
-              </ProxySettingsSheet>
-              <ProxyDeleteConfirmation
-                onConfirm={handleDeleteProxy}
-                open={deleteOpen}
-                onOpenChange={setDeleteOpen}
-              >
-                <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
-                  <MenuItemIcon>
-                    <TrashIcon />
-                  </MenuItemIcon>
-                  <MenuItemLabel>Delete</MenuItemLabel>
-                </DropdownMenuItem>
-              </ProxyDeleteConfirmation>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <ProxyActionsDropdown
+          proxy={proxy}
+          onUpdateProxy={handleUpdateProxy}
+          onDeleteProxy={handleDeleteProxy}
+          isUpdating={updateProxyMutation.isPending}
+          settingsOpen={settingsOpen}
+          onSettingsOpenChange={setSettingsOpen}
+          deleteOpen={deleteOpen}
+          onDeleteOpenChange={setDeleteOpen}
+        />
       </LayoutNavigation>
 
       <LayoutViewContent>

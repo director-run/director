@@ -1,12 +1,4 @@
 import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { cn } from "@/lib/cn";
-import {
   ArrowRightIcon,
   BookOpenIcon,
   HardDriveIcon,
@@ -14,6 +6,14 @@ import {
 } from "@phosphor-icons/react";
 import Link from "next/link";
 import { ComponentProps } from "react";
+import { cn } from "../../lib/cn";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../ui/alert-dialog";
 import { Label } from "../ui/label";
 
 function NextStepsLink({

@@ -161,7 +161,7 @@ function SidebarContent() {
   );
 }
 
-export function Layout({
+export function LayoutMain({
   className,
   children,
   ...props

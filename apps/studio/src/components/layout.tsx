@@ -1,16 +1,5 @@
 "use client";
 
-import {
-  BookOpenTextIcon,
-  GithubLogoIcon,
-  PlusIcon,
-  SidebarIcon,
-} from "@phosphor-icons/react";
-import * as SheetPrimitive from "@radix-ui/react-dialog";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import Link from "next/link";
-import type { ComponentProps, ReactNode } from "react";
-
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
 import {
@@ -24,7 +13,17 @@ import { ScrambleText } from "@/components/ui/scramble-text";
 import { Sheet, SheetPortal, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/cn";
 import { trpc } from "@/trpc/client";
+import {
+  BookOpenTextIcon,
+  GithubLogoIcon,
+  PlusIcon,
+  SidebarIcon,
+} from "@phosphor-icons/react";
+import * as SheetPrimitive from "@radix-ui/react-dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
+import type { ComponentProps, ReactNode } from "react";
 
 interface SidebarSheetProps extends ComponentProps<typeof Sheet> {
   children?: ReactNode;
@@ -62,7 +61,7 @@ export function SidebarSheet({ children, ...props }: SidebarSheetProps) {
   );
 }
 
-export function SidebarContent() {
+function SidebarContent() {
   const pathname = usePathname();
   const { proxyId } = useParams<{ proxyId?: string }>();
   const { data, isLoading, error } = trpc.store.getAll.useQuery();

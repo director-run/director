@@ -1,6 +1,4 @@
 "use client";
-
-import { LayoutNavigation } from "@/components/layout/navigation";
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "../../lib/cn";
 import { Sheet } from "../components/ui/sheet";
@@ -78,5 +76,3 @@ export function LayoutViewContent({
     </div>
   );
 }
-
-export { LayoutNavigation };

@@ -39,29 +39,26 @@ export default function GetStartedPage() {
 
   const hasProxy = proxyListQuery.data && proxyListQuery.data.length > 0;
   const currentProxy = hasProxy ? proxyListQuery.data[0] : null;
+  const hasServers = (currentProxy?.servers.length ?? 0) > 0;
+  const hasInstallers =
+    installersQuery.data && Object.values(installersQuery.data).some(Boolean);
 
-  const installers = installersQuery.data ?? {};
-  const isInstalled = !!Object.values(installers).filter((it) => Boolean(it))
-    .length;
-
-  const createStepStatus = hasProxy ? "completed" : "in-progress";
-  const addStepStatus =
-    createStepStatus !== "completed" || !currentProxy
-      ? "not-started"
-      : currentProxy.servers.length > 0
-        ? "completed"
-        : "in-progress";
-  const connectStepStatus =
-    addStepStatus === "completed" && isInstalled
-      ? "completed"
-      : addStepStatus === "completed" && installersQuery.isFetched
-        ? "in-progress"
-        : "not-started";
+  // Simplified step logic
+  const steps = {
+    create: hasProxy ? "completed" : "in-progress",
+    add: hasProxy ? (hasServers ? "completed" : "in-progress") : "not-started",
+    connect:
+      hasProxy && hasServers
+        ? hasInstallers
+          ? "completed"
+          : "in-progress"
+        : "not-started",
+  } as const;
 
   const isCompleted =
-    createStepStatus === "completed" &&
-    addStepStatus === "completed" &&
-    connectStepStatus === "completed";
+    steps.create === "completed" &&
+    steps.add === "completed" &&
+    steps.connect === "completed";
 
   return (
     <GetStartedPageView
@@ -70,11 +67,8 @@ export default function GetStartedPage() {
       onSearchQueryChange={setSearchQuery}
       registryEntries={registryEntriesQuery.data?.entries ?? []}
       currentProxy={currentProxy}
-      createStepStatus={createStepStatus}
-      addStepStatus={addStepStatus}
-      connectStepStatus={connectStepStatus}
+      steps={steps}
       isCompleted={isCompleted}
-      hasProxy={!!hasProxy}
     />
   );
 }

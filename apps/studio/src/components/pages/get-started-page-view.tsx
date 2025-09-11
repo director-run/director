@@ -27,17 +27,20 @@ import { RegistryGetEntriesEntry, StoreGetAll } from "@/trpc/types";
 
 type StepStatus = "not-started" | "in-progress" | "completed";
 
+interface Steps {
+  create: StepStatus;
+  add: StepStatus;
+  connect: StepStatus;
+}
+
 interface GetStartedPageViewProps {
   isLoading: boolean;
   searchQuery: string;
   onSearchQueryChange: (query: string) => void;
   registryEntries: RegistryGetEntriesEntry[];
   currentProxy: StoreGetAll[number] | null;
-  createStepStatus: StepStatus;
-  addStepStatus: StepStatus;
-  connectStepStatus: StepStatus;
+  steps: Steps;
   isCompleted: boolean;
-  hasProxy: boolean;
 }
 
 export function GetStartedPageView({
@@ -46,11 +49,8 @@ export function GetStartedPageView({
   onSearchQueryChange,
   registryEntries,
   currentProxy,
-  createStepStatus,
-  addStepStatus,
-  connectStepStatus,
+  steps,
   isCompleted,
-  hasProxy,
 }: GetStartedPageViewProps) {
   if (isLoading) {
     return <FullScreenLoader />;
@@ -71,20 +71,20 @@ export function GetStartedPageView({
 
         <GetStartedList>
           <GetStartedListItem
-            status={createStepStatus}
+            status={steps.create}
             title="Create an MCP Proxy Server"
-            disabled={hasProxy}
-            open={createStepStatus === "in-progress"}
+            disabled={steps.create === "completed"}
+            open={steps.create === "in-progress"}
           >
             <div className="py-4 pr-4 pl-11.5">
               <GetStartedProxyForm />
             </div>
           </GetStartedListItem>
           <GetStartedListItem
-            status={addStepStatus}
+            status={steps.add}
             title="Add your first MCP server"
-            open={addStepStatus === "in-progress"}
-            disabled={addStepStatus !== "in-progress"}
+            open={steps.add === "in-progress"}
+            disabled={steps.add !== "in-progress"}
           >
             <div className="relative z-10 px-2 pt-2">
               <Input
@@ -125,10 +125,10 @@ export function GetStartedPageView({
             </div>
           </GetStartedListItem>
           <GetStartedListItem
-            status={connectStepStatus}
+            status={steps.connect}
             title="Connect your first client"
-            open={connectStepStatus === "in-progress"}
-            disabled={connectStepStatus !== "in-progress"}
+            open={steps.connect === "in-progress"}
+            disabled={steps.connect !== "in-progress"}
           >
             <GetStartedInstallers proxyId={currentProxy?.id ?? ""} />
           </GetStartedListItem>

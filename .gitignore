@@ -50,3 +50,5 @@ public/swe-worker*
 .env
 config.yaml
 config.test.yaml
+*storybook.log
+storybook-static

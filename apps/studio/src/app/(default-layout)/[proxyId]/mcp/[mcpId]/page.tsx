@@ -6,9 +6,9 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 import {
+  LayoutNavigation,
   LayoutView,
   LayoutViewContent,
-  LayoutViewHeader,
 } from "@/components/layout";
 import { McpLogo } from "@/components/mcp-logo";
 import { McpDeleteConfirmation } from "@/components/mcp-servers/mcp-delete-confirmation";
@@ -95,7 +95,7 @@ export default function ProxyPage() {
 
   return (
     <LayoutView>
-      <LayoutViewHeader>
+      <LayoutNavigation>
         <Breadcrumb className="grow">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -133,7 +133,7 @@ export default function ProxyPage() {
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-      </LayoutViewHeader>
+      </LayoutNavigation>
 
       <LayoutViewContent>
         <Container size="lg">

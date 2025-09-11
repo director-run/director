@@ -1,9 +1,9 @@
-import { LayoutMain } from "@/components/layout";
+import { LayoutRoot } from "@/components/layout";
 
 export default function DefaultLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <LayoutMain>{children}</LayoutMain>;
+  return <LayoutRoot>{children}</LayoutRoot>;
 }

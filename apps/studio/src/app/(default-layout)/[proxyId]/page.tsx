@@ -1,9 +1,9 @@
 "use client";
 
 import {
+  LayoutNavigation,
   LayoutView,
   LayoutViewContent,
-  LayoutViewHeader,
 } from "@/components/layout";
 import {
   MCPLinkCard,
@@ -72,7 +72,7 @@ export default function ProxyPage() {
 
   return (
     <LayoutView>
-      <LayoutViewHeader>
+      <LayoutNavigation>
         <Breadcrumb className="grow">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -112,7 +112,7 @@ export default function ProxyPage() {
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-      </LayoutViewHeader>
+      </LayoutNavigation>
 
       <LayoutViewContent>
         <Container size="lg">

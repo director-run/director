@@ -161,7 +161,7 @@ function SidebarContent() {
   );
 }
 
-export function LayoutMain({
+export function LayoutRoot({
   className,
   children,
   ...props
@@ -212,7 +212,7 @@ export function LayoutView({
   );
 }
 
-export function LayoutViewHeader({
+export function LayoutNavigation({
   className,
   children,
   ...props

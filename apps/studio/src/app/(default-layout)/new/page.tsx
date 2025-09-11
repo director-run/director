@@ -1,7 +1,7 @@
 import {
+  LayoutNavigation,
   LayoutView,
   LayoutViewContent,
-  LayoutViewHeader,
 } from "@/components/layout";
 import { NewProxyForm } from "@/components/proxies/proxy-form";
 import {
@@ -22,7 +22,7 @@ import {
 export default function NewProxyPage() {
   return (
     <LayoutView>
-      <LayoutViewHeader>
+      <LayoutNavigation>
         <Breadcrumb className="grow">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -30,7 +30,7 @@ export default function NewProxyPage() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-      </LayoutViewHeader>
+      </LayoutNavigation>
 
       <LayoutViewContent>
         <Container size="sm">

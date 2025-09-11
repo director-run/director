@@ -1,9 +1,9 @@
 "use client";
 
 import {
+  LayoutNavigation,
   LayoutView,
   LayoutViewContent,
-  LayoutViewHeader,
 } from "@/components/layout";
 import { ListOfLinks } from "@/components/list-of-links";
 import {
@@ -30,7 +30,7 @@ export function RegistryLibrarySkeleton({
   return (
     <LayoutView className="pointer-events-none relative select-none">
       {children}
-      <LayoutViewHeader aria-hidden>
+      <LayoutNavigation aria-hidden>
         <Breadcrumb className="grow">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -50,7 +50,7 @@ export function RegistryLibrarySkeleton({
           <DotsThreeOutlineVerticalIcon weight="fill" className="!size-4" />
           <span className="sr-only">Settings</span>
         </Button>
-      </LayoutViewHeader>
+      </LayoutNavigation>
       <LayoutViewContent aria-hidden>
         <Container size="lg">
           <Section className="gap-y-6">

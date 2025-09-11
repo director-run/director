@@ -1,9 +1,9 @@
 "use client";
 
 import {
+  LayoutNavigation,
   LayoutView,
   LayoutViewContent,
-  LayoutViewHeader,
 } from "@/components/layout";
 import { ListOfLinks } from "@/components/list-of-links";
 import { Badge, BadgeIcon, BadgeLabel } from "@/components/ui/badge";
@@ -32,7 +32,7 @@ export function RegistryEntrySkeleton({ children }: { children?: ReactNode }) {
   return (
     <LayoutView className="pointer-events-none relative select-none">
       {children}
-      <LayoutViewHeader aria-hidden>
+      <LayoutNavigation aria-hidden>
         <Breadcrumb className="grow">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -50,7 +50,7 @@ export function RegistryEntrySkeleton({ children }: { children?: ReactNode }) {
         <Button disabled className="ml-auto">
           Add to proxy
         </Button>
-      </LayoutViewHeader>
+      </LayoutNavigation>
 
       <LayoutViewContent aria-hidden>
         <Container size="lg">

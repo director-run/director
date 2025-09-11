@@ -2,9 +2,9 @@
 import { useState } from "react";
 
 import {
+  LayoutNavigation,
   LayoutView,
   LayoutViewContent,
-  LayoutViewHeader,
 } from "@/components/layout";
 import { McpAddSheet } from "@/components/mcp-servers/mcp-add-sheet";
 import {
@@ -68,7 +68,7 @@ export default function RegistryPage() {
 
   return (
     <LayoutView>
-      <LayoutViewHeader>
+      <LayoutNavigation>
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -76,7 +76,7 @@ export default function RegistryPage() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-      </LayoutViewHeader>
+      </LayoutNavigation>
       <LayoutViewContent>
         <Container size="lg">
           <Section className="gap-y-6">

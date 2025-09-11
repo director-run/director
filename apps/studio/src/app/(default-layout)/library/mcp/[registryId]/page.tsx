@@ -1,9 +1,9 @@
 "use client";
 
 import {
+  LayoutNavigation,
   LayoutView,
   LayoutViewContent,
-  LayoutViewHeader,
 } from "@/components/layout";
 import { McpLogo } from "@/components/mcp-logo";
 import { McpDescriptionList } from "@/components/mcp-servers/mcp-description-list";
@@ -105,7 +105,7 @@ export default function RegistryEntryPage() {
 
   return (
     <LayoutView>
-      <LayoutViewHeader>
+      <LayoutNavigation>
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -133,7 +133,7 @@ export default function RegistryEntryPage() {
             <RegistryInstallForm mcp={entry} proxies={proxiesWithoutMcp} />
           </PopoverContent>
         </Popover>
-      </LayoutViewHeader>
+      </LayoutNavigation>
 
       <LayoutViewContent>
         <Container size="xl">

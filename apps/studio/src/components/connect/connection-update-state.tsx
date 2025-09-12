@@ -1,5 +1,5 @@
 import { Container } from "../ui/container";
-import { Logo } from "../ui/logo";
+import { Logo } from "../ui/images/logo";
 import { SimpleMarkdown } from "../ui/markdown";
 import {
   Section,

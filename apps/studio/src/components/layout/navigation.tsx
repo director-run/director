@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Logo } from "@/components/ui/logo";
+import { Logo } from "@/components/ui/images/logo";
 import {
   Menu,
   MenuItem,

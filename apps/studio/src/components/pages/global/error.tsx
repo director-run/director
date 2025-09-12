@@ -1,5 +1,5 @@
 import { Container } from "@/components/ui/container";
-import { Logo } from "@/components/ui/logo";
+import { Logo } from "@/components/ui/images/logo";
 import { SectionDescription, SectionTitle } from "@/components/ui/section";
 import { Section, SectionHeader } from "@/components/ui/section";
 

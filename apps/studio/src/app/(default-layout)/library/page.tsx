@@ -5,22 +5,22 @@ import {
   LayoutView,
   LayoutViewContent,
   LayoutViewHeader,
-} from "@director.run/design/components/layout/layout";
-import { McpAddSheet } from "@director.run/design/components/mcp-servers/mcp-add-sheet";
-import type { McpAddFormData } from "@director.run/design/components/mcp-servers/mcp-add-sheet";
-import { RegistryItemList } from "@director.run/design/components/pages/registry-item-list";
-import { RegistryLibrarySkeleton } from "@director.run/design/components/registry/registry-library-skeleton";
+} from "@director.run/design/components/layout/layout.tsx";
+import { McpAddSheet } from "@director.run/design/components/mcp-servers/mcp-add-sheet.tsx";
+import type { McpAddFormData } from "@director.run/design/components/mcp-servers/mcp-add-sheet.tsx";
+import { RegistryItemList } from "@director.run/design/components/pages/registry-item-list.tsx";
+import { RegistryLibrarySkeleton } from "@director.run/design/components/registry/registry-library-skeleton.tsx";
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbPage,
-} from "@director.run/design/components/ui/breadcrumb";
-import { Button } from "@director.run/design/components/ui/button";
-import { EmptyStateDescription } from "@director.run/design/components/ui/empty-state";
-import { EmptyState } from "@director.run/design/components/ui/empty-state";
-import { EmptyStateTitle } from "@director.run/design/components/ui/empty-state";
-import { toast } from "@director.run/design/components/ui/toast";
+} from "@director.run/design/components/ui/breadcrumb.tsx";
+import { Button } from "@director.run/design/components/ui/button.tsx";
+import { EmptyStateDescription } from "@director.run/design/components/ui/empty-state.tsx";
+import { EmptyState } from "@director.run/design/components/ui/empty-state.tsx";
+import { EmptyStateTitle } from "@director.run/design/components/ui/empty-state.tsx";
+import { toast } from "@director.run/design/components/ui/toast.tsx";
 import { useRouter } from "next/navigation";
 import { trpc } from "../../../state/client";
 

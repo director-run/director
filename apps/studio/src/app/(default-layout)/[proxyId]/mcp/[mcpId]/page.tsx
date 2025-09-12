@@ -4,11 +4,11 @@ import {
   LayoutView,
   LayoutViewContent,
   LayoutViewHeader,
-} from "@director.run/design/components/layout/layout";
-import { McpToolSheet } from "@director.run/design/components/mcp-servers/mcp-tool-sheet";
-import { McpServerDetail } from "@director.run/design/components/pages/workspace-target-detail";
-import { ProxySkeleton } from "@director.run/design/components/proxies/proxy-skeleton";
-import { WorkspaceTargetDetailDropDownMenu } from "@director.run/design/components/proxies/workspace-target-detail-dropdown-menu";
+} from "@director.run/design/components/layout/layout.tsx";
+import { McpToolSheet } from "@director.run/design/components/mcp-servers/mcp-tool-sheet.tsx";
+import { McpServerDetail } from "@director.run/design/components/pages/workspace-target-detail.tsx";
+import { ProxySkeleton } from "@director.run/design/components/proxies/proxy-skeleton.tsx";
+import { WorkspaceTargetDetailDropDownMenu } from "@director.run/design/components/proxies/workspace-target-detail-dropdown-menu.tsx";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -16,18 +16,18 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@director.run/design/components/ui/breadcrumb";
-import { Container } from "@director.run/design/components/ui/container";
-import { toast } from "@director.run/design/components/ui/toast";
+} from "@director.run/design/components/ui/breadcrumb.tsx";
+import { Container } from "@director.run/design/components/ui/container.tsx";
+import { toast } from "@director.run/design/components/ui/toast.tsx";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { trpc } from "../../../../../state/client";
-import { useInspectMcp } from "../../../../../state/use-inspect-mcp";
-import { useProxy } from "../../../../../state/use-proxy";
+import { useInspectMcp } from "../../../../../state/use-inspect-mcp.ts";
 import {
   proxyQuerySerializer,
   useProxyQuery,
 } from "../../../../../state/use-proxy-query";
+import { useProxy } from "../../../../../state/use-proxy.ts";
 
 export default function McpServerPage() {
   const router = useRouter();

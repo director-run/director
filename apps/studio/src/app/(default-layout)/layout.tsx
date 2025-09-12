@@ -1,8 +1,8 @@
 "use client";
 
-import { LayoutRoot } from "@director.run/design/components/layout/layout";
-import type { NavigationSection } from "@director.run/design/components/layout/navigation";
-import { MCPIcon } from "@director.run/design/components/ui/icons/mcp-icon";
+import { LayoutRoot } from "@director.run/design/components/layout/layout.tsx";
+import type { NavigationSection } from "@director.run/design/components/layout/navigation.tsx";
+import { MCPIcon } from "@director.run/design/components/ui/icons/mcp-icon.tsx";
 import {
   BookOpenTextIcon,
   GithubLogoIcon,

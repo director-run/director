@@ -4,27 +4,27 @@ import {
   LayoutView,
   LayoutViewContent,
   LayoutViewHeader,
-} from "@director.run/design/components/layout/layout";
+} from "@director.run/design/components/layout/layout.tsx";
 import {
   ProxyForm,
   ProxyFormButton,
-} from "@director.run/design/components/proxies/proxy-form";
-import type { ProxyFormData } from "@director.run/design/components/proxies/proxy-form";
+} from "@director.run/design/components/proxies/proxy-form.tsx";
+import type { ProxyFormData } from "@director.run/design/components/proxies/proxy-form.tsx";
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbPage,
-} from "@director.run/design/components/ui/breadcrumb";
-import { Container } from "@director.run/design/components/ui/container";
+} from "@director.run/design/components/ui/breadcrumb.tsx";
+import { Container } from "@director.run/design/components/ui/container.tsx";
 import {
   Section,
   SectionDescription,
   SectionHeader,
   SectionSeparator,
   SectionTitle,
-} from "@director.run/design/components/ui/section";
-import { toast } from "@director.run/design/components/ui/toast";
+} from "@director.run/design/components/ui/section.tsx";
+import { toast } from "@director.run/design/components/ui/toast.tsx";
 import { useRouter } from "next/navigation";
 import { trpc } from "../../../state/client";
 

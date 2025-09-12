@@ -2,7 +2,6 @@ import { Switch } from "../ui/switch";
 
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import { ArrowUpRightIcon } from "@phosphor-icons/react";
-import { DIRECTOR_URL } from "../../config";
 import { cn } from "../../helpers/cn";
 
 export interface Client {
@@ -19,6 +18,7 @@ export interface AvailableClient {
 
 interface ProxyInstallersProps {
   proxyId: string;
+  gatewayBaseUrl: string;
   clients: Client[];
   installers: Record<string, boolean>;
   availableClients: AvailableClient[];
@@ -31,6 +31,7 @@ interface ProxyInstallersProps {
 
 export function ProxyInstallers({
   proxyId,
+  gatewayBaseUrl,
   clients,
   installers,
   availableClients,
@@ -45,7 +46,7 @@ export function ProxyInstallers({
       {clients.map((it) => {
         if (it.type === "deep-link") {
           const gooseUrl = `goose://extension?url=${encodeURIComponent(
-            `${DIRECTOR_URL}/${proxyId}/sse`,
+            `${gatewayBaseUrl}/${proxyId}/sse`,
           )}&id=${proxyId}&name=director__${proxyId}`;
 
           const raycastUrl = `raycast://mcp/install?${encodeURIComponent(
@@ -55,7 +56,7 @@ export function ProxyInstallers({
               command: "npx",
               args: [
                 "@director.run/cli http2stdio",
-                `${DIRECTOR_URL}/${proxyId}/sse`,
+                `${gatewayBaseUrl}/${proxyId}/sse`,
               ],
             }),
           )}`;

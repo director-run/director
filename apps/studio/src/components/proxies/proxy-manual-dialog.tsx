@@ -1,8 +1,6 @@
 import { CopyIcon } from "@phosphor-icons/react";
 import type { ComponentProps, ReactNode } from "react";
 import { useState } from "react";
-
-import { DIRECTOR_URL } from "../../config";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -19,16 +17,17 @@ type TransportType = "http" | "sse" | "stdio";
 
 interface ManualInputProps {
   id: string;
+  gatewayBaseUrl: string;
   onCopy: (text: string) => void;
 }
 
-function ManualInput({ id, onCopy }: ManualInputProps) {
+function ManualInput({ id, gatewayBaseUrl, onCopy }: ManualInputProps) {
   const [transportType, setTransportType] = useState<TransportType>("http");
 
   const transports: Record<TransportType, string> = {
-    http: `${DIRECTOR_URL}/${id}/mcp`,
-    sse: `${DIRECTOR_URL}/${id}/sse`,
-    stdio: `director http2stdio ${DIRECTOR_URL}/${id}/sse`,
+    http: `${gatewayBaseUrl}/${id}/mcp`,
+    sse: `${gatewayBaseUrl}/${id}/sse`,
+    stdio: `director http2stdio ${gatewayBaseUrl}/${id}/sse`,
   };
 
   return (
@@ -65,12 +64,14 @@ function ManualInput({ id, onCopy }: ManualInputProps) {
 
 interface ProxyManualDialogProps extends ComponentProps<typeof Dialog> {
   proxyId: string;
+  gatewayBaseUrl: string;
   children?: ReactNode;
   onCopy: (text: string) => void;
 }
 
 export function ProxyManualDialog({
   proxyId,
+  gatewayBaseUrl,
   children,
   onCopy,
   ...props
@@ -89,7 +90,11 @@ export function ProxyManualDialog({
         </DialogHeader>
 
         <div className="border-t-[0.5px] p-5">
-          <ManualInput id={proxyId} onCopy={onCopy} />
+          <ManualInput
+            id={proxyId}
+            gatewayBaseUrl={gatewayBaseUrl}
+            onCopy={onCopy}
+          />
         </div>
       </DialogContent>
     </Dialog>

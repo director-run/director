@@ -234,6 +234,7 @@ export default function ProxyPage() {
       <LayoutViewContent>
         <ProxyDetail
           proxy={proxy}
+          gatewayBaseUrl={DIRECTOR_URL}
           clients={clients}
           installers={installers}
           availableClients={availableClients ?? []}

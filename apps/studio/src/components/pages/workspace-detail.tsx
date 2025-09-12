@@ -25,6 +25,7 @@ interface ProxyDetailProps {
       name: string;
     }>;
   };
+  gatewayBaseUrl: string;
   clients: Client[];
   installers: Record<string, boolean>;
   availableClients: AvailableClient[];
@@ -47,6 +48,7 @@ interface ProxyDetailProps {
 
 export function ProxyDetail({
   proxy,
+  gatewayBaseUrl,
   clients,
   installers,
   availableClients,
@@ -85,12 +87,17 @@ export function ProxyDetail({
           <SectionTitle variant="h2" asChild>
             <h2>Clients</h2>
           </SectionTitle>
-          <ProxyManualDialog proxyId={proxy.id} onCopy={handleCopy}>
+          <ProxyManualDialog
+            proxyId={proxy.id}
+            gatewayBaseUrl={gatewayBaseUrl}
+            onCopy={handleCopy}
+          >
             <Button size="sm">Connect manually</Button>
           </ProxyManualDialog>
         </SectionHeader>
         <ProxyInstallers
           proxyId={proxy.id}
+          gatewayBaseUrl={gatewayBaseUrl}
           clients={clients}
           installers={installers}
           availableClients={availableClients}

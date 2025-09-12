@@ -143,6 +143,7 @@ const mockToolLinks = [
 export const Default: Story = {
   args: {
     proxy: mockProxy,
+    gatewayBaseUrl: "http://localhost:3673",
     clients: mockClients,
     installers: mockInstallers,
     availableClients: mockAvailableClients,

@@ -1,26 +1,26 @@
 "use client";
 
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import {
   LayoutView,
   LayoutViewContent,
   LayoutViewHeader,
-} from "../../../components/layout/layout";
-import { McpToolSheet } from "../../../components/mcp-servers/mcp-tool-sheet";
-import { ProxyDetail } from "../../../components/pages/workspace-detail";
-import { ProxyActionsDropdown } from "../../../components/proxies/proxy-actions-dropdown";
-import type { Client } from "../../../components/proxies/proxy-installers";
-import { ProxySkeleton } from "../../../components/proxies/proxy-skeleton";
-import { Badge, BadgeLabel } from "../../../components/ui/badge";
+} from "@director.run/design/components/layout/layout";
+import { McpToolSheet } from "@director.run/design/components/mcp-servers/mcp-tool-sheet";
+import { ProxyDetail } from "@director.run/design/components/pages/workspace-detail";
+import { ProxyActionsDropdown } from "@director.run/design/components/proxies/proxy-actions-dropdown";
+import type { Client } from "@director.run/design/components/proxies/proxy-installers";
+import { ProxySkeleton } from "@director.run/design/components/proxies/proxy-skeleton";
+import { Badge, BadgeLabel } from "@director.run/design/components/ui/badge";
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbPage,
-} from "../../../components/ui/breadcrumb";
-import { toast } from "../../../components/ui/toast";
+} from "@director.run/design/components/ui/breadcrumb";
+import { toast } from "@director.run/design/components/ui/toast";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { DIRECTOR_URL } from "../../../config";
 import { trpc } from "../../../state/client";
 import { useInspectMcp } from "../../../state/use-inspect-mcp";

@@ -1,9 +1,9 @@
 import { ChatToUs } from "@director.run/design/components/chat-to-us.tsx";
+import { Toaster } from "@director.run/design/components/ui/toast";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next";
-import { Toaster } from "../components/ui/toast";
 import { TRPCProvider } from "../state/client";
 import { ConnectionStatusProvider } from "../state/connection-status-provider";
 

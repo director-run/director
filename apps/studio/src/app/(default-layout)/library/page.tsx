@@ -1,27 +1,27 @@
 "use client";
 import { useState } from "react";
 
-import { useRouter } from "next/navigation";
 import {
   LayoutView,
   LayoutViewContent,
   LayoutViewHeader,
-} from "../../../components/layout/layout";
-import { McpAddSheet } from "../../../components/mcp-servers/mcp-add-sheet";
-import type { McpAddFormData } from "../../../components/mcp-servers/mcp-add-sheet";
-import { RegistryItemList } from "../../../components/pages/registry-item-list";
-import { RegistryLibrarySkeleton } from "../../../components/registry/registry-library-skeleton";
+} from "@director.run/design/components/layout/layout";
+import { McpAddSheet } from "@director.run/design/components/mcp-servers/mcp-add-sheet";
+import type { McpAddFormData } from "@director.run/design/components/mcp-servers/mcp-add-sheet";
+import { RegistryItemList } from "@director.run/design/components/pages/registry-item-list";
+import { RegistryLibrarySkeleton } from "@director.run/design/components/registry/registry-library-skeleton";
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbPage,
-} from "../../../components/ui/breadcrumb";
-import { Button } from "../../../components/ui/button";
-import { EmptyStateDescription } from "../../../components/ui/empty-state";
-import { EmptyState } from "../../../components/ui/empty-state";
-import { EmptyStateTitle } from "../../../components/ui/empty-state";
-import { toast } from "../../../components/ui/toast";
+} from "@director.run/design/components/ui/breadcrumb";
+import { Button } from "@director.run/design/components/ui/button";
+import { EmptyStateDescription } from "@director.run/design/components/ui/empty-state";
+import { EmptyState } from "@director.run/design/components/ui/empty-state";
+import { EmptyStateTitle } from "@director.run/design/components/ui/empty-state";
+import { toast } from "@director.run/design/components/ui/toast";
+import { useRouter } from "next/navigation";
 import { trpc } from "../../../state/client";
 
 export default function RegistryPage() {

@@ -1,31 +1,31 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import {
   LayoutView,
   LayoutViewContent,
   LayoutViewHeader,
-} from "../../../components/layout/layout";
+} from "@director.run/design/components/layout/layout";
 import {
   ProxyForm,
   ProxyFormButton,
-} from "../../../components/proxies/proxy-form";
-import type { ProxyFormData } from "../../../components/proxies/proxy-form";
+} from "@director.run/design/components/proxies/proxy-form";
+import type { ProxyFormData } from "@director.run/design/components/proxies/proxy-form";
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbPage,
-} from "../../../components/ui/breadcrumb";
-import { Container } from "../../../components/ui/container";
+} from "@director.run/design/components/ui/breadcrumb";
+import { Container } from "@director.run/design/components/ui/container";
 import {
   Section,
   SectionDescription,
   SectionHeader,
   SectionSeparator,
   SectionTitle,
-} from "../../../components/ui/section";
-import { toast } from "../../../components/ui/toast";
+} from "@director.run/design/components/ui/section";
+import { toast } from "@director.run/design/components/ui/toast";
+import { useRouter } from "next/navigation";
 import { trpc } from "../../../state/client";
 
 export default function NewProxyPage() {

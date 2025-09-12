@@ -1,27 +1,27 @@
 "use client";
 
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
-import { useEffect, useState } from "react";
-import type { SubmitHandler } from "react-hook-form";
-import { GetStartedCompleteDialog } from "../../components/get-started/get-started-complete-dialog";
-import { GetStartedHeader } from "../../components/get-started/get-started-header";
-import { GetStartedInstallServerDialog } from "../../components/get-started/get-started-install-server-dialog";
-import { GetStartedInstallers } from "../../components/get-started/get-started-installers";
+import { GetStartedCompleteDialog } from "@director.run/design/components/get-started/get-started-complete-dialog";
+import { GetStartedHeader } from "@director.run/design/components/get-started/get-started-header";
+import { GetStartedInstallServerDialog } from "@director.run/design/components/get-started/get-started-install-server-dialog";
+import { GetStartedInstallers } from "@director.run/design/components/get-started/get-started-installers";
 import {
   GetStartedList,
   GetStartedListItem,
-} from "../../components/get-started/get-started-list";
-import { GetStartedMcpServerList } from "../../components/get-started/get-started-mcp-server-list";
+} from "@director.run/design/components/get-started/get-started-list";
+import { GetStartedMcpServerList } from "@director.run/design/components/get-started/get-started-mcp-server-list";
 import {
   GetStartedProxyForm,
   proxySchema,
-} from "../../components/get-started/get-started-proxy-form";
-import type { FormValues as ProxyFormValues } from "../../components/get-started/get-started-proxy-form";
-import { FullScreenLoader } from "../../components/pages/global/loader";
-import type { RegistryGetEntriesEntry } from "../../components/types";
-import { Container } from "../../components/ui/container";
-import { Section } from "../../components/ui/section";
-import { toast } from "../../components/ui/toast";
+} from "@director.run/design/components/get-started/get-started-proxy-form";
+import type { FormValues as ProxyFormValues } from "@director.run/design/components/get-started/get-started-proxy-form";
+import { FullScreenLoader } from "@director.run/design/components/pages/global/loader";
+import type { RegistryGetEntriesEntry } from "@director.run/design/components/types";
+import { Container } from "@director.run/design/components/ui/container";
+import { Section } from "@director.run/design/components/ui/section";
+import { toast } from "@director.run/design/components/ui/toast";
+import { useEffect, useState } from "react";
+import type { SubmitHandler } from "react-hook-form";
 import { DIRECTOR_URL } from "../../config";
 import { useZodForm } from "../../hooks/use-zod-form";
 import { trpc } from "../../state/client";

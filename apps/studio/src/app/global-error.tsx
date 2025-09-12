@@ -1,6 +1,6 @@
 "use client"; // Error boundaries must be Client Components
+import { FullScreenError } from "@director.run/design/components/pages/global/error";
 import { TRPCClientError } from "@trpc/client";
-import { FullScreenError } from "../components/pages/global/error";
 
 export default function GlobalError({
   error,

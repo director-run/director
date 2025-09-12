@@ -125,7 +125,7 @@ const mockTools = [
     name: "search_repositories",
     description: "Search for repositories on GitHub",
     inputSchema: {
-      type: "object",
+      type: "object" as const,
       properties: {
         query: {
           type: "string",
@@ -139,7 +139,7 @@ const mockTools = [
     name: "get_repository",
     description: "Get details about a specific repository",
     inputSchema: {
-      type: "object",
+      type: "object" as const,
       properties: {
         owner: {
           type: "string",
@@ -157,7 +157,7 @@ const mockTools = [
     name: "create_issue",
     description: "Create a new issue in a repository",
     inputSchema: {
-      type: "object",
+      type: "object" as const,
       properties: {
         owner: {
           type: "string",

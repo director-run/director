@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
 import { useIsClient } from "@/hooks/use-is-client";
-import { createCtx } from "@/lib/create-ctx";
 import { trpc } from "@/trpc/client";
+import cliPackage from "@director.run/cli/package.json";
+import { useEffect, useState } from "react";
+import { createContext, useContext } from "react";
 import { ConnectionEmptyState } from "../components/connect/connection-empty-state";
 import { ConnectionLostDialog } from "../components/connect/connection-lost-dialog";
-
-import cliPackage from "@director.run/cli/package.json";
 import { ConnectionUpdateState } from "../components/connect/connection-update-state";
 
 const [useCtx, CtxProvider] = createCtx<{
@@ -108,3 +106,30 @@ export function ConnectionStatusProvider({
 }
 
 export const useConnectionStatus = useCtx;
+
+/**
+ * A helper to create a Context and Provider with no upfront default value, and
+ * without having to check for undefined all the time.
+ * @link https://react-typescript-cheatsheet.netlify.app/docs/basic/getting-started/context/
+ */
+function createCtx<T extends object>(name: string) {
+  const ctx = createContext<T | undefined>(undefined);
+
+  function useCtx() {
+    const c = useContext(ctx);
+    if (c === undefined) {
+      throw new Error(
+        `use${name} must be inside a ${name}Provider with a value`,
+      );
+    }
+    return c;
+  }
+  function Provider(props: {
+    children: React.ReactNode;
+    value: T;
+  }) {
+    return <ctx.Provider value={props.value}>{props.children}</ctx.Provider>;
+  }
+
+  return [useCtx, Provider] as const; // 'as const' makes TypeScript infer a tuple
+}

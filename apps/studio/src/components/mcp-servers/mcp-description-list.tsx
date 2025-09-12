@@ -14,7 +14,6 @@ import {
   ListItemDetails,
   ListItemTitle,
 } from "@/components/ui/list";
-import { assertUnreachable } from "@/lib/assert-unreachable";
 import { GlobeIcon, TerminalIcon } from "@phosphor-icons/react";
 
 interface McpDescriptionListProps extends ComponentProps<typeof List> {
@@ -142,4 +141,11 @@ function McpSseDescriptionList({
       </ListItem>
     </List>
   );
+}
+
+/**
+ * @link https://stackoverflow.com/a/39419171
+ */
+function assertUnreachable(_x: never): never {
+  throw new Error("Didn't expect to get here");
 }

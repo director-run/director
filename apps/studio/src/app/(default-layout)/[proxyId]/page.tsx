@@ -15,8 +15,8 @@ import {
 } from "@/components/ui/breadcrumb";
 import { toast } from "@/components/ui/toast";
 import { DIRECTOR_URL } from "@/config";
-import { useInspectMcp } from "@/hooks/use-inspect-mcp";
 import { trpc } from "@/trpc/client";
+import { useInspectMcp } from "@/trpc/use-inspect-mcp";
 import { useProxy } from "@/trpc/use-proxy";
 import { useProxyQuery } from "@/trpc/use-proxy-query";
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";

@@ -1,6 +1,6 @@
 "use client";
 import { Badge, BadgeLabel } from "@/components/ui/badge";
-import { useInspectMcp } from "@/hooks/use-inspect-mcp";
+import { useInspectMcp } from "@/trpc/use-inspect-mcp";
 import { proxyQuerySerializer } from "@/trpc/use-proxy-query";
 import { ListOfLinks } from "../list-of-links";
 

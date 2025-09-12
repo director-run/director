@@ -4,7 +4,7 @@ import { RegistryGetEntryTools } from "@/components/types";
 import {
   registryQuerySerializer,
   useRegistryQuery,
-} from "@/hooks/use-registry-query";
+} from "@/trpc/use-registry-query";
 import { ListOfLinks } from "../list-of-links";
 
 interface RegistryToolsProps {

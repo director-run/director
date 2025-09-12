@@ -21,8 +21,8 @@ import {
 } from "@/components/ui/popover";
 import { toast } from "@/components/ui/toast";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
-import { useRegistryQuery } from "@/hooks/use-registry-query";
 import { trpc } from "@/trpc/client";
+import { useRegistryQuery } from "@/trpc/use-registry-query";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

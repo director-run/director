@@ -30,7 +30,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { useRegistryQuery } from "@/hooks/use-registry-query";
+import { useRegistryQuery } from "@/trpc/use-registry-query";
 
 import Link from "next/link";
 

@@ -16,8 +16,8 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Container } from "@/components/ui/container";
 import { toast } from "@/components/ui/toast";
-import { useInspectMcp } from "@/hooks/use-inspect-mcp";
 import { trpc } from "@/trpc/client";
+import { useInspectMcp } from "@/trpc/use-inspect-mcp";
 import { useProxy } from "@/trpc/use-proxy";
 import { useProxyQuery } from "@/trpc/use-proxy-query";
 import Link from "next/link";

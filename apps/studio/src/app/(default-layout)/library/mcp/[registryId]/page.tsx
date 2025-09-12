@@ -23,9 +23,9 @@ import {
   PopoverTrigger,
 } from "@director.run/design/components/ui/popover.tsx";
 import { toast } from "@director.run/design/components/ui/toast.tsx";
+import { useCopyToClipboard } from "@director.run/design/hooks/use-copy-to-clipboard.ts";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useCopyToClipboard } from "../../../../../hooks/use-copy-to-clipboard";
 import { trpc } from "../../../../../state/client";
 import { useRegistryQuery } from "../../../../../state/use-registry-query";
 import { registryQuerySerializer } from "../../../../../state/use-registry-query";

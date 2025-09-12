@@ -33,8 +33,8 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useInspectMcp } from "@/hooks/use-inspect-mcp";
-import { useProxy } from "@/hooks/use-proxy";
 import { proxyQuerySerializer, useProxyQuery } from "@/hooks/use-proxy-query";
+import { useProxy } from "@/trpc/use-proxy";
 import Link from "next/link";
 
 function SheetInner({

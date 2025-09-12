@@ -16,8 +16,8 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Container } from "@/components/ui/container";
 import { toast } from "@/components/ui/toast";
-import { useProxy } from "@/hooks/use-proxy";
 import { trpc } from "@/trpc/client";
+import { useProxy } from "@/trpc/use-proxy";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

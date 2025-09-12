@@ -15,8 +15,8 @@ import {
 } from "@/components/ui/breadcrumb";
 import { toast } from "@/components/ui/toast";
 import { DIRECTOR_URL } from "@/config";
-import { useProxy } from "@/hooks/use-proxy";
 import { trpc } from "@/trpc/client";
+import { useProxy } from "@/trpc/use-proxy";
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

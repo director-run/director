@@ -1,12 +1,37 @@
 "use client";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Logo } from "@/components/ui/logo";
 import { trpc } from "@/trpc/client";
 import cliPackage from "@director.run/cli/package.json";
 import { useEffect, useState } from "react";
 import { createContext, useContext } from "react";
 import { ConnectionEmptyState } from "../components/connect/connection-empty-state";
-import { ConnectionLostDialog } from "../components/connect/connection-lost-dialog";
 import { ConnectionUpdateState } from "../components/connect/connection-update-state";
+
+function ConnectionLostDialog() {
+  const { lostConnection } = useConnectionStatus();
+
+  return (
+    <Dialog open={lostConnection}>
+      <DialogContent dismissable={false}>
+        <DialogHeader>
+          <Logo className="mb-3" />
+          <DialogTitle>Director has lost connection</DialogTitle>
+          <DialogDescription>
+            Please check that the service is running.
+          </DialogDescription>
+        </DialogHeader>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 const [useCtx, CtxProvider] = createCtx<{
   connected: boolean;

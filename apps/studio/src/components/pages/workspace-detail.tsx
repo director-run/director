@@ -9,6 +9,7 @@ import {
   ProxyInstallers,
 } from "@/components/proxies/proxy-installers";
 import { ProxyManualDialog } from "@/components/proxies/proxy-manual-dialog";
+import { Badge, BadgeLabel } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import {
@@ -20,6 +21,7 @@ import {
 } from "@/components/ui/section";
 import { toast } from "@/components/ui/toast";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
+import { proxyQuerySerializer } from "@/state/use-proxy-query";
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import Link from "next/link";
@@ -67,6 +69,27 @@ export function ProxyDetail({
       description: "The endpoint has been copied to your clipboard.",
     });
   };
+
+  const toolLinks = tools
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((it) => {
+      const server = it.description?.match(/\[([^\]]+)\]/)?.[1];
+
+      return {
+        title: it.name,
+        subtitle: it.description?.replace(/\[([^\]]+)\]/g, "") || "",
+        scroll: false,
+        href: `${proxyQuerySerializer({
+          toolId: it.name,
+          serverId: server,
+        })}`,
+        badges: server && (
+          <Badge>
+            <BadgeLabel uppercase>{server}</BadgeLabel>
+          </Badge>
+        ),
+      };
+    });
   return (
     <Container size="lg">
       <Section>
@@ -137,7 +160,7 @@ export function ProxyDetail({
             <h2>Tools</h2>
           </SectionTitle>
         </SectionHeader>
-        <McpToolsTable tools={tools} isLoading={toolsLoading} />
+        <McpToolsTable links={toolLinks} isLoading={toolsLoading} />
       </Section>
     </Container>
   );

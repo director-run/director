@@ -1,6 +1,6 @@
 "use client";
 
-import { DIRECTOR_URL } from "@/urls";
+import { DIRECTOR_URL } from "@/config";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";

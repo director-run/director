@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { SelectNative } from "@/components/ui/select-native";
-import { DIRECTOR_URL } from "@/urls";
+import { DIRECTOR_URL } from "@/config";
 
 type TransportType = "http" | "sse" | "stdio";
 

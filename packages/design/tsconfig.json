@@ -1,16 +1,4 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src/**/*.ts", ".next/types/**/*.ts"],
-  "compilerOptions": {
-    "incremental": true,
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "jsx": "preserve",
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
-  },
-  "exclude": ["node_modules"]
+  "include": ["src/**/*.ts"]
 }

@@ -169,6 +169,7 @@ export default function RegistryEntryPage() {
           proxiesWithoutMcp={proxiesWithoutMcp}
           selectedTool={selectedTool}
           defaultProxyId={serverId ?? undefined}
+          serverId={serverId}
           onInstall={handleInstall}
           isInstalling={installMutation.isPending}
           onCloseTool={handleCloseTool}

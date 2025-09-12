@@ -1,3 +1,4 @@
+import { registryQuerySerializer } from "@/state/use-registry-query";
 import {
   ArrowSquareOutIcon,
   BookOpenTextIcon,
@@ -169,6 +170,18 @@ function GetStartedInstallServerDialogPresentation({
   isFormSubmitting: boolean;
   isFormInstalling: boolean;
 }) {
+  const toolLinks = (mcp.tools ?? [])
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((tool) => ({
+      title: tool.name,
+      subtitle: tool.description?.replace(/\[([^\]]+)\]/g, ""),
+      scroll: false,
+      href: registryQuerySerializer({
+        toolId: tool.name,
+        serverId: null,
+      }),
+    }));
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       {children && <DialogTrigger asChild>{children}</DialogTrigger>}
@@ -252,7 +265,7 @@ function GetStartedInstallServerDialogPresentation({
                         <h3>Tools</h3>
                       </SectionTitle>
                     </SectionHeader>
-                    <RegistryTools tools={mcp.tools ?? []} />
+                    <RegistryTools links={toolLinks} />
                   </Section>
                 </TabsContent>
 

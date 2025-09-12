@@ -25,6 +25,7 @@ import {
   SectionTitle,
 } from "@/components/ui/section";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { registryQuerySerializer } from "@/state/use-registry-query";
 import {
   ArrowSquareOutIcon,
   BookOpenTextIcon,
@@ -40,6 +41,7 @@ interface RegistryItemDetailProps {
   proxiesWithoutMcp: StoreGetAll;
   selectedTool?: NonNullable<RegistryGetEntryByName["tools"]>[number];
   defaultProxyId?: string;
+  serverId: string | null;
   onInstall: (values: {
     proxyId: string;
     parameters: Record<string, string>;
@@ -54,10 +56,23 @@ export function RegistryItemDetail({
   proxiesWithoutMcp,
   selectedTool,
   defaultProxyId,
+  serverId,
   onInstall,
   isInstalling = false,
   onCloseTool,
 }: RegistryItemDetailProps) {
+  const toolLinks = (entry.tools ?? [])
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((tool) => ({
+      title: tool.name,
+      subtitle: tool.description?.replace(/\[([^\]]+)\]/g, ""),
+      scroll: false,
+      href: registryQuerySerializer({
+        toolId: tool.name,
+        serverId,
+      }),
+    }));
+
   return (
     <>
       <Container size="xl">
@@ -135,7 +150,7 @@ export function RegistryItemDetail({
                       <h3>Tools</h3>
                     </SectionTitle>
                   </SectionHeader>
-                  <RegistryTools tools={entry.tools ?? []} />
+                  <RegistryTools links={toolLinks} />
                 </Section>
               </TabsContent>
 

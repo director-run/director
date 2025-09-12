@@ -303,6 +303,7 @@ export const Default: Story = {
     proxiesWithMcp: mockProxiesWithMcp,
     proxiesWithoutMcp: mockProxiesWithoutMcp,
     defaultProxyId: "production-proxy",
+    serverId: "production-proxy",
     onInstall: async (values) => {
       console.log("Installing MCP server:", values);
       // Simulate installation delay

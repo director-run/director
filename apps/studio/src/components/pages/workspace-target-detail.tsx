@@ -10,8 +10,6 @@ import {
   SectionHeader,
   SectionTitle,
 } from "@/components/ui/section";
-import { proxyQuerySerializer } from "@/state/use-proxy-query";
-import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import Link from "next/link";
 
 interface McpServerDetailProps {
@@ -28,7 +26,13 @@ interface McpServerDetailProps {
     readme?: string;
   };
   description?: string | null;
-  tools: Tool[];
+  toolLinks: Array<{
+    title: string;
+    subtitle: string;
+    scroll: boolean;
+    href: string;
+    badges?: React.ReactNode;
+  }>;
   toolsLoading: boolean;
 }
 
@@ -37,26 +41,9 @@ export function McpServerDetail({
   proxy,
   entryData,
   description,
-  tools,
+  toolLinks,
   toolsLoading,
 }: McpServerDetailProps) {
-  const toolLinks = tools
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .map((it) => {
-      const server = it.description?.match(/\[([^\]]+)\]/)?.[1];
-
-      return {
-        title: it.name,
-        subtitle: it.description?.replace(/\[([^\]]+)\]/g, "") || "",
-        scroll: false,
-        href: `${proxyQuerySerializer({
-          toolId: it.name,
-          serverId: server,
-        })}`,
-        badges: undefined, // No badges needed since we're in a specific server context
-      };
-    });
-
   return (
     <>
       <Section>

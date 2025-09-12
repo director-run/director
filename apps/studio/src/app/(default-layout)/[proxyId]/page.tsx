@@ -7,6 +7,7 @@ import { ProxyDetail } from "@/components/pages/workspace-detail";
 import { ProxyActionsDropdown } from "@/components/proxies/proxy-actions-dropdown";
 import { Client } from "@/components/proxies/proxy-installers";
 import { ProxySkeleton } from "@/components/proxies/proxy-skeleton";
+import { Badge, BadgeLabel } from "@/components/ui/badge";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -18,7 +19,7 @@ import { DIRECTOR_URL } from "@/config";
 import { trpc } from "@/state/client";
 import { useInspectMcp } from "@/state/use-inspect-mcp";
 import { useProxy } from "@/state/use-proxy";
-import { useProxyQuery } from "@/state/use-proxy-query";
+import { proxyQuerySerializer, useProxyQuery } from "@/state/use-proxy-query";
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -180,6 +181,28 @@ export default function ProxyPage() {
     return <ProxySkeleton />;
   }
 
+  // Generate toolLinks for the ProxyDetail component
+  const toolLinks = tools
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((it) => {
+      const server = it.description?.match(/\[([^\]]+)\]/)?.[1];
+
+      return {
+        title: it.name,
+        subtitle: it.description?.replace(/\[([^\]]+)\]/g, "") || "",
+        scroll: false,
+        href: `${proxyQuerySerializer({
+          toolId: it.name,
+          serverId: server,
+        })}`,
+        badges: server && (
+          <Badge>
+            <BadgeLabel uppercase>{server}</BadgeLabel>
+          </Badge>
+        ),
+      };
+    });
+
   return (
     <LayoutView>
       <LayoutNavigation
@@ -217,7 +240,7 @@ export default function ProxyPage() {
           onUninstall={handleUninstall}
           isInstalling={installationMutation.isPending}
           isUninstalling={uninstallationMutation.isPending}
-          tools={tools}
+          toolLinks={toolLinks}
           toolsLoading={toolsLoading}
         />
       </LayoutViewContent>

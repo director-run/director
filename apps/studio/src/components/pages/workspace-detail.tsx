@@ -9,7 +9,6 @@ import {
   ProxyInstallers,
 } from "@/components/proxies/proxy-installers";
 import { ProxyManualDialog } from "@/components/proxies/proxy-manual-dialog";
-import { Badge, BadgeLabel } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import {
@@ -21,9 +20,7 @@ import {
 } from "@/components/ui/section";
 import { toast } from "@/components/ui/toast";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
-import { proxyQuerySerializer } from "@/state/use-proxy-query";
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
-import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import Link from "next/link";
 
 interface ProxyDetailProps {
@@ -43,7 +40,13 @@ interface ProxyDetailProps {
   onUninstall: (proxyId: string, client: ConfiguratorTarget) => void;
   isInstalling: boolean;
   isUninstalling: boolean;
-  tools: Tool[];
+  toolLinks: Array<{
+    title: string;
+    subtitle: string;
+    scroll: boolean;
+    href: string;
+    badges?: React.ReactNode;
+  }>;
   toolsLoading: boolean;
 }
 
@@ -57,7 +60,7 @@ export function ProxyDetail({
   onUninstall,
   isInstalling,
   isUninstalling,
-  tools,
+  toolLinks,
   toolsLoading,
 }: ProxyDetailProps) {
   const [_, copy] = useCopyToClipboard();
@@ -69,27 +72,6 @@ export function ProxyDetail({
       description: "The endpoint has been copied to your clipboard.",
     });
   };
-
-  const toolLinks = tools
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .map((it) => {
-      const server = it.description?.match(/\[([^\]]+)\]/)?.[1];
-
-      return {
-        title: it.name,
-        subtitle: it.description?.replace(/\[([^\]]+)\]/g, "") || "",
-        scroll: false,
-        href: `${proxyQuerySerializer({
-          toolId: it.name,
-          serverId: server,
-        })}`,
-        badges: server && (
-          <Badge>
-            <BadgeLabel uppercase>{server}</BadgeLabel>
-          </Badge>
-        ),
-      };
-    });
   return (
     <Container size="lg">
       <Section>

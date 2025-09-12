@@ -19,7 +19,7 @@ import { toast } from "@/components/ui/toast";
 import { trpc } from "@/state/client";
 import { useInspectMcp } from "@/state/use-inspect-mcp";
 import { useProxy } from "@/state/use-proxy";
-import { useProxyQuery } from "@/state/use-proxy-query";
+import { proxyQuerySerializer, useProxyQuery } from "@/state/use-proxy-query";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -113,6 +113,24 @@ export default function McpServerPage() {
       ? (entryData as { description: string }).description
       : null;
 
+  // Generate toolLinks for the McpServerDetail component
+  const toolLinks = tools
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((it) => {
+      const server = it.description?.match(/\[([^\]]+)\]/)?.[1];
+
+      return {
+        title: it.name,
+        subtitle: it.description?.replace(/\[([^\]]+)\]/g, "") || "",
+        scroll: false,
+        href: `${proxyQuerySerializer({
+          toolId: it.name,
+          serverId: server,
+        })}`,
+        badges: undefined, // No badges needed since we're in a specific server context
+      };
+    });
+
   return (
     <LayoutView>
       <LayoutNavigation
@@ -147,7 +165,7 @@ export default function McpServerPage() {
             proxy={proxy}
             entryData={entryData}
             description={description}
-            tools={tools}
+            toolLinks={toolLinks}
             toolsLoading={toolsLoading}
           />
         </Container>

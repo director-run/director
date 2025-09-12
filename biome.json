@@ -93,7 +93,8 @@
         "app/**/not-found.tsx",
         "*.config.*",
         "**/*.stories.ts",
-        "**/*.stories.tsx"
+        "**/*.stories.tsx",
+        ".storybook/**/*"
       ],
       "linter": {
         "rules": {

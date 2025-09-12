@@ -32,7 +32,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { proxyQuerySerializer } from "@/state/use-proxy-query";
 import { Tool } from "@modelcontextprotocol/sdk/types.js";
 import Link from "next/link";
 
@@ -45,6 +44,7 @@ export function McpToolSheet({
   proxy,
   tool,
   isLoading,
+  onServerClick,
 }: McpToolSheetProps) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -56,6 +56,7 @@ export function McpToolSheet({
             proxy={proxy}
             tool={tool}
             isLoading={isLoading}
+            onServerClick={onServerClick}
           />
         )}
       </SheetContent>
@@ -69,12 +70,14 @@ function SheetInner({
   proxy,
   tool,
   isLoading,
+  onServerClick,
 }: {
   toolId: string;
   server: StoreServer;
   proxy: StoreGet;
   tool: Tool | undefined;
   isLoading: boolean;
+  onServerClick?: (serverId: string) => void;
 }) {
   if (isLoading) {
     return (
@@ -124,10 +127,21 @@ function SheetInner({
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href={`/${proxy.id}/mcp/${server.name}`}>
-                  {server?.name}
-                </Link>
+              <BreadcrumbLink
+                asChild={!onServerClick}
+                onClick={
+                  onServerClick ? () => onServerClick(server.name) : undefined
+                }
+              >
+                {onServerClick ? (
+                  <button type="button" className="text-left">
+                    {server?.name}
+                  </button>
+                ) : (
+                  <Link href={`/${proxy.id}/mcp/${server.name}`}>
+                    {server?.name}
+                  </Link>
+                )}
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -143,12 +157,22 @@ function SheetInner({
           <SheetTitle>{tool.name}</SheetTitle>
           <SheetDescription className="text-sm">
             Installed from{" "}
-            <Link
-              href={`/${proxy.id}${proxyQuerySerializer({ serverId: server.name })}`}
-              className="text-fg"
-            >
-              {server?.name}
-            </Link>{" "}
+            {onServerClick ? (
+              <button
+                type="button"
+                onClick={() => onServerClick(server.name)}
+                className="text-fg hover:underline"
+              >
+                {server?.name}
+              </button>
+            ) : (
+              <Link
+                href={`/${proxy.id}?serverId=${server.name}`}
+                className="text-fg"
+              >
+                {server?.name}
+              </Link>
+            )}{" "}
             on{" "}
             <Link href={`/${proxy.id}`} className="text-fg">
               {proxy?.name}
@@ -193,4 +217,5 @@ interface McpToolSheetProps {
   proxy: StoreGet | undefined;
   tool: Tool | undefined;
   isLoading: boolean;
+  onServerClick?: (serverId: string) => void;
 }

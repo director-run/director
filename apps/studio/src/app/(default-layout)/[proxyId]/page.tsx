@@ -162,6 +162,10 @@ export default function ProxyPage() {
     });
   };
 
+  const handleServerClick = (serverId: string) => {
+    router.push(`/${params.proxyId}/mcp/${serverId}`);
+  };
+
   useEffect(() => {
     if (!isLoading && !proxy) {
       toast({
@@ -225,6 +229,7 @@ export default function ProxyPage() {
         proxy={proxy}
         tool={tool}
         isLoading={toolsLoading}
+        onServerClick={handleServerClick}
       />
     </LayoutView>
   );

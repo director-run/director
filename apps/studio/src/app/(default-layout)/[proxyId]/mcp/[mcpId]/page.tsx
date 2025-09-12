@@ -79,6 +79,10 @@ export default function McpServerPage() {
     });
   };
 
+  const handleServerClick = (serverId: string) => {
+    router.push(`/${params.proxyId}/mcp/${serverId}`);
+  };
+
   useEffect(() => {
     if (!isLoading && (!proxy || !mcp)) {
       toast({
@@ -156,6 +160,7 @@ export default function McpServerPage() {
         proxy={proxy}
         tool={tool}
         isLoading={toolsLoading}
+        onServerClick={handleServerClick}
       />
     </LayoutView>
   );

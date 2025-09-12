@@ -120,60 +120,24 @@ const mockAvailableClients = [
   },
 ];
 
-const mockTools = [
+const mockToolLinks = [
   {
-    name: "search_repositories",
-    description: "Search for repositories on GitHub",
-    inputSchema: {
-      type: "object" as const,
-      properties: {
-        query: {
-          type: "string",
-          description: "The search query",
-        },
-      },
-      required: ["query"],
-    },
+    title: "search_repositories",
+    subtitle: "Search for repositories on GitHub",
+    scroll: false,
+    href: "/dev-proxy/mcp/github-mcp#search_repositories",
   },
   {
-    name: "get_repository",
-    description: "Get details about a specific repository",
-    inputSchema: {
-      type: "object" as const,
-      properties: {
-        owner: {
-          type: "string",
-          description: "Repository owner",
-        },
-        repo: {
-          type: "string",
-          description: "Repository name",
-        },
-      },
-      required: ["owner", "repo"],
-    },
+    title: "get_repository",
+    subtitle: "Get details about a specific repository",
+    scroll: false,
+    href: "/dev-proxy/mcp/github-mcp#get_repository",
   },
   {
-    name: "create_issue",
-    description: "Create a new issue in a repository",
-    inputSchema: {
-      type: "object" as const,
-      properties: {
-        owner: {
-          type: "string",
-          description: "Repository owner",
-        },
-        repo: {
-          type: "string",
-          description: "Repository name",
-        },
-        title: {
-          type: "string",
-          description: "Issue title",
-        },
-      },
-      required: ["owner", "repo", "title"],
-    },
+    title: "create_issue",
+    subtitle: "Create a new issue in a repository",
+    scroll: false,
+    href: "/dev-proxy/mcp/github-mcp#create_issue",
   },
 ];
 
@@ -196,7 +160,7 @@ export const Default: Story = {
     },
     isInstalling: false,
     isUninstalling: false,
-    tools: mockTools,
+    toolLinks: mockToolLinks,
     toolsLoading: false,
   },
 };

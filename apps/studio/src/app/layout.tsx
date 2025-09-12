@@ -1,3 +1,4 @@
+import { ChatToUs } from "@director.run/design/components/chat-to-us.tsx";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
@@ -7,7 +8,6 @@ import { TRPCProvider } from "../state/client";
 import { ConnectionStatusProvider } from "../state/connection-status-provider";
 
 import "./globals.css";
-import { ChatToUs } from "../components/chat-to-us";
 
 const sans = Inter({
   variable: "--font-sans",

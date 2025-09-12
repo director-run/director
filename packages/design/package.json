@@ -54,12 +54,7 @@
     "zod": "^3.25.76"
   },
   "exports": {
-    "./components/*": "./src/components/*.tsx",
-    "./components/types": "./src/components/types.ts",
-    "./hooks/use-copy-to-clipboard": "./src/hooks/use-copy-to-clipboard.ts",
-    "./hooks/use-zod-form": "./src/hooks/use-zod-form.tsx",
-    "./helpers/*": "./src/helpers/*.ts",
-    "./config": "./src/config.ts"
+    "./*": "./src/*"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^4.1.1",

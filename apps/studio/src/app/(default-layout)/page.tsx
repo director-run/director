@@ -1,8 +1,8 @@
 "use client";
 
+import { ProxySkeleton } from "@director.run/design/components/proxies/proxy-skeleton.tsx";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { ProxySkeleton } from "../../components/proxies/proxy-skeleton";
 import { trpc } from "../../state/client";
 
 export default function ProxiesPage() {

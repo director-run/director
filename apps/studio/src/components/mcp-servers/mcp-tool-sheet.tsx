@@ -1,7 +1,7 @@
 "use client";
 
-import { Tool } from "@modelcontextprotocol/sdk/types.js";
-import { StoreGet, StoreServer } from "../types";
+import type { Tool } from "@modelcontextprotocol/sdk/types.js";
+import type { StoreGet, StoreServer } from "../types";
 import { Badge } from "../ui/badge";
 import {
   Breadcrumb,

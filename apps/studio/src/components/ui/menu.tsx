@@ -1,6 +1,6 @@
 "use client";
 
-import { IconWeight } from "@phosphor-icons/react";
+import type { IconWeight } from "@phosphor-icons/react";
 import { Slot } from "@radix-ui/react-slot";
 import { cn } from "../../helpers/cn";
 

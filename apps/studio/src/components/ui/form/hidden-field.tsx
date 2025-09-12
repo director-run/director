@@ -2,7 +2,7 @@ import type { ComponentPropsWithoutRef } from "react";
 import { useFormContext } from "react-hook-form";
 import { FormField } from "../form";
 import { Input } from "../input";
-import { CommonFieldProps } from "./types";
+import type { CommonFieldProps } from "./types";
 
 type InputFieldProps = CommonFieldProps &
   ComponentPropsWithoutRef<typeof Input>;

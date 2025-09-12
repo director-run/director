@@ -10,7 +10,7 @@ import {
 } from "../form";
 import { Label } from "../label";
 import { Textarea } from "../textarea";
-import { CommonFieldProps } from "./types";
+import type { CommonFieldProps } from "./types";
 
 type TextareaFieldProps = CommonFieldProps &
   ComponentPropsWithoutRef<typeof Textarea>;

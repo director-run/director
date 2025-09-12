@@ -3,7 +3,7 @@ import {
   GearIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
-import { StoreGet } from "../types";
+import type { StoreGet } from "../types";
 import { Button } from "../ui/button";
 import {
   DropdownMenu,

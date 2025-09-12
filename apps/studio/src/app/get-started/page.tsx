@@ -2,7 +2,7 @@
 
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import { useEffect, useState } from "react";
-import { SubmitHandler } from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
 import { GetStartedCompleteDialog } from "../../components/get-started/get-started-complete-dialog";
 import { GetStartedHeader } from "../../components/get-started/get-started-header";
 import { GetStartedInstallServerDialog } from "../../components/get-started/get-started-install-server-dialog";
@@ -14,11 +14,11 @@ import {
 import { GetStartedMcpServerList } from "../../components/get-started/get-started-mcp-server-list";
 import {
   GetStartedProxyForm,
-  FormValues as ProxyFormValues,
   proxySchema,
 } from "../../components/get-started/get-started-proxy-form";
+import type { FormValues as ProxyFormValues } from "../../components/get-started/get-started-proxy-form";
 import { FullScreenLoader } from "../../components/pages/global/loader";
-import { RegistryGetEntriesEntry } from "../../components/types";
+import type { RegistryGetEntriesEntry } from "../../components/types";
 import { Container } from "../../components/ui/container";
 import { Section } from "../../components/ui/section";
 import { toast } from "../../components/ui/toast";
@@ -26,10 +26,6 @@ import { DIRECTOR_URL } from "../../config";
 import { useZodForm } from "../../hooks/use-zod-form";
 import { trpc } from "../../state/client";
 import { registryQuerySerializer } from "../../state/use-registry-query";
-
-import claudeIconImage from "../../../public/icons/claude-icon.png";
-import vscodeIconImage from "../../../public/icons/code-icon.png";
-import cursorIconImage from "../../../public/icons/cursor-icon.png";
 
 type StepStatus = "not-started" | "in-progress" | "completed";
 
@@ -43,17 +39,17 @@ const clients = [
   {
     id: "claude",
     label: "Claude",
-    image: claudeIconImage.src,
+    image: "/icons/claude-icon.png",
   },
   {
     id: "cursor",
     label: "Cursor",
-    image: cursorIconImage.src,
+    image: "/icons/cursor-icon.png",
   },
   {
     id: "vscode",
     label: "VSCode",
-    image: vscodeIconImage.src,
+    image: "/icons/code-icon.png",
   },
 ];
 

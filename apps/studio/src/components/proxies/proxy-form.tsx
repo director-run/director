@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { z } from "zod";
 import { Button } from "../ui/button";
 import { FormWithSchema } from "../ui/form";

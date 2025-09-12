@@ -7,10 +7,8 @@ import {
   LayoutViewContent,
   LayoutViewHeader,
 } from "../../../components/layout/layout";
-import {
-  McpAddFormData,
-  McpAddSheet,
-} from "../../../components/mcp-servers/mcp-add-sheet";
+import { McpAddSheet } from "../../../components/mcp-servers/mcp-add-sheet";
+import type { McpAddFormData } from "../../../components/mcp-servers/mcp-add-sheet";
 import { RegistryItemList } from "../../../components/pages/registry-item-list";
 import { RegistryLibrarySkeleton } from "../../../components/registry/registry-library-skeleton";
 import {

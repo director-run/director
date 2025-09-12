@@ -7,7 +7,8 @@ import { createContext, useContext } from "react";
 import { cn } from "../../helpers/cn";
 import { Button } from "../ui/button";
 import { Sheet, SheetPortal, SheetTrigger } from "../ui/sheet";
-import { NavigationSection, SidebarContent } from "./navigation";
+import { SidebarContent } from "./navigation";
+import type { NavigationSection } from "./navigation";
 
 const NavigationContext = createContext<NavigationSection[]>([]);
 

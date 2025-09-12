@@ -1,7 +1,7 @@
 "use client";
 
 import { DotsThreeOutlineVerticalIcon } from "@phosphor-icons/react";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { LayoutView, LayoutViewContent } from "../layout/layout";
 import { LayoutNavigation } from "../layout/navigation";
 import { ListOfLinks } from "../list-of-links";

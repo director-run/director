@@ -1,5 +1,5 @@
 import { MinusIcon, PlusIcon } from "@phosphor-icons/react";
-import { ComponentProps, ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { z } from "zod";
 import {

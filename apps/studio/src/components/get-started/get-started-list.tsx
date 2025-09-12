@@ -6,7 +6,7 @@ import {
   CircleNotchIcon,
 } from "@phosphor-icons/react";
 import * as CollapsiblePrimitive from "@radix-ui/react-collapsible";
-import { ComponentProps } from "react";
+import type { ComponentProps } from "react";
 import { cn } from "../../helpers/cn";
 
 export function GetStartedList({

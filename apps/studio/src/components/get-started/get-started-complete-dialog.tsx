@@ -4,7 +4,7 @@ import {
   HardDriveIcon,
   ListMagnifyingGlassIcon,
 } from "@phosphor-icons/react";
-import { ComponentProps } from "react";
+import type { ComponentProps } from "react";
 import { cn } from "../../helpers/cn";
 import {
   AlertDialog,

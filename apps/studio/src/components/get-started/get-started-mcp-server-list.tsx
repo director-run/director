@@ -1,7 +1,7 @@
 "use client";
 
 import { McpLogo } from "../mcp-logo";
-import { RegistryGetEntriesEntry } from "../types";
+import type { RegistryGetEntriesEntry } from "../types";
 import { EmptyState, EmptyStateTitle } from "../ui/empty-state";
 import { Input } from "../ui/input";
 import {

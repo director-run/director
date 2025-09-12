@@ -1,5 +1,5 @@
 import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
-import { ClientId } from "../../app/get-started/page";
+import type { ClientId } from "../../app/get-started/page";
 import { cn } from "../../helpers/cn";
 import { Button } from "../ui/button";
 import { ListItemTitle } from "../ui/list";

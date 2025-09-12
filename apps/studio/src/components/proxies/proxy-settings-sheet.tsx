@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
-import { StoreGet } from "../types";
+import type { StoreGet } from "../types";
 import { Separator } from "../ui/separator";
 import {
   Sheet,
@@ -12,7 +12,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
-import { ProxyForm, ProxyFormData } from "./proxy-form";
+import { ProxyForm } from "./proxy-form";
+import type { ProxyFormData } from "./proxy-form";
 
 interface ProxySettingsSheetProps {
   children: ReactNode;

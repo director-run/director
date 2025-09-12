@@ -9,8 +9,8 @@ import {
 import {
   ProxyForm,
   ProxyFormButton,
-  ProxyFormData,
 } from "../../../components/proxies/proxy-form";
+import type { ProxyFormData } from "../../../components/proxies/proxy-form";
 import {
   Breadcrumb,
   BreadcrumbItem,

@@ -11,7 +11,7 @@ import {
 import { McpToolSheet } from "../../../components/mcp-servers/mcp-tool-sheet";
 import { ProxyDetail } from "../../../components/pages/workspace-detail";
 import { ProxyActionsDropdown } from "../../../components/proxies/proxy-actions-dropdown";
-import { Client } from "../../../components/proxies/proxy-installers";
+import type { Client } from "../../../components/proxies/proxy-installers";
 import { ProxySkeleton } from "../../../components/proxies/proxy-skeleton";
 import { Badge, BadgeLabel } from "../../../components/ui/badge";
 import {

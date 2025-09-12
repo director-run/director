@@ -20,41 +20,35 @@ import { trpc } from "@/trpc/client";
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import claudeIconImage from "../../../../public/icons/claude-icon.png";
-import vscodeIconImage from "../../../../public/icons/code-icon.png";
-import cursorIconImage from "../../../../public/icons/cursor-icon.png";
-import gooseIconImage from "../../../../public/icons/goose-icon.png";
-import raycastIconImage from "../../../../public/icons/raycast-icon.png";
-
 const clients: Client[] = [
   {
     id: "claude",
     label: "Claude",
-    image: claudeIconImage,
+    image: "/icons/claude-icon.png",
     type: "installer",
   },
   {
     id: "cursor",
     label: "Cursor",
-    image: cursorIconImage,
+    image: "/icons/cursor-icon.png",
     type: "installer",
   },
   {
     id: "vscode",
     label: "VSCode",
-    image: vscodeIconImage,
+    image: "/icons/code-icon.png",
     type: "installer",
   },
   {
     id: "goose",
     label: "Goose",
-    image: gooseIconImage,
+    image: "/icons/goose-icon.png",
     type: "deep-link",
   },
   {
     id: "raycast",
     label: "Raycast",
-    image: raycastIconImage,
+    image: "/icons/raycast-icon.png",
     type: "deep-link",
   },
 ];

@@ -118,18 +118,10 @@ const mockDescription =
 const mockHttpTransport: StoreServerTransport = {
   type: "http",
   url: "https://api.github.com/mcp",
-  headers: {
-    Authorization: "Bearer ghp_xxxxxxxxxxxxxxxxxxxx",
-    "User-Agent": "github-mcp-server/1.0.0",
-  },
 };
 
-const mockSseTransport: StoreServerTransport = {
-  type: "sse",
-  url: "https://api.example.com/mcp/events",
-  headers: {
-    Authorization: "Bearer token_here",
-  },
+const mockMemTransport: StoreServerTransport = {
+  type: "mem",
 };
 
 export const Default: Story = {
@@ -151,12 +143,12 @@ export const WithHttpTransport: Story = {
   },
 };
 
-export const WithSseTransport: Story = {
+export const WithMemTransport: Story = {
   args: {
     ...Default.args,
     mcp: {
       ...mockMcp,
-      transport: mockSseTransport,
+      transport: mockMemTransport,
     },
   },
 };

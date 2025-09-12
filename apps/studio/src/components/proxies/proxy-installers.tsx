@@ -1,4 +1,4 @@
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 
 import { Switch } from "../ui/switch";
 
@@ -10,7 +10,7 @@ import { ArrowUpRightIcon } from "@phosphor-icons/react";
 export interface Client {
   id: string;
   label: string;
-  image: StaticImageData;
+  image: string;
   type: "installer" | "deep-link";
 }
 

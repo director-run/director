@@ -21,7 +21,19 @@ const mockEntry: RegistryGetEntryByName = {
   description:
     "A Model Context Protocol server for GitHub that provides tools to interact with repositories, issues, pull requests, and more.",
   icon: "https://github.com/github.png",
+  createdAt: new Date("2024-01-01T00:00:00Z"),
   isOfficial: true,
+  isEnriched: true,
+  isFeatured: false,
+  isConnectable: true,
+  lastConnectionAttemptedAt: new Date("2024-01-15T10:30:00Z"),
+  lastConnectionError: null,
+  state: "published",
+  githubStarCount: 1250,
+  downloadCount: 50000,
+  metadata: null,
+  source_registry: null,
+  categories: ["development", "github", "version-control"],
   homepage:
     "https://github.com/modelcontextprotocol/servers/tree/main/src/github",
   readme: `# GitHub MCP Server
@@ -100,12 +112,10 @@ The server provides the following tools:
           },
           sort: {
             type: "string",
-            enum: ["stars", "forks", "help-wanted-issues", "updated"],
             description: "Sort results by",
           },
           order: {
             type: "string",
-            enum: ["asc", "desc"],
             description: "Sort order",
           },
         },
@@ -154,7 +164,6 @@ The server provides the following tools:
           },
           labels: {
             type: "array",
-            items: { type: "string" },
             description: "Issue labels",
           },
         },
@@ -177,7 +186,6 @@ The server provides the following tools:
           },
           state: {
             type: "string",
-            enum: ["open", "closed", "all"],
             description: "Issue state",
           },
           labels: {
@@ -252,11 +260,19 @@ const mockProxiesWithMcp: StoreGetAll = [
     id: "dev-proxy",
     name: "Development Proxy",
     description: "Main development proxy",
+    prompts: undefined,
+    targets: [],
+    servers: [],
+    path: "/ws/dev-proxy",
   },
   {
     id: "staging-proxy",
     name: "Staging Proxy",
     description: "Staging environment proxy",
+    prompts: undefined,
+    targets: [],
+    servers: [],
+    path: "/ws/staging-proxy",
   },
 ];
 
@@ -265,11 +281,19 @@ const mockProxiesWithoutMcp: StoreGetAll = [
     id: "production-proxy",
     name: "Production Proxy",
     description: "Production environment proxy",
+    prompts: undefined,
+    targets: [],
+    servers: [],
+    path: "/ws/production-proxy",
   },
   {
     id: "test-proxy",
     name: "Test Proxy",
     description: "Testing environment proxy",
+    prompts: undefined,
+    targets: [],
+    servers: [],
+    path: "/ws/test-proxy",
   },
 ];
 
@@ -307,7 +331,7 @@ export const NoProxiesAvailable: Story = {
     entry: mockEntry,
     proxiesWithMcp: mockProxiesWithMcp,
     proxiesWithoutMcp: [],
-    onInstall: (values) => {
+    onInstall: async (values) => {
       console.log("Installing MCP server:", values);
     },
     isInstalling: false,
@@ -326,7 +350,7 @@ export const CommunityServer: Story = {
     },
     proxiesWithMcp: [],
     proxiesWithoutMcp: mockProxiesWithoutMcp,
-    onInstall: (values) => {
+    onInstall: async (values) => {
       console.log("Installing community MCP server:", values);
     },
     isInstalling: false,
@@ -337,11 +361,11 @@ export const NoReadme: Story = {
   args: {
     entry: {
       ...mockEntry,
-      readme: undefined,
+      readme: null,
     },
     proxiesWithMcp: mockProxiesWithMcp,
     proxiesWithoutMcp: mockProxiesWithoutMcp,
-    onInstall: (values) => {
+    onInstall: async (values) => {
       console.log("Installing MCP server:", values);
     },
     isInstalling: false,
@@ -356,7 +380,7 @@ export const NoTools: Story = {
     },
     proxiesWithMcp: mockProxiesWithMcp,
     proxiesWithoutMcp: mockProxiesWithoutMcp,
-    onInstall: (values) => {
+    onInstall: async (values) => {
       console.log("Installing MCP server:", values);
     },
     isInstalling: false,

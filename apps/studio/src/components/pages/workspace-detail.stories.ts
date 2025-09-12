@@ -56,53 +56,36 @@ const mockProxyEmpty = {
 };
 
 // Mock clients data
-const mockClients: Array<{
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-  isInstalled: boolean;
-  isAvailable: boolean;
-}> = [
+const mockClients = [
   {
     id: "claude",
-    name: "Claude",
-    description: "Anthropic's Claude AI assistant",
-    icon: "/icons/claude-icon.png",
-    isInstalled: true,
-    isAvailable: true,
+    label: "Claude",
+    image: "/icons/claude-icon.png",
+    type: "installer" as const,
   },
   {
     id: "cursor",
-    name: "Cursor",
-    description: "AI-powered code editor",
-    icon: "/icons/cursor-icon.png",
-    isInstalled: false,
-    isAvailable: true,
+    label: "Cursor",
+    image: "/icons/cursor-icon.png",
+    type: "installer" as const,
   },
   {
     id: "raycast",
-    name: "Raycast",
-    description: "Mac productivity tool",
-    icon: "/icons/raycast-icon.png",
-    isInstalled: true,
-    isAvailable: true,
+    label: "Raycast",
+    image: "/icons/raycast-icon.png",
+    type: "deep-link" as const,
   },
   {
     id: "code",
-    name: "VS Code",
-    description: "Visual Studio Code editor",
-    icon: "/icons/code-icon.png",
-    isInstalled: false,
-    isAvailable: true,
+    label: "VS Code",
+    image: "/icons/code-icon.png",
+    type: "installer" as const,
   },
   {
     id: "goose",
-    name: "Goose",
-    description: "AI coding assistant",
-    icon: "/icons/goose-icon.png",
-    isInstalled: false,
-    isAvailable: false,
+    label: "Goose",
+    image: "/icons/goose-icon.png",
+    type: "deep-link" as const,
   },
 ];
 
@@ -114,35 +97,26 @@ const mockInstallers: Record<string, boolean> = {
   goose: false,
 };
 
-const mockAvailableClients: Array<{
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-}> = [
+const mockAvailableClients = [
   {
-    id: "claude",
-    name: "Claude",
-    description: "Anthropic's Claude AI assistant",
-    icon: "/icons/claude-icon.png",
+    name: "claude",
+    installed: true,
   },
   {
-    id: "cursor",
-    name: "Cursor",
-    description: "AI-powered code editor",
-    icon: "/icons/cursor-icon.png",
+    name: "cursor",
+    installed: true,
   },
   {
-    id: "raycast",
-    name: "Raycast",
-    description: "Mac productivity tool",
-    icon: "/icons/raycast-icon.png",
+    name: "raycast",
+    installed: true,
   },
   {
-    id: "code",
-    name: "VS Code",
-    description: "Visual Studio Code editor",
-    icon: "/icons/code-icon.png",
+    name: "code",
+    installed: true,
+  },
+  {
+    name: "goose",
+    installed: false,
   },
 ];
 
@@ -213,10 +187,7 @@ export const NoAvailableClients: Story = {
 export const AllClientsInstalled: Story = {
   args: {
     ...Default.args,
-    clients: mockClients.map((client) => ({
-      ...client,
-      isInstalled: true,
-    })),
+    clients: mockClients,
     installers: {
       claude: true,
       cursor: true,
@@ -224,16 +195,17 @@ export const AllClientsInstalled: Story = {
       code: true,
       goose: true,
     },
+    availableClients: mockAvailableClients.map((client) => ({
+      ...client,
+      installed: true,
+    })),
   },
 };
 
 export const NoClientsInstalled: Story = {
   args: {
     ...Default.args,
-    clients: mockClients.map((client) => ({
-      ...client,
-      isInstalled: false,
-    })),
+    clients: mockClients,
     installers: {
       claude: false,
       cursor: false,
@@ -241,6 +213,10 @@ export const NoClientsInstalled: Story = {
       code: false,
       goose: false,
     },
+    availableClients: mockAvailableClients.map((client) => ({
+      ...client,
+      installed: true,
+    })),
   },
 };
 

@@ -1,21 +1,11 @@
 "use client";
 
-import { DotsThreeOutlineVerticalIcon, TrashIcon } from "@phosphor-icons/react";
-import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
-
-import {
-  LayoutView,
-  LayoutViewContent,
-  LayoutViewHeader,
-} from "@/components/layout";
-import { McpLogo } from "@/components/mcp-logo";
-import { McpDeleteConfirmation } from "@/components/mcp-servers/mcp-delete-confirmation";
-import { McpDescriptionList } from "@/components/mcp-servers/mcp-description-list";
+import { LayoutView, LayoutViewContent } from "@/components/layout/layout";
+import { LayoutNavigation } from "@/components/layout/navigation";
 import { McpToolSheet } from "@/components/mcp-servers/mcp-tool-sheet";
-import { McpToolsTable } from "@/components/mcp-servers/mcp-tools-table";
+import { McpServerDetail } from "@/components/pages/workspace-target-detail";
 import { ProxySkeleton } from "@/components/proxies/proxy-skeleton";
+import { WorkspaceTargetDetailDropDownMenu } from "@/components/proxies/workspace-target-detail-dropdown-menu";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -24,33 +14,25 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { EmptyState, EmptyStateTitle } from "@/components/ui/empty-state";
-import { Markdown } from "@/components/ui/markdown";
-import { MenuItemIcon, MenuItemLabel } from "@/components/ui/menu";
-import {
-  Section,
-  SectionDescription,
-  SectionHeader,
-  SectionTitle,
-} from "@/components/ui/section";
 import { toast } from "@/components/ui/toast";
 import { useProxy } from "@/hooks/use-proxy";
 import { trpc } from "@/trpc/client";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-export default function ProxyPage() {
+export default function McpServerPage() {
   const router = useRouter();
   const params = useParams<{ proxyId: string; mcpId: string }>();
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const { proxy, isLoading } = useProxy(params.proxyId);
+  const {
+    data: servers,
+    isLoading: serversLoading,
+    error: serversError,
+  } = trpc.store.getAll.useQuery();
 
   const registryEntryQuery = trpc.registry.getEntryByName.useQuery(
     {
@@ -61,7 +43,30 @@ export default function ProxyPage() {
     },
   );
 
+  const utils = trpc.useUtils();
+
+  const deleteServerMutation = trpc.store.removeServer.useMutation({
+    onSuccess: async () => {
+      await utils.store.get.invalidate({ proxyId: params.proxyId });
+      await utils.store.getAll.invalidate();
+
+      toast({
+        title: "Server deleted",
+        description: "This server was successfully deleted.",
+      });
+      setDeleteOpen(false);
+      router.push(`/${params.proxyId}`);
+    },
+  });
+
   const mcp = proxy?.servers.find((server) => server.name === params.mcpId);
+
+  const handleDeleteServer = async () => {
+    await deleteServerMutation.mutateAsync({
+      proxyId: params.proxyId,
+      serverName: params.mcpId,
+    });
+  };
 
   useEffect(() => {
     if (!isLoading && (!proxy || !mcp)) {
@@ -95,7 +100,11 @@ export default function ProxyPage() {
 
   return (
     <LayoutView>
-      <LayoutViewHeader>
+      <LayoutNavigation
+        servers={servers}
+        isLoading={serversLoading}
+        error={serversError?.message}
+      >
         <Breadcrumb className="grow">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -109,85 +118,21 @@ export default function ProxyPage() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="radix-state-[open]:bg-accent-subtle"
-            >
-              <DotsThreeOutlineVerticalIcon weight="fill" className="!size-4" />
-              <span className="sr-only">Settings</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuGroup>
-              <McpDeleteConfirmation proxyId={proxy.id} serverId={mcp.name}>
-                <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
-                  <MenuItemIcon>
-                    <TrashIcon />
-                  </MenuItemIcon>
-                  <MenuItemLabel>Delete</MenuItemLabel>
-                </DropdownMenuItem>
-              </McpDeleteConfirmation>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </LayoutViewHeader>
+        <WorkspaceTargetDetailDropDownMenu
+          onDelete={handleDeleteServer}
+          open={deleteOpen}
+          onOpenChange={setDeleteOpen}
+        />
+      </LayoutNavigation>
 
       <LayoutViewContent>
         <Container size="lg">
-          <Section>
-            <McpLogo src={entryData?.icon} className="size-9" />
-            <SectionHeader>
-              <SectionTitle>{mcp.name}</SectionTitle>
-              <SectionDescription>
-                Installed on{" "}
-                <Link href={`/${proxy.id}`} className="text-fg">
-                  {proxy?.name}
-                </Link>
-              </SectionDescription>
-            </SectionHeader>
-
-            {description ? <Markdown>{description}</Markdown> : null}
-          </Section>
-
-          <Section>
-            <SectionHeader>
-              <SectionTitle variant="h2" asChild>
-                <h3>Transport</h3>
-              </SectionTitle>
-            </SectionHeader>
-
-            <McpDescriptionList transport={mcp.transport} />
-          </Section>
-
-          <Section>
-            <SectionHeader>
-              <SectionTitle variant="h2" asChild>
-                <h3>Tools</h3>
-              </SectionTitle>
-            </SectionHeader>
-
-            <McpToolsTable proxyId={proxy.id} serverId={mcp.name} />
-          </Section>
-
-          <Section>
-            <SectionHeader>
-              <SectionTitle variant="h2" asChild>
-                <h3>Readme</h3>
-              </SectionTitle>
-            </SectionHeader>
-            {entryData.readme ? (
-              <div className="rounded-md border-[0.5px] bg-accent-subtle/20 px-4 py-8">
-                <Markdown className="mx-auto">{entryData.readme}</Markdown>
-              </div>
-            ) : (
-              <EmptyState>
-                <EmptyStateTitle>No readme found</EmptyStateTitle>
-              </EmptyState>
-            )}
-          </Section>
+          <McpServerDetail
+            mcp={mcp}
+            proxy={proxy}
+            entryData={entryData}
+            description={description}
+          />
         </Container>
       </LayoutViewContent>
 

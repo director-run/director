@@ -1,9 +1,12 @@
+"use client";
+
+import { LayoutView, LayoutViewContent } from "@/components/layout/layout";
+import { LayoutNavigation } from "@/components/layout/navigation";
 import {
-  LayoutView,
-  LayoutViewContent,
-  LayoutViewHeader,
-} from "@/components/layout";
-import { NewProxyForm } from "@/components/proxies/proxy-form";
+  ProxyForm,
+  ProxyFormButton,
+  ProxyFormData,
+} from "@/components/proxies/proxy-form";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -18,11 +21,37 @@ import {
   SectionSeparator,
   SectionTitle,
 } from "@/components/ui/section";
+import { toast } from "@/components/ui/toast";
+import { trpc } from "@/trpc/client";
+import { useRouter } from "next/navigation";
 
 export default function NewProxyPage() {
+  const router = useRouter();
+  const { data: servers, isLoading, error } = trpc.store.getAll.useQuery();
+
+  const utils = trpc.useUtils();
+  const mutation = trpc.store.create.useMutation({
+    onSuccess: async (response) => {
+      await utils.store.getAll.refetch();
+      toast({
+        title: "Proxy created",
+        description: "This proxy was successfully created.",
+      });
+      router.push(`/${response.id}`);
+    },
+  });
+
+  const handleSubmit = async (values: ProxyFormData) => {
+    await mutation.mutateAsync({ ...values, servers: [] });
+  };
+
   return (
     <LayoutView>
-      <LayoutViewHeader>
+      <LayoutNavigation
+        servers={servers}
+        isLoading={isLoading}
+        error={error?.message}
+      >
         <Breadcrumb className="grow">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -30,7 +59,7 @@ export default function NewProxyPage() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-      </LayoutViewHeader>
+      </LayoutNavigation>
 
       <LayoutViewContent>
         <Container size="sm">
@@ -42,7 +71,14 @@ export default function NewProxyPage() {
               </SectionDescription>
             </SectionHeader>
             <SectionSeparator />
-            <NewProxyForm />
+            <ProxyForm
+              onSubmit={handleSubmit}
+              isSubmitting={mutation.isPending}
+            >
+              <ProxyFormButton isSubmitting={mutation.isPending}>
+                Create proxy
+              </ProxyFormButton>
+            </ProxyForm>
           </Section>
         </Container>
       </LayoutViewContent>

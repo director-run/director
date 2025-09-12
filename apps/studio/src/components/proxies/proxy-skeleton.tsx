@@ -1,10 +1,7 @@
 "use client";
 
-import {
-  LayoutView,
-  LayoutViewContent,
-  LayoutViewHeader,
-} from "@/components/layout";
+import { LayoutView, LayoutViewContent } from "@/components/layout/layout";
+import { LayoutNavigation } from "@/components/layout/navigation";
 import { ListOfLinks } from "@/components/list-of-links";
 import {
   Breadcrumb,
@@ -28,7 +25,7 @@ export function ProxySkeleton({ children }: { children?: ReactNode }) {
   return (
     <LayoutView className="pointer-events-none relative select-none">
       {children}
-      <LayoutViewHeader aria-hidden>
+      <LayoutNavigation aria-hidden>
         <Breadcrumb className="grow">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -48,7 +45,7 @@ export function ProxySkeleton({ children }: { children?: ReactNode }) {
           <DotsThreeOutlineVerticalIcon weight="fill" className="!size-4" />
           <span className="sr-only">Settings</span>
         </Button>
-      </LayoutViewHeader>
+      </LayoutNavigation>
       <LayoutViewContent aria-hidden>
         <Container size="lg">
           <Section>

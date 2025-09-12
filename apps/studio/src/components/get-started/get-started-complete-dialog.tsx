@@ -1,45 +1,19 @@
 import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { cn } from "@/lib/cn";
-import {
   ArrowRightIcon,
   BookOpenIcon,
   HardDriveIcon,
   ListMagnifyingGlassIcon,
 } from "@phosphor-icons/react";
-import Link from "next/link";
 import { ComponentProps } from "react";
+import { cn } from "../../lib/cn";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../ui/alert-dialog";
 import { Label } from "../ui/label";
-
-function NextStepsLink({
-  className,
-  children,
-  ...props
-}: ComponentProps<typeof Link>) {
-  return (
-    <Link
-      className={cn(
-        "group grid grid-cols-[24px_1fr_24px] items-center gap-2",
-        "h-9 rounded-md bg-accent pr-1.5 pl-3 font-[450] text-[15px]",
-        "outline-none hover:bg-accent-subtle",
-        "[&>svg]:size-5",
-        className,
-      )}
-      {...props}
-    >
-      {children}
-      <ArrowRightIcon
-        weight="bold"
-        className="opacity-0 transition-opacity duration-200 group-hover:opacity-60"
-      />
-    </Link>
-  );
-}
 
 export function GetStartedCompleteDialog(
   props: ComponentProps<typeof AlertDialog>,
@@ -77,5 +51,49 @@ export function GetStartedCompleteDialog(
         </div>
       </AlertDialogContent>
     </AlertDialog>
+  );
+}
+
+interface NextStepsLinkProps {
+  className?: string;
+  children: React.ReactNode;
+  href: string;
+  onClick?: () => void;
+}
+
+function NextStepsLink({
+  className,
+  children,
+  href,
+  onClick,
+}: NextStepsLinkProps) {
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    } else if (href.startsWith("http")) {
+      window.open(href, "_blank", "noopener,noreferrer");
+    } else {
+      window.location.href = href;
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      className={cn(
+        "group grid grid-cols-[24px_1fr_24px] items-center gap-2",
+        "h-9 rounded-md bg-accent pr-1.5 pl-3 font-[450] text-[15px]",
+        "outline-none hover:bg-accent-subtle",
+        "[&>svg]:size-5",
+        className,
+      )}
+      onClick={handleClick}
+    >
+      {children}
+      <ArrowRightIcon
+        weight="bold"
+        className="opacity-0 transition-opacity duration-200 group-hover:opacity-60"
+      />
+    </button>
   );
 }

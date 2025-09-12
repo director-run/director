@@ -1,5 +1,6 @@
 import { ComponentProps } from "react";
 
+import { RegistryGetEntryByName } from "@/components/types";
 import {
   Badge,
   BadgeGroup,
@@ -18,7 +19,6 @@ import {
   ListItemDetails,
   ListItemTitle,
 } from "@/components/ui/list";
-import { RegistryGetEntryByName } from "@/trpc/types";
 import { AsteriskIcon, TextTIcon } from "@phosphor-icons/react";
 
 interface RegistryParametersProps extends ComponentProps<typeof List> {

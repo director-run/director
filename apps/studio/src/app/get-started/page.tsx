@@ -1,39 +1,80 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-import { useConnectionStatus } from "@/components/connect/connection-status-provider";
 import { GetStartedCompleteDialog } from "@/components/get-started/get-started-complete-dialog";
-import { GetStartedDependencies } from "@/components/get-started/get-started-dependencies";
+import { GetStartedHeader } from "@/components/get-started/get-started-header";
 import { GetStartedInstallServerDialog } from "@/components/get-started/get-started-install-server-dialog";
 import { GetStartedInstallers } from "@/components/get-started/get-started-installers";
 import {
   GetStartedList,
   GetStartedListItem,
 } from "@/components/get-started/get-started-list";
-import { GetStartedProxyForm } from "@/components/get-started/get-started-proxy-form";
-import { McpLogo } from "@/components/mcp-logo";
+import { GetStartedMcpServerList } from "@/components/get-started/get-started-mcp-server-list";
+import {
+  GetStartedProxyForm,
+  FormValues as ProxyFormValues,
+  proxySchema,
+} from "@/components/get-started/get-started-proxy-form";
+import { FullScreenLoader } from "@/components/pages/global/loader";
+import { RegistryGetEntriesEntry } from "@/components/types";
 import { Container } from "@/components/ui/container";
-import { EmptyState, EmptyStateTitle } from "@/components/ui/empty-state";
-import { Input } from "@/components/ui/input";
-import {
-  ListItemDescription,
-  ListItemDetails,
-  ListItemTitle,
-} from "@/components/ui/list";
-import { Logo } from "@/components/ui/logo";
-import {
-  Section,
-  SectionDescription,
-  SectionHeader,
-  SectionTitle,
-} from "@/components/ui/section";
+import { Section } from "@/components/ui/section";
+import { toast } from "@/components/ui/toast";
+import { useZodForm } from "@/hooks/use-zod-form";
+import { DIRECTOR_URL } from "@/lib/urls";
 import { trpc } from "@/trpc/client";
-import { RegistryGetEntriesEntry } from "@/trpc/types";
+import { ConfiguratorTarget } from "@director.run/client-configurator/index";
+import { useEffect, useState } from "react";
+import { SubmitHandler } from "react-hook-form";
+
+import claudeIconImage from "../../../public/icons/claude-icon.png";
+import vscodeIconImage from "../../../public/icons/code-icon.png";
+import cursorIconImage from "../../../public/icons/cursor-icon.png";
+
+type StepStatus = "not-started" | "in-progress" | "completed";
+
+interface Steps {
+  create: StepStatus;
+  add: StepStatus;
+  connect: StepStatus;
+}
+
+const clients = [
+  {
+    id: "claude",
+    label: "Claude",
+    image: claudeIconImage.src,
+  },
+  {
+    id: "cursor",
+    label: "Cursor",
+    image: cursorIconImage.src,
+  },
+  {
+    id: "vscode",
+    label: "VSCode",
+    image: vscodeIconImage.src,
+  },
+];
+
+export type ClientId = (typeof clients)[number]["id"];
 
 export default function GetStartedPage() {
+  // Search and proxy state
   const [searchQuery, setSearchQuery] = useState("");
   const [currentProxyId, setCurrentProxyId] = useState<string | null>(null);
+
+  // Installer state
+  const [selectedClient, setSelectedClient] = useState<ClientId | undefined>(
+    undefined,
+  );
+  const [selectedMcp, setSelectedMcp] =
+    useState<RegistryGetEntriesEntry | null>(null);
+  const [isInstallDialogOpen, setIsInstallDialogOpen] = useState(false);
+
+  // tRPC utils
+  const utils = trpc.useUtils();
+
+  // Proxy queries
   const proxyListQuery = trpc.store.getAll.useQuery();
   const registryEntriesQuery = trpc.registry.getEntries.useQuery(
     {
@@ -46,8 +87,6 @@ export default function GetStartedPage() {
     },
   );
 
-  const { dependencies } = useConnectionStatus();
-
   const installersQuery = trpc.installer.byProxy.list.useQuery(
     {
       proxyId: currentProxyId as string,
@@ -57,147 +96,217 @@ export default function GetStartedPage() {
     },
   );
 
-  const hasData = proxyListQuery.data && registryEntriesQuery.data;
+  // Additional queries for installers
+  const listClientsQuery = trpc.installer.allClients.useQuery();
+  const entryQuery = trpc.registry.getEntryByName.useQuery(
+    {
+      name: selectedMcp?.name || "",
+    },
+    {
+      enabled: !!selectedMcp && isInstallDialogOpen,
+    },
+  );
 
+  // Proxy form
+  const proxyForm = useZodForm({
+    schema: proxySchema,
+    defaultValues: { name: "", description: "A proxy for getting started" },
+  });
+
+  // Mutations
+  const createProxyMutation = trpc.store.create.useMutation({
+    onSuccess: async () => {
+      await utils.store.getAll.refetch();
+      toast({
+        title: "Proxy created",
+        description: "This proxy was successfully created.",
+      });
+    },
+  });
+
+  const installationMutation = trpc.installer.byProxy.install.useMutation({
+    onSuccess: () => {
+      utils.installer.byProxy.list.invalidate();
+      toast({
+        title: "Proxy installed",
+        description: `This proxy was successfully installed`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+      });
+    },
+  });
+
+  const transportMutation = trpc.registry.getTransportForEntry.useMutation();
+  const installServerMutation = trpc.store.addServer.useMutation({
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+      });
+    },
+    onSuccess: (data) => {
+      utils.store.getAll.invalidate();
+      toast({
+        title: "Proxy installed",
+        description: "This proxy was successfully installed.",
+      });
+      setIsInstallDialogOpen(false);
+    },
+  });
+
+  // Auto-select proxy when only one exists
   useEffect(() => {
     if (proxyListQuery.data && proxyListQuery.data.length === 1) {
       setCurrentProxyId(proxyListQuery.data[0].id);
     }
   }, [proxyListQuery.data]);
 
+  // Derived state
+  const hasData = proxyListQuery.data && registryEntriesQuery.data;
   const hasProxy = proxyListQuery.data && proxyListQuery.data.length > 0;
   const currentProxy = hasProxy ? proxyListQuery.data[0] : null;
+  const hasServers = (currentProxy?.servers.length ?? 0) > 0;
+  const hasInstallers =
+    installersQuery.data && Object.values(installersQuery.data).some(Boolean);
 
-  if (!hasData) {
-    return (
-      <div className="flex h-screen w-screen items-center justify-center">
-        <Logo className="size-10 animate-pulse" />
-      </div>
-    );
-  }
-
-  const installers = installersQuery.data ?? {};
-
-  const isInstalled = !!Object.values(installers).filter((it) => Boolean(it))
-    .length;
-
-  const hasMissingDependencies = dependencies.some(
-    (dependency) => !dependency.installed,
-  );
-
-  const createStepStatus = hasMissingDependencies
-    ? "not-started"
-    : hasProxy
-      ? "completed"
-      : "in-progress";
-  const addStepStatus =
-    createStepStatus !== "completed" || !currentProxy
-      ? "not-started"
-      : currentProxy.servers.length > 0
-        ? "completed"
-        : "in-progress";
-  const connectStepStatus =
-    addStepStatus === "completed" && isInstalled
-      ? "completed"
-      : addStepStatus === "completed" && installersQuery.isFetched
-        ? "in-progress"
-        : "not-started";
+  // Step logic
+  const steps: Steps = {
+    create: hasProxy ? "completed" : "in-progress",
+    add: hasProxy ? (hasServers ? "completed" : "in-progress") : "not-started",
+    connect:
+      hasProxy && hasServers
+        ? hasInstallers
+          ? "completed"
+          : "in-progress"
+        : "not-started",
+  };
 
   const isCompleted =
-    createStepStatus === "completed" &&
-    addStepStatus === "completed" &&
-    connectStepStatus === "completed";
+    steps.create === "completed" &&
+    steps.add === "completed" &&
+    steps.connect === "completed";
+
+  // Event handlers
+  const handleProxySubmit: SubmitHandler<ProxyFormValues> = async (values) => {
+    await createProxyMutation.mutateAsync({ ...values, servers: [] });
+  };
+
+  const handleClientInstall = (client: ClientId) => {
+    if (!currentProxy?.id) {
+      return;
+    }
+    installationMutation.mutate({
+      proxyId: currentProxy.id,
+      client: client as ConfiguratorTarget,
+      baseUrl: DIRECTOR_URL,
+    });
+  };
+
+  const handleMcpSelect = (mcp: RegistryGetEntriesEntry) => {
+    setSelectedMcp(mcp);
+    setIsInstallDialogOpen(true);
+  };
+
+  const handleMcpFormSubmit: SubmitHandler<{
+    proxyId: string;
+    parameters: Record<string, string>;
+  }> = async (values) => {
+    if (!selectedMcp) {
+      return;
+    }
+    const transport = await transportMutation.mutateAsync({
+      entryName: selectedMcp.name,
+      parameters: values.parameters,
+    });
+    installServerMutation.mutate({
+      proxyId: values.proxyId,
+      server: {
+        name: selectedMcp.name,
+        transport,
+      },
+    });
+  };
+
+  if (!hasData) {
+    return <FullScreenLoader />;
+  }
 
   return (
-    <Container size="sm" className="py-12 lg:py-16">
-      <Section className="gap-y-8">
-        <Logo className="mx-auto" />
-        <SectionHeader className="items-center gap-y-1.5 text-center">
-          <SectionTitle className="font-medium text-2xl">
-            Get started
-          </SectionTitle>
-          <SectionDescription className="text-base">
-            Let&apos;s get your started with MCP using Director.
-          </SectionDescription>
-        </SectionHeader>
+    <>
+      <Container size="sm" className="py-12 lg:py-16">
+        <Section className="gap-y-8">
+          <GetStartedHeader
+            title="Get started"
+            description="Let's get you started with MCP using Director."
+          />
 
-        <GetStartedList>
-          <GetStartedListItem
-            status={hasMissingDependencies ? "in-progress" : "completed"}
-            open={hasMissingDependencies}
-            disabled={!hasMissingDependencies}
-            title="Install dependencies"
-          >
-            <div className="p-4">
-              <GetStartedDependencies />
-            </div>
-          </GetStartedListItem>
-          <GetStartedListItem
-            status={createStepStatus}
-            title="Create an MCP Proxy Server"
-            disabled={hasMissingDependencies || hasProxy}
-            open={createStepStatus === "in-progress"}
-          >
-            <div className="py-4 pr-4 pl-11.5">
-              <GetStartedProxyForm />
-            </div>
-          </GetStartedListItem>
-          <GetStartedListItem
-            status={addStepStatus}
-            title="Add your first MCP server"
-            open={addStepStatus === "in-progress"}
-            disabled={addStepStatus !== "in-progress"}
-          >
-            <div className="relative z-10 px-2 pt-2">
-              <Input
-                type="text"
-                placeholder="Search MCP servers..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+          <GetStartedList>
+            <GetStartedListItem
+              status={steps.create}
+              title="Create an MCP Proxy Server"
+              disabled={steps.create === "completed"}
+              open={steps.create === "in-progress"}
+            >
+              <div className="py-4 pr-4 pl-11.5">
+                <GetStartedProxyForm
+                  form={proxyForm}
+                  isPending={createProxyMutation.isPending}
+                  onSubmit={handleProxySubmit}
+                />
+              </div>
+            </GetStartedListItem>
+            <GetStartedListItem
+              status={steps.add}
+              title="Add your first MCP server"
+              open={steps.add === "in-progress"}
+              disabled={steps.add !== "in-progress"}
+            >
+              <GetStartedMcpServerList
+                searchQuery={searchQuery}
+                onSearchQueryChange={setSearchQuery}
+                registryEntries={registryEntriesQuery.data?.entries ?? []}
+                onMcpSelect={handleMcpSelect}
               />
-            </div>
-            <div className="grid max-h-[320px] grid-cols-1 gap-1 overflow-y-auto p-2">
-              {registryEntriesQuery.data.entries
-                .sort((a, b) => a.title.localeCompare(b.title))
-                .map((it) => {
-                  return (
-                    <GetStartedInstallServerDialog
-                      key={it.id}
-                      mcp={it as RegistryGetEntriesEntry}
-                      proxyId={currentProxy ? currentProxy.id : ""}
-                    >
-                      <div className="flex flex-row items-center gap-x-3 rounded-lg bg-accent-subtle/60 px-2.5 py-1.5 hover:bg-accent">
-                        <McpLogo src={it.icon} />
-                        <ListItemDetails>
-                          <ListItemTitle>{it.title}</ListItemTitle>
-                          <ListItemDescription>
-                            {it.description}
-                          </ListItemDescription>
-                        </ListItemDetails>
-                      </div>
-                    </GetStartedInstallServerDialog>
-                  );
-                })}
+            </GetStartedListItem>
+            <GetStartedListItem
+              status={steps.connect}
+              title="Connect your first client"
+              open={steps.connect === "in-progress"}
+              disabled={steps.connect !== "in-progress"}
+            >
+              <GetStartedInstallers
+                selectedClient={selectedClient}
+                onClientSelect={setSelectedClient}
+                availableClients={listClientsQuery.data ?? []}
+                clients={clients}
+                isLoading={listClientsQuery.isLoading}
+                isInstalling={installationMutation.isPending}
+                onInstall={handleClientInstall}
+              />
+            </GetStartedListItem>
+          </GetStartedList>
+        </Section>
 
-              {registryEntriesQuery.data.entries.length === 0 && (
-                <EmptyState className="bg-accent-subtle/60">
-                  <EmptyStateTitle>No MCP servers found</EmptyStateTitle>
-                </EmptyState>
-              )}
-            </div>
-          </GetStartedListItem>
-          <GetStartedListItem
-            status={connectStepStatus}
-            title="Connect your first client"
-            open={connectStepStatus === "in-progress"}
-            disabled={connectStepStatus !== "in-progress"}
-          >
-            <GetStartedInstallers proxyId={currentProxy?.id ?? ""} />
-          </GetStartedListItem>
-        </GetStartedList>
-      </Section>
-
+        {/* MCP Install Dialog */}
+        {selectedMcp && (
+          <GetStartedInstallServerDialog
+            mcp={selectedMcp}
+            proxyId={currentProxy?.id ?? ""}
+            open={isInstallDialogOpen}
+            onOpenChange={setIsInstallDialogOpen}
+            entryData={entryQuery.data}
+            isLoading={entryQuery.isLoading}
+            onFormSubmit={handleMcpFormSubmit}
+            isFormSubmitting={transportMutation.isPending}
+            isFormInstalling={installServerMutation.isPending}
+          />
+        )}
+      </Container>
       <GetStartedCompleteDialog open={isCompleted} />
-    </Container>
+    </>
   );
 }

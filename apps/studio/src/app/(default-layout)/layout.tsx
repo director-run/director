@@ -1,9 +1,18 @@
-import { Layout } from "@/components/layout";
+"use client";
+
+import { LayoutRoot } from "@/components/layout/layout";
+import { trpc } from "@/trpc/client";
 
 export default function DefaultLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <Layout>{children}</Layout>;
+  const { data: servers, isLoading, error } = trpc.store.getAll.useQuery();
+
+  return (
+    <LayoutRoot servers={servers} isLoading={isLoading} error={error?.message}>
+      {children}
+    </LayoutRoot>
+  );
 }

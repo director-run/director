@@ -5,11 +5,11 @@ import { useEffect, useState } from "react";
 import { useIsClient } from "@/hooks/use-is-client";
 import { createCtx } from "@/lib/create-ctx";
 import { trpc } from "@/trpc/client";
-import { ConnectionEmptyState } from "./connection-empty-state";
-import { ConnectionLostDialog } from "./connection-lost-dialog";
+import { ConnectionEmptyState } from "../components/connect/connection-empty-state";
+import { ConnectionLostDialog } from "../components/connect/connection-lost-dialog";
 
 import cliPackage from "@director.run/cli/package.json";
-import { ConnectionUpdateState } from "./connection-update-state";
+import { ConnectionUpdateState } from "../components/connect/connection-update-state";
 
 const [useContext, ContextProvider] = createCtx<{
   connected: boolean;

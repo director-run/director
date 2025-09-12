@@ -1,15 +1,8 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
+import { FormWithSchema } from "@/components/ui/form";
 import { InputField } from "@/components/ui/form/input-field";
 import { TextareaField } from "@/components/ui/form/textarea-field";
 import { Loader } from "@/components/ui/loader";
-import { toast } from "@/components/ui/toast";
-import { useZodForm } from "@/hooks/use-zod-form";
-import { trpc } from "@/trpc/client";
-import { StoreGet } from "@/trpc/types";
-import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
 import { z } from "zod";
 
@@ -22,27 +15,32 @@ const proxySchema = z.object({
     .transform((val) => (val === "" ? undefined : val)),
 });
 
+export type ProxyFormData = z.infer<typeof proxySchema>;
+
 interface ProxyFormProps {
   children: ReactNode;
-  defaultValues?: Partial<z.infer<typeof proxySchema>>;
-  onSubmit: (values: z.infer<typeof proxySchema>) => Promise<void>;
+  defaultValues?: Partial<ProxyFormData>;
+  onSubmit: (values: ProxyFormData) => Promise<void>;
+  isSubmitting?: boolean;
 }
 
 export function ProxyForm({
   children,
   onSubmit,
   defaultValues,
+  isSubmitting = false,
 }: ProxyFormProps) {
-  const form = useZodForm({
-    schema: proxySchema,
-    defaultValues: {
-      name: defaultValues?.name ?? "",
-      description: defaultValues?.description ?? "",
-    },
-  });
+  const formDefaultValues = {
+    name: defaultValues?.name ?? "",
+    description: defaultValues?.description ?? "",
+  };
 
   return (
-    <Form form={form} onSubmit={onSubmit}>
+    <FormWithSchema
+      schema={proxySchema}
+      defaultValues={formDefaultValues}
+      onSubmit={onSubmit}
+    >
       <div className="flex w-full flex-col gap-y-6">
         <InputField label="Name" name="name" placeholder="My Proxy" />
         <TextareaField
@@ -54,80 +52,29 @@ export function ProxyForm({
       </div>
 
       {children}
-    </Form>
+    </FormWithSchema>
   );
 }
 
-export function NewProxyForm() {
-  const router = useRouter();
-
-  const utils = trpc.useUtils();
-  const mutation = trpc.store.create.useMutation({
-    onSuccess: async (response) => {
-      await utils.store.getAll.refetch();
-      toast({
-        title: "Proxy created",
-        description: "This proxy was successfully created.",
-      });
-      router.push(`/${response.id}`);
-    },
-  });
-
-  const isPending = mutation.isPending;
-
-  return (
-    <ProxyForm
-      onSubmit={async (values) => {
-        await mutation.mutateAsync({ ...values, servers: [] });
-      }}
-    >
-      <Button
-        size="lg"
-        className="self-start"
-        type="submit"
-        disabled={isPending}
-      >
-        {isPending ? <Loader className="text-fg-subtle" /> : "Create proxy"}
-      </Button>
-    </ProxyForm>
-  );
+interface ProxyFormButtonProps {
+  isSubmitting?: boolean;
+  children?: ReactNode;
+  className?: string;
 }
 
-export function UpdateProxyForm(props: StoreGet & { onSuccess?: () => void }) {
-  const router = useRouter();
-
-  const utils = trpc.useUtils();
-  const mutation = trpc.store.update.useMutation({
-    onSuccess: async () => {
-      await utils.store.getAll.invalidate();
-      await utils.store.get.invalidate({ proxyId: props.id });
-      toast({
-        title: "Proxy updated",
-        description: "This proxy was successfully updated.",
-      });
-      router.refresh();
-    },
-  });
-
-  const isPending = mutation.isPending;
-
+export function ProxyFormButton({
+  isSubmitting = false,
+  children,
+  className = "self-start",
+}: ProxyFormButtonProps) {
   return (
-    <ProxyForm
-      onSubmit={async (values) => {
-        await mutation.mutateAsync({
-          proxyId: props.id,
-          attributes: { ...values },
-        });
-        props.onSuccess?.();
-      }}
-      defaultValues={{
-        name: props.name,
-        description: props.description ?? undefined,
-      }}
+    <Button
+      size="lg"
+      className={className}
+      type="submit"
+      disabled={isSubmitting}
     >
-      <Button className="self-start" type="submit" disabled={isPending}>
-        {isPending ? <Loader className="text-fg-subtle" /> : "Save changes"}
-      </Button>
-    </ProxyForm>
+      {isSubmitting ? <Loader className="text-fg-subtle" /> : children}
+    </Button>
   );
 }

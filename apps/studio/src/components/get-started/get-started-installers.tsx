@@ -1,79 +1,50 @@
-"use client";
-
-import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
-import Image from "next/image";
-import { useState } from "react";
-
+import { ClientId } from "@/app/get-started/page";
 import { Button } from "@/components/ui/button";
 import { ListItemTitle } from "@/components/ui/list";
-import { toast } from "@/components/ui/toast";
 import { cn } from "@/lib/cn";
-import { trpc } from "@/trpc/client";
+import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
+import Image from "next/image";
 
-import { DIRECTOR_URL } from "@/lib/urls";
-import { ConfiguratorTarget } from "@director.run/client-configurator/index";
-import claudeIconImage from "../../../public/icons/claude-icon.png";
-import vscodeIconImage from "../../../public/icons/code-icon.png";
-import cursorIconImage from "../../../public/icons/cursor-icon.png";
+// tRPC types - using the actual return type from the query
+export type ClientStatus = {
+  name: string;
+  installed: boolean;
+  configExists: boolean;
+  configPath: string;
+};
 
-const clients = [
-  {
-    id: "claude",
-    label: "Claude",
-    image: claudeIconImage,
-  },
-  {
-    id: "cursor",
-    label: "Cursor",
-    image: cursorIconImage,
-  },
-  {
-    id: "vscode",
-    label: "VSCode",
-    image: vscodeIconImage,
-  },
-] as const;
-
-type ClientId = (typeof clients)[number]["id"];
-
+// Presentational component props
 interface GetStartedInstallersProps {
-  proxyId: string;
+  selectedClient: ClientId | undefined;
+  onClientSelect: (client: ClientId) => void;
+  availableClients: ClientStatus[];
+  clients: Array<{
+    id: string;
+    label: string;
+    image: string;
+  }>;
+  isLoading: boolean;
+  isInstalling: boolean;
+  onInstall: (client: string) => void;
 }
 
-export function GetStartedInstallers({ proxyId }: GetStartedInstallersProps) {
-  const [selectedClient, setSelectedClient] = useState<ClientId | undefined>(
-    undefined,
-  );
-
-  const utils = trpc.useUtils();
-
-  const listClientsQuery = trpc.installer.allClients.useQuery();
-
-  const installationMutation = trpc.installer.byProxy.install.useMutation({
-    onSuccess: () => {
-      utils.installer.byProxy.list.invalidate();
-      toast({
-        title: "Proxy installed",
-        description: `This proxy was successfully installed`,
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error.message,
-      });
-    },
-  });
-
-  const availableClients = listClientsQuery.data ?? [];
-
+// Presentational component
+export function GetStartedInstallers({
+  selectedClient,
+  onClientSelect,
+  availableClients,
+  clients,
+  isLoading,
+  isInstalling,
+  onInstall,
+}: GetStartedInstallersProps) {
   return (
     <div className="flex flex-col gap-y-4 p-4">
       <ToggleGroupPrimitive.Root
         type="single"
         value={selectedClient}
         onValueChange={(value) => {
-          setSelectedClient(value as ClientId);
+          onClientSelect(value as ClientId);
         }}
         className="group flex flex-row items-center justify-center gap-x-2"
       >
@@ -94,11 +65,7 @@ export function GetStartedInstallers({ proxyId }: GetStartedInstallersProps) {
                 "focus-visible:bg-accent-subtle focus-visible:ring-accent",
                 "radix-state-[on]:ring-fg",
               )}
-              disabled={
-                installationMutation.isPending ||
-                listClientsQuery.isLoading ||
-                !isAvailable
-              }
+              disabled={isInstalling || isLoading || !isAvailable}
             >
               <Image src={it.image} alt="Claude" width={64} height={64} />
               <ListItemTitle className="font-[450] text-fg/80 capitalize">
@@ -110,20 +77,15 @@ export function GetStartedInstallers({ proxyId }: GetStartedInstallersProps) {
       </ToggleGroupPrimitive.Root>
       <Button
         className="self-end"
-        disabled={!selectedClient || installationMutation.isPending}
+        disabled={!selectedClient || isInstalling}
         onClick={() => {
           if (!selectedClient) {
             return;
           }
-
-          installationMutation.mutate({
-            proxyId,
-            client: selectedClient as ConfiguratorTarget,
-            baseUrl: DIRECTOR_URL,
-          });
+          onInstall(selectedClient);
         }}
       >
-        {installationMutation.isPending ? "Connecting…" : "Connect"}
+        {isInstalling ? "Connecting…" : "Connect"}
       </Button>
     </div>
   );

@@ -1,6 +1,6 @@
-"use client";
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 
+import { StoreGet } from "@/components/types";
 import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
@@ -12,24 +12,27 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useProxy } from "@/hooks/use-proxy";
-import { StoreGet } from "@/trpc/types";
-import { UpdateProxyForm } from "./proxy-form";
+import { ProxyForm, ProxyFormData } from "./proxy-form";
 
 interface ProxySettingsSheetProps {
-  proxyId: string;
   children: ReactNode;
+  proxy: StoreGet;
+  onSubmit: (values: ProxyFormData) => Promise<void>;
+  isSubmitting?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export function ProxySettingsSheet({
-  proxyId,
   children,
+  proxy,
+  onSubmit,
+  isSubmitting = false,
+  open,
+  onOpenChange,
 }: ProxySettingsSheetProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const { proxy } = useProxy(proxyId);
-
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+    <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetTrigger asChild>{children}</SheetTrigger>
 
       <SheetContent>
@@ -44,10 +47,18 @@ export function ProxySettingsSheet({
 
           <Separator />
 
-          <UpdateProxyForm
-            {...(proxy as StoreGet)}
-            onSuccess={() => setIsOpen(false)}
-          />
+          <ProxyForm
+            defaultValues={{
+              name: proxy.name,
+              description: proxy.description ?? undefined,
+            }}
+            onSubmit={onSubmit}
+            isSubmitting={isSubmitting}
+          >
+            <button type="submit" className="self-start">
+              {isSubmitting ? "Saving..." : "Save changes"}
+            </button>
+          </ProxyForm>
         </SheetBody>
       </SheetContent>
     </Sheet>

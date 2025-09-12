@@ -1,7 +1,5 @@
-"use client";
-
 import { CopyIcon } from "@phosphor-icons/react";
-import { ComponentProps, useState } from "react";
+import { ComponentProps, ReactNode, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,14 +12,16 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { SelectNative } from "@/components/ui/select-native";
-import { toast } from "@/components/ui/toast";
-import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { DIRECTOR_URL } from "@/lib/urls";
 
 type TransportType = "http" | "sse" | "stdio";
 
-function ManualInput({ id }: { id: string }) {
-  const [_, copy] = useCopyToClipboard();
+interface ManualInputProps {
+  id: string;
+  onCopy: (text: string) => void;
+}
+
+function ManualInput({ id, onCopy }: ManualInputProps) {
   const [transportType, setTransportType] = useState<TransportType>("http");
 
   const transports: Record<TransportType, string> = {
@@ -53,13 +53,7 @@ function ManualInput({ id }: { id: string }) {
         <Button
           size="icon"
           variant="ghost"
-          onClick={async () => {
-            await copy(transports[transportType]);
-            toast({
-              title: "Copied to clipboard",
-              description: "The endpoint has been copied to your clipboard.",
-            });
-          }}
+          onClick={() => onCopy(transports[transportType])}
         >
           <CopyIcon />
         </Button>
@@ -70,11 +64,14 @@ function ManualInput({ id }: { id: string }) {
 
 interface ProxyManualDialogProps extends ComponentProps<typeof Dialog> {
   proxyId: string;
+  children?: ReactNode;
+  onCopy: (text: string) => void;
 }
 
 export function ProxyManualDialog({
   proxyId,
   children,
+  onCopy,
   ...props
 }: ProxyManualDialogProps) {
   return (
@@ -91,7 +88,7 @@ export function ProxyManualDialog({
         </DialogHeader>
 
         <div className="border-t-[0.5px] p-5">
-          <ManualInput id={proxyId} />
+          <ManualInput id={proxyId} onCopy={onCopy} />
         </div>
       </DialogContent>
     </Dialog>

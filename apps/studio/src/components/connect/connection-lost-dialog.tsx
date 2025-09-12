@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Logo } from "@/components/ui/logo";
-import { useConnectionStatus } from "./connection-status-provider";
+import { useConnectionStatus } from "../../lib/connection-status-provider";
 
 export function ConnectionLostDialog() {
   const { lostConnection } = useConnectionStatus();

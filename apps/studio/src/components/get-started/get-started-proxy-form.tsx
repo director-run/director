@@ -1,14 +1,11 @@
-"use client";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
 import { HiddenField } from "@/components/ui/form/hidden-field";
-import { InputField } from "@/components/ui/form/input-field";
-import { Loader } from "@/components/ui/loader";
-import { toast } from "@/components/ui/toast";
-import { useZodForm } from "@/hooks/use-zod-form";
-import { trpc } from "@/trpc/client";
+import { useZodForm } from "../../hooks/use-zod-form";
+import { Button } from "../ui/button";
+import { Form } from "../ui/form";
+import { InputField } from "../ui/form/input-field";
+import { Loader } from "../ui/loader";
 
 const proxySchema = z.object({
   name: z.string().trim().min(1, "Required"),
@@ -19,31 +16,28 @@ const proxySchema = z.object({
     .transform((val) => (val === "" ? undefined : val)),
 });
 
-export function GetStartedProxyForm() {
-  const form = useZodForm({
-    schema: proxySchema,
-    defaultValues: { name: "", description: "A proxy for getting started" },
-  });
+// Form values type
+export type FormValues = z.infer<typeof proxySchema>;
 
-  const utils = trpc.useUtils();
-  const mutation = trpc.store.create.useMutation({
-    onSuccess: async () => {
-      await utils.store.getAll.refetch();
-      toast({
-        title: "Proxy created",
-        description: "This proxy was successfully created.",
-      });
-    },
-  });
+// Presentational component props
+interface GetStartedProxyFormProps {
+  form: ReturnType<typeof useZodForm<typeof proxySchema>>;
+  isPending: boolean;
+  onSubmit: (values: FormValues) => void;
+}
 
-  const isPending = mutation.isPending;
-
+// Presentational component
+export function GetStartedProxyForm({
+  form,
+  isPending,
+  onSubmit,
+}: GetStartedProxyFormProps) {
   return (
     <Form
       className="gap-y-4"
       form={form}
       onSubmit={async (values) => {
-        await mutation.mutateAsync({ ...values, servers: [] });
+        await onSubmit(values);
       }}
     >
       <InputField label="Name" name="name" placeholder="My Proxy" />
@@ -60,3 +54,5 @@ export function GetStartedProxyForm() {
     </Form>
   );
 }
+
+export { proxySchema };

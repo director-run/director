@@ -1,93 +1,47 @@
-"use client";
+import Image, { StaticImageData } from "next/image";
 
-import Image from "next/image";
-
-import { toast } from "@/components/ui/toast";
-import { useProxy } from "@/hooks/use-proxy";
-import { trpc } from "@/trpc/client";
 import { Switch } from "../ui/switch";
 
 import { cn } from "@/lib/cn";
 import { DIRECTOR_URL } from "@/lib/urls";
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import { ArrowUpRightIcon } from "@phosphor-icons/react";
-import claudeIconImage from "../../../public/icons/claude-icon.png";
-import vscodeIconImage from "../../../public/icons/code-icon.png";
-import cursorIconImage from "../../../public/icons/cursor-icon.png";
-import gooseIconImage from "../../../public/icons/goose-icon.png";
-import raycastIconImage from "../../../public/icons/raycast-icon.png";
 
-const clients = [
-  {
-    id: "claude",
-    label: "Claude",
-    image: claudeIconImage,
-    type: "installer",
-  },
-  {
-    id: "cursor",
-    label: "Cursor",
-    image: cursorIconImage,
-    type: "installer",
-  },
-  {
-    id: "vscode",
-    label: "VSCode",
-    image: vscodeIconImage,
-    type: "installer",
-  },
-  {
-    id: "goose",
-    label: "Goose",
-    image: gooseIconImage,
-    type: "deep-link",
-  },
-  {
-    id: "raycast",
-    label: "Raycast",
-    image: raycastIconImage,
-    type: "deep-link",
-  },
-] as const;
+export interface Client {
+  id: string;
+  label: string;
+  image: StaticImageData;
+  type: "installer" | "deep-link";
+}
+
+export interface AvailableClient {
+  name: string;
+  installed: boolean;
+}
 
 interface ProxyInstallersProps {
   proxyId: string;
+  clients: Client[];
+  installers: Record<string, boolean>;
+  availableClients: AvailableClient[];
+  isLoading: boolean;
+  onInstall: (proxyId: string, client: ConfiguratorTarget) => void;
+  onUninstall: (proxyId: string, client: ConfiguratorTarget) => void;
+  isInstalling: boolean;
+  isUninstalling: boolean;
 }
 
-export function ProxyInstallers({ proxyId }: ProxyInstallersProps) {
-  const { installers } = useProxy(proxyId);
-
-  const utils = trpc.useUtils();
-
-  const listClientsQuery = trpc.installer.allClients.useQuery();
-
-  const installationMutation = trpc.installer.byProxy.install.useMutation({
-    onSuccess: () => {
-      utils.installer.byProxy.list.invalidate();
-      toast({
-        title: "Proxy installed",
-        description: `This proxy was successfully installed`,
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error.message,
-      });
-    },
-  });
-
-  const uninstallationMutation = trpc.installer.byProxy.uninstall.useMutation({
-    onSuccess: () => {
-      utils.installer.byProxy.list.invalidate();
-      toast({
-        title: "Proxy uninstalled",
-        description: `This proxy was successfully uninstalled`,
-      });
-    },
-  });
-
-  const availableClients = listClientsQuery.data ?? [];
+export function ProxyInstallers({
+  proxyId,
+  clients,
+  installers,
+  availableClients,
+  isLoading,
+  onInstall,
+  onUninstall,
+  isInstalling,
+  isUninstalling,
+}: ProxyInstallersProps) {
   return (
     <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-3">
       {clients.map((it) => {
@@ -163,23 +117,13 @@ export function ProxyInstallers({ proxyId }: ProxyInstallersProps) {
               checked={installers[it.id]}
               onCheckedChange={(checked) => {
                 if (checked) {
-                  installationMutation.mutate({
-                    proxyId,
-                    client: it.id as ConfiguratorTarget,
-                    baseUrl: DIRECTOR_URL,
-                  });
+                  onInstall(proxyId, it.id as ConfiguratorTarget);
                 } else {
-                  uninstallationMutation.mutate({
-                    proxyId,
-                    client: it.id as ConfiguratorTarget,
-                  });
+                  onUninstall(proxyId, it.id as ConfiguratorTarget);
                 }
               }}
               disabled={
-                installationMutation.isPending ||
-                uninstallationMutation.isPending ||
-                listClientsQuery.isLoading ||
-                !isAvailable
+                isInstalling || isUninstalling || isLoading || !isAvailable
               }
             />
           </label>

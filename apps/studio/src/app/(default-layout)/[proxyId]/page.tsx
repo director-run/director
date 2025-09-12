@@ -1,20 +1,11 @@
 "use client";
 
-import {
-  LayoutView,
-  LayoutViewContent,
-  LayoutViewHeader,
-} from "@/components/layout";
-import {
-  MCPLinkCard,
-  MCPLinkCardList,
-} from "@/components/mcp-servers/mcp-link-card";
+import { LayoutView, LayoutViewContent } from "@/components/layout/layout";
+import { LayoutNavigation } from "@/components/layout/navigation";
 import { McpToolSheet } from "@/components/mcp-servers/mcp-tool-sheet";
-import { McpToolsTable } from "@/components/mcp-servers/mcp-tools-table";
-import { ProxyDeleteConfirmation } from "@/components/proxies/proxy-delete-confirmation";
-import { ProxyInstallers } from "@/components/proxies/proxy-installers";
-import { ProxyManualDialog } from "@/components/proxies/proxy-manual-dialog";
-import { ProxySettingsSheet } from "@/components/proxies/proxy-settings-sheet";
+import { ProxyDetail } from "@/components/pages/workspace-detail";
+import { ProxyActionsDropdown } from "@/components/proxies/proxy-actions-dropdown";
+import { Client } from "@/components/proxies/proxy-installers";
 import { ProxySkeleton } from "@/components/proxies/proxy-skeleton";
 import {
   Breadcrumb,
@@ -22,39 +13,149 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
-import { Container } from "@/components/ui/container";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { MenuItemIcon, MenuItemLabel } from "@/components/ui/menu";
-import {
-  Section,
-  SectionDescription,
-  SectionHeader,
-  SectionSeparator,
-  SectionTitle,
-} from "@/components/ui/section";
 import { toast } from "@/components/ui/toast";
 import { useProxy } from "@/hooks/use-proxy";
-import {
-  DotsThreeOutlineVerticalIcon,
-  GearIcon,
-  TrashIcon,
-} from "@phosphor-icons/react";
-import Link from "next/link";
+import { DIRECTOR_URL } from "@/lib/urls";
+import { trpc } from "@/trpc/client";
+import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import claudeIconImage from "../../../../public/icons/claude-icon.png";
+import vscodeIconImage from "../../../../public/icons/code-icon.png";
+import cursorIconImage from "../../../../public/icons/cursor-icon.png";
+import gooseIconImage from "../../../../public/icons/goose-icon.png";
+import raycastIconImage from "../../../../public/icons/raycast-icon.png";
+
+const clients: Client[] = [
+  {
+    id: "claude",
+    label: "Claude",
+    image: claudeIconImage,
+    type: "installer",
+  },
+  {
+    id: "cursor",
+    label: "Cursor",
+    image: cursorIconImage,
+    type: "installer",
+  },
+  {
+    id: "vscode",
+    label: "VSCode",
+    image: vscodeIconImage,
+    type: "installer",
+  },
+  {
+    id: "goose",
+    label: "Goose",
+    image: gooseIconImage,
+    type: "deep-link",
+  },
+  {
+    id: "raycast",
+    label: "Raycast",
+    image: raycastIconImage,
+    type: "deep-link",
+  },
+];
 
 export default function ProxyPage() {
   const router = useRouter();
   const params = useParams<{ proxyId: string }>();
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
-  const { proxy, isLoading } = useProxy(params.proxyId);
+  const { proxy, isLoading, installers } = useProxy(params.proxyId);
+  const {
+    data: servers,
+    isLoading: serversLoading,
+    error: serversError,
+  } = trpc.store.getAll.useQuery();
+
+  const { data: availableClients, isLoading: isClientsLoading } =
+    trpc.installer.allClients.useQuery();
+
+  const utils = trpc.useUtils();
+
+  const updateProxyMutation = trpc.store.update.useMutation({
+    onSuccess: async () => {
+      await utils.store.getAll.invalidate();
+      await utils.store.get.invalidate({ proxyId: params.proxyId });
+      toast({
+        title: "Proxy updated",
+        description: "This proxy was successfully updated.",
+      });
+      router.refresh();
+      setSettingsOpen(false);
+    },
+  });
+
+  const deleteProxyMutation = trpc.store.delete.useMutation({
+    onSuccess: async () => {
+      await utils.store.getAll.invalidate();
+      toast({
+        title: "Proxy deleted",
+        description: "This proxy was successfully deleted.",
+      });
+      setDeleteOpen(false);
+      router.push("/");
+    },
+  });
+
+  const installationMutation = trpc.installer.byProxy.install.useMutation({
+    onSuccess: () => {
+      utils.installer.byProxy.list.invalidate();
+      toast({
+        title: "Proxy installed",
+        description: `This proxy was successfully installed`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+      });
+    },
+  });
+
+  const uninstallationMutation = trpc.installer.byProxy.uninstall.useMutation({
+    onSuccess: () => {
+      utils.installer.byProxy.list.invalidate();
+      toast({
+        title: "Proxy uninstalled",
+        description: `This proxy was successfully uninstalled`,
+      });
+    },
+  });
+
+  const handleUpdateProxy = async (values: {
+    name: string;
+    description?: string;
+  }) => {
+    await updateProxyMutation.mutateAsync({
+      proxyId: params.proxyId,
+      attributes: values,
+    });
+  };
+
+  const handleDeleteProxy = async () => {
+    await deleteProxyMutation.mutateAsync({ proxyId: params.proxyId });
+  };
+
+  const handleInstall = (proxyId: string, client: ConfiguratorTarget) => {
+    installationMutation.mutate({
+      proxyId,
+      client,
+      baseUrl: DIRECTOR_URL,
+    });
+  };
+
+  const handleUninstall = (proxyId: string, client: ConfiguratorTarget) => {
+    uninstallationMutation.mutate({
+      proxyId,
+      client,
+    });
+  };
 
   useEffect(() => {
     if (!isLoading && !proxy) {
@@ -72,7 +173,11 @@ export default function ProxyPage() {
 
   return (
     <LayoutView>
-      <LayoutViewHeader>
+      <LayoutNavigation
+        servers={servers}
+        isLoading={serversLoading}
+        error={serversError?.message}
+      >
         <Breadcrumb className="grow">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -80,103 +185,30 @@ export default function ProxyPage() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="radix-state-[open]:bg-accent-subtle"
-            >
-              <DotsThreeOutlineVerticalIcon weight="fill" className="!size-4" />
-              <span className="sr-only">Settings</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuGroup>
-              <ProxySettingsSheet proxyId={proxy.id}>
-                <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
-                  <MenuItemIcon>
-                    <GearIcon />
-                  </MenuItemIcon>
-                  <MenuItemLabel>Settings</MenuItemLabel>
-                </DropdownMenuItem>
-              </ProxySettingsSheet>
-              <ProxyDeleteConfirmation proxyId={proxy.id}>
-                <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
-                  <MenuItemIcon>
-                    <TrashIcon />
-                  </MenuItemIcon>
-                  <MenuItemLabel>Delete</MenuItemLabel>
-                </DropdownMenuItem>
-              </ProxyDeleteConfirmation>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </LayoutViewHeader>
+        <ProxyActionsDropdown
+          proxy={proxy}
+          onUpdateProxy={handleUpdateProxy}
+          onDeleteProxy={handleDeleteProxy}
+          isUpdating={updateProxyMutation.isPending}
+          settingsOpen={settingsOpen}
+          onSettingsOpenChange={setSettingsOpen}
+          deleteOpen={deleteOpen}
+          onDeleteOpenChange={setDeleteOpen}
+        />
+      </LayoutNavigation>
 
       <LayoutViewContent>
-        <Container size="lg">
-          <Section>
-            <SectionHeader>
-              <SectionTitle>{proxy.name}</SectionTitle>
-              <SectionDescription>{proxy.description}</SectionDescription>
-            </SectionHeader>
-          </Section>
-
-          <SectionSeparator />
-
-          <Section>
-            <SectionHeader className="flex flex-row items-center justify-between">
-              <SectionTitle variant="h2" asChild>
-                <h2>Clients</h2>
-              </SectionTitle>
-              <ProxyManualDialog proxyId={proxy.id}>
-                <Button size="sm">Connect manually</Button>
-              </ProxyManualDialog>
-            </SectionHeader>
-            <ProxyInstallers proxyId={proxy.id} />
-          </Section>
-
-          <SectionSeparator />
-
-          <Section>
-            <SectionHeader className="flex flex-row items-center justify-between">
-              <SectionTitle variant="h2" asChild>
-                <h2>MCP Servers</h2>
-              </SectionTitle>
-              <Button size="sm" asChild>
-                <Link href="/library">Add MCP server</Link>
-              </Button>
-            </SectionHeader>
-            <MCPLinkCardList>
-              {proxy.servers.map((it) => {
-                return (
-                  <MCPLinkCard
-                    key={it.name}
-                    entry={{
-                      title: it.name,
-                      description: null,
-                      icon: null,
-                      isOfficial: false,
-                    }}
-                    href={`/${proxy.id}/mcp/${it.name}`}
-                  />
-                );
-              })}
-            </MCPLinkCardList>
-          </Section>
-
-          <SectionSeparator />
-
-          <Section>
-            <SectionHeader>
-              <SectionTitle variant="h2" asChild>
-                <h2>Tools</h2>
-              </SectionTitle>
-            </SectionHeader>
-            <McpToolsTable proxyId={proxy.id} />
-          </Section>
-        </Container>
+        <ProxyDetail
+          proxy={proxy}
+          clients={clients}
+          installers={installers}
+          availableClients={availableClients ?? []}
+          isClientsLoading={isClientsLoading}
+          onInstall={handleInstall}
+          onUninstall={handleUninstall}
+          isInstalling={installationMutation.isPending}
+          isUninstalling={uninstallationMutation.isPending}
+        />
       </LayoutViewContent>
 
       <McpToolSheet proxyId={proxy.id} />

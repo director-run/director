@@ -6,6 +6,7 @@ import * as React from "react";
 import {
   Controller,
   type ControllerProps,
+  type DefaultValues,
   type FieldPath,
   type FieldValues,
   FormProvider,
@@ -14,8 +15,9 @@ import {
 } from "react-hook-form";
 
 import { Label } from "@/components/ui/label";
-import { UseZodFormReturn } from "@/hooks/use-zod-form";
+import { UseZodFormReturn, useZodForm } from "@/hooks/use-zod-form";
 import { cn } from "@/lib/cn";
+import type { z } from "zod";
 
 interface FormProps<T extends FieldValues> {
   form: UseZodFormReturn<T>;
@@ -30,6 +32,38 @@ function Form<T extends FieldValues>({
   children,
   onSubmit,
 }: FormProps<T>) {
+  return (
+    <FormProvider {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className={cn("flex w-full flex-col gap-y-8", className)}
+      >
+        {children}
+      </form>
+    </FormProvider>
+  );
+}
+
+interface FormWithSchemaProps<T extends FieldValues> {
+  schema: z.ZodType<T>;
+  defaultValues: DefaultValues<T>;
+  className?: string;
+  children?: React.ReactNode;
+  onSubmit: SubmitHandler<T>;
+}
+
+function FormWithSchema<T extends FieldValues>({
+  schema,
+  defaultValues,
+  className,
+  children,
+  onSubmit,
+}: FormWithSchemaProps<T>) {
+  const form = useZodForm({
+    schema,
+    defaultValues,
+  });
+
   return (
     <FormProvider {...form}>
       <form
@@ -175,6 +209,7 @@ function FormMessage(props: React.ComponentProps<"p">) {
 export {
   useFormField,
   Form,
+  FormWithSchema,
   FormItem,
   FormLabel,
   FormControl,

@@ -6,6 +6,7 @@ import * as React from "react";
 import {
   Controller,
   type ControllerProps,
+  type DefaultValues,
   type FieldPath,
   type FieldValues,
   FormProvider,
@@ -45,7 +46,7 @@ function Form<T extends FieldValues>({
 
 interface FormWithSchemaProps<T extends FieldValues> {
   schema: z.ZodType<T>;
-  defaultValues: T;
+  defaultValues: DefaultValues<T>;
   className?: string;
   children?: React.ReactNode;
   onSubmit: SubmitHandler<T>;

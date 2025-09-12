@@ -50,7 +50,7 @@ export type HTTPTransport = z.infer<typeof httpTransportSchema>;
 export const stdioTransportSchema = z.object({
   type: z.literal("stdio"),
   command: requiredStringSchema,
-  args: z.array(z.string()).default([]),
+  args: z.array(z.string()),
   env: z.record(requiredStringSchema, z.string()).optional(),
 });
 

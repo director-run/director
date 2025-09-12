@@ -1,5 +1,6 @@
 import { ProxyDeleteConfirmation } from "@/components/proxies/proxy-delete-confirmation";
 import { ProxySettingsSheet } from "@/components/proxies/proxy-settings-sheet";
+import { StoreGet } from "@/components/types";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,11 +17,7 @@ import {
 } from "@phosphor-icons/react";
 
 interface ProxyActionsDropdownProps {
-  proxy: {
-    id: string;
-    name: string;
-    description?: string;
-  };
+  proxy: StoreGet;
   onUpdateProxy: (values: {
     name: string;
     description?: string;

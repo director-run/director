@@ -11,7 +11,7 @@ import { MenuItemIcon, MenuItemLabel } from "@/components/ui/menu";
 import { DotsThreeOutlineVerticalIcon, TrashIcon } from "@phosphor-icons/react";
 
 interface WorkspaceTargetDetailDropDownMenuProps {
-  onDelete: () => void;
+  onDelete: () => Promise<void>;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }

@@ -1,3 +1,4 @@
+import { ClientId } from "@/app/get-started/page";
 import { Button } from "@/components/ui/button";
 import { ListItemTitle } from "@/components/ui/list";
 import { cn } from "@/lib/cn";

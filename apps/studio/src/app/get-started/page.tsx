@@ -42,19 +42,19 @@ const clients = [
   {
     id: "claude",
     label: "Claude",
-    image: claudeIconImage,
+    image: claudeIconImage.src,
   },
   {
     id: "cursor",
     label: "Cursor",
-    image: cursorIconImage,
+    image: cursorIconImage.src,
   },
   {
     id: "vscode",
     label: "VSCode",
-    image: vscodeIconImage,
+    image: vscodeIconImage.src,
   },
-] as const;
+];
 
 export type ClientId = (typeof clients)[number]["id"];
 

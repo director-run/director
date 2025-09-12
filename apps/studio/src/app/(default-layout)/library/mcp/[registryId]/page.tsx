@@ -150,7 +150,7 @@ export default function RegistryEntryPage() {
             <RegistryInstallForm
               mcp={entry}
               proxies={proxiesWithoutMcp}
-              defaultProxyId={serverId}
+              defaultProxyId={serverId ?? undefined}
               onSubmit={handleInstall}
               isSubmitting={installMutation.isPending}
             />
@@ -164,7 +164,7 @@ export default function RegistryEntryPage() {
           proxiesWithMcp={proxiesWithMcp}
           proxiesWithoutMcp={proxiesWithoutMcp}
           selectedTool={selectedTool}
-          defaultProxyId={serverId}
+          defaultProxyId={serverId ?? undefined}
           onInstall={handleInstall}
           isInstalling={installMutation.isPending}
         />

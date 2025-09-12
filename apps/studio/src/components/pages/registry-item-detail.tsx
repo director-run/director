@@ -38,7 +38,7 @@ interface RegistryItemDetailProps {
   entry: RegistryGetEntryByName;
   proxiesWithMcp: StoreGetAll;
   proxiesWithoutMcp: StoreGetAll;
-  selectedTool?: RegistryGetEntryByName["tools"][number];
+  selectedTool?: NonNullable<RegistryGetEntryByName["tools"]>[number];
   defaultProxyId?: string;
   onInstall: (values: {
     proxyId: string;

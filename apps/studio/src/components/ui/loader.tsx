@@ -1,10 +1,9 @@
 "use client";
 
+import { cn } from "@/lib/cn";
 import type { ComponentProps } from "react";
 import { useState } from "react";
-
-import { useInterval } from "@/hooks/use-interval";
-import { cn } from "@/lib/cn";
+import { useEffect, useLayoutEffect, useRef } from "react";
 
 export function Loader({
   className,
@@ -24,3 +23,32 @@ export function Loader({
     </span>
   );
 }
+
+function useInterval(callback: () => void, delay: number | null) {
+  const savedCallback = useRef(callback);
+
+  // Remember the latest callback if it changes.
+  useIsomorphicLayoutEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  // Set up the interval.
+  useEffect(() => {
+    // Don't schedule if no delay is specified.
+    // Note: 0 is a valid value for delay.
+    if (delay === null) {
+      return;
+    }
+
+    const id = setInterval(() => {
+      savedCallback.current();
+    }, delay);
+
+    return () => {
+      clearInterval(id);
+    };
+  }, [delay]);
+}
+
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;

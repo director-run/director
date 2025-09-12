@@ -124,12 +124,83 @@ const mockMemTransport: StoreServerTransport = {
   type: "mem",
 };
 
+const mockTools = [
+  {
+    name: "search_repositories",
+    description: "Search for repositories on GitHub",
+    inputSchema: {
+      type: "object",
+      properties: {
+        query: {
+          type: "string",
+          description: "The search query",
+        },
+        sort: {
+          type: "string",
+          description: "Sort results by",
+        },
+        order: {
+          type: "string",
+          description: "Sort order",
+        },
+      },
+      required: ["query"],
+    },
+  },
+  {
+    name: "get_repository",
+    description: "Get details about a specific repository",
+    inputSchema: {
+      type: "object",
+      properties: {
+        owner: {
+          type: "string",
+          description: "Repository owner",
+        },
+        repo: {
+          type: "string",
+          description: "Repository name",
+        },
+      },
+      required: ["owner", "repo"],
+    },
+  },
+  {
+    name: "create_issue",
+    description: "Create a new issue in a repository",
+    inputSchema: {
+      type: "object",
+      properties: {
+        owner: {
+          type: "string",
+          description: "Repository owner",
+        },
+        repo: {
+          type: "string",
+          description: "Repository name",
+        },
+        title: {
+          type: "string",
+          description: "Issue title",
+        },
+        body: {
+          type: "string",
+          description: "Issue body",
+        },
+      },
+      required: ["owner", "repo", "title"],
+    },
+  },
+];
+
 export const Default: Story = {
   args: {
     mcp: mockMcp,
     proxy: mockProxy,
     entryData: mockEntryData,
     description: mockDescription,
+    tools: mockTools,
+    toolsLoading: false,
   },
 };
 

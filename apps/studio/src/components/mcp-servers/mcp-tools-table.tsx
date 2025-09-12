@@ -1,17 +1,20 @@
 "use client";
 import { Badge, BadgeLabel } from "@/components/ui/badge";
-import { useInspectMcp } from "@/state/use-inspect-mcp";
 import { proxyQuerySerializer } from "@/state/use-proxy-query";
+import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { ListOfLinks } from "../list-of-links";
 
 interface McpToolTableProps {
-  proxyId: string;
+  tools: Tool[];
+  isLoading: boolean;
   serverId?: string;
 }
 
-export function McpToolsTable({ proxyId, serverId }: McpToolTableProps) {
-  const { isLoading, tools } = useInspectMcp(proxyId, serverId);
-
+export function McpToolsTable({
+  tools,
+  isLoading,
+  serverId,
+}: McpToolTableProps) {
   return (
     <ListOfLinks
       isLoading={isLoading}

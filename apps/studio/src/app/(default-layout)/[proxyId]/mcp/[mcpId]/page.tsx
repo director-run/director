@@ -147,6 +147,8 @@ export default function McpServerPage() {
             proxy={proxy}
             entryData={entryData}
             description={description}
+            tools={tools}
+            toolsLoading={toolsLoading}
           />
         </Container>
       </LayoutViewContent>

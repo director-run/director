@@ -120,6 +120,63 @@ const mockAvailableClients = [
   },
 ];
 
+const mockTools = [
+  {
+    name: "search_repositories",
+    description: "Search for repositories on GitHub",
+    inputSchema: {
+      type: "object",
+      properties: {
+        query: {
+          type: "string",
+          description: "The search query",
+        },
+      },
+      required: ["query"],
+    },
+  },
+  {
+    name: "get_repository",
+    description: "Get details about a specific repository",
+    inputSchema: {
+      type: "object",
+      properties: {
+        owner: {
+          type: "string",
+          description: "Repository owner",
+        },
+        repo: {
+          type: "string",
+          description: "Repository name",
+        },
+      },
+      required: ["owner", "repo"],
+    },
+  },
+  {
+    name: "create_issue",
+    description: "Create a new issue in a repository",
+    inputSchema: {
+      type: "object",
+      properties: {
+        owner: {
+          type: "string",
+          description: "Repository owner",
+        },
+        repo: {
+          type: "string",
+          description: "Repository name",
+        },
+        title: {
+          type: "string",
+          description: "Issue title",
+        },
+      },
+      required: ["owner", "repo", "title"],
+    },
+  },
+];
+
 export const Default: Story = {
   args: {
     proxy: mockProxy,
@@ -139,6 +196,8 @@ export const Default: Story = {
     },
     isInstalling: false,
     isUninstalling: false,
+    tools: mockTools,
+    toolsLoading: false,
   },
 };
 

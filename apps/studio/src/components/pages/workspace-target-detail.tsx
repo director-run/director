@@ -10,6 +10,7 @@ import {
   SectionHeader,
   SectionTitle,
 } from "@/components/ui/section";
+import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import Link from "next/link";
 
 interface McpServerDetailProps {
@@ -26,6 +27,8 @@ interface McpServerDetailProps {
     readme?: string;
   };
   description?: string | null;
+  tools: Tool[];
+  toolsLoading: boolean;
 }
 
 export function McpServerDetail({
@@ -33,6 +36,8 @@ export function McpServerDetail({
   proxy,
   entryData,
   description,
+  tools,
+  toolsLoading,
 }: McpServerDetailProps) {
   return (
     <>
@@ -68,7 +73,11 @@ export function McpServerDetail({
           </SectionTitle>
         </SectionHeader>
 
-        <McpToolsTable proxyId={proxy.id} serverId={mcp.name} />
+        <McpToolsTable
+          tools={tools}
+          isLoading={toolsLoading}
+          serverId={mcp.name}
+        />
       </Section>
 
       <Section>

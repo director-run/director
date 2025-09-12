@@ -217,6 +217,8 @@ export default function ProxyPage() {
           onUninstall={handleUninstall}
           isInstalling={installationMutation.isPending}
           isUninstalling={uninstallationMutation.isPending}
+          tools={tools}
+          toolsLoading={toolsLoading}
         />
       </LayoutViewContent>
 

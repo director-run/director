@@ -21,6 +21,7 @@ import {
 import { toast } from "@/components/ui/toast";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
+import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import Link from "next/link";
 
 interface ProxyDetailProps {
@@ -40,6 +41,8 @@ interface ProxyDetailProps {
   onUninstall: (proxyId: string, client: ConfiguratorTarget) => void;
   isInstalling: boolean;
   isUninstalling: boolean;
+  tools: Tool[];
+  toolsLoading: boolean;
 }
 
 export function ProxyDetail({
@@ -52,6 +55,8 @@ export function ProxyDetail({
   onUninstall,
   isInstalling,
   isUninstalling,
+  tools,
+  toolsLoading,
 }: ProxyDetailProps) {
   const [_, copy] = useCopyToClipboard();
 
@@ -132,7 +137,7 @@ export function ProxyDetail({
             <h2>Tools</h2>
           </SectionTitle>
         </SectionHeader>
-        <McpToolsTable proxyId={proxy.id} />
+        <McpToolsTable tools={tools} isLoading={toolsLoading} />
       </Section>
     </Container>
   );

@@ -23,7 +23,7 @@ import type {
 import { Container } from "@director.run/design/components/ui/container.tsx";
 import { Section } from "@director.run/design/components/ui/section.tsx";
 import { toast } from "@director.run/design/components/ui/toast.tsx";
-import { useZodForm } from "director.run/design/hooks/use-zod-form.tsx";
+import { useZodForm } from "@director.run/design/hooks/use-zod-form.tsx";
 import { useEffect, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { DIRECTOR_URL } from "../../config";

@@ -1,7 +1,7 @@
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toast";
-import { ConnectionStatusProvider } from "@/lib/connection-status-provider";
 import { TRPCProvider } from "@/trpc/client";
+import { ConnectionStatusProvider } from "@/trpc/connection-status-provider";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";

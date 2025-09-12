@@ -11,7 +11,7 @@ import { ConnectionLostDialog } from "../components/connect/connection-lost-dial
 import cliPackage from "@director.run/cli/package.json";
 import { ConnectionUpdateState } from "../components/connect/connection-update-state";
 
-const [useContext, ContextProvider] = createCtx<{
+const [useCtx, CtxProvider] = createCtx<{
   connected: boolean;
   lostConnection: boolean;
   dependencies: {
@@ -86,7 +86,7 @@ export function ConnectionStatusProvider({
   }
 
   return (
-    <ContextProvider
+    <CtxProvider
       value={{
         connected,
         lostConnection,
@@ -103,8 +103,8 @@ export function ConnectionStatusProvider({
       ) : (
         <ConnectionEmptyState />
       )}
-    </ContextProvider>
+    </CtxProvider>
   );
 }
 
-export const useConnectionStatus = useContext;
+export const useConnectionStatus = useCtx;

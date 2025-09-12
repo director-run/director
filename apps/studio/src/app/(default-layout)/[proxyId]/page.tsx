@@ -1,11 +1,22 @@
 "use client";
 
-import { LayoutView, LayoutViewContent } from "@/components/layout/layout";
+import {
+  LayoutView,
+  LayoutViewContent,
+  LayoutViewHeader,
+} from "@/components/layout/layout";
 import { McpToolSheet } from "@/components/mcp-servers/mcp-tool-sheet";
 import { ProxyDetail } from "@/components/pages/workspace-detail";
+import { ProxyActionsDropdown } from "@/components/proxies/proxy-actions-dropdown";
 import { Client } from "@/components/proxies/proxy-installers";
 import { ProxySkeleton } from "@/components/proxies/proxy-skeleton";
 import { Badge, BadgeLabel } from "@/components/ui/badge";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb";
 import { toast } from "@/components/ui/toast";
 import { DIRECTOR_URL } from "@/config";
 import { trpc } from "@/state/client";
@@ -197,6 +208,26 @@ export default function ProxyPage() {
 
   return (
     <LayoutView>
+      <LayoutViewHeader>
+        <Breadcrumb className="grow">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbPage>{proxy.name}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <ProxyActionsDropdown
+          proxy={proxy}
+          onUpdateProxy={handleUpdateProxy}
+          onDeleteProxy={handleDeleteProxy}
+          isUpdating={updateProxyMutation.isPending}
+          settingsOpen={settingsOpen}
+          onSettingsOpenChange={setSettingsOpen}
+          deleteOpen={deleteOpen}
+          onDeleteOpenChange={setDeleteOpen}
+        />
+      </LayoutViewHeader>
+
       <LayoutViewContent>
         <ProxyDetail
           proxy={proxy}

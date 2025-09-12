@@ -1,13 +1,23 @@
 "use client";
 import { useState } from "react";
 
-import { LayoutView, LayoutViewContent } from "@/components/layout/layout";
+import {
+  LayoutView,
+  LayoutViewContent,
+  LayoutViewHeader,
+} from "@/components/layout/layout";
 import {
   McpAddFormData,
   McpAddSheet,
 } from "@/components/mcp-servers/mcp-add-sheet";
 import { RegistryItemList } from "@/components/pages/registry-item-list";
 import { RegistryLibrarySkeleton } from "@/components/registry/registry-library-skeleton";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { EmptyStateDescription } from "@/components/ui/empty-state";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -127,6 +137,16 @@ export default function RegistryPage() {
 
   return (
     <LayoutView>
+      <LayoutViewHeader>
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbPage>Library</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </LayoutViewHeader>
+
       <LayoutViewContent>
         <RegistryItemList
           entries={data.entries}

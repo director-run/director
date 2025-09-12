@@ -15,47 +15,6 @@ interface SidebarSheetProps extends ComponentProps<typeof Sheet> {
   children?: ReactNode;
 }
 
-interface MobileNavigationProps {
-  sections: NavigationSection[];
-}
-
-function MobileNavigation({ sections }: MobileNavigationProps) {
-  return (
-    <div className="flex h-13 shrink-0 flex-row items-center gap-x-2 border-accent border-b-[0.5px] bg-surface px-4 md:hidden">
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button size="icon" variant="ghost">
-            <SidebarIcon weight="fill" className="!size-5 shrink-0" />
-            <span className="sr-only">Open sidebar</span>
-          </Button>
-        </SheetTrigger>
-        <SheetPortal>
-          <SheetPrimitive.Overlay className="overlay" />
-          <SheetPrimitive.Content
-            className={cn(
-              "fixed inset-y-0 left-0 z-50 h-full w-full max-w-[220px] bg-bg text-fg transition ease-in-out",
-              "shadow-[0_0_10px_3px_rgba(55,50,46,0.13),_0_0_0_0.5px_rgba(55,50,46,0.2)] outline-none",
-              "overflow-y-auto overflow-x-hidden",
-              "radix-state-[closed]:slide-out-to-left radix-state-[closed]:animate-out radix-state-[closed]:duration-200",
-              "radix-state-[open]:slide-in-from-left radix-state-[open]:animate-in radix-state-[open]:duration-300",
-            )}
-          >
-            <VisuallyHidden>
-              <SheetPrimitive.DialogTitle>
-                Navigation
-              </SheetPrimitive.DialogTitle>
-              <SheetPrimitive.DialogDescription>
-                A sidebar containing global navigation for Director studio.
-              </SheetPrimitive.DialogDescription>
-            </VisuallyHidden>
-            <SidebarContent sections={sections} />
-          </SheetPrimitive.Content>
-        </SheetPortal>
-      </Sheet>
-    </div>
-  );
-}
-
 interface LayoutRootProps extends ComponentProps<"div"> {
   sections?: NavigationSection[];
 }
@@ -100,8 +59,6 @@ export function LayoutView({
   children,
   ...props
 }: ComponentProps<"div">) {
-  const sections = useContext(NavigationContext);
-
   return (
     <div
       className={cn(
@@ -111,7 +68,59 @@ export function LayoutView({
       )}
       {...props}
     >
-      <MobileNavigation sections={sections} />
+      {children}
+    </div>
+  );
+}
+
+export function LayoutViewHeader({
+  className,
+  children,
+  ...props
+}: ComponentProps<"div">) {
+  const sections = useContext(NavigationContext);
+
+  return (
+    <div
+      className={cn(
+        "flex shrink-0 flex-row items-center gap-x-2",
+        "h-13 border-accent border-b-[0.5px] bg-surface px-4 md:px-8 lg:px-12",
+        className,
+      )}
+      {...props}
+    >
+      <div className="md:hidden">
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button size="icon" variant="ghost">
+              <SidebarIcon weight="fill" className="!size-5 shrink-0" />
+              <span className="sr-only">Open sidebar</span>
+            </Button>
+          </SheetTrigger>
+          <SheetPortal>
+            <SheetPrimitive.Overlay className="overlay" />
+            <SheetPrimitive.Content
+              className={cn(
+                "fixed inset-y-0 left-0 z-50 h-full w-full max-w-[220px] bg-bg text-fg transition ease-in-out",
+                "shadow-[0_0_10px_3px_rgba(55,50,46,0.13),_0_0_0_0.5px_rgba(55,50,46,0.2)] outline-none",
+                "overflow-y-auto overflow-x-hidden",
+                "radix-state-[closed]:slide-out-to-left radix-state-[closed]:animate-out radix-state-[closed]:duration-200",
+                "radix-state-[open]:slide-in-from-left radix-state-[open]:animate-in radix-state-[open]:duration-300",
+              )}
+            >
+              <VisuallyHidden>
+                <SheetPrimitive.DialogTitle>
+                  Navigation
+                </SheetPrimitive.DialogTitle>
+                <SheetPrimitive.DialogDescription>
+                  A sidebar containing global navigation for Director studio.
+                </SheetPrimitive.DialogDescription>
+              </VisuallyHidden>
+              <SidebarContent sections={sections} />
+            </SheetPrimitive.Content>
+          </SheetPortal>
+        </Sheet>
+      </div>
       {children}
     </div>
   );

@@ -1,9 +1,22 @@
 "use client";
 
-import { LayoutView, LayoutViewContent } from "@/components/layout/layout";
+import {
+  LayoutView,
+  LayoutViewContent,
+  LayoutViewHeader,
+} from "@/components/layout/layout";
 import { McpToolSheet } from "@/components/mcp-servers/mcp-tool-sheet";
 import { McpServerDetail } from "@/components/pages/workspace-target-detail";
 import { ProxySkeleton } from "@/components/proxies/proxy-skeleton";
+import { WorkspaceTargetDetailDropDownMenu } from "@/components/proxies/workspace-target-detail-dropdown-menu";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { Container } from "@/components/ui/container";
 import { toast } from "@/components/ui/toast";
 import { trpc } from "@/state/client";
@@ -122,6 +135,30 @@ export default function McpServerPage() {
 
   return (
     <LayoutView>
+      <LayoutViewHeader>
+        <Breadcrumb className="grow">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink
+                onClick={() => router.push(`/${proxy.id}`)}
+                className="cursor-pointer"
+              >
+                {proxy?.name}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{mcp.name}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <WorkspaceTargetDetailDropDownMenu
+          onDelete={handleDeleteServer}
+          open={deleteOpen}
+          onOpenChange={setDeleteOpen}
+        />
+      </LayoutViewHeader>
+
       <LayoutViewContent>
         <Container size="lg">
           <McpServerDetail

@@ -1,11 +1,21 @@
 "use client";
 
-import { LayoutView, LayoutViewContent } from "@/components/layout/layout";
+import {
+  LayoutView,
+  LayoutViewContent,
+  LayoutViewHeader,
+} from "@/components/layout/layout";
 import {
   ProxyForm,
   ProxyFormButton,
   ProxyFormData,
 } from "@/components/proxies/proxy-form";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb";
 import { Container } from "@/components/ui/container";
 import {
   Section,
@@ -39,6 +49,16 @@ export default function NewProxyPage() {
 
   return (
     <LayoutView>
+      <LayoutViewHeader>
+        <Breadcrumb className="grow">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbPage>New proxy</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </LayoutViewHeader>
+
       <LayoutViewContent>
         <Container size="sm">
           <Section className="gap-y-8">

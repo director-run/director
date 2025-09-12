@@ -20,7 +20,7 @@ import { EmptyStateDescription } from "@/components/ui/empty-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { EmptyStateTitle } from "@/components/ui/empty-state";
 import { toast } from "@/components/ui/toast";
-import { trpc } from "@/trpc/client";
+import { trpc } from "@/state/client";
 import { useRouter } from "next/navigation";
 
 export default function RegistryPage() {

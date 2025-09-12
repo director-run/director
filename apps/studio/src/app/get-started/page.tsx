@@ -21,7 +21,7 @@ import { Section } from "@/components/ui/section";
 import { toast } from "@/components/ui/toast";
 import { DIRECTOR_URL } from "@/config";
 import { useZodForm } from "@/hooks/use-zod-form";
-import { trpc } from "@/trpc/client";
+import { trpc } from "@/state/client";
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import { useEffect, useState } from "react";
 import { SubmitHandler } from "react-hook-form";

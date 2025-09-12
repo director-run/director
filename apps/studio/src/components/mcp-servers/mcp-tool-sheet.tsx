@@ -32,7 +32,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { proxyQuerySerializer } from "@/trpc/use-proxy-query";
+import { proxyQuerySerializer } from "@/state/use-proxy-query";
 import { Tool } from "@modelcontextprotocol/sdk/types.js";
 import Link from "next/link";
 

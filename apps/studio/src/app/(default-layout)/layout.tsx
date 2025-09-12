@@ -1,7 +1,7 @@
 "use client";
 
 import { LayoutRoot } from "@/components/layout/layout";
-import { trpc } from "@/trpc/client";
+import { trpc } from "@/state/client";
 
 export default function DefaultLayout({
   children,

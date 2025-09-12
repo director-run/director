@@ -1,6 +1,6 @@
 "use client";
 
-import { trpc } from "@/trpc/client";
+import { trpc } from "@/state/client";
 
 export function useProxy(proxyId: string) {
   const [proxy, clients] = trpc.useQueries((t) => [

@@ -15,10 +15,10 @@ import {
 } from "@/components/ui/breadcrumb";
 import { toast } from "@/components/ui/toast";
 import { DIRECTOR_URL } from "@/config";
-import { trpc } from "@/trpc/client";
-import { useInspectMcp } from "@/trpc/use-inspect-mcp";
-import { useProxy } from "@/trpc/use-proxy";
-import { useProxyQuery } from "@/trpc/use-proxy-query";
+import { trpc } from "@/state/client";
+import { useInspectMcp } from "@/state/use-inspect-mcp";
+import { useProxy } from "@/state/use-proxy";
+import { useProxyQuery } from "@/state/use-proxy-query";
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

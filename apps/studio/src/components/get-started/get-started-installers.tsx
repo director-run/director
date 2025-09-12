@@ -1,5 +1,4 @@
 import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
-import Image from "next/image";
 import { ClientId } from "../../app/get-started/page";
 import { cn } from "../../helpers/cn";
 import { Button } from "../ui/button";
@@ -67,7 +66,7 @@ export function GetStartedInstallers({
               )}
               disabled={isInstalling || isLoading || !isAvailable}
             >
-              <Image src={it.image} alt="Claude" width={64} height={64} />
+              <img src={it.image} alt="Claude" width={64} height={64} />
               <ListItemTitle className="font-[450] text-fg/80 capitalize">
                 {it.label}
               </ListItemTitle>

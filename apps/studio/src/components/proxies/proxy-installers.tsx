@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 import { Switch } from "../ui/switch";
 
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
@@ -69,7 +67,7 @@ export function ProxyInstallers({
               className="flex cursor-pointer flex-row items-center justify-between rounded-lg bg-accent-subtle p-1 pr-2.5 transition-colors duration-200 ease-in-out hover:bg-accent"
             >
               <div className="flex grow flex-row items-center gap-x-1">
-                <Image
+                <img
                   src={it.image}
                   alt={`${it.label} icon`}
                   height={32}
@@ -102,7 +100,7 @@ export function ProxyInstallers({
             )}
           >
             <div className="flex grow flex-row items-center gap-x-1">
-              <Image
+              <img
                 src={it.image}
                 alt={`${it.label} icon`}
                 height={32}

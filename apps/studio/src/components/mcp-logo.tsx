@@ -2,7 +2,6 @@
 
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import type { ComponentProps } from "react";
-import { REGISTRY_URL } from "../config";
 import { cn } from "../helpers/cn";
 import { MCPIcon } from "./ui/icons/mcp-icon";
 
@@ -12,8 +11,6 @@ interface McpLogoProps
 }
 
 export function McpLogo({ src, className, ...props }: McpLogoProps) {
-  const srcUrl = src?.startsWith("http") ? src : `${REGISTRY_URL}/${src}`;
-
   return (
     <AvatarPrimitive.Root
       data-slot="avatar"
@@ -24,7 +21,7 @@ export function McpLogo({ src, className, ...props }: McpLogoProps) {
       <AvatarPrimitive.Image
         data-slot="avatar-image"
         className={cn("aspect-square size-full", className)}
-        src={srcUrl ?? `${REGISTRY_URL}/public/mcp.svg`}
+        src={src ?? ""}
       />
       <AvatarPrimitive.Fallback
         data-slot="avatar-fallback"

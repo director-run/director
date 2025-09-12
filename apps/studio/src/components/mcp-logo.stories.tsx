@@ -45,7 +45,7 @@ export const AllStates: Story = {
 
         <div className="flex flex-col items-center gap-2 rounded-lg border-2 border-green-500 p-4">
           <h3 className="text-center font-medium text-sm">With Null Src</h3>
-          <McpLogo src={null} />
+          <McpLogo />
         </div>
       </div>
 

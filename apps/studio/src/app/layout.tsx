@@ -2,7 +2,6 @@ import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next";
-import { ThemeProvider } from "../components/theme-provider";
 import { Toaster } from "../components/ui/toast";
 import { TRPCProvider } from "../state/client";
 import { ConnectionStatusProvider } from "../state/connection-status-provider";
@@ -36,20 +35,13 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${sans.variable} ${mono.variable} antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <TRPCProvider>
-            <ConnectionStatusProvider>
-              <NuqsAdapter>{children}</NuqsAdapter>
-            </ConnectionStatusProvider>
-            <Toaster />
-            <ChatToUs />
-          </TRPCProvider>
-        </ThemeProvider>
+        <TRPCProvider>
+          <ConnectionStatusProvider>
+            <NuqsAdapter>{children}</NuqsAdapter>
+          </ConnectionStatusProvider>
+          <Toaster />
+          <ChatToUs />
+        </TRPCProvider>
         <Analytics />
       </body>
     </html>

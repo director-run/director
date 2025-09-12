@@ -16,7 +16,10 @@ import {
 } from "@director.run/design/components/get-started/get-started-proxy-form.tsx";
 import type { FormValues as ProxyFormValues } from "@director.run/design/components/get-started/get-started-proxy-form.tsx";
 import { FullScreenLoader } from "@director.run/design/components/pages/global/loader.tsx";
-import type { RegistryGetEntriesEntry } from "@director.run/design/components/types.ts";
+import type {
+  ClientId,
+  RegistryGetEntriesEntry,
+} from "@director.run/design/components/types.ts";
 import { Container } from "@director.run/design/components/ui/container.tsx";
 import { Section } from "@director.run/design/components/ui/section.tsx";
 import { toast } from "@director.run/design/components/ui/toast.tsx";
@@ -52,8 +55,6 @@ const clients = [
     image: "/icons/code-icon.png",
   },
 ];
-
-export type ClientId = (typeof clients)[number]["id"];
 
 export default function GetStartedPage() {
   // Search and proxy state
@@ -203,6 +204,10 @@ export default function GetStartedPage() {
     });
   };
 
+  const handleClientSelect = (client: ClientId) => {
+    setSelectedClient(client);
+  };
+
   const handleMcpSelect = (mcp: RegistryGetEntriesEntry) => {
     setSelectedMcp(mcp);
     setIsInstallDialogOpen(true);
@@ -291,7 +296,7 @@ export default function GetStartedPage() {
             >
               <GetStartedInstallers
                 selectedClient={selectedClient}
-                onClientSelect={setSelectedClient}
+                onClientSelect={handleClientSelect}
                 availableClients={listClientsQuery.data ?? []}
                 clients={clients}
                 isLoading={listClientsQuery.isLoading}

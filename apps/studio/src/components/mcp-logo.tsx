@@ -2,7 +2,6 @@
 
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import { ComponentProps } from "react";
-
 import { REGISTRY_URL } from "../config";
 import { cn } from "../helpers/cn";
 import { MCPIcon } from "./ui/icons/mcp-icon";

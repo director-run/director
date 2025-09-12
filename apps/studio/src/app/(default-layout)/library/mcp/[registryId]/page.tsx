@@ -30,7 +30,7 @@ import { useEffect, useState } from "react";
 export default function RegistryEntryPage() {
   const router = useRouter();
   const { registryId } = useParams<{ registryId: string }>();
-  const { toolId, serverId } = useRegistryQuery();
+  const { toolId, serverId, setRegistryQuery } = useRegistryQuery();
   const [_, copy] = useCopyToClipboard();
   const [installFormOpen, setInstallFormOpen] = useState(false);
 
@@ -85,6 +85,10 @@ export default function RegistryEntryPage() {
         transport,
       },
     });
+  };
+
+  const handleCloseTool = () => {
+    setRegistryQuery({ toolId: null, serverId });
   };
 
   useEffect(() => {
@@ -167,6 +171,7 @@ export default function RegistryEntryPage() {
           defaultProxyId={serverId ?? undefined}
           onInstall={handleInstall}
           isInstalling={installMutation.isPending}
+          onCloseTool={handleCloseTool}
         />
       </LayoutViewContent>
     </LayoutView>

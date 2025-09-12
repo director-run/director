@@ -309,6 +309,9 @@ export const Default: Story = {
       await new Promise((resolve) => setTimeout(resolve, 2000));
     },
     isInstalling: false,
+    onCloseTool: () => {
+      console.log("Closing tool sheet");
+    },
   },
 };
 
@@ -335,6 +338,9 @@ export const NoProxiesAvailable: Story = {
       await console.log("Installing MCP server:", values);
     },
     isInstalling: false,
+    onCloseTool: () => {
+      console.log("Closing tool sheet");
+    },
   },
 };
 
@@ -354,6 +360,9 @@ export const CommunityServer: Story = {
       await console.log("Installing community MCP server:", values);
     },
     isInstalling: false,
+    onCloseTool: () => {
+      console.log("Closing tool sheet");
+    },
   },
 };
 
@@ -369,6 +378,9 @@ export const NoReadme: Story = {
       await console.log("Installing MCP server:", values);
     },
     isInstalling: false,
+    onCloseTool: () => {
+      console.log("Closing tool sheet");
+    },
   },
 };
 
@@ -384,5 +396,8 @@ export const NoTools: Story = {
       await console.log("Installing MCP server:", values);
     },
     isInstalling: false,
+    onCloseTool: () => {
+      console.log("Closing tool sheet");
+    },
   },
 };

@@ -30,28 +30,23 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { useRegistryQuery } from "@/state/use-registry-query";
-
 import Link from "next/link";
 
 interface RegistryToolSheetProps {
   tool: RegistryGetEntryTool;
   mcpName: string;
   mcpId: string;
+  onClose: () => void;
 }
 
 export function RegistryToolSheet({
   tool,
   mcpName,
   mcpId,
+  onClose,
 }: RegistryToolSheetProps) {
-  const { serverId, setRegistryQuery } = useRegistryQuery();
-
   return (
-    <Sheet
-      open={!!tool}
-      onOpenChange={() => setRegistryQuery({ toolId: null, serverId })}
-    >
+    <Sheet open={!!tool} onOpenChange={onClose}>
       <SheetContent>
         <SheetActions>
           <Breadcrumb className="grow">

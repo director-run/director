@@ -45,6 +45,7 @@ interface RegistryItemDetailProps {
     parameters: Record<string, string>;
   }) => Promise<void>;
   isInstalling?: boolean;
+  onCloseTool: () => void;
 }
 
 export function RegistryItemDetail({
@@ -55,6 +56,7 @@ export function RegistryItemDetail({
   defaultProxyId,
   onInstall,
   isInstalling = false,
+  onCloseTool,
 }: RegistryItemDetailProps) {
   return (
     <>
@@ -218,6 +220,7 @@ export function RegistryItemDetail({
           tool={selectedTool}
           mcpName={entry.title}
           mcpId={entry.name}
+          onClose={onCloseTool}
         />
       )}
     </>

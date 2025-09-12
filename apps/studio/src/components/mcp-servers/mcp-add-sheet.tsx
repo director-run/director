@@ -17,9 +17,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { PlusIcon } from "@phosphor-icons/react";
+import { MinusIcon, PlusIcon } from "@phosphor-icons/react";
 import Link from "next/link";
 import { ComponentProps, ReactNode } from "react";
+import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "../ui/button";
 import { FormWithSchema } from "../ui/form";
@@ -273,10 +274,19 @@ export function McpAddFormFields({
 }
 
 export function McpAddFormTransportFields() {
+  const { control } = useFormContext();
+  const transportType = useWatch({
+    control,
+    name: "server.transport.type",
+    defaultValue: "stdio",
+  });
+
+  console.log("Current transport type:", transportType);
+
   return (
     <>
-      <McpAddFormStdioFields />
-      <McpAddFormHttpFields />
+      {transportType === "stdio" && <McpAddFormStdioFields />}
+      {transportType === "http" && <McpAddFormHttpFields />}
     </>
   );
 }
@@ -317,41 +327,103 @@ export function McpAddFormHttpFields() {
 }
 
 export function McpAddFormEnvFields() {
+  const { control } = useFormContext();
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "_env",
+  });
+
+  const handleAdd = () => {
+    console.log("Adding env field, current fields length:", fields.length);
+    append(["", ""]);
+    console.log("After append, fields length should be:", fields.length + 1);
+  };
+
   return (
     <div className="space-y-2">
-      <div className="flex flex-row gap-x-2 [&>div]:flex-1">
-        <InputField name="_env.0.0" placeholder="Variable name" />
-        <InputField name="_env.0.1" placeholder="Value" />
-        <Button
-          className="size-8 leading-8"
-          type="button"
-          variant="secondary"
-          size="icon"
-        >
-          <PlusIcon />
-          <div className="sr-only">Add</div>
-        </Button>
-      </div>
+      {fields.map((field, index) => (
+        <div key={field.id} className="flex flex-row gap-x-2 [&>div]:flex-1">
+          <InputField
+            name={`_env.${index}.0`}
+            placeholder="Variable name"
+            defaultValue=""
+          />
+          <InputField
+            name={`_env.${index}.1`}
+            placeholder="Value"
+            defaultValue=""
+          />
+          {fields.length > 1 ? (
+            <Button
+              className="size-8 leading-8"
+              type="button"
+              variant="secondary"
+              size="icon"
+              onClick={() => remove(index)}
+            >
+              <MinusIcon />
+              <div className="sr-only">Remove</div>
+            </Button>
+          ) : (
+            <div className="size-8" />
+          )}
+        </div>
+      ))}
+      <Button type="button" variant="secondary" size="sm" onClick={handleAdd}>
+        <PlusIcon className="mr-2 size-4" />
+        Add environment variable
+      </Button>
     </div>
   );
 }
 
 export function McpAddFormHeaderFields() {
+  const { control } = useFormContext();
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "_headers",
+  });
+
+  const handleAdd = () => {
+    console.log("Adding header field, current fields length:", fields.length);
+    append(["", ""]);
+    console.log("After append, fields length should be:", fields.length + 1);
+  };
+
   return (
     <div className="space-y-2">
-      <div className="flex flex-row gap-x-2 [&>div]:flex-1">
-        <InputField name="_headers.0.0" placeholder="Variable name" />
-        <InputField name="_headers.0.1" placeholder="Value" />
-        <Button
-          className="size-8 leading-8"
-          type="button"
-          variant="secondary"
-          size="icon"
-        >
-          <PlusIcon />
-          <div className="sr-only">Add</div>
-        </Button>
-      </div>
+      {fields.map((field, index) => (
+        <div key={field.id} className="flex flex-row gap-x-2 [&>div]:flex-1">
+          <InputField
+            name={`_headers.${index}.0`}
+            placeholder="Header name"
+            defaultValue=""
+          />
+          <InputField
+            name={`_headers.${index}.1`}
+            placeholder="Value"
+            defaultValue=""
+          />
+          {fields.length > 1 ? (
+            <Button
+              className="size-8 leading-8"
+              type="button"
+              variant="secondary"
+              size="icon"
+              onClick={() => remove(index)}
+            >
+              <MinusIcon />
+              <div className="sr-only">Remove</div>
+            </Button>
+          ) : (
+            <div className="size-8" />
+          )}
+        </div>
+      ))}
+      <Button type="button" variant="secondary" size="sm" onClick={handleAdd}>
+        <PlusIcon className="mr-2 size-4" />
+        Add header
+      </Button>
     </div>
   );
 }

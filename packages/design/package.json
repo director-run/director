@@ -3,15 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "storybook": "storybook dev -p 6006",
     "build": "storybook build",
+    "dev": "storybook dev -p 6006",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf node_modules",
     "format": "bun run format:fix-classnames && bun run format:fix-imports && bun run format:fix-all",
     "format:fix-all": "biome format --write ./src",
     "format:fix-imports": "biome check --formatter-enabled=false --linter-enabled=false --organize-imports-enabled=true --write ./src",
     "format:fix-classnames": "biome lint --fix --unsafe --only=lint/nursery/useSortedClasses ./src",
-    "lint": "biome check ./src",
+    "lint": "biome check ./src"
   },
   "dependencies": {
     "@director.run/gateway": "workspace:*",

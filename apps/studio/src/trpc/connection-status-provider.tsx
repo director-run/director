@@ -1,6 +1,5 @@
 "use client";
 
-import { useIsClient } from "@/hooks/use-is-client";
 import { trpc } from "@/trpc/client";
 import cliPackage from "@director.run/cli/package.json";
 import { useEffect, useState } from "react";
@@ -132,4 +131,17 @@ function createCtx<T extends object>(name: string) {
   }
 
   return [useCtx, Provider] as const; // 'as const' makes TypeScript infer a tuple
+}
+
+let hasEverMounted = false;
+
+function useIsClient() {
+  const [isClient, setClient] = useState(hasEverMounted);
+
+  useEffect(() => {
+    setClient(true);
+    hasEverMounted = true;
+  }, []);
+
+  return isClient;
 }

@@ -13,7 +13,7 @@ import {
   SectionHeader,
   SectionTitle,
 } from "@/components/ui/section";
-import { cn } from "@/lib/cn";
+import { cn } from "@/helpers/cn";
 import { ArrowLeftIcon, ArrowRightIcon } from "@phosphor-icons/react";
 
 interface RegistryEntry {

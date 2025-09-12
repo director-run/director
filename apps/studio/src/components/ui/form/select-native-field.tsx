@@ -6,7 +6,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { cn } from "@/lib/cn";
+import { cn } from "@/helpers/cn";
 import type { ComponentPropsWithoutRef } from "react";
 import { useFormContext } from "react-hook-form";
 import { Label } from "../label";

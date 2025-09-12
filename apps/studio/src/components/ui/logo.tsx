@@ -1,6 +1,6 @@
 import { ComponentProps } from "react";
 
-import { cn } from "@/lib/cn";
+import { cn } from "@/helpers/cn";
 
 export function Logo({ className, ...props }: ComponentProps<"svg">) {
   return (

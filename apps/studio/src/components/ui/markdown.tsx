@@ -1,4 +1,4 @@
-import { cn } from "@/lib/cn";
+import { cn } from "@/helpers/cn";
 
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";

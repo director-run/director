@@ -1,7 +1,7 @@
 import { ClientId } from "@/app/get-started/page";
 import { Button } from "@/components/ui/button";
 import { ListItemTitle } from "@/components/ui/list";
-import { cn } from "@/lib/cn";
+import { cn } from "@/helpers/cn";
 import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
 import Image from "next/image";
 

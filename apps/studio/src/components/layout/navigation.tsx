@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/menu";
 import { ScrambleText } from "@/components/ui/scramble-text";
 import { Sheet, SheetPortal, SheetTrigger } from "@/components/ui/sheet";
-import { cn } from "@/lib/cn";
+import { cn } from "@/helpers/cn";
 import {
   BookOpenTextIcon,
   GithubLogoIcon,

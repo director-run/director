@@ -3,7 +3,7 @@ import Link from "next/link";
 import { LinkProps } from "next/link";
 
 import { McpLogo } from "@/components/mcp-logo";
-import { cn } from "@/lib/cn";
+import { cn } from "@/helpers/cn";
 import { ComponentProps } from "react";
 
 interface MCPLinkCardProps extends LinkProps {

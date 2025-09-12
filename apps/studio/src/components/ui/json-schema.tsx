@@ -1,4 +1,4 @@
-import { cn } from "@/lib/cn";
+import { cn } from "@/helpers/cn";
 import { CaretRightIcon, CircleIcon } from "@phosphor-icons/react";
 import {
   Accordion,

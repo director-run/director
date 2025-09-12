@@ -3,7 +3,7 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import * as React from "react";
 
-import { cn } from "@/lib/cn";
+import { cn } from "@/helpers/cn";
 import { XIcon } from "@phosphor-icons/react";
 import { Button } from "./button";
 import { textVariants } from "./typography";

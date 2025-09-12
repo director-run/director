@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/breadcrumb";
 import { toast } from "@/components/ui/toast";
 import { DIRECTOR_URL } from "@/config";
+import { useInspectMcp } from "@/hooks/use-inspect-mcp";
+import { useProxyQuery } from "@/hooks/use-proxy-query";
 import { trpc } from "@/trpc/client";
 import { useProxy } from "@/trpc/use-proxy";
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
@@ -60,6 +62,15 @@ export default function ProxyPage() {
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   const { proxy, isLoading, installers } = useProxy(params.proxyId);
+  const { toolId, serverId, setProxyQuery } = useProxyQuery();
+
+  // Find the server and tool data
+  const server = proxy?.servers.find((server) => server.name === serverId);
+  const { tools, isLoading: toolsLoading } = useInspectMcp(
+    params.proxyId,
+    serverId || undefined,
+  );
+  const tool = tools.find((tool) => tool.name === toolId);
   const {
     data: servers,
     isLoading: serversLoading,
@@ -205,7 +216,16 @@ export default function ProxyPage() {
         />
       </LayoutViewContent>
 
-      <McpToolSheet proxyId={proxy.id} />
+      <McpToolSheet
+        open={serverId !== null && toolId !== null && !!server && !!proxy}
+        onOpenChange={() => setProxyQuery({ toolId: null, serverId: null })}
+        toolId={toolId}
+        serverId={serverId}
+        server={server}
+        proxy={proxy}
+        tool={tool}
+        isLoading={toolsLoading}
+      />
     </LayoutView>
   );
 }

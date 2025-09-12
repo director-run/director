@@ -32,25 +32,31 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { useInspectMcp } from "@/hooks/use-inspect-mcp";
-import { proxyQuerySerializer, useProxyQuery } from "@/hooks/use-proxy-query";
-import { useProxy } from "@/trpc/use-proxy";
+import { proxyQuerySerializer } from "@/hooks/use-proxy-query";
+import { Tool } from "@modelcontextprotocol/sdk/types.js";
 import Link from "next/link";
 
-export function McpToolSheet({ proxyId }: McpToolSheetProps) {
-  const { toolId, serverId, setProxyQuery } = useProxyQuery();
-  const { proxy } = useProxy(proxyId);
-
-  const server = proxy?.servers.find((server) => server.name === serverId);
-
+export function McpToolSheet({
+  open,
+  onOpenChange,
+  toolId,
+  serverId,
+  server,
+  proxy,
+  tool,
+  isLoading,
+}: McpToolSheetProps) {
   return (
-    <Sheet
-      open={serverId !== null && toolId !== null && !!server && !!proxy}
-      onOpenChange={() => setProxyQuery({ toolId: null, serverId: null })}
-    >
+    <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         {server && proxy && toolId && (
-          <SheetInner toolId={toolId} server={server} proxy={proxy} />
+          <SheetInner
+            toolId={toolId}
+            server={server}
+            proxy={proxy}
+            tool={tool}
+            isLoading={isLoading}
+          />
         )}
       </SheetContent>
     </Sheet>
@@ -61,15 +67,15 @@ function SheetInner({
   toolId,
   server,
   proxy,
+  tool,
+  isLoading,
 }: {
   toolId: string;
   server: StoreServer;
   proxy: StoreGet;
+  tool: Tool | undefined;
+  isLoading: boolean;
 }) {
-  const { tools, isLoading } = useInspectMcp(proxy.id, server.name);
-
-  const tool = tools.find((tool) => tool.name === toolId);
-
   if (isLoading) {
     return (
       <>
@@ -179,5 +185,12 @@ function SheetInner({
 }
 
 interface McpToolSheetProps {
-  proxyId: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  toolId: string | null;
+  serverId: string | null;
+  server: StoreServer | undefined;
+  proxy: StoreGet | undefined;
+  tool: Tool | undefined;
+  isLoading: boolean;
 }

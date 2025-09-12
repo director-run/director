@@ -332,7 +332,7 @@ export const NoProxiesAvailable: Story = {
     proxiesWithMcp: mockProxiesWithMcp,
     proxiesWithoutMcp: [],
     onInstall: async (values) => {
-      console.log("Installing MCP server:", values);
+      await console.log("Installing MCP server:", values);
     },
     isInstalling: false,
   },
@@ -351,7 +351,7 @@ export const CommunityServer: Story = {
     proxiesWithMcp: [],
     proxiesWithoutMcp: mockProxiesWithoutMcp,
     onInstall: async (values) => {
-      console.log("Installing community MCP server:", values);
+      await console.log("Installing community MCP server:", values);
     },
     isInstalling: false,
   },
@@ -366,7 +366,7 @@ export const NoReadme: Story = {
     proxiesWithMcp: mockProxiesWithMcp,
     proxiesWithoutMcp: mockProxiesWithoutMcp,
     onInstall: async (values) => {
-      console.log("Installing MCP server:", values);
+      await console.log("Installing MCP server:", values);
     },
     isInstalling: false,
   },
@@ -381,7 +381,7 @@ export const NoTools: Story = {
     proxiesWithMcp: mockProxiesWithMcp,
     proxiesWithoutMcp: mockProxiesWithoutMcp,
     onInstall: async (values) => {
-      console.log("Installing MCP server:", values);
+      await console.log("Installing MCP server:", values);
     },
     isInstalling: false,
   },

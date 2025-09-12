@@ -17,9 +17,9 @@ import {
 import { Container } from "@/components/ui/container";
 import { toast } from "@/components/ui/toast";
 import { useInspectMcp } from "@/hooks/use-inspect-mcp";
-import { useProxyQuery } from "@/hooks/use-proxy-query";
 import { trpc } from "@/trpc/client";
 import { useProxy } from "@/trpc/use-proxy";
+import { useProxyQuery } from "@/trpc/use-proxy-query";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

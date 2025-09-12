@@ -16,9 +16,9 @@ import {
 import { toast } from "@/components/ui/toast";
 import { DIRECTOR_URL } from "@/config";
 import { useInspectMcp } from "@/hooks/use-inspect-mcp";
-import { useProxyQuery } from "@/hooks/use-proxy-query";
 import { trpc } from "@/trpc/client";
 import { useProxy } from "@/trpc/use-proxy";
+import { useProxyQuery } from "@/trpc/use-proxy-query";
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

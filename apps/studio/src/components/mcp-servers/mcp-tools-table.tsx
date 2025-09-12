@@ -1,7 +1,7 @@
 "use client";
 import { Badge, BadgeLabel } from "@/components/ui/badge";
 import { useInspectMcp } from "@/hooks/use-inspect-mcp";
-import { proxyQuerySerializer } from "@/hooks/use-proxy-query";
+import { proxyQuerySerializer } from "@/trpc/use-proxy-query";
 import { ListOfLinks } from "../list-of-links";
 
 interface McpToolTableProps {

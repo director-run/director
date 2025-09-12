@@ -91,7 +91,9 @@
         "app/**/error.tsx",
         "app/**/global-error.tsx",
         "app/**/not-found.tsx",
-        "*.config.*"
+        "*.config.*",
+        "**/*.stories.ts",
+        "**/*.stories.tsx"
       ],
       "linter": {
         "rules": {

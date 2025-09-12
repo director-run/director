@@ -30,13 +30,13 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import Link from "next/link";
-
 interface RegistryToolSheetProps {
   tool: RegistryGetEntryTool;
   mcpName: string;
   mcpId: string;
   onClose: () => void;
+  onLibraryClick?: () => void;
+  onMcpClick?: (mcpId: string) => void;
 }
 
 export function RegistryToolSheet({
@@ -44,6 +44,8 @@ export function RegistryToolSheet({
   mcpName,
   mcpId,
   onClose,
+  onLibraryClick,
+  onMcpClick,
 }: RegistryToolSheetProps) {
   return (
     <Sheet open={!!tool} onOpenChange={onClose}>
@@ -52,14 +54,20 @@ export function RegistryToolSheet({
           <Breadcrumb className="grow">
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href={`/library`}>Library</Link>
+                <BreadcrumbLink 
+                  onClick={onLibraryClick}
+                  className="cursor-pointer"
+                >
+                  Library
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href={`/library/mcp/${mcpId}`}>{mcpName}</Link>
+                <BreadcrumbLink 
+                  onClick={() => onMcpClick?.(mcpId)}
+                  className="cursor-pointer"
+                >
+                  {mcpName}
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
@@ -75,9 +83,12 @@ export function RegistryToolSheet({
             <SheetTitle>{tool.name}</SheetTitle>
             <SheetDescription className="text-sm">
               From{" "}
-              <Link href={`/library/mcp/${mcpId}`} className="text-fg">
+              <button
+                onClick={() => onMcpClick?.(mcpId)}
+                className="text-fg underline cursor-pointer"
+              >
                 {mcpName}
-              </Link>
+              </button>
             </SheetDescription>
           </SheetHeader>
 

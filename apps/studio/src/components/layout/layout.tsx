@@ -17,6 +17,11 @@ interface LayoutRootProps extends ComponentProps<"div"> {
   servers?: Server[];
   isLoading?: boolean;
   error?: string | null;
+  onLibraryClick?: () => void;
+  onServerClick?: (serverId: string) => void;
+  onNewServerClick?: () => void;
+  onDocumentationClick?: () => void;
+  onGithubClick?: () => void;
 }
 
 export function LayoutRoot({
@@ -25,6 +30,11 @@ export function LayoutRoot({
   servers,
   isLoading,
   error,
+  onLibraryClick,
+  onServerClick,
+  onNewServerClick,
+  onDocumentationClick,
+  onGithubClick,
   ...props
 }: LayoutRootProps) {
   return (
@@ -42,7 +52,16 @@ export function LayoutRoot({
           "hidden w-full max-w-[220px] shrink-0 overflow-y-auto overflow-x-hidden md:flex",
         )}
       >
-        <SidebarContent servers={servers} isLoading={isLoading} error={error} />
+        <SidebarContent 
+          servers={servers} 
+          isLoading={isLoading} 
+          error={error}
+          onLibraryClick={onLibraryClick}
+          onServerClick={onServerClick}
+          onNewServerClick={onNewServerClick}
+          onDocumentationClick={onDocumentationClick}
+          onGithubClick={onGithubClick}
+        />
       </div>
       <div
         data-slot="layout-content"

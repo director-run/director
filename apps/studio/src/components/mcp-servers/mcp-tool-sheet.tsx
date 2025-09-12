@@ -33,7 +33,6 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Tool } from "@modelcontextprotocol/sdk/types.js";
-import Link from "next/link";
 
 export function McpToolSheet({
   open,
@@ -45,6 +44,7 @@ export function McpToolSheet({
   tool,
   isLoading,
   onServerClick,
+  onProxyClick,
 }: McpToolSheetProps) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -57,6 +57,7 @@ export function McpToolSheet({
             tool={tool}
             isLoading={isLoading}
             onServerClick={onServerClick}
+            onProxyClick={onProxyClick}
           />
         )}
       </SheetContent>
@@ -71,6 +72,7 @@ function SheetInner({
   tool,
   isLoading,
   onServerClick,
+  onProxyClick,
 }: {
   toolId: string;
   server: StoreServer;
@@ -78,6 +80,7 @@ function SheetInner({
   tool: Tool | undefined;
   isLoading: boolean;
   onServerClick?: (serverId: string) => void;
+  onProxyClick?: (proxyId: string) => void;
 }) {
   if (isLoading) {
     return (
@@ -121,27 +124,22 @@ function SheetInner({
         <Breadcrumb className="grow">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href={`/${proxy.id}`}>{proxy?.name}</Link>
+              <BreadcrumbLink 
+                onClick={() => onProxyClick?.(proxy.id)}
+                className="cursor-pointer"
+              >
+                {proxy?.name}
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink
-                asChild={!onServerClick}
                 onClick={
                   onServerClick ? () => onServerClick(server.name) : undefined
                 }
+                className={onServerClick ? "cursor-pointer" : ""}
               >
-                {onServerClick ? (
-                  <button type="button" className="text-left">
-                    {server?.name}
-                  </button>
-                ) : (
-                  <Link href={`/${proxy.id}/mcp/${server.name}`}>
-                    {server?.name}
-                  </Link>
-                )}
+                {server?.name}
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -157,26 +155,20 @@ function SheetInner({
           <SheetTitle>{tool.name}</SheetTitle>
           <SheetDescription className="text-sm">
             Installed from{" "}
-            {onServerClick ? (
-              <button
-                type="button"
-                onClick={() => onServerClick(server.name)}
-                className="text-fg hover:underline"
-              >
-                {server?.name}
-              </button>
-            ) : (
-              <Link
-                href={`/${proxy.id}?serverId=${server.name}`}
-                className="text-fg"
-              >
-                {server?.name}
-              </Link>
-            )}{" "}
+            <button
+              type="button"
+              onClick={() => onServerClick?.(server.name)}
+              className="text-fg hover:underline cursor-pointer"
+            >
+              {server?.name}
+            </button>{" "}
             on{" "}
-            <Link href={`/${proxy.id}`} className="text-fg">
+            <button
+              onClick={() => onProxyClick?.(proxy.id)}
+              className="text-fg underline cursor-pointer"
+            >
               {proxy?.name}
-            </Link>
+            </button>
           </SheetDescription>
         </SheetHeader>
 
@@ -218,4 +210,5 @@ interface McpToolSheetProps {
   tool: Tool | undefined;
   isLoading: boolean;
   onServerClick?: (serverId: string) => void;
+  onProxyClick?: (proxyId: string) => void;
 }

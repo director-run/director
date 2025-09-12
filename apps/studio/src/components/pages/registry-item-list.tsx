@@ -38,6 +38,7 @@ interface RegistryItemListProps {
   onPageChange: (pageIndex: number) => void;
   onAddManual: () => void;
   addManualButton: React.ReactNode;
+  onEntryClick?: (entryName: string) => void;
 }
 
 export function RegistryItemList({
@@ -48,6 +49,7 @@ export function RegistryItemList({
   onPageChange,
   onAddManual,
   addManualButton,
+  onEntryClick,
 }: RegistryItemListProps) {
   return (
     <Container size="lg">
@@ -80,7 +82,7 @@ export function RegistryItemList({
                   <MCPLinkCard
                     key={entry.id}
                     entry={entry}
-                    href={`/library/mcp/${entry.name}`}
+                    onClick={() => onEntryClick?.(entry.name)}
                   />
                 );
               })}

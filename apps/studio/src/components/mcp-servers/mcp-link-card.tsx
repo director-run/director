@@ -1,12 +1,10 @@
 import { SealCheckIcon } from "@phosphor-icons/react";
-import Link from "next/link";
-import { LinkProps } from "next/link";
 
 import { McpLogo } from "@/components/mcp-logo";
 import { cn } from "@/helpers/cn";
 import { ComponentProps } from "react";
 
-interface MCPLinkCardProps extends LinkProps {
+interface MCPLinkCardProps {
   className?: string;
   entry: {
     title: string;
@@ -14,16 +12,17 @@ interface MCPLinkCardProps extends LinkProps {
     icon?: string | null;
     isOfficial?: boolean | null;
   };
+  onClick?: () => void;
 }
 
-export function MCPLinkCard({ className, entry, ...props }: MCPLinkCardProps) {
+export function MCPLinkCard({ className, entry, onClick }: MCPLinkCardProps) {
   return (
-    <Link
+    <div
       className={cn(
-        "flex h-40 flex-col justify-between gap-y-6 rounded-lg bg-accent-subtle p-4 transition-colors duration-200 ease-in-out hover:bg-accent",
+        "flex h-40 flex-col justify-between gap-y-6 rounded-lg bg-accent-subtle p-4 transition-colors duration-200 ease-in-out hover:bg-accent cursor-pointer",
         className,
       )}
-      {...props}
+      onClick={onClick}
     >
       <McpLogo src={entry.icon} className="size-8" />
 
@@ -38,7 +37,7 @@ export function MCPLinkCard({ className, entry, ...props }: MCPLinkCardProps) {
           </div>
         )}
       </div>
-    </Link>
+    </div>
   );
 }
 

@@ -21,7 +21,6 @@ import {
 import { toast } from "@/components/ui/toast";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
-import Link from "next/link";
 
 interface ProxyDetailProps {
   proxy: {
@@ -48,6 +47,8 @@ interface ProxyDetailProps {
     badges?: React.ReactNode;
   }>;
   toolsLoading: boolean;
+  onLibraryClick?: () => void;
+  onServerClick?: (serverId: string) => void;
 }
 
 export function ProxyDetail({
@@ -62,6 +63,8 @@ export function ProxyDetail({
   isUninstalling,
   toolLinks,
   toolsLoading,
+  onLibraryClick,
+  onServerClick,
 }: ProxyDetailProps) {
   const [_, copy] = useCopyToClipboard();
 
@@ -112,8 +115,8 @@ export function ProxyDetail({
           <SectionTitle variant="h2" asChild>
             <h2>MCP Servers</h2>
           </SectionTitle>
-          <Button size="sm" asChild>
-            <Link href="/library">Add MCP server</Link>
+          <Button size="sm" onClick={onLibraryClick}>
+            Add MCP server
           </Button>
         </SectionHeader>
         <MCPLinkCardList>
@@ -127,7 +130,7 @@ export function ProxyDetail({
                   icon: null,
                   isOfficial: false,
                 }}
-                href={`/${proxy.id}/mcp/${it.name}`}
+                onClick={() => onServerClick?.(it.name)}
               />
             );
           })}

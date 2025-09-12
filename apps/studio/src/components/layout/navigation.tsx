@@ -20,7 +20,6 @@ import {
 } from "@phosphor-icons/react";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import type { ComponentProps, ReactNode } from "react";
 
@@ -28,6 +27,11 @@ interface LayoutNavigationProps extends ComponentProps<"div"> {
   servers?: Server[];
   isLoading?: boolean;
   error?: string | null;
+  onLibraryClick?: () => void;
+  onServerClick?: (serverId: string) => void;
+  onNewServerClick?: () => void;
+  onDocumentationClick?: () => void;
+  onGithubClick?: () => void;
 }
 
 export function LayoutNavigation({
@@ -36,6 +40,11 @@ export function LayoutNavigation({
   servers,
   isLoading,
   error,
+  onLibraryClick,
+  onServerClick,
+  onNewServerClick,
+  onDocumentationClick,
+  onGithubClick,
   ...props
 }: LayoutNavigationProps) {
   return (
@@ -47,7 +56,16 @@ export function LayoutNavigation({
       )}
       {...props}
     >
-      <SidebarSheet servers={servers} isLoading={isLoading} error={error}>
+      <SidebarSheet 
+        servers={servers} 
+        isLoading={isLoading} 
+        error={error}
+        onLibraryClick={onLibraryClick}
+        onServerClick={onServerClick}
+        onNewServerClick={onNewServerClick}
+        onDocumentationClick={onDocumentationClick}
+        onGithubClick={onGithubClick}
+      >
         <Button size="icon" variant="ghost">
           <SidebarIcon weight="fill" className="!size-5 shrink-0" />
           <span className="sr-only">Open sidebar</span>
@@ -63,6 +81,11 @@ interface SidebarSheetProps extends ComponentProps<typeof Sheet> {
   servers?: Server[];
   isLoading?: boolean;
   error?: string | null;
+  onLibraryClick?: () => void;
+  onServerClick?: (serverId: string) => void;
+  onNewServerClick?: () => void;
+  onDocumentationClick?: () => void;
+  onGithubClick?: () => void;
 }
 
 function SidebarSheet({
@@ -70,6 +93,11 @@ function SidebarSheet({
   servers,
   isLoading,
   error,
+  onLibraryClick,
+  onServerClick,
+  onNewServerClick,
+  onDocumentationClick,
+  onGithubClick,
   ...props
 }: SidebarSheetProps) {
   return (
@@ -100,6 +128,11 @@ function SidebarSheet({
             servers={servers}
             isLoading={isLoading}
             error={error}
+            onLibraryClick={onLibraryClick}
+            onServerClick={onServerClick}
+            onNewServerClick={onNewServerClick}
+            onDocumentationClick={onDocumentationClick}
+            onGithubClick={onGithubClick}
           />
         </SheetPrimitive.Content>
       </SheetPortal>
@@ -116,12 +149,22 @@ interface SidebarContentProps {
   servers?: Server[];
   isLoading?: boolean;
   error?: string | null;
+  onLibraryClick?: () => void;
+  onServerClick?: (serverId: string) => void;
+  onNewServerClick?: () => void;
+  onDocumentationClick?: () => void;
+  onGithubClick?: () => void;
 }
 
 export function SidebarContent({
   servers,
   isLoading,
   error,
+  onLibraryClick,
+  onServerClick,
+  onNewServerClick,
+  onDocumentationClick,
+  onGithubClick,
 }: SidebarContentProps) {
   const pathname = usePathname();
   const { proxyId } = useParams<{ proxyId?: string }>();
@@ -138,19 +181,17 @@ export function SidebarContent({
         <MenuLabel label="Library" />
         <MenuItem
           data-state={pathname.startsWith("/library") ? "active" : "inactive"}
-          asChild
+          onClick={onLibraryClick}
         >
-          <Link href="/library">
-            <MenuItemIcon>
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path
-                  d="M9.22783 1.84903C10.438 0.698788 12.3519 0.717222 13.5394 1.9047L13.595 1.96134C14.2699 2.67128 14.5382 3.62317 14.4085 4.52872C15.3143 4.39869 16.2666 4.66906 16.9769 5.34415L17.0335 5.39982L17.0706 5.43595L17.1263 5.49259C18.2584 6.68354 18.2583 8.55649 17.1263 9.74747L17.0706 9.80411L10.7483 16.1264L10.722 16.1586C10.6694 16.2385 10.6781 16.3471 10.7483 16.4174L12.0472 17.7152C12.2882 17.9565 12.2882 18.3481 12.0472 18.5893C11.806 18.8305 11.4144 18.8303 11.1731 18.5893L9.87529 17.2904C9.32116 16.7363 9.31205 15.8434 9.84892 15.2787L16.1966 8.93107L16.2298 8.89689C16.92 8.17086 16.9089 7.0225 16.1966 6.30997L16.1604 6.27286L16.1263 6.23966C15.4027 5.55186 14.2593 5.56013 13.5462 6.26505L13.5394 6.27286L8.26005 11.5522L8.23759 11.5736C7.99507 11.7928 7.61976 11.7859 7.38603 11.5522C7.14492 11.311 7.14501 10.9194 7.38603 10.6781L12.6653 5.39982L12.6985 5.36564C13.3887 4.63962 13.3776 3.49123 12.6653 2.77872V2.77775C11.953 2.06552 10.8045 2.05457 10.0784 2.74454L10.0442 2.77872L3.054 9.76798L3.03154 9.78946C2.78907 10.0085 2.41469 10.0016 2.18095 9.76798C1.93968 9.52671 1.93968 9.13523 2.18095 8.89396L9.17021 1.9047L9.22783 1.84903ZM10.9407 3.63028C11.1832 3.41123 11.5576 3.41825 11.7913 3.65177C12.0326 3.89304 12.0326 4.28452 11.7913 4.52579L6.62236 9.69474C5.8986 10.4185 5.89854 11.593 6.62236 12.3168C7.34618 13.0402 8.51976 13.0404 9.24345 12.3168L14.4124 7.14689C14.6537 6.90563 15.0452 6.90562 15.2864 7.14689C15.5276 7.38816 15.5277 7.77965 15.2864 8.02091L10.1165 13.1899C8.92901 14.3772 7.01516 14.3958 5.80498 13.2455L5.74834 13.1899C4.54215 11.9835 4.5421 10.028 5.74834 8.82169L10.9173 3.65177L10.9407 3.63028Z"
-                  fill="currentcolor"
-                />
-              </svg>
-            </MenuItemIcon>
-            <MenuItemLabel>MCP</MenuItemLabel>
-          </Link>
+          <MenuItemIcon>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path
+                d="M9.22783 1.84903C10.438 0.698788 12.3519 0.717222 13.5394 1.9047L13.595 1.96134C14.2699 2.67128 14.5382 3.62317 14.4085 4.52872C15.3143 4.39869 16.2666 4.66906 16.9769 5.34415L17.0335 5.39982L17.0706 5.43595L17.1263 5.49259C18.2584 6.68354 18.2583 8.55649 17.1263 9.74747L17.0706 9.80411L10.7483 16.1264L10.722 16.1586C10.6694 16.2385 10.6781 16.3471 10.7483 16.4174L12.0472 17.7152C12.2882 17.9565 12.2882 18.3481 12.0472 18.5893C11.806 18.8305 11.4144 18.8303 11.1731 18.5893L9.87529 17.2904C9.32116 16.7363 9.31205 15.8434 9.84892 15.2787L16.1966 8.93107L16.2298 8.89689C16.92 8.17086 16.9089 7.0225 16.1966 6.30997L16.1604 6.27286L16.1263 6.23966C15.4027 5.55186 14.2593 5.56013 13.5462 6.26505L13.5394 6.27286L8.26005 11.5522L8.23759 11.5736C7.99507 11.7928 7.61976 11.7859 7.38603 11.5522C7.14492 11.311 7.14501 10.9194 7.38603 10.6781L12.6653 5.39982L12.6985 5.36564C13.3887 4.63962 13.3776 3.49123 12.6653 2.77872V2.77775C11.953 2.06552 10.8045 2.05457 10.0784 2.74454L10.0442 2.77872L3.054 9.76798L3.03154 9.78946C2.78907 10.0085 2.41469 10.0016 2.18095 9.76798C1.93968 9.52671 1.93968 9.13523 2.18095 8.89396L9.17021 1.9047L9.22783 1.84903ZM10.9407 3.63028C11.1832 3.41123 11.5576 3.41825 11.7913 3.65177C12.0326 3.89304 12.0326 4.28452 11.7913 4.52579L6.62236 9.69474C5.8986 10.4185 5.89854 11.593 6.62236 12.3168C7.34618 13.0402 8.51976 13.0404 9.24345 12.3168L14.4124 7.14689C14.6537 6.90563 15.0452 6.90562 15.2864 7.14689C15.5276 7.38816 15.5277 7.77965 15.2864 8.02091L10.1165 13.1899C8.92901 14.3772 7.01516 14.3958 5.80498 13.2455L5.74834 13.1899C4.54215 11.9835 4.5421 10.028 5.74834 8.82169L10.9173 3.65177L10.9407 3.63028Z"
+                fill="currentcolor"
+              />
+            </svg>
+          </MenuItemIcon>
+          <MenuItemLabel>MCP</MenuItemLabel>
         </MenuItem>
       </Menu>
 
@@ -170,11 +211,9 @@ export function SidebarContent({
                 <MenuItem
                   key={server.id}
                   data-state={isActive ? "active" : "inactive"}
-                  asChild
+                  onClick={() => onServerClick?.(server.id)}
                 >
-                  <Link href={`/${server.id}`}>
-                    <MenuItemLabel>{server.name}</MenuItemLabel>
-                  </Link>
+                  <MenuItemLabel>{server.name}</MenuItemLabel>
                 </MenuItem>
               );
             })}
@@ -183,38 +222,24 @@ export function SidebarContent({
       <Menu className="mt-auto">
         <MenuItem
           data-state={pathname === "/new" ? "active" : "inactive"}
-          asChild
+          onClick={onNewServerClick}
         >
-          <Link href="/new">
-            <MenuItemIcon>
-              <PlusIcon />
-            </MenuItemIcon>
-            <MenuItemLabel>New server</MenuItemLabel>
-          </Link>
+          <MenuItemIcon>
+            <PlusIcon />
+          </MenuItemIcon>
+          <MenuItemLabel>New server</MenuItemLabel>
         </MenuItem>
-        <MenuItem asChild>
-          <Link
-            href="https://docs.director.run"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <MenuItemIcon>
-              <BookOpenTextIcon weight="fill" />
-            </MenuItemIcon>
-            <MenuItemLabel>Documentation</MenuItemLabel>
-          </Link>
+        <MenuItem onClick={onDocumentationClick}>
+          <MenuItemIcon>
+            <BookOpenTextIcon weight="fill" />
+          </MenuItemIcon>
+          <MenuItemLabel>Documentation</MenuItemLabel>
         </MenuItem>
-        <MenuItem asChild>
-          <Link
-            href="https://github.com/director-run/director"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <MenuItemIcon>
-              <GithubLogoIcon />
-            </MenuItemIcon>
-            <MenuItemLabel>Github</MenuItemLabel>
-          </Link>
+        <MenuItem onClick={onGithubClick}>
+          <MenuItemIcon>
+            <GithubLogoIcon />
+          </MenuItemIcon>
+          <MenuItemLabel>Github</MenuItemLabel>
         </MenuItem>
       </Menu>
     </div>

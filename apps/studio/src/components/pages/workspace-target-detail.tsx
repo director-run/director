@@ -10,7 +10,6 @@ import {
   SectionHeader,
   SectionTitle,
 } from "@/components/ui/section";
-import Link from "next/link";
 
 interface McpServerDetailProps {
   mcp: {
@@ -34,6 +33,7 @@ interface McpServerDetailProps {
     badges?: React.ReactNode;
   }>;
   toolsLoading: boolean;
+  onProxyClick?: (proxyId: string) => void;
 }
 
 export function McpServerDetail({
@@ -43,6 +43,7 @@ export function McpServerDetail({
   description,
   toolLinks,
   toolsLoading,
+  onProxyClick,
 }: McpServerDetailProps) {
   return (
     <>
@@ -52,9 +53,12 @@ export function McpServerDetail({
           <SectionTitle>{mcp.name}</SectionTitle>
           <SectionDescription>
             Installed on{" "}
-            <Link href={`/${proxy.id}`} className="text-fg">
+            <button
+              onClick={() => onProxyClick?.(proxy.id)}
+              className="text-fg underline cursor-pointer"
+            >
               {proxy?.name}
-            </Link>
+            </button>
           </SectionDescription>
         </SectionHeader>
 

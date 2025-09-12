@@ -18,7 +18,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { MinusIcon, PlusIcon } from "@phosphor-icons/react";
-import Link from "next/link";
 import { ComponentProps, ReactNode } from "react";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { z } from "zod";
@@ -123,6 +122,7 @@ interface McpAddSheetProps extends ComponentProps<typeof Sheet> {
   isLoadingProxies?: boolean;
   onSubmit: (data: McpAddFormData) => Promise<void>;
   isSubmitting?: boolean;
+  onLibraryClick?: () => void;
 }
 
 export function McpAddSheet({
@@ -133,6 +133,7 @@ export function McpAddSheet({
   isLoadingProxies = false,
   onSubmit,
   isSubmitting = false,
+  onLibraryClick,
   ...props
 }: McpAddSheetProps) {
   const defaultValues = {
@@ -158,8 +159,11 @@ export function McpAddSheet({
           <Breadcrumb className="grow">
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href={`/library`}>Library</Link>
+                <BreadcrumbLink 
+                  onClick={onLibraryClick}
+                  className="cursor-pointer"
+                >
+                  Library
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />

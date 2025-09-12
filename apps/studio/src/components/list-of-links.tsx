@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { ReactNode } from "react";
 
 import { Badge, BadgeGroup, BadgeLabel } from "@/components/ui/badge";
@@ -41,23 +40,22 @@ interface LinkItem {
   subtitle?: string;
   title: string;
   badges?: ReactNode;
+  onClick?: () => void;
 }
 
 function ListItem({ link }: { link: LinkItem }) {
   return (
-    <List.ListItem asChild>
-      <Link href={link.href} scroll={link.scroll}>
-        <List.ListItemDetails>
-          <List.ListItemTitle>{link.title}</List.ListItemTitle>
-          {link.subtitle && (
-            <List.ListItemDescription>{link.subtitle}</List.ListItemDescription>
-          )}
-        </List.ListItemDetails>
-
-        {link.badges && (
-          <BadgeGroup className="ml-auto">{link.badges}</BadgeGroup>
+    <List.ListItem onClick={link.onClick}>
+      <List.ListItemDetails>
+        <List.ListItemTitle>{link.title}</List.ListItemTitle>
+        {link.subtitle && (
+          <List.ListItemDescription>{link.subtitle}</List.ListItemDescription>
         )}
-      </Link>
+      </List.ListItemDetails>
+
+      {link.badges && (
+        <BadgeGroup className="ml-auto">{link.badges}</BadgeGroup>
+      )}
     </List.ListItem>
   );
 }

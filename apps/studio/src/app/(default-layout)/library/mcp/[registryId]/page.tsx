@@ -24,7 +24,6 @@ import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { trpc } from "@/state/client";
 import { useRegistryQuery } from "@/state/use-registry-query";
 import { registryQuerySerializer } from "@/state/use-registry-query";
-import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -131,6 +130,10 @@ export default function RegistryEntryPage() {
         toolId: tool.name,
         serverId,
       }),
+      onClick: () => setRegistryQuery({
+        toolId: tool.name,
+        serverId,
+      }),
     }));
 
   return (
@@ -139,12 +142,20 @@ export default function RegistryEntryPage() {
         servers={storeQuery.data}
         isLoading={storeQuery.isLoading}
         error={storeQuery.error?.message}
+        onLibraryClick={() => router.push("/library")}
+        onServerClick={(serverId) => router.push(`/${serverId}`)}
+        onNewServerClick={() => router.push("/new")}
+        onDocumentationClick={() => window.open("https://docs.director.run", "_blank", "noopener noreferrer")}
+        onGithubClick={() => window.open("https://github.com/director-run/director", "_blank", "noopener noreferrer")}
       >
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/library">Library</Link>
+              <BreadcrumbLink 
+                onClick={() => router.push("/library")}
+                className="cursor-pointer"
+              >
+                Library
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -187,6 +198,9 @@ export default function RegistryEntryPage() {
           isInstalling={installMutation.isPending}
           onCloseTool={handleCloseTool}
           toolLinks={toolLinks}
+          onProxyServerClick={(proxyId, serverName) => router.push(`/${proxyId}/mcp/${serverName}`)}
+          onLibraryClick={() => router.push("/library")}
+          onMcpClick={(mcpId) => router.push(`/library/mcp/${mcpId}`)}
         />
       </LayoutViewContent>
     </LayoutView>

@@ -141,6 +141,11 @@ export default function RegistryPage() {
         servers={servers}
         isLoading={serversLoading}
         error={serversError?.message}
+        onLibraryClick={() => router.push("/library")}
+        onServerClick={(serverId) => router.push(`/${serverId}`)}
+        onNewServerClick={() => router.push("/new")}
+        onDocumentationClick={() => window.open("https://docs.director.run", "_blank", "noopener noreferrer")}
+        onGithubClick={() => window.open("https://github.com/director-run/director", "_blank", "noopener noreferrer")}
       >
         <Breadcrumb>
           <BreadcrumbList>
@@ -158,6 +163,7 @@ export default function RegistryPage() {
           onSearchChange={setSearchQuery}
           onPageChange={setPageIndex}
           onAddManual={() => setAddSheetOpen(true)}
+          onEntryClick={(entryName) => router.push(`/library/mcp/${entryName}`)}
           addManualButton={
             <McpAddSheet
               open={addSheetOpen}
@@ -166,6 +172,7 @@ export default function RegistryPage() {
               isLoadingProxies={serversLoading}
               onSubmit={handleAddServer}
               isSubmitting={addServerMutation.isPending}
+              onLibraryClick={() => router.push("/library")}
             >
               <Button>Add manually</Button>
             </McpAddSheet>

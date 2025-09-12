@@ -51,6 +51,11 @@ export default function NewProxyPage() {
         servers={servers}
         isLoading={isLoading}
         error={error?.message}
+        onLibraryClick={() => router.push("/library")}
+        onServerClick={(serverId) => router.push(`/${serverId}`)}
+        onNewServerClick={() => router.push("/new")}
+        onDocumentationClick={() => window.open("https://docs.director.run", "_blank", "noopener noreferrer")}
+        onGithubClick={() => window.open("https://github.com/director-run/director", "_blank", "noopener noreferrer")}
       >
         <Breadcrumb className="grow">
           <BreadcrumbList>

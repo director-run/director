@@ -32,7 +32,6 @@ import {
   SealCheckIcon,
   ToolboxIcon,
 } from "@phosphor-icons/react";
-import Link from "next/link";
 
 interface RegistryItemDetailProps {
   entry: RegistryGetEntryByName;
@@ -53,6 +52,9 @@ interface RegistryItemDetailProps {
     scroll: boolean;
     href: string;
   }>;
+  onProxyServerClick?: (proxyId: string, serverName: string) => void;
+  onLibraryClick?: () => void;
+  onMcpClick?: (mcpId: string) => void;
 }
 
 export function RegistryItemDetail({
@@ -66,6 +68,9 @@ export function RegistryItemDetail({
   isInstalling = false,
   onCloseTool,
   toolLinks,
+  onProxyServerClick,
+  onLibraryClick,
+  onMcpClick,
 }: RegistryItemDetailProps) {
   return (
     <>
@@ -184,13 +189,12 @@ export function RegistryItemDetail({
                   <BadgeGroup>
                     {proxiesWithMcp.map((proxy) => {
                       return (
-                        <Badge key={proxy.id} asChild>
-                          <Link
-                            href={`/${proxy.id}/mcp/${entry.name}`}
-                            key={proxy.id}
-                          >
-                            <BadgeLabel>{proxy.name}</BadgeLabel>
-                          </Link>
+                        <Badge 
+                          key={proxy.id}
+                          onClick={() => onProxyServerClick?.(proxy.id, entry.name)}
+                          className="cursor-pointer"
+                        >
+                          <BadgeLabel>{proxy.name}</BadgeLabel>
                         </Badge>
                       );
                     })}
@@ -230,6 +234,8 @@ export function RegistryItemDetail({
           mcpName={entry.title}
           mcpId={entry.name}
           onClose={onCloseTool}
+          onLibraryClick={onLibraryClick}
+          onMcpClick={onMcpClick}
         />
       )}
     </>

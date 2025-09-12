@@ -10,7 +10,6 @@ const meta = {
   },
 } satisfies Meta<typeof McpServerDetail>;
 
-// eslint-disable-next-line import/no-default-export
 export default meta;
 type Story = StoryObj<typeof meta>;
 

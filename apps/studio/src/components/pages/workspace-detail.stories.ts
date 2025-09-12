@@ -10,7 +10,6 @@ const meta = {
   },
 } satisfies Meta<typeof ProxyDetail>;
 
-// eslint-disable-next-line import/no-default-export
 export default meta;
 type Story = StoryObj<typeof meta>;
 

@@ -12,7 +12,6 @@ const meta = {
   },
 } satisfies Meta<typeof RegistryItemList>;
 
-// eslint-disable-next-line import/no-default-export
 export default meta;
 type Story = StoryObj<typeof meta>;
 

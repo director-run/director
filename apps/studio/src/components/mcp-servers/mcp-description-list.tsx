@@ -1,7 +1,7 @@
-import { ComponentProps } from "react";
+import type { ComponentProps } from "react";
 
 import { GlobeIcon, TerminalIcon } from "@phosphor-icons/react";
-import { StoreServerTransport } from "../types";
+import type { StoreServerTransport } from "../types";
 import { Badge, BadgeGroup, BadgeIcon, BadgeLabel } from "../ui/badge";
 import {
   List,

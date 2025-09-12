@@ -2,11 +2,8 @@ import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import { useCopyToClipboard } from "../../hooks/use-copy-to-clipboard";
 import { MCPLinkCard, MCPLinkCardList } from "../mcp-servers/mcp-link-card";
 import { McpToolsTable } from "../mcp-servers/mcp-tools-table";
-import {
-  AvailableClient,
-  Client,
-  ProxyInstallers,
-} from "../proxies/proxy-installers";
+import type { AvailableClient, Client } from "../proxies/proxy-installers";
+import { ProxyInstallers } from "../proxies/proxy-installers";
 import { ProxyManualDialog } from "../proxies/proxy-manual-dialog";
 import { Button } from "../ui/button";
 import { Container } from "../ui/container";

@@ -8,7 +8,8 @@ import {
 import { Slot } from "@radix-ui/react-slot";
 import { cn } from "../../helpers/cn";
 
-import React, { ComponentProps } from "react";
+import React from "react";
+import type { ComponentProps } from "react";
 
 import { Badge, BadgeGroup, BadgeLabel } from "./badge";
 import {

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { RegistryGetEntryByName, StoreGetAll } from "../types";
+import type { RegistryGetEntryByName, StoreGetAll } from "../types";
 import { RegistryItemDetail } from "./registry-item-detail";
 
 const meta = {

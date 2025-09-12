@@ -11,7 +11,7 @@ import {
 } from "../form";
 import { Label } from "../label";
 import { SelectNative } from "../select-native";
-import { CommonFieldProps } from "./types";
+import type { CommonFieldProps } from "./types";
 
 type SelectNativeFieldProps = CommonFieldProps &
   ComponentPropsWithoutRef<typeof SelectNative>;

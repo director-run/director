@@ -1,4 +1,4 @@
-import { GatewayRouterOutputs } from "@director.run/gateway/client";
+import type { GatewayRouterOutputs } from "@director.run/gateway/client";
 
 export type RegistryGetEntries = GatewayRouterOutputs["registry"]["getEntries"];
 

@@ -1,5 +1,5 @@
 import { Slot } from "@radix-ui/react-slot";
-import { VariantProps } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
 import { cn } from "../../helpers/cn";
 import { Separator } from "./separator";
 import { textVariants } from "./typography";

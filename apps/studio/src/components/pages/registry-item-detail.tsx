@@ -11,7 +11,7 @@ import { RegistryInstallForm } from "../registry/registry-install-form";
 import { RegistryParameters } from "../registry/registry-parameters";
 import { RegistryToolSheet } from "../registry/registry-tool-sheet";
 import { RegistryTools } from "../registry/registry-tools";
-import { RegistryGetEntryByName, StoreGetAll } from "../types";
+import type { RegistryGetEntryByName, StoreGetAll } from "../types";
 import { Badge, BadgeGroup, BadgeIcon, BadgeLabel } from "../ui/badge";
 import { Container } from "../ui/container";
 import {

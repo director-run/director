@@ -1,5 +1,6 @@
 import { CopyIcon } from "@phosphor-icons/react";
-import { ComponentProps, ReactNode, useState } from "react";
+import type { ComponentProps, ReactNode } from "react";
+import { useState } from "react";
 
 import { DIRECTOR_URL } from "../../config";
 import { Button } from "../ui/button";

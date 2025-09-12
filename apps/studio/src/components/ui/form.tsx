@@ -10,13 +10,14 @@ import {
   type FieldPath,
   type FieldValues,
   FormProvider,
-  SubmitHandler,
+  type SubmitHandler,
   useFormContext,
 } from "react-hook-form";
 
 import type { z } from "zod";
 import { cn } from "../../helpers/cn";
-import { UseZodFormReturn, useZodForm } from "../../hooks/use-zod-form";
+import type { UseZodFormReturn } from "../../hooks/use-zod-form";
+import { useZodForm } from "../../hooks/use-zod-form";
 import { Label } from "./label";
 
 interface FormProps<T extends FieldValues> {

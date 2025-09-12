@@ -3,7 +3,7 @@
 import { type VariantProps, cva } from "class-variance-authority";
 import * as React from "react";
 
-import { IconWeight } from "@phosphor-icons/react";
+import type { IconWeight } from "@phosphor-icons/react";
 import { Slot } from "@radix-ui/react-slot";
 import { cn } from "../../helpers/cn";
 

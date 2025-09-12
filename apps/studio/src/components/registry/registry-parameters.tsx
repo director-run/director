@@ -1,7 +1,7 @@
-import { ComponentProps } from "react";
+import type { ComponentProps } from "react";
 
 import { AsteriskIcon, TextTIcon } from "@phosphor-icons/react";
-import { RegistryGetEntryByName } from "../types";
+import type { RegistryGetEntryByName } from "../types";
 import { Badge, BadgeGroup, BadgeIcon, BadgeLabel } from "../ui/badge";
 import {
   EmptyState,

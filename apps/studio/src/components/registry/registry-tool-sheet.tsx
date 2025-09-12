@@ -1,5 +1,5 @@
 "use client";
-import { RegistryGetEntryTool } from "../types";
+import type { RegistryGetEntryTool } from "../types";
 import {
   Breadcrumb,
   BreadcrumbItem,

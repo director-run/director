@@ -1,4 +1,4 @@
-import { ComponentProps } from "react";
+import type { ComponentProps } from "react";
 import { cn } from "../../../helpers/cn";
 
 interface MCPIconProps extends ComponentProps<"svg"> {

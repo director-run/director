@@ -10,7 +10,7 @@ import {
 } from "../form";
 import { Input } from "../input";
 import { Label } from "../label";
-import { CommonFieldProps } from "./types";
+import type { CommonFieldProps } from "./types";
 
 type InputFieldProps = CommonFieldProps &
   ComponentPropsWithoutRef<typeof Input>;

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { RegistryGetEntryByName, StoreGetAll } from "../types";
+import type { RegistryGetEntryByName, StoreGetAll } from "../types";
 import { Button } from "../ui/button";
 import { FormWithSchema } from "../ui/form";
 import { InputField } from "../ui/form/input-field";

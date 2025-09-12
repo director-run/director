@@ -1,5 +1,5 @@
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
-import { useCopyToClipboard } from "../../hooks/use-copy-to-clipboard";
+import { useCopyToClipboard } from "@director.run/design/hooks/use-copy-to-clipboard.ts";
 import { MCPLinkCard, MCPLinkCardList } from "../mcp-servers/mcp-link-card";
 import { McpToolsTable } from "../mcp-servers/mcp-tools-table";
 import type { AvailableClient, Client } from "../proxies/proxy-installers";

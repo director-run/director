@@ -37,6 +37,26 @@ import { proxyQuerySerializer, useProxyQuery } from "@/hooks/use-proxy-query";
 import { useProxy } from "@/trpc/use-proxy";
 import Link from "next/link";
 
+export function McpToolSheet({ proxyId }: McpToolSheetProps) {
+  const { toolId, serverId, setProxyQuery } = useProxyQuery();
+  const { proxy } = useProxy(proxyId);
+
+  const server = proxy?.servers.find((server) => server.name === serverId);
+
+  return (
+    <Sheet
+      open={serverId !== null && toolId !== null && !!server && !!proxy}
+      onOpenChange={() => setProxyQuery({ toolId: null, serverId: null })}
+    >
+      <SheetContent>
+        {server && proxy && toolId && (
+          <SheetInner toolId={toolId} server={server} proxy={proxy} />
+        )}
+      </SheetContent>
+    </Sheet>
+  );
+}
+
 function SheetInner({
   toolId,
   server,
@@ -160,24 +180,4 @@ function SheetInner({
 
 interface McpToolSheetProps {
   proxyId: string;
-}
-
-export function McpToolSheet({ proxyId }: McpToolSheetProps) {
-  const { toolId, serverId, setProxyQuery } = useProxyQuery();
-  const { proxy } = useProxy(proxyId);
-
-  const server = proxy?.servers.find((server) => server.name === serverId);
-
-  return (
-    <Sheet
-      open={serverId !== null && toolId !== null && !!server && !!proxy}
-      onOpenChange={() => setProxyQuery({ toolId: null, serverId: null })}
-    >
-      <SheetContent>
-        {server && proxy && toolId && (
-          <SheetInner toolId={toolId} server={server} proxy={proxy} />
-        )}
-      </SheetContent>
-    </Sheet>
-  );
 }

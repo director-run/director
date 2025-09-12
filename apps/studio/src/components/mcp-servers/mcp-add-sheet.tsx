@@ -159,7 +159,7 @@ export function McpAddSheet({
           <Breadcrumb className="grow">
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink 
+                <BreadcrumbLink
                   onClick={onLibraryClick}
                   className="cursor-pointer"
                 >

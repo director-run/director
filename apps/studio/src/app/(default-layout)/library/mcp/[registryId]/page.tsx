@@ -130,10 +130,11 @@ export default function RegistryEntryPage() {
         toolId: tool.name,
         serverId,
       }),
-      onClick: () => setRegistryQuery({
-        toolId: tool.name,
-        serverId,
-      }),
+      onClick: () =>
+        setRegistryQuery({
+          toolId: tool.name,
+          serverId,
+        }),
     }));
 
   return (
@@ -145,13 +146,25 @@ export default function RegistryEntryPage() {
         onLibraryClick={() => router.push("/library")}
         onServerClick={(serverId) => router.push(`/${serverId}`)}
         onNewServerClick={() => router.push("/new")}
-        onDocumentationClick={() => window.open("https://docs.director.run", "_blank", "noopener noreferrer")}
-        onGithubClick={() => window.open("https://github.com/director-run/director", "_blank", "noopener noreferrer")}
+        onDocumentationClick={() =>
+          window.open(
+            "https://docs.director.run",
+            "_blank",
+            "noopener noreferrer",
+          )
+        }
+        onGithubClick={() =>
+          window.open(
+            "https://github.com/director-run/director",
+            "_blank",
+            "noopener noreferrer",
+          )
+        }
       >
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink 
+              <BreadcrumbLink
                 onClick={() => router.push("/library")}
                 className="cursor-pointer"
               >
@@ -198,7 +211,9 @@ export default function RegistryEntryPage() {
           isInstalling={installMutation.isPending}
           onCloseTool={handleCloseTool}
           toolLinks={toolLinks}
-          onProxyServerClick={(proxyId, serverName) => router.push(`/${proxyId}/mcp/${serverName}`)}
+          onProxyServerClick={(proxyId, serverName) =>
+            router.push(`/${proxyId}/mcp/${serverName}`)
+          }
           onLibraryClick={() => router.push("/library")}
           onMcpClick={(mcpId) => router.push(`/library/mcp/${mcpId}`)}
         />

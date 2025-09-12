@@ -29,13 +29,17 @@ export default function DefaultLayout({
   };
 
   const handleGithubClick = () => {
-    window.open("https://github.com/director-run/director", "_blank", "noopener noreferrer");
+    window.open(
+      "https://github.com/director-run/director",
+      "_blank",
+      "noopener noreferrer",
+    );
   };
 
   return (
-    <LayoutRoot 
-      servers={servers} 
-      isLoading={isLoading} 
+    <LayoutRoot
+      servers={servers}
+      isLoading={isLoading}
       error={error?.message}
       onLibraryClick={handleLibraryClick}
       onServerClick={handleServerClick}

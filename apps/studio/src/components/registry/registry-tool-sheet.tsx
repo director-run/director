@@ -54,7 +54,7 @@ export function RegistryToolSheet({
           <Breadcrumb className="grow">
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink 
+                <BreadcrumbLink
                   onClick={onLibraryClick}
                   className="cursor-pointer"
                 >
@@ -63,7 +63,7 @@ export function RegistryToolSheet({
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbLink 
+                <BreadcrumbLink
                   onClick={() => onMcpClick?.(mcpId)}
                   className="cursor-pointer"
                 >
@@ -85,7 +85,7 @@ export function RegistryToolSheet({
               From{" "}
               <button
                 onClick={() => onMcpClick?.(mcpId)}
-                className="text-fg underline cursor-pointer"
+                className="cursor-pointer text-fg underline"
               >
                 {mcpName}
               </button>

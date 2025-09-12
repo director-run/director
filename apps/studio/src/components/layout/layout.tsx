@@ -52,9 +52,9 @@ export function LayoutRoot({
           "hidden w-full max-w-[220px] shrink-0 overflow-y-auto overflow-x-hidden md:flex",
         )}
       >
-        <SidebarContent 
-          servers={servers} 
-          isLoading={isLoading} 
+        <SidebarContent
+          servers={servers}
+          isLoading={isLoading}
           error={error}
           onLibraryClick={onLibraryClick}
           onServerClick={onServerClick}

@@ -126,10 +126,11 @@ export default function McpServerPage() {
           toolId: it.name,
           serverId: server,
         })}`,
-        onClick: () => setProxyQuery({
-          toolId: it.name,
-          serverId: server,
-        }),
+        onClick: () =>
+          setProxyQuery({
+            toolId: it.name,
+            serverId: server,
+          }),
         badges: undefined, // No badges needed since we're in a specific server context
       };
     });
@@ -143,13 +144,25 @@ export default function McpServerPage() {
         onLibraryClick={() => router.push("/library")}
         onServerClick={(serverId) => router.push(`/${serverId}`)}
         onNewServerClick={() => router.push("/new")}
-        onDocumentationClick={() => window.open("https://docs.director.run", "_blank", "noopener noreferrer")}
-        onGithubClick={() => window.open("https://github.com/director-run/director", "_blank", "noopener noreferrer")}
+        onDocumentationClick={() =>
+          window.open(
+            "https://docs.director.run",
+            "_blank",
+            "noopener noreferrer",
+          )
+        }
+        onGithubClick={() =>
+          window.open(
+            "https://github.com/director-run/director",
+            "_blank",
+            "noopener noreferrer",
+          )
+        }
       >
         <Breadcrumb className="grow">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink 
+              <BreadcrumbLink
                 onClick={() => router.push(`/${proxy.id}`)}
                 className="cursor-pointer"
               >

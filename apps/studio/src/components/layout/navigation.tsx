@@ -56,9 +56,9 @@ export function LayoutNavigation({
       )}
       {...props}
     >
-      <SidebarSheet 
-        servers={servers} 
-        isLoading={isLoading} 
+      <SidebarSheet
+        servers={servers}
+        isLoading={isLoading}
         error={error}
         onLibraryClick={onLibraryClick}
         onServerClick={onServerClick}

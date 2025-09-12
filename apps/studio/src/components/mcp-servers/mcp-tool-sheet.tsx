@@ -124,7 +124,7 @@ function SheetInner({
         <Breadcrumb className="grow">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink 
+              <BreadcrumbLink
                 onClick={() => onProxyClick?.(proxy.id)}
                 className="cursor-pointer"
               >
@@ -158,14 +158,14 @@ function SheetInner({
             <button
               type="button"
               onClick={() => onServerClick?.(server.name)}
-              className="text-fg hover:underline cursor-pointer"
+              className="cursor-pointer text-fg hover:underline"
             >
               {server?.name}
             </button>{" "}
             on{" "}
             <button
               onClick={() => onProxyClick?.(proxy.id)}
-              className="text-fg underline cursor-pointer"
+              className="cursor-pointer text-fg underline"
             >
               {proxy?.name}
             </button>

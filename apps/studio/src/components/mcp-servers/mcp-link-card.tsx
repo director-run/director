@@ -19,7 +19,7 @@ export function MCPLinkCard({ className, entry, onClick }: MCPLinkCardProps) {
   return (
     <div
       className={cn(
-        "flex h-40 flex-col justify-between gap-y-6 rounded-lg bg-accent-subtle p-4 transition-colors duration-200 ease-in-out hover:bg-accent cursor-pointer",
+        "flex h-40 cursor-pointer flex-col justify-between gap-y-6 rounded-lg bg-accent-subtle p-4 transition-colors duration-200 ease-in-out hover:bg-accent",
         className,
       )}
       onClick={onClick}

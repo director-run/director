@@ -55,7 +55,7 @@ export function McpServerDetail({
             Installed on{" "}
             <button
               onClick={() => onProxyClick?.(proxy.id)}
-              className="text-fg underline cursor-pointer"
+              className="cursor-pointer text-fg underline"
             >
               {proxy?.name}
             </button>

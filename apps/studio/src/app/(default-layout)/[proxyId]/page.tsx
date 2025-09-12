@@ -195,10 +195,11 @@ export default function ProxyPage() {
           toolId: it.name,
           serverId: server,
         })}`,
-        onClick: () => setProxyQuery({
-          toolId: it.name,
-          serverId: server,
-        }),
+        onClick: () =>
+          setProxyQuery({
+            toolId: it.name,
+            serverId: server,
+          }),
         badges: server && (
           <Badge>
             <BadgeLabel uppercase>{server}</BadgeLabel>
@@ -216,8 +217,20 @@ export default function ProxyPage() {
         onLibraryClick={() => router.push("/library")}
         onServerClick={(serverId) => router.push(`/${serverId}`)}
         onNewServerClick={() => router.push("/new")}
-        onDocumentationClick={() => window.open("https://docs.director.run", "_blank", "noopener noreferrer")}
-        onGithubClick={() => window.open("https://github.com/director-run/director", "_blank", "noopener noreferrer")}
+        onDocumentationClick={() =>
+          window.open(
+            "https://docs.director.run",
+            "_blank",
+            "noopener noreferrer",
+          )
+        }
+        onGithubClick={() =>
+          window.open(
+            "https://github.com/director-run/director",
+            "_blank",
+            "noopener noreferrer",
+          )
+        }
       >
         <Breadcrumb className="grow">
           <BreadcrumbList>
@@ -252,7 +265,9 @@ export default function ProxyPage() {
           toolLinks={toolLinks}
           toolsLoading={toolsLoading}
           onLibraryClick={() => router.push("/library")}
-          onServerClick={(serverId) => router.push(`/${params.proxyId}/mcp/${serverId}`)}
+          onServerClick={(serverId) =>
+            router.push(`/${params.proxyId}/mcp/${serverId}`)
+          }
         />
       </LayoutViewContent>
 

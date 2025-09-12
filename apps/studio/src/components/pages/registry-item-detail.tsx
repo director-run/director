@@ -189,9 +189,11 @@ export function RegistryItemDetail({
                   <BadgeGroup>
                     {proxiesWithMcp.map((proxy) => {
                       return (
-                        <Badge 
+                        <Badge
                           key={proxy.id}
-                          onClick={() => onProxyServerClick?.(proxy.id, entry.name)}
+                          onClick={() =>
+                            onProxyServerClick?.(proxy.id, entry.name)
+                          }
                           className="cursor-pointer"
                         >
                           <BadgeLabel>{proxy.name}</BadgeLabel>

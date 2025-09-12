@@ -5,7 +5,7 @@ import Image from "next/image";
 import { ComponentProps } from "react";
 
 import { cn } from "@/lib/cn";
-import { REGISTRY_URL } from "@/lib/urls";
+import { REGISTRY_URL } from "@/urls";
 
 import McpImageSrc from "../../public/icons/mcp.svg";
 

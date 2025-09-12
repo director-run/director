@@ -14,9 +14,9 @@ import {
   useFormContext,
 } from "react-hook-form";
 
-import { Label } from "@/components/ui/label";
-import { cn } from "@/helpers/cn";
-import { UseZodFormReturn, useZodForm } from "@/hooks/use-zod-form";
+import { Label } from "./label";
+import { cn } from "../../helpers/cn";
+import { UseZodFormReturn, useZodForm } from "../../hooks/use-zod-form";
 import type { z } from "zod";
 
 interface FormProps<T extends FieldValues> {

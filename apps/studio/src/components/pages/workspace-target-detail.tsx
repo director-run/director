@@ -1,15 +1,15 @@
-import { McpLogo } from "@/components/mcp-logo";
-import { McpDescriptionList } from "@/components/mcp-servers/mcp-description-list";
-import { McpToolsTable } from "@/components/mcp-servers/mcp-tools-table";
-import { StoreServerTransport } from "@/components/types";
-import { EmptyState, EmptyStateTitle } from "@/components/ui/empty-state";
-import { Markdown } from "@/components/ui/markdown";
+import { McpLogo } from "../mcp-logo";
+import { McpDescriptionList } from "../mcp-servers/mcp-description-list";
+import { McpToolsTable } from "../mcp-servers/mcp-tools-table";
+import { StoreServerTransport } from "../types";
+import { EmptyState, EmptyStateTitle } from "../ui/empty-state";
+import { Markdown } from "../ui/markdown";
 import {
   Section,
   SectionDescription,
   SectionHeader,
   SectionTitle,
-} from "@/components/ui/section";
+} from "../ui/section";
 
 interface McpServerDetailProps {
   mcp: {

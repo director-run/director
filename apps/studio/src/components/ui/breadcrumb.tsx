@@ -3,7 +3,7 @@
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 
-import { cn } from "@/helpers/cn";
+import { cn } from "../../helpers/cn";
 import { CaretRightIcon } from "@phosphor-icons/react";
 
 const Breadcrumb = React.forwardRef<

@@ -1,7 +1,7 @@
 "use client";
 
-import { StoreGet, StoreServer } from "@/components/types";
-import { Badge } from "@/components/ui/badge";
+import { StoreGet, StoreServer } from "../types";
+import { Badge } from "../ui/badge";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -9,20 +9,20 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+} from "../ui/breadcrumb";
 import {
   EmptyState,
   EmptyStateDescription,
   EmptyStateTitle,
-} from "@/components/ui/empty-state";
-import { JSONSchema, type JsonSchema } from "@/components/ui/json-schema";
-import { Markdown } from "@/components/ui/markdown";
+} from "../ui/empty-state";
+import { JSONSchema, type JsonSchema } from "../ui/json-schema";
+import { Markdown } from "../ui/markdown";
 import {
   Section,
   SectionHeader,
   SectionSeparator,
   SectionTitle,
-} from "@/components/ui/section";
+} from "../ui/section";
 import {
   Sheet,
   SheetActions,
@@ -31,7 +31,7 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet";
+} from "../ui/sheet";
 import { Tool } from "@modelcontextprotocol/sdk/types.js";
 
 export function McpToolSheet({

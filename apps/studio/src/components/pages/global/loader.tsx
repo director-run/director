@@ -1,4 +1,4 @@
-import { Logo } from "@/components/ui/icons/logo";
+import { Logo } from "../../ui/icons/logo";
 
 export const FullScreenLoader = () => {
   return (

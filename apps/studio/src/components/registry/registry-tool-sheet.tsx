@@ -1,5 +1,5 @@
 "use client";
-import { RegistryGetEntryTool } from "@/components/types";
+import { RegistryGetEntryTool } from "../types";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -7,20 +7,20 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+} from "../ui/breadcrumb";
 import {
   EmptyState,
   EmptyStateDescription,
   EmptyStateTitle,
-} from "@/components/ui/empty-state";
-import { JSONSchema, type JsonSchema } from "@/components/ui/json-schema";
-import { Markdown } from "@/components/ui/markdown";
+} from "../ui/empty-state";
+import { JSONSchema, type JsonSchema } from "../ui/json-schema";
+import { Markdown } from "../ui/markdown";
 import {
   Section,
   SectionHeader,
   SectionSeparator,
   SectionTitle,
-} from "@/components/ui/section";
+} from "../ui/section";
 import {
   Sheet,
   SheetActions,
@@ -29,7 +29,7 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet";
+} from "../ui/sheet";
 interface RegistryToolSheetProps {
   tool: RegistryGetEntryTool;
   mcpName: string;

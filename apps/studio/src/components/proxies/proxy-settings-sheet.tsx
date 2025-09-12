@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 
-import { StoreGet } from "@/components/types";
-import { Separator } from "@/components/ui/separator";
+import { StoreGet } from "../types";
+import { Separator } from "../ui/separator";
 import {
   Sheet,
   SheetActions,
@@ -11,7 +11,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
+} from "../ui/sheet";
 import { ProxyForm, ProxyFormData } from "./proxy-form";
 
 interface ProxySettingsSheetProps {

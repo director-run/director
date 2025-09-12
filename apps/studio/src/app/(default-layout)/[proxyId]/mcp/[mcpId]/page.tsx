@@ -4,11 +4,11 @@ import {
   LayoutView,
   LayoutViewContent,
   LayoutViewHeader,
-} from "@/components/layout/layout";
-import { McpToolSheet } from "@/components/mcp-servers/mcp-tool-sheet";
-import { McpServerDetail } from "@/components/pages/workspace-target-detail";
-import { ProxySkeleton } from "@/components/proxies/proxy-skeleton";
-import { WorkspaceTargetDetailDropDownMenu } from "@/components/proxies/workspace-target-detail-dropdown-menu";
+} from "../../../../../components/layout/layout";
+import { McpToolSheet } from "../../../../../components/mcp-servers/mcp-tool-sheet";
+import { McpServerDetail } from "../../../../../components/pages/workspace-target-detail";
+import { ProxySkeleton } from "../../../../../components/proxies/proxy-skeleton";
+import { WorkspaceTargetDetailDropDownMenu } from "../../../../../components/proxies/workspace-target-detail-dropdown-menu";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -16,13 +16,13 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Container } from "@/components/ui/container";
-import { toast } from "@/components/ui/toast";
-import { trpc } from "@/state/client";
-import { useInspectMcp } from "@/state/use-inspect-mcp";
-import { useProxy } from "@/state/use-proxy";
-import { proxyQuerySerializer, useProxyQuery } from "@/state/use-proxy-query";
+} from "../../../../../components/ui/breadcrumb";
+import { Container } from "../../../../../components/ui/container";
+import { toast } from "../../../../../components/ui/toast";
+import { trpc } from "../../../../../state/client";
+import { useInspectMcp } from "../../../../../state/use-inspect-mcp";
+import { useProxy } from "../../../../../state/use-proxy";
+import { proxyQuerySerializer, useProxyQuery } from "../../../../../state/use-proxy-query";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 

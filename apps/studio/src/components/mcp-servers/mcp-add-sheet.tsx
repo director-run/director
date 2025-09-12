@@ -5,8 +5,8 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { SectionSeparator } from "@/components/ui/section";
+} from "../ui/breadcrumb";
+import { SectionSeparator } from "../ui/section";
 import {
   Sheet,
   SheetActions,
@@ -16,7 +16,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
+} from "../ui/sheet";
 import { MinusIcon, PlusIcon } from "@phosphor-icons/react";
 import { ComponentProps, ReactNode } from "react";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";

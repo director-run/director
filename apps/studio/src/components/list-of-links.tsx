@@ -2,14 +2,14 @@
 
 import { ReactNode } from "react";
 
-import { Badge, BadgeGroup, BadgeLabel } from "@/components/ui/badge";
+import { Badge, BadgeGroup, BadgeLabel } from "./ui/badge";
 import {
   EmptyState,
   EmptyStateDescription,
   EmptyStateTitle,
-} from "@/components/ui/empty-state";
-import * as List from "@/components/ui/list";
-import { ScrambleText } from "@/components/ui/scramble-text";
+} from "./ui/empty-state";
+import * as List from "./ui/list";
+import { ScrambleText } from "./ui/scramble-text";
 
 function ListSkeletonItem() {
   return (

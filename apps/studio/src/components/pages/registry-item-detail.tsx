@@ -1,30 +1,30 @@
-import { McpLogo } from "@/components/mcp-logo";
-import { McpDescriptionList } from "@/components/mcp-servers/mcp-description-list";
-import { RegistryInstallForm } from "@/components/registry/registry-install-form";
-import { RegistryParameters } from "@/components/registry/registry-parameters";
-import { RegistryToolSheet } from "@/components/registry/registry-tool-sheet";
-import { RegistryTools } from "@/components/registry/registry-tools";
-import { RegistryGetEntryByName, StoreGetAll } from "@/components/types";
+import { McpLogo } from "../mcp-logo";
+import { McpDescriptionList } from "../mcp-servers/mcp-description-list";
+import { RegistryInstallForm } from "../registry/registry-install-form";
+import { RegistryParameters } from "../registry/registry-parameters";
+import { RegistryToolSheet } from "../registry/registry-tool-sheet";
+import { RegistryTools } from "../registry/registry-tools";
+import { RegistryGetEntryByName, StoreGetAll } from "../types";
 import {
   Badge,
   BadgeGroup,
   BadgeIcon,
   BadgeLabel,
-} from "@/components/ui/badge";
-import { Container } from "@/components/ui/container";
+} from "../ui/badge";
+import { Container } from "../ui/container";
 import {
   EmptyState,
   EmptyStateDescription,
   EmptyStateTitle,
-} from "@/components/ui/empty-state";
-import { Markdown } from "@/components/ui/markdown";
+} from "../ui/empty-state";
+import { Markdown } from "../ui/markdown";
 import {
   Section,
   SectionDescription,
   SectionHeader,
   SectionTitle,
-} from "@/components/ui/section";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from "../ui/section";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import {
   ArrowSquareOutIcon,
   BookOpenTextIcon,

@@ -1,7 +1,7 @@
-import { Container } from "@/components/ui/container";
-import { Logo } from "@/components/ui/icons/logo";
-import { SectionDescription, SectionTitle } from "@/components/ui/section";
-import { Section, SectionHeader } from "@/components/ui/section";
+import { Container } from "../../ui/container";
+import { Logo } from "../../ui/icons/logo";
+import { SectionDescription, SectionTitle } from "../../ui/section";
+import { Section, SectionHeader } from "../../ui/section";
 
 export function FullScreenError({
   errorMessage,

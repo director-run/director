@@ -5,25 +5,25 @@ import {
   LayoutView,
   LayoutViewContent,
   LayoutViewHeader,
-} from "@/components/layout/layout";
+} from "../../../components/layout/layout";
 import {
   McpAddFormData,
   McpAddSheet,
-} from "@/components/mcp-servers/mcp-add-sheet";
-import { RegistryItemList } from "@/components/pages/registry-item-list";
-import { RegistryLibrarySkeleton } from "@/components/registry/registry-library-skeleton";
+} from "../../../components/mcp-servers/mcp-add-sheet";
+import { RegistryItemList } from "../../../components/pages/registry-item-list";
+import { RegistryLibrarySkeleton } from "../../../components/registry/registry-library-skeleton";
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbPage,
-} from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
-import { EmptyStateDescription } from "@/components/ui/empty-state";
-import { EmptyState } from "@/components/ui/empty-state";
-import { EmptyStateTitle } from "@/components/ui/empty-state";
-import { toast } from "@/components/ui/toast";
-import { trpc } from "@/state/client";
+} from "../../../components/ui/breadcrumb";
+import { Button } from "../../../components/ui/button";
+import { EmptyStateDescription } from "../../../components/ui/empty-state";
+import { EmptyState } from "../../../components/ui/empty-state";
+import { EmptyStateTitle } from "../../../components/ui/empty-state";
+import { toast } from "../../../components/ui/toast";
+import { trpc } from "../../../state/client";
 import { useRouter } from "next/navigation";
 
 export default function RegistryPage() {

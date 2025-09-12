@@ -4,10 +4,10 @@ import {
   LayoutView,
   LayoutViewContent,
   LayoutViewHeader,
-} from "@/components/layout/layout";
-import { RegistryItemDetail } from "@/components/pages/registry-item-detail";
-import { RegistryEntrySkeleton } from "@/components/registry/registry-entry-skeleton";
-import { RegistryInstallForm } from "@/components/registry/registry-install-form";
+} from "../../../../../components/layout/layout";
+import { RegistryItemDetail } from "../../../../../components/pages/registry-item-detail";
+import { RegistryEntrySkeleton } from "../../../../../components/registry/registry-entry-skeleton";
+import { RegistryInstallForm } from "../../../../../components/registry/registry-install-form";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -15,18 +15,18 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
+} from "../../../../../components/ui/breadcrumb";
+import { Button } from "../../../../../components/ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { toast } from "@/components/ui/toast";
-import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
-import { trpc } from "@/state/client";
-import { useRegistryQuery } from "@/state/use-registry-query";
-import { registryQuerySerializer } from "@/state/use-registry-query";
+} from "../../../../../components/ui/popover";
+import { toast } from "../../../../../components/ui/toast";
+import { useCopyToClipboard } from "../../../../../hooks/use-copy-to-clipboard";
+import { trpc } from "../../../../../state/client";
+import { useRegistryQuery } from "../../../../../state/use-registry-query";
+import { registryQuerySerializer } from "../../../../../state/use-registry-query";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 

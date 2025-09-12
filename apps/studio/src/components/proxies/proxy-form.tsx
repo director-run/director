@@ -1,8 +1,8 @@
-import { Button } from "@/components/ui/button";
-import { FormWithSchema } from "@/components/ui/form";
-import { InputField } from "@/components/ui/form/input-field";
-import { TextareaField } from "@/components/ui/form/textarea-field";
-import { Loader } from "@/components/ui/loader";
+import { Button } from "../ui/button";
+import { FormWithSchema } from "../ui/form";
+import { InputField } from "../ui/form/input-field";
+import { TextareaField } from "../ui/form/textarea-field";
+import { Loader } from "../ui/loader";
 import { ReactNode } from "react";
 import { z } from "zod";
 

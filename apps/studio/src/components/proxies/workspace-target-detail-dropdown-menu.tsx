@@ -1,13 +1,13 @@
-import { McpDeleteConfirmation } from "@/components/mcp-servers/mcp-delete-confirmation";
-import { Button } from "@/components/ui/button";
+import { McpDeleteConfirmation } from "../mcp-servers/mcp-delete-confirmation";
+import { Button } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { MenuItemIcon, MenuItemLabel } from "@/components/ui/menu";
+} from "../ui/dropdown-menu";
+import { MenuItemIcon, MenuItemLabel } from "../ui/menu";
 import { DotsThreeOutlineVerticalIcon, TrashIcon } from "@phosphor-icons/react";
 
 interface WorkspaceTargetDetailDropDownMenuProps {

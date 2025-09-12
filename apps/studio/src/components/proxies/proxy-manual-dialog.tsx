@@ -1,7 +1,7 @@
 import { CopyIcon } from "@phosphor-icons/react";
 import { ComponentProps, ReactNode, useState } from "react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "../ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,10 +9,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { SelectNative } from "@/components/ui/select-native";
-import { DIRECTOR_URL } from "@/config";
+} from "../ui/dialog";
+import { Input } from "../ui/input";
+import { SelectNative } from "../ui/select-native";
+import { DIRECTOR_URL } from "../../config";
 
 type TransportType = "http" | "sse" | "stdio";
 

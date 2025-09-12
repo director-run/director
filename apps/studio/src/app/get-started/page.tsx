@@ -1,28 +1,28 @@
 "use client";
 
-import { GetStartedCompleteDialog } from "@/components/get-started/get-started-complete-dialog";
-import { GetStartedHeader } from "@/components/get-started/get-started-header";
-import { GetStartedInstallServerDialog } from "@/components/get-started/get-started-install-server-dialog";
-import { GetStartedInstallers } from "@/components/get-started/get-started-installers";
+import { GetStartedCompleteDialog } from "../../components/get-started/get-started-complete-dialog";
+import { GetStartedHeader } from "../../components/get-started/get-started-header";
+import { GetStartedInstallServerDialog } from "../../components/get-started/get-started-install-server-dialog";
+import { GetStartedInstallers } from "../../components/get-started/get-started-installers";
 import {
   GetStartedList,
   GetStartedListItem,
-} from "@/components/get-started/get-started-list";
-import { GetStartedMcpServerList } from "@/components/get-started/get-started-mcp-server-list";
+} from "../../components/get-started/get-started-list";
+import { GetStartedMcpServerList } from "../../components/get-started/get-started-mcp-server-list";
 import {
   GetStartedProxyForm,
   FormValues as ProxyFormValues,
   proxySchema,
-} from "@/components/get-started/get-started-proxy-form";
-import { FullScreenLoader } from "@/components/pages/global/loader";
-import { RegistryGetEntriesEntry } from "@/components/types";
-import { Container } from "@/components/ui/container";
-import { Section } from "@/components/ui/section";
-import { toast } from "@/components/ui/toast";
-import { DIRECTOR_URL } from "@/config";
-import { useZodForm } from "@/hooks/use-zod-form";
-import { trpc } from "@/state/client";
-import { registryQuerySerializer } from "@/state/use-registry-query";
+} from "../../components/get-started/get-started-proxy-form";
+import { FullScreenLoader } from "../../components/pages/global/loader";
+import { RegistryGetEntriesEntry } from "../../components/types";
+import { Container } from "../../components/ui/container";
+import { Section } from "../../components/ui/section";
+import { toast } from "../../components/ui/toast";
+import { DIRECTOR_URL } from "../../config";
+import { useZodForm } from "../../hooks/use-zod-form";
+import { trpc } from "../../state/client";
+import { registryQuerySerializer } from "../../state/use-registry-query";
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import { useEffect, useState } from "react";
 import { SubmitHandler } from "react-hook-form";

@@ -1,14 +1,14 @@
 "use client";
 
-import { McpLogo } from "@/components/mcp-logo";
-import { RegistryGetEntriesEntry } from "@/components/types";
-import { EmptyState, EmptyStateTitle } from "@/components/ui/empty-state";
-import { Input } from "@/components/ui/input";
+import { McpLogo } from "../mcp-logo";
+import { RegistryGetEntriesEntry } from "../types";
+import { EmptyState, EmptyStateTitle } from "../ui/empty-state";
+import { Input } from "../ui/input";
 import {
   ListItemDescription,
   ListItemDetails,
   ListItemTitle,
-} from "@/components/ui/list";
+} from "../ui/list";
 
 interface GetStartedMcpServerListProps {
   searchQuery: string;

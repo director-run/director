@@ -5,8 +5,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from "../form";
+import { Input } from "../input";
 import type { ComponentPropsWithoutRef } from "react";
 import { useFormContext } from "react-hook-form";
 import { Label } from "../label";

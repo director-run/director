@@ -1,6 +1,6 @@
 "use client";
 
-import { DIRECTOR_URL } from "@/config";
+import { DIRECTOR_URL } from "../config";
 import { createGatewayClient } from "@director.run/gateway/client";
 import type { AppRouter } from "@director.run/gateway/routers/trpc/index";
 import { QueryClientProvider } from "@tanstack/react-query";

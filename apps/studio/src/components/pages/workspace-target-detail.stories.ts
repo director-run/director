@@ -1,4 +1,4 @@
-import { StoreServerTransport } from "@/components/types";
+import { StoreServerTransport } from "../types";
 import type { Meta, StoryObj } from "@storybook/react";
 import { McpServerDetail } from "./workspace-target-detail";
 

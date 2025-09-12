@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-import { cn } from "@/helpers/cn";
+import { cn } from "../../helpers/cn";
 
 const CHARS = "░▒▓█";
 

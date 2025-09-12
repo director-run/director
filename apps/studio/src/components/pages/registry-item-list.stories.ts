@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "../ui/button";
 import { PlusIcon } from "@phosphor-icons/react";
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";

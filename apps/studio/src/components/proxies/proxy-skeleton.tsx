@@ -1,23 +1,23 @@
 "use client";
 
-import { LayoutView, LayoutViewContent } from "@/components/layout/layout";
-import { LayoutNavigation } from "@/components/layout/navigation";
-import { ListOfLinks } from "@/components/list-of-links";
+import { LayoutView, LayoutViewContent } from "../layout/layout";
+import { LayoutNavigation } from "../layout/navigation";
+import { ListOfLinks } from "../list-of-links";
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbPage,
-} from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
-import { Container } from "@/components/ui/container";
-import { ScrambleText } from "@/components/ui/scramble-text";
+} from "../ui/breadcrumb";
+import { Button } from "../ui/button";
+import { Container } from "../ui/container";
+import { ScrambleText } from "../ui/scramble-text";
 import {
   Section,
   SectionDescription,
   SectionHeader,
   SectionTitle,
-} from "@/components/ui/section";
+} from "../ui/section";
 import { DotsThreeOutlineVerticalIcon } from "@phosphor-icons/react";
 import { ReactNode } from "react";
 

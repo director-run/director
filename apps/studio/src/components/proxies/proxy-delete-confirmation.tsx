@@ -1,4 +1,4 @@
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { ConfirmDialog } from "../ui/confirm-dialog";
 import { ReactNode } from "react";
 
 interface ProxyDeleteConfirmationProps {

@@ -1,17 +1,17 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Logo } from "@/components/ui/icons/logo";
+import { Button } from "../ui/button";
+import { Logo } from "../ui/icons/logo";
 import {
   Menu,
   MenuItem,
   MenuItemIcon,
   MenuItemLabel,
   MenuLabel,
-} from "@/components/ui/menu";
-import { ScrambleText } from "@/components/ui/scramble-text";
-import { Sheet, SheetPortal, SheetTrigger } from "@/components/ui/sheet";
-import { cn } from "@/helpers/cn";
+} from "../ui/menu";
+import { ScrambleText } from "../ui/scramble-text";
+import { Sheet, SheetPortal, SheetTrigger } from "../ui/sheet";
+import { cn } from "../../helpers/cn";
 import { SidebarIcon } from "@phosphor-icons/react";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";

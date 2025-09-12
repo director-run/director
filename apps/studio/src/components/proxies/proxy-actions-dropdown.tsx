@@ -1,15 +1,15 @@
-import { ProxyDeleteConfirmation } from "@/components/proxies/proxy-delete-confirmation";
-import { ProxySettingsSheet } from "@/components/proxies/proxy-settings-sheet";
-import { StoreGet } from "@/components/types";
-import { Button } from "@/components/ui/button";
+import { ProxyDeleteConfirmation } from "./proxy-delete-confirmation";
+import { ProxySettingsSheet } from "./proxy-settings-sheet";
+import { StoreGet } from "../types";
+import { Button } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { MenuItemIcon, MenuItemLabel } from "@/components/ui/menu";
+} from "../ui/dropdown-menu";
+import { MenuItemIcon, MenuItemLabel } from "../ui/menu";
 import {
   DotsThreeOutlineVerticalIcon,
   GearIcon,

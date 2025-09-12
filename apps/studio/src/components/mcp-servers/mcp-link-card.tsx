@@ -1,7 +1,7 @@
 import { SealCheckIcon } from "@phosphor-icons/react";
 
-import { McpLogo } from "@/components/mcp-logo";
-import { cn } from "@/helpers/cn";
+import { McpLogo } from "../mcp-logo";
+import { cn } from "../../helpers/cn";
 import { ComponentProps } from "react";
 
 interface MCPLinkCardProps {

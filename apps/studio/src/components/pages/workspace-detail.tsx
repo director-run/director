@@ -1,25 +1,25 @@
 import {
   MCPLinkCard,
   MCPLinkCardList,
-} from "@/components/mcp-servers/mcp-link-card";
-import { McpToolsTable } from "@/components/mcp-servers/mcp-tools-table";
+} from "../mcp-servers/mcp-link-card";
+import { McpToolsTable } from "../mcp-servers/mcp-tools-table";
 import {
   AvailableClient,
   Client,
   ProxyInstallers,
-} from "@/components/proxies/proxy-installers";
-import { ProxyManualDialog } from "@/components/proxies/proxy-manual-dialog";
-import { Button } from "@/components/ui/button";
-import { Container } from "@/components/ui/container";
+} from "../proxies/proxy-installers";
+import { ProxyManualDialog } from "../proxies/proxy-manual-dialog";
+import { Button } from "../ui/button";
+import { Container } from "../ui/container";
 import {
   Section,
   SectionDescription,
   SectionHeader,
   SectionSeparator,
   SectionTitle,
-} from "@/components/ui/section";
-import { toast } from "@/components/ui/toast";
-import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
+} from "../ui/section";
+import { toast } from "../ui/toast";
+import { useCopyToClipboard } from "../../hooks/use-copy-to-clipboard";
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 
 interface ProxyDetailProps {

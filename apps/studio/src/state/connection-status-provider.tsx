@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Logo } from "@/components/ui/images/logo";
+import { Logo } from "@/components/ui/icons/logo";
 import { trpc } from "@/state/client";
 import cliPackage from "@director.run/cli/package.json";
 import { useEffect, useState } from "react";

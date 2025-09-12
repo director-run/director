@@ -1,6 +1,6 @@
 "use client";
 
-import { Logo } from "../ui/images/logo";
+import { Logo } from "../ui/icons/logo";
 import { SectionDescription, SectionHeader, SectionTitle } from "../ui/section";
 
 interface GetStartedHeaderProps {

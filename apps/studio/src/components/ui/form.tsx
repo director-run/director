@@ -14,10 +14,10 @@ import {
   useFormContext,
 } from "react-hook-form";
 
+import { cn } from "@director.run/design/helpers/cn.ts";
+import type { UseZodFormReturn } from "@director.run/design/hooks/use-zod-form.tsx";
+import { useZodForm } from "@director.run/design/hooks/use-zod-form.tsx";
 import type { z } from "zod";
-import { cn } from "../../helpers/cn";
-import type { UseZodFormReturn } from "../../hooks/use-zod-form";
-import { useZodForm } from "../../hooks/use-zod-form";
 import { Label } from "./label";
 
 interface FormProps<T extends FieldValues> {

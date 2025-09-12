@@ -63,7 +63,6 @@
   "devDependencies": {
     "@chromatic-com/storybook": "^4.1.1",
     "@director.run/cli": "workspace:*",
-    "@director.run/typescript-config": "workspace:*",
     "@storybook/addon-docs": "^9.1.5",
     "@storybook/addon-onboarding": "^9.1.5",
     "@storybook/nextjs": "^9.1.5",

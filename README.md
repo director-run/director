@@ -420,7 +420,6 @@ const result = await workspace.callTool('github.create_issue', {
 - [`packages/mcp`](./packages/mcp/README.md) - Extensions to MCP SDK that add middleware functionality
 - [`packages/utilities`](./packages/utilities/README.md) - Shared utilities used across all packages and apps
 - [`packages/design`](./packages/design/README.md) - Design system: reusable UI components, hooks, and styles for all Director apps
-- [`packages/typescript-config`](./packages/typescript-config/README.md) - Shared TypeScript configuration for all packages and apps
 
 *This is a monorepo managed by [Turborepo](https://turbo.build/).*
 

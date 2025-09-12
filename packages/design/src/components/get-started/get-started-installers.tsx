@@ -1,6 +1,6 @@
 import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
-import type { ClientId } from "../../app/get-started/page";
 import { cn } from "../../helpers/cn";
+import type { ClientId } from "../types";
 import { Button } from "../ui/button";
 import { ListItemTitle } from "../ui/list";
 
@@ -24,7 +24,7 @@ interface GetStartedInstallersProps {
   }>;
   isLoading: boolean;
   isInstalling: boolean;
-  onInstall: (client: string) => void;
+  onInstall: (client: ClientId) => void;
 }
 
 // Presentational component

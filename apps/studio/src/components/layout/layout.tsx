@@ -1,75 +1,97 @@
 "use client";
+import { SidebarIcon } from "@phosphor-icons/react";
+import * as SheetPrimitive from "@radix-ui/react-dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import type { ComponentProps, ReactNode } from "react";
+import { createContext, useContext } from "react";
 import { cn } from "../../helpers/cn";
-import { Sheet } from "../ui/sheet";
-import { SidebarContent } from "./navigation";
+import { Button } from "../ui/button";
+import { Sheet, SheetPortal, SheetTrigger } from "../ui/sheet";
+import { NavigationSection, SidebarContent } from "./navigation";
+
+const NavigationContext = createContext<NavigationSection[]>([]);
 
 interface SidebarSheetProps extends ComponentProps<typeof Sheet> {
   children?: ReactNode;
 }
 
-interface Server {
-  id: string;
-  name: string;
+interface MobileNavigationProps {
+  sections: NavigationSection[];
+}
+
+function MobileNavigation({ sections }: MobileNavigationProps) {
+  return (
+    <div className="flex h-13 shrink-0 flex-row items-center gap-x-2 border-accent border-b-[0.5px] bg-surface px-4 md:hidden">
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button size="icon" variant="ghost">
+            <SidebarIcon weight="fill" className="!size-5 shrink-0" />
+            <span className="sr-only">Open sidebar</span>
+          </Button>
+        </SheetTrigger>
+        <SheetPortal>
+          <SheetPrimitive.Overlay className="overlay" />
+          <SheetPrimitive.Content
+            className={cn(
+              "fixed inset-y-0 left-0 z-50 h-full w-full max-w-[220px] bg-bg text-fg transition ease-in-out",
+              "shadow-[0_0_10px_3px_rgba(55,50,46,0.13),_0_0_0_0.5px_rgba(55,50,46,0.2)] outline-none",
+              "overflow-y-auto overflow-x-hidden",
+              "radix-state-[closed]:slide-out-to-left radix-state-[closed]:animate-out radix-state-[closed]:duration-200",
+              "radix-state-[open]:slide-in-from-left radix-state-[open]:animate-in radix-state-[open]:duration-300",
+            )}
+          >
+            <VisuallyHidden>
+              <SheetPrimitive.DialogTitle>
+                Navigation
+              </SheetPrimitive.DialogTitle>
+              <SheetPrimitive.DialogDescription>
+                A sidebar containing global navigation for Director studio.
+              </SheetPrimitive.DialogDescription>
+            </VisuallyHidden>
+            <SidebarContent sections={sections} />
+          </SheetPrimitive.Content>
+        </SheetPortal>
+      </Sheet>
+    </div>
+  );
 }
 
 interface LayoutRootProps extends ComponentProps<"div"> {
-  servers?: Server[];
-  isLoading?: boolean;
-  error?: string | null;
-  onLibraryClick?: () => void;
-  onServerClick?: (serverId: string) => void;
-  onNewServerClick?: () => void;
-  onDocumentationClick?: () => void;
-  onGithubClick?: () => void;
+  sections?: NavigationSection[];
 }
 
 export function LayoutRoot({
   className,
   children,
-  servers,
-  isLoading,
-  error,
-  onLibraryClick,
-  onServerClick,
-  onNewServerClick,
-  onDocumentationClick,
-  onGithubClick,
+  sections = [],
   ...props
 }: LayoutRootProps) {
   return (
-    <div
-      data-slot="layout"
-      className={cn(
-        "flex h-screen w-screen flex-row overflow-hidden bg-bg text-fg",
-        className,
-      )}
-      {...props}
-    >
+    <NavigationContext.Provider value={sections}>
       <div
-        data-slot="layout-sidebar"
+        data-slot="layout"
         className={cn(
-          "hidden w-full max-w-[220px] shrink-0 overflow-y-auto overflow-x-hidden md:flex",
+          "flex h-screen w-screen flex-row overflow-hidden bg-bg text-fg",
+          className,
         )}
+        {...props}
       >
-        <SidebarContent
-          servers={servers}
-          isLoading={isLoading}
-          error={error}
-          onLibraryClick={onLibraryClick}
-          onServerClick={onServerClick}
-          onNewServerClick={onNewServerClick}
-          onDocumentationClick={onDocumentationClick}
-          onGithubClick={onGithubClick}
-        />
+        <div
+          data-slot="layout-sidebar"
+          className={cn(
+            "hidden w-full max-w-[220px] shrink-0 overflow-y-auto overflow-x-hidden md:flex",
+          )}
+        >
+          <SidebarContent sections={sections} />
+        </div>
+        <div
+          data-slot="layout-content"
+          className="flex grow flex-col overflow-hidden p-2 md:pl-px"
+        >
+          {children}
+        </div>
       </div>
-      <div
-        data-slot="layout-content"
-        className="flex grow flex-col overflow-hidden p-2 md:pl-px"
-      >
-        {children}
-      </div>
-    </div>
+    </NavigationContext.Provider>
   );
 }
 
@@ -78,6 +100,8 @@ export function LayoutView({
   children,
   ...props
 }: ComponentProps<"div">) {
+  const sections = useContext(NavigationContext);
+
   return (
     <div
       className={cn(
@@ -87,6 +111,7 @@ export function LayoutView({
       )}
       {...props}
     >
+      <MobileNavigation sections={sections} />
       {children}
     </div>
   );

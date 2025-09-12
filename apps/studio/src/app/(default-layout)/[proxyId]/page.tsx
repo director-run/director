@@ -1,19 +1,11 @@
 "use client";
 
 import { LayoutView, LayoutViewContent } from "@/components/layout/layout";
-import { LayoutNavigation } from "@/components/layout/navigation";
 import { McpToolSheet } from "@/components/mcp-servers/mcp-tool-sheet";
 import { ProxyDetail } from "@/components/pages/workspace-detail";
-import { ProxyActionsDropdown } from "@/components/proxies/proxy-actions-dropdown";
 import { Client } from "@/components/proxies/proxy-installers";
 import { ProxySkeleton } from "@/components/proxies/proxy-skeleton";
 import { Badge, BadgeLabel } from "@/components/ui/badge";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbPage,
-} from "@/components/ui/breadcrumb";
 import { toast } from "@/components/ui/toast";
 import { DIRECTOR_URL } from "@/config";
 import { trpc } from "@/state/client";
@@ -72,11 +64,6 @@ export default function ProxyPage() {
     serverId || undefined,
   );
   const tool = tools.find((tool) => tool.name === toolId);
-  const {
-    data: servers,
-    isLoading: serversLoading,
-    error: serversError,
-  } = trpc.store.getAll.useQuery();
 
   const { data: availableClients, isLoading: isClientsLoading } =
     trpc.installer.allClients.useQuery();
@@ -210,47 +197,6 @@ export default function ProxyPage() {
 
   return (
     <LayoutView>
-      <LayoutNavigation
-        servers={servers}
-        isLoading={serversLoading}
-        error={serversError?.message}
-        onLibraryClick={() => router.push("/library")}
-        onServerClick={(serverId) => router.push(`/${serverId}`)}
-        onNewServerClick={() => router.push("/new")}
-        onDocumentationClick={() =>
-          window.open(
-            "https://docs.director.run",
-            "_blank",
-            "noopener noreferrer",
-          )
-        }
-        onGithubClick={() =>
-          window.open(
-            "https://github.com/director-run/director",
-            "_blank",
-            "noopener noreferrer",
-          )
-        }
-      >
-        <Breadcrumb className="grow">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbPage>{proxy.name}</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-        <ProxyActionsDropdown
-          proxy={proxy}
-          onUpdateProxy={handleUpdateProxy}
-          onDeleteProxy={handleDeleteProxy}
-          isUpdating={updateProxyMutation.isPending}
-          settingsOpen={settingsOpen}
-          onSettingsOpenChange={setSettingsOpen}
-          deleteOpen={deleteOpen}
-          onDeleteOpenChange={setDeleteOpen}
-        />
-      </LayoutNavigation>
-
       <LayoutViewContent>
         <ProxyDetail
           proxy={proxy}

@@ -1,8 +1,15 @@
 "use client";
 
 import { LayoutRoot } from "@/components/layout/layout";
+import { NavigationSection } from "@/components/layout/navigation";
+import { MCPIcon } from "@/components/ui/icons/mcp-icon";
 import { trpc } from "@/state/client";
-import { useRouter } from "next/navigation";
+import {
+  BookOpenTextIcon,
+  GithubLogoIcon,
+  PlusIcon,
+} from "@phosphor-icons/react";
+import { useParams, usePathname, useRouter } from "next/navigation";
 
 export default function DefaultLayout({
   children,
@@ -10,44 +17,76 @@ export default function DefaultLayout({
   children: React.ReactNode;
 }>) {
   const router = useRouter();
+  const pathname = usePathname();
+  const { proxyId } = useParams<{ proxyId?: string }>();
   const { data: servers, isLoading, error } = trpc.store.getAll.useQuery();
 
-  const handleLibraryClick = () => {
-    router.push("/library");
-  };
+  const showLoading = isLoading || error?.message === "Failed to fetch";
 
-  const handleServerClick = (serverId: string) => {
-    router.push(`/${serverId}`);
-  };
+  const sections: NavigationSection[] = [
+    // Library section
+    {
+      id: "library",
+      label: "Library",
+      items: [
+        {
+          id: "mcp",
+          label: "MCP",
+          icon: <MCPIcon />,
+          isActive: pathname.startsWith("/library"),
+          onClick: () => router.push("/library"),
+        },
+      ],
+    },
+    // Servers section
+    {
+      id: "servers",
+      label: "Servers",
+      isLoading: showLoading,
+      items:
+        servers?.map((server) => ({
+          id: server.id,
+          label: server.name,
+          isActive: server.id === proxyId,
+          onClick: () => router.push(`/${server.id}`),
+        })) || [],
+    },
+    // Bottom actions section
+    {
+      id: "actions",
+      items: [
+        {
+          id: "new-server",
+          label: "New server",
+          icon: <PlusIcon />,
+          isActive: pathname === "/new",
+          onClick: () => router.push("/new"),
+        },
+        {
+          id: "documentation",
+          label: "Documentation",
+          icon: <BookOpenTextIcon weight="fill" />,
+          onClick: () =>
+            window.open(
+              "https://docs.director.run",
+              "_blank",
+              "noopener noreferrer",
+            ),
+        },
+        {
+          id: "github",
+          label: "Github",
+          icon: <GithubLogoIcon />,
+          onClick: () =>
+            window.open(
+              "https://github.com/director-run/director",
+              "_blank",
+              "noopener noreferrer",
+            ),
+        },
+      ],
+    },
+  ];
 
-  const handleNewServerClick = () => {
-    router.push("/new");
-  };
-
-  const handleDocumentationClick = () => {
-    window.open("https://docs.director.run", "_blank", "noopener noreferrer");
-  };
-
-  const handleGithubClick = () => {
-    window.open(
-      "https://github.com/director-run/director",
-      "_blank",
-      "noopener noreferrer",
-    );
-  };
-
-  return (
-    <LayoutRoot
-      servers={servers}
-      isLoading={isLoading}
-      error={error?.message}
-      onLibraryClick={handleLibraryClick}
-      onServerClick={handleServerClick}
-      onNewServerClick={handleNewServerClick}
-      onDocumentationClick={handleDocumentationClick}
-      onGithubClick={handleGithubClick}
-    >
-      {children}
-    </LayoutRoot>
-  );
+  return <LayoutRoot sections={sections}>{children}</LayoutRoot>;
 }

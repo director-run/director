@@ -1,38 +1,21 @@
 "use client";
 
 import { LayoutView, LayoutViewContent } from "@/components/layout/layout";
-import { LayoutNavigation } from "@/components/layout/navigation";
 import { RegistryItemDetail } from "@/components/pages/registry-item-detail";
 import { RegistryEntrySkeleton } from "@/components/registry/registry-entry-skeleton";
-import { RegistryInstallForm } from "@/components/registry/registry-install-form";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { toast } from "@/components/ui/toast";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { trpc } from "@/state/client";
 import { useRegistryQuery } from "@/state/use-registry-query";
 import { registryQuerySerializer } from "@/state/use-registry-query";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function RegistryEntryPage() {
   const router = useRouter();
   const { registryId } = useParams<{ registryId: string }>();
   const { toolId, serverId, setRegistryQuery } = useRegistryQuery();
   const [_, copy] = useCopyToClipboard();
-  const [installFormOpen, setInstallFormOpen] = useState(false);
 
   const [entryQuery, storeQuery] = trpc.useQueries((t) => [
     t.registry.getEntryByName({
@@ -139,66 +122,6 @@ export default function RegistryEntryPage() {
 
   return (
     <LayoutView>
-      <LayoutNavigation
-        servers={storeQuery.data}
-        isLoading={storeQuery.isLoading}
-        error={storeQuery.error?.message}
-        onLibraryClick={() => router.push("/library")}
-        onServerClick={(serverId) => router.push(`/${serverId}`)}
-        onNewServerClick={() => router.push("/new")}
-        onDocumentationClick={() =>
-          window.open(
-            "https://docs.director.run",
-            "_blank",
-            "noopener noreferrer",
-          )
-        }
-        onGithubClick={() =>
-          window.open(
-            "https://github.com/director-run/director",
-            "_blank",
-            "noopener noreferrer",
-          )
-        }
-      >
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink
-                onClick={() => router.push("/library")}
-                className="cursor-pointer"
-              >
-                Library
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>{entry.title}</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-
-        <Popover open={installFormOpen} onOpenChange={setInstallFormOpen}>
-          <PopoverTrigger asChild>
-            <Button className="ml-auto lg:hidden">Add to proxy</Button>
-          </PopoverTrigger>
-          <PopoverContent
-            side="bottom"
-            align="end"
-            sideOffset={8}
-            className="w-sm max-w-[80dvw] rounded-[20px] lg:hidden"
-          >
-            <RegistryInstallForm
-              mcp={entry}
-              proxies={proxiesWithoutMcp}
-              defaultProxyId={serverId ?? undefined}
-              onSubmit={handleInstall}
-              isSubmitting={installMutation.isPending}
-            />
-          </PopoverContent>
-        </Popover>
-      </LayoutNavigation>
-
       <LayoutViewContent>
         <RegistryItemDetail
           entry={entry}

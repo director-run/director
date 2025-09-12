@@ -1,18 +1,11 @@
 "use client";
 
 import { LayoutView, LayoutViewContent } from "@/components/layout/layout";
-import { LayoutNavigation } from "@/components/layout/navigation";
 import {
   ProxyForm,
   ProxyFormButton,
   ProxyFormData,
 } from "@/components/proxies/proxy-form";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbPage,
-} from "@/components/ui/breadcrumb";
 import { Container } from "@/components/ui/container";
 import {
   Section,
@@ -27,7 +20,6 @@ import { useRouter } from "next/navigation";
 
 export default function NewProxyPage() {
   const router = useRouter();
-  const { data: servers, isLoading, error } = trpc.store.getAll.useQuery();
 
   const utils = trpc.useUtils();
   const mutation = trpc.store.create.useMutation({
@@ -47,37 +39,6 @@ export default function NewProxyPage() {
 
   return (
     <LayoutView>
-      <LayoutNavigation
-        servers={servers}
-        isLoading={isLoading}
-        error={error?.message}
-        onLibraryClick={() => router.push("/library")}
-        onServerClick={(serverId) => router.push(`/${serverId}`)}
-        onNewServerClick={() => router.push("/new")}
-        onDocumentationClick={() =>
-          window.open(
-            "https://docs.director.run",
-            "_blank",
-            "noopener noreferrer",
-          )
-        }
-        onGithubClick={() =>
-          window.open(
-            "https://github.com/director-run/director",
-            "_blank",
-            "noopener noreferrer",
-          )
-        }
-      >
-        <Breadcrumb className="grow">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbPage>New proxy</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      </LayoutNavigation>
-
       <LayoutViewContent>
         <Container size="sm">
           <Section className="gap-y-8">

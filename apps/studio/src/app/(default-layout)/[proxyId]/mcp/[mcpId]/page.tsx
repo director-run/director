@@ -1,19 +1,9 @@
 "use client";
 
 import { LayoutView, LayoutViewContent } from "@/components/layout/layout";
-import { LayoutNavigation } from "@/components/layout/navigation";
 import { McpToolSheet } from "@/components/mcp-servers/mcp-tool-sheet";
 import { McpServerDetail } from "@/components/pages/workspace-target-detail";
 import { ProxySkeleton } from "@/components/proxies/proxy-skeleton";
-import { WorkspaceTargetDetailDropDownMenu } from "@/components/proxies/workspace-target-detail-dropdown-menu";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Container } from "@/components/ui/container";
 import { toast } from "@/components/ui/toast";
 import { trpc } from "@/state/client";
@@ -38,11 +28,6 @@ export default function McpServerPage() {
     serverId || undefined,
   );
   const tool = tools.find((tool) => tool.name === toolId);
-  const {
-    data: servers,
-    isLoading: serversLoading,
-    error: serversError,
-  } = trpc.store.getAll.useQuery();
 
   const registryEntryQuery = trpc.registry.getEntryByName.useQuery(
     {
@@ -137,51 +122,6 @@ export default function McpServerPage() {
 
   return (
     <LayoutView>
-      <LayoutNavigation
-        servers={servers}
-        isLoading={serversLoading}
-        error={serversError?.message}
-        onLibraryClick={() => router.push("/library")}
-        onServerClick={(serverId) => router.push(`/${serverId}`)}
-        onNewServerClick={() => router.push("/new")}
-        onDocumentationClick={() =>
-          window.open(
-            "https://docs.director.run",
-            "_blank",
-            "noopener noreferrer",
-          )
-        }
-        onGithubClick={() =>
-          window.open(
-            "https://github.com/director-run/director",
-            "_blank",
-            "noopener noreferrer",
-          )
-        }
-      >
-        <Breadcrumb className="grow">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink
-                onClick={() => router.push(`/${proxy.id}`)}
-                className="cursor-pointer"
-              >
-                {proxy?.name}
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>{mcp.name}</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-        <WorkspaceTargetDetailDropDownMenu
-          onDelete={handleDeleteServer}
-          open={deleteOpen}
-          onOpenChange={setDeleteOpen}
-        />
-      </LayoutNavigation>
-
       <LayoutViewContent>
         <Container size="lg">
           <McpServerDetail

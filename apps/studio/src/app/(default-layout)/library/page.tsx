@@ -2,19 +2,12 @@
 import { useState } from "react";
 
 import { LayoutView, LayoutViewContent } from "@/components/layout/layout";
-import { LayoutNavigation } from "@/components/layout/navigation";
 import {
   McpAddFormData,
   McpAddSheet,
 } from "@/components/mcp-servers/mcp-add-sheet";
 import { RegistryItemList } from "@/components/pages/registry-item-list";
 import { RegistryLibrarySkeleton } from "@/components/registry/registry-library-skeleton";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbPage,
-} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { EmptyStateDescription } from "@/components/ui/empty-state";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -40,11 +33,8 @@ export default function RegistryPage() {
     },
   );
 
-  const {
-    data: servers,
-    isLoading: serversLoading,
-    error: serversError,
-  } = trpc.store.getAll.useQuery();
+  const { data: servers, isLoading: serversLoading } =
+    trpc.store.getAll.useQuery();
 
   const utils = trpc.useUtils();
 
@@ -137,36 +127,6 @@ export default function RegistryPage() {
 
   return (
     <LayoutView>
-      <LayoutNavigation
-        servers={servers}
-        isLoading={serversLoading}
-        error={serversError?.message}
-        onLibraryClick={() => router.push("/library")}
-        onServerClick={(serverId) => router.push(`/${serverId}`)}
-        onNewServerClick={() => router.push("/new")}
-        onDocumentationClick={() =>
-          window.open(
-            "https://docs.director.run",
-            "_blank",
-            "noopener noreferrer",
-          )
-        }
-        onGithubClick={() =>
-          window.open(
-            "https://github.com/director-run/director",
-            "_blank",
-            "noopener noreferrer",
-          )
-        }
-      >
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbPage>Library</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      </LayoutNavigation>
       <LayoutViewContent>
         <RegistryItemList
           entries={data.entries}

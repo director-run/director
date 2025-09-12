@@ -12,40 +12,35 @@ import {
 import { ScrambleText } from "@/components/ui/scramble-text";
 import { Sheet, SheetPortal, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/helpers/cn";
-import {
-  BookOpenTextIcon,
-  GithubLogoIcon,
-  PlusIcon,
-  SidebarIcon,
-} from "@phosphor-icons/react";
+import { SidebarIcon } from "@phosphor-icons/react";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { useParams, usePathname } from "next/navigation";
 import type { ComponentProps, ReactNode } from "react";
-import { MCPIcon } from "../ui/icons/mcp-icon";
+
+export interface NavigationItem {
+  id: string;
+  label: string;
+  icon?: ReactNode;
+  isActive?: boolean;
+  onClick?: () => void;
+}
+
+export interface NavigationSection {
+  id: string;
+  label?: string;
+  items: NavigationItem[];
+  isLoading?: boolean;
+  className?: string;
+}
 
 interface LayoutNavigationProps extends ComponentProps<"div"> {
-  servers?: Server[];
-  isLoading?: boolean;
-  error?: string | null;
-  onLibraryClick?: () => void;
-  onServerClick?: (serverId: string) => void;
-  onNewServerClick?: () => void;
-  onDocumentationClick?: () => void;
-  onGithubClick?: () => void;
+  sections?: NavigationSection[];
 }
 
 export function LayoutNavigation({
   className,
   children,
-  servers,
-  isLoading,
-  error,
-  onLibraryClick,
-  onServerClick,
-  onNewServerClick,
-  onDocumentationClick,
-  onGithubClick,
+  sections = [],
   ...props
 }: LayoutNavigationProps) {
   return (
@@ -57,16 +52,7 @@ export function LayoutNavigation({
       )}
       {...props}
     >
-      <SidebarSheet
-        servers={servers}
-        isLoading={isLoading}
-        error={error}
-        onLibraryClick={onLibraryClick}
-        onServerClick={onServerClick}
-        onNewServerClick={onNewServerClick}
-        onDocumentationClick={onDocumentationClick}
-        onGithubClick={onGithubClick}
-      >
+      <SidebarSheet sections={sections}>
         <Button size="icon" variant="ghost">
           <SidebarIcon weight="fill" className="!size-5 shrink-0" />
           <span className="sr-only">Open sidebar</span>
@@ -79,28 +65,10 @@ export function LayoutNavigation({
 
 interface SidebarSheetProps extends ComponentProps<typeof Sheet> {
   children?: ReactNode;
-  servers?: Server[];
-  isLoading?: boolean;
-  error?: string | null;
-  onLibraryClick?: () => void;
-  onServerClick?: (serverId: string) => void;
-  onNewServerClick?: () => void;
-  onDocumentationClick?: () => void;
-  onGithubClick?: () => void;
+  sections: NavigationSection[];
 }
 
-function SidebarSheet({
-  children,
-  servers,
-  isLoading,
-  error,
-  onLibraryClick,
-  onServerClick,
-  onNewServerClick,
-  onDocumentationClick,
-  onGithubClick,
-  ...props
-}: SidebarSheetProps) {
+function SidebarSheet({ children, sections, ...props }: SidebarSheetProps) {
   return (
     <Sheet {...props}>
       {children && (
@@ -125,119 +93,56 @@ function SidebarSheet({
               A sidebar containing global navigation for Director studio.
             </SheetPrimitive.DialogDescription>
           </VisuallyHidden>
-          <SidebarContent
-            servers={servers}
-            isLoading={isLoading}
-            error={error}
-            onLibraryClick={onLibraryClick}
-            onServerClick={onServerClick}
-            onNewServerClick={onNewServerClick}
-            onDocumentationClick={onDocumentationClick}
-            onGithubClick={onGithubClick}
-          />
+          <SidebarContent sections={sections} />
         </SheetPrimitive.Content>
       </SheetPortal>
     </Sheet>
   );
 }
 
-interface Server {
-  id: string;
-  name: string;
-}
-
 interface SidebarContentProps {
-  servers?: Server[];
-  isLoading?: boolean;
-  error?: string | null;
-  onLibraryClick?: () => void;
-  onServerClick?: (serverId: string) => void;
-  onNewServerClick?: () => void;
-  onDocumentationClick?: () => void;
-  onGithubClick?: () => void;
+  sections: NavigationSection[];
 }
 
-export function SidebarContent({
-  servers,
-  isLoading,
-  error,
-  onLibraryClick,
-  onServerClick,
-  onNewServerClick,
-  onDocumentationClick,
-  onGithubClick,
-}: SidebarContentProps) {
-  const pathname = usePathname();
-  const { proxyId } = useParams<{ proxyId?: string }>();
-
-  const showLoading = isLoading || error === "Failed to fetch";
-
+export function SidebarContent({ sections }: SidebarContentProps) {
   return (
     <div className="flex h-full w-full shrink-0 flex-col gap-y-6 px-4 pt-6 *:last:pb-4">
       <div className="px-2">
         <Logo className="size-6" />
       </div>
 
-      <Menu>
-        <MenuLabel label="Library" />
-        <MenuItem
-          data-state={pathname.startsWith("/library") ? "active" : "inactive"}
-          onClick={onLibraryClick}
+      {sections.map((section, index) => (
+        <Menu
+          key={section.id}
+          className={cn(
+            section.className,
+            index === sections.length - 1 ? "mt-auto" : undefined,
+          )}
         >
-          <MenuItemIcon>
-            <MCPIcon />
-          </MenuItemIcon>
-          <MenuItemLabel>MCP</MenuItemLabel>
-        </MenuItem>
-      </Menu>
-
-      <Menu>
-        <MenuLabel label="Servers" />
-        {showLoading
-          ? new Array(3).fill(0).map((_, index) => (
-              <MenuItem key={`loading-${index}`} className="bg-accent-subtle">
-                <MenuItemLabel className="opacity-50">
-                  <ScrambleText text="Loading" />
-                </MenuItemLabel>
-              </MenuItem>
-            ))
-          : servers?.map((server) => {
-              const isActive = server.id === proxyId;
-              return (
+          {section.label && <MenuLabel label={section.label} />}
+          {section.isLoading
+            ? new Array(3).fill(0).map((_, loadingIndex) => (
                 <MenuItem
-                  key={server.id}
-                  data-state={isActive ? "active" : "inactive"}
-                  onClick={() => onServerClick?.(server.id)}
+                  key={`loading-${loadingIndex}`}
+                  className="bg-accent-subtle"
                 >
-                  <MenuItemLabel>{server.name}</MenuItemLabel>
+                  <MenuItemLabel className="opacity-50">
+                    <ScrambleText text="Loading" />
+                  </MenuItemLabel>
                 </MenuItem>
-              );
-            })}
-      </Menu>
-
-      <Menu className="mt-auto">
-        <MenuItem
-          data-state={pathname === "/new" ? "active" : "inactive"}
-          onClick={onNewServerClick}
-        >
-          <MenuItemIcon>
-            <PlusIcon />
-          </MenuItemIcon>
-          <MenuItemLabel>New server</MenuItemLabel>
-        </MenuItem>
-        <MenuItem onClick={onDocumentationClick}>
-          <MenuItemIcon>
-            <BookOpenTextIcon weight="fill" />
-          </MenuItemIcon>
-          <MenuItemLabel>Documentation</MenuItemLabel>
-        </MenuItem>
-        <MenuItem onClick={onGithubClick}>
-          <MenuItemIcon>
-            <GithubLogoIcon />
-          </MenuItemIcon>
-          <MenuItemLabel>Github</MenuItemLabel>
-        </MenuItem>
-      </Menu>
+              ))
+            : section.items.map((item) => (
+                <MenuItem
+                  key={item.id}
+                  data-state={item.isActive ? "active" : "inactive"}
+                  onClick={item.onClick}
+                >
+                  {item.icon && <MenuItemIcon>{item.icon}</MenuItemIcon>}
+                  <MenuItemLabel>{item.label}</MenuItemLabel>
+                </MenuItem>
+              ))}
+        </Menu>
+      ))}
     </div>
   );
 }

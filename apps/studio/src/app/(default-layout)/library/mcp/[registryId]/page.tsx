@@ -23,6 +23,7 @@ import { toast } from "@/components/ui/toast";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { trpc } from "@/state/client";
 import { useRegistryQuery } from "@/state/use-registry-query";
+import { registryQuerySerializer } from "@/state/use-registry-query";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -120,6 +121,18 @@ export default function RegistryEntryPage() {
       }),
   );
 
+  const toolLinks = (entry.tools ?? [])
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((tool) => ({
+      title: tool.name,
+      subtitle: tool.description?.replace(/\[([^\]]+)\]/g, ""),
+      scroll: false,
+      href: registryQuerySerializer({
+        toolId: tool.name,
+        serverId,
+      }),
+    }));
+
   return (
     <LayoutView>
       <LayoutNavigation
@@ -173,6 +186,7 @@ export default function RegistryEntryPage() {
           onInstall={handleInstall}
           isInstalling={installMutation.isPending}
           onCloseTool={handleCloseTool}
+          toolLinks={toolLinks}
         />
       </LayoutViewContent>
     </LayoutView>

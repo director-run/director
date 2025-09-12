@@ -1,4 +1,3 @@
-import { registryQuerySerializer } from "@/state/use-registry-query";
 import {
   ArrowSquareOutIcon,
   BookOpenTextIcon,
@@ -61,6 +60,12 @@ type GetStartedInstallServerDialogProps = {
   onOpenChange?: (open: boolean) => void;
   entryData?: RegistryGetEntryByName | null;
   isLoading?: boolean;
+  toolLinks: Array<{
+    title: string;
+    subtitle: string;
+    scroll: boolean;
+    href: string;
+  }>;
 };
 
 // Presentational component - no state management or tRPC calls
@@ -162,6 +167,7 @@ function GetStartedInstallServerDialogPresentation({
   onFormSubmit,
   isFormSubmitting,
   isFormInstalling,
+  toolLinks,
 }: GetStartedInstallServerDialogProps & {
   onFormSubmit: SubmitHandler<{
     proxyId: string;
@@ -170,18 +176,6 @@ function GetStartedInstallServerDialogPresentation({
   isFormSubmitting: boolean;
   isFormInstalling: boolean;
 }) {
-  const toolLinks = (mcp.tools ?? [])
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .map((tool) => ({
-      title: tool.name,
-      subtitle: tool.description?.replace(/\[([^\]]+)\]/g, ""),
-      scroll: false,
-      href: registryQuerySerializer({
-        toolId: tool.name,
-        serverId: null,
-      }),
-    }));
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       {children && <DialogTrigger asChild>{children}</DialogTrigger>}
@@ -341,6 +335,7 @@ export function GetStartedInstallServerDialog({
   onFormSubmit,
   isFormSubmitting,
   isFormInstalling,
+  toolLinks,
 }: GetStartedInstallServerDialogProps & {
   onFormSubmit: SubmitHandler<{
     proxyId: string;
@@ -361,6 +356,7 @@ export function GetStartedInstallServerDialog({
       onFormSubmit={onFormSubmit}
       isFormSubmitting={isFormSubmitting}
       isFormInstalling={isFormInstalling}
+      toolLinks={toolLinks}
     />
   );
 }

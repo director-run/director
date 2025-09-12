@@ -3,8 +3,8 @@
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import * as React from "react";
 
-import { cn } from "../../helpers/cn";
 import { XIcon } from "@phosphor-icons/react";
+import { cn } from "../../helpers/cn";
 import { Button } from "./button";
 import { textVariants } from "./typography";
 

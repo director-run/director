@@ -1,3 +1,10 @@
+import {
+  ArrowSquareOutIcon,
+  BookOpenTextIcon,
+  HardDriveIcon,
+  SealCheckIcon,
+  ToolboxIcon,
+} from "@phosphor-icons/react";
 import { McpLogo } from "../mcp-logo";
 import { McpDescriptionList } from "../mcp-servers/mcp-description-list";
 import { RegistryInstallForm } from "../registry/registry-install-form";
@@ -5,12 +12,7 @@ import { RegistryParameters } from "../registry/registry-parameters";
 import { RegistryToolSheet } from "../registry/registry-tool-sheet";
 import { RegistryTools } from "../registry/registry-tools";
 import { RegistryGetEntryByName, StoreGetAll } from "../types";
-import {
-  Badge,
-  BadgeGroup,
-  BadgeIcon,
-  BadgeLabel,
-} from "../ui/badge";
+import { Badge, BadgeGroup, BadgeIcon, BadgeLabel } from "../ui/badge";
 import { Container } from "../ui/container";
 import {
   EmptyState,
@@ -25,13 +27,6 @@ import {
   SectionTitle,
 } from "../ui/section";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import {
-  ArrowSquareOutIcon,
-  BookOpenTextIcon,
-  HardDriveIcon,
-  SealCheckIcon,
-  ToolboxIcon,
-} from "@phosphor-icons/react";
 
 interface RegistryItemDetailProps {
   entry: RegistryGetEntryByName;

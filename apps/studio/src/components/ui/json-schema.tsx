@@ -1,4 +1,3 @@
-import { cn } from "../../helpers/cn";
 import { CaretRightIcon, CircleIcon } from "@phosphor-icons/react";
 import {
   Accordion,
@@ -7,6 +6,7 @@ import {
   AccordionTrigger,
 } from "@radix-ui/react-accordion";
 import { Slot } from "@radix-ui/react-slot";
+import { cn } from "../../helpers/cn";
 
 import React, { ComponentProps } from "react";
 

@@ -1,8 +1,8 @@
 "use client";
 
-import { cn } from "../../helpers/cn";
 import { IconWeight } from "@phosphor-icons/react";
 import { Slot } from "@radix-ui/react-slot";
+import { cn } from "../../helpers/cn";
 
 interface PrimitiveBaseProps extends React.ComponentProps<"div"> {
   asChild?: boolean;

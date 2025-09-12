@@ -1,10 +1,10 @@
 "use client";
 
-import { DIRECTOR_URL } from "../config";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { useEffect, useState } from "react";
+import { DIRECTOR_URL } from "../config";
 
 export function useInspectMcp(proxyId: string, serverId?: string) {
   const [isLoading, setIsLoading] = useState(true);

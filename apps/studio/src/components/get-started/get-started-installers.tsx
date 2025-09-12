@@ -1,9 +1,9 @@
-import { ClientId } from "../../app/get-started/page";
-import { Button } from "../ui/button";
-import { ListItemTitle } from "../ui/list";
-import { cn } from "../../helpers/cn";
 import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
 import Image from "next/image";
+import { ClientId } from "../../app/get-started/page";
+import { cn } from "../../helpers/cn";
+import { Button } from "../ui/button";
+import { ListItemTitle } from "../ui/list";
 
 // tRPC types - using the actual return type from the query
 export type ClientStatus = {

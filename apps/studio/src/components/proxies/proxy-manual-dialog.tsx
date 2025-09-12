@@ -1,6 +1,7 @@
 import { CopyIcon } from "@phosphor-icons/react";
 import { ComponentProps, ReactNode, useState } from "react";
 
+import { DIRECTOR_URL } from "../../config";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -12,7 +13,6 @@ import {
 } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { SelectNative } from "../ui/select-native";
-import { DIRECTOR_URL } from "../../config";
 
 type TransportType = "http" | "sse" | "stdio";
 

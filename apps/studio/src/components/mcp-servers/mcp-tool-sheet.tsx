@@ -1,5 +1,6 @@
 "use client";
 
+import { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { StoreGet, StoreServer } from "../types";
 import { Badge } from "../ui/badge";
 import {
@@ -32,7 +33,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "../ui/sheet";
-import { Tool } from "@modelcontextprotocol/sdk/types.js";
 
 export function McpToolSheet({
   open,

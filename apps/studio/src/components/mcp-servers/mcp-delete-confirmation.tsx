@@ -1,5 +1,5 @@
-import { ConfirmDialog } from "../ui/confirm-dialog";
 import { ReactNode } from "react";
+import { ConfirmDialog } from "../ui/confirm-dialog";
 
 interface McpDeleteConfirmationProps {
   children: ReactNode;

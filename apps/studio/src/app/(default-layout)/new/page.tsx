@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import {
   LayoutView,
   LayoutViewContent,
@@ -26,7 +27,6 @@ import {
 } from "../../../components/ui/section";
 import { toast } from "../../../components/ui/toast";
 import { trpc } from "../../../state/client";
-import { useRouter } from "next/navigation";
 
 export default function NewProxyPage() {
   const router = useRouter();

@@ -1,5 +1,7 @@
 "use client";
 
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   LayoutView,
   LayoutViewContent,
@@ -22,9 +24,10 @@ import { toast } from "../../../../../components/ui/toast";
 import { trpc } from "../../../../../state/client";
 import { useInspectMcp } from "../../../../../state/use-inspect-mcp";
 import { useProxy } from "../../../../../state/use-proxy";
-import { proxyQuerySerializer, useProxyQuery } from "../../../../../state/use-proxy-query";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import {
+  proxyQuerySerializer,
+  useProxyQuery,
+} from "../../../../../state/use-proxy-query";
 
 export default function McpServerPage() {
   const router = useRouter();

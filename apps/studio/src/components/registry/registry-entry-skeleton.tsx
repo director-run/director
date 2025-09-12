@@ -1,5 +1,7 @@
 "use client";
 
+import { LinkIcon, SpinnerGapIcon } from "@phosphor-icons/react";
+import { ReactNode } from "react";
 import { LayoutView, LayoutViewContent } from "../layout/layout";
 import { LayoutNavigation } from "../layout/navigation";
 import { ListOfLinks } from "../list-of-links";
@@ -22,8 +24,6 @@ import {
   SectionSeparator,
   SectionTitle,
 } from "../ui/section";
-import { LinkIcon, SpinnerGapIcon } from "@phosphor-icons/react";
-import { ReactNode } from "react";
 
 export function RegistryEntrySkeleton({ children }: { children?: ReactNode }) {
   return (

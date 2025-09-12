@@ -1,5 +1,8 @@
 "use client";
 
+import { ConfiguratorTarget } from "@director.run/client-configurator/index";
+import { useEffect, useState } from "react";
+import { SubmitHandler } from "react-hook-form";
 import { GetStartedCompleteDialog } from "../../components/get-started/get-started-complete-dialog";
 import { GetStartedHeader } from "../../components/get-started/get-started-header";
 import { GetStartedInstallServerDialog } from "../../components/get-started/get-started-install-server-dialog";
@@ -23,9 +26,6 @@ import { DIRECTOR_URL } from "../../config";
 import { useZodForm } from "../../hooks/use-zod-form";
 import { trpc } from "../../state/client";
 import { registryQuerySerializer } from "../../state/use-registry-query";
-import { ConfiguratorTarget } from "@director.run/client-configurator/index";
-import { useEffect, useState } from "react";
-import { SubmitHandler } from "react-hook-form";
 
 import claudeIconImage from "../../../public/icons/claude-icon.png";
 import vscodeIconImage from "../../../public/icons/code-icon.png";

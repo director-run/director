@@ -2,8 +2,8 @@
 
 import * as React from "react";
 
-import { cn } from "../../helpers/cn";
 import { CaretUpDownIcon } from "@phosphor-icons/react";
+import { cn } from "../../helpers/cn";
 
 const SelectNative = ({
   className,

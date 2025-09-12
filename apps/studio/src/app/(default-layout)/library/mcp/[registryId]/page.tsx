@@ -1,5 +1,7 @@
 "use client";
 
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   LayoutView,
   LayoutViewContent,
@@ -27,8 +29,6 @@ import { useCopyToClipboard } from "../../../../../hooks/use-copy-to-clipboard";
 import { trpc } from "../../../../../state/client";
 import { useRegistryQuery } from "../../../../../state/use-registry-query";
 import { registryQuerySerializer } from "../../../../../state/use-registry-query";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
 export default function RegistryEntryPage() {
   const router = useRouter();

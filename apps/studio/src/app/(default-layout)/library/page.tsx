@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 
+import { useRouter } from "next/navigation";
 import {
   LayoutView,
   LayoutViewContent,
@@ -24,7 +25,6 @@ import { EmptyState } from "../../../components/ui/empty-state";
 import { EmptyStateTitle } from "../../../components/ui/empty-state";
 import { toast } from "../../../components/ui/toast";
 import { trpc } from "../../../state/client";
-import { useRouter } from "next/navigation";
 
 export default function RegistryPage() {
   const router = useRouter();

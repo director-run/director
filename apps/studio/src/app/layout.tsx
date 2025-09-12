@@ -1,11 +1,11 @@
-import { ThemeProvider } from "../components/theme-provider";
-import { Toaster } from "../components/ui/toast";
-import { TRPCProvider } from "../state/client";
-import { ConnectionStatusProvider } from "../state/connection-status-provider";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next";
+import { ThemeProvider } from "../components/theme-provider";
+import { Toaster } from "../components/ui/toast";
+import { TRPCProvider } from "../state/client";
+import { ConnectionStatusProvider } from "../state/connection-status-provider";
 
 import "./globals.css";
 import { ChatToUs } from "../components/chat-to-us";

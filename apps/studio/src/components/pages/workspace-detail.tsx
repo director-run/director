@@ -1,7 +1,6 @@
-import {
-  MCPLinkCard,
-  MCPLinkCardList,
-} from "../mcp-servers/mcp-link-card";
+import { ConfiguratorTarget } from "@director.run/client-configurator/index";
+import { useCopyToClipboard } from "../../hooks/use-copy-to-clipboard";
+import { MCPLinkCard, MCPLinkCardList } from "../mcp-servers/mcp-link-card";
 import { McpToolsTable } from "../mcp-servers/mcp-tools-table";
 import {
   AvailableClient,
@@ -19,8 +18,6 @@ import {
   SectionTitle,
 } from "../ui/section";
 import { toast } from "../ui/toast";
-import { useCopyToClipboard } from "../../hooks/use-copy-to-clipboard";
-import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 
 interface ProxyDetailProps {
   proxy: {

@@ -1,5 +1,8 @@
-import { ProxyDeleteConfirmation } from "./proxy-delete-confirmation";
-import { ProxySettingsSheet } from "./proxy-settings-sheet";
+import {
+  DotsThreeOutlineVerticalIcon,
+  GearIcon,
+  TrashIcon,
+} from "@phosphor-icons/react";
 import { StoreGet } from "../types";
 import { Button } from "../ui/button";
 import {
@@ -10,11 +13,8 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { MenuItemIcon, MenuItemLabel } from "../ui/menu";
-import {
-  DotsThreeOutlineVerticalIcon,
-  GearIcon,
-  TrashIcon,
-} from "@phosphor-icons/react";
+import { ProxyDeleteConfirmation } from "./proxy-delete-confirmation";
+import { ProxySettingsSheet } from "./proxy-settings-sheet";
 
 interface ProxyActionsDropdownProps {
   proxy: StoreGet;

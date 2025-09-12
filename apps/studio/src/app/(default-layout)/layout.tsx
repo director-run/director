@@ -1,15 +1,15 @@
 "use client";
 
-import { LayoutRoot } from "../../components/layout/layout";
-import { NavigationSection } from "../../components/layout/navigation";
-import { MCPIcon } from "../../components/ui/icons/mcp-icon";
-import { trpc } from "../../state/client";
 import {
   BookOpenTextIcon,
   GithubLogoIcon,
   PlusIcon,
 } from "@phosphor-icons/react";
 import { useParams, usePathname, useRouter } from "next/navigation";
+import { LayoutRoot } from "../../components/layout/layout";
+import { NavigationSection } from "../../components/layout/navigation";
+import { MCPIcon } from "../../components/ui/icons/mcp-icon";
+import { trpc } from "../../state/client";
 
 export default function DefaultLayout({
   children,

@@ -1,9 +1,9 @@
 "use client";
 
-import { cn } from "../../helpers/cn";
 import type { ComponentProps } from "react";
 import { useState } from "react";
 import { useEffect, useLayoutEffect, useRef } from "react";
+import { cn } from "../../helpers/cn";
 
 export function Loader({
   className,

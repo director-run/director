@@ -1,5 +1,5 @@
-import { cn } from "../../helpers/cn";
 import { ComponentProps } from "react";
+import { cn } from "../../helpers/cn";
 
 export function SafariBrand({ className, ...props }: ComponentProps<"svg">) {
   return (

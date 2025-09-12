@@ -1,5 +1,8 @@
 "use client";
 
+import { ConfiguratorTarget } from "@director.run/client-configurator/index";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   LayoutView,
   LayoutViewContent,
@@ -22,10 +25,10 @@ import { DIRECTOR_URL } from "../../../config";
 import { trpc } from "../../../state/client";
 import { useInspectMcp } from "../../../state/use-inspect-mcp";
 import { useProxy } from "../../../state/use-proxy";
-import { proxyQuerySerializer, useProxyQuery } from "../../../state/use-proxy-query";
-import { ConfiguratorTarget } from "@director.run/client-configurator/index";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import {
+  proxyQuerySerializer,
+  useProxyQuery,
+} from "../../../state/use-proxy-query";
 const clients: Client[] = [
   {
     id: "claude",

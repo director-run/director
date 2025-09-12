@@ -1,7 +1,6 @@
-import {
-  MCPLinkCard,
-  MCPLinkCardList,
-} from "../mcp-servers/mcp-link-card";
+import { ArrowLeftIcon, ArrowRightIcon } from "@phosphor-icons/react";
+import { cn } from "../../helpers/cn";
+import { MCPLinkCard, MCPLinkCardList } from "../mcp-servers/mcp-link-card";
 import { Button } from "../ui/button";
 import { Container } from "../ui/container";
 import { EmptyState } from "../ui/empty-state";
@@ -13,8 +12,6 @@ import {
   SectionHeader,
   SectionTitle,
 } from "../ui/section";
-import { cn } from "../../helpers/cn";
-import { ArrowLeftIcon, ArrowRightIcon } from "@phosphor-icons/react";
 
 interface RegistryEntry {
   id: string;

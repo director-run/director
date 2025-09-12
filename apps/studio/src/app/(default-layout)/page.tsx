@@ -1,9 +1,9 @@
 "use client";
 
-import { ProxySkeleton } from "../../components/proxies/proxy-skeleton";
-import { trpc } from "../../state/client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { ProxySkeleton } from "../../components/proxies/proxy-skeleton";
+import { trpc } from "../../state/client";
 
 export default function ProxiesPage() {
   const router = useRouter();

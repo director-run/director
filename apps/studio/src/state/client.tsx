@@ -1,6 +1,5 @@
 "use client";
 
-import { DIRECTOR_URL } from "../config";
 import { createGatewayClient } from "@director.run/gateway/client";
 import type { AppRouter } from "@director.run/gateway/routers/trpc/index";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -11,6 +10,7 @@ import {
 import { createTRPCReact } from "@trpc/react-query";
 import { useState } from "react";
 import superjson from "superjson";
+import { DIRECTOR_URL } from "../config";
 
 function makeQueryClient() {
   return new QueryClient({

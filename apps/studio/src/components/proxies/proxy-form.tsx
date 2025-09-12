@@ -1,10 +1,10 @@
+import { ReactNode } from "react";
+import { z } from "zod";
 import { Button } from "../ui/button";
 import { FormWithSchema } from "../ui/form";
 import { InputField } from "../ui/form/input-field";
 import { TextareaField } from "../ui/form/textarea-field";
 import { Loader } from "../ui/loader";
-import { ReactNode } from "react";
-import { z } from "zod";
 
 const proxySchema = z.object({
   name: z.string().trim().min(1, "Required"),

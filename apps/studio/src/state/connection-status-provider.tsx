@@ -1,5 +1,10 @@
 "use client";
 
+import cliPackage from "@director.run/cli/package.json";
+import { useEffect, useState } from "react";
+import { createContext, useContext } from "react";
+import { ConnectionEmptyState } from "../components/connect/connection-empty-state";
+import { ConnectionUpdateState } from "../components/connect/connection-update-state";
 import {
   Dialog,
   DialogContent,
@@ -9,11 +14,6 @@ import {
 } from "../components/ui/dialog";
 import { Logo } from "../components/ui/icons/logo";
 import { trpc } from "./client";
-import cliPackage from "@director.run/cli/package.json";
-import { useEffect, useState } from "react";
-import { createContext, useContext } from "react";
-import { ConnectionEmptyState } from "../components/connect/connection-empty-state";
-import { ConnectionUpdateState } from "../components/connect/connection-update-state";
 
 function ConnectionLostDialog() {
   const { lostConnection } = useConnectionStatus();

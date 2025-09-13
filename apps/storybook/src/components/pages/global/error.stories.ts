@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/react";
 import { FullScreenError } from "@director.run/studio/src/components/pages/global/error";
+import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
   title: "pages/global/error",

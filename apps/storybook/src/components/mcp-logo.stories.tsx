@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/react";
 import { McpLogo } from "@director.run/studio/src/components/mcp-logo";
+import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
   title: "components/McpLogo",

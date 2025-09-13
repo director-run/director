@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/react";
 import { FullScreenLoader } from "@director.run/studio/src/components/pages/global/loader";
+import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
   title: "pages/global/loader",

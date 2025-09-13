@@ -1,8 +1,8 @@
+import { RegistryItemList } from "@director.run/studio/src/components/pages/registry-item-list";
+import { Button } from "@director.run/studio/src/components/ui/button";
 import { PlusIcon } from "@phosphor-icons/react";
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
-import { Button } from "@director.run/studio/src/components/ui/button";
-import { RegistryItemList } from "@director.run/studio/src/components/pages/registry-item-list";
 
 const meta = {
   title: "pages/RegistryItemList",

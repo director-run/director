@@ -12,5 +12,9 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["@director.run/studio", "@director.run/sandbox"]
+  "ignore": [
+    "@director.run/studio",
+    "@director.run/sandbox",
+    "@director.run/storybook"
+  ]
 }

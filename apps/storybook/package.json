@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "storybook dev -p 6006",
-    "build": "storybook build",
+    "build": "storybook build -o dist/",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist storybook-static",
     "format": "bun run format:fix-classnames && bun run format:fix-imports && bun run format:fix-all",

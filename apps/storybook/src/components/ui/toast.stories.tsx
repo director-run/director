@@ -1,5 +1,5 @@
-import { Button } from "@director.run/studio/src/components/ui/button";
-import { Toaster, toast } from "@director.run/studio/src/components/ui/toast";
+import { Button } from "@director.run/studio/components/ui/button";
+import { Toaster, toast } from "@director.run/studio/components/ui/toast";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 

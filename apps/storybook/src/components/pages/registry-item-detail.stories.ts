@@ -1,8 +1,8 @@
-import { RegistryItemDetail } from "@director.run/studio/src/components/pages/registry-item-detail";
+import { RegistryItemDetail } from "@director.run/studio/components/pages/registry-item-detail.tsx";
 import type {
   RegistryGetEntryByName,
   StoreGetAll,
-} from "@director.run/studio/src/components/types";
+} from "@director.run/studio/components/types.ts";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {

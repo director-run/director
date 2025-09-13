@@ -1,4 +1,4 @@
-import { FullScreenLoader } from "@director.run/studio/src/components/pages/global/loader";
+import { FullScreenLoader } from "@director.run/studio/components/pages/global/loader.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {

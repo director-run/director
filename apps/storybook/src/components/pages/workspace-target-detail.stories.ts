@@ -1,5 +1,5 @@
-import { McpServerDetail } from "@director.run/studio/src/components/pages/workspace-target-detail";
-import type { StoreServerTransport } from "@director.run/studio/src/components/types";
+import { McpServerDetail } from "@director.run/studio/components/pages/workspace-target-detail.tsx";
+import type { StoreServerTransport } from "@director.run/studio/components/types.ts";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {

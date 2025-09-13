@@ -1,5 +1,5 @@
-import { RegistryItemList } from "@director.run/studio/src/components/pages/registry-item-list";
-import { Button } from "@director.run/studio/src/components/ui/button";
+import { RegistryItemList } from "@director.run/studio/components/pages/registry-item-list.tsx";
+import { Button } from "@director.run/studio/components/ui/button.tsx";
 import { PlusIcon } from "@phosphor-icons/react";
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";

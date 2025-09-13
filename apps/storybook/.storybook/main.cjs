@@ -24,7 +24,7 @@ const config = {
       },
       resolve: {
         alias: {
-          "@director.run/studio": resolve(__dirname, "../../studio"),
+          "@director.run/studio": resolve(__dirname, "../../studio/src"),
         },
       },
     });

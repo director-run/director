@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import type { RegistryGetEntryByName, StoreGetAll } from "../types";
-import { RegistryItemDetail } from "./registry-item-detail";
+import type { RegistryGetEntryByName, StoreGetAll } from "@director.run/studio/src/components/types";
+import { RegistryItemDetail } from "@director.run/studio/src/components/pages/registry-item-detail";
 
 const meta = {
   title: "pages/RegistryItemDetail",

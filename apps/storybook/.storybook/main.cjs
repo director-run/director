@@ -22,6 +22,11 @@ const config = {
         global: "globalThis",
         "process.env.NODE_ENV": '"production"',
       },
+      resolve: {
+        alias: {
+          "@director.run/studio": resolve(__dirname, "../../studio"),
+        },
+      },
     });
   },
 };

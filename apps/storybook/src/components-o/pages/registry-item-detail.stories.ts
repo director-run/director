@@ -1,9 +1,12 @@
+import { RegistryItemDetail } from "@director.run/studio/components/pages/registry-item-detail.tsx";
+import type {
+  RegistryGetEntryByName,
+  StoreGetAll,
+} from "@director.run/studio/components/types.ts";
 import type { Meta, StoryObj } from "@storybook/react";
-import type { RegistryGetEntryByName, StoreGetAll } from "../types";
-import { RegistryItemDetail } from "./registry-item-detail";
 
 const meta = {
-  title: "pages/RegistryItemDetail",
+  title: "pages-o/RegistryItemDetail",
   component: RegistryItemDetail,
   parameters: {
     layout: "fullscreen",

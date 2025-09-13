@@ -1,17 +1,4 @@
 {
   "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "moduleResolution": "bundler",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true
-  },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx", 
-    ".storybook/*.ts"
-  ],
-  "ts-node": {
-    "esm": true
-  }
+  "include": ["src/**/*.ts"]
 }

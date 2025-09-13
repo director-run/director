@@ -1,13 +1,7 @@
-import { resolve } from "path";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import type { StorybookConfig } from "@storybook/react-vite";
-import { mergeConfig } from "vite";
+const { resolve } = require("path");
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const config: StorybookConfig = {
+/** @type { import('@storybook/react-vite').StorybookConfig } */
+const config = {
   stories: ["../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
   addons: [
     "@chromatic-com/storybook",
@@ -23,6 +17,7 @@ const config: StorybookConfig = {
     reactDocgen: "react-docgen-typescript",
   },
   viteFinal(config) {
+    const { mergeConfig } = require("vite");
     return mergeConfig(config, {
       resolve: {
         alias: {
@@ -55,4 +50,4 @@ const config: StorybookConfig = {
   },
 };
 
-export default config;
+module.exports = config;

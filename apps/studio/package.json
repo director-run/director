@@ -14,7 +14,7 @@
     "lint": "biome check ./src",
     "start": "next start",
     "tools:shadcn": "bunx --bun shadcn@latest",
-    "storybook": "storybook dev -p 6006",
+    "storybook": "storybook dev -p 6007",
     "build-storybook": "storybook build"
   },
   "exports": {

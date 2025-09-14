@@ -1,26 +1,32 @@
-import type { StorybookConfig } from '@storybook/nextjs';
+import type { StorybookConfig } from "@storybook/nextjs";
 
 const config: StorybookConfig = {
-  stories: [
-    "../src/**/*.mdx",
-    "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"
-  ],
+  stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
   addons: [
-    '@chromatic-com/storybook',
-    '@storybook/addon-docs',
-    '@storybook/addon-onboarding'
+    "@chromatic-com/storybook",
+    "@storybook/addon-docs",
+    "@storybook/addon-onboarding",
   ],
   framework: {
-    name: '@storybook/nextjs',
+    name: "@storybook/nextjs",
     options: {
-      nextConfigPath: '../next.config.js',
-    }
+      nextConfigPath: "../next.config.js",
+    },
   },
-  staticDirs: [
-    "../public"
-  ],
+  staticDirs: ["../public"],
+  managerHead: (head) => `
+  ${head}
+  <style>
+    /* Custom styling for red sidebar and Design branding */
+    .sidebar-container {
+      background-color: #dc2626 !important;
+    }
+    
+  </style>
+  
+`,
   typescript: {
-    reactDocgen: 'react-docgen-typescript',
+    reactDocgen: "react-docgen-typescript",
   },
 };
 

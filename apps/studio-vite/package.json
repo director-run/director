@@ -1,5 +1,5 @@
 {
-  "name": "hello-world-spa",
+  "name": "@director.run/studio-vite",
   "version": "1.0.0",
   "description": "A React TypeScript single page web app with React Router v7",
   "main": "server/index.js",

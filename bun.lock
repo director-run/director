@@ -224,7 +224,7 @@
     },
     "apps/studio-vite": {
       "name": "@director.run/studio-vite",
-      "version": "1.0.0",
+      "version": "0.1.0",
       "dependencies": {
         "express": "^4.18.0",
         "react": "^19.1.0",

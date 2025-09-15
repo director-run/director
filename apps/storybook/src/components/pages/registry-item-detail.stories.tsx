@@ -10,6 +10,13 @@ const meta = {
   parameters: {
     layout: "fullscreen",
   },
+  decorators: [
+    (Story) => (
+      <div id="main-layout">
+        <Story />
+      </div>
+    ),
+  ],
 } satisfies Meta<typeof RegistryItemDetail>;
 
 export default meta;

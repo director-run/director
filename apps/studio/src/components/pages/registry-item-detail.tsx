@@ -67,7 +67,6 @@ export function RegistryItemDetail({
   onLibraryClick,
   onMcpClick,
 }: RegistryItemDetailProps) {
-  console.log(JSON.stringify(entry));
   return (
     <>
       <Container size="xl">

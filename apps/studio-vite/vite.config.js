@@ -16,10 +16,6 @@ export default defineConfig({
   css: {
     postcss: resolve(__dirname, "./postcss.config.mjs"),
   },
-  define: {
-    global: "globalThis",
-    "process.env.NODE_ENV": '"production"',
-  },
   resolve: {
     alias: {
       "@director.run/studio": resolve(__dirname, "../../studio/src"),

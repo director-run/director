@@ -1,7 +1,7 @@
 import { RegistryItemDetail } from "@director.run/studio/components/pages/registry-item-detail.tsx";
 import type { StoreGetAll } from "@director.run/studio/components/types.ts";
+import { mockRegistryEntry } from "@director.run/studio/test/fixtures/registry/entry.ts";
 import type { Meta, StoryObj } from "@storybook/react";
-import { mockRegistryEntry } from "../../fixtures/registry/entry";
 import { withLayoutView } from "../../helpers/decorators";
 
 const mockProxiesWithMcp: StoreGetAll = [

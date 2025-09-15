@@ -2,7 +2,7 @@ import { McpLogo } from "@director.run/studio/components/mcp-logo.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
-  title: "components/McpLogo",
+  title: "ui/McpLogo",
   component: McpLogo,
   parameters: {
     layout: "fullscreen",

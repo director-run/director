@@ -1,19 +1,20 @@
 import { McpServerDetail } from "@director.run/studio/components/pages/workspace-target-detail.tsx";
 import type { StoreServerTransport } from "@director.run/studio/components/types.ts";
 import type { Meta, StoryObj } from "@storybook/react";
+import { withLayoutView } from "../../helpers/decorators";
 
 const meta = {
-  title: "pages/McpServerDetail",
+  title: "workspace/target-detail",
   component: McpServerDetail,
   parameters: {
     layout: "fullscreen",
   },
+  decorators: [withLayoutView],
 } satisfies Meta<typeof McpServerDetail>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Mock data for MCP server
 const mockMcp = {
   name: "github-mcp",
   transport: {

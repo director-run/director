@@ -2,7 +2,7 @@ import { FullScreenLoader } from "@director.run/studio/components/pages/global/l
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
-  title: "pages/global/loader",
+  title: "ui/global-loader",
   component: FullScreenLoader,
   parameters: {
     layout: "fullscreen",

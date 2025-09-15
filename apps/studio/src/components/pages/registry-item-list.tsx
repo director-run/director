@@ -48,6 +48,7 @@ export function RegistryItemList({
   addManualButton,
   onEntryClick,
 }: RegistryItemListProps) {
+  console.log(JSON.stringify(entries));
   return (
     <Container size="lg">
       <Section className="gap-y-6">

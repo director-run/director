@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { mockRegistryEntry } from "../../fixtures/registry/entry";
 import { withLayoutView } from "../../helpers/decorators";
 
-export const mockProxiesWithMcp: StoreGetAll = [
+const mockProxiesWithMcp: StoreGetAll = [
   {
     id: "dev-proxy",
     name: "Development Proxy",
@@ -25,7 +25,7 @@ export const mockProxiesWithMcp: StoreGetAll = [
   },
 ];
 
-export const mockProxiesWithoutMcp: StoreGetAll = [
+const mockProxiesWithoutMcp: StoreGetAll = [
   {
     id: "production-proxy",
     name: "Production Proxy",
@@ -71,7 +71,7 @@ export const Default: Story = {
         subtitle: tool.description,
         scroll: false,
         href: `#${tool.name}`,
-      })) || [],
+      })) ?? [],
     onInstall: async (values) => {
       console.log("Installing MCP server:", values);
       // Simulate installation delay

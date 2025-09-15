@@ -29,27 +29,6 @@ export const Default: Story = {
         scroll: false,
         href: `#${tool.name}`,
       })) || [],
-
-    // [
-    //   {
-    //     title: "search_repositories",
-    //     subtitle: "Search for repositories on GitHub",
-    //     scroll: false,
-    //     href: "#search_repositories",
-    //   },
-    //   {
-    //     title: "get_repository",
-    //     subtitle: "Get details about a specific repository",
-    //     scroll: false,
-    //     href: "#get_repository",
-    //   },
-    //   {
-    //     title: "create_issue",
-    //     subtitle: "Create a new issue in a repository",
-    //     scroll: false,
-    //     href: "#create_issue",
-    //   },
-    // ],
     onInstall: async (values) => {
       console.log("Installing MCP server:", values);
       // Simulate installation delay

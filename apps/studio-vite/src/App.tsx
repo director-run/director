@@ -1,9 +1,9 @@
 import React from "react";
 import { Link, Route, Routes, useLocation } from "react-router-dom";
-import AboutPage from "./components/AboutPage";
-import ContactPage from "./components/ContactPage";
-import HomePage from "./components/HomePage";
-import NotFoundPage from "./components/NotFoundPage";
+import { AboutPage } from "./components/AboutPage";
+import { ContactPage } from "./components/ContactPage";
+import { HomePage } from "./components/HomePage";
+import { NotFoundPage } from "./components/NotFoundPage";
 import "./style.css";
 
 interface AppConfig {
@@ -19,7 +19,7 @@ declare global {
   }
 }
 
-const App: React.FC = () => {
+export const App: React.FC = () => {
   const location = useLocation();
   const config = window.__APP_CONFIG__;
 
@@ -66,5 +66,3 @@ const App: React.FC = () => {
     </>
   );
 };
-
-export default App;

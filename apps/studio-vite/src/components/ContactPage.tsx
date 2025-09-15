@@ -1,6 +1,6 @@
-import React from 'react'
+import React from "react";
 
-const ContactPage: React.FC = () => {
+export const ContactPage: React.FC = () => {
   return (
     <div className="page">
       <h1>Contact Us</h1>
@@ -20,7 +20,5 @@ const ContactPage: React.FC = () => {
         <p>Sunday: Closed</p>
       </div>
     </div>
-  )
-}
-
-export default ContactPage
+  );
+};

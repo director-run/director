@@ -1,7 +1,7 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React from "react";
+import { Link } from "react-router-dom";
 
-const NotFoundPage: React.FC = () => {
+export const NotFoundPage: React.FC = () => {
   return (
     <div className="page">
       <div className="hero">
@@ -12,7 +12,5 @@ const NotFoundPage: React.FC = () => {
         </p>
       </div>
     </div>
-  )
-}
-
-export default NotFoundPage
+  );
+};

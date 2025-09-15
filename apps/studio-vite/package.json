@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "serve": "bun run server/index.ts",
     "clean": "rm -rf dist/*",
-    "start": "npm run build && npm run serve",
+    "start": "bun run build && bun run serve",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

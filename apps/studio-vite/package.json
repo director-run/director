@@ -10,7 +10,9 @@
     "serve": "bun run server/index.ts",
     "clean": "rm -rf dist/*",
     "start": "bun run build && bun run serve",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check ./src && biome check ./server",
+    "format": "biome format --write ./src && biome format --write ./server"
   },
   "devDependencies": {
     "@types/express": "^4.17.0",

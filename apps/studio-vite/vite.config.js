@@ -16,9 +16,4 @@ export default defineConfig({
   css: {
     postcss: resolve(__dirname, "./postcss.config.mjs"),
   },
-  resolve: {
-    alias: {
-      "@director.run/studio": resolve(__dirname, "../studio/src"),
-    },
-  },
 });

@@ -18,7 +18,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@director.run/studio": resolve(__dirname, "../../studio/src"),
+      "@director.run/studio": resolve(__dirname, "../studio/src"),
     },
   },
 });

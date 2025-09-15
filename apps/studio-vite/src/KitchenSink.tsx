@@ -15,7 +15,6 @@ import { BreadcrumbItem } from "@director.run/studio/components/ui/breadcrumb.ts
 import { BreadcrumbLink } from "@director.run/studio/components/ui/breadcrumb.tsx";
 import { BreadcrumbSeparator } from "@director.run/studio/components/ui/breadcrumb.tsx";
 import { BreadcrumbPage } from "@director.run/studio/components/ui/breadcrumb.tsx";
-import {} from "@phosphor-icons/react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { AboutPage } from "./components/AboutPage";
 import { ContactPage } from "./components/ContactPage";

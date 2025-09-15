@@ -32,12 +32,12 @@ export const withLayoutView: Decorator = (Story) => {
                   onClick={() => alert("Library")}
                   className="cursor-pointer"
                 >
-                  Library
+                  Dummy
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>Registry Item Detail</BreadcrumbPage>
+                <BreadcrumbPage>Content</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>

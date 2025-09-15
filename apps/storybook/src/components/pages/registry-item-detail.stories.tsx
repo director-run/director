@@ -1,7 +1,7 @@
 import { RegistryItemDetail } from "@director.run/studio/components/pages/registry-item-detail.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
 import { mockRegistryEntry } from "../../fixtures/registry/entry";
-import { withMainLayout } from "../../helpers/decorators";
+import { withLayoutView } from "../../helpers/decorators";
 import { mockProxiesWithMcp, mockProxiesWithoutMcp } from "../fixtures";
 
 const meta = {
@@ -10,7 +10,7 @@ const meta = {
   parameters: {
     layout: "fullscreen",
   },
-  decorators: [withMainLayout],
+  decorators: [withLayoutView],
 } satisfies Meta<typeof RegistryItemDetail>;
 
 export default meta;

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import type { RegistryGetEntryByName, StoreGetAll } from "../types";
+import type { MasterRegistryEntry, StoreGetAll } from "../types";
 import { RegistryItemDetail } from "./registry-item-detail";
 
 const meta = {
@@ -14,7 +14,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 // Mock data for a comprehensive MCP server entry
-const mockEntry: RegistryGetEntryByName = {
+const mockEntry: MasterRegistryEntry = {
   id: "github-mcp",
   name: "github-mcp",
   title: "GitHub MCP Server",

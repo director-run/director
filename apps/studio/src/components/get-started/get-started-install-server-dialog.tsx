@@ -10,7 +10,7 @@ import { McpLogo } from "../mcp-logo";
 import { McpDescriptionList } from "../mcp-servers/mcp-description-list";
 import { RegistryParameters } from "../registry/registry-parameters";
 import { RegistryTools } from "../registry/registry-tools";
-import type { RegistryGetEntryByName } from "../types";
+import type { MasterRegistryEntry } from "../types";
 import { Badge, BadgeGroup, BadgeIcon, BadgeLabel } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Container } from "../ui/container";
@@ -32,7 +32,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 type GetStartedInstallServerDialogProps = {
-  registryEntry?: RegistryGetEntryByName | null;
+  registryEntry?: MasterRegistryEntry | null;
   isRegistryEntryLoading?: boolean;
   onClickInstall: () => void;
   isInstalling: boolean;

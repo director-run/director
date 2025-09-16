@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { RegistryGetEntryByName, StoreGetAll } from "../types";
+import type { MasterRegistryEntry, StoreGetAll } from "../types";
 import { Button } from "../ui/button";
 import { FormWithSchema } from "../ui/form";
 import { InputField } from "../ui/form/input-field";
@@ -7,7 +7,7 @@ import { SelectNativeField } from "../ui/form/select-native-field";
 import { SimpleMarkdown } from "../ui/markdown";
 
 interface RegistryInstallFormProps {
-  mcp: RegistryGetEntryByName;
+  mcp: MasterRegistryEntry;
   proxies: StoreGetAll;
   defaultProxyId?: string;
   onSubmit: (values: {

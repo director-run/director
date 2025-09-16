@@ -1,7 +1,7 @@
 import type { ComponentProps } from "react";
 
 import { AsteriskIcon, TextTIcon } from "@phosphor-icons/react";
-import type { RegistryGetEntryByName } from "../types";
+import type { MasterRegistryEntry } from "../types";
 import { Badge, BadgeGroup, BadgeIcon, BadgeLabel } from "../ui/badge";
 import {
   EmptyState,
@@ -17,7 +17,7 @@ import {
 } from "../ui/list";
 
 interface RegistryParametersProps extends ComponentProps<typeof List> {
-  parameters: RegistryGetEntryByName["parameters"];
+  parameters: MasterRegistryEntry["parameters"];
 }
 
 export function RegistryParameters({

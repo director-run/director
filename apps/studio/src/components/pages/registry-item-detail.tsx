@@ -11,7 +11,7 @@ import { RegistryInstallForm } from "../registry/registry-install-form";
 import { RegistryParameters } from "../registry/registry-parameters";
 import { RegistryToolSheet } from "../registry/registry-tool-sheet";
 import { RegistryTools } from "../registry/registry-tools";
-import type { RegistryGetEntryByName, StoreGetAll } from "../types";
+import type { MasterRegistryEntry, StoreGetAll } from "../types";
 import { Badge, BadgeGroup, BadgeIcon, BadgeLabel } from "../ui/badge";
 import { Container } from "../ui/container";
 import {
@@ -29,10 +29,10 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 interface RegistryItemDetailProps {
-  entry: RegistryGetEntryByName;
+  entry: MasterRegistryEntry;
   proxiesWithMcp: StoreGetAll;
   proxiesWithoutMcp: StoreGetAll;
-  selectedTool?: NonNullable<RegistryGetEntryByName["tools"]>[number];
+  selectedTool?: NonNullable<MasterRegistryEntry["tools"]>[number];
   defaultProxyId?: string;
   serverId: string | null;
   onInstall: (values: {

@@ -1,65 +1,20 @@
 import { GetStartedCompleteDialog } from "@director.run/studio/components/get-started/get-started-complete-dialog.tsx";
 import { GetStartedInstallServerDialog } from "@director.run/studio/components/get-started/get-started-install-server-dialog.tsx";
 import { GetStartedPageView } from "@director.run/studio/components/pages/get-started.tsx";
-import type {
-  RegistryGetEntriesEntry,
-  RegistryGetEntryByName,
-} from "@director.run/studio/components/types.ts";
+import { mockRegistryEntryList } from "@director.run/studio/test/fixtures/registry/entry-list.ts";
+import { mockRegistryEntry } from "@director.run/studio/test/fixtures/registry/entry.ts";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
-import { withLayoutView } from "../../helpers/decorators";
 
 const meta = {
   title: "pages/get-started",
   component: GetStartedPageView,
   parameters: { layout: "fullscreen" },
-  decorators: [withLayoutView],
+  //   decorators: [withLayoutView],
 } satisfies Meta<typeof GetStartedPageView>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-
-// Mocks
-const mockRegistryEntries: RegistryGetEntriesEntry[] = [
-  {
-    id: "github-mcp",
-    name: "github-mcp",
-    title: "GitHub MCP",
-    description: "Access GitHub repositories and issues via MCP.",
-    icon: "/icons/github.svg",
-    tools: [
-      {
-        name: "search_repositories",
-        description: "Search repositories",
-        inputSchema: { type: "object" },
-      },
-    ],
-    transport: { type: "http" },
-    homepage: "https://example.com",
-    isOfficial: true,
-    parameters: [
-      { name: "token", description: "GitHub token", required: true },
-    ],
-  },
-  {
-    id: "filesystem-mcp",
-    name: "filesystem-mcp",
-    title: "Filesystem MCP",
-    description: "Interact with local files.",
-    icon: "/icons/ghost.png",
-    tools: [],
-    transport: { type: "stdio" },
-    homepage: undefined,
-    isOfficial: false,
-    parameters: [],
-  },
-];
-
-const mockRegistryEntryDetail: RegistryGetEntryByName = {
-  ...mockRegistryEntries[0],
-  readme: "# GitHub MCP\nSome documentation...",
-  tools: mockRegistryEntries[0].tools,
-};
 
 const mockClientStatuses = [
   { name: "claude", installed: true, configExists: true, configPath: "" },
@@ -113,7 +68,7 @@ export const Step2a_RegistryEntryList: Story = {
   render: () => (
     <StatefulPage
       currentProxy={{ id: "proxy-1", servers: [] }}
-      registryEntries={mockRegistryEntries}
+      registryEntries={mockRegistryEntryList}
       clientStatuses={mockClientStatuses}
       isInstallingClient={false}
       createProxyIsPending={false}
@@ -129,13 +84,13 @@ export const Step2b_RegistryEntryDetail: Story = {
       <>
         <StatefulPage
           currentProxy={{ id: "proxy-1", servers: [] }}
-          registryEntries={mockRegistryEntries}
+          registryEntries={mockRegistryEntryList}
           clientStatuses={mockClientStatuses}
           isInstallingClient={false}
           createProxyIsPending={false}
         />
         <GetStartedInstallServerDialog
-          registryEntry={mockRegistryEntryDetail}
+          registryEntry={mockRegistryEntry}
           isRegistryEntryLoading={false}
           onClickInstall={() => {}}
           isInstalling={false}
@@ -152,7 +107,7 @@ export const Step3_ClientInstallers: Story = {
   render: () => (
     <StatefulPage
       currentProxy={{ id: "proxy-1", servers: [{ name: "github-mcp" }] }}
-      registryEntries={mockRegistryEntries}
+      registryEntries={mockRegistryEntryList}
       clientStatuses={mockClientStatuses}
       isInstallingClient={false}
       createProxyIsPending={false}
@@ -165,7 +120,7 @@ export const Step3b_ClientInstallLoading: Story = {
   render: () => (
     <StatefulPage
       currentProxy={{ id: "proxy-1", servers: [{ name: "github-mcp" }] }}
-      registryEntries={mockRegistryEntries}
+      registryEntries={mockRegistryEntryList}
       clientStatuses={mockClientStatuses}
       isInstallingClient={true}
       createProxyIsPending={false}

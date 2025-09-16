@@ -1,6 +1,8 @@
+import { useCopyToClipboard } from "../../hooks/use-copy-to-clipboard";
 import { ConfiguratorTarget } from "../types";
 import { Button } from "../ui/button";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
+import { toast } from "../ui/toast";
 import type { AvailableClient, Client } from "./proxy-installers";
 import { ProxyInstallers } from "./proxy-installers";
 import { ProxyManualDialog } from "./proxy-manual-dialog";
@@ -16,7 +18,6 @@ interface WorkspaceSectionClientsProps {
   onUninstall: (proxyId: string, client: ConfiguratorTarget) => void;
   isInstalling: boolean;
   isUninstalling: boolean;
-  onCopy: (text: string) => Promise<void>;
 }
 
 export function WorkspaceSectionClients({
@@ -30,8 +31,16 @@ export function WorkspaceSectionClients({
   onUninstall,
   isInstalling,
   isUninstalling,
-  onCopy,
 }: WorkspaceSectionClientsProps) {
+  const [_, copy] = useCopyToClipboard();
+
+  const handleCopy = async (text: string) => {
+    await copy(text);
+    toast({
+      title: "Copied to clipboard",
+      description: "The endpoint has been copied to your clipboard.",
+    });
+  };
   return (
     <Section>
       <SectionHeader className="flex flex-row items-center justify-between">
@@ -41,7 +50,7 @@ export function WorkspaceSectionClients({
         <ProxyManualDialog
           proxyId={workspaceId}
           gatewayBaseUrl={gatewayBaseUrl}
-          onCopy={onCopy}
+          onCopy={handleCopy}
         >
           <Button size="sm">Connect manually</Button>
         </ProxyManualDialog>

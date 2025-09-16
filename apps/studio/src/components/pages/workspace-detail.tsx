@@ -1,4 +1,3 @@
-import { useCopyToClipboard } from "../../hooks/use-copy-to-clipboard";
 import type { AvailableClient, Client } from "../proxies/proxy-installers";
 import { WorkspaceSectionClients } from "../proxies/workspace-section-clients";
 import { WorkspaceSectionHeader } from "../proxies/workspace-section-header";
@@ -7,7 +6,6 @@ import { WorkspaceSectionTools } from "../proxies/workspace-section-tools";
 import { ConfiguratorTarget, type MasterWorkspace } from "../types";
 import { Container } from "../ui/container";
 import { SectionSeparator } from "../ui/section";
-import { toast } from "../ui/toast";
 
 interface WorkspaceDetailProps {
   workspace: MasterWorkspace;
@@ -48,14 +46,6 @@ export function WorkspaceDetail({
   onLibraryClick,
   onServerClick,
 }: WorkspaceDetailProps) {
-  const [_, copy] = useCopyToClipboard();
-  const handleCopy = async (text: string) => {
-    await copy(text);
-    toast({
-      title: "Copied to clipboard",
-      description: "The endpoint has been copied to your clipboard.",
-    });
-  };
   return (
     <Container size="lg">
       <WorkspaceSectionHeader workspace={workspace} />
@@ -73,7 +63,6 @@ export function WorkspaceDetail({
         onUninstall={onUninstall}
         isInstalling={isInstalling}
         isUninstalling={isUninstalling}
-        onCopy={handleCopy}
       />
 
       <SectionSeparator />

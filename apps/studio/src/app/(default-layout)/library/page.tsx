@@ -152,22 +152,21 @@ export default function RegistryPage() {
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           onPageChange={setPageIndex}
-          onAddManual={() => setAddSheetOpen(true)}
+          onAddClick={() => setAddSheetOpen(true)}
           onEntryClick={(entryName) => router.push(`/library/mcp/${entryName}`)}
-          addManualButton={
-            <McpAddSheet
-              open={addSheetOpen}
-              onOpenChange={setAddSheetOpen}
-              proxies={servers ?? []}
-              isLoadingProxies={serversLoading}
-              onSubmit={handleAddServer}
-              isSubmitting={addServerMutation.isPending}
-              onLibraryClick={() => router.push("/library")}
-            >
-              <Button>Add manually</Button>
-            </McpAddSheet>
-          }
         />
+
+        <McpAddSheet
+          open={addSheetOpen}
+          onOpenChange={setAddSheetOpen}
+          proxies={servers ?? []}
+          isLoadingProxies={serversLoading}
+          onSubmit={handleAddServer}
+          isSubmitting={addServerMutation.isPending}
+          onLibraryClick={() => router.push("/library")}
+        >
+          <Button className="hidden">Add manually</Button>
+        </McpAddSheet>
       </LayoutViewContent>
     </LayoutView>
   );

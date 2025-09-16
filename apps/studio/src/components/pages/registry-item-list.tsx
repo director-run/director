@@ -28,8 +28,7 @@ interface RegistryItemListProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   onPageChange: (pageIndex: number) => void;
-  onAddManual: () => void;
-  addManualButton: React.ReactNode;
+  onAddClick?: () => void;
   onEntryClick?: (entryName: string) => void;
 }
 
@@ -39,8 +38,7 @@ export function RegistryItemList({
   searchQuery,
   onSearchChange,
   onPageChange,
-  onAddManual,
-  addManualButton,
+  onAddClick,
   onEntryClick,
 }: RegistryItemListProps) {
   console.log(JSON.stringify(entries));
@@ -64,7 +62,7 @@ export function RegistryItemList({
               onChange={(e) => onSearchChange(e.target.value)}
               className="max-w-md"
             />
-            {addManualButton}
+            <Button onClick={onAddClick}>Add manually</Button>
           </div>
 
           <MCPLinkCardList>

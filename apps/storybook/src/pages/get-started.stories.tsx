@@ -104,7 +104,7 @@ export const Step2b_RegistryEntryDetail: Story = {
           onClickInstall={() => {}}
           isInstalling={false}
           open={open}
-          onClickClose={() => setOpen(false)}
+          onOpenChange={setOpen}
         />
       </>
     );

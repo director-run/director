@@ -227,7 +227,6 @@ export default function GetStartedPage() {
         onAddWorkspaceToClient={handleClientInstall}
       />
 
-      {/* MCP Install Dialog */}
       {selectedMcp && (
         <GetStartedInstallServerDialog
           registryEntry={entryQuery.data}

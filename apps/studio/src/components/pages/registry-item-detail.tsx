@@ -10,6 +10,7 @@ import { McpDescriptionList } from "../mcp-servers/mcp-description-list";
 import { RegistryInstallForm } from "../registry/registry-install-form";
 import { RegistryParameters } from "../registry/registry-parameters";
 import { RegistryTools } from "../registry/registry-tools";
+import { SplitView, SplitViewMain, SplitViewSide } from "../split-view";
 import type { MasterRegistryEntry, StoreGetAll } from "../types";
 import { Badge, BadgeGroup, BadgeIcon, BadgeLabel } from "../ui/badge";
 import { Container } from "../ui/container";
@@ -58,8 +59,8 @@ export function RegistryItemDetail({
   return (
     <>
       <Container size="xl">
-        <div className="flex flex-row gap-x-8">
-          <div className="flex min-w-0 grow flex-col gap-y-12 lg:gap-y-16">
+        <SplitView>
+          <SplitViewMain>
             <Section className="gap-y-8">
               <McpLogo src={entry.icon} className="size-9" />
               <SectionHeader>
@@ -172,8 +173,8 @@ export function RegistryItemDetail({
                 </Section>
               </TabsContent>
             </Tabs>
-          </div>
-          <div className="hidden w-xs shrink-0 flex-col lg:flex">
+          </SplitViewMain>
+          <SplitViewSide>
             <div className="sticky top-0 flex flex-col gap-y-8">
               {proxiesWithMcp.length > 0 && (
                 <Section>
@@ -223,8 +224,8 @@ export function RegistryItemDetail({
                 )}
               </Section>
             </div>
-          </div>
-        </div>
+          </SplitViewSide>
+        </SplitView>
       </Container>
     </>
   );

@@ -1,4 +1,4 @@
-import { RegistryItemAddForm } from "@director.run/studio/components/registry-item-add-form.tsx";
+import { RegistryDetailSidebar } from "@director.run/studio/components/registry-item-add-form.tsx";
 import { RegistryItem } from "@director.run/studio/components/registry-item.tsx";
 import { RegistryToolSheet } from "@director.run/studio/components/registry/registry-tool-sheet.tsx";
 import {
@@ -63,7 +63,7 @@ const RegistryItemDetailComponent = ({
         <RegistryItem entry={entry} onToolClick={onToolClick} />
       </SplitViewMain>
       <SplitViewSide>
-        <RegistryItemAddForm
+        <RegistryDetailSidebar
           entry={entry}
           proxies={proxies}
           entryInstalledOn={entryInstalledOn}
@@ -124,7 +124,7 @@ export const WithToolSelected: Story = {
               />
             </SplitViewMain>
             <SplitViewSide>
-              <RegistryItemAddForm
+              <RegistryDetailSidebar
                 entry={mockRegistryEntry}
                 proxies={mockProxies}
                 entryInstalledOn={["dev-proxy"]}

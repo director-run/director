@@ -1,4 +1,4 @@
-import { RegistryItemAddForm } from "@director.run/studio/components/registry-item-add-form.tsx";
+import { RegistryDetailSidebar } from "@director.run/studio/components/registry-item-add-form.tsx";
 import {
   SplitView,
   SplitViewMain,
@@ -98,13 +98,13 @@ const DebugPanel = ({
 );
 
 const meta = {
-  title: "components/forms/registry-item-add-form",
-  component: RegistryItemAddForm,
+  title: "components/sidebars/registry-item-detail-sidebar",
+  component: RegistryDetailSidebar,
   parameters: {
     layout: "fullscreen",
   },
   decorators: [withLayoutView],
-} satisfies Meta<typeof RegistryItemAddForm>;
+} satisfies Meta<typeof RegistryDetailSidebar>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -166,7 +166,7 @@ const BaseStory = ({
             )}
           </SplitViewMain>
           <SplitViewSide>
-            <RegistryItemAddForm
+            <RegistryDetailSidebar
               entry={entry}
               proxies={proxies}
               entryInstalledOn={entryInstalledOn}

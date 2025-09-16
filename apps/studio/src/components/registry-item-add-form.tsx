@@ -3,7 +3,7 @@ import type { MasterRegistryEntry, StoreGetAll } from "./types";
 import { Badge, BadgeGroup, BadgeLabel } from "./ui/badge";
 import { Section, SectionHeader, SectionTitle } from "./ui/section";
 
-interface RegistryItemAddFormProps {
+interface RegistryDetailSidebarProps {
   entry: Pick<MasterRegistryEntry, "name" | "id" | "parameters">;
   proxies?: StoreGetAll;
   entryInstalledOn?: string[];
@@ -15,13 +15,13 @@ interface RegistryItemAddFormProps {
   isInstalling?: boolean;
 }
 
-export function RegistryItemAddForm({
+export function RegistryDetailSidebar({
   entry,
   proxies,
   entryInstalledOn = [],
   onClickInstall,
   isInstalling = false,
-}: RegistryItemAddFormProps) {
+}: RegistryDetailSidebarProps) {
   return (
     <>
       {entryInstalledOn.length > 0 && (
@@ -51,7 +51,7 @@ export function RegistryItemAddForm({
         </SectionHeader>
 
         <RegistryInstallForm
-          mcp={entry}
+          registryEntry={entry}
           proxies={proxies}
           entryInstalledOn={entryInstalledOn}
           onSubmit={onClickInstall}

@@ -8,7 +8,7 @@ import { SelectNativeField } from "../ui/form/select-native-field";
 import { SimpleMarkdown } from "../ui/markdown";
 
 interface RegistryInstallFormProps {
-  mcp: Pick<MasterRegistryEntry, "name" | "id" | "parameters">;
+  registryEntry: Pick<MasterRegistryEntry, "name" | "id" | "parameters">;
   proxies?: StoreGetAll;
   defaultProxyId?: string;
   entryInstalledOn?: string[];
@@ -21,14 +21,14 @@ interface RegistryInstallFormProps {
 }
 
 export function RegistryInstallForm({
-  mcp,
+  registryEntry,
   proxies,
   defaultProxyId,
   entryInstalledOn = [],
   onSubmit,
   isSubmitting = false,
 }: RegistryInstallFormProps) {
-  const parameters = (mcp.parameters ?? []).filter(
+  const parameters = (registryEntry.parameters ?? []).filter(
     (parameter, index, array) =>
       array.findIndex((p) => p.name === parameter.name) === index,
   );
@@ -92,7 +92,7 @@ export function RegistryInstallForm({
             availableProxies && availableProxies.length > 0
               ? (values as { proxyId?: string }).proxyId
               : undefined,
-          entryId: mcp.id as unknown as string,
+          entryId: registryEntry.id as unknown as string,
           parameters: values.parameters,
         });
       }}

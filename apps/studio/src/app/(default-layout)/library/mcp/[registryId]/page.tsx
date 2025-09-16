@@ -8,7 +8,7 @@ import {
   LayoutViewHeader,
 } from "../../../../../components/layout/layout";
 import { RegistryItem } from "../../../../../components/registry-item";
-import { RegistryItemAddForm } from "../../../../../components/registry-item-add-form";
+import { RegistryDetailSidebar } from "../../../../../components/registry-item-add-form";
 import { RegistryEntrySkeleton } from "../../../../../components/registry/registry-entry-skeleton";
 import { RegistryInstallForm } from "../../../../../components/registry/registry-install-form";
 import { RegistryToolSheet } from "../../../../../components/registry/registry-tool-sheet";
@@ -160,7 +160,7 @@ export default function RegistryEntryPage() {
             className="w-sm max-w-[80dvw] rounded-[20px] lg:hidden"
           >
             <RegistryInstallForm
-              mcp={entry}
+              registryEntry={entry}
               proxies={proxies.filter(
                 (proxy) => !proxy.servers.some((it) => it.name === entry.name),
               )}
@@ -188,7 +188,7 @@ export default function RegistryEntryPage() {
               />
             </SplitViewMain>
             <SplitViewSide>
-              <RegistryItemAddForm
+              <RegistryDetailSidebar
                 entry={entry}
                 proxies={proxies}
                 entryInstalledOn={entryInstalledOn}

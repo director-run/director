@@ -144,7 +144,7 @@ const mockToolLinks = [
 
 export const Default: Story = {
   args: {
-    proxy: mockProxy,
+    workspace: mockProxy,
     gatewayBaseUrl: "http://localhost:3673",
     clients: mockClients,
     installers: mockInstallers,
@@ -170,14 +170,14 @@ export const Default: Story = {
 export const WithManyServers: Story = {
   args: {
     ...Default.args,
-    proxy: mockProxyWithManyServers,
+    workspace: mockProxyWithManyServers,
   },
 };
 
 export const EmptyProxy: Story = {
   args: {
     ...Default.args,
-    proxy: mockProxyEmpty,
+    workspace: mockProxyEmpty,
   },
 };
 
@@ -248,7 +248,7 @@ export const NoClientsInstalled: Story = {
 export const LongDescription: Story = {
   args: {
     ...Default.args,
-    proxy: {
+    workspace: {
       ...mockProxy,
       description:
         "This is a very long description for the development proxy that explains its purpose, configuration, and usage in great detail. It should wrap nicely in the UI and provide comprehensive information about what this proxy is used for and how it's configured.",
@@ -259,7 +259,7 @@ export const LongDescription: Story = {
 export const NoDescription: Story = {
   args: {
     ...Default.args,
-    proxy: {
+    workspace: {
       ...mockProxy,
       description: undefined,
     },

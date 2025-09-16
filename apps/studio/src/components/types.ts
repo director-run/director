@@ -10,6 +10,8 @@ export type MasterRegistryEntry =
 export type MasterRegistryEntryList =
   GatewayRouterOutputs["registry"]["getEntries"]["entries"];
 
+export type MasterWorkspace = GatewayRouterOutputs["store"]["get"];
+
 export type RegistryGetEntryTools = MasterRegistryEntry["tools"];
 
 export type RegistryGetEntryTool = NonNullable<RegistryGetEntryTools>[number];

@@ -17,7 +17,7 @@ import {
 import { toast } from "../ui/toast";
 
 interface ProxyDetailProps {
-  proxy: {
+  workspace: {
     id: string;
     name: string;
     description?: string;
@@ -47,7 +47,7 @@ interface ProxyDetailProps {
 }
 
 export function ProxyDetail({
-  proxy,
+  workspace: proxy,
   gatewayBaseUrl,
   clients,
   installers,

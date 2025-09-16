@@ -6,7 +6,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { withLayoutView } from "../helpers/decorators";
 
-const mockProxiesWithMcp: StoreGetAll = [
+const mockProxies: StoreGetAll = [
   {
     id: "dev-proxy",
     name: "Development Proxy",
@@ -27,27 +27,6 @@ const mockProxiesWithMcp: StoreGetAll = [
   },
 ];
 
-const mockProxiesWithoutMcp: StoreGetAll = [
-  {
-    id: "production-proxy",
-    name: "Production Proxy",
-    description: "Production environment proxy",
-    prompts: undefined,
-    targets: [],
-    servers: [],
-    path: "/ws/production-proxy",
-  },
-  {
-    id: "test-proxy",
-    name: "Test Proxy",
-    description: "Testing environment proxy",
-    prompts: undefined,
-    targets: [],
-    servers: [],
-    path: "/ws/test-proxy",
-  },
-];
-
 const meta = {
   title: "pages/registry/detail",
   component: RegistryItemDetail,
@@ -63,11 +42,9 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     entry: mockRegistryEntry,
-    proxiesWithMcp: mockProxiesWithMcp,
-    proxiesWithoutMcp: mockProxiesWithoutMcp,
-    defaultProxyId: "production-proxy",
-    serverId: "production-proxy",
-    onInstall: async (values) => {
+    proxies: mockProxies,
+    entryInstalledOn: ["dev-proxy"],
+    onClickInstall: async (values) => {
       console.log("Installing MCP server:", values);
       // Simulate installation delay
       await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -92,6 +69,9 @@ export const WithToolSelected: Story = {
       <>
         <RegistryItemDetail
           {...args}
+          entry={mockRegistryEntry}
+          proxies={mockProxies}
+          entryInstalledOn={["dev-proxy"]}
           onToolClick={(tool) => setSelectedToolName(tool.name)}
         />
         {selectedTool && (

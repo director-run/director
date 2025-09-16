@@ -29,12 +29,10 @@ export const KitchenSink = () => {
           element={
             <RegistryItemDetail
               entry={mockRegistryEntry}
-              proxiesWithMcp={[]}
-              proxiesWithoutMcp={[]}
-              serverId={null}
-              onInstall={async () => {}}
-              onCloseTool={() => {}}
-              toolLinks={[]}
+              proxies={[]}
+              entryInstalledOn={[]}
+              onClickInstall={async () => {}}
+              isInstalling={false}
             />
           }
         />

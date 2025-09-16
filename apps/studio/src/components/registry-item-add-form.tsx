@@ -5,28 +5,27 @@ import { EmptyState, EmptyStateDescription } from "./ui/empty-state";
 import { Section, SectionHeader, SectionTitle } from "./ui/section";
 
 interface RegistryItemAddFormProps {
-  entry: Pick<MasterRegistryEntry, "name">;
-  proxiesWithMcp: StoreGetAll;
-  proxiesWithoutMcp: StoreGetAll;
-  defaultProxyId?: string;
-  onInstall: (values: {
-    proxyId: string;
-    parameters: Record<string, string>;
+  entry: Pick<MasterRegistryEntry, "name" | "id">;
+  proxies?: StoreGetAll;
+  entryInstalledOn?: string[];
+  onClickInstall: (params: {
+    proxyId?: string;
+    entryId: string;
+    parameters?: Record<string, string>;
   }) => Promise<void>;
   isInstalling?: boolean;
 }
 
 export function RegistryItemAddForm({
   entry,
-  proxiesWithMcp,
-  proxiesWithoutMcp,
-  defaultProxyId,
-  onInstall,
+  proxies,
+  entryInstalledOn = [],
+  onClickInstall,
   isInstalling = false,
 }: RegistryItemAddFormProps) {
   return (
     <>
-      {proxiesWithMcp.length > 0 && (
+      {entryInstalledOn.length > 0 && (
         <Section>
           <SectionHeader>
             <SectionTitle variant="h3" asChild>
@@ -34,10 +33,10 @@ export function RegistryItemAddForm({
             </SectionTitle>
           </SectionHeader>
           <BadgeGroup>
-            {proxiesWithMcp.map((proxy) => {
+            {entryInstalledOn.map((proxyId) => {
               return (
-                <Badge key={proxy.id} className="cursor-pointer">
-                  <BadgeLabel>{proxy.name}</BadgeLabel>
+                <Badge key={proxyId} className="cursor-pointer">
+                  <BadgeLabel>{proxyId}</BadgeLabel>
                 </Badge>
               );
             })}
@@ -51,12 +50,29 @@ export function RegistryItemAddForm({
             <h3>Add to proxy</h3>
           </SectionTitle>
         </SectionHeader>
-        {proxiesWithoutMcp.length > 0 ? (
+        {proxies && proxies.length > 0 ? (
           <RegistryInstallForm
             mcp={entry as MasterRegistryEntry}
-            proxies={proxiesWithoutMcp}
-            defaultProxyId={defaultProxyId}
-            onSubmit={onInstall}
+            proxies={proxies}
+            onSubmit={async (values) =>
+              onClickInstall({
+                proxyId: values.proxyId,
+                entryId: entry.id as unknown as string,
+                parameters: values.parameters,
+              })
+            }
+            isSubmitting={isInstalling}
+          />
+        ) : proxies === undefined ? (
+          <RegistryInstallForm
+            mcp={entry as MasterRegistryEntry}
+            proxies={[]}
+            onSubmit={async (values) =>
+              onClickInstall({
+                entryId: entry.id as unknown as string,
+                parameters: values.parameters,
+              })
+            }
             isSubmitting={isInstalling}
           />
         ) : (

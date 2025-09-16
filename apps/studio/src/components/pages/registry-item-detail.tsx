@@ -6,13 +6,12 @@ import { Container } from "../ui/container";
 
 interface RegistryItemDetailProps {
   entry: MasterRegistryEntry;
-  proxiesWithMcp: StoreGetAll;
-  proxiesWithoutMcp: StoreGetAll;
-  defaultProxyId?: string;
-  serverId: string | null;
-  onInstall: (values: {
-    proxyId: string;
-    parameters: Record<string, string>;
+  proxies?: StoreGetAll;
+  entryInstalledOn?: string[];
+  onClickInstall: (params: {
+    proxyId?: string;
+    entryId: string;
+    parameters?: Record<string, string>;
   }) => Promise<void>;
   isInstalling?: boolean;
   onToolClick?: (
@@ -23,11 +22,9 @@ interface RegistryItemDetailProps {
 
 export function RegistryItemDetail({
   entry,
-  proxiesWithMcp,
-  proxiesWithoutMcp,
-  defaultProxyId,
-  serverId,
-  onInstall,
+  proxies,
+  entryInstalledOn = [],
+  onClickInstall,
   isInstalling = false,
   onToolClick,
   onProxyServerClick,
@@ -42,10 +39,9 @@ export function RegistryItemDetail({
           <SplitViewSide>
             <RegistryItemAddForm
               entry={entry}
-              proxiesWithMcp={proxiesWithMcp}
-              proxiesWithoutMcp={proxiesWithoutMcp}
-              defaultProxyId={defaultProxyId}
-              onInstall={onInstall}
+              proxies={proxies}
+              entryInstalledOn={entryInstalledOn}
+              onClickInstall={onClickInstall}
               isInstalling={isInstalling}
             />
           </SplitViewSide>

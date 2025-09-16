@@ -70,8 +70,9 @@ export default function RegistryEntryPage() {
   const entry = entryQuery.data;
 
   const handleInstall = async (values: {
-    proxyId: string;
-    parameters: Record<string, string>;
+    proxyId?: string;
+    entryId: string;
+    parameters?: Record<string, string>;
   }) => {
     if (!entry) {
       return;
@@ -79,15 +80,17 @@ export default function RegistryEntryPage() {
 
     const transport = await transportMutation.mutateAsync({
       entryName: entry.name,
-      parameters: values.parameters,
+      parameters: values.parameters ?? {},
     });
-    installMutation.mutate({
-      proxyId: values.proxyId,
-      server: {
-        name: entry.name,
-        transport,
-      },
-    });
+    if (values.proxyId) {
+      installMutation.mutate({
+        proxyId: values.proxyId,
+        server: {
+          name: entry.name,
+          transport,
+        },
+      });
+    }
   };
 
   const handleCloseTool = () => {
@@ -110,18 +113,10 @@ export default function RegistryEntryPage() {
 
   const selectedTool = entry.tools?.find((tool) => tool.name === toolId);
 
-  const proxiesWithMcp = (storeQuery.data ?? [])?.filter((proxy) =>
-    proxy.servers.find((it) => {
-      return it.name === entry.name;
-    }),
-  );
-
-  const proxiesWithoutMcp = (storeQuery.data ?? [])?.filter(
-    (proxy) =>
-      !proxy.servers.find((it) => {
-        return it.name === entry.name;
-      }),
-  );
+  const proxies = storeQuery.data ?? [];
+  const entryInstalledOn = proxies
+    .filter((proxy) => proxy.servers.some((it) => it.name === entry.name))
+    .map((p) => p.id);
 
   const handleToolClick = (toolName: string) => {
     setRegistryQuery({ toolId: toolName, serverId });
@@ -159,9 +154,17 @@ export default function RegistryEntryPage() {
           >
             <RegistryInstallForm
               mcp={entry}
-              proxies={proxiesWithoutMcp}
+              proxies={proxies.filter(
+                (proxy) => !proxy.servers.some((it) => it.name === entry.name),
+              )}
               defaultProxyId={serverId ?? undefined}
-              onSubmit={handleInstall}
+              onSubmit={(values) =>
+                handleInstall({
+                  proxyId: values.proxyId,
+                  entryId: entry.id as unknown as string,
+                  parameters: values.parameters,
+                })
+              }
               isSubmitting={installMutation.isPending}
             />
           </PopoverContent>
@@ -171,11 +174,9 @@ export default function RegistryEntryPage() {
       <LayoutViewContent>
         <RegistryItemDetail
           entry={entry}
-          proxiesWithMcp={proxiesWithMcp}
-          proxiesWithoutMcp={proxiesWithoutMcp}
-          defaultProxyId={serverId ?? undefined}
-          serverId={serverId}
-          onInstall={handleInstall}
+          proxies={proxies}
+          entryInstalledOn={entryInstalledOn}
+          onClickInstall={handleInstall}
           isInstalling={installMutation.isPending}
           onToolClick={(tool) => handleToolClick(tool.name)}
           onProxyServerClick={(proxyId, serverName) =>

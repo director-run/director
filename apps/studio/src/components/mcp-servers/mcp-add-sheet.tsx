@@ -1,5 +1,5 @@
-import { MinusIcon, PlusIcon } from "@phosphor-icons/react";
-import type { ComponentProps } from "react";
+import { PlusIcon, TrashIcon } from "@phosphor-icons/react";
+import { type ComponentProps } from "react";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -326,7 +326,7 @@ export function McpAddFormEnvFields() {
               size="icon"
               onClick={() => remove(index)}
             >
-              <MinusIcon />
+              <TrashIcon />
               <div className="sr-only">Remove</div>
             </Button>
           ) : (
@@ -372,7 +372,7 @@ export function McpAddFormHeaderFields() {
               size="icon"
               onClick={() => remove(index)}
             >
-              <MinusIcon />
+              <TrashIcon />
               <div className="sr-only">Remove</div>
             </Button>
           ) : (

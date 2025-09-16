@@ -8,7 +8,7 @@ import {
   LayoutViewHeader,
 } from "../../../../../components/layout/layout";
 import { McpToolSheet } from "../../../../../components/mcp-servers/mcp-tool-sheet";
-import { McpServerDetail } from "../../../../../components/pages/workspace-target-detail";
+import { WorkspaceTargetDetail } from "../../../../../components/pages/workspace-target-detail";
 import { ProxySkeleton } from "../../../../../components/proxies/proxy-skeleton";
 import { WorkspaceTargetDetailDropDownMenu } from "../../../../../components/proxies/workspace-target-detail-dropdown-menu";
 import {
@@ -164,7 +164,7 @@ export default function McpServerPage() {
 
       <LayoutViewContent>
         <Container size="lg">
-          <McpServerDetail
+          <WorkspaceTargetDetail
             mcp={mcp}
             proxy={proxy}
             entryData={entryData}

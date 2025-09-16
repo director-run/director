@@ -11,7 +11,7 @@ import {
   SectionTitle,
 } from "../ui/section";
 
-interface McpServerDetailProps {
+interface WorkspaceTargetDetailProps {
   mcp: {
     name: string;
     transport: StoreServerTransport;
@@ -33,7 +33,7 @@ interface McpServerDetailProps {
   onProxyClick?: (proxyId: string) => void;
 }
 
-export function McpServerDetail({
+export function WorkspaceTargetDetail({
   mcp,
   proxy,
   entryData,
@@ -41,7 +41,7 @@ export function McpServerDetail({
   toolLinks,
   toolsLoading,
   onProxyClick,
-}: McpServerDetailProps) {
+}: WorkspaceTargetDetailProps) {
   return (
     <>
       <Section>

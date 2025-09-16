@@ -1,14 +1,14 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import type { StoreServerTransport } from "../types";
-import { McpServerDetail } from "./workspace-target-detail";
+import { WorkspaceTargetDetail } from "./workspace-target-detail";
 
 const meta = {
   title: "pages/McpServerDetail",
-  component: McpServerDetail,
+  component: WorkspaceTargetDetail,
   parameters: {
     layout: "fullscreen",
   },
-} satisfies Meta<typeof McpServerDetail>;
+} satisfies Meta<typeof WorkspaceTargetDetail>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

@@ -1,4 +1,4 @@
-import { McpServerDetail } from "@director.run/studio/components/pages/workspace-target-detail.tsx";
+import { WorkspaceTargetDetail } from "@director.run/studio/components/pages/workspace-target-detail.tsx";
 import type { StoreServerTransport } from "@director.run/studio/components/types.ts";
 import { mockRegistryEntry } from "@director.run/studio/test/fixtures/registry/entry.ts";
 import type { Meta, StoryObj } from "@storybook/react";
@@ -6,12 +6,12 @@ import { withLayoutView } from "../helpers/decorators";
 
 const meta = {
   title: "pages/workspaces/target-detail",
-  component: McpServerDetail,
+  component: WorkspaceTargetDetail,
   parameters: {
     layout: "fullscreen",
   },
   decorators: [withLayoutView],
-} satisfies Meta<typeof McpServerDetail>;
+} satisfies Meta<typeof WorkspaceTargetDetail>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

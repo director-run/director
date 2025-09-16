@@ -8,7 +8,7 @@ import { SelectNativeField } from "../ui/form/select-native-field";
 import { SimpleMarkdown } from "../ui/markdown";
 
 interface RegistryInstallFormProps {
-  mcp: MasterRegistryEntry;
+  mcp: Pick<MasterRegistryEntry, "name" | "id" | "parameters">;
   proxies?: StoreGetAll;
   defaultProxyId?: string;
   entryInstalledOn?: string[];

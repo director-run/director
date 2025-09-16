@@ -11,6 +11,20 @@ const meta = {
   component: GetStartedPageView,
   parameters: { layout: "fullscreen" },
   //   decorators: [withLayoutView],
+  render: (args) => <StatefulPage {...args} />,
+  args: {
+    currentProxy: null,
+    registryEntries: [],
+    clientStatuses: [],
+    isInstallingClient: false,
+    createProxyIsPending: false,
+    searchQuery: "",
+    onSearchQueryChange: () => {},
+    onMcpSelect: () => {},
+    onInstallClient: () => {},
+    // Accept any since storybook args typing requires this prop
+    onCreateProxy: async () => {},
+  },
 } satisfies Meta<typeof GetStartedPageView>;
 
 export default meta;
@@ -39,56 +53,51 @@ function StatefulPage(args: React.ComponentProps<typeof GetStartedPageView>) {
 
 // step 1a: new proxy
 export const Step1a_NewProxy: Story = {
-  render: () => (
-    <StatefulPage
-      currentProxy={null}
-      registryEntries={[]}
-      clientStatuses={mockClientStatuses}
-      isInstallingClient={false}
-      createProxyIsPending={false}
-    />
-  ),
+  args: {
+    currentProxy: null,
+    registryEntries: [],
+    clientStatuses: mockClientStatuses,
+    isInstallingClient: false,
+    createProxyIsPending: false,
+  },
 };
 
 // step 1b: new proxy loading
 export const Step1b_NewProxyLoading: Story = {
-  render: () => (
-    <StatefulPage
-      currentProxy={null}
-      registryEntries={[]}
-      clientStatuses={mockClientStatuses}
-      isInstallingClient={false}
-      createProxyIsPending={true}
-    />
-  ),
+  args: {
+    currentProxy: null,
+    registryEntries: [],
+    clientStatuses: mockClientStatuses,
+    isInstallingClient: false,
+    createProxyIsPending: true,
+  },
 };
 
 // step 2a: registry entry list (proxy created, no servers yet)
 export const Step2a_RegistryEntryList: Story = {
-  render: () => (
-    <StatefulPage
-      currentProxy={{ id: "proxy-1", servers: [] }}
-      registryEntries={mockRegistryEntryList}
-      clientStatuses={mockClientStatuses}
-      isInstallingClient={false}
-      createProxyIsPending={false}
-    />
-  ),
+  args: {
+    currentProxy: { id: "proxy-1", servers: [] },
+    registryEntries: mockRegistryEntryList,
+    clientStatuses: mockClientStatuses,
+    isInstallingClient: false,
+    createProxyIsPending: false,
+  },
 };
 
 // step 2b: registry entry detail (dialog open)
 export const Step2b_RegistryEntryDetail: Story = {
-  render: () => {
+  args: {
+    currentProxy: { id: "proxy-1", servers: [] },
+    registryEntries: mockRegistryEntryList,
+    clientStatuses: mockClientStatuses,
+    isInstallingClient: false,
+    createProxyIsPending: false,
+  },
+  render: (args) => {
     const [open, setOpen] = useState(true);
     return (
       <>
-        <StatefulPage
-          currentProxy={{ id: "proxy-1", servers: [] }}
-          registryEntries={mockRegistryEntryList}
-          clientStatuses={mockClientStatuses}
-          isInstallingClient={false}
-          createProxyIsPending={false}
-        />
+        <StatefulPage {...args} />
         <GetStartedInstallServerDialog
           registryEntry={mockRegistryEntry}
           isRegistryEntryLoading={false}
@@ -104,31 +113,28 @@ export const Step2b_RegistryEntryDetail: Story = {
 
 // step 3: client installers (proxy with a server)
 export const Step3_ClientInstallers: Story = {
-  render: () => (
-    <StatefulPage
-      currentProxy={{ id: "proxy-1", servers: [{ name: "github-mcp" }] }}
-      registryEntries={mockRegistryEntryList}
-      clientStatuses={mockClientStatuses}
-      isInstallingClient={false}
-      createProxyIsPending={false}
-    />
-  ),
+  args: {
+    currentProxy: { id: "proxy-1", servers: [{ name: "github-mcp" }] },
+    registryEntries: mockRegistryEntryList,
+    clientStatuses: mockClientStatuses,
+    isInstallingClient: false,
+    createProxyIsPending: false,
+  },
 };
 
 // step 3b: client install loading
 export const Step3b_ClientInstallLoading: Story = {
-  render: () => (
-    <StatefulPage
-      currentProxy={{ id: "proxy-1", servers: [{ name: "github-mcp" }] }}
-      registryEntries={mockRegistryEntryList}
-      clientStatuses={mockClientStatuses}
-      isInstallingClient={true}
-      createProxyIsPending={false}
-    />
-  ),
+  args: {
+    currentProxy: { id: "proxy-1", servers: [{ name: "github-mcp" }] },
+    registryEntries: mockRegistryEntryList,
+    clientStatuses: mockClientStatuses,
+    isInstallingClient: true,
+    createProxyIsPending: false,
+  },
 };
 
 // step 4: final dialog
 export const Step4_CompleteDialog: Story = {
+  args: {},
   render: () => <GetStartedCompleteDialog open />,
 };

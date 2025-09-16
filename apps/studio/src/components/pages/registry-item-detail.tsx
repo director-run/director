@@ -175,55 +175,53 @@ export function RegistryItemDetail({
             </Tabs>
           </SplitViewMain>
           <SplitViewSide>
-            <div className="sticky top-0 flex flex-col gap-y-8">
-              {proxiesWithMcp.length > 0 && (
-                <Section>
-                  <SectionHeader>
-                    <SectionTitle variant="h3" asChild>
-                      <h3>Installed on</h3>
-                    </SectionTitle>
-                  </SectionHeader>
-                  <BadgeGroup>
-                    {proxiesWithMcp.map((proxy) => {
-                      return (
-                        <Badge
-                          key={proxy.id}
-                          onClick={() =>
-                            onProxyServerClick?.(proxy.id, entry.name)
-                          }
-                          className="cursor-pointer"
-                        >
-                          <BadgeLabel>{proxy.name}</BadgeLabel>
-                        </Badge>
-                      );
-                    })}
-                  </BadgeGroup>
-                </Section>
-              )}
-
+            {proxiesWithMcp.length > 0 && (
               <Section>
                 <SectionHeader>
                   <SectionTitle variant="h3" asChild>
-                    <h3>Add to proxy</h3>
+                    <h3>Installed on</h3>
                   </SectionTitle>
                 </SectionHeader>
-                {proxiesWithoutMcp.length > 0 ? (
-                  <RegistryInstallForm
-                    mcp={entry}
-                    proxies={proxiesWithoutMcp}
-                    defaultProxyId={defaultProxyId}
-                    onSubmit={onInstall}
-                    isSubmitting={isInstalling}
-                  />
-                ) : (
-                  <EmptyState>
-                    <EmptyStateDescription>
-                      This MCP has already been installed on all your proxies.
-                    </EmptyStateDescription>
-                  </EmptyState>
-                )}
+                <BadgeGroup>
+                  {proxiesWithMcp.map((proxy) => {
+                    return (
+                      <Badge
+                        key={proxy.id}
+                        onClick={() =>
+                          onProxyServerClick?.(proxy.id, entry.name)
+                        }
+                        className="cursor-pointer"
+                      >
+                        <BadgeLabel>{proxy.name}</BadgeLabel>
+                      </Badge>
+                    );
+                  })}
+                </BadgeGroup>
               </Section>
-            </div>
+            )}
+
+            <Section>
+              <SectionHeader>
+                <SectionTitle variant="h3" asChild>
+                  <h3>Add to proxy</h3>
+                </SectionTitle>
+              </SectionHeader>
+              {proxiesWithoutMcp.length > 0 ? (
+                <RegistryInstallForm
+                  mcp={entry}
+                  proxies={proxiesWithoutMcp}
+                  defaultProxyId={defaultProxyId}
+                  onSubmit={onInstall}
+                  isSubmitting={isInstalling}
+                />
+              ) : (
+                <EmptyState>
+                  <EmptyStateDescription>
+                    This MCP has already been installed on all your proxies.
+                  </EmptyStateDescription>
+                </EmptyState>
+              )}
+            </Section>
           </SplitViewSide>
         </SplitView>
       </Container>

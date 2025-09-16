@@ -7,6 +7,9 @@ export type RegistryGetEntriesEntry = RegistryGetEntries["entries"][number];
 export type MasterRegistryEntry =
   GatewayRouterOutputs["registry"]["getEntryByName"];
 
+export type MasterRegistryEntryList =
+  GatewayRouterOutputs["registry"]["getEntries"]["entries"];
+
 export type RegistryGetEntryTools = MasterRegistryEntry["tools"];
 
 export type RegistryGetEntryTool = NonNullable<RegistryGetEntryTools>[number];

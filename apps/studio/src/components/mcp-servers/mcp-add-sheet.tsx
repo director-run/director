@@ -1,5 +1,5 @@
 import { MinusIcon, PlusIcon } from "@phosphor-icons/react";
-import type { ComponentProps, ReactNode } from "react";
+import type { ComponentProps } from "react";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -24,7 +24,6 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "../ui/sheet";
 
 export const requiredStringSchema = z.string().trim().min(1, "Required");
@@ -116,14 +115,12 @@ interface Proxy {
 }
 
 interface McpAddSheetProps extends ComponentProps<typeof Sheet> {
-  children?: ReactNode;
   proxies?: Proxy[];
   onSubmit: (data: McpAddFormData) => Promise<void>;
   isSubmitting?: boolean;
 }
 
 export function McpAddSheet({
-  children,
   open,
   onOpenChange,
   proxies,
@@ -148,7 +145,6 @@ export function McpAddSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange} {...props}>
-      {children && <SheetTrigger asChild>{children}</SheetTrigger>}
       <SheetContent>
         <SheetActions>
           <Breadcrumb className="grow">

@@ -17,7 +17,6 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
 } from "../../../components/ui/breadcrumb";
-import { Button } from "../../../components/ui/button";
 import { EmptyStateDescription } from "../../../components/ui/empty-state";
 import { EmptyState } from "../../../components/ui/empty-state";
 import { EmptyStateTitle } from "../../../components/ui/empty-state";
@@ -171,9 +170,7 @@ export default function RegistryPage() {
           proxies={servers}
           onSubmit={handleAddServer}
           isSubmitting={addServerMutation.isPending}
-        >
-          <Button className="hidden">Add manually</Button>
-        </McpAddSheet>
+        />
       </LayoutViewContent>
     </LayoutView>
   );

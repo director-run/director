@@ -1,6 +1,6 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src/**/*.ts", ".next/types/**/*.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", ".next/types/**/*.ts"],
   "compilerOptions": {
     "incremental": true,
     "esModuleInterop": true,

@@ -5,20 +5,12 @@ import { useEffect, useState } from "react";
 import {
   LayoutView,
   LayoutViewContent,
-  LayoutViewHeader,
 } from "../../../../../components/layout/layout";
+import { LayoutBreadcrumbHeader } from "../../../../../components/layout/layout-breadcrumb-header";
 import { McpToolSheet } from "../../../../../components/mcp-servers/mcp-tool-sheet";
 import { WorkspaceTargetDetail } from "../../../../../components/pages/workspace-target-detail";
 import { ProxySkeleton } from "../../../../../components/proxies/proxy-skeleton";
 import { WorkspaceTargetDetailDropDownMenu } from "../../../../../components/proxies/workspace-target-detail-dropdown-menu";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "../../../../../components/ui/breadcrumb";
 import { toast } from "../../../../../components/ui/toast";
 import { trpc } from "../../../../../state/client";
 import { useInspectMcp } from "../../../../../state/use-inspect-mcp";
@@ -137,29 +129,23 @@ export default function McpServerPage() {
 
   return (
     <LayoutView>
-      <LayoutViewHeader>
-        <Breadcrumb className="grow">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink
-                onClick={() => router.push(`/${proxy.id}`)}
-                className="cursor-pointer"
-              >
-                {proxy?.name}
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>{mcp.name}</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
+      <LayoutBreadcrumbHeader
+        breadcrumbs={[
+          {
+            title: proxy?.name || "",
+            onClick: () => router.push(`/${proxy.id}`),
+          },
+          {
+            title: mcp.name,
+          },
+        ]}
+      >
         <WorkspaceTargetDetailDropDownMenu
           onDelete={handleDeleteServer}
           open={deleteOpen}
           onOpenChange={setDeleteOpen}
         />
-      </LayoutViewHeader>
+      </LayoutBreadcrumbHeader>
 
       <LayoutViewContent>
         <WorkspaceTargetDetail

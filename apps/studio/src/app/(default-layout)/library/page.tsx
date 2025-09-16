@@ -5,18 +5,12 @@ import { useRouter } from "next/navigation";
 import {
   LayoutView,
   LayoutViewContent,
-  LayoutViewHeader,
 } from "../../../components/layout/layout";
+import { LayoutBreadcrumbHeader } from "../../../components/layout/layout-breadcrumb-header";
 import { McpAddSheet } from "../../../components/mcp-servers/mcp-add-sheet";
 import type { McpAddFormData } from "../../../components/mcp-servers/mcp-add-sheet";
 import { RegistryItemList } from "../../../components/pages/registry-item-list";
 import { RegistryLibrarySkeleton } from "../../../components/registry/registry-library-skeleton";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbPage,
-} from "../../../components/ui/breadcrumb";
 import { EmptyStateDescription } from "../../../components/ui/empty-state";
 import { EmptyState } from "../../../components/ui/empty-state";
 import { EmptyStateTitle } from "../../../components/ui/empty-state";
@@ -143,15 +137,13 @@ export default function RegistryPage() {
 
   return (
     <LayoutView>
-      <LayoutViewHeader>
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbPage>Library</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      </LayoutViewHeader>
+      <LayoutBreadcrumbHeader
+        breadcrumbs={[
+          {
+            title: "Library",
+          },
+        ]}
+      />
 
       <LayoutViewContent>
         <RegistryItemList

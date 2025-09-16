@@ -3,17 +3,10 @@
 import { DotsThreeOutlineVerticalIcon } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
 import { LayoutView, LayoutViewContent } from "../layout/layout";
-import { LayoutNavigation } from "../layout/navigation";
+import { LayoutBreadcrumbHeader } from "../layout/layout-breadcrumb-header";
 import { ListOfLinks } from "../list-of-links";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbPage,
-} from "../ui/breadcrumb";
 import { Button } from "../ui/button";
 import { Container } from "../ui/container";
-import { ScrambleText } from "../ui/scramble-text";
 import {
   Section,
   SectionDescription,
@@ -27,17 +20,14 @@ export function RegistryLibrarySkeleton({
   return (
     <LayoutView className="pointer-events-none relative select-none">
       {children}
-      <LayoutNavigation aria-hidden>
-        <Breadcrumb className="grow">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbPage className="opacity-50">
-                <ScrambleText text="Loading proxy…" />
-              </BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-
+      <LayoutBreadcrumbHeader
+        breadcrumbs={[
+          {
+            title: "Loading proxy…",
+          },
+        ]}
+        loading={true}
+      >
         <Button
           size="icon"
           variant="ghost"
@@ -47,7 +37,7 @@ export function RegistryLibrarySkeleton({
           <DotsThreeOutlineVerticalIcon weight="fill" className="!size-4" />
           <span className="sr-only">Settings</span>
         </Button>
-      </LayoutNavigation>
+      </LayoutBreadcrumbHeader>
       <LayoutViewContent aria-hidden>
         <Container size="lg">
           <Section className="gap-y-6">

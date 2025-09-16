@@ -4,16 +4,10 @@ import { useRouter } from "next/navigation";
 import {
   LayoutView,
   LayoutViewContent,
-  LayoutViewHeader,
 } from "../../../components/layout/layout";
+import { LayoutBreadcrumbHeader } from "../../../components/layout/layout-breadcrumb-header";
 import { ProxyNew } from "../../../components/pages/proxy-new";
 import type { ProxyFormData } from "../../../components/proxies/proxy-form";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbPage,
-} from "../../../components/ui/breadcrumb";
 import { toast } from "../../../components/ui/toast";
 import { trpc } from "../../../state/client";
 
@@ -38,15 +32,13 @@ export default function NewProxyPage() {
 
   return (
     <LayoutView>
-      <LayoutViewHeader>
-        <Breadcrumb className="grow">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbPage>New proxy</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      </LayoutViewHeader>
+      <LayoutBreadcrumbHeader
+        breadcrumbs={[
+          {
+            title: "New proxy",
+          },
+        ]}
+      />
 
       <LayoutViewContent>
         <ProxyNew

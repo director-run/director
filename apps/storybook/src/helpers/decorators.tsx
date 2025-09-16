@@ -1,17 +1,11 @@
 import { ChatToUs } from "@director.run/studio/components/chat-to-us.tsx";
+import { LayoutBreadcrumbHeader } from "@director.run/studio/components/layout/layout-breadcrumb-header.js";
 import {
   LayoutRoot,
   LayoutView,
   LayoutViewContent,
-  LayoutViewHeader,
 } from "@director.run/studio/components/layout/layout.tsx";
 import type { NavigationSection } from "@director.run/studio/components/layout/navigation.js";
-import { Breadcrumb } from "@director.run/studio/components/ui/breadcrumb.tsx";
-import { BreadcrumbList } from "@director.run/studio/components/ui/breadcrumb.tsx";
-import { BreadcrumbItem } from "@director.run/studio/components/ui/breadcrumb.tsx";
-import { BreadcrumbLink } from "@director.run/studio/components/ui/breadcrumb.tsx";
-import { BreadcrumbSeparator } from "@director.run/studio/components/ui/breadcrumb.tsx";
-import { BreadcrumbPage } from "@director.run/studio/components/ui/breadcrumb.tsx";
 import { MCPIcon } from "@director.run/studio/components/ui/icons/mcp-icon.js";
 import {
   BookOpenTextIcon,
@@ -24,24 +18,16 @@ export const withLayoutView: Decorator = (Story) => {
   return (
     <LayoutRoot sections={navigationSections}>
       <LayoutView>
-        <LayoutViewHeader>
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink
-                  onClick={() => alert("Library")}
-                  className="cursor-pointer"
-                >
-                  Dummy
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Content</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        </LayoutViewHeader>
+        <LayoutBreadcrumbHeader
+          breadcrumbs={[
+            {
+              title: "Dummy",
+            },
+            {
+              title: "Content",
+            },
+          ]}
+        />
 
         <LayoutViewContent>
           <Story />

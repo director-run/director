@@ -3,17 +3,10 @@
 import { LinkIcon, SpinnerGapIcon } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
 import { LayoutView, LayoutViewContent } from "../layout/layout";
-import { LayoutNavigation } from "../layout/navigation";
+import { LayoutBreadcrumbHeader } from "../layout/layout-breadcrumb-header";
 import { ListOfLinks } from "../list-of-links";
 import { Badge, BadgeIcon, BadgeLabel } from "../ui/badge";
 import { BadgeGroup } from "../ui/badge";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "../ui/breadcrumb";
 import { Button } from "../ui/button";
 import { Container } from "../ui/container";
 import { ScrambleText } from "../ui/scramble-text";
@@ -29,25 +22,21 @@ export function RegistryEntrySkeleton({ children }: { children?: ReactNode }) {
   return (
     <LayoutView className="pointer-events-none relative select-none">
       {children}
-      <LayoutNavigation aria-hidden>
-        <Breadcrumb className="grow">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbPage className="opacity-50">Library</BreadcrumbPage>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage className="opacity-50">
-                <ScrambleText text="Loading" />
-              </BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-
+      <LayoutBreadcrumbHeader
+        breadcrumbs={[
+          {
+            title: "Library",
+          },
+          {
+            title: "Loading",
+          },
+        ]}
+        loading={true}
+      >
         <Button disabled className="ml-auto">
           Add to proxy
         </Button>
-      </LayoutNavigation>
+      </LayoutBreadcrumbHeader>
 
       <LayoutViewContent aria-hidden>
         <Container size="lg">

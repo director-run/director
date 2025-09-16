@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
-import type { useZodForm } from "../../hooks/use-zod-form";
+import { useZodForm } from "../../hooks/use-zod-form";
 import { GetStartedHeader } from "../get-started/get-started-header";
 import { GetStartedInstallers } from "../get-started/get-started-installers";
 import {
@@ -38,14 +38,11 @@ type InstallerClientStatus = {
 
 export interface GetStartedPageViewProps {
   currentProxy: { id: string; servers?: unknown[] } | null;
-  hasInstallers: boolean;
   registryEntries: RegistryGetEntriesEntry[];
-  availableClients: InstallerClientStatus[];
-  listClientsIsLoading: boolean;
+  clientStatuses: InstallerClientStatus[];
   isInstallingClient: boolean;
 
   // Proxy form
-  proxyForm: ReturnType<typeof useZodForm<typeof proxySchema>>;
   createProxyIsPending: boolean;
   onCreateProxy: SubmitHandler<ProxyFormValues>;
 
@@ -56,28 +53,27 @@ export interface GetStartedPageViewProps {
   // Actions
   onMcpSelect: (mcp: RegistryGetEntriesEntry) => void;
   onInstallClient: (clientId: ClientId) => void;
-  onComplete: () => void;
 }
 
 export function GetStartedPageView(props: GetStartedPageViewProps) {
   const {
     currentProxy,
-    hasInstallers,
     registryEntries,
-    availableClients,
-    listClientsIsLoading,
+    clientStatuses,
     isInstallingClient,
-    proxyForm,
     createProxyIsPending,
     onCreateProxy,
     searchQuery,
     onSearchQueryChange,
     onMcpSelect,
     onInstallClient,
-    onComplete,
   } = props;
 
   const [selectedClient, setSelectedClient] = useState<ClientId | undefined>();
+  const proxyForm = useZodForm({
+    schema: proxySchema,
+    defaultValues: { name: "", description: "A proxy for getting started" },
+  });
 
   const hasProxy = !!currentProxy;
   const hasServers = (currentProxy?.servers?.length ?? 0) > 0;
@@ -89,25 +85,11 @@ export function GetStartedPageView(props: GetStartedPageViewProps) {
         ? "completed"
         : "in-progress"
       : "not-started";
+    // With simplified props, we consider connect step "in-progress" until user triggers install
     const connect: StepStatus =
-      hasProxy && hasServers
-        ? hasInstallers
-          ? "completed"
-          : "in-progress"
-        : "not-started";
+      hasProxy && hasServers ? "in-progress" : "not-started";
     return { create, add, connect };
-  }, [hasProxy, hasServers, hasInstallers]);
-
-  const isCompleted =
-    steps.create === "completed" &&
-    steps.add === "completed" &&
-    steps.connect === "completed";
-
-  useEffect(() => {
-    if (isCompleted) {
-      onComplete();
-    }
-  }, [isCompleted, onComplete]);
+  }, [hasProxy, hasServers]);
 
   return (
     <Container size="sm" className="py-12 lg:py-16">
@@ -156,9 +138,9 @@ export function GetStartedPageView(props: GetStartedPageViewProps) {
             <GetStartedInstallers
               selectedClient={selectedClient}
               onClientSelect={setSelectedClient}
-              availableClients={availableClients}
+              availableClients={clientStatuses}
               clients={clients}
-              isLoading={listClientsIsLoading}
+              isLoading={false}
               isInstalling={isInstallingClient}
               onInstall={onInstallClient}
             />

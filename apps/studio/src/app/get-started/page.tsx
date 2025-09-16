@@ -97,6 +97,7 @@ export default function GetStartedPage() {
         title: "Proxy installed",
         description: `This proxy was successfully installed`,
       });
+      setIsCompleted(true);
     },
     onError: (error) => {
       toast({
@@ -201,19 +202,15 @@ export default function GetStartedPage() {
     <>
       <GetStartedPageView
         currentProxy={currentProxy}
-        hasInstallers={!!hasInstallers}
         registryEntries={registryEntriesQuery.data?.entries ?? []}
-        availableClients={listClientsQuery.data ?? []}
-        listClientsIsLoading={listClientsQuery.isLoading}
+        clientStatuses={listClientsQuery.data ?? []}
         isInstallingClient={installationMutation.isPending}
-        proxyForm={proxyForm}
         createProxyIsPending={createProxyMutation.isPending}
         onCreateProxy={handleProxySubmit}
         searchQuery={searchQuery}
         onSearchQueryChange={setSearchQuery}
         onMcpSelect={handleMcpSelect}
         onInstallClient={handleClientInstall}
-        onComplete={() => setIsCompleted(true)}
       />
 
       {/* MCP Install Dialog */}

@@ -267,9 +267,7 @@ export default function ProxyPage() {
         isSubmitting={updateProxyMutation.isPending}
         open={settingsOpen}
         onOpenChange={setSettingsOpen}
-      >
-        <div />
-      </ProxySettingsSheet>
+      />
 
       <ProxyDeleteConfirmation
         onConfirm={handleDeleteProxy}

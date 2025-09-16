@@ -79,38 +79,3 @@ export function RegistryItemAddForm({
     </>
   );
 }
-
-interface RegistryItemAddFormProps {
-  entry: Pick<MasterRegistryEntry, "name" | "id">;
-  proxies?: StoreGetAll;
-  entryInstalledOn?: string[];
-  onClickInstall: (params: {
-    proxyId?: string;
-    entryId: string;
-    parameters?: Record<string, string>;
-  }) => Promise<void>;
-  isInstalling?: boolean;
-}
-
-function ProxyInstallForm({
-  entry,
-  proxies,
-  entryInstalledOn = [],
-  onClickInstall,
-  isInstalling = false,
-}: RegistryItemAddFormProps) {
-  if (
-    proxies &&
-    proxies.length > 0 &&
-    entryInstalledOn.length === proxies.length
-  ) {
-    return (
-      <EmptyState>
-        <EmptyStateDescription>
-          This MCP has already been installed on all your proxies.
-        </EmptyStateDescription>
-      </EmptyState>
-    );
-  } else {
-  }
-}

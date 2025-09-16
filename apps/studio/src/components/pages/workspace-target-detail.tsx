@@ -1,7 +1,7 @@
 import { McpLogo } from "../mcp-logo";
 import { McpDescriptionList } from "../mcp-servers/mcp-description-list";
 import { McpToolsTable } from "../mcp-servers/mcp-tools-table";
-import type { StoreServerTransport } from "../types";
+import type { MasterRegistryEntry, StoreServerTransport } from "../types";
 import { EmptyState, EmptyStateTitle } from "../ui/empty-state";
 import { Markdown } from "../ui/markdown";
 import {
@@ -20,10 +20,7 @@ interface McpServerDetailProps {
     id: string;
     name: string;
   };
-  entryData: {
-    icon?: string;
-    readme?: string;
-  };
+  entryData: Pick<MasterRegistryEntry, "icon" | "readme">;
   description?: string | null;
   toolLinks: Array<{
     title: string;

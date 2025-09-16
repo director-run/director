@@ -1,32 +1,8 @@
-import {
-  ArrowSquareOutIcon,
-  BookOpenTextIcon,
-  HardDriveIcon,
-  SealCheckIcon,
-  ToolboxIcon,
-} from "@phosphor-icons/react";
-import { McpLogo } from "../mcp-logo";
-import { McpDescriptionList } from "../mcp-servers/mcp-description-list";
-import { RegistryInstallForm } from "../registry/registry-install-form";
-import { RegistryParameters } from "../registry/registry-parameters";
-import { RegistryTools } from "../registry/registry-tools";
+import { RegistryItem } from "../registry-item";
+import { RegistryItemAddForm } from "../registry-item-add-form";
 import { SplitView, SplitViewMain, SplitViewSide } from "../split-view";
 import type { MasterRegistryEntry, StoreGetAll } from "../types";
-import { Badge, BadgeGroup, BadgeIcon, BadgeLabel } from "../ui/badge";
 import { Container } from "../ui/container";
-import {
-  EmptyState,
-  EmptyStateDescription,
-  EmptyStateTitle,
-} from "../ui/empty-state";
-import { Markdown } from "../ui/markdown";
-import {
-  Section,
-  SectionDescription,
-  SectionHeader,
-  SectionTitle,
-} from "../ui/section";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 interface RegistryItemDetailProps {
   entry: MasterRegistryEntry;
@@ -61,167 +37,18 @@ export function RegistryItemDetail({
       <Container size="xl">
         <SplitView>
           <SplitViewMain>
-            <Section className="gap-y-8">
-              <McpLogo src={entry.icon} className="size-9" />
-              <SectionHeader>
-                <SectionTitle>{entry.title}</SectionTitle>
-                <SectionDescription>{entry.description}</SectionDescription>
-              </SectionHeader>
-
-              <BadgeGroup>
-                {entry.isOfficial && (
-                  <Badge variant="success">
-                    <BadgeIcon>
-                      <SealCheckIcon />
-                    </BadgeIcon>
-                    <BadgeLabel uppercase>Official</BadgeLabel>
-                  </Badge>
-                )}
-
-                {entry.homepage && (
-                  <Badge
-                    className="transition-opacity duration-200 hover:opacity-50"
-                    asChild
-                  >
-                    <a
-                      href={entry.homepage}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <BadgeIcon>
-                        <ArrowSquareOutIcon weight="bold" />
-                      </BadgeIcon>
-                      <BadgeLabel uppercase>Homepage</BadgeLabel>
-                    </a>
-                  </Badge>
-                )}
-              </BadgeGroup>
-            </Section>
-
-            <Tabs defaultValue="readme">
-              <TabsList>
-                <TabsTrigger value="readme">
-                  <BookOpenTextIcon /> Readme
-                </TabsTrigger>
-                <TabsTrigger value="tools">
-                  <ToolboxIcon /> Tools
-                </TabsTrigger>
-                <TabsTrigger value="transport">
-                  <HardDriveIcon /> Transport
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="readme">
-                {entry.readme ? (
-                  <Markdown className="!max-w-none rounded-xl border-[0.5px] bg-accent-subtle/20 p-6">
-                    {entry.readme}
-                  </Markdown>
-                ) : (
-                  <EmptyState>
-                    <EmptyStateTitle>No readme found</EmptyStateTitle>
-                  </EmptyState>
-                )}
-              </TabsContent>
-
-              <TabsContent
-                value="tools"
-                className="rounded-xl border-[0.5px] bg-accent-subtle/20 p-6"
-              >
-                <Section>
-                  <SectionHeader>
-                    <SectionTitle variant="h2" asChild>
-                      <h3>Tools</h3>
-                    </SectionTitle>
-                  </SectionHeader>
-                  <RegistryTools
-                    links={(entry.tools ?? [])
-                      .sort((a, b) => a.name.localeCompare(b.name))
-                      .map((tool) => ({
-                        title: tool.name,
-                        subtitle: tool.description?.replace(
-                          /\[([^\]]+)\]/g,
-                          "",
-                        ),
-                        scroll: false,
-                        href: "#",
-                        onClick: () => onToolClick?.(tool),
-                      }))}
-                  />
-                </Section>
-              </TabsContent>
-
-              <TabsContent
-                value="transport"
-                className="flex flex-col gap-y-10 rounded-xl border-[0.5px] bg-accent-subtle/20 p-6"
-              >
-                <Section>
-                  <SectionHeader>
-                    <SectionTitle variant="h2" asChild>
-                      <h3>Overview</h3>
-                    </SectionTitle>
-                  </SectionHeader>
-                  <McpDescriptionList transport={entry.transport} />
-                </Section>
-
-                <Section>
-                  <SectionHeader>
-                    <SectionTitle variant="h2" asChild>
-                      <h3>Parameters</h3>
-                    </SectionTitle>
-                  </SectionHeader>
-                  <RegistryParameters parameters={entry.parameters ?? []} />
-                </Section>
-              </TabsContent>
-            </Tabs>
+            <RegistryItem entry={entry} onToolClick={onToolClick} />
           </SplitViewMain>
           <SplitViewSide>
-            {proxiesWithMcp.length > 0 && (
-              <Section>
-                <SectionHeader>
-                  <SectionTitle variant="h3" asChild>
-                    <h3>Installed on</h3>
-                  </SectionTitle>
-                </SectionHeader>
-                <BadgeGroup>
-                  {proxiesWithMcp.map((proxy) => {
-                    return (
-                      <Badge
-                        key={proxy.id}
-                        onClick={() =>
-                          onProxyServerClick?.(proxy.id, entry.name)
-                        }
-                        className="cursor-pointer"
-                      >
-                        <BadgeLabel>{proxy.name}</BadgeLabel>
-                      </Badge>
-                    );
-                  })}
-                </BadgeGroup>
-              </Section>
-            )}
-
-            <Section>
-              <SectionHeader>
-                <SectionTitle variant="h3" asChild>
-                  <h3>Add to proxy</h3>
-                </SectionTitle>
-              </SectionHeader>
-              {proxiesWithoutMcp.length > 0 ? (
-                <RegistryInstallForm
-                  mcp={entry}
-                  proxies={proxiesWithoutMcp}
-                  defaultProxyId={defaultProxyId}
-                  onSubmit={onInstall}
-                  isSubmitting={isInstalling}
-                />
-              ) : (
-                <EmptyState>
-                  <EmptyStateDescription>
-                    This MCP has already been installed on all your proxies.
-                  </EmptyStateDescription>
-                </EmptyState>
-              )}
-            </Section>
+            <RegistryItemAddForm
+              entry={entry}
+              proxiesWithMcp={proxiesWithMcp}
+              proxiesWithoutMcp={proxiesWithoutMcp}
+              defaultProxyId={defaultProxyId}
+              onInstall={onInstall}
+              isInstalling={isInstalling}
+              onProxyServerClick={onProxyServerClick}
+            />
           </SplitViewSide>
         </SplitView>
       </Container>

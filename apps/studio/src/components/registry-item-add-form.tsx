@@ -56,7 +56,7 @@ export function RegistryItemAddForm({
         entryInstalledOn.length === proxies.length ? (
           <EmptyState>
             <EmptyStateDescription>
-              XX This MCP has already been installed on all your proxies.
+              This MCP has already been installed on all your proxies.
             </EmptyStateDescription>
           </EmptyState>
         ) : (

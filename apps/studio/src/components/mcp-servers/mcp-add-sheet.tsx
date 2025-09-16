@@ -26,9 +26,9 @@ import {
   SheetTitle,
 } from "../ui/sheet";
 
-export const requiredStringSchema = z.string().trim().min(1, "Required");
+const requiredStringSchema = z.string().trim().min(1, "Required");
 
-export const slugStringSchema = z
+const slugStringSchema = z
   .string()
   .trim()
   .min(1, "Required")
@@ -37,34 +37,34 @@ export const slugStringSchema = z
     "Only lowercase ASCII letters, digits, and characters ., -, _ are allowed",
   );
 
-export const httpTransportSchema = z.object({
+const httpTransportSchema = z.object({
   type: z.literal("http"),
   url: requiredStringSchema.url(),
   headers: z.record(requiredStringSchema, z.string()).optional(),
 });
 
-export type HTTPTransport = z.infer<typeof httpTransportSchema>;
+type HTTPTransport = z.infer<typeof httpTransportSchema>;
 
-export const stdioTransportSchema = z.object({
+const stdioTransportSchema = z.object({
   type: z.literal("stdio"),
   command: requiredStringSchema,
   args: z.array(z.string()),
   env: z.record(requiredStringSchema, z.string()).optional(),
 });
 
-export type STDIOTransport = z.infer<typeof stdioTransportSchema>;
+type STDIOTransport = z.infer<typeof stdioTransportSchema>;
 
-export const proxyTransport = z.discriminatedUnion("type", [
+const proxyTransport = z.discriminatedUnion("type", [
   httpTransportSchema,
   stdioTransportSchema,
 ]);
 
-export const ProxyTargetSourceSchema = z.object({
+const ProxyTargetSourceSchema = z.object({
   name: z.literal("registry"),
   entryId: requiredStringSchema,
 });
 
-export const proxyTargetAttributesSchema = z.object({
+const proxyTargetAttributesSchema = z.object({
   name: slugStringSchema,
   transport: proxyTransport,
   source: ProxyTargetSourceSchema.optional(),
@@ -189,7 +189,7 @@ interface McpAddFormProps {
   isSubmitting?: boolean;
 }
 
-export function McpAddForm({
+function McpAddForm({
   defaultValues,
   proxies,
   onSubmit,
@@ -211,7 +211,7 @@ interface McpAddFormFieldsProps {
   isSubmitting?: boolean;
 }
 
-export function McpAddFormFields({
+function McpAddFormFields({
   proxies,
   isSubmitting = false,
 }: McpAddFormFieldsProps) {
@@ -248,7 +248,7 @@ export function McpAddFormFields({
   );
 }
 
-export function McpAddFormTransportFields() {
+function McpAddFormTransportFields() {
   const { control } = useFormContext();
   const transportType = useWatch({
     control,
@@ -266,7 +266,7 @@ export function McpAddFormTransportFields() {
   );
 }
 
-export function McpAddFormStdioFields() {
+function McpAddFormStdioFields() {
   return (
     <div className="space-y-4">
       <TextareaField
@@ -284,7 +284,7 @@ export function McpAddFormStdioFields() {
   );
 }
 
-export function McpAddFormHttpFields() {
+function McpAddFormHttpFields() {
   return (
     <div className="space-y-4">
       <InputField
@@ -306,7 +306,7 @@ export function McpAddFormHttpFields() {
   );
 }
 
-export function McpAddFormEnvFields() {
+function McpAddFormEnvFields() {
   return (
     <KeyValueFieldArray
       name="_env"
@@ -317,7 +317,7 @@ export function McpAddFormEnvFields() {
   );
 }
 
-export function KeyValueFieldArray({
+function KeyValueFieldArray({
   name,
   keyPlaceholder,
   valuePlaceholder,

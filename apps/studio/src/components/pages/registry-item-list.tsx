@@ -26,9 +26,9 @@ interface RegistryItemListProps {
   entries: MasterRegistryEntryList;
   pagination: Pagination;
   searchQuery: string;
-  onSearchChange: (query: string) => void;
+  onSearchQueryChange: (query: string) => void;
   onPageChange: (pageIndex: number) => void;
-  onAddClick?: () => void;
+  onManualAddClick?: () => void;
   onEntryClick?: (entryName: string) => void;
 }
 
@@ -36,9 +36,9 @@ export function RegistryItemList({
   entries,
   pagination,
   searchQuery,
-  onSearchChange,
+  onSearchQueryChange: onSearchChange,
   onPageChange,
-  onAddClick,
+  onManualAddClick: onAddClick,
   onEntryClick,
 }: RegistryItemListProps) {
   console.log(JSON.stringify(entries));

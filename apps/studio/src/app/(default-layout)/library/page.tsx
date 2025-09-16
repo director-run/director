@@ -150,9 +150,9 @@ export default function RegistryPage() {
           entries={data.entries}
           pagination={data.pagination}
           searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
+          onSearchQueryChange={setSearchQuery}
           onPageChange={setPageIndex}
-          onAddClick={() => setAddSheetOpen(true)}
+          onManualAddClick={() => setAddSheetOpen(true)}
           onEntryClick={(entryName) => router.push(`/library/mcp/${entryName}`)}
         />
 

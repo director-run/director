@@ -62,7 +62,7 @@ export function RegistryItemAddForm({
         ) : (
           <RegistryInstallForm
             mcp={entry as MasterRegistryEntry}
-            proxies={(proxies ?? []).filter(
+            proxies={proxies?.filter(
               (proxy) => !entryInstalledOn.includes(proxy.id),
             )}
             onSubmit={async (values) =>

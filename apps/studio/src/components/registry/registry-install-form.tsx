@@ -8,10 +8,10 @@ import { SimpleMarkdown } from "../ui/markdown";
 
 interface RegistryInstallFormProps {
   mcp: MasterRegistryEntry;
-  proxies: StoreGetAll;
+  proxies?: StoreGetAll;
   defaultProxyId?: string;
   onSubmit: (values: {
-    proxyId: string;
+    proxyId?: string;
     parameters: Record<string, string>;
   }) => Promise<void>;
   isSubmitting?: boolean;
@@ -30,7 +30,7 @@ export function RegistryInstallForm({
   );
 
   const schema = z.object({
-    proxyId: z.string(),
+    ...(proxies && { proxyId: z.string() }),
     parameters: z.object(
       parameters.reduce(
         (acc, param) => {
@@ -43,7 +43,7 @@ export function RegistryInstallForm({
   });
 
   const defaultValues = {
-    proxyId: defaultProxyId ?? proxies[0]?.id ?? "",
+    ...(proxies && { proxyId: defaultProxyId ?? proxies[0]?.id ?? "" }),
     parameters: parameters.reduce(
       (acc, param) => {
         acc[param.name] = "";
@@ -58,16 +58,25 @@ export function RegistryInstallForm({
       schema={schema}
       defaultValues={defaultValues}
       className="gap-y-0 overflow-hidden rounded-xl bg-accent-subtle shadow-[0_0_0_0.5px_rgba(55,50,46,0.15)]"
-      onSubmit={onSubmit}
+      onSubmit={(values) => {
+        onSubmit({
+          proxyId: proxies
+            ? (values as { proxyId?: string }).proxyId
+            : undefined,
+          parameters: values.parameters,
+        });
+      }}
     >
       <div className="flex flex-col gap-y-4 p-4">
-        <SelectNativeField name="proxyId" label="Select a proxy">
-          {proxies.map((it) => (
-            <option key={it.id} value={it.id}>
-              {it.name}
-            </option>
-          ))}
-        </SelectNativeField>
+        {proxies && (
+          <SelectNativeField name="proxyId" label="Select a proxy">
+            {proxies.map((it) => (
+              <option key={it.id} value={it.id}>
+                {it.name}
+              </option>
+            ))}
+          </SelectNativeField>
+        )}
         {parameters.map((param) => (
           <InputField
             type={param.password ? "password" : "text"}

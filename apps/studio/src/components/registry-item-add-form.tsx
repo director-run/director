@@ -50,10 +50,21 @@ export function RegistryItemAddForm({
             <h3>Add to proxy</h3>
           </SectionTitle>
         </SectionHeader>
-        {proxies && proxies.length > 0 ? (
+
+        {proxies &&
+        proxies.length > 0 &&
+        entryInstalledOn.length === proxies.length ? (
+          <EmptyState>
+            <EmptyStateDescription>
+              XX This MCP has already been installed on all your proxies.
+            </EmptyStateDescription>
+          </EmptyState>
+        ) : (
           <RegistryInstallForm
             mcp={entry as MasterRegistryEntry}
-            proxies={proxies}
+            proxies={(proxies ?? []).filter(
+              (proxy) => !entryInstalledOn.includes(proxy.id),
+            )}
             onSubmit={async (values) =>
               onClickInstall({
                 proxyId: values.proxyId,
@@ -63,26 +74,43 @@ export function RegistryItemAddForm({
             }
             isSubmitting={isInstalling}
           />
-        ) : proxies === undefined ? (
-          <RegistryInstallForm
-            mcp={entry as MasterRegistryEntry}
-            proxies={[]}
-            onSubmit={async (values) =>
-              onClickInstall({
-                entryId: entry.id as unknown as string,
-                parameters: values.parameters,
-              })
-            }
-            isSubmitting={isInstalling}
-          />
-        ) : (
-          <EmptyState>
-            <EmptyStateDescription>
-              This MCP has already been installed on all your proxies.
-            </EmptyStateDescription>
-          </EmptyState>
         )}
       </Section>
     </>
   );
+}
+
+interface RegistryItemAddFormProps {
+  entry: Pick<MasterRegistryEntry, "name" | "id">;
+  proxies?: StoreGetAll;
+  entryInstalledOn?: string[];
+  onClickInstall: (params: {
+    proxyId?: string;
+    entryId: string;
+    parameters?: Record<string, string>;
+  }) => Promise<void>;
+  isInstalling?: boolean;
+}
+
+function ProxyInstallForm({
+  entry,
+  proxies,
+  entryInstalledOn = [],
+  onClickInstall,
+  isInstalling = false,
+}: RegistryItemAddFormProps) {
+  if (
+    proxies &&
+    proxies.length > 0 &&
+    entryInstalledOn.length === proxies.length
+  ) {
+    return (
+      <EmptyState>
+        <EmptyStateDescription>
+          This MCP has already been installed on all your proxies.
+        </EmptyStateDescription>
+      </EmptyState>
+    );
+  } else {
+  }
 }

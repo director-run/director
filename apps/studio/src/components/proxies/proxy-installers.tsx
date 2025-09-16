@@ -1,8 +1,7 @@
-import { Switch } from "../ui/switch";
-
-import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import { ArrowUpRightIcon } from "@phosphor-icons/react";
 import { cn } from "../../helpers/cn";
+import { ConfiguratorTarget } from "../types";
+import { Switch } from "../ui/switch";
 
 export interface Client {
   id: string;

@@ -1,5 +1,5 @@
-import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import type { Meta, StoryObj } from "@storybook/react";
+import { ConfiguratorTarget } from "../types";
 import { ProxyDetail } from "./workspace-detail";
 
 const meta = {

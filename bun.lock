@@ -226,6 +226,7 @@
       "name": "@director.run/studio-vite",
       "version": "0.1.0",
       "dependencies": {
+        "@director.run/studio": "workspace:*",
         "express": "^4.18.0",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",

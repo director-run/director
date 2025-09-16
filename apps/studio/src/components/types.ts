@@ -18,3 +18,9 @@ export type StoreGet = GatewayRouterOutputs["store"]["get"];
 export type StoreServer = StoreGet["servers"][number];
 
 export type StoreServerTransport = StoreServer["transport"];
+
+export enum ConfiguratorTarget {
+  Claude = "claude",
+  Cursor = "cursor",
+  VSCode = "vscode",
+}

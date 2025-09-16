@@ -5,7 +5,6 @@ import { z } from "zod";
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
@@ -122,7 +121,6 @@ interface McpAddSheetProps extends ComponentProps<typeof Sheet> {
   isLoadingProxies?: boolean;
   onSubmit: (data: McpAddFormData) => Promise<void>;
   isSubmitting?: boolean;
-  onLibraryClick?: () => void;
 }
 
 export function McpAddSheet({
@@ -133,7 +131,6 @@ export function McpAddSheet({
   isLoadingProxies = false,
   onSubmit,
   isSubmitting = false,
-  onLibraryClick,
   ...props
 }: McpAddSheetProps) {
   const defaultValues = {
@@ -159,12 +156,7 @@ export function McpAddSheet({
           <Breadcrumb className="grow">
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink
-                  onClick={onLibraryClick}
-                  className="cursor-pointer"
-                >
-                  Library
-                </BreadcrumbLink>
+                <BreadcrumbPage>Library</BreadcrumbPage>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>

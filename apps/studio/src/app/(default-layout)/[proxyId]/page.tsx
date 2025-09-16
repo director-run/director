@@ -9,7 +9,7 @@ import {
 } from "../../../components/layout/layout";
 import { LayoutBreadcrumbHeader } from "../../../components/layout/layout-breadcrumb-header";
 import { McpToolSheet } from "../../../components/mcp-servers/mcp-tool-sheet";
-import { ProxyDetail } from "../../../components/pages/workspace-detail";
+import { WorkspaceDetail } from "../../../components/pages/workspace-detail";
 import { ProxyActionsDropdown } from "../../../components/proxies/proxy-actions-dropdown";
 import { ProxyDeleteConfirmation } from "../../../components/proxies/proxy-delete-confirmation";
 import type { Client } from "../../../components/proxies/proxy-installers";
@@ -221,7 +221,7 @@ export default function ProxyPage() {
       </LayoutBreadcrumbHeader>
 
       <LayoutViewContent>
-        <ProxyDetail
+        <WorkspaceDetail
           workspace={proxy}
           gatewayBaseUrl={DIRECTOR_URL}
           clients={clients}

@@ -4,7 +4,7 @@ import { McpToolsTable } from "../mcp-servers/mcp-tools-table";
 import type { AvailableClient, Client } from "../proxies/proxy-installers";
 import { ProxyInstallers } from "../proxies/proxy-installers";
 import { ProxyManualDialog } from "../proxies/proxy-manual-dialog";
-import { ConfiguratorTarget } from "../types";
+import { ConfiguratorTarget, type MasterWorkspace } from "../types";
 import { Button } from "../ui/button";
 import { Container } from "../ui/container";
 import {
@@ -16,15 +16,8 @@ import {
 } from "../ui/section";
 import { toast } from "../ui/toast";
 
-interface ProxyDetailProps {
-  workspace: {
-    id: string;
-    name: string;
-    description?: string;
-    servers: Array<{
-      name: string;
-    }>;
-  };
+interface WorkspaceDetailProps {
+  workspace: MasterWorkspace;
   gatewayBaseUrl: string;
   clients: Client[];
   installers: Record<string, boolean>;
@@ -46,8 +39,8 @@ interface ProxyDetailProps {
   onServerClick?: (serverId: string) => void;
 }
 
-export function ProxyDetail({
-  workspace: proxy,
+export function WorkspaceDetail({
+  workspace,
   gatewayBaseUrl,
   clients,
   installers,
@@ -61,9 +54,10 @@ export function ProxyDetail({
   toolsLoading,
   onLibraryClick,
   onServerClick,
-}: ProxyDetailProps) {
+}: WorkspaceDetailProps) {
   const [_, copy] = useCopyToClipboard();
 
+  console.log(JSON.stringify(workspace));
   const handleCopy = async (text: string) => {
     await copy(text);
     toast({
@@ -75,8 +69,8 @@ export function ProxyDetail({
     <Container size="lg">
       <Section>
         <SectionHeader>
-          <SectionTitle>{proxy.name}</SectionTitle>
-          <SectionDescription>{proxy.description}</SectionDescription>
+          <SectionTitle>{workspace.name}</SectionTitle>
+          <SectionDescription>{workspace.description}</SectionDescription>
         </SectionHeader>
       </Section>
 
@@ -88,7 +82,7 @@ export function ProxyDetail({
             <h2>Clients</h2>
           </SectionTitle>
           <ProxyManualDialog
-            proxyId={proxy.id}
+            proxyId={workspace.id}
             gatewayBaseUrl={gatewayBaseUrl}
             onCopy={handleCopy}
           >
@@ -96,7 +90,7 @@ export function ProxyDetail({
           </ProxyManualDialog>
         </SectionHeader>
         <ProxyInstallers
-          proxyId={proxy.id}
+          proxyId={workspace.id}
           gatewayBaseUrl={gatewayBaseUrl}
           clients={clients}
           installers={installers}
@@ -121,7 +115,7 @@ export function ProxyDetail({
           </Button>
         </SectionHeader>
         <MCPLinkCardList>
-          {proxy.servers.map((it) => {
+          {workspace.servers.map((it) => {
             return (
               <MCPLinkCard
                 key={it.name}

@@ -1,60 +1,20 @@
-import { ProxyDetail } from "@director.run/studio/components/pages/workspace-detail.tsx";
+import { WorkspaceDetail } from "@director.run/studio/components/pages/workspace-detail.tsx";
 import type { ConfiguratorTarget } from "@director.run/studio/components/types.ts";
+import { mockWorkspace } from "@director.run/studio/test/fixtures/workspace/workspace.ts";
 import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../helpers/decorators";
 
 const meta = {
   title: "pages/workspaces/detail",
-  component: ProxyDetail,
+  component: WorkspaceDetail,
   parameters: {
     layout: "fullscreen",
   },
   decorators: [withLayoutView],
-} satisfies Meta<typeof ProxyDetail>;
+} satisfies Meta<typeof WorkspaceDetail>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-
-// Mock data for proxy
-const mockProxy = {
-  id: "dev-proxy",
-  name: "Development Proxy",
-  description: "Main development proxy for local development and testing",
-  servers: [
-    { name: "github-mcp" },
-    { name: "filesystem-mcp" },
-    { name: "sqlite-mcp" },
-    { name: "brave-search-mcp" },
-  ],
-};
-
-const mockProxyWithManyServers = {
-  id: "production-proxy",
-  name: "Production Proxy",
-  description:
-    "Production environment proxy with comprehensive MCP server setup",
-  servers: [
-    { name: "github-mcp" },
-    { name: "filesystem-mcp" },
-    { name: "sqlite-mcp" },
-    { name: "brave-search-mcp" },
-    { name: "postgres-mcp" },
-    { name: "notion-mcp" },
-    { name: "slack-mcp" },
-    { name: "figma-mcp" },
-    { name: "airtable-mcp" },
-    { name: "google-drive-mcp" },
-    { name: "linear-mcp" },
-    { name: "jira-mcp" },
-  ],
-};
-
-const mockProxyEmpty = {
-  id: "new-proxy",
-  name: "New Proxy",
-  description: "A newly created proxy with no MCP servers installed yet",
-  servers: [],
-};
 
 // Mock clients data
 const mockClients = [
@@ -144,7 +104,7 @@ const mockToolLinks = [
 
 export const Default: Story = {
   args: {
-    workspace: mockProxy,
+    workspace: mockWorkspace,
     gatewayBaseUrl: "http://localhost:3673",
     clients: mockClients,
     installers: mockInstallers,
@@ -164,104 +124,5 @@ export const Default: Story = {
     isUninstalling: false,
     toolLinks: mockToolLinks,
     toolsLoading: false,
-  },
-};
-
-export const WithManyServers: Story = {
-  args: {
-    ...Default.args,
-    workspace: mockProxyWithManyServers,
-  },
-};
-
-export const EmptyProxy: Story = {
-  args: {
-    ...Default.args,
-    workspace: mockProxyEmpty,
-  },
-};
-
-export const LoadingClients: Story = {
-  args: {
-    ...Default.args,
-    isClientsLoading: true,
-  },
-};
-
-export const InstallingClient: Story = {
-  args: {
-    ...Default.args,
-    isInstalling: true,
-  },
-};
-
-export const UninstallingClient: Story = {
-  args: {
-    ...Default.args,
-    isUninstalling: true,
-  },
-};
-
-export const NoAvailableClients: Story = {
-  args: {
-    ...Default.args,
-    availableClients: [],
-  },
-};
-
-export const AllClientsInstalled: Story = {
-  args: {
-    ...Default.args,
-    clients: mockClients,
-    installers: {
-      claude: true,
-      cursor: true,
-      raycast: true,
-      code: true,
-      goose: true,
-    },
-    availableClients: mockAvailableClients.map((client) => ({
-      ...client,
-      installed: true,
-    })),
-  },
-};
-
-export const NoClientsInstalled: Story = {
-  args: {
-    ...Default.args,
-    clients: mockClients,
-    installers: {
-      claude: false,
-      cursor: false,
-      raycast: false,
-      code: false,
-      goose: false,
-    },
-    availableClients: mockAvailableClients.map((client) => ({
-      ...client,
-      installed: true,
-    })),
-  },
-};
-
-export const LongDescription: Story = {
-  args: {
-    ...Default.args,
-    workspace: {
-      ...mockProxy,
-      description:
-        "This is a very long description for the development proxy that explains its purpose, configuration, and usage in great detail. It should wrap nicely in the UI and provide comprehensive information about what this proxy is used for and how it's configured.",
-    },
-  },
-};
-
-export const NoDescription: Story = {
-  args: {
-    ...Default.args,
-    workspace: {
-      ...mockProxy,
-      description: undefined,
-    },
   },
 };

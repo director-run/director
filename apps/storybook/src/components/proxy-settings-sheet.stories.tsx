@@ -17,6 +17,15 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
+    proxy: {
+      id: "proxy-1",
+      name: "Local Proxy",
+      description: "A local development proxy for testing MCP servers",
+      prompts: [],
+      targets: [],
+      servers: [],
+      path: "/proxy/proxy-1",
+    },
     onSubmit: (_data: ProxyFormData) => Promise.resolve(),
   },
   render: () => {
@@ -26,6 +35,10 @@ export const Default: Story = {
       id: "proxy-1",
       name: "Local Proxy",
       description: "A local development proxy for testing MCP servers",
+      prompts: [],
+      targets: [],
+      servers: [],
+      path: "/proxy/proxy-1",
     };
 
     const handleSubmit = (data: ProxyFormData) => {

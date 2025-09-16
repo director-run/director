@@ -1,6 +1,13 @@
-import { RegistryItemDetail } from "@director.run/studio/components/pages/registry-item-detail.tsx";
+import { RegistryItemAddForm } from "@director.run/studio/components/registry-item-add-form.tsx";
+import { RegistryItem } from "@director.run/studio/components/registry-item.tsx";
 import { RegistryToolSheet } from "@director.run/studio/components/registry/registry-tool-sheet.tsx";
+import {
+  SplitView,
+  SplitViewMain,
+  SplitViewSide,
+} from "@director.run/studio/components/split-view.tsx";
 import type { StoreGetAll } from "@director.run/studio/components/types.ts";
+import { Container } from "@director.run/studio/components/ui/container.tsx";
 import { mockRegistryEntry } from "@director.run/studio/test/fixtures/registry/entry.ts";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
@@ -27,14 +34,55 @@ const mockProxies: StoreGetAll = [
   },
 ];
 
+const RegistryItemDetailComponent = ({
+  entry,
+  proxies,
+  entryInstalledOn,
+  onClickInstall,
+  isInstalling,
+  onToolClick,
+  onProxyServerClick,
+}: {
+  entry: typeof mockRegistryEntry;
+  proxies?: StoreGetAll;
+  entryInstalledOn?: string[];
+  onClickInstall: (params: {
+    proxyId?: string;
+    entryId: string;
+    parameters?: Record<string, string>;
+  }) => Promise<void>;
+  isInstalling?: boolean;
+  onToolClick?: (
+    tool: NonNullable<typeof mockRegistryEntry.tools>[number],
+  ) => void;
+  onProxyServerClick?: (proxyId: string, serverName: string) => void;
+}) => (
+  <Container size="xl">
+    <SplitView>
+      <SplitViewMain>
+        <RegistryItem entry={entry} onToolClick={onToolClick} />
+      </SplitViewMain>
+      <SplitViewSide>
+        <RegistryItemAddForm
+          entry={entry}
+          proxies={proxies}
+          entryInstalledOn={entryInstalledOn}
+          onClickInstall={onClickInstall}
+          isInstalling={isInstalling}
+        />
+      </SplitViewSide>
+    </SplitView>
+  </Container>
+);
+
 const meta = {
   title: "pages/registry/detail",
-  component: RegistryItemDetail,
+  component: RegistryItemDetailComponent,
   parameters: {
     layout: "fullscreen",
   },
   decorators: [withLayoutView],
-} satisfies Meta<typeof RegistryItemDetail>;
+} satisfies Meta<typeof RegistryItemDetailComponent>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -67,13 +115,25 @@ export const WithToolSelected: Story = {
 
     return (
       <>
-        <RegistryItemDetail
-          {...args}
-          entry={mockRegistryEntry}
-          proxies={mockProxies}
-          entryInstalledOn={["dev-proxy"]}
-          onToolClick={(tool) => setSelectedToolName(tool.name)}
-        />
+        <Container size="xl">
+          <SplitView>
+            <SplitViewMain>
+              <RegistryItem
+                entry={mockRegistryEntry}
+                onToolClick={(tool) => setSelectedToolName(tool.name)}
+              />
+            </SplitViewMain>
+            <SplitViewSide>
+              <RegistryItemAddForm
+                entry={mockRegistryEntry}
+                proxies={mockProxies}
+                entryInstalledOn={["dev-proxy"]}
+                onClickInstall={args.onClickInstall || (async () => {})}
+                isInstalling={args.isInstalling || false}
+              />
+            </SplitViewSide>
+          </SplitView>
+        </Container>
         {selectedTool && (
           <RegistryToolSheet
             tool={selectedTool}

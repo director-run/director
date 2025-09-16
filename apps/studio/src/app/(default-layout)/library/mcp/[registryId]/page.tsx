@@ -7,10 +7,16 @@ import {
   LayoutViewContent,
   LayoutViewHeader,
 } from "../../../../../components/layout/layout";
-import { RegistryItemDetail } from "../../../../../components/pages/registry-item-detail";
+import { RegistryItem } from "../../../../../components/registry-item";
+import { RegistryItemAddForm } from "../../../../../components/registry-item-add-form";
 import { RegistryEntrySkeleton } from "../../../../../components/registry/registry-entry-skeleton";
 import { RegistryInstallForm } from "../../../../../components/registry/registry-install-form";
 import { RegistryToolSheet } from "../../../../../components/registry/registry-tool-sheet";
+import {
+  SplitView,
+  SplitViewMain,
+  SplitViewSide,
+} from "../../../../../components/split-view";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -20,6 +26,7 @@ import {
   BreadcrumbSeparator,
 } from "../../../../../components/ui/breadcrumb";
 import { Button } from "../../../../../components/ui/button";
+import { Container } from "../../../../../components/ui/container";
 import {
   Popover,
   PopoverContent,
@@ -172,17 +179,25 @@ export default function RegistryEntryPage() {
       </LayoutViewHeader>
 
       <LayoutViewContent>
-        <RegistryItemDetail
-          entry={entry}
-          proxies={proxies}
-          entryInstalledOn={entryInstalledOn}
-          onClickInstall={handleInstall}
-          isInstalling={installMutation.isPending}
-          onToolClick={(tool) => handleToolClick(tool.name)}
-          onProxyServerClick={(proxyId, serverName) =>
-            router.push(`/${proxyId}/mcp/${serverName}`)
-          }
-        />
+        <Container size="xl">
+          <SplitView>
+            <SplitViewMain>
+              <RegistryItem
+                entry={entry}
+                onToolClick={(tool) => handleToolClick(tool.name)}
+              />
+            </SplitViewMain>
+            <SplitViewSide>
+              <RegistryItemAddForm
+                entry={entry}
+                proxies={proxies}
+                entryInstalledOn={entryInstalledOn}
+                onClickInstall={handleInstall}
+                isInstalling={installMutation.isPending}
+              />
+            </SplitViewSide>
+          </SplitView>
+        </Container>
 
         {selectedTool && (
           <RegistryToolSheet

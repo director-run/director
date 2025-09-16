@@ -1,4 +1,11 @@
-import { RegistryItemDetail } from "@director.run/studio/components/pages/registry-item-detail.tsx";
+import { RegistryItemAddForm } from "@director.run/studio/components/registry-item-add-form.tsx";
+import { RegistryItem } from "@director.run/studio/components/registry-item.tsx";
+import {
+  SplitView,
+  SplitViewMain,
+  SplitViewSide,
+} from "@director.run/studio/components/split-view.tsx";
+import { Container } from "@director.run/studio/components/ui/container.tsx";
 import { mockRegistryEntry } from "@director.run/studio/test/fixtures/registry/entry.ts";
 import "./fonts.css";
 import "./globals.css";
@@ -27,13 +34,22 @@ export const KitchenSink = () => {
         <Route
           path="/"
           element={
-            <RegistryItemDetail
-              entry={mockRegistryEntry}
-              proxies={[]}
-              entryInstalledOn={[]}
-              onClickInstall={async () => {}}
-              isInstalling={false}
-            />
+            <Container size="xl">
+              <SplitView>
+                <SplitViewMain>
+                  <RegistryItem entry={mockRegistryEntry} />
+                </SplitViewMain>
+                <SplitViewSide>
+                  <RegistryItemAddForm
+                    entry={mockRegistryEntry}
+                    proxies={[]}
+                    entryInstalledOn={[]}
+                    onClickInstall={async () => {}}
+                    isInstalling={false}
+                  />
+                </SplitViewSide>
+              </SplitView>
+            </Container>
           }
         />
         <Route path="/about" element={<AboutPage />} />

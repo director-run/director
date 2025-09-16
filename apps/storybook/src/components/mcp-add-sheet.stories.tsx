@@ -28,8 +28,10 @@ export const Default: Story = {
     ];
 
     const handleSubmit = (data: McpAddFormData) => {
-      // eslint-disable-next-line no-console
-      console.log("MCP Add Submit:", data);
+      console.log("Add to proxy:", data.proxyId);
+      console.log("Server:", JSON.stringify(data.server, null, 2));
+      console.log("Environment variables:", JSON.stringify(data._env, null, 2));
+      console.log("Headers:", JSON.stringify(data._headers, null, 2));
       return Promise.resolve();
     };
 

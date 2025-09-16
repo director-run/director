@@ -1,19 +1,12 @@
 import { useCopyToClipboard } from "../../hooks/use-copy-to-clipboard";
-import { MCPLinkCard, MCPLinkCardList } from "../mcp-servers/mcp-link-card";
-import { McpToolsTable } from "../mcp-servers/mcp-tools-table";
 import type { AvailableClient, Client } from "../proxies/proxy-installers";
-import { ProxyInstallers } from "../proxies/proxy-installers";
-import { ProxyManualDialog } from "../proxies/proxy-manual-dialog";
+import { WorkspaceSectionClients } from "../proxies/workspace-section-clients";
+import { WorkspaceSectionHeader } from "../proxies/workspace-section-header";
+import { WorkspaceSectionServers } from "../proxies/workspace-section-servers";
+import { WorkspaceSectionTools } from "../proxies/workspace-section-tools";
 import { ConfiguratorTarget, type MasterWorkspace } from "../types";
-import { Button } from "../ui/button";
 import { Container } from "../ui/container";
-import {
-  Section,
-  SectionDescription,
-  SectionHeader,
-  SectionSeparator,
-  SectionTitle,
-} from "../ui/section";
+import { SectionSeparator } from "../ui/section";
 import { toast } from "../ui/toast";
 
 interface WorkspaceDetailProps {
@@ -56,8 +49,6 @@ export function WorkspaceDetail({
   onServerClick,
 }: WorkspaceDetailProps) {
   const [_, copy] = useCopyToClipboard();
-
-  console.log(JSON.stringify(workspace));
   const handleCopy = async (text: string) => {
     await copy(text);
     toast({
@@ -67,81 +58,38 @@ export function WorkspaceDetail({
   };
   return (
     <Container size="lg">
-      <Section>
-        <SectionHeader>
-          <SectionTitle>{workspace.name}</SectionTitle>
-          <SectionDescription>{workspace.description}</SectionDescription>
-        </SectionHeader>
-      </Section>
+      <WorkspaceSectionHeader workspace={workspace} />
 
       <SectionSeparator />
 
-      <Section>
-        <SectionHeader className="flex flex-row items-center justify-between">
-          <SectionTitle variant="h2" asChild>
-            <h2>Clients</h2>
-          </SectionTitle>
-          <ProxyManualDialog
-            proxyId={workspace.id}
-            gatewayBaseUrl={gatewayBaseUrl}
-            onCopy={handleCopy}
-          >
-            <Button size="sm">Connect manually</Button>
-          </ProxyManualDialog>
-        </SectionHeader>
-        <ProxyInstallers
-          proxyId={workspace.id}
-          gatewayBaseUrl={gatewayBaseUrl}
-          clients={clients}
-          installers={installers}
-          availableClients={availableClients}
-          isLoading={isClientsLoading}
-          onInstall={onInstall}
-          onUninstall={onUninstall}
-          isInstalling={isInstalling}
-          isUninstalling={isUninstalling}
-        />
-      </Section>
+      <WorkspaceSectionClients
+        workspaceId={workspace.id}
+        gatewayBaseUrl={gatewayBaseUrl}
+        clients={clients}
+        installers={installers}
+        availableClients={availableClients}
+        isClientsLoading={isClientsLoading}
+        onInstall={onInstall}
+        onUninstall={onUninstall}
+        isInstalling={isInstalling}
+        isUninstalling={isUninstalling}
+        onCopy={handleCopy}
+      />
 
       <SectionSeparator />
 
-      <Section>
-        <SectionHeader className="flex flex-row items-center justify-between">
-          <SectionTitle variant="h2" asChild>
-            <h2>MCP Servers</h2>
-          </SectionTitle>
-          <Button size="sm" onClick={onLibraryClick}>
-            Add MCP server
-          </Button>
-        </SectionHeader>
-        <MCPLinkCardList>
-          {workspace.servers.map((it) => {
-            return (
-              <MCPLinkCard
-                key={it.name}
-                entry={{
-                  title: it.name,
-                  description: null,
-                  icon: null,
-                  isOfficial: false,
-                }}
-                onClick={() => onServerClick?.(it.name)}
-              />
-            );
-          })}
-        </MCPLinkCardList>
-      </Section>
+      <WorkspaceSectionServers
+        workspace={workspace}
+        onLibraryClick={onLibraryClick}
+        onServerClick={onServerClick}
+      />
 
       <SectionSeparator />
 
-      <Section>
-        <SectionHeader>
-          <SectionTitle variant="h2" asChild>
-            <h2>Tools</h2>
-          </SectionTitle>
-        </SectionHeader>
-        <McpToolsTable links={toolLinks} isLoading={toolsLoading} />
-      </Section>
+      <WorkspaceSectionTools
+        toolLinks={toolLinks}
+        toolsLoading={toolsLoading}
+      />
     </Container>
   );
 }

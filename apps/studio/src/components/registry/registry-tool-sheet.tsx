@@ -3,7 +3,6 @@ import type { RegistryGetEntryTool } from "../types";
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
@@ -33,19 +32,13 @@ import {
 interface RegistryToolSheetProps {
   tool: RegistryGetEntryTool;
   mcpName: string;
-  mcpId: string;
   onClose: () => void;
-  onLibraryClick?: () => void;
-  onMcpClick?: (mcpId: string) => void;
 }
 
 export function RegistryToolSheet({
   tool,
   mcpName,
-  mcpId,
   onClose,
-  onLibraryClick,
-  onMcpClick,
 }: RegistryToolSheetProps) {
   return (
     <Sheet open={!!tool} onOpenChange={onClose}>
@@ -53,27 +46,11 @@ export function RegistryToolSheet({
         <SheetActions>
           <Breadcrumb className="grow">
             <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink
-                  onClick={onLibraryClick}
-                  className="cursor-pointer"
-                >
-                  Library
-                </BreadcrumbLink>
-              </BreadcrumbItem>
+              <BreadcrumbItem>Library</BreadcrumbItem>
               <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink
-                  onClick={() => onMcpClick?.(mcpId)}
-                  className="cursor-pointer"
-                >
-                  {mcpName}
-                </BreadcrumbLink>
-              </BreadcrumbItem>
+              <BreadcrumbItem>{mcpName}</BreadcrumbItem>
               <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>{tool.name}</BreadcrumbPage>
-              </BreadcrumbItem>
+              <BreadcrumbPage>{tool.name}</BreadcrumbPage>
             </BreadcrumbList>
           </Breadcrumb>
         </SheetActions>
@@ -83,10 +60,7 @@ export function RegistryToolSheet({
             <SheetTitle>{tool.name}</SheetTitle>
             <SheetDescription className="text-sm">
               From{" "}
-              <button
-                onClick={() => onMcpClick?.(mcpId)}
-                className="cursor-pointer text-fg underline"
-              >
+              <button className="cursor-pointer text-fg underline">
                 {mcpName}
               </button>
             </SheetDescription>

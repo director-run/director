@@ -187,10 +187,7 @@ export default function RegistryEntryPage() {
           <RegistryToolSheet
             tool={selectedTool}
             mcpName={entry.title}
-            mcpId={entry.name}
             onClose={handleCloseTool}
-            onLibraryClick={() => router.push("/library")}
-            onMcpClick={(mcpId) => router.push(`/library/mcp/${mcpId}`)}
           />
         )}
       </LayoutViewContent>

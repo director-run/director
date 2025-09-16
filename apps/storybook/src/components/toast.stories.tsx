@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
 const meta = {
-  title: "ui/Toast",
+  title: "components/toast",
   component: Toaster,
   parameters: {
     layout: "fullscreen",

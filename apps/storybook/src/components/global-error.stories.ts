@@ -2,7 +2,7 @@ import { FullScreenError } from "@director.run/studio/components/pages/global/er
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
-  title: "ui/global-error",
+  title: "components/global-error",
   component: FullScreenError,
   parameters: {
     layout: "fullscreen",

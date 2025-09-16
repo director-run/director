@@ -19,7 +19,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "../../../../../components/ui/breadcrumb";
-import { Container } from "../../../../../components/ui/container";
 import { toast } from "../../../../../components/ui/toast";
 import { trpc } from "../../../../../state/client";
 import { useInspectMcp } from "../../../../../state/use-inspect-mcp";
@@ -163,17 +162,15 @@ export default function McpServerPage() {
       </LayoutViewHeader>
 
       <LayoutViewContent>
-        <Container size="lg">
-          <WorkspaceTargetDetail
-            mcp={mcp}
-            proxy={proxy}
-            entryData={entryData}
-            description={description}
-            toolLinks={toolLinks}
-            toolsLoading={toolsLoading}
-            onProxyClick={(proxyId) => router.push(`/${proxyId}`)}
-          />
-        </Container>
+        <WorkspaceTargetDetail
+          mcp={mcp}
+          proxy={proxy}
+          entryData={entryData}
+          description={description}
+          toolLinks={toolLinks}
+          toolsLoading={toolsLoading}
+          onProxyClick={(proxyId) => router.push(`/${proxyId}`)}
+        />
       </LayoutViewContent>
 
       <McpToolSheet

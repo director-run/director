@@ -2,6 +2,7 @@ import { McpLogo } from "../mcp-logo";
 import { McpDescriptionList } from "../mcp-servers/mcp-description-list";
 import { McpToolsTable } from "../mcp-servers/mcp-tools-table";
 import type { MasterRegistryEntry, StoreServerTransport } from "../types";
+import { Container } from "../ui/container";
 import { EmptyState, EmptyStateTitle } from "../ui/empty-state";
 import { Markdown } from "../ui/markdown";
 import {
@@ -43,7 +44,7 @@ export function WorkspaceTargetDetail({
   onProxyClick,
 }: WorkspaceTargetDetailProps) {
   return (
-    <>
+    <Container size="lg">
       <Section>
         <McpLogo src={entryData?.icon} className="size-9" />
         <SectionHeader>
@@ -98,6 +99,6 @@ export function WorkspaceTargetDetail({
           </EmptyState>
         )}
       </Section>
-    </>
+    </Container>
   );
 }

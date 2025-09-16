@@ -22,11 +22,8 @@ const mockSubmit = async (values: ProxyFormData) => {
 
 export const Default: Story = {
   args: {
-    title: "New proxy",
-    description: "Create a new proxy to start using MCP.",
     onSubmit: mockSubmit,
     isSubmitting: false,
-    submitLabel: "Create proxy",
   },
 };
 

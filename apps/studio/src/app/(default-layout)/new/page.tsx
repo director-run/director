@@ -41,13 +41,7 @@ export default function NewProxyPage() {
       />
 
       <LayoutViewContent>
-        <ProxyNew
-          title="New proxy"
-          description="Create a new proxy to start using MCP."
-          onSubmit={handleSubmit}
-          isSubmitting={mutation.isPending}
-          submitLabel="Create proxy"
-        />
+        <ProxyNew onSubmit={handleSubmit} isSubmitting={mutation.isPending} />
       </LayoutViewContent>
     </LayoutView>
   );

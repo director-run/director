@@ -10,26 +10,19 @@ import {
 } from "../ui/section";
 
 interface ProxyNewProps {
-  title: string;
-  description: string;
   onSubmit: (values: ProxyFormData) => Promise<void> | void;
   isSubmitting: boolean;
-  submitLabel: string;
 }
 
-export function ProxyNew({
-  title,
-  description,
-  onSubmit,
-  isSubmitting,
-  submitLabel,
-}: ProxyNewProps) {
+export function ProxyNew({ onSubmit, isSubmitting }: ProxyNewProps) {
   return (
     <Container size="sm">
       <Section className="gap-y-8">
         <SectionHeader>
-          <SectionTitle>{title}</SectionTitle>
-          <SectionDescription>{description}</SectionDescription>
+          <SectionTitle>New proxy</SectionTitle>
+          <SectionDescription>
+            Create a new proxy to start using MCP.
+          </SectionDescription>
         </SectionHeader>
         <SectionSeparator />
         <ProxyForm
@@ -39,7 +32,7 @@ export function ProxyNew({
           isSubmitting={isSubmitting}
         >
           <ProxyFormButton isSubmitting={isSubmitting}>
-            {submitLabel}
+            Create proxy
           </ProxyFormButton>
         </ProxyForm>
       </Section>

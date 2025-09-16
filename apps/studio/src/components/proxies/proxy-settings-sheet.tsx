@@ -1,4 +1,5 @@
 import type { StoreGet } from "../types";
+import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import {
   Sheet,
@@ -49,9 +50,7 @@ export function ProxySettingsSheet({
             onSubmit={onSubmit}
             isSubmitting={isSubmitting}
           >
-            <button type="submit" className="self-start">
-              {isSubmitting ? "Saving..." : "Save changes"}
-            </button>
+            <Button>Save changes</Button>
           </ProxyForm>
         </SheetBody>
       </SheetContent>

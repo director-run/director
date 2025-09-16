@@ -1,7 +1,7 @@
 import { McpToolsTable } from "../mcp-servers/mcp-tools-table";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
 
-interface WorkspaceSectionToolsProps {
+export interface WorkspaceSectionToolsProps {
   toolLinks: Array<{
     title: string;
     subtitle: string;

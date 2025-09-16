@@ -1,5 +1,6 @@
 import { useCopyToClipboard } from "../../hooks/use-copy-to-clipboard";
 import { ConfiguratorTarget } from "../types";
+import type { MasterWorkspace } from "../types";
 import { Button } from "../ui/button";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
 import { toast } from "../ui/toast";
@@ -7,8 +8,8 @@ import type { AvailableClient, Client } from "./proxy-installers";
 import { ProxyInstallers } from "./proxy-installers";
 import { ProxyManualDialog } from "./proxy-manual-dialog";
 
-interface WorkspaceSectionClientsProps {
-  workspaceId: string;
+export interface WorkspaceSectionClientsProps {
+  workspace: MasterWorkspace;
   gatewayBaseUrl: string;
   clients: Client[];
   installers: Record<string, boolean>;
@@ -21,7 +22,7 @@ interface WorkspaceSectionClientsProps {
 }
 
 export function WorkspaceSectionClients({
-  workspaceId,
+  workspace,
   gatewayBaseUrl,
   clients,
   installers,
@@ -48,7 +49,7 @@ export function WorkspaceSectionClients({
           <h2>Clients</h2>
         </SectionTitle>
         <ProxyManualDialog
-          proxyId={workspaceId}
+          proxyId={workspace.id}
           gatewayBaseUrl={gatewayBaseUrl}
           onCopy={handleCopy}
         >
@@ -56,7 +57,7 @@ export function WorkspaceSectionClients({
         </ProxyManualDialog>
       </SectionHeader>
       <ProxyInstallers
-        proxyId={workspaceId}
+        proxyId={workspace.id}
         gatewayBaseUrl={gatewayBaseUrl}
         clients={clients}
         installers={installers}

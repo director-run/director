@@ -3,7 +3,7 @@ import type { MasterWorkspace } from "../types";
 import { Button } from "../ui/button";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
 
-interface WorkspaceSectionServersProps {
+export interface WorkspaceSectionServersProps {
   workspace: MasterWorkspace;
   onLibraryClick?: () => void;
   onServerClick?: (serverId: string) => void;

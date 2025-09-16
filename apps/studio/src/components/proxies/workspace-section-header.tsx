@@ -6,7 +6,7 @@ import {
   SectionTitle,
 } from "../ui/section";
 
-interface WorkspaceSectionHeaderProps {
+export interface WorkspaceSectionHeaderProps {
   workspace: MasterWorkspace;
 }
 

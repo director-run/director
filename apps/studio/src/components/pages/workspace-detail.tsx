@@ -1,34 +1,22 @@
-import type { AvailableClient, Client } from "../proxies/proxy-installers";
-import { WorkspaceSectionClients } from "../proxies/workspace-section-clients";
-import { WorkspaceSectionHeader } from "../proxies/workspace-section-header";
-import { WorkspaceSectionServers } from "../proxies/workspace-section-servers";
-import { WorkspaceSectionTools } from "../proxies/workspace-section-tools";
-import { ConfiguratorTarget, type MasterWorkspace } from "../types";
+import type {} from "../proxies/proxy-installers";
+import {
+  WorkspaceSectionClients,
+  type WorkspaceSectionClientsProps,
+} from "../proxies/workspace-section-clients";
+import {
+  WorkspaceSectionHeader,
+  type WorkspaceSectionHeaderProps,
+} from "../proxies/workspace-section-header";
+import {
+  WorkspaceSectionServers,
+  type WorkspaceSectionServersProps,
+} from "../proxies/workspace-section-servers";
+import {
+  WorkspaceSectionTools,
+  type WorkspaceSectionToolsProps,
+} from "../proxies/workspace-section-tools";
 import { Container } from "../ui/container";
 import { SectionSeparator } from "../ui/section";
-
-interface WorkspaceDetailProps {
-  workspace: MasterWorkspace;
-  gatewayBaseUrl: string;
-  clients: Client[];
-  installers: Record<string, boolean>;
-  availableClients: AvailableClient[];
-  isClientsLoading: boolean;
-  onInstall: (proxyId: string, client: ConfiguratorTarget) => void;
-  onUninstall: (proxyId: string, client: ConfiguratorTarget) => void;
-  isInstalling: boolean;
-  isUninstalling: boolean;
-  toolLinks: Array<{
-    title: string;
-    subtitle: string;
-    scroll: boolean;
-    href: string;
-    badges?: React.ReactNode;
-  }>;
-  toolsLoading: boolean;
-  onLibraryClick?: () => void;
-  onServerClick?: (serverId: string) => void;
-}
 
 export function WorkspaceDetail({
   workspace,
@@ -45,7 +33,10 @@ export function WorkspaceDetail({
   toolsLoading,
   onLibraryClick,
   onServerClick,
-}: WorkspaceDetailProps) {
+}: WorkspaceSectionClientsProps &
+  WorkspaceSectionHeaderProps &
+  WorkspaceSectionServersProps &
+  WorkspaceSectionToolsProps) {
   return (
     <Container size="lg">
       <WorkspaceSectionHeader workspace={workspace} />
@@ -53,7 +44,7 @@ export function WorkspaceDetail({
       <SectionSeparator />
 
       <WorkspaceSectionClients
-        workspaceId={workspace.id}
+        workspace={workspace}
         gatewayBaseUrl={gatewayBaseUrl}
         clients={clients}
         installers={installers}

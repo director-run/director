@@ -1,0 +1,170 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import type { SubmitHandler } from "react-hook-form";
+import type { useZodForm } from "../../hooks/use-zod-form";
+import { GetStartedHeader } from "../get-started/get-started-header";
+import { GetStartedInstallers } from "../get-started/get-started-installers";
+import {
+  GetStartedList,
+  GetStartedListItem,
+} from "../get-started/get-started-list";
+import { GetStartedMcpServerList } from "../get-started/get-started-mcp-server-list";
+import {
+  GetStartedProxyForm,
+  type FormValues as ProxyFormValues,
+} from "../get-started/get-started-proxy-form";
+import { proxySchema } from "../get-started/get-started-proxy-form";
+import type { RegistryGetEntriesEntry } from "../types";
+import { Container } from "../ui/container";
+import { Section } from "../ui/section";
+
+type StepStatus = "not-started" | "in-progress" | "completed";
+
+export type ClientId = "claude" | "cursor" | "vscode";
+
+const clients: { id: ClientId; label: string; image: string }[] = [
+  { id: "claude", label: "Claude", image: "/icons/claude-icon.png" },
+  { id: "cursor", label: "Cursor", image: "/icons/cursor-icon.png" },
+  { id: "vscode", label: "VSCode", image: "/icons/code-icon.png" },
+];
+
+type InstallerClientStatus = {
+  name: string;
+  installed: boolean;
+  configExists: boolean;
+  configPath: string;
+};
+
+export interface GetStartedPageViewProps {
+  currentProxy: { id: string; servers?: unknown[] } | null;
+  hasInstallers: boolean;
+  registryEntries: RegistryGetEntriesEntry[];
+  availableClients: InstallerClientStatus[];
+  listClientsIsLoading: boolean;
+  isInstallingClient: boolean;
+
+  // Proxy form
+  proxyForm: ReturnType<typeof useZodForm<typeof proxySchema>>;
+  createProxyIsPending: boolean;
+  onCreateProxy: SubmitHandler<ProxyFormValues>;
+
+  // Registry search
+  searchQuery: string;
+  onSearchQueryChange: (value: string) => void;
+
+  // Actions
+  onMcpSelect: (mcp: RegistryGetEntriesEntry) => void;
+  onInstallClient: (clientId: ClientId) => void;
+  onComplete: () => void;
+}
+
+export function GetStartedPageView(props: GetStartedPageViewProps) {
+  const {
+    currentProxy,
+    hasInstallers,
+    registryEntries,
+    availableClients,
+    listClientsIsLoading,
+    isInstallingClient,
+    proxyForm,
+    createProxyIsPending,
+    onCreateProxy,
+    searchQuery,
+    onSearchQueryChange,
+    onMcpSelect,
+    onInstallClient,
+    onComplete,
+  } = props;
+
+  const [selectedClient, setSelectedClient] = useState<ClientId | undefined>();
+
+  const hasProxy = !!currentProxy;
+  const hasServers = (currentProxy?.servers?.length ?? 0) > 0;
+
+  const steps = useMemo(() => {
+    const create: StepStatus = hasProxy ? "completed" : "in-progress";
+    const add: StepStatus = hasProxy
+      ? hasServers
+        ? "completed"
+        : "in-progress"
+      : "not-started";
+    const connect: StepStatus =
+      hasProxy && hasServers
+        ? hasInstallers
+          ? "completed"
+          : "in-progress"
+        : "not-started";
+    return { create, add, connect };
+  }, [hasProxy, hasServers, hasInstallers]);
+
+  const isCompleted =
+    steps.create === "completed" &&
+    steps.add === "completed" &&
+    steps.connect === "completed";
+
+  useEffect(() => {
+    if (isCompleted) {
+      onComplete();
+    }
+  }, [isCompleted, onComplete]);
+
+  return (
+    <Container size="sm" className="py-12 lg:py-16">
+      <Section className="gap-y-8">
+        <GetStartedHeader
+          title="Get started"
+          description="Let's get you started with MCP using Director."
+        />
+
+        <GetStartedList>
+          <GetStartedListItem
+            status={steps.create}
+            title="Create an MCP Proxy Server"
+            disabled={steps.create === "completed"}
+            open={steps.create === "in-progress"}
+          >
+            <div className="py-4 pr-4 pl-11.5">
+              <GetStartedProxyForm
+                form={proxyForm}
+                isPending={createProxyIsPending}
+                onSubmit={onCreateProxy}
+              />
+            </div>
+          </GetStartedListItem>
+
+          <GetStartedListItem
+            status={steps.add}
+            title="Add your first MCP server"
+            open={steps.add === "in-progress"}
+            disabled={steps.add !== "in-progress"}
+          >
+            <GetStartedMcpServerList
+              searchQuery={searchQuery}
+              onSearchQueryChange={onSearchQueryChange}
+              registryEntries={registryEntries}
+              onMcpSelect={onMcpSelect}
+            />
+          </GetStartedListItem>
+
+          <GetStartedListItem
+            status={steps.connect}
+            title="Connect your first client"
+            open={steps.connect === "in-progress"}
+            disabled={steps.connect !== "in-progress"}
+          >
+            <GetStartedInstallers
+              selectedClient={selectedClient}
+              onClientSelect={setSelectedClient}
+              availableClients={availableClients}
+              clients={clients}
+              isLoading={listClientsIsLoading}
+              isInstalling={isInstallingClient}
+              onInstall={onInstallClient}
+            />
+          </GetStartedListItem>
+        </GetStartedList>
+      </Section>
+    </Container>
+  );
+}

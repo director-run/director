@@ -7,7 +7,7 @@ import React from "react";
 import { withLayoutView } from "../../helpers/decorators";
 
 const meta = {
-  title: "library/list",
+  title: "pages/registry/list",
   component: RegistryItemList,
   parameters: {
     layout: "fullscreen",

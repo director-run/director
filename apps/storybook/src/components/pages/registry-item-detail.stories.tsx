@@ -47,7 +47,7 @@ const mockProxiesWithoutMcp: StoreGetAll = [
 ];
 
 const meta = {
-  title: "library/detail",
+  title: "pages/registry/detail",
   component: RegistryItemDetail,
   parameters: {
     layout: "fullscreen",

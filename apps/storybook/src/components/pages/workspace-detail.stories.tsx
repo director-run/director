@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../../helpers/decorators";
 
 const meta = {
-  title: "pages/ProxyDetail",
+  title: "pages/workspaces/detail",
   component: ProxyDetail,
   parameters: {
     layout: "fullscreen",

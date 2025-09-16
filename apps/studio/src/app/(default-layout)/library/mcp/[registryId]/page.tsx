@@ -161,17 +161,9 @@ export default function RegistryEntryPage() {
           >
             <RegistryInstallForm
               registryEntry={entry}
-              proxies={proxies.filter(
-                (proxy) => !proxy.servers.some((it) => it.name === entry.name),
-              )}
-              defaultProxyId={serverId ?? undefined}
-              onSubmit={(values) =>
-                handleInstall({
-                  proxyId: values.proxyId,
-                  entryId: entry.id as unknown as string,
-                  parameters: values.parameters,
-                })
-              }
+              proxies={proxies}
+              entryInstalledOn={entryInstalledOn}
+              onSubmit={handleInstall}
               isSubmitting={installMutation.isPending}
             />
           </PopoverContent>

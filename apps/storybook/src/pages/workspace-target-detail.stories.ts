@@ -165,248 +165,26 @@ export const WithHttpTransport: Story = {
     },
   },
 };
-
-export const WithMemTransport: Story = {
+export const SparselyPopulated: Story = {
   args: {
     ...Default.args,
-    mcp: {
-      ...mockMcp,
-      transport: mockMemTransport,
-    },
-  },
-};
-
-export const NoIcon: Story = {
-  args: {
-    ...Default.args,
+    description: null,
     entryData: {
       ...mockEntryData,
       icon: undefined,
-    },
-  },
-};
-
-export const NoReadme: Story = {
-  args: {
-    ...Default.args,
-    entryData: {
-      ...mockEntryData,
       readme: undefined,
     },
   },
 };
 
-export const NoDescription: Story = {
-  args: {
-    ...Default.args,
-    description: null,
-  },
-};
-
-export const EmptyReadme: Story = {
-  args: {
-    ...Default.args,
-    entryData: {
-      ...mockEntryData,
-      readme: "",
-    },
-  },
-};
-
-export const LongDescription: Story = {
-  args: {
-    ...Default.args,
-    description:
-      "This is a very long description that explains in great detail what this MCP server does, how it works, what features it provides, and how to use it effectively. It should wrap nicely in the UI and provide comprehensive information about the server's capabilities and usage patterns. The description covers all the important aspects that users need to know when working with this particular MCP server implementation.",
-  },
-};
-
-export const ComplexReadme: Story = {
-  args: {
-    ...Default.args,
-    entryData: {
-      ...mockEntryData,
-      readme: `# Advanced GitHub MCP Server
-
-A comprehensive Model Context Protocol server for GitHub that provides extensive tools and functionality.
-
-## 🚀 Features
-
-### Repository Management
-- **Full CRUD Operations**: Create, read, update, and delete repositories
-- **Branch Management**: Create, merge, and delete branches
-- **Tag Management**: Create and manage Git tags
-- **Webhook Management**: Set up and manage repository webhooks
-
-### Issue & PR Management
-- **Advanced Issue Tracking**: Create, update, close, and search issues
-- **Pull Request Workflow**: Create, review, merge, and close PRs
-- **Code Review Tools**: Comment, approve, and request changes
-- **Milestone Management**: Create and manage project milestones
-
-### Code Analysis
-- **Code Search**: Search across repositories and codebases
-- **Dependency Analysis**: Analyze package dependencies
-- **Security Scanning**: Identify security vulnerabilities
-- **Code Quality Metrics**: Generate code quality reports
-
-## 📦 Installation
-
-\`\`\`bash
-# Install via npm
-npm install @modelcontextprotocol/server-github
-
-# Or install via yarn
-yarn add @modelcontextprotocol/server-github
-
-# Or install via pnpm
-pnpm add @modelcontextprotocol/server-github
-\`\`\`
-
-## ⚙️ Configuration
-
-### Environment Variables
-
-| Variable | Description | Required | Default |
-|----------|-------------|----------|---------|
-| \`GITHUB_TOKEN\` | GitHub personal access token | Yes | - |
-| \`GITHUB_API_URL\` | GitHub API URL (for Enterprise) | No | \`https://api.github.com\` |
-| \`GITHUB_APP_ID\` | GitHub App ID | No | - |
-| \`GITHUB_PRIVATE_KEY\` | GitHub App private key | No | - |
-
-### Example Configuration
-
-\`\`\`bash
-export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
-export GITHUB_API_URL=https://api.github.com
-export GITHUB_APP_ID=123456
-export GITHUB_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\\n...\\n-----END PRIVATE KEY-----"
-\`\`\`
-
-## 🛠️ Usage
-
-### Basic Repository Operations
-
-\`\`\`json
-{
-  "tool": "get_repository",
-  "arguments": {
-    "owner": "octocat",
-    "repo": "Hello-World"
-  }
-}
-\`\`\`
-
-### Advanced Search
-
-\`\`\`json
-{
-  "tool": "search_repositories",
-  "arguments": {
-    "query": "language:typescript stars:>1000 created:>2023-01-01",
-    "sort": "stars",
-    "order": "desc",
-    "per_page": 100
-  }
-}
-\`\`\`
-
-### Issue Management
-
-\`\`\`json
-{
-  "tool": "create_issue",
-  "arguments": {
-    "owner": "octocat",
-    "repo": "Hello-World",
-    "title": "Feature Request: Add dark mode",
-    "body": "Please add a dark mode option to the application.",
-    "labels": ["enhancement", "ui"],
-    "assignees": ["octocat"],
-    "milestone": 1
-  }
-}
-\`\`\`
-
-## 🔧 Advanced Features
-
-### Webhook Management
-- Create and manage repository webhooks
-- Configure webhook events and URLs
-- Test webhook deliveries
-
-### Organization Management
-- Manage organization repositories
-- Handle team permissions
-- Configure organization settings
-
-### Security Features
-- Dependabot integration
-- Security advisory management
-- Secret scanning
-
-## 📊 Monitoring & Analytics
-
-The server provides comprehensive monitoring capabilities:
-- Request/response logging
-- Performance metrics
-- Error tracking
-- Rate limit monitoring
-
-## 🚨 Error Handling
-
-The server handles various error conditions:
-- **Rate Limiting**: Automatic retry with exponential backoff
-- **Authentication Errors**: Clear error messages for token issues
-- **Network Errors**: Retry logic with appropriate delays
-- **API Errors**: Detailed error information from GitHub API
-
-## 🔒 Security Considerations
-
-- Tokens are never logged or exposed
-- All API calls use HTTPS
-- Rate limiting is respected
-- Input validation on all parameters
-
-## 📚 Examples
-
-See the [examples directory](./examples) for more detailed usage examples.
-
-## 🤝 Contributing
-
-Contributions are welcome! Please see our [contributing guide](./CONTRIBUTING.md) for details.
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
-
-## 🆘 Support
-
-For support and questions:
-- Open an issue on GitHub
-- Join our Discord server
-- Check the documentation wiki
-`,
-    },
-  },
-};
-
-export const DifferentProxy: Story = {
-  args: {
-    ...Default.args,
-    proxy: {
-      id: "production-proxy",
-      name: "Production Proxy",
-    },
-  },
-};
-
-export const LongProxyName: Story = {
+export const LongStrings: Story = {
   args: {
     ...Default.args,
     proxy: {
       id: "very-long-proxy-name-that-should-wrap",
       name: "Very Long Proxy Name That Should Wrap Nicely in the UI",
     },
+    description:
+      "This is a very long description that explains in great detail what this MCP server does, how it works, what features it provides, and how to use it effectively. It should wrap nicely in the UI and provide comprehensive information about the server's capabilities and usage patterns. The description covers all the important aspects that users need to know when working with this particular MCP server implementation.",
   },
 };

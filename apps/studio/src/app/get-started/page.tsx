@@ -180,6 +180,20 @@ export default function GetStartedPage() {
     });
   };
 
+  const handleClickInstall = async () => {
+    if (!selectedMcp || !currentProxy?.id) {
+      return;
+    }
+    const transport = await transportMutation.mutateAsync({
+      entryName: selectedMcp.name,
+      parameters: {},
+    });
+    installServerMutation.mutate({
+      proxyId: currentProxy.id,
+      server: { name: selectedMcp.name, transport },
+    });
+  };
+
   const toolLinks = selectedMcp
     ? (selectedMcp.tools ?? [])
         .sort((a, b) => a.name.localeCompare(b.name))
@@ -216,16 +230,12 @@ export default function GetStartedPage() {
       {/* MCP Install Dialog */}
       {selectedMcp && (
         <GetStartedInstallServerDialog
-          mcp={selectedMcp}
-          proxyId={currentProxy?.id ?? ""}
+          registryEntry={entryQuery.data}
+          isRegistryEntryLoading={entryQuery.isLoading}
+          onClickInstall={handleClickInstall}
+          isInstalling={installServerMutation.isPending}
           open={isInstallDialogOpen}
-          onOpenChange={setIsInstallDialogOpen}
-          entryData={entryQuery.data}
-          isLoading={entryQuery.isLoading}
-          onFormSubmit={handleMcpFormSubmit}
-          isFormSubmitting={transportMutation.isPending}
-          isFormInstalling={installServerMutation.isPending}
-          toolLinks={toolLinks}
+          onClickClose={() => setIsInstallDialogOpen(false)}
         />
       )}
 

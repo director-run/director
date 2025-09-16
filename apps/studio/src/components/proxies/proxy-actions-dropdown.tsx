@@ -3,7 +3,6 @@ import {
   GearIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
-import type { StoreGet } from "../types";
 import { Button } from "../ui/button";
 import {
   DropdownMenu,
@@ -13,32 +12,15 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { MenuItemIcon, MenuItemLabel } from "../ui/menu";
-import { ProxyDeleteConfirmation } from "./proxy-delete-confirmation";
-import { ProxySettingsSheet } from "./proxy-settings-sheet";
 
 interface ProxyActionsDropdownProps {
-  proxy: StoreGet;
-  onUpdateProxy: (values: {
-    name: string;
-    description?: string;
-  }) => Promise<void>;
-  onDeleteProxy: () => Promise<void>;
-  isUpdating: boolean;
-  settingsOpen: boolean;
-  onSettingsOpenChange: (open: boolean) => void;
-  deleteOpen: boolean;
-  onDeleteOpenChange: (open: boolean) => void;
+  onSettingsClick: () => void;
+  onDeleteClick: () => void;
 }
 
 export function ProxyActionsDropdown({
-  proxy,
-  onUpdateProxy,
-  onDeleteProxy,
-  isUpdating,
-  settingsOpen,
-  onSettingsOpenChange,
-  deleteOpen,
-  onDeleteOpenChange,
+  onSettingsClick,
+  onDeleteClick,
 }: ProxyActionsDropdownProps) {
   return (
     <DropdownMenu>
@@ -54,32 +36,18 @@ export function ProxyActionsDropdown({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuGroup>
-          <ProxySettingsSheet
-            proxy={proxy}
-            onSubmit={onUpdateProxy}
-            isSubmitting={isUpdating}
-            open={settingsOpen}
-            onOpenChange={onSettingsOpenChange}
-          >
-            <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
-              <MenuItemIcon>
-                <GearIcon />
-              </MenuItemIcon>
-              <MenuItemLabel>Settings</MenuItemLabel>
-            </DropdownMenuItem>
-          </ProxySettingsSheet>
-          <ProxyDeleteConfirmation
-            onConfirm={onDeleteProxy}
-            open={deleteOpen}
-            onOpenChange={onDeleteOpenChange}
-          >
-            <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
-              <MenuItemIcon>
-                <TrashIcon />
-              </MenuItemIcon>
-              <MenuItemLabel>Delete</MenuItemLabel>
-            </DropdownMenuItem>
-          </ProxyDeleteConfirmation>
+          <DropdownMenuItem onSelect={onSettingsClick}>
+            <MenuItemIcon>
+              <GearIcon />
+            </MenuItemIcon>
+            <MenuItemLabel>Settings</MenuItemLabel>
+          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={onDeleteClick}>
+            <MenuItemIcon>
+              <TrashIcon />
+            </MenuItemIcon>
+            <MenuItemLabel>Delete</MenuItemLabel>
+          </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -11,7 +11,9 @@ import {
 import { McpToolSheet } from "../../../components/mcp-servers/mcp-tool-sheet";
 import { ProxyDetail } from "../../../components/pages/workspace-detail";
 import { ProxyActionsDropdown } from "../../../components/proxies/proxy-actions-dropdown";
+import { ProxyDeleteConfirmation } from "../../../components/proxies/proxy-delete-confirmation";
 import type { Client } from "../../../components/proxies/proxy-installers";
+import { ProxySettingsSheet } from "../../../components/proxies/proxy-settings-sheet";
 import { ProxySkeleton } from "../../../components/proxies/proxy-skeleton";
 import { Badge, BadgeLabel } from "../../../components/ui/badge";
 import {
@@ -220,14 +222,8 @@ export default function ProxyPage() {
           </BreadcrumbList>
         </Breadcrumb>
         <ProxyActionsDropdown
-          proxy={proxy}
-          onUpdateProxy={handleUpdateProxy}
-          onDeleteProxy={handleDeleteProxy}
-          isUpdating={updateProxyMutation.isPending}
-          settingsOpen={settingsOpen}
-          onSettingsOpenChange={setSettingsOpen}
-          deleteOpen={deleteOpen}
-          onDeleteOpenChange={setDeleteOpen}
+          onSettingsClick={() => setSettingsOpen(true)}
+          onDeleteClick={() => setDeleteOpen(true)}
         />
       </LayoutViewHeader>
 
@@ -264,6 +260,24 @@ export default function ProxyPage() {
         onServerClick={handleServerClick}
         onProxyClick={(proxyId) => router.push(`/${proxyId}`)}
       />
+
+      <ProxySettingsSheet
+        proxy={proxy}
+        onSubmit={handleUpdateProxy}
+        isSubmitting={updateProxyMutation.isPending}
+        open={settingsOpen}
+        onOpenChange={setSettingsOpen}
+      >
+        <div />
+      </ProxySettingsSheet>
+
+      <ProxyDeleteConfirmation
+        onConfirm={handleDeleteProxy}
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+      >
+        <div />
+      </ProxyDeleteConfirmation>
     </LayoutView>
   );
 }

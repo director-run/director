@@ -37,7 +37,7 @@ type GetStartedInstallServerDialogProps = {
   onClickInstall: () => void;
   isInstalling: boolean;
   open: boolean;
-  onClickClose: () => void;
+  onOpenChange: (open: boolean) => void;
 };
 
 // Presentational component - no state management or tRPC calls
@@ -47,11 +47,11 @@ function GetStartedInstallServerDialogPresentation({
   onClickInstall,
   isInstalling,
   open,
-  onClickClose,
+  onOpenChange,
 }: GetStartedInstallServerDialogProps) {
   const mcp = registryEntry;
   return (
-    <Dialog open={open} onOpenChange={(v) => !v && onClickClose()}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="!max-w-none !inset-1 !translate-0 !w-auto flex flex-col py-10">
         <VisuallyHidden>
           <DialogTitle className="pt-4">Install {mcp?.title}</DialogTitle>
@@ -223,7 +223,7 @@ export function GetStartedInstallServerDialog({
   onClickInstall,
   isInstalling,
   open,
-  onClickClose,
+  onOpenChange,
 }: GetStartedInstallServerDialogProps) {
   return (
     <GetStartedInstallServerDialogPresentation
@@ -232,7 +232,7 @@ export function GetStartedInstallServerDialog({
       onClickInstall={onClickInstall}
       isInstalling={isInstalling}
       open={open}
-      onClickClose={onClickClose}
+      onOpenChange={onOpenChange}
     />
   );
 }

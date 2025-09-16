@@ -235,7 +235,7 @@ export default function GetStartedPage() {
           onClickInstall={handleClickInstall}
           isInstalling={installServerMutation.isPending}
           open={isInstallDialogOpen}
-          onClickClose={() => setIsInstallDialogOpen(false)}
+          onOpenChange={setIsInstallDialogOpen}
         />
       )}
 

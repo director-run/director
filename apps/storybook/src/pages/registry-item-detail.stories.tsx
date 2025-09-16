@@ -1,7 +1,9 @@
 import { RegistryItemDetail } from "@director.run/studio/components/pages/registry-item-detail.tsx";
+import { RegistryToolSheet } from "@director.run/studio/components/registry/registry-tool-sheet.tsx";
 import type { StoreGetAll } from "@director.run/studio/components/types.ts";
 import { mockRegistryEntry } from "@director.run/studio/test/fixtures/registry/entry.ts";
 import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
 import { withLayoutView } from "../helpers/decorators";
 
 const mockProxiesWithMcp: StoreGetAll = [
@@ -65,28 +67,42 @@ export const Default: Story = {
     proxiesWithoutMcp: mockProxiesWithoutMcp,
     defaultProxyId: "production-proxy",
     serverId: "production-proxy",
-    toolLinks:
-      mockRegistryEntry?.tools?.map((tool) => ({
-        title: tool.name,
-        subtitle: tool.description,
-        scroll: false,
-        href: `#${tool.name}`,
-      })) ?? [],
     onInstall: async (values) => {
       console.log("Installing MCP server:", values);
       // Simulate installation delay
       await new Promise((resolve) => setTimeout(resolve, 2000));
     },
     isInstalling: false,
-    onCloseTool: () => {
-      console.log("Closing tool sheet");
-    },
   },
 };
 
 export const WithToolSelected: Story = {
   args: {
     ...Default.args,
-    selectedTool: mockRegistryEntry.tools?.[0],
+  },
+  render: (args) => {
+    const [selectedToolName, setSelectedToolName] = useState<string | null>(
+      mockRegistryEntry.tools?.[0]?.name ?? null,
+    );
+    const selectedTool = mockRegistryEntry.tools?.find(
+      (t) => t.name === selectedToolName,
+    );
+
+    return (
+      <>
+        <RegistryItemDetail
+          {...args}
+          onToolClick={(tool) => setSelectedToolName(tool.name)}
+        />
+        {selectedTool && (
+          <RegistryToolSheet
+            tool={selectedTool}
+            mcpName={mockRegistryEntry.title}
+            mcpId={mockRegistryEntry.name}
+            onClose={() => setSelectedToolName(null)}
+          />
+        )}
+      </>
+    );
   },
 };

@@ -10,6 +10,7 @@ import {
 import { RegistryItemDetail } from "../../../../../components/pages/registry-item-detail";
 import { RegistryEntrySkeleton } from "../../../../../components/registry/registry-entry-skeleton";
 import { RegistryInstallForm } from "../../../../../components/registry/registry-install-form";
+import { RegistryToolSheet } from "../../../../../components/registry/registry-tool-sheet";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -28,7 +29,6 @@ import { toast } from "../../../../../components/ui/toast";
 import { useCopyToClipboard } from "../../../../../hooks/use-copy-to-clipboard";
 import { trpc } from "../../../../../state/client";
 import { useRegistryQuery } from "../../../../../state/use-registry-query";
-import { registryQuerySerializer } from "../../../../../state/use-registry-query";
 
 export default function RegistryEntryPage() {
   const router = useRouter();
@@ -123,22 +123,9 @@ export default function RegistryEntryPage() {
       }),
   );
 
-  const toolLinks = (entry.tools ?? [])
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .map((tool) => ({
-      title: tool.name,
-      subtitle: tool.description?.replace(/\[([^\]]+)\]/g, ""),
-      scroll: false,
-      href: registryQuerySerializer({
-        toolId: tool.name,
-        serverId,
-      }),
-      onClick: () =>
-        setRegistryQuery({
-          toolId: tool.name,
-          serverId,
-        }),
-    }));
+  const handleToolClick = (toolName: string) => {
+    setRegistryQuery({ toolId: toolName, serverId });
+  };
 
   return (
     <LayoutView>
@@ -186,19 +173,26 @@ export default function RegistryEntryPage() {
           entry={entry}
           proxiesWithMcp={proxiesWithMcp}
           proxiesWithoutMcp={proxiesWithoutMcp}
-          selectedTool={selectedTool}
           defaultProxyId={serverId ?? undefined}
           serverId={serverId}
           onInstall={handleInstall}
           isInstalling={installMutation.isPending}
-          onCloseTool={handleCloseTool}
-          toolLinks={toolLinks}
+          onToolClick={(tool) => handleToolClick(tool.name)}
           onProxyServerClick={(proxyId, serverName) =>
             router.push(`/${proxyId}/mcp/${serverName}`)
           }
-          onLibraryClick={() => router.push("/library")}
-          onMcpClick={(mcpId) => router.push(`/library/mcp/${mcpId}`)}
         />
+
+        {selectedTool && (
+          <RegistryToolSheet
+            tool={selectedTool}
+            mcpName={entry.title}
+            mcpId={entry.name}
+            onClose={handleCloseTool}
+            onLibraryClick={() => router.push("/library")}
+            onMcpClick={(mcpId) => router.push(`/library/mcp/${mcpId}`)}
+          />
+        )}
       </LayoutViewContent>
     </LayoutView>
   );

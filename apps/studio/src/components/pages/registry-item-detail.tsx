@@ -9,7 +9,6 @@ import { McpLogo } from "../mcp-logo";
 import { McpDescriptionList } from "../mcp-servers/mcp-description-list";
 import { RegistryInstallForm } from "../registry/registry-install-form";
 import { RegistryParameters } from "../registry/registry-parameters";
-import { RegistryToolSheet } from "../registry/registry-tool-sheet";
 import { RegistryTools } from "../registry/registry-tools";
 import type { MasterRegistryEntry, StoreGetAll } from "../types";
 import { Badge, BadgeGroup, BadgeIcon, BadgeLabel } from "../ui/badge";
@@ -32,7 +31,6 @@ interface RegistryItemDetailProps {
   entry: MasterRegistryEntry;
   proxiesWithMcp: StoreGetAll;
   proxiesWithoutMcp: StoreGetAll;
-  selectedTool?: NonNullable<MasterRegistryEntry["tools"]>[number];
   defaultProxyId?: string;
   serverId: string | null;
   onInstall: (values: {
@@ -40,32 +38,22 @@ interface RegistryItemDetailProps {
     parameters: Record<string, string>;
   }) => Promise<void>;
   isInstalling?: boolean;
-  onCloseTool: () => void;
-  toolLinks: Array<{
-    title: string;
-    subtitle: string;
-    scroll: boolean;
-    href: string;
-  }>;
+  onToolClick?: (
+    tool: NonNullable<MasterRegistryEntry["tools"]>[number],
+  ) => void;
   onProxyServerClick?: (proxyId: string, serverName: string) => void;
-  onLibraryClick?: () => void;
-  onMcpClick?: (mcpId: string) => void;
 }
 
 export function RegistryItemDetail({
   entry,
   proxiesWithMcp,
   proxiesWithoutMcp,
-  selectedTool,
   defaultProxyId,
   serverId,
   onInstall,
   isInstalling = false,
-  onCloseTool,
-  toolLinks,
+  onToolClick,
   onProxyServerClick,
-  onLibraryClick,
-  onMcpClick,
 }: RegistryItemDetailProps) {
   return (
     <>
@@ -144,7 +132,20 @@ export function RegistryItemDetail({
                       <h3>Tools</h3>
                     </SectionTitle>
                   </SectionHeader>
-                  <RegistryTools links={toolLinks} />
+                  <RegistryTools
+                    links={(entry.tools ?? [])
+                      .sort((a, b) => a.name.localeCompare(b.name))
+                      .map((tool) => ({
+                        title: tool.name,
+                        subtitle: tool.description?.replace(
+                          /\[([^\]]+)\]/g,
+                          "",
+                        ),
+                        scroll: false,
+                        href: "#",
+                        onClick: () => onToolClick?.(tool),
+                      }))}
+                  />
                 </Section>
               </TabsContent>
 
@@ -225,16 +226,6 @@ export function RegistryItemDetail({
           </div>
         </div>
       </Container>
-      {selectedTool && (
-        <RegistryToolSheet
-          tool={selectedTool}
-          mcpName={entry.title}
-          mcpId={entry.name}
-          onClose={onCloseTool}
-          onLibraryClick={onLibraryClick}
-          onMcpClick={onMcpClick}
-        />
-      )}
     </>
   );
 }

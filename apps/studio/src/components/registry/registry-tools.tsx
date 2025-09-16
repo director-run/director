@@ -8,6 +8,7 @@ interface RegistryToolsProps {
     subtitle?: string;
     href: string;
     scroll?: boolean;
+    onClick?: () => void;
   }>;
 }
 

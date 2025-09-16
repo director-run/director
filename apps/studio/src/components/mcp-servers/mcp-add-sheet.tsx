@@ -316,16 +316,8 @@ export function McpAddFormEnvFields() {
     <div className="space-y-2">
       {fields.map((field, index) => (
         <div key={field.id} className="flex flex-row gap-x-2 [&>div]:flex-1">
-          <InputField
-            name={`_env.${index}.0`}
-            placeholder="Variable name"
-            defaultValue=""
-          />
-          <InputField
-            name={`_env.${index}.1`}
-            placeholder="Value"
-            defaultValue=""
-          />
+          <InputField name={`_env.${index}.0`} placeholder="Variable name" />
+          <InputField name={`_env.${index}.1`} placeholder="Value" />
           {index < fields.length - 1 ? (
             <Button
               className="size-8 leading-8"
@@ -370,16 +362,8 @@ export function McpAddFormHeaderFields() {
     <div className="space-y-2">
       {fields.map((field, index) => (
         <div key={field.id} className="flex flex-row gap-x-2 [&>div]:flex-1">
-          <InputField
-            name={`_headers.${index}.0`}
-            placeholder="Header name"
-            defaultValue=""
-          />
-          <InputField
-            name={`_headers.${index}.1`}
-            placeholder="Value"
-            defaultValue=""
-          />
+          <InputField name={`_headers.${index}.0`} placeholder="Header name" />
+          <InputField name={`_headers.${index}.1`} placeholder="Value" />
           {index < fields.length - 1 ? (
             <Button
               className="size-8 leading-8"

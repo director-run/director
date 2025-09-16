@@ -4,7 +4,7 @@ import { mockRegistryEntryList } from "@director.run/studio/test/fixtures/regist
 import { PlusIcon } from "@phosphor-icons/react";
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
-import { withLayoutView } from "../../helpers/decorators";
+import { withLayoutView } from "../helpers/decorators";
 
 const meta = {
   title: "pages/registry/list",

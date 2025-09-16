@@ -1,7 +1,7 @@
 import { ProxyDetail } from "@director.run/studio/components/pages/workspace-detail.tsx";
 import type { ConfiguratorTarget } from "@director.run/studio/components/types.ts";
 import type { Meta, StoryObj } from "@storybook/react";
-import { withLayoutView } from "../../helpers/decorators";
+import { withLayoutView } from "../helpers/decorators";
 
 const meta = {
   title: "pages/workspaces/detail",

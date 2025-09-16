@@ -32,7 +32,12 @@ export function ProxyNew({
           <SectionDescription>{description}</SectionDescription>
         </SectionHeader>
         <SectionSeparator />
-        <ProxyForm onSubmit={onSubmit} isSubmitting={isSubmitting}>
+        <ProxyForm
+          onSubmit={async (values) => {
+            await onSubmit(values);
+          }}
+          isSubmitting={isSubmitting}
+        >
           <ProxyFormButton isSubmitting={isSubmitting}>
             {submitLabel}
           </ProxyFormButton>

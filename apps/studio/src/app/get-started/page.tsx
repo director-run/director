@@ -1,6 +1,7 @@
 "use client";
 
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { GetStartedCompleteDialog } from "../../components/get-started/get-started-complete-dialog";
@@ -27,6 +28,7 @@ interface Steps {
 export type ClientId = "claude" | "cursor" | "vscode";
 
 export default function GetStartedPage() {
+  const router = useRouter();
   // Search and proxy state
   const [searchQuery, setSearchQuery] = useState("");
   const [currentProxyId, setCurrentProxyId] = useState<string | null>(null);
@@ -238,7 +240,11 @@ export default function GetStartedPage() {
         />
       )}
 
-      <GetStartedCompleteDialog open={isCompleted} />
+      <GetStartedCompleteDialog
+        open={isCompleted}
+        onClickLibrary={() => router.push("/library")}
+        onClickWorkspace={() => router.push("/")}
+      />
     </>
   );
 }

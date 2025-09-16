@@ -136,5 +136,11 @@ export const Step3b_ClientInstallLoading: Story = {
 // step 4: final dialog
 export const Step4_CompleteDialog: Story = {
   args: {},
-  render: () => <GetStartedCompleteDialog open />,
+  render: () => (
+    <GetStartedCompleteDialog
+      open
+      onClickLibrary={() => {}}
+      onClickWorkspace={() => {}}
+    />
+  ),
 };

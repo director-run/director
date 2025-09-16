@@ -15,11 +15,15 @@ import {
 } from "../ui/alert-dialog";
 import { Label } from "../ui/label";
 
-export function GetStartedCompleteDialog(
-  props: ComponentProps<typeof AlertDialog>,
-) {
+type GetStartedCompleteDialogProps = ComponentProps<typeof AlertDialog> & {
+  onClickLibrary: () => void;
+  onClickWorkspace: () => void;
+};
+
+export function GetStartedCompleteDialog(props: GetStartedCompleteDialogProps) {
+  const { onClickLibrary, onClickWorkspace, ...alertDialogProps } = props;
   return (
-    <AlertDialog {...props}>
+    <AlertDialog {...alertDialogProps}>
       <AlertDialogContent>
         <AlertDialogHeader className="gap-y-0.5">
           <AlertDialogTitle className="text-xl">
@@ -33,7 +37,7 @@ export function GetStartedCompleteDialog(
         <div className="flex flex-col gap-1 border-accent border-t-[0.5px] p-5">
           <Label className="pb-1">Next steps</Label>
 
-          <NextStepsLink href="/library">
+          <NextStepsLink href="/library" onClick={onClickLibrary}>
             <ListMagnifyingGlassIcon className="text-fg-subtle" weight="fill" />
             <span>Discover more MCP servers</span>
           </NextStepsLink>
@@ -44,6 +48,7 @@ export function GetStartedCompleteDialog(
           <NextStepsLink
             className="bg-fg text-surface hover:bg-fg-subtle"
             href="/"
+            onClick={onClickWorkspace}
           >
             <HardDriveIcon weight="fill" />
             <span>Continue to your proxy</span>

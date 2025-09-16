@@ -309,9 +309,7 @@ export function McpAddFormEnvFields() {
   });
 
   const handleAdd = () => {
-    console.log("Adding env field, current fields length:", fields.length);
     append(["", ""]);
-    console.log("After append, fields length should be:", fields.length + 1);
   };
 
   return (
@@ -328,7 +326,7 @@ export function McpAddFormEnvFields() {
             placeholder="Value"
             defaultValue=""
           />
-          {fields.length > 1 ? (
+          {index < fields.length - 1 ? (
             <Button
               className="size-8 leading-8"
               type="button"
@@ -340,14 +338,19 @@ export function McpAddFormEnvFields() {
               <div className="sr-only">Remove</div>
             </Button>
           ) : (
-            <div className="size-8" />
+            <Button
+              className="size-8 leading-8"
+              type="button"
+              variant="secondary"
+              size="icon"
+              onClick={handleAdd}
+            >
+              <PlusIcon />
+              <div className="sr-only">Add environment variable</div>
+            </Button>
           )}
         </div>
       ))}
-      <Button type="button" variant="secondary" size="sm" onClick={handleAdd}>
-        <PlusIcon className="mr-2 size-4" />
-        Add environment variable
-      </Button>
     </div>
   );
 }
@@ -360,9 +363,7 @@ export function McpAddFormHeaderFields() {
   });
 
   const handleAdd = () => {
-    console.log("Adding header field, current fields length:", fields.length);
     append(["", ""]);
-    console.log("After append, fields length should be:", fields.length + 1);
   };
 
   return (
@@ -379,7 +380,7 @@ export function McpAddFormHeaderFields() {
             placeholder="Value"
             defaultValue=""
           />
-          {fields.length > 1 ? (
+          {index < fields.length - 1 ? (
             <Button
               className="size-8 leading-8"
               type="button"
@@ -391,14 +392,19 @@ export function McpAddFormHeaderFields() {
               <div className="sr-only">Remove</div>
             </Button>
           ) : (
-            <div className="size-8" />
+            <Button
+              className="size-8 leading-8"
+              type="button"
+              variant="secondary"
+              size="icon"
+              onClick={handleAdd}
+            >
+              <PlusIcon />
+              <div className="sr-only">Add header</div>
+            </Button>
           )}
         </div>
       ))}
-      <Button type="button" variant="secondary" size="sm" onClick={handleAdd}>
-        <PlusIcon className="mr-2 size-4" />
-        Add header
-      </Button>
     </div>
   );
 }

@@ -14,7 +14,6 @@ interface RegistryItemAddFormProps {
     parameters: Record<string, string>;
   }) => Promise<void>;
   isInstalling?: boolean;
-  onProxyServerClick?: (proxyId: string, serverName: string) => void;
 }
 
 export function RegistryItemAddForm({
@@ -24,7 +23,6 @@ export function RegistryItemAddForm({
   defaultProxyId,
   onInstall,
   isInstalling = false,
-  onProxyServerClick,
 }: RegistryItemAddFormProps) {
   return (
     <>
@@ -38,11 +36,7 @@ export function RegistryItemAddForm({
           <BadgeGroup>
             {proxiesWithMcp.map((proxy) => {
               return (
-                <Badge
-                  key={proxy.id}
-                  onClick={() => onProxyServerClick?.(proxy.id, entry.name)}
-                  className="cursor-pointer"
-                >
+                <Badge key={proxy.id} className="cursor-pointer">
                   <BadgeLabel>{proxy.name}</BadgeLabel>
                 </Badge>
               );

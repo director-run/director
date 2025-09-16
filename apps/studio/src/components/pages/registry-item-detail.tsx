@@ -47,7 +47,6 @@ export function RegistryItemDetail({
               defaultProxyId={defaultProxyId}
               onInstall={onInstall}
               isInstalling={isInstalling}
-              onProxyServerClick={onProxyServerClick}
             />
           </SplitViewSide>
         </SplitView>

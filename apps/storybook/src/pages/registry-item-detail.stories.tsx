@@ -98,7 +98,6 @@ export const WithToolSelected: Story = {
           <RegistryToolSheet
             tool={selectedTool}
             mcpName={mockRegistryEntry.title}
-            mcpId={mockRegistryEntry.name}
             onClose={() => setSelectedToolName(null)}
           />
         )}

@@ -6,10 +6,7 @@ import {
   LayoutViewContent,
   LayoutViewHeader,
 } from "../../../components/layout/layout";
-import {
-  ProxyForm,
-  ProxyFormButton,
-} from "../../../components/proxies/proxy-form";
+import { ProxyNew } from "../../../components/pages/proxy-new";
 import type { ProxyFormData } from "../../../components/proxies/proxy-form";
 import {
   Breadcrumb,
@@ -17,14 +14,6 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
 } from "../../../components/ui/breadcrumb";
-import { Container } from "../../../components/ui/container";
-import {
-  Section,
-  SectionDescription,
-  SectionHeader,
-  SectionSeparator,
-  SectionTitle,
-} from "../../../components/ui/section";
 import { toast } from "../../../components/ui/toast";
 import { trpc } from "../../../state/client";
 
@@ -60,25 +49,13 @@ export default function NewProxyPage() {
       </LayoutViewHeader>
 
       <LayoutViewContent>
-        <Container size="sm">
-          <Section className="gap-y-8">
-            <SectionHeader>
-              <SectionTitle>New proxy</SectionTitle>
-              <SectionDescription>
-                Create a new proxy to start using MCP.
-              </SectionDescription>
-            </SectionHeader>
-            <SectionSeparator />
-            <ProxyForm
-              onSubmit={handleSubmit}
-              isSubmitting={mutation.isPending}
-            >
-              <ProxyFormButton isSubmitting={mutation.isPending}>
-                Create proxy
-              </ProxyFormButton>
-            </ProxyForm>
-          </Section>
-        </Container>
+        <ProxyNew
+          title="New proxy"
+          description="Create a new proxy to start using MCP."
+          onSubmit={handleSubmit}
+          isSubmitting={mutation.isPending}
+          submitLabel="Create proxy"
+        />
       </LayoutViewContent>
     </LayoutView>
   );

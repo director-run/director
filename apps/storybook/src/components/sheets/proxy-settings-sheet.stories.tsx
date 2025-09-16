@@ -5,7 +5,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
 const meta = {
-  title: "components/proxy-settings-sheet",
+  title: "components/sheets/proxy-settings-sheet",
   component: ProxySettingsSheet,
   parameters: {
     layout: "fullscreen",

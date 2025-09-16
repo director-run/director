@@ -2,7 +2,7 @@ import { RegistryEntrySkeleton } from "@director.run/studio/components/registry/
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
-  title: "components/registry-entry-skeleton",
+  title: "components/skeletons/registry-entry-skeleton",
   component: RegistryEntrySkeleton,
   parameters: {
     layout: "fullscreen",

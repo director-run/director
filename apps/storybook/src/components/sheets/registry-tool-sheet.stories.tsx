@@ -89,7 +89,7 @@ const mockToolWithComplexSchema: RegistryGetEntryTool = {
 };
 
 const meta = {
-  title: "components/registry-tool-sheet",
+  title: "components/sheets/registry-tool-sheet",
   component: RegistryToolSheet,
   parameters: {
     layout: "fullscreen",

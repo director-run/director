@@ -9,7 +9,7 @@ import { Container } from "@director.run/studio/components/ui/container.tsx";
 import { mockRegistryEntry } from "@director.run/studio/test/fixtures/registry/entry.ts";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
-import { withLayoutView } from "../helpers/decorators";
+import { withLayoutView } from "../../helpers/decorators";
 
 const mockProxies: StoreGetAll = [
   {
@@ -98,7 +98,7 @@ const DebugPanel = ({
 );
 
 const meta = {
-  title: "components/registry-item-add-form",
+  title: "components/forms/registry-item-add-form",
   component: RegistryItemAddForm,
   parameters: {
     layout: "fullscreen",

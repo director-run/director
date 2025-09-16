@@ -7,7 +7,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
 const meta = {
-  title: "pages/get-started",
+  title: "pages/onboarding",
   component: GetStartedPageView,
   parameters: { layout: "fullscreen" },
   //   decorators: [withLayoutView],

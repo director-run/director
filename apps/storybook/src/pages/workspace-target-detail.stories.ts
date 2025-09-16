@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../helpers/decorators";
 
 const meta = {
-  title: "pages/workspaces/target/detail",
+  title: "pages/workspaces/target-detail",
   component: McpServerDetail,
   parameters: {
     layout: "fullscreen",

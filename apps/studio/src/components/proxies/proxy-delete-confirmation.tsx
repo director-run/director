@@ -1,15 +1,12 @@
-import type { ReactNode } from "react";
 import { ConfirmDialog } from "../ui/confirm-dialog";
 
 interface ProxyDeleteConfirmationProps {
-  children: ReactNode;
   onConfirm: () => Promise<void>;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
 
 export function ProxyDeleteConfirmation({
-  children,
   onConfirm,
   open,
   onOpenChange,
@@ -21,8 +18,6 @@ export function ProxyDeleteConfirmation({
       open={open}
       onOpenChange={onOpenChange}
       onConfirm={onConfirm}
-    >
-      {children}
-    </ConfirmDialog>
+    />
   );
 }

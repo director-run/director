@@ -5,7 +5,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
 const meta = {
-  title: "components/mcp-add-sheet",
+  title: "components/sheets/mcp-add-sheet",
   component: McpAddSheet,
   parameters: {
     layout: "fullscreen",

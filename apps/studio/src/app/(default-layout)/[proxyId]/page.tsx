@@ -273,9 +273,7 @@ export default function ProxyPage() {
         onConfirm={handleDeleteProxy}
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
-      >
-        <div />
-      </ProxyDeleteConfirmation>
+      />
     </LayoutView>
   );
 }

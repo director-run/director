@@ -2,7 +2,7 @@ import { ProxySkeleton } from "@director.run/studio/components/proxies/proxy-ske
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
-  title: "components/proxy-skeleton",
+  title: "components/skeletons/proxy-skeleton",
   component: ProxySkeleton,
   parameters: {
     layout: "fullscreen",

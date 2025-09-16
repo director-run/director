@@ -163,7 +163,6 @@ export default function RegistryPage() {
           isLoadingProxies={serversLoading}
           onSubmit={handleAddServer}
           isSubmitting={addServerMutation.isPending}
-          onLibraryClick={() => router.push("/library")}
         >
           <Button className="hidden">Add manually</Button>
         </McpAddSheet>

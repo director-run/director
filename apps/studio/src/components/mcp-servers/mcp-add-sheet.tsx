@@ -102,7 +102,7 @@ const nonEmptyTupleSchema = z
   );
 
 const formSchema = z.object({
-  proxyId: requiredStringSchema,
+  proxyId: z.string().optional(),
   server: proxyTargetAttributesSchema,
   _env: nonEmptyTupleSchema,
   _headers: nonEmptyTupleSchema,
@@ -117,8 +117,7 @@ interface Proxy {
 
 interface McpAddSheetProps extends ComponentProps<typeof Sheet> {
   children?: ReactNode;
-  proxies: Proxy[];
-  isLoadingProxies?: boolean;
+  proxies?: Proxy[];
   onSubmit: (data: McpAddFormData) => Promise<void>;
   isSubmitting?: boolean;
 }
@@ -128,13 +127,12 @@ export function McpAddSheet({
   open,
   onOpenChange,
   proxies,
-  isLoadingProxies = false,
   onSubmit,
   isSubmitting = false,
   ...props
 }: McpAddSheetProps) {
   const defaultValues = {
-    proxyId: proxies[0]?.id ?? "",
+    proxyId: proxies?.[0]?.id ?? undefined,
     server: {
       name: "",
       transport: {
@@ -179,7 +177,6 @@ export function McpAddSheet({
           <McpAddForm
             defaultValues={defaultValues}
             proxies={proxies}
-            isLoadingProxies={isLoadingProxies}
             onSubmit={onSubmit}
             isSubmitting={isSubmitting}
           />
@@ -191,8 +188,7 @@ export function McpAddSheet({
 
 interface McpAddFormProps {
   defaultValues: McpAddFormData;
-  proxies: Proxy[];
-  isLoadingProxies?: boolean;
+  proxies?: Proxy[];
   onSubmit: (data: McpAddFormData) => Promise<void>;
   isSubmitting?: boolean;
 }
@@ -200,7 +196,6 @@ interface McpAddFormProps {
 export function McpAddForm({
   defaultValues,
   proxies,
-  isLoadingProxies = false,
   onSubmit,
   isSubmitting = false,
 }: McpAddFormProps) {
@@ -210,43 +205,31 @@ export function McpAddForm({
       defaultValues={defaultValues}
       onSubmit={onSubmit}
     >
-      <McpAddFormFields
-        proxies={proxies}
-        isLoadingProxies={isLoadingProxies}
-        isSubmitting={isSubmitting}
-      />
+      <McpAddFormFields proxies={proxies} isSubmitting={isSubmitting} />
     </FormWithSchema>
   );
 }
 
 interface McpAddFormFieldsProps {
-  proxies: Proxy[];
-  isLoadingProxies?: boolean;
+  proxies?: Proxy[];
   isSubmitting?: boolean;
 }
 
 export function McpAddFormFields({
   proxies,
-  isLoadingProxies = false,
   isSubmitting = false,
 }: McpAddFormFieldsProps) {
   return (
     <>
-      <SelectNativeField
-        name="proxyId"
-        label="Proxy"
-        disabled={isLoadingProxies}
-      >
-        {isLoadingProxies ? (
-          <option value="">Loading…</option>
-        ) : (
-          proxies.map((proxy) => (
+      {proxies && (
+        <SelectNativeField name="proxyId" label="Proxy">
+          {proxies.map((proxy) => (
             <option key={proxy.id} value={proxy.id}>
               {proxy.name}
             </option>
-          ))
-        )}
-      </SelectNativeField>
+          ))}
+        </SelectNativeField>
+      )}
 
       <div className="flex flex-row gap-x-2 [&>div]:flex-1">
         <InputField

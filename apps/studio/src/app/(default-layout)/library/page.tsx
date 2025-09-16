@@ -41,8 +41,7 @@ export default function RegistryPage() {
     },
   );
 
-  const { data: servers, isLoading: serversLoading } =
-    trpc.store.getAll.useQuery();
+  const { data: servers } = trpc.store.getAll.useQuery();
 
   const utils = trpc.useUtils();
 
@@ -69,6 +68,16 @@ export default function RegistryPage() {
   const handleAddServer = async (data: McpAddFormData) => {
     const server = data.server;
 
+    if (!data.proxyId) {
+      toast({
+        title: "No proxy selected",
+        description: "Please select a proxy before adding a server.",
+      });
+      return;
+    }
+
+    const proxyId = data.proxyId;
+
     if (server.transport.type === "stdio") {
       const env = data._env.reduce(
         (acc, [key, value]) => {
@@ -82,7 +91,7 @@ export default function RegistryPage() {
       const args = server.transport.command.split(" ").slice(1).join(" ");
 
       await addServerMutation.mutateAsync({
-        proxyId: data.proxyId,
+        proxyId,
         server: {
           name: data.server.name,
           transport: {
@@ -103,7 +112,7 @@ export default function RegistryPage() {
       );
 
       await addServerMutation.mutateAsync({
-        proxyId: data.proxyId,
+        proxyId,
         server: {
           name: data.server.name,
           transport: {
@@ -159,8 +168,7 @@ export default function RegistryPage() {
         <McpAddSheet
           open={addSheetOpen}
           onOpenChange={setAddSheetOpen}
-          proxies={servers ?? []}
-          isLoadingProxies={serversLoading}
+          proxies={servers}
           onSubmit={handleAddServer}
           isSubmitting={addServerMutation.isPending}
         >

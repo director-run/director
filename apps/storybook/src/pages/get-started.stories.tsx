@@ -13,17 +13,17 @@ const meta = {
   //   decorators: [withLayoutView],
   render: (args) => <StatefulPage {...args} />,
   args: {
-    currentProxy: null,
+    currentWorkspace: null,
     registryEntries: [],
     clientStatuses: [],
-    isInstallingClient: false,
-    createProxyIsPending: false,
+    isAddingWorkspaceToClient: false,
+    isCreateWorkspaceLoading: false,
     searchQuery: "",
     onSearchQueryChange: () => {},
-    onMcpSelect: () => {},
-    onInstallClient: () => {},
+    onClickRegistryEntry: () => {},
+    onAddWorkspaceToClient: () => {},
     // Accept any since storybook args typing requires this prop
-    onCreateProxy: async () => {},
+    onCreateWorkspace: async () => {},
   },
 } satisfies Meta<typeof GetStartedPageView>;
 
@@ -44,9 +44,9 @@ function StatefulPage(args: React.ComponentProps<typeof GetStartedPageView>) {
       {...args}
       searchQuery={searchQuery}
       onSearchQueryChange={setSearchQuery}
-      onMcpSelect={() => {}}
-      onInstallClient={() => {}}
-      onCreateProxy={async () => {}}
+      onClickRegistryEntry={() => {}}
+      onAddWorkspaceToClient={() => {}}
+      onCreateWorkspace={async () => {}}
     />
   );
 }
@@ -54,44 +54,44 @@ function StatefulPage(args: React.ComponentProps<typeof GetStartedPageView>) {
 // step 1a: new proxy
 export const Step1a_NewProxy: Story = {
   args: {
-    currentProxy: null,
+    currentWorkspace: null,
     registryEntries: [],
     clientStatuses: mockClientStatuses,
-    isInstallingClient: false,
-    createProxyIsPending: false,
+    isAddingWorkspaceToClient: false,
+    isCreateWorkspaceLoading: false,
   },
 };
 
 // step 1b: new proxy loading
 export const Step1b_NewProxyLoading: Story = {
   args: {
-    currentProxy: null,
+    currentWorkspace: null,
     registryEntries: [],
     clientStatuses: mockClientStatuses,
-    isInstallingClient: false,
-    createProxyIsPending: true,
+    isAddingWorkspaceToClient: false,
+    isCreateWorkspaceLoading: true,
   },
 };
 
 // step 2a: registry entry list (proxy created, no servers yet)
 export const Step2a_RegistryEntryList: Story = {
   args: {
-    currentProxy: { id: "proxy-1", servers: [] },
+    currentWorkspace: { id: "proxy-1", servers: [] },
     registryEntries: mockRegistryEntryList,
     clientStatuses: mockClientStatuses,
-    isInstallingClient: false,
-    createProxyIsPending: false,
+    isAddingWorkspaceToClient: false,
+    isCreateWorkspaceLoading: false,
   },
 };
 
 // step 2b: registry entry detail (dialog open)
 export const Step2b_RegistryEntryDetail: Story = {
   args: {
-    currentProxy: { id: "proxy-1", servers: [] },
+    currentWorkspace: { id: "proxy-1", servers: [] },
     registryEntries: mockRegistryEntryList,
     clientStatuses: mockClientStatuses,
-    isInstallingClient: false,
-    createProxyIsPending: false,
+    isAddingWorkspaceToClient: false,
+    isCreateWorkspaceLoading: false,
   },
   render: (args) => {
     const [open, setOpen] = useState(true);
@@ -114,22 +114,22 @@ export const Step2b_RegistryEntryDetail: Story = {
 // step 3: client installers (proxy with a server)
 export const Step3_ClientInstallers: Story = {
   args: {
-    currentProxy: { id: "proxy-1", servers: [{ name: "github-mcp" }] },
+    currentWorkspace: { id: "proxy-1", servers: [{ name: "github-mcp" }] },
     registryEntries: mockRegistryEntryList,
     clientStatuses: mockClientStatuses,
-    isInstallingClient: false,
-    createProxyIsPending: false,
+    isAddingWorkspaceToClient: false,
+    isCreateWorkspaceLoading: false,
   },
 };
 
 // step 3b: client install loading
 export const Step3b_ClientInstallLoading: Story = {
   args: {
-    currentProxy: { id: "proxy-1", servers: [{ name: "github-mcp" }] },
+    currentWorkspace: { id: "proxy-1", servers: [{ name: "github-mcp" }] },
     registryEntries: mockRegistryEntryList,
     clientStatuses: mockClientStatuses,
-    isInstallingClient: true,
-    createProxyIsPending: false,
+    isAddingWorkspaceToClient: true,
+    isCreateWorkspaceLoading: false,
   },
 };
 

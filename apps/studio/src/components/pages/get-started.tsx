@@ -37,36 +37,35 @@ type InstallerClientStatus = {
 };
 
 export interface GetStartedPageViewProps {
-  currentProxy: { id: string; servers?: unknown[] } | null;
+  // Step 1: Create workspace
+  isCreateWorkspaceLoading: boolean;
+  onCreateWorkspace: SubmitHandler<ProxyFormValues>;
+  currentWorkspace: { id: string; servers?: unknown[] } | null;
+
+  // Registry
   registryEntries: RegistryGetEntriesEntry[];
-  clientStatuses: InstallerClientStatus[];
-  isInstallingClient: boolean;
-
-  // Proxy form
-  createProxyIsPending: boolean;
-  onCreateProxy: SubmitHandler<ProxyFormValues>;
-
-  // Registry search
   searchQuery: string;
   onSearchQueryChange: (value: string) => void;
+  onClickRegistryEntry: (mcp: RegistryGetEntriesEntry) => void;
 
   // Actions
-  onMcpSelect: (mcp: RegistryGetEntriesEntry) => void;
-  onInstallClient: (clientId: ClientId) => void;
+  onAddWorkspaceToClient: (clientId: ClientId) => void;
+  clientStatuses: InstallerClientStatus[];
+  isAddingWorkspaceToClient: boolean;
 }
 
 export function GetStartedPageView(props: GetStartedPageViewProps) {
   const {
-    currentProxy,
+    currentWorkspace: currentProxy,
     registryEntries,
     clientStatuses,
-    isInstallingClient,
-    createProxyIsPending,
-    onCreateProxy,
+    isAddingWorkspaceToClient: isInstallingClient,
+    isCreateWorkspaceLoading: createProxyIsPending,
+    onCreateWorkspace: onCreateProxy,
     searchQuery,
     onSearchQueryChange,
-    onMcpSelect,
-    onInstallClient,
+    onClickRegistryEntry: onMcpSelect,
+    onAddWorkspaceToClient: onInstallClient,
   } = props;
 
   const [selectedClient, setSelectedClient] = useState<ClientId | undefined>();

@@ -215,16 +215,16 @@ export default function GetStartedPage() {
   return (
     <>
       <GetStartedPageView
-        currentProxy={currentProxy}
+        currentWorkspace={currentProxy}
         registryEntries={registryEntriesQuery.data?.entries ?? []}
         clientStatuses={listClientsQuery.data ?? []}
-        isInstallingClient={installationMutation.isPending}
-        createProxyIsPending={createProxyMutation.isPending}
-        onCreateProxy={handleProxySubmit}
+        isAddingWorkspaceToClient={installationMutation.isPending}
+        isCreateWorkspaceLoading={createProxyMutation.isPending}
+        onCreateWorkspace={handleProxySubmit}
         searchQuery={searchQuery}
         onSearchQueryChange={setSearchQuery}
-        onMcpSelect={handleMcpSelect}
-        onInstallClient={handleClientInstall}
+        onClickRegistryEntry={handleMcpSelect}
+        onAddWorkspaceToClient={handleClientInstall}
       />
 
       {/* MCP Install Dialog */}

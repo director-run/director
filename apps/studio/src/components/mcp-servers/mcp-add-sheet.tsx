@@ -295,63 +295,43 @@ export function McpAddFormHttpFields() {
 
       <div className="flex flex-col gap-y-2">
         <Label>Headers</Label>
-        <McpAddFormHeaderFields />
+        <KeyValueFieldArray
+          name="_headers"
+          keyPlaceholder="Header name"
+          valuePlaceholder="Value"
+          addSrText="Add header"
+        />
       </div>
     </div>
   );
 }
 
 export function McpAddFormEnvFields() {
-  const { control } = useFormContext();
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "_env",
-  });
-
-  const handleAdd = () => {
-    append(["", ""]);
-  };
-
   return (
-    <div className="space-y-2">
-      {fields.map((field, index) => (
-        <div key={field.id} className="flex flex-row gap-x-2 [&>div]:flex-1">
-          <InputField name={`_env.${index}.0`} placeholder="Variable name" />
-          <InputField name={`_env.${index}.1`} placeholder="Value" />
-          {index < fields.length - 1 ? (
-            <Button
-              className="size-8 leading-8"
-              type="button"
-              variant="secondary"
-              size="icon"
-              onClick={() => remove(index)}
-            >
-              <TrashIcon />
-              <div className="sr-only">Remove</div>
-            </Button>
-          ) : (
-            <Button
-              className="size-8 leading-8"
-              type="button"
-              variant="secondary"
-              size="icon"
-              onClick={handleAdd}
-            >
-              <PlusIcon />
-              <div className="sr-only">Add environment variable</div>
-            </Button>
-          )}
-        </div>
-      ))}
-    </div>
+    <KeyValueFieldArray
+      name="_env"
+      keyPlaceholder="Variable name"
+      valuePlaceholder="Value"
+      addSrText="Add environment variable"
+    />
   );
 }
 
-export function McpAddFormHeaderFields() {
+export function KeyValueFieldArray({
+  name,
+  keyPlaceholder,
+  valuePlaceholder,
+  addSrText,
+}: {
+  name: string;
+  keyPlaceholder: string;
+  valuePlaceholder: string;
+  addSrText: string;
+}) {
   const { control } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "_headers",
+    name,
   });
 
   const handleAdd = () => {
@@ -362,8 +342,14 @@ export function McpAddFormHeaderFields() {
     <div className="space-y-2">
       {fields.map((field, index) => (
         <div key={field.id} className="flex flex-row gap-x-2 [&>div]:flex-1">
-          <InputField name={`_headers.${index}.0`} placeholder="Header name" />
-          <InputField name={`_headers.${index}.1`} placeholder="Value" />
+          <InputField
+            name={`${name}.${index}.0`}
+            placeholder={keyPlaceholder}
+          />
+          <InputField
+            name={`${name}.${index}.1`}
+            placeholder={valuePlaceholder}
+          />
           {index < fields.length - 1 ? (
             <Button
               className="size-8 leading-8"
@@ -384,7 +370,7 @@ export function McpAddFormHeaderFields() {
               onClick={handleAdd}
             >
               <PlusIcon />
-              <div className="sr-only">Add header</div>
+              <div className="sr-only">{addSrText}</div>
             </Button>
           )}
         </div>

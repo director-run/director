@@ -215,6 +215,13 @@ function McpAddFormFields({
   proxies,
   isSubmitting = false,
 }: McpAddFormFieldsProps) {
+  const { control } = useFormContext();
+  const transportType = useWatch({
+    control,
+    name: "server.transport.type",
+    defaultValue: "stdio",
+  });
+
   return (
     <>
       {proxies && (
@@ -239,29 +246,12 @@ function McpAddFormFields({
         </SelectNativeField>
       </div>
 
-      <McpAddFormTransportFields />
+      {transportType === "stdio" && <McpAddFormStdioFields />}
+      {transportType === "http" && <McpAddFormHttpFields />}
 
       <Button type="submit" disabled={isSubmitting}>
         {isSubmitting ? "Adding..." : "Add MCP Server"}
       </Button>
-    </>
-  );
-}
-
-function McpAddFormTransportFields() {
-  const { control } = useFormContext();
-  const transportType = useWatch({
-    control,
-    name: "server.transport.type",
-    defaultValue: "stdio",
-  });
-
-  console.log("Current transport type:", transportType);
-
-  return (
-    <>
-      {transportType === "stdio" && <McpAddFormStdioFields />}
-      {transportType === "http" && <McpAddFormHttpFields />}
     </>
   );
 }
@@ -278,7 +268,12 @@ function McpAddFormStdioFields() {
 
       <div className="flex flex-col gap-y-2">
         <Label>Environment variables</Label>
-        <McpAddFormEnvFields />
+        <KeyValueFieldArray
+          name="_env"
+          keyPlaceholder="Variable name"
+          valuePlaceholder="Value"
+          addSrText="Add environment variable"
+        />{" "}
       </div>
     </div>
   );
@@ -303,17 +298,6 @@ function McpAddFormHttpFields() {
         />
       </div>
     </div>
-  );
-}
-
-function McpAddFormEnvFields() {
-  return (
-    <KeyValueFieldArray
-      name="_env"
-      keyPlaceholder="Variable name"
-      valuePlaceholder="Value"
-      addSrText="Add environment variable"
-    />
   );
 }
 

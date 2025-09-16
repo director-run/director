@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { MasterRegistryEntry, StoreGetAll } from "../types";
 import { Button } from "../ui/button";
+import { EmptyState, EmptyStateDescription } from "../ui/empty-state";
 import { FormWithSchema } from "../ui/form";
 import { InputField } from "../ui/form/input-field";
 import { SelectNativeField } from "../ui/form/select-native-field";
@@ -10,9 +11,11 @@ interface RegistryInstallFormProps {
   mcp: MasterRegistryEntry;
   proxies?: StoreGetAll;
   defaultProxyId?: string;
-  onSubmit: (values: {
+  entryInstalledOn?: string[];
+  onSubmit: (params: {
     proxyId?: string;
-    parameters: Record<string, string>;
+    entryId: string;
+    parameters?: Record<string, string>;
   }) => Promise<void>;
   isSubmitting?: boolean;
 }
@@ -21,6 +24,7 @@ export function RegistryInstallForm({
   mcp,
   proxies,
   defaultProxyId,
+  entryInstalledOn = [],
   onSubmit,
   isSubmitting = false,
 }: RegistryInstallFormProps) {
@@ -29,8 +33,29 @@ export function RegistryInstallForm({
       array.findIndex((p) => p.name === parameter.name) === index,
   );
 
+  // Filter out proxies where the entry is already installed
+  const availableProxies = proxies?.filter(
+    (proxy) => !entryInstalledOn.includes(proxy.id),
+  );
+
+  // Show empty state if all proxies have the entry installed
+  if (
+    proxies &&
+    proxies.length > 0 &&
+    entryInstalledOn.length === proxies.length
+  ) {
+    return (
+      <EmptyState>
+        <EmptyStateDescription>
+          This MCP has already been installed on all your proxies.
+        </EmptyStateDescription>
+      </EmptyState>
+    );
+  }
+
   const schema = z.object({
-    ...(proxies && { proxyId: z.string() }),
+    ...(availableProxies &&
+      availableProxies.length > 0 && { proxyId: z.string() }),
     parameters: z.object(
       parameters.reduce(
         (acc, param) => {
@@ -43,7 +68,10 @@ export function RegistryInstallForm({
   });
 
   const defaultValues = {
-    ...(proxies && { proxyId: defaultProxyId ?? proxies[0]?.id ?? "" }),
+    ...(availableProxies &&
+      availableProxies.length > 0 && {
+        proxyId: defaultProxyId ?? availableProxies[0]?.id ?? "",
+      }),
     parameters: parameters.reduce(
       (acc, param) => {
         acc[param.name] = "";
@@ -60,17 +88,19 @@ export function RegistryInstallForm({
       className="gap-y-0 overflow-hidden rounded-xl bg-accent-subtle shadow-[0_0_0_0.5px_rgba(55,50,46,0.15)]"
       onSubmit={(values) => {
         onSubmit({
-          proxyId: proxies
-            ? (values as { proxyId?: string }).proxyId
-            : undefined,
+          proxyId:
+            availableProxies && availableProxies.length > 0
+              ? (values as { proxyId?: string }).proxyId
+              : undefined,
+          entryId: mcp.id as unknown as string,
           parameters: values.parameters,
         });
       }}
     >
       <div className="flex flex-col gap-y-4 p-4">
-        {proxies && (
+        {availableProxies && availableProxies.length > 0 && (
           <SelectNativeField name="proxyId" label="Select a proxy">
-            {proxies.map((it) => (
+            {availableProxies.map((it) => (
               <option key={it.id} value={it.id}>
                 {it.name}
               </option>

@@ -15,10 +15,7 @@ import {
   type FormValues as ProxyFormValues,
 } from "../get-started/get-started-proxy-form";
 import { proxySchema } from "../get-started/get-started-proxy-form";
-import type {
-  DeprecatedRegistryEntryListItem,
-  RegistryEntryList,
-} from "../types";
+import type { RegistryEntryList } from "../types";
 import { Container } from "../ui/container";
 import { Section } from "../ui/section";
 
@@ -49,7 +46,9 @@ export interface GetStartedPageViewProps {
   registryEntries: RegistryEntryList;
   searchQuery: string;
   onSearchQueryChange: (value: string) => void;
-  onClickRegistryEntry: (mcp: DeprecatedRegistryEntryListItem) => void;
+  onClickRegistryEntry: (entry: {
+    name: string;
+  }) => void;
 
   // Actions
   onAddWorkspaceToClient: (clientId: ClientId) => void;

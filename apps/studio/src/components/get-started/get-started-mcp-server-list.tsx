@@ -1,10 +1,7 @@
 "use client";
 
 import { McpLogo } from "../mcp-logo";
-import type {
-  DeprecatedRegistryEntryListItem,
-  RegistryEntryList,
-} from "../types";
+import type { RegistryEntryList } from "../types";
 import { EmptyState, EmptyStateTitle } from "../ui/empty-state";
 import { Input } from "../ui/input";
 import {
@@ -17,7 +14,7 @@ interface GetStartedMcpServerListProps {
   searchQuery: string;
   onSearchQueryChange: (query: string) => void;
   registryEntries: RegistryEntryList;
-  onMcpSelect: (mcp: DeprecatedRegistryEntryListItem) => void;
+  onMcpSelect: (entry: { name: string }) => void;
 }
 
 export function GetStartedMcpServerList({

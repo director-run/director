@@ -17,8 +17,6 @@ export type WorkspaceTarget =
 export type MCPTool = NonNullable<RegistryEntryDetail["tools"]>[number];
 
 // Trash
-export type DeprecatedRegistryEntryListItem =
-  GatewayRouterOutputs["registry"]["getEntries"]["entries"][number]; // TODO: Remove this type
 export type DeprecatedWorkspaceTargetTransport = WorkspaceTarget["transport"];
 
 export enum ConfiguratorTarget {

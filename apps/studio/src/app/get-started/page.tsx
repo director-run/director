@@ -10,7 +10,6 @@ import { proxySchema } from "../../components/get-started/get-started-proxy-form
 import type { FormValues as ProxyFormValues } from "../../components/get-started/get-started-proxy-form";
 import { GetStartedPageView } from "../../components/pages/get-started";
 import { FullScreenLoader } from "../../components/pages/global/loader";
-import type { DeprecatedRegistryEntryListItem } from "../../components/types";
 import { toast } from "../../components/ui/toast";
 import { DIRECTOR_URL } from "../../config";
 import { useZodForm } from "../../hooks/use-zod-form";
@@ -25,8 +24,9 @@ export default function GetStartedPage() {
   const [currentProxyId, setCurrentProxyId] = useState<string | null>(null);
 
   // Installer state
-  const [selectedMcp, setSelectedMcp] =
-    useState<DeprecatedRegistryEntryListItem | null>(null);
+  const [selectedRegistryEntryName, setSelectedRegistryEntryName] = useState<
+    string | null
+  >(null);
   const [isInstallDialogOpen, setIsInstallDialogOpen] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
 
@@ -59,10 +59,10 @@ export default function GetStartedPage() {
   const listClientsQuery = trpc.installer.allClients.useQuery();
   const entryQuery = trpc.registry.getEntryByName.useQuery(
     {
-      name: selectedMcp?.name || "",
+      name: selectedRegistryEntryName || "",
     },
     {
-      enabled: !!selectedMcp && isInstallDialogOpen,
+      enabled: !!selectedRegistryEntryName && isInstallDialogOpen,
     },
   );
 
@@ -148,8 +148,8 @@ export default function GetStartedPage() {
     });
   };
 
-  const handleMcpSelect = (mcp: DeprecatedRegistryEntryListItem) => {
-    setSelectedMcp(mcp);
+  const handleMcpSelect = (entry: { name: string }) => {
+    setSelectedRegistryEntryName(entry.name);
     setIsInstallDialogOpen(true);
   };
 
@@ -158,18 +158,18 @@ export default function GetStartedPage() {
     entryId: string;
     parameters?: Record<string, string>;
   }) => {
-    if (!selectedMcp) {
+    if (!selectedRegistryEntryName) {
       return;
     }
     const transport = await transportMutation.mutateAsync({
-      entryName: selectedMcp.name,
+      entryName: selectedRegistryEntryName,
       parameters: values.parameters ?? {},
     });
     if (values.proxyId) {
       installServerMutation.mutate({
         proxyId: values.proxyId,
         server: {
-          name: selectedMcp.name,
+          name: selectedRegistryEntryName,
           transport,
         },
       });
@@ -195,7 +195,7 @@ export default function GetStartedPage() {
         onAddWorkspaceToClient={handleClientInstall}
       />
 
-      {selectedMcp && (
+      {selectedRegistryEntryName && (
         <GetStartedInstallServerDialog
           registryEntry={entryQuery.data}
           isRegistryEntryLoading={entryQuery.isLoading}

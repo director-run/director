@@ -9,7 +9,7 @@ export type RegistryEntryDetail =
 
 // Workspace
 export type WorkspaceList = GatewayRouterOutputs["store"]["getAll"];
-export type Workspace = GatewayRouterOutputs["store"]["get"];
+export type WorkspaceDetail = GatewayRouterOutputs["store"]["get"];
 export type WorkspaceTarget =
   GatewayRouterOutputs["store"]["get"]["targets"][number];
 

@@ -2,7 +2,7 @@ import { McpLogo } from "../mcp-logo";
 import { McpDescriptionList } from "../mcp-servers/mcp-description-list";
 import { McpToolsTable } from "../mcp-servers/mcp-tools-table";
 import type { RegistryEntryDetail } from "../types";
-import type { Workspace, WorkspaceTarget } from "../types";
+import type { WorkspaceDetail, WorkspaceTarget } from "../types";
 import { Container } from "../ui/container";
 import { EmptyState, EmptyStateTitle } from "../ui/empty-state";
 import { Markdown } from "../ui/markdown";
@@ -15,7 +15,7 @@ import {
 
 interface WorkspaceTargetDetailProps {
   workspaceTarget: WorkspaceTarget;
-  workspace: Workspace;
+  workspace: WorkspaceDetail;
   entryData: Pick<RegistryEntryDetail, "icon" | "readme">;
   description?: string | null;
   toolLinks: Array<{

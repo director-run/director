@@ -1,6 +1,6 @@
-import type { Workspace } from "../../../components/types.ts";
+import type { WorkspaceDetail } from "../../../components/types.ts";
 
-export const mockWorkspace: Workspace = {
+export const mockWorkspace: WorkspaceDetail = {
     "id": "dgfgfd",
     "name": "dgfgfd",
     "description": "Mock workspace for testing",

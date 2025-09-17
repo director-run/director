@@ -1,6 +1,6 @@
 import { useCopyToClipboard } from "../../hooks/use-copy-to-clipboard";
 import { ConfiguratorTarget } from "../types";
-import type { Workspace } from "../types";
+import type { WorkspaceDetail } from "../types";
 import { Button } from "../ui/button";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
 import { toast } from "../ui/toast";
@@ -9,7 +9,7 @@ import { ProxyInstallers } from "./proxy-installers";
 import { ProxyManualDialog } from "./proxy-manual-dialog";
 
 export interface WorkspaceSectionClientsProps {
-  workspace: Workspace;
+  workspace: WorkspaceDetail;
   gatewayBaseUrl: string;
   clients: Client[];
   installers: Record<string, boolean>;

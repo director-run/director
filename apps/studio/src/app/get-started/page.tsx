@@ -15,7 +15,6 @@ import { toast } from "../../components/ui/toast";
 import { DIRECTOR_URL } from "../../config";
 import { useZodForm } from "../../hooks/use-zod-form";
 import { trpc } from "../../state/client";
-import { registryQuerySerializer } from "../../state/use-registry-query";
 
 export type ClientId = "claude" | "cursor" | "vscode";
 
@@ -176,34 +175,6 @@ export default function GetStartedPage() {
       });
     }
   };
-
-  const handleClickInstall = async () => {
-    if (!selectedMcp || !currentProxy?.id) {
-      return;
-    }
-    const transport = await transportMutation.mutateAsync({
-      entryName: selectedMcp.name,
-      parameters: {},
-    });
-    installServerMutation.mutate({
-      proxyId: currentProxy.id,
-      server: { name: selectedMcp.name, transport },
-    });
-  };
-
-  const toolLinks = selectedMcp
-    ? (selectedMcp.tools ?? [])
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .map((tool) => ({
-          title: tool.name,
-          subtitle: tool.description?.replace(/\[([^\]]+)\]/g, ""),
-          scroll: false,
-          href: registryQuerySerializer({
-            toolId: tool.name,
-            serverId: null,
-          }),
-        }))
-    : [];
 
   if (!hasData) {
     return <FullScreenLoader />;

@@ -18,9 +18,7 @@ export type MasterMCPTool = NonNullable<MasterRegistryEntry["tools"]>[number];
 
 export type MasterWorkspaceList = GatewayRouterOutputs["store"]["getAll"];
 
-export type StoreGet = MasterWorkspace;
-
-export type StoreServer = StoreGet["servers"][number];
+export type StoreServer = MasterWorkspace["servers"][number];
 
 export type StoreServerTransport = StoreServer["transport"];
 

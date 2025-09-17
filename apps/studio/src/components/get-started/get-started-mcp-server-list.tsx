@@ -1,7 +1,10 @@
 "use client";
 
 import { McpLogo } from "../mcp-logo";
-import type { RegistryGetEntriesEntry } from "../types";
+import type {
+  MasterRegistryEntryList,
+  MasterRegistryEntryListItem,
+} from "../types";
 import { EmptyState, EmptyStateTitle } from "../ui/empty-state";
 import { Input } from "../ui/input";
 import {
@@ -13,8 +16,8 @@ import {
 interface GetStartedMcpServerListProps {
   searchQuery: string;
   onSearchQueryChange: (query: string) => void;
-  registryEntries: RegistryGetEntriesEntry[];
-  onMcpSelect: (mcp: RegistryGetEntriesEntry) => void;
+  registryEntries: MasterRegistryEntryList;
+  onMcpSelect: (mcp: MasterRegistryEntryListItem) => void;
 }
 
 export function GetStartedMcpServerList({

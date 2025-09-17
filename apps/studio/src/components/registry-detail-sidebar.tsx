@@ -1,10 +1,10 @@
 import { RegistryInstallForm } from "./registry/registry-install-form";
-import type { MasterRegistryEntry, MasterWorkspaceList } from "./types";
+import type { MasterRegistryEntryDetail, MasterWorkspaceList } from "./types";
 import { Badge, BadgeGroup, BadgeLabel } from "./ui/badge";
 import { Section, SectionHeader, SectionTitle } from "./ui/section";
 
 interface RegistryDetailSidebarProps {
-  entry: Pick<MasterRegistryEntry, "name" | "id" | "parameters">;
+  entry: Pick<MasterRegistryEntryDetail, "name" | "id" | "parameters">;
   proxies?: MasterWorkspaceList;
   entryInstalledOn?: string[];
   onClickInstall: (params: {

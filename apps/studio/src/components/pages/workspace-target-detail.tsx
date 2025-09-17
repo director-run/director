@@ -1,7 +1,7 @@
 import { McpLogo } from "../mcp-logo";
 import { McpDescriptionList } from "../mcp-servers/mcp-description-list";
 import { McpToolsTable } from "../mcp-servers/mcp-tools-table";
-import type { MasterRegistryEntry } from "../types";
+import type { MasterRegistryEntryDetail } from "../types";
 import type { MasterWorkspace, MasterWorkspaceTarget } from "../types";
 import { Container } from "../ui/container";
 import { EmptyState, EmptyStateTitle } from "../ui/empty-state";
@@ -16,7 +16,7 @@ import {
 interface WorkspaceTargetDetailProps {
   workspaceTarget: MasterWorkspaceTarget;
   workspace: MasterWorkspace;
-  entryData: Pick<MasterRegistryEntry, "icon" | "readme">;
+  entryData: Pick<MasterRegistryEntryDetail, "icon" | "readme">;
   description?: string | null;
   toolLinks: Array<{
     title: string;

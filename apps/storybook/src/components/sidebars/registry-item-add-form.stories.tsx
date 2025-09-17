@@ -4,14 +4,14 @@ import {
   SplitViewMain,
   SplitViewSide,
 } from "@director.run/studio/components/split-view.tsx";
-import type { StoreGetAll } from "@director.run/studio/components/types.ts";
+import type { MasterWorkspaceList } from "@director.run/studio/components/types.ts";
 import { Container } from "@director.run/studio/components/ui/container.tsx";
 import { mockRegistryEntry } from "@director.run/studio/test/fixtures/registry/entry.ts";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { withLayoutView } from "../../helpers/decorators";
 
-const mockProxies: StoreGetAll = [
+const mockProxies: MasterWorkspaceList = [
   {
     id: "dev-proxy",
     name: "Development Proxy",
@@ -118,7 +118,7 @@ const BaseStory = ({
   showDebug = true,
 }: {
   entry?: typeof mockRegistryEntry;
-  proxies?: StoreGetAll;
+  proxies?: MasterWorkspaceList;
   entryInstalledOn?: string[];
   isInstalling?: boolean;
   showDebug?: boolean;

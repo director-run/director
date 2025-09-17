@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { MasterRegistryEntry, StoreGetAll } from "../types";
+import type { MasterRegistryEntry, MasterWorkspaceList } from "../types";
 import { Button } from "../ui/button";
 import { EmptyState, EmptyStateDescription } from "../ui/empty-state";
 import { FormWithSchema } from "../ui/form";
@@ -9,7 +9,7 @@ import { SimpleMarkdown } from "../ui/markdown";
 
 interface RegistryInstallFormProps {
   registryEntry: Pick<MasterRegistryEntry, "name" | "id" | "parameters">;
-  proxies?: StoreGetAll;
+  proxies?: MasterWorkspaceList;
   defaultProxyId?: string;
   entryInstalledOn?: string[];
   onSubmit: (params: {

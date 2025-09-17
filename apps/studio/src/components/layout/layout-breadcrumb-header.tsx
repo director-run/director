@@ -37,7 +37,7 @@ export function LayoutBreadcrumbHeader({
             const isClickable = !!item.onClick;
 
             return (
-              <div key={index} className="flex items-center">
+              <>
                 {index > 0 && <BreadcrumbSeparator />}
                 <BreadcrumbItem>
                   {isClickable ? (
@@ -61,7 +61,7 @@ export function LayoutBreadcrumbHeader({
                     </BreadcrumbPage>
                   )}
                 </BreadcrumbItem>
-              </div>
+              </>
             );
           })}
         </BreadcrumbList>

@@ -1,6 +1,6 @@
-import type { RegistryGetEntryTools } from "@director.run/studio/components/types.ts";
+import type { MasterMCPTool } from "@director.run/studio/components/types.ts";
 
-export const mockTools: RegistryGetEntryTools = [
+export const mockTools: MasterMCPTool[] = [
   {
     name: "search_repositories",
     description: "Search for repositories on GitHub",

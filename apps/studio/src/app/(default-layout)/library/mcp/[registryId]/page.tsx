@@ -7,8 +7,8 @@ import {
   LayoutViewContent,
 } from "../../../../../components/layout/layout";
 import { LayoutBreadcrumbHeader } from "../../../../../components/layout/layout-breadcrumb-header";
+import { RegistryDetailSidebar } from "../../../../../components/registry-detail-sidebar";
 import { RegistryItem } from "../../../../../components/registry-item";
-import { RegistryDetailSidebar } from "../../../../../components/registry-item-add-form";
 import { RegistryEntrySkeleton } from "../../../../../components/registry/registry-entry-skeleton";
 import { RegistryInstallForm } from "../../../../../components/registry/registry-install-form";
 import { RegistryToolSheet } from "../../../../../components/registry/registry-tool-sheet";

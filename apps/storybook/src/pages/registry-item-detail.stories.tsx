@@ -1,4 +1,4 @@
-import { RegistryDetailSidebar } from "@director.run/studio/components/registry-item-add-form.tsx";
+import { RegistryDetailSidebar } from "@director.run/studio/components/registry-detail-sidebar.tsx";
 import { RegistryItem } from "@director.run/studio/components/registry-item.tsx";
 import { RegistryToolSheet } from "@director.run/studio/components/registry/registry-tool-sheet.tsx";
 import {

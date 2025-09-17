@@ -43,16 +43,12 @@ const httpTransportSchema = z.object({
   headers: z.record(requiredStringSchema, z.string()).optional(),
 });
 
-type HTTPTransport = z.infer<typeof httpTransportSchema>;
-
 const stdioTransportSchema = z.object({
   type: z.literal("stdio"),
   command: requiredStringSchema,
   args: z.array(z.string()),
   env: z.record(requiredStringSchema, z.string()).optional(),
 });
-
-type STDIOTransport = z.infer<typeof stdioTransportSchema>;
 
 const proxyTransport = z.discriminatedUnion("type", [
   httpTransportSchema,
@@ -73,38 +69,21 @@ const proxyTargetAttributesSchema = z.object({
   disabled: z.boolean().optional(),
 });
 
-const nonEmptyTupleSchema = z
-  .array(z.tuple([z.string(), z.string()]))
-  .transform((data) => {
-    return data.filter(([key, value]) => {
-      if (key.trim() === "" || value.trim() === "") {
-        return false;
-      }
-
-      return true;
-    });
-  })
-  .refine(
-    (envVars) => {
-      // All items except the last one must have non-empty strings
-      for (let i = 0; i <= envVars.length - 1; i++) {
-        if (envVars[i][0].trim() === "" || envVars[i][1].trim() === "") {
-          return false;
-        }
-      }
-
-      return true;
-    },
-    {
-      message: "All values must have both name and value",
-    },
-  );
-
 const formSchema = z.object({
   proxyId: z.string().optional(),
   server: proxyTargetAttributesSchema,
-  _env: nonEmptyTupleSchema,
-  _headers: nonEmptyTupleSchema,
+  _env: z.array(
+    z.object({
+      key: z.string(),
+      value: z.string(),
+    }),
+  ),
+  _headers: z.array(
+    z.object({
+      key: z.string(),
+      value: z.string(),
+    }),
+  ),
 });
 
 export type McpAddFormData = z.infer<typeof formSchema>;
@@ -139,8 +118,8 @@ export function McpAddSheet({
         env: {},
       },
     },
-    _env: [["", ""]] as [string, string][],
-    _headers: [["", ""]] as [string, string][],
+    _env: [{ key: "", value: "" }],
+    _headers: [{ key: "", value: "" }],
   };
 
   return (
@@ -313,13 +292,17 @@ function KeyValueFieldArray({
   addSrText: string;
 }) {
   const { control } = useFormContext();
+
   const { fields, append, remove } = useFieldArray({
     control,
     name,
   });
 
   const handleAdd = () => {
-    append(["", ""]);
+    append({
+      key: "",
+      value: "",
+    });
   };
 
   return (
@@ -327,11 +310,11 @@ function KeyValueFieldArray({
       {fields.map((field, index) => (
         <div key={field.id} className="flex flex-row gap-x-2 [&>div]:flex-1">
           <InputField
-            name={`${name}.${index}.0`}
+            name={`${name}.${index}.key`}
             placeholder={keyPlaceholder}
           />
           <InputField
-            name={`${name}.${index}.1`}
+            name={`${name}.${index}.value`}
             placeholder={valuePlaceholder}
           />
           {index < fields.length - 1 ? (

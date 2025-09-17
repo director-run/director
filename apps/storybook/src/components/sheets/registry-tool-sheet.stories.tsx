@@ -1,11 +1,11 @@
 import { RegistryToolSheet } from "@director.run/studio/components/registry/registry-tool-sheet.tsx";
-import type { RegistryGetEntryTool } from "@director.run/studio/components/types.ts";
+import type { MasterMCPTool } from "@director.run/studio/components/types.ts";
 import { Button } from "@director.run/studio/components/ui/button.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
 // Mock tool data
-const mockToolWithSchema: RegistryGetEntryTool = {
+const mockToolWithSchema: MasterMCPTool = {
   name: "search_repositories",
   description:
     "Search for repositories on GitHub using various filters and sorting options. This tool allows you to find repositories based on keywords, language, stars, and other criteria.",
@@ -37,7 +37,7 @@ const mockToolWithSchema: RegistryGetEntryTool = {
   },
 };
 
-const mockToolWithoutSchema: RegistryGetEntryTool = {
+const mockToolWithoutSchema: MasterMCPTool = {
   name: "get_user_info",
   description:
     "Get information about the authenticated user. This tool retrieves basic profile information and account details for the currently authenticated GitHub user.",
@@ -48,7 +48,7 @@ const mockToolWithoutSchema: RegistryGetEntryTool = {
   },
 };
 
-const mockToolWithComplexSchema: RegistryGetEntryTool = {
+const mockToolWithComplexSchema: MasterMCPTool = {
   name: "create_issue",
   description:
     "Create a new issue in a GitHub repository. This tool allows you to create issues with titles, descriptions, labels, assignees, and milestones.",

@@ -1,5 +1,5 @@
 "use client";
-import type { RegistryGetEntryTool } from "../types";
+import type { MasterMCPTool } from "../types";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -30,7 +30,7 @@ import {
   SheetTitle,
 } from "../ui/sheet";
 interface RegistryToolSheetProps {
-  tool: RegistryGetEntryTool;
+  tool: MasterMCPTool;
   mcpName: string;
   onClose: () => void;
 }

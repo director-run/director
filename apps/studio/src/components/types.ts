@@ -14,13 +14,11 @@ export type MasterWorkspace = GatewayRouterOutputs["store"]["get"];
 
 export type MasterWorkspaceTarget = MasterWorkspace["targets"][number];
 
-export type RegistryGetEntryTools = MasterRegistryEntry["tools"];
-
-export type RegistryGetEntryTool = NonNullable<RegistryGetEntryTools>[number];
+export type MasterMCPTool = NonNullable<MasterRegistryEntry["tools"]>[number];
 
 export type StoreGetAll = GatewayRouterOutputs["store"]["getAll"];
 
-export type StoreGet = GatewayRouterOutputs["store"]["get"];
+export type StoreGet = MasterWorkspace;
 
 export type StoreServer = StoreGet["servers"][number];
 

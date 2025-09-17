@@ -13,11 +13,11 @@ import {
 } from "../ui/section";
 
 interface WorkspaceTargetDetailProps {
-  mcp: {
+  workspaceTarget: {
     name: string;
     transport: StoreServerTransport;
   };
-  proxy: {
+  workspace: {
     id: string;
     name: string;
   };
@@ -35,8 +35,8 @@ interface WorkspaceTargetDetailProps {
 }
 
 export function WorkspaceTargetDetail({
-  mcp,
-  proxy,
+  workspaceTarget,
+  workspace,
   entryData,
   description,
   toolLinks,
@@ -48,14 +48,14 @@ export function WorkspaceTargetDetail({
       <Section>
         <McpLogo src={entryData?.icon} className="size-9" />
         <SectionHeader>
-          <SectionTitle>{mcp.name}</SectionTitle>
+          <SectionTitle>{workspaceTarget.name}</SectionTitle>
           <SectionDescription>
             Installed on{" "}
             <button
-              onClick={() => onProxyClick?.(proxy.id)}
+              onClick={() => onProxyClick?.(workspace.id)}
               className="cursor-pointer text-fg underline"
             >
-              {proxy?.name}
+              {workspace?.name}
             </button>
           </SectionDescription>
         </SectionHeader>
@@ -70,7 +70,7 @@ export function WorkspaceTargetDetail({
           </SectionTitle>
         </SectionHeader>
 
-        <McpDescriptionList transport={mcp.transport} />
+        <McpDescriptionList transport={workspaceTarget.transport} />
       </Section>
 
       <Section>

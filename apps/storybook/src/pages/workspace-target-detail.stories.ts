@@ -1,6 +1,8 @@
 import { WorkspaceTargetDetail } from "@director.run/studio/components/pages/workspace-target-detail.tsx";
 import type { StoreServerTransport } from "@director.run/studio/components/types.ts";
 import { mockRegistryEntry } from "@director.run/studio/test/fixtures/registry/entry.ts";
+import { mockWorkspace } from "@director.run/studio/test/fixtures/workspace/workspace.js";
+import { mockWorkspaceTarget } from "@director.run/studio/test/fixtures/workspace/worskspace-target.js";
 import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../helpers/decorators";
 
@@ -15,23 +17,6 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-
-const mockMcp = {
-  name: "github-mcp",
-  transport: {
-    type: "stdio" as const,
-    command: "npx",
-    args: ["@modelcontextprotocol/server-github"],
-    env: {
-      GITHUB_TOKEN: "ghp_xxxxxxxxxxxxxxxxxxxx",
-    },
-  } as StoreServerTransport,
-};
-
-const mockProxy = {
-  id: "dev-proxy",
-  name: "Development Proxy",
-};
 
 const mockDescription =
   "A comprehensive GitHub integration that provides tools to interact with repositories, issues, pull requests, and more through the Model Context Protocol.";
@@ -65,8 +50,8 @@ const mockToolLinks = [
 
 export const Default: Story = {
   args: {
-    mcp: mockMcp,
-    proxy: mockProxy,
+    workspaceTarget: mockWorkspaceTarget,
+    workspace: mockWorkspace,
     entryData: mockRegistryEntry,
     description: mockDescription,
     toolLinks: mockToolLinks,
@@ -77,8 +62,8 @@ export const Default: Story = {
 export const WithHttpTransport: Story = {
   args: {
     ...Default.args,
-    mcp: {
-      ...mockMcp,
+    workspaceTarget: {
+      ...mockWorkspaceTarget,
       transport: mockHttpTransport,
     },
   },
@@ -98,7 +83,7 @@ export const SparselyPopulated: Story = {
 export const LongStrings: Story = {
   args: {
     ...Default.args,
-    proxy: {
+    workspace: {
       id: "very-long-proxy-name-that-should-wrap",
       name: "Very Long Proxy Name That Should Wrap Nicely in the UI",
     },

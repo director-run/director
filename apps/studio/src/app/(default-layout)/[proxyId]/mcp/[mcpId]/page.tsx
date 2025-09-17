@@ -149,8 +149,8 @@ export default function McpServerPage() {
 
       <LayoutViewContent>
         <WorkspaceTargetDetail
-          mcp={mcp}
-          proxy={proxy}
+          workspaceTarget={mcp}
+          workspace={proxy}
           entryData={entryData}
           description={description}
           toolLinks={toolLinks}

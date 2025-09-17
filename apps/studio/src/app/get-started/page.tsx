@@ -17,14 +17,6 @@ import { useZodForm } from "../../hooks/use-zod-form";
 import { trpc } from "../../state/client";
 import { registryQuerySerializer } from "../../state/use-registry-query";
 
-type StepStatus = "not-started" | "in-progress" | "completed";
-
-interface Steps {
-  create: StepStatus;
-  add: StepStatus;
-  connect: StepStatus;
-}
-
 export type ClientId = "claude" | "cursor" | "vscode";
 
 export default function GetStartedPage() {

@@ -101,7 +101,9 @@ export const Step2b_RegistryEntryDetail: Story = {
         <GetStartedInstallServerDialog
           registryEntry={mockRegistryEntry}
           isRegistryEntryLoading={false}
-          onClickInstall={() => {}}
+          proxies={[]}
+          entryInstalledOn={[]}
+          onClickInstall={async () => {}}
           isInstalling={false}
           open={open}
           onOpenChange={setOpen}

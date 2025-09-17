@@ -116,12 +116,14 @@ const BaseStory = ({
   entryInstalledOn,
   isInstalling = false,
   showDebug = true,
+  onClickCancel,
 }: {
   entry?: typeof mockRegistryEntry;
   proxies?: WorkspaceList;
   entryInstalledOn?: string[];
   isInstalling?: boolean;
   showDebug?: boolean;
+  onClickCancel?: () => void;
 }) => {
   const [installResults, setInstallResults] = useState<
     Array<{
@@ -172,6 +174,7 @@ const BaseStory = ({
               entryInstalledOn={entryInstalledOn}
               onClickInstall={handleClickInstall}
               isInstalling={isInstalling}
+              onClickCancel={onClickCancel}
             />
           </SplitViewSide>
         </SplitView>
@@ -220,7 +223,13 @@ export const UndefinedProxies: Story = {
     entry: mockRegistryEntry,
     onClickInstall: async () => {},
   },
-  render: () => <BaseStory proxies={undefined} entryInstalledOn={[]} />,
+  render: () => (
+    <BaseStory
+      proxies={undefined}
+      entryInstalledOn={[]}
+      onClickCancel={() => {}}
+    />
+  ),
 };
 
 // 5. Empty proxies array - should show "already installed" message

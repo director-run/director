@@ -12,6 +12,7 @@ interface RegistryDetailSidebarProps {
     entryId: string;
     parameters?: Record<string, string>;
   }) => Promise<void>;
+  onClickCancel?: () => void;
   isInstalling?: boolean;
 }
 
@@ -20,6 +21,7 @@ export function RegistryDetailSidebar({
   proxies,
   entryInstalledOn = [],
   onClickInstall,
+  onClickCancel,
   isInstalling = false,
 }: RegistryDetailSidebarProps) {
   return (
@@ -56,6 +58,7 @@ export function RegistryDetailSidebar({
           entryInstalledOn={entryInstalledOn}
           onSubmit={onClickInstall}
           isSubmitting={isInstalling}
+          onClickCancel={onClickCancel}
         />
       </Section>
     </>

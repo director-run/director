@@ -12,6 +12,7 @@ interface RegistryInstallFormProps {
   proxies?: WorkspaceList;
   defaultProxyId?: string;
   entryInstalledOn?: string[];
+  onClickCancel?: () => void;
   onSubmit: (params: {
     proxyId?: string;
     entryId: string;
@@ -25,6 +26,7 @@ export function RegistryInstallForm({
   proxies,
   defaultProxyId,
   entryInstalledOn = [],
+  onClickCancel,
   onSubmit,
   isSubmitting = false,
 }: RegistryInstallFormProps) {
@@ -125,6 +127,17 @@ export function RegistryInstallForm({
         <Button type="submit" disabled={isSubmitting} className="w-full">
           {isSubmitting ? "Installing..." : "Add to proxy"}
         </Button>
+        {onClickCancel && (
+          <Button
+            className="mt-2 w-full bg-surface/50"
+            variant="secondary"
+            onClick={onClickCancel}
+            disabled={isSubmitting}
+            type="button"
+          >
+            Cancel
+          </Button>
+        )}
       </div>
     </FormWithSchema>
   );

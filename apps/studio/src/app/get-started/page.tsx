@@ -154,24 +154,27 @@ export default function GetStartedPage() {
     setIsInstallDialogOpen(true);
   };
 
-  const handleMcpFormSubmit: SubmitHandler<{
-    proxyId: string;
-    parameters: Record<string, string>;
-  }> = async (values) => {
+  const handleMcpFormSubmit = async (values: {
+    proxyId?: string;
+    entryId: string;
+    parameters?: Record<string, string>;
+  }) => {
     if (!selectedMcp) {
       return;
     }
     const transport = await transportMutation.mutateAsync({
       entryName: selectedMcp.name,
-      parameters: values.parameters,
+      parameters: values.parameters ?? {},
     });
-    installServerMutation.mutate({
-      proxyId: values.proxyId,
-      server: {
-        name: selectedMcp.name,
-        transport,
-      },
-    });
+    if (values.proxyId) {
+      installServerMutation.mutate({
+        proxyId: values.proxyId,
+        server: {
+          name: selectedMcp.name,
+          transport,
+        },
+      });
+    }
   };
 
   const handleClickInstall = async () => {
@@ -225,7 +228,9 @@ export default function GetStartedPage() {
         <GetStartedInstallServerDialog
           registryEntry={entryQuery.data}
           isRegistryEntryLoading={entryQuery.isLoading}
-          onClickInstall={handleClickInstall}
+          proxies={proxyListQuery.data}
+          entryInstalledOn={[]} // No existing installations in get-started flow
+          onClickInstall={handleMcpFormSubmit}
           isInstalling={installServerMutation.isPending}
           open={isInstallDialogOpen}
           onOpenChange={setIsInstallDialogOpen}

@@ -1,4 +1,4 @@
-import { RegistryItemAddForm } from "@director.run/studio/components/registry-item-add-form.tsx";
+import { RegistryDetailSidebar } from "@director.run/studio/components/registry-item-add-form.tsx";
 import { RegistryItem } from "@director.run/studio/components/registry-item.tsx";
 import {
   SplitView,
@@ -40,7 +40,7 @@ export const KitchenSink = () => {
                   <RegistryItem entry={mockRegistryEntry} />
                 </SplitViewMain>
                 <SplitViewSide>
-                  <RegistryItemAddForm
+                  <RegistryDetailSidebar
                     entry={mockRegistryEntry}
                     proxies={[]}
                     entryInstalledOn={[]}

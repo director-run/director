@@ -9,18 +9,15 @@ export type MasterRegistryEntry =
 // Workspace
 export type MasterWorkspaceList = GatewayRouterOutputs["store"]["getAll"];
 export type MasterWorkspace = GatewayRouterOutputs["store"]["get"];
-export type MasterWorkspaceTarget = MasterWorkspace["targets"][number];
+export type MasterWorkspaceTarget =
+  GatewayRouterOutputs["store"]["get"]["targets"][number];
 
 // MCP
 export type MasterMCPTool = NonNullable<MasterRegistryEntry["tools"]>[number];
 
 // Trash
-export type StoreServer = MasterWorkspaceTarget;
 export type StoreServerTransport = MasterWorkspaceTarget["transport"];
-
-export type RegistryGetEntries = GatewayRouterOutputs["registry"]["getEntries"];
-
-export type RegistryGetEntriesEntry = RegistryGetEntries["entries"][number];
+export type RegistryGetEntriesEntry = MasterRegistryEntryList[number];
 
 export enum ConfiguratorTarget {
   Claude = "claude",

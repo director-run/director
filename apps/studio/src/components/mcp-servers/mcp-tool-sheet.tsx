@@ -1,7 +1,7 @@
 "use client";
 
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
-import type { MasterWorkspace, StoreServer } from "../types";
+import type { MasterWorkspace, MasterWorkspaceTarget } from "../types";
 import { Badge } from "../ui/badge";
 import {
   Breadcrumb,
@@ -75,7 +75,7 @@ function SheetInner({
   onProxyClick,
 }: {
   toolId: string;
-  server: StoreServer;
+  server: MasterWorkspaceTarget;
   proxy: MasterWorkspace;
   tool: Tool | undefined;
   isLoading: boolean;
@@ -205,7 +205,7 @@ interface McpToolSheetProps {
   onOpenChange: (open: boolean) => void;
   toolId: string | null;
   serverId: string | null;
-  server: StoreServer | undefined;
+  server: MasterWorkspaceTarget | undefined;
   proxy: MasterWorkspace | undefined;
   tool: Tool | undefined;
   isLoading: boolean;

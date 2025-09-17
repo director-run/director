@@ -1,11 +1,10 @@
 import type { GatewayRouterOutputs } from "@director.run/gateway/client";
 
 // Registry
-export type MasterRegistryEntry =
-  GatewayRouterOutputs["registry"]["getEntryByName"];
-
 export type MasterRegistryEntryList =
   GatewayRouterOutputs["registry"]["getEntries"]["entries"];
+export type MasterRegistryEntry =
+  GatewayRouterOutputs["registry"]["getEntryByName"];
 
 // Workspace
 export type MasterWorkspaceList = GatewayRouterOutputs["store"]["getAll"];
@@ -16,8 +15,9 @@ export type MasterWorkspaceTarget = MasterWorkspace["targets"][number];
 export type MasterMCPTool = NonNullable<MasterRegistryEntry["tools"]>[number];
 
 // Trash
-export type StoreServer = MasterWorkspace["servers"][number];
-export type StoreServerTransport = StoreServer["transport"];
+export type StoreServer = MasterWorkspaceTarget;
+export type StoreServerTransport = MasterWorkspaceTarget["transport"];
+
 export type RegistryGetEntries = GatewayRouterOutputs["registry"]["getEntries"];
 
 export type RegistryGetEntriesEntry = RegistryGetEntries["entries"][number];

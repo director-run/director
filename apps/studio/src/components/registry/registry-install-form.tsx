@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { MasterRegistryEntryDetail, MasterWorkspaceList } from "../types";
+import type { RegistryEntryDetail, WorkspaceList } from "../types";
 import { Button } from "../ui/button";
 import { EmptyState, EmptyStateDescription } from "../ui/empty-state";
 import { FormWithSchema } from "../ui/form";
@@ -8,8 +8,8 @@ import { SelectNativeField } from "../ui/form/select-native-field";
 import { SimpleMarkdown } from "../ui/markdown";
 
 interface RegistryInstallFormProps {
-  registryEntry: Pick<MasterRegistryEntryDetail, "name" | "id" | "parameters">;
-  proxies?: MasterWorkspaceList;
+  registryEntry: Pick<RegistryEntryDetail, "name" | "id" | "parameters">;
+  proxies?: WorkspaceList;
   defaultProxyId?: string;
   entryInstalledOn?: string[];
   onSubmit: (params: {

@@ -1,8 +1,8 @@
-import type { MasterRegistryEntryDetail } from "@director.run/studio/components/types.ts";
+import type { RegistryEntryDetail } from "@director.run/studio/components/types.ts";
 import { mockTools } from "../mcp/tools";
 import { mockRegistryEntryReadme } from "./entry-readme";
 
-export const mockRegistryEntry: MasterRegistryEntryDetail = {
+export const mockRegistryEntry: RegistryEntryDetail = {
   id: "e6029b7b-3175-41fd-89ab-42d11f1d98af",
   name: "github",
   title: "GitHub",

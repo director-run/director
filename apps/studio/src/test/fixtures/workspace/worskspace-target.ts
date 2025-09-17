@@ -1,6 +1,6 @@
-import type { MasterWorkspaceTarget } from "../../../components/types";
+import type { WorkspaceTarget } from "../../../components/types";
 
-export const mockWorkspaceTarget: MasterWorkspaceTarget = {
+export const mockWorkspaceTarget: WorkspaceTarget = {
   name: "context-7",
   status: "connected",
   lastConnectedAt: new Date("2025-09-16T15:12:14.154Z"),

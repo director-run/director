@@ -1,6 +1,6 @@
-import type { MasterRegistryEntryList } from "../../../components/types";
+import type { RegistryEntryList } from "../../../components/types";
 
-export const mockRegistryEntryList: MasterRegistryEntryList = [
+export const mockRegistryEntryList: RegistryEntryList = [
     {
       "id": "297191dd-45a4-4f7d-95f0-12a84f11d90d",
       "name": "context-7",

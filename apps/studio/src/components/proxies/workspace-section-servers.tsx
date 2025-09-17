@@ -1,10 +1,10 @@
 import { MCPLinkCard, MCPLinkCardList } from "../mcp-servers/mcp-link-card";
-import type { MasterWorkspace } from "../types";
+import type { Workspace } from "../types";
 import { Button } from "../ui/button";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
 
 export interface WorkspaceSectionServersProps {
-  workspace: MasterWorkspace;
+  workspace: Workspace;
   onLibraryClick?: () => void;
   onServerClick?: (serverId: string) => void;
 }

@@ -9,7 +9,7 @@ import { McpLogo } from "./mcp-logo";
 import { McpDescriptionList } from "./mcp-servers/mcp-description-list";
 import { RegistryParameters } from "./registry/registry-parameters";
 import { RegistryTools } from "./registry/registry-tools";
-import type { MasterRegistryEntryDetail } from "./types";
+import type { RegistryEntryDetail } from "./types";
 import { Badge, BadgeGroup, BadgeIcon, BadgeLabel } from "./ui/badge";
 import { EmptyState, EmptyStateTitle } from "./ui/empty-state";
 import { Markdown } from "./ui/markdown";
@@ -17,9 +17,9 @@ import { Section, SectionHeader, SectionTitle } from "./ui/section";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
 interface RegistryItemProps {
-  entry: MasterRegistryEntryDetail;
+  entry: RegistryEntryDetail;
   onToolClick?: (
-    tool: NonNullable<MasterRegistryEntryDetail["tools"]>[number],
+    tool: NonNullable<RegistryEntryDetail["tools"]>[number],
   ) => void;
 }
 

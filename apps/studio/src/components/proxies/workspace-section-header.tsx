@@ -1,4 +1,4 @@
-import type { MasterWorkspace } from "../types";
+import type { Workspace } from "../types";
 import {
   Section,
   SectionDescription,
@@ -7,7 +7,7 @@ import {
 } from "../ui/section";
 
 export interface WorkspaceSectionHeaderProps {
-  workspace: MasterWorkspace;
+  workspace: Workspace;
 }
 
 export function WorkspaceSectionHeader({

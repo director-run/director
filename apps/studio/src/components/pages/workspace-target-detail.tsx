@@ -1,8 +1,8 @@
 import { McpLogo } from "../mcp-logo";
 import { McpDescriptionList } from "../mcp-servers/mcp-description-list";
 import { McpToolsTable } from "../mcp-servers/mcp-tools-table";
-import type { MasterRegistryEntryDetail } from "../types";
-import type { MasterWorkspace, MasterWorkspaceTarget } from "../types";
+import type { RegistryEntryDetail } from "../types";
+import type { Workspace, WorkspaceTarget } from "../types";
 import { Container } from "../ui/container";
 import { EmptyState, EmptyStateTitle } from "../ui/empty-state";
 import { Markdown } from "../ui/markdown";
@@ -14,9 +14,9 @@ import {
 } from "../ui/section";
 
 interface WorkspaceTargetDetailProps {
-  workspaceTarget: MasterWorkspaceTarget;
-  workspace: MasterWorkspace;
-  entryData: Pick<MasterRegistryEntryDetail, "icon" | "readme">;
+  workspaceTarget: WorkspaceTarget;
+  workspace: Workspace;
+  entryData: Pick<RegistryEntryDetail, "icon" | "readme">;
   description?: string | null;
   toolLinks: Array<{
     title: string;

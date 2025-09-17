@@ -2,8 +2,8 @@
 
 import { McpLogo } from "../mcp-logo";
 import type {
-  MasterRegistryEntryList,
-  MasterRegistryEntryListItem,
+  DeprecatedRegistryEntryListItem,
+  RegistryEntryList,
 } from "../types";
 import { EmptyState, EmptyStateTitle } from "../ui/empty-state";
 import { Input } from "../ui/input";
@@ -16,8 +16,8 @@ import {
 interface GetStartedMcpServerListProps {
   searchQuery: string;
   onSearchQueryChange: (query: string) => void;
-  registryEntries: MasterRegistryEntryList;
-  onMcpSelect: (mcp: MasterRegistryEntryListItem) => void;
+  registryEntries: RegistryEntryList;
+  onMcpSelect: (mcp: DeprecatedRegistryEntryListItem) => void;
 }
 
 export function GetStartedMcpServerList({

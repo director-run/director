@@ -1,4 +1,4 @@
-import type { MasterWorkspace } from "../types";
+import type { Workspace } from "../types";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import {
@@ -14,7 +14,7 @@ import { ProxyForm } from "./proxy-form";
 import type { ProxyFormData } from "./proxy-form";
 
 interface ProxySettingsSheetProps {
-  proxy: MasterWorkspace;
+  proxy: Workspace;
   onSubmit: (values: ProxyFormData) => Promise<void>;
   isSubmitting?: boolean;
   open?: boolean;

@@ -1,7 +1,7 @@
 import { ArrowLeftIcon, ArrowRightIcon } from "@phosphor-icons/react";
 import { cn } from "../../helpers/cn";
 import { MCPLinkCard, MCPLinkCardList } from "../mcp-servers/mcp-link-card";
-import type { MasterRegistryEntryList } from "../types";
+import type { RegistryEntryList } from "../types";
 import { Button } from "../ui/button";
 import { Container } from "../ui/container";
 import { EmptyState } from "../ui/empty-state";
@@ -23,7 +23,7 @@ interface Pagination {
 }
 
 interface RegistryItemListProps {
-  entries: MasterRegistryEntryList;
+  entries: RegistryEntryList;
   pagination: Pagination;
   searchQuery: string;
   onSearchQueryChange: (query: string) => void;

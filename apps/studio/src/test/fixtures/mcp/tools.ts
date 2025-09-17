@@ -1,6 +1,6 @@
-import type { MasterMCPTool } from "@director.run/studio/components/types.ts";
+import type { MCPTool } from "@director.run/studio/components/types.ts";
 
-export const mockTools: MasterMCPTool[] = [
+export const mockTools: MCPTool[] = [
   {
     name: "search_repositories",
     description: "Search for repositories on GitHub",

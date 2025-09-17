@@ -16,8 +16,8 @@ import {
 } from "../get-started/get-started-proxy-form";
 import { proxySchema } from "../get-started/get-started-proxy-form";
 import type {
-  MasterRegistryEntryList,
-  MasterRegistryEntryListItem,
+  DeprecatedRegistryEntryListItem,
+  RegistryEntryList,
 } from "../types";
 import { Container } from "../ui/container";
 import { Section } from "../ui/section";
@@ -46,10 +46,10 @@ export interface GetStartedPageViewProps {
   currentWorkspace: { id: string; servers?: unknown[] } | null;
 
   // Registry
-  registryEntries: MasterRegistryEntryList;
+  registryEntries: RegistryEntryList;
   searchQuery: string;
   onSearchQueryChange: (value: string) => void;
-  onClickRegistryEntry: (mcp: MasterRegistryEntryListItem) => void;
+  onClickRegistryEntry: (mcp: DeprecatedRegistryEntryListItem) => void;
 
   // Actions
   onAddWorkspaceToClient: (clientId: ClientId) => void;

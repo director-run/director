@@ -84,6 +84,7 @@ export const LongStrings: Story = {
   args: {
     ...Default.args,
     workspace: {
+      ...mockWorkspace,
       id: "very-long-proxy-name-that-should-wrap",
       name: "Very Long Proxy Name That Should Wrap Nicely in the UI",
     },

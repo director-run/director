@@ -13,7 +13,12 @@ import type { RegistryEntryDetail } from "./types";
 import { Badge, BadgeGroup, BadgeIcon, BadgeLabel } from "./ui/badge";
 import { EmptyState, EmptyStateTitle } from "./ui/empty-state";
 import { Markdown } from "./ui/markdown";
-import { Section, SectionHeader, SectionTitle } from "./ui/section";
+import {
+  Section,
+  SectionDescription,
+  SectionHeader,
+  SectionTitle,
+} from "./ui/section";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
 interface RegistryItemProps {
@@ -29,7 +34,7 @@ export function RegistryItem({ entry, onToolClick }: RegistryItemProps) {
       <McpLogo src={entry.icon} className="size-9" />
       <SectionHeader>
         <SectionTitle>{entry.title}</SectionTitle>
-        <p className="text-muted-foreground">{entry.description}</p>
+        <SectionDescription>{entry.description}</SectionDescription>
       </SectionHeader>
 
       <BadgeGroup>

@@ -1,7 +1,7 @@
 import type { ComponentProps } from "react";
 
 import { GlobeIcon, TerminalIcon } from "@phosphor-icons/react";
-import type { StoreServerTransport } from "../types";
+import type { MasterWorkspaceTargetTransport } from "../types";
 import { Badge, BadgeGroup, BadgeIcon, BadgeLabel } from "../ui/badge";
 import {
   List,
@@ -12,7 +12,7 @@ import {
 } from "../ui/list";
 
 interface McpDescriptionListProps extends ComponentProps<typeof List> {
-  transport: StoreServerTransport;
+  transport: MasterWorkspaceTargetTransport;
 }
 
 export function McpDescriptionList({
@@ -32,7 +32,7 @@ export function McpDescriptionList({
 }
 
 interface McpStdioDescriptionListProps extends ComponentProps<typeof List> {
-  transport: StoreServerTransport;
+  transport: MasterWorkspaceTargetTransport;
 }
 
 function McpStdioDescriptionList({
@@ -102,7 +102,7 @@ function McpStdioDescriptionList({
 }
 
 interface McpSseDescriptionListProps extends ComponentProps<typeof List> {
-  transport: StoreServerTransport;
+  transport: MasterWorkspaceTargetTransport;
 }
 
 function McpSseDescriptionList({

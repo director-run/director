@@ -1,5 +1,5 @@
 import { WorkspaceTargetDetail } from "@director.run/studio/components/pages/workspace-target-detail.tsx";
-import type { StoreServerTransport } from "@director.run/studio/components/types.ts";
+import type { MasterWorkspaceTargetTransport } from "@director.run/studio/components/types.ts";
 import { mockRegistryEntry } from "@director.run/studio/test/fixtures/registry/entry.ts";
 import { mockWorkspace } from "@director.run/studio/test/fixtures/workspace/workspace.js";
 import { mockWorkspaceTarget } from "@director.run/studio/test/fixtures/workspace/worskspace-target.js";
@@ -22,7 +22,7 @@ const mockDescription =
   "A comprehensive GitHub integration that provides tools to interact with repositories, issues, pull requests, and more through the Model Context Protocol.";
 
 // Different transport types for variety
-const mockHttpTransport: StoreServerTransport = {
+const mockHttpTransport: MasterWorkspaceTargetTransport = {
   type: "http",
   url: "https://api.github.com/mcp",
 };

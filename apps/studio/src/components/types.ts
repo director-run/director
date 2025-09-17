@@ -3,8 +3,7 @@ import type { GatewayRouterOutputs } from "@director.run/gateway/client";
 // Registry
 export type MasterRegistryEntryList =
   GatewayRouterOutputs["registry"]["getEntries"]["entries"];
-export type MasterRegistryEntryListItem =
-  GatewayRouterOutputs["registry"]["getEntries"]["entries"][number];
+
 export type MasterRegistryEntryDetail =
   GatewayRouterOutputs["registry"]["getEntryByName"];
 
@@ -20,9 +19,11 @@ export type MasterMCPTool = NonNullable<
 >[number];
 
 // Trash
-export type StoreServerTransport = MasterWorkspaceTarget["transport"];
-export type RegistryGetEntriesEntry = MasterRegistryEntryListItem;
 
+export type MasterRegistryEntryListItem =
+  GatewayRouterOutputs["registry"]["getEntries"]["entries"][number]; // TODO: Remove this type
+
+export type MasterWorkspaceTargetTransport = MasterWorkspaceTarget["transport"];
 export enum ConfiguratorTarget {
   Claude = "claude",
   Cursor = "cursor",

@@ -4,39 +4,6 @@ import { Button } from "@director.run/studio/components/ui/button.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
-// Mock tool data
-const mockToolWithSchema: MCPTool = {
-  name: "search_repositories",
-  description:
-    "Search for repositories on GitHub using various filters and sorting options. This tool allows you to find repositories based on keywords, language, stars, and other criteria.",
-  inputSchema: {
-    type: "object",
-    properties: {
-      query: {
-        type: "string",
-        description: "The search query to find repositories",
-      },
-      sort: {
-        type: "string",
-        description: "Sort results by",
-      },
-      order: {
-        type: "string",
-        description: "Sort order",
-      },
-      per_page: {
-        type: "integer",
-        description: "Number of results per page",
-      },
-      page: {
-        type: "integer",
-        description: "Page number",
-      },
-    },
-    required: ["query"],
-  },
-};
-
 const mockToolWithoutSchema: MCPTool = {
   name: "get_user_info",
   description:

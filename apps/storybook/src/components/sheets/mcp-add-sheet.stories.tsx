@@ -18,14 +18,13 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     onSubmit: (_data: McpAddFormData) => Promise.resolve(),
-  },
-  render: () => {
-    const [open, setOpen] = useState(true);
-
-    const proxies = [
+    proxies: [
       { id: "proxy-1", name: "Local Proxy" },
       { id: "proxy-2", name: "Remote Proxy" },
-    ];
+    ],
+  },
+  render: ({ proxies }) => {
+    const [open, setOpen] = useState(true);
 
     const handleSubmit = (data: McpAddFormData) => {
       console.log("Add to proxy:", data.proxyId);
@@ -51,5 +50,13 @@ export const Default: Story = {
         />
       </div>
     );
+  },
+};
+
+export const NotInstalled: Story = {
+  ...Default,
+  args: {
+    ...Default.args,
+    proxies: undefined,
   },
 };

@@ -9,12 +9,14 @@ export function LoginPage() {
   const { login } = useAuth();
   return (
     <>
-      {error && <div>ERROR: {error.message}</div>}
+      {error && <div style={{ color: "red" }}>ERROR: {error.message}</div>}
       <LoginForm
+        defaultValues={{ email: "bmalet@gmail.com", password: "password" }}
         onSubmit={async (user) => {
+          console.log("user", user);
           try {
-            await login(user);
             await setIsLoading(true);
+            await login(user);
           } catch (error) {
             await setError(error as Error);
           } finally {

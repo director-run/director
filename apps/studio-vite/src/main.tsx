@@ -2,11 +2,13 @@ import {} from "@director.run/studio/components/split-view.tsx";
 import "./fonts.css";
 import "./globals.css";
 import {} from "@director.run/studio/components/layout/layout.tsx";
+import { FullScreenLoader } from "@director.run/studio/components/pages/global/loader.tsx";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Route, Routes } from "react-router-dom";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./contexts/auth-context";
+import { useAuth } from "./contexts/auth-context";
 import { AboutPage } from "./pages/about-page";
 import { LoginPage } from "./pages/login-page";
 import { NotFoundPage } from "./pages/not-found-page";
@@ -16,6 +18,11 @@ import { Root } from "./root";
 
 import "./fonts.css";
 import "./globals.css";
+
+export const GlobalLoader = ({ children }: { children: React.ReactNode }) => {
+  const { isLoading } = useAuth();
+  return isLoading ? <FullScreenLoader /> : <>{children}</>;
+};
 
 export const App = () => {
   return (

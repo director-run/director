@@ -4,6 +4,10 @@ import { InputField } from "@director.run/studio/components/ui/form/input-field.
 import { z } from "zod";
 
 interface LoginFormProps {
+  defaultValues?: {
+    email: string;
+    password: string;
+  };
   onSubmit: (params: {
     email: string;
     password: string;
@@ -11,21 +15,22 @@ interface LoginFormProps {
   isSubmitting?: boolean;
 }
 
-export function LoginForm({ onSubmit, isSubmitting = false }: LoginFormProps) {
+export function LoginForm({
+  onSubmit,
+  isSubmitting = false,
+  defaultValues,
+}: LoginFormProps) {
   const schema = z.object({
     email: z.string().email("Please enter a valid email address"),
     password: z.string().min(1, "Password is required"),
   });
 
-  const defaultValues = {
-    email: "",
-    password: "",
-  };
-
   return (
     <FormWithSchema
       schema={schema}
-      defaultValues={defaultValues}
+      defaultValues={
+        defaultValues ? defaultValues : { email: "", password: "" }
+      }
       className="gap-y-0 overflow-hidden rounded-xl bg-accent-subtle shadow-[0_0_0_0.5px_rgba(55,50,46,0.15)]"
       onSubmit={(values) => {
         onSubmit({

@@ -6,12 +6,14 @@ const AuthContext = createContext<{
   login: (params: { email: string; password: string }) => Promise<void>;
   logout: () => void;
   checkAuthStatus: () => Promise<void>;
+  isLoading: boolean;
 }>({
   user: null,
   isAuthenticated: false,
   login: async () => {},
   logout: () => {},
   checkAuthStatus: async () => {},
+  isLoading: false,
 });
 
 export const useAuth = () => {
@@ -36,6 +38,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // check auth status on mount
   useEffect(() => {
@@ -43,17 +46,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const checkAuthStatus = async () => {
+    setIsLoading(true);
     await simulateApiCall();
-    setUser({
-      id: 1,
-      email: "bmalet@gmail.com",
-      password: "password",
-    });
+    setIsLoading(false);
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
   };
 
   const login = async (params: { email: string; password: string }) => {
+    console.log("loginnnnnn", params);
+    setIsLoading(true);
     await simulateApiCall();
+    setIsLoading(false);
+    console.log("good!");
+
     if (params.email === "bmalet@gmail.com" && params.password === "password") {
+      console.log("valid!");
       const userData = {
         id: 1,
         email: params.email,
@@ -61,17 +71,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       };
 
       setUser(userData);
-      // Todo:: store in local storage
+      localStorage.setItem("user", JSON.stringify(userData));
+    } else {
+      console.log("invalid!");
+      throw new Error("Invalid email or password");
     }
   };
 
   const logout = () => {
     setUser(null);
+    localStorage.removeItem("user");
   };
 
   const value = {
     user,
     isAuthenticated: !!user,
+    isLoading,
     login,
     logout,
     checkAuthStatus,

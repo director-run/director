@@ -35,20 +35,20 @@ interface Proxy {
   name: string;
 }
 
-interface McpAddSheetProps extends ComponentProps<typeof Sheet> {
-  proxies?: Proxy[];
+interface WorkspaceTargetAddSheetProps extends ComponentProps<typeof Sheet> {
+  workspaces?: Proxy[];
   onSubmit: (data: WorkspaceTargetFormData) => Promise<void> | void;
   isSubmitting?: boolean;
 }
 
-export function McpAddSheet({
+export function WorkspaceTargetAddSheet({
   open,
   onOpenChange,
-  proxies,
+  workspaces: proxies,
   onSubmit,
   isSubmitting = false,
   ...props
-}: McpAddSheetProps) {
+}: WorkspaceTargetAddSheetProps) {
   const defaultValues = {
     proxyId: proxies?.[0]?.id ?? undefined,
     server: {

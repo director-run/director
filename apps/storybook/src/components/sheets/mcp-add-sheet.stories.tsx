@@ -1,4 +1,4 @@
-import { McpAddSheet } from "@director.run/studio/components/mcp-servers/mcp-add-sheet.tsx";
+import { WorkspaceTargetAddSheet } from "@director.run/studio/components/mcp-servers/mcp-add-sheet.tsx";
 import type { WorkspaceTargetFormData } from "@director.run/studio/components/mcp-servers/mcp-add-sheet.tsx";
 import { Button } from "@director.run/studio/components/ui/button.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
@@ -6,11 +6,11 @@ import { useState } from "react";
 
 const meta = {
   title: "components/sheets/mcp-add-sheet",
-  component: McpAddSheet,
+  component: WorkspaceTargetAddSheet,
   parameters: {
     layout: "fullscreen",
   },
-} satisfies Meta<typeof McpAddSheet>;
+} satisfies Meta<typeof WorkspaceTargetAddSheet>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -18,12 +18,12 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     onSubmit: (_data: WorkspaceTargetFormData) => Promise.resolve(),
-    proxies: [
+    workspaces: [
       { id: "proxy-1", name: "Local Proxy" },
       { id: "proxy-2", name: "Remote Proxy" },
     ],
   },
-  render: ({ proxies }) => {
+  render: ({ workspaces: proxies }) => {
     const [open, setOpen] = useState(true);
 
     return (
@@ -33,10 +33,10 @@ export const Default: Story = {
             {open ? "Close Sheet" : "Open Sheet"}
           </Button>
         </div>
-        <McpAddSheet
+        <WorkspaceTargetAddSheet
           open={open}
           onOpenChange={setOpen}
-          proxies={proxies}
+          workspaces={proxies}
           onSubmit={(data: WorkspaceTargetFormData) => {
             console.log("Data:", JSON.stringify(data, null, 2));
           }}
@@ -51,6 +51,6 @@ export const NotInstalled: Story = {
   ...Default,
   args: {
     ...Default.args,
-    proxies: undefined,
+    workspaces: undefined,
   },
 };

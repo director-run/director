@@ -7,7 +7,7 @@ import {
   LayoutViewContent,
 } from "../../../components/layout/layout";
 import { LayoutBreadcrumbHeader } from "../../../components/layout/layout-breadcrumb-header";
-import { McpAddSheet } from "../../../components/mcp-servers/mcp-add-sheet";
+import { WorkspaceTargetAddSheet } from "../../../components/mcp-servers/mcp-add-sheet";
 import type { WorkspaceTargetFormData } from "../../../components/mcp-servers/mcp-add-sheet";
 import { RegistryItemList } from "../../../components/pages/registry-item-list";
 import { RegistryLibrarySkeleton } from "../../../components/registry/registry-library-skeleton";
@@ -132,10 +132,10 @@ export default function RegistryPage() {
           onEntryClick={(entryName) => router.push(`/library/mcp/${entryName}`)}
         />
 
-        <McpAddSheet
+        <WorkspaceTargetAddSheet
           open={addSheetOpen}
           onOpenChange={setAddSheetOpen}
-          proxies={servers}
+          workspaces={servers}
           onSubmit={handleAddServer}
           isSubmitting={addServerMutation.isPending}
         />

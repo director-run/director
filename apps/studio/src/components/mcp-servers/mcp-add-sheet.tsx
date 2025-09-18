@@ -27,7 +27,6 @@ import {
 } from "../ui/sheet";
 
 const requiredStringSchema = z.string().trim().min(1, "Required");
-
 const slugStringSchema = z
   .string()
   .trim()
@@ -37,41 +36,27 @@ const slugStringSchema = z
     "Only lowercase ASCII letters, digits, and characters ., -, _ are allowed",
   );
 
-const httpTransportSchema = z.object({
-  type: z.literal("http"),
-  url: requiredStringSchema.url(),
-  headers: z.record(requiredStringSchema, z.string()).optional(),
-});
-
-const stdioTransportSchema = z.object({
+const WorkspaceStdioTargetAttributesSchema = z.object({
+  name: slugStringSchema,
   type: z.literal("stdio"),
   command: requiredStringSchema,
   args: z.array(z.string()),
   env: z.record(requiredStringSchema, z.string()).optional(),
 });
 
-const proxyTransport = z.discriminatedUnion("type", [
-  httpTransportSchema,
-  stdioTransportSchema,
-]);
-
-const ProxyTargetSourceSchema = z.object({
-  name: z.literal("registry"),
-  entryId: requiredStringSchema,
-});
-
-const proxyTargetAttributesSchema = z.object({
+const WorkspaceHTTPTargetAttributesSchema = z.object({
   name: slugStringSchema,
-  transport: proxyTransport,
-  source: ProxyTargetSourceSchema.optional(),
-  toolPrefix: z.string().trim().optional(),
-  disabledTools: z.array(requiredStringSchema).optional(),
-  disabled: z.boolean().optional(),
+  type: z.literal("http"),
+  url: requiredStringSchema.url(),
+  headers: z.record(requiredStringSchema, z.string()).optional(),
 });
 
 const formSchema = z.object({
   proxyId: z.string().optional(),
-  server: proxyTargetAttributesSchema,
+  server: z.union([
+    WorkspaceStdioTargetAttributesSchema,
+    WorkspaceHTTPTargetAttributesSchema,
+  ]),
   _env: z.array(
     z.object({
       key: z.string(),
@@ -111,12 +96,10 @@ export function McpAddSheet({
     proxyId: proxies?.[0]?.id ?? undefined,
     server: {
       name: "",
-      transport: {
-        type: "stdio" as const,
-        command: "",
-        args: [],
-        env: {},
-      },
+      type: "stdio" as const,
+      command: "",
+      args: [],
+      env: {},
     },
     _env: [{ key: "", value: "" }],
     _headers: [{ key: "", value: "" }],
@@ -197,7 +180,7 @@ function McpAddFormFields({
   const { control } = useFormContext();
   const transportType = useWatch({
     control,
-    name: "server.transport.type",
+    name: "server.type",
     defaultValue: "stdio",
   });
 
@@ -219,7 +202,7 @@ function McpAddFormFields({
           name="server.name"
           placeholder="Enter server name…"
         />
-        <SelectNativeField label="Transport" name="server.transport.type">
+        <SelectNativeField label="Transport" name="server.type">
           <option value="stdio">STDIO</option>
           <option value="http">HTTP</option>
         </SelectNativeField>
@@ -241,7 +224,7 @@ function McpAddFormStdioFields() {
       <TextareaField
         className="min-h-auto"
         label="Command"
-        name="server.transport.command"
+        name="server.command"
         placeholder="e.g. npx -y @modelcontextprotocol/my-server <filepath>"
       />
 
@@ -263,7 +246,7 @@ function McpAddFormHttpFields() {
     <div className="space-y-4">
       <InputField
         label="URL"
-        name="server.transport.url"
+        name="server.url"
         placeholder="Enter server URL…"
       />
 

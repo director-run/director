@@ -19,13 +19,11 @@ import { Root } from "./root";
 import "./fonts.css";
 import "./globals.css";
 
-export const GlobalLoader = ({ children }: { children: React.ReactNode }) => {
-  const { isLoading } = useAuth();
-  return isLoading ? <FullScreenLoader /> : <>{children}</>;
-};
-
 export const App = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
+  if (isLoading) {
+    return <FullScreenLoader />;
+  }
   if (isAuthenticated) {
     return (
       <Root>
@@ -40,13 +38,11 @@ export const App = () => {
     );
   } else {
     return (
-      <Root>
-        <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </Root>
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
     );
   }
 };

@@ -61,8 +61,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     console.log("loginnnnnn", params);
     setIsLoading(true);
     await simulateApiCall();
-    setIsLoading(false);
-    console.log("good!");
 
     if (params.email === "bmalet@gmail.com" && params.password === "password") {
       console.log("valid!");
@@ -74,9 +72,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));
-      navigate("/");
+      setIsLoading(false);
+      console.log("good!");
     } else {
       console.log("invalid!");
+      setIsLoading(false);
       throw new Error("Invalid email or password");
     }
   };
@@ -84,7 +84,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
-    navigate("/login");
   };
 
   const value = {

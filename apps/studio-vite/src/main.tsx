@@ -11,7 +11,6 @@ import { AuthProvider } from "./contexts/auth-context";
 import { useAuth } from "./contexts/auth-context";
 import { AboutPage } from "./pages/about-page";
 import { LoginPage } from "./pages/login-page";
-import { NotFoundPage } from "./pages/not-found-page";
 import { SettingsPage } from "./pages/settings-page";
 import { WorkspaceDetailPage } from "./pages/workspace-detail-page";
 import { Root } from "./root";
@@ -28,20 +27,18 @@ export const App = () => {
     return (
       <Root>
         <Routes>
-          <Route path="/" element={<Navigate to="/settings" replace />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/workspace" element={<WorkspaceDetailPage />} />
-          <Route path="*" element={<NotFoundPage />} />
+          <Route path="*" element={<Navigate to="/settings" replace />} />
         </Routes>
       </Root>
     );
   } else {
     return (
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     );
   }

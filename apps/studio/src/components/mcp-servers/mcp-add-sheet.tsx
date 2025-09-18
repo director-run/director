@@ -44,13 +44,13 @@ interface WorkspaceTargetAddSheetProps extends ComponentProps<typeof Sheet> {
 export function WorkspaceTargetAddSheet({
   open,
   onOpenChange,
-  workspaces: proxies,
+  workspaces,
   onSubmit,
   isSubmitting = false,
   ...props
 }: WorkspaceTargetAddSheetProps) {
   const defaultValues = {
-    proxyId: proxies?.[0]?.id ?? undefined,
+    workspaceId: workspaces?.[0]?.id ?? undefined,
     server: {
       name: "",
       type: "stdio" as const,
@@ -89,7 +89,7 @@ export function WorkspaceTargetAddSheet({
 
           <WorkspaceTargetForm
             defaultValues={defaultValues}
-            proxies={proxies}
+            proxies={workspaces}
             onSubmit={onSubmit}
             isSubmitting={isSubmitting}
           />
@@ -123,7 +123,7 @@ function WorkspaceTargetForm({
       onSubmit={(data) => {
         if (data.server.type === "stdio") {
           onSubmit({
-            proxyId: data.proxyId,
+            workspaceId: data.workspaceId,
             server: {
               ...data.server,
               command: data.server.command.split(" ")[0],
@@ -141,7 +141,7 @@ function WorkspaceTargetForm({
           });
         } else if (data.server.type === "http") {
           onSubmit({
-            proxyId: data.proxyId,
+            workspaceId: data.workspaceId,
             server: {
               ...data.server,
               headers: data._headers.reduce(
@@ -182,7 +182,7 @@ function McpAddFormFields({
   return (
     <>
       {proxies && (
-        <SelectNativeField name="proxyId" label="Proxy">
+        <SelectNativeField name="workspaceId" label="Proxy">
           {proxies.map((proxy) => (
             <option key={proxy.id} value={proxy.id}>
               {proxy.name}
@@ -340,7 +340,7 @@ const WorkspaceHTTPTargetAttributesSchema = z.object({
 });
 
 const formSchema = z.object({
-  proxyId: z.string().optional(),
+  workspaceId: z.string().optional(),
   server: z.discriminatedUnion("type", [
     WorkspaceStdioTargetAttributesSchema,
     WorkspaceHTTPTargetAttributesSchema,

@@ -61,15 +61,15 @@ export default function RegistryPage() {
   const handleAddServer = async (data: WorkspaceTargetFormData) => {
     const server = data.server;
 
-    if (!data.proxyId) {
+    if (!data.workspaceId) {
       toast({
-        title: "No proxy selected",
+        title: "No workspace selected",
         description: "Please select a proxy before adding a server.",
       });
       return;
     }
 
-    const proxyId = data.proxyId;
+    const proxyId = data.workspaceId;
 
     if (server.type === "stdio") {
       await addServerMutation.mutateAsync({

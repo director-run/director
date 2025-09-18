@@ -53,7 +53,7 @@ const WorkspaceHTTPTargetAttributesSchema = z.object({
 
 const formSchema = z.object({
   proxyId: z.string().optional(),
-  server: z.union([
+  server: z.discriminatedUnion("type", [
     WorkspaceStdioTargetAttributesSchema,
     WorkspaceHTTPTargetAttributesSchema,
   ]),

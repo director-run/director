@@ -5,7 +5,7 @@ import {} from "@director.run/studio/components/layout/layout.tsx";
 import { FullScreenLoader } from "@director.run/studio/components/pages/global/loader.tsx";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./contexts/auth-context";
 import { useAuth } from "./contexts/auth-context";
@@ -28,7 +28,7 @@ export const App = () => {
   return (
     <Root>
       <Routes>
-        <Route path="/" element={<AboutPage />} />
+        <Route path="/" element={<Navigate to="/settings" replace />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/settings" element={<SettingsPage />} />

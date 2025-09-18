@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { Fragment } from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -37,7 +38,7 @@ export function LayoutBreadcrumbHeader({
             const isClickable = !!item.onClick;
 
             return (
-              <>
+              <Fragment key={item.title}>
                 {index > 0 && <BreadcrumbSeparator />}
                 <BreadcrumbItem>
                   {isClickable ? (
@@ -61,7 +62,7 @@ export function LayoutBreadcrumbHeader({
                     </BreadcrumbPage>
                   )}
                 </BreadcrumbItem>
-              </>
+              </Fragment>
             );
           })}
         </BreadcrumbList>

@@ -76,12 +76,7 @@ export default function RegistryPage() {
         proxyId,
         server: {
           name: server.name,
-          transport: {
-            type: "stdio",
-            command: server.command,
-            args: server.args,
-            env: server.env,
-          },
+          transport: server,
         },
       });
     } else {

@@ -122,13 +122,16 @@ function WorkspaceTargetForm({
       }}
       onSubmit={(data) => {
         if (data.server.type === "stdio") {
+          console.log("Submitting STDIO data", data);
           onSubmit({
-            ...data,
+            proxyId: data.proxyId,
             server: {
               ...data.server,
               env: data._env.reduce(
                 (acc, { key, value }) => {
-                  acc[key] = value;
+                  if (!!key) {
+                    acc[key] = value;
+                  }
                   return acc;
                 },
                 {} as Record<string, string>,
@@ -137,12 +140,14 @@ function WorkspaceTargetForm({
           });
         } else if (data.server.type === "http") {
           onSubmit({
-            ...data,
+            proxyId: data.proxyId,
             server: {
               ...data.server,
               headers: data._headers.reduce(
                 (acc, { key, value }) => {
-                  acc[key] = value;
+                  if (!!key) {
+                    acc[key] = value;
+                  }
                   return acc;
                 },
                 {} as Record<string, string>,

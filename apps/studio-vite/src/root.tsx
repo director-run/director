@@ -24,22 +24,10 @@ export const Root = ({ children }: { children: React.ReactNode }) => {
               onClick: () => navigate("/settings"),
             },
             {
-              id: "login",
-              label: "Login",
-              isActive: false,
-              onClick: () => navigate("/login"),
-            },
-            {
               id: "about",
               label: "About",
               isActive: false,
               onClick: () => navigate("/about"),
-            },
-            {
-              id: "contact",
-              label: "Contact",
-              isActive: false,
-              onClick: () => navigate("/contact"),
             },
             {
               id: "workspace",

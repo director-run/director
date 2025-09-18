@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext<{
   user: User | null;
@@ -40,7 +39,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
 
   // check auth status on mount
   useEffect(() => {
@@ -59,11 +57,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const login = async (params: { email: string; password: string }) => {
     console.log("loginnnnnn", params);
-    setIsLoading(true);
     await simulateApiCall();
 
     if (params.email === "bmalet@gmail.com" && params.password === "password") {
-      console.log("valid!");
       const userData = {
         id: 1,
         email: params.email,
@@ -72,11 +68,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));
-      setIsLoading(false);
       console.log("good!");
     } else {
       console.log("invalid!");
-      setIsLoading(false);
       throw new Error("Invalid email or password");
     }
   };

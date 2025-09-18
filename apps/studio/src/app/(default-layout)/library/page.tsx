@@ -8,7 +8,7 @@ import {
 } from "../../../components/layout/layout";
 import { LayoutBreadcrumbHeader } from "../../../components/layout/layout-breadcrumb-header";
 import { McpAddSheet } from "../../../components/mcp-servers/mcp-add-sheet";
-import type { McpAddFormData } from "../../../components/mcp-servers/mcp-add-sheet";
+import type { WorkspaceTargetFormData } from "../../../components/mcp-servers/mcp-add-sheet";
 import { RegistryItemList } from "../../../components/pages/registry-item-list";
 import { RegistryLibrarySkeleton } from "../../../components/registry/registry-library-skeleton";
 import { EmptyStateDescription } from "../../../components/ui/empty-state";
@@ -58,7 +58,7 @@ export default function RegistryPage() {
     },
   });
 
-  const handleAddServer = async (data: McpAddFormData) => {
+  const handleAddServer = async (data: WorkspaceTargetFormData) => {
     const server = data.server;
 
     if (!data.proxyId) {

@@ -1,3 +1,7 @@
+import {
+  requiredStringSchema,
+  slugStringSchema,
+} from "@director.run/utilities/schema";
 import { PlusIcon, TrashIcon } from "@phosphor-icons/react";
 import { type ComponentProps } from "react";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
@@ -26,53 +30,6 @@ import {
   SheetTitle,
 } from "../ui/sheet";
 
-const requiredStringSchema = z.string().trim().min(1, "Required");
-const slugStringSchema = z
-  .string()
-  .trim()
-  .min(1, "Required")
-  .regex(
-    /^[a-z0-9._-]+$/,
-    "Only lowercase ASCII letters, digits, and characters ., -, _ are allowed",
-  );
-
-const WorkspaceStdioTargetAttributesSchema = z.object({
-  name: slugStringSchema,
-  type: z.literal("stdio"),
-  command: requiredStringSchema,
-  args: z.array(z.string()),
-  env: z.record(requiredStringSchema, z.string()).optional(),
-});
-
-const WorkspaceHTTPTargetAttributesSchema = z.object({
-  name: slugStringSchema,
-  type: z.literal("http"),
-  url: requiredStringSchema.url(),
-  headers: z.record(requiredStringSchema, z.string()).optional(),
-});
-
-const formSchema = z.object({
-  proxyId: z.string().optional(),
-  server: z.discriminatedUnion("type", [
-    WorkspaceStdioTargetAttributesSchema,
-    WorkspaceHTTPTargetAttributesSchema,
-  ]),
-  _env: z.array(
-    z.object({
-      key: z.string(),
-      value: z.string(),
-    }),
-  ),
-  _headers: z.array(
-    z.object({
-      key: z.string(),
-      value: z.string(),
-    }),
-  ),
-});
-
-export type McpAddFormData = z.infer<typeof formSchema>;
-
 interface Proxy {
   id: string;
   name: string;
@@ -80,7 +37,7 @@ interface Proxy {
 
 interface McpAddSheetProps extends ComponentProps<typeof Sheet> {
   proxies?: Proxy[];
-  onSubmit: (data: McpAddFormData) => Promise<void>;
+  onSubmit: (data: WorkspaceTargetFormData) => Promise<void> | void;
   isSubmitting?: boolean;
 }
 
@@ -101,8 +58,6 @@ export function McpAddSheet({
       args: [],
       env: {},
     },
-    _env: [{ key: "", value: "" }],
-    _headers: [{ key: "", value: "" }],
   };
 
   return (
@@ -132,7 +87,7 @@ export function McpAddSheet({
 
           <SectionSeparator />
 
-          <McpAddForm
+          <WorkspaceTargetForm
             defaultValues={defaultValues}
             proxies={proxies}
             onSubmit={onSubmit}
@@ -144,23 +99,27 @@ export function McpAddSheet({
   );
 }
 
-interface McpAddFormProps {
-  defaultValues: McpAddFormData;
+interface WorkspaceTargetFormProps {
+  defaultValues: WorkspaceTargetFormData;
   proxies?: Proxy[];
-  onSubmit: (data: McpAddFormData) => Promise<void>;
+  onSubmit: (data: WorkspaceTargetFormData) => Promise<void> | void;
   isSubmitting?: boolean;
 }
 
-function McpAddForm({
+function WorkspaceTargetForm({
   defaultValues,
   proxies,
   onSubmit,
   isSubmitting = false,
-}: McpAddFormProps) {
+}: WorkspaceTargetFormProps) {
   return (
     <FormWithSchema
       schema={formSchema}
-      defaultValues={defaultValues}
+      defaultValues={{
+        ...defaultValues,
+        _env: [{ key: "", value: "" }],
+        _headers: [{ key: "", value: "" }],
+      }}
       onSubmit={onSubmit}
     >
       <McpAddFormFields proxies={proxies} isSubmitting={isSubmitting} />
@@ -328,3 +287,43 @@ function KeyValueFieldArray({
     </div>
   );
 }
+
+const WorkspaceStdioTargetAttributesSchema = z.object({
+  name: slugStringSchema,
+  type: z.literal("stdio"),
+  command: requiredStringSchema,
+  args: z.array(z.string()),
+  env: z.record(requiredStringSchema, z.string()).optional(),
+});
+
+const WorkspaceHTTPTargetAttributesSchema = z.object({
+  name: slugStringSchema,
+  type: z.literal("http"),
+  url: requiredStringSchema.url(),
+  headers: z.record(requiredStringSchema, z.string()).optional(),
+});
+
+const formSchema = z.object({
+  proxyId: z.string().optional(),
+  server: z.discriminatedUnion("type", [
+    WorkspaceStdioTargetAttributesSchema,
+    WorkspaceHTTPTargetAttributesSchema,
+  ]),
+  _env: z.array(
+    z.object({
+      key: z.string(),
+      value: z.string(),
+    }),
+  ),
+  _headers: z.array(
+    z.object({
+      key: z.string(),
+      value: z.string(),
+    }),
+  ),
+});
+
+export type WorkspaceTargetFormData = Omit<
+  z.infer<typeof formSchema>,
+  "_env" | "_headers"
+>;

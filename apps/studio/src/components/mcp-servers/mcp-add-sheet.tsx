@@ -122,11 +122,12 @@ function WorkspaceTargetForm({
       }}
       onSubmit={(data) => {
         if (data.server.type === "stdio") {
-          console.log("Submitting STDIO data", data);
           onSubmit({
             proxyId: data.proxyId,
             server: {
               ...data.server,
+              command: data.server.command.split(" ")[0],
+              args: data.server.command.split(" ").slice(1),
               env: data._env.reduce(
                 (acc, { key, value }) => {
                   if (!!key) {

@@ -71,47 +71,28 @@ export default function RegistryPage() {
 
     const proxyId = data.proxyId;
 
-    if (server.transport.type === "stdio") {
-      const env = data._env.reduce(
-        (acc, [key, value]) => {
-          acc[key] = value;
-          return acc;
-        },
-        {} as Record<string, string>,
-      );
-
-      const cmd = server.transport.command.split(" ")[0];
-      const args = server.transport.command.split(" ").slice(1).join(" ");
-
+    if (server.type === "stdio") {
       await addServerMutation.mutateAsync({
         proxyId,
         server: {
-          name: data.server.name,
+          name: server.name,
           transport: {
             type: "stdio",
-            command: cmd,
-            args: [args],
-            env: Object.keys(env).length > 0 ? env : undefined,
+            command: server.command,
+            args: server.args,
+            env: server.env,
           },
         },
       });
     } else {
-      const headers = data._headers.reduce(
-        (acc, [key, value]) => {
-          acc[key] = value;
-          return acc;
-        },
-        {} as Record<string, string>,
-      );
-
       await addServerMutation.mutateAsync({
         proxyId,
         server: {
           name: data.server.name,
           transport: {
             type: "http",
-            url: server.transport.url,
-            headers: Object.keys(headers).length > 0 ? headers : undefined,
+            url: server.url,
+            headers: server.headers,
           },
         },
       });

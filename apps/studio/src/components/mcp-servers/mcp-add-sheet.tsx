@@ -120,7 +120,37 @@ function WorkspaceTargetForm({
         _env: [{ key: "", value: "" }],
         _headers: [{ key: "", value: "" }],
       }}
-      onSubmit={onSubmit}
+      onSubmit={(data) => {
+        if (data.server.type === "stdio") {
+          onSubmit({
+            ...data,
+            server: {
+              ...data.server,
+              env: data._env.reduce(
+                (acc, { key, value }) => {
+                  acc[key] = value;
+                  return acc;
+                },
+                {} as Record<string, string>,
+              ),
+            },
+          });
+        } else if (data.server.type === "http") {
+          onSubmit({
+            ...data,
+            server: {
+              ...data.server,
+              headers: data._headers.reduce(
+                (acc, { key, value }) => {
+                  acc[key] = value;
+                  return acc;
+                },
+                {} as Record<string, string>,
+              ),
+            },
+          });
+        }
+      }}
     >
       <McpAddFormFields proxies={proxies} isSubmitting={isSubmitting} />
     </FormWithSchema>

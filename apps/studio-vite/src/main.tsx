@@ -25,18 +25,30 @@ export const GlobalLoader = ({ children }: { children: React.ReactNode }) => {
 };
 
 export const App = () => {
-  return (
-    <Root>
-      <Routes>
-        <Route path="/" element={<Navigate to="/settings" replace />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/workspace" element={<WorkspaceDetailPage />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </Root>
-  );
+  const { isAuthenticated } = useAuth();
+  if (isAuthenticated) {
+    return (
+      <Root>
+        <Routes>
+          <Route path="/" element={<Navigate to="/settings" replace />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/workspace" element={<WorkspaceDetailPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </Root>
+    );
+  } else {
+    return (
+      <Root>
+        <Routes>
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </Root>
+    );
+  }
 };
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(

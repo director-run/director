@@ -1,5 +1,5 @@
-import { LayoutBreadcrumbHeader } from "@director.run/studio/components/layout/layout-breadcrumb-header.js";
-import { LayoutViewContent } from "@director.run/studio/components/layout/layout.js";
+import { LayoutBreadcrumbHeader } from "@director.run/studio/components/layout/layout-breadcrumb-header.tsx";
+import { LayoutViewContent } from "@director.run/studio/components/layout/layout.tsx";
 import { WorkspaceDetail } from "@director.run/studio/components/pages/workspace-detail.tsx";
 import { ProxySkeleton } from "@director.run/studio/components/proxies/proxy-skeleton.tsx";
 import { useParams } from "react-router";

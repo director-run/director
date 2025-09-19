@@ -45,7 +45,7 @@ function getQueryClient() {
   return (clientQueryClientSingleton ??= makeQueryClient());
 }
 
-export function TRPCProvider(
+export function GatewayProvider(
   props: Readonly<{
     gatewayUrl: string;
     children: React.ReactNode;

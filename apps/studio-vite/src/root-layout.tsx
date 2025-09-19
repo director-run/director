@@ -7,6 +7,7 @@ import {
 } from "@director.run/studio/components/layout/layout.tsx";
 import {
   BookOpenTextIcon,
+  GearIcon,
   GithubLogoIcon,
   PlusIcon,
 } from "@phosphor-icons/react";
@@ -26,12 +27,6 @@ export const RootLayout = ({ children }: { children: React.ReactNode }) => {
           id: "links",
           label: "Links",
           items: [
-            {
-              id: "settings",
-              label: "Settings",
-              isActive: location.pathname === "/settings",
-              onClick: () => navigate("/settings"),
-            },
             {
               id: "about",
               label: "About",
@@ -83,6 +78,13 @@ export const RootLayout = ({ children }: { children: React.ReactNode }) => {
                   "_blank",
                   "noopener noreferrer",
                 ),
+            },
+            {
+              id: "settings",
+              label: "Settings",
+              icon: <GearIcon />,
+              isActive: location.pathname === "/settings",
+              onClick: () => navigate("/settings"),
             },
           ],
         },

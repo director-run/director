@@ -1,6 +1,3 @@
-import {} from "@director.run/studio/components/split-view.tsx";
-import "./fonts.css";
-import "./globals.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Navigate, Route, Routes } from "react-router-dom";

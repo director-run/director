@@ -1,5 +1,3 @@
-"use client";
-
 import { createGatewayClient } from "@director.run/gateway/client";
 import type { AppRouter } from "@director.run/gateway/routers/trpc/index";
 import { QueryClientProvider } from "@tanstack/react-query";

@@ -1,5 +1,3 @@
-"use client";
-
 import { trpc } from "../contexts/gateway-context";
 
 export function useWorkspace(workspaceId: string) {

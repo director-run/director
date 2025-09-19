@@ -10,16 +10,15 @@ import {
   GithubLogoIcon,
   PlusIcon,
 } from "@phosphor-icons/react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { trpc } from "./contexts/gateway-context";
 
 export const RootLayout = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
   const { data: servers, isLoading, error } = trpc.store.getAll.useQuery();
   const showLoading = isLoading || error?.message === "Failed to fetch";
+  const location = useLocation();
 
-  console.log("showLoading", showLoading);
-  console.log("servers", servers);
   return (
     <LayoutRoot
       sections={[
@@ -30,13 +29,13 @@ export const RootLayout = ({ children }: { children: React.ReactNode }) => {
             {
               id: "settings",
               label: "Settings",
-              isActive: false,
+              isActive: location.pathname === "/settings",
               onClick: () => navigate("/settings"),
             },
             {
               id: "about",
               label: "About",
-              isActive: false,
+              isActive: location.pathname === "/about",
               onClick: () => navigate("/about"),
             },
           ],
@@ -49,7 +48,7 @@ export const RootLayout = ({ children }: { children: React.ReactNode }) => {
             servers?.map((server) => ({
               id: server.id,
               label: server.name,
-              // isActive: server.id === proxyId,
+              isActive: location.pathname === `/${server.id}`,
               onClick: () => navigate(`/${server.id}`),
             })) || [],
         },
@@ -60,7 +59,7 @@ export const RootLayout = ({ children }: { children: React.ReactNode }) => {
               id: "new-server",
               label: "New server",
               icon: <PlusIcon />,
-              // isActive: pathname === "/new",
+              isActive: location.pathname === "/new",
               onClick: () => navigate(`/new`),
             },
             {

@@ -1,6 +1,7 @@
 import { LayoutBreadcrumbHeader } from "@director.run/studio/components/layout/layout-breadcrumb-header.js";
 import { LayoutViewContent } from "@director.run/studio/components/layout/layout.js";
 import { WorkspaceDetail } from "@director.run/studio/components/pages/workspace-detail.tsx";
+import { ProxySkeleton } from "@director.run/studio/components/proxies/proxy-skeleton.tsx";
 import { useParams } from "react-router";
 import { useWorkspace } from "../hooks/use-workspace";
 
@@ -10,14 +11,15 @@ export const WorkspaceDetailPage = () => {
   if (!workspaceId) {
     throw new Error("Workspace ID is required");
   }
+
   const { workspace, isLoading, installers } = useWorkspace(workspaceId);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <ProxySkeleton />;
   }
 
   if (!workspace) {
-    return <div>Workspace not found</div>;
+    throw new Error("Workspace not found");
   }
 
   return (

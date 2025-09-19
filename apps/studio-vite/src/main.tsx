@@ -13,23 +13,10 @@ import { AboutPage } from "./pages/about-page";
 import { LoginPage } from "./pages/login-page";
 import { SettingsPage } from "./pages/settings-page";
 import { WorkspaceDetailPage } from "./pages/workspace-detail-page";
-import { Root } from "./root";
+import { RootLayout } from "./root-layout";
 
 import "./fonts.css";
 import "./globals.css";
-
-const Full = () => {
-  return (
-    <Root>
-      <Routes>
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/workspace" element={<WorkspaceDetailPage />} />
-        <Route path="*" element={<Navigate to="/settings" replace />} />
-      </Routes>
-    </Root>
-  );
-};
 
 export const App = () => {
   const { isAuthenticated, isInitializing } = useAuth();
@@ -39,7 +26,16 @@ export const App = () => {
   }
 
   if (isAuthenticated) {
-    return <Full />;
+    return (
+      <RootLayout>
+        <Routes>
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/workspace" element={<WorkspaceDetailPage />} />
+          <Route path="*" element={<Navigate to="/settings" replace />} />
+        </Routes>
+      </RootLayout>
+    );
   } else {
     return (
       <Routes>

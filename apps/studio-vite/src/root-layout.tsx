@@ -7,7 +7,7 @@ import {
 } from "@director.run/studio/components/layout/layout.tsx";
 import { useNavigate } from "react-router-dom";
 
-export const Root = ({ children }: { children: React.ReactNode }) => {
+export const RootLayout = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
 
   return (

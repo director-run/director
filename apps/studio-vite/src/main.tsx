@@ -18,22 +18,28 @@ import { Root } from "./root";
 import "./fonts.css";
 import "./globals.css";
 
+const Full = () => {
+  return (
+    <Root>
+      <Routes>
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/workspace" element={<WorkspaceDetailPage />} />
+        <Route path="*" element={<Navigate to="/settings" replace />} />
+      </Routes>
+    </Root>
+  );
+};
+
 export const App = () => {
-  const { isAuthenticated, isLoading } = useAuth();
-  if (isLoading) {
+  const { isAuthenticated, isInitializing } = useAuth();
+
+  if (isInitializing) {
     return <FullScreenLoader />;
   }
+
   if (isAuthenticated) {
-    return (
-      <Root>
-        <Routes>
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/workspace" element={<WorkspaceDetailPage />} />
-          <Route path="*" element={<Navigate to="/settings" replace />} />
-        </Routes>
-      </Root>
-    );
+    return <Full />;
   } else {
     return (
       <Routes>

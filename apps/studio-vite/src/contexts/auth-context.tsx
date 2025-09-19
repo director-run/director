@@ -5,15 +5,13 @@ const AuthContext = createContext<{
   isAuthenticated: boolean;
   login: (params: { email: string; password: string }) => Promise<void>;
   logout: () => void;
-  checkAuthStatus: () => Promise<void>;
-  isLoading: boolean;
+  isInitializing: boolean;
 }>({
   user: null,
   isAuthenticated: false,
   login: async () => {},
   logout: () => {},
-  checkAuthStatus: async () => {},
-  isLoading: false,
+  isInitializing: false,
 });
 
 export const useAuth = () => {
@@ -38,7 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(false);
 
   // check auth status on mount
   useEffect(() => {
@@ -46,9 +44,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const checkAuthStatus = async () => {
-    setIsLoading(true);
+    setIsInitializing(true);
     await simulateApiCall();
-    setIsLoading(false);
+    setIsInitializing(false);
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
       setUser(JSON.parse(savedUser));
@@ -83,10 +81,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const value = {
     user,
     isAuthenticated: !!user,
-    isLoading,
+    isInitializing,
     login,
     logout,
-    checkAuthStatus,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

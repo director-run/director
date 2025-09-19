@@ -27,6 +27,10 @@ export const App = () => {
     return <div>Initializing Auth...</div>;
   }
 
+  console.log(
+    `AUTH: isInitializing=${isInitializing} isAuthenticated=${isAuthenticated}`,
+  );
+
   if (isAuthenticated) {
     return (
       <RootLayout>

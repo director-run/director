@@ -36,7 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isInitializing, setIsInitializing] = useState(false);
+  const [isInitializing, setIsInitializing] = useState<boolean>(true);
 
   // check auth status on mount
   useEffect(() => {
@@ -46,11 +46,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const checkAuthStatus = async () => {
     setIsInitializing(true);
     await simulateApiCall();
-    setIsInitializing(false);
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
+    setIsInitializing(false);
   };
 
   const login = async (params: { email: string; password: string }) => {

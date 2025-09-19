@@ -17,6 +17,7 @@ import { RootLayout } from "./root-layout";
 
 import "./fonts.css";
 import "./globals.css";
+import { GlobalErrorBoundary } from "./helpers/global-error-boundry";
 
 const GATEWAY_URL = "http://localhost:3673";
 
@@ -55,12 +56,14 @@ export const App = () => {
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <GatewayProvider gatewayUrl={GATEWAY_URL}>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </GatewayProvider>
-    </BrowserRouter>
+    <GlobalErrorBoundary>
+      <BrowserRouter>
+        <GatewayProvider gatewayUrl={GATEWAY_URL}>
+          <AuthProvider>
+            <App />
+          </AuthProvider>
+        </GatewayProvider>
+      </BrowserRouter>
+    </GlobalErrorBoundary>
   </React.StrictMode>,
 );

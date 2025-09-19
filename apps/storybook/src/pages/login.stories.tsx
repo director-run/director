@@ -38,7 +38,7 @@ export const Prefilled: Story = {
     error: null,
     isLoading: false,
     defaultValues: {
-      email: "bmalet@gmail.com",
+      email: "barnaby@example.com",
       password: "password",
     },
   },
@@ -49,7 +49,7 @@ export const Error: Story = {
     error: { message: "Login failed" } as Error,
     isLoading: false,
     defaultValues: {
-      email: "bmalet@gmail.com",
+      email: "barnaby@example.com",
       password: "password",
     },
   },

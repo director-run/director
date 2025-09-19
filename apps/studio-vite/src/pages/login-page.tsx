@@ -36,7 +36,7 @@ export function LoginPage() {
             )}
             <LoginForm
               defaultValues={{
-                email: "bmalet@gmail.com",
+                email: "barnaby@example.com",
                 password: "password",
               }}
               onSubmit={async (user) => {

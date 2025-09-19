@@ -57,7 +57,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     console.log("loginnnnnn", params);
     await simulateApiCall();
 
-    if (params.email === "bmalet@gmail.com" && params.password === "password") {
+    if (
+      params.email === "barnaby@example.com" &&
+      params.password === "password"
+    ) {
       const userData = {
         id: 1,
         email: params.email,

@@ -8,8 +8,8 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./contexts/auth-context";
 import { useAuth } from "./contexts/auth-context";
 import { GatewayProvider } from "./contexts/gateway-context";
-import { AboutPage } from "./pages/about-page";
 import { LoginPage } from "./pages/login-page";
+import { RegistryListPage } from "./pages/registry-list-page";
 import { SettingsPage } from "./pages/settings-page";
 import { NewProxyPage } from "./pages/workspace-create-page";
 import { WorkspaceDetailPage } from "./pages/workspace-detail-page";
@@ -36,7 +36,7 @@ export const App = () => {
     return (
       <RootLayout>
         <Routes>
-          <Route path="/about" element={<AboutPage />} />
+          <Route path="/library" element={<RegistryListPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/:workspaceId" element={<WorkspaceDetailPage />} />
           <Route path="/new" element={<NewProxyPage />} />

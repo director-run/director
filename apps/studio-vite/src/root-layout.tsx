@@ -5,6 +5,7 @@ import {
   LayoutRoot,
   LayoutView,
 } from "@director.run/studio/components/layout/layout.tsx";
+import { MCPIcon } from "@director.run/studio/components/ui/icons/mcp-icon.tsx";
 import {
   BookOpenTextIcon,
   GearIcon,
@@ -24,14 +25,15 @@ export const RootLayout = ({ children }: { children: React.ReactNode }) => {
     <LayoutRoot
       sections={[
         {
-          id: "links",
-          label: "Links",
+          id: "library",
+          label: "Library",
           items: [
             {
-              id: "about",
-              label: "About",
-              isActive: location.pathname === "/about",
-              onClick: () => navigate("/about"),
+              id: "mcp",
+              label: "MCP",
+              icon: <MCPIcon />,
+              isActive: location.pathname === "/library",
+              onClick: () => navigate(`/library`),
             },
           ],
         },

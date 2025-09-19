@@ -1,7 +1,6 @@
 import {} from "@director.run/studio/components/split-view.tsx";
 import "./fonts.css";
 import "./globals.css";
-import { FullScreenLoader } from "@director.run/studio/components/pages/global/loader.tsx";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Navigate, Route, Routes } from "react-router-dom";
@@ -25,7 +24,7 @@ export const App = () => {
   const { isAuthenticated, isInitializing } = useAuth();
 
   if (isInitializing) {
-    return <FullScreenLoader />;
+    return <div>Initializing Auth...</div>;
   }
 
   if (isAuthenticated) {

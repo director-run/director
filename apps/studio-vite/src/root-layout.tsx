@@ -61,7 +61,7 @@ export const RootLayout = ({ children }: { children: React.ReactNode }) => {
               label: "New server",
               icon: <PlusIcon />,
               // isActive: pathname === "/new",
-              onClick: () => console.log("new server"),
+              onClick: () => navigate(`/new`),
             },
             {
               id: "documentation",

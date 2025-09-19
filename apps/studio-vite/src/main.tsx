@@ -12,6 +12,7 @@ import { TRPCProvider } from "./contexts/gateway-context";
 import { AboutPage } from "./pages/about-page";
 import { LoginPage } from "./pages/login-page";
 import { SettingsPage } from "./pages/settings-page";
+import { NewProxyPage } from "./pages/workspace-create-page";
 import { WorkspaceDetailPage } from "./pages/workspace-detail-page";
 import { RootLayout } from "./root-layout";
 
@@ -34,6 +35,7 @@ export const App = () => {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/:workspaceId" element={<WorkspaceDetailPage />} />
+          <Route path="/new" element={<NewProxyPage />} />
           <Route path="*" element={<Navigate to="/settings" replace />} />
         </Routes>
       </RootLayout>

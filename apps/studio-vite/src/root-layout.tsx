@@ -5,11 +5,21 @@ import {
   LayoutRoot,
   LayoutView,
 } from "@director.run/studio/components/layout/layout.tsx";
+import {
+  BookOpenTextIcon,
+  GithubLogoIcon,
+  PlusIcon,
+} from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
+import { trpc } from "./contexts/gateway-context";
 
 export const RootLayout = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
+  const { data: servers, isLoading, error } = trpc.store.getAll.useQuery();
+  const showLoading = isLoading || error?.message === "Failed to fetch";
 
+  console.log("showLoading", showLoading);
+  console.log("servers", servers);
   return (
     <LayoutRoot
       sections={[
@@ -29,17 +39,53 @@ export const RootLayout = ({ children }: { children: React.ReactNode }) => {
               isActive: false,
               onClick: () => navigate("/about"),
             },
-            {
-              id: "workspace",
-              label: "Workspace",
-              isActive: false,
-              onClick: () => navigate("/workspace"),
-            },
           ],
         },
         {
+          id: "servers",
+          label: "Servers",
+          isLoading: showLoading,
+          items:
+            servers?.map((server) => ({
+              id: server.id,
+              label: server.name,
+              // isActive: server.id === proxyId,
+              onClick: () => navigate(`/${server.id}`),
+            })) || [],
+        },
+        {
           id: "actions",
-          items: [],
+          items: [
+            {
+              id: "new-server",
+              label: "New server",
+              icon: <PlusIcon />,
+              // isActive: pathname === "/new",
+              onClick: () => console.log("new server"),
+            },
+            {
+              id: "documentation",
+              label: "Documentation",
+              icon: <BookOpenTextIcon weight="fill" />,
+              onClick: () =>
+                window.open(
+                  "https://docs.director.run",
+                  "_blank",
+                  "noopener noreferrer",
+                ),
+            },
+            {
+              id: "github",
+              label: "Github",
+              icon: <GithubLogoIcon />,
+              onClick: () =>
+                window.open(
+                  "https://github.com/director-run/director",
+                  "_blank",
+                  "noopener noreferrer",
+                ),
+            },
+          ],
         },
       ]}
     >

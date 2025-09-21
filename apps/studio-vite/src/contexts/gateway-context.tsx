@@ -9,39 +9,25 @@ import { createTRPCReact } from "@trpc/react-query";
 import { useState } from "react";
 import superjson from "superjson";
 
-function makeQueryClient() {
-  return new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 30 * 1000,
-        throwOnError: true,
-        retry: false,
-      },
-      dehydrate: {
-        serializeData: superjson.serialize,
-        shouldDehydrateQuery: (query) =>
-          defaultShouldDehydrateQuery(query) ||
-          query.state.status === "pending",
-      },
-      hydrate: {
-        deserializeData: superjson.deserialize,
-      },
-    },
-  });
-}
-
 export const trpc = createTRPCReact<AppRouter>();
 
-let clientQueryClientSingleton: QueryClient;
-
-function getQueryClient() {
-  if (typeof window === "undefined") {
-    // Server: always make a new query client
-    return makeQueryClient();
-  }
-  // Browser: use singleton pattern to keep the same query client
-  return (clientQueryClientSingleton ??= makeQueryClient());
-}
+const eueryClientSingleton = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30 * 1000,
+      throwOnError: true,
+      retry: false,
+    },
+    dehydrate: {
+      serializeData: superjson.serialize,
+      shouldDehydrateQuery: (query) =>
+        defaultShouldDehydrateQuery(query) || query.state.status === "pending",
+    },
+    hydrate: {
+      deserializeData: superjson.deserialize,
+    },
+  },
+});
 
 export function GatewayProvider(
   props: Readonly<{
@@ -49,15 +35,13 @@ export function GatewayProvider(
     children: React.ReactNode;
   }>,
 ) {
-  const queryClient = getQueryClient();
-
   const [trpcClient] = useState(() =>
     createGatewayClient(`${props.gatewayUrl}/trpc`),
   );
 
   return (
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
+    <trpc.Provider client={trpcClient} queryClient={eueryClientSingleton}>
+      <QueryClientProvider client={eueryClientSingleton}>
         {props.children}
       </QueryClientProvider>
     </trpc.Provider>

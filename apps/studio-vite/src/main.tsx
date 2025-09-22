@@ -70,7 +70,6 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         </AuthProvider>
       </GatewayProvider>
     </BrowserRouter>
-
     {/* </GlobalErrorBoundary> */}
   </React.StrictMode>,
 );

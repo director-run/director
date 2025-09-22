@@ -2,11 +2,12 @@ import { LayoutBreadcrumbHeader } from "@director.run/studio/components/layout/l
 import { LayoutViewContent } from "@director.run/studio/components/layout/layout.tsx";
 import { WorkspaceDetail } from "@director.run/studio/components/pages/workspace-detail.tsx";
 import { ProxySkeleton } from "@director.run/studio/components/proxies/proxy-skeleton.tsx";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useWorkspace } from "../hooks/use-workspace";
 
 export const WorkspaceDetailPage = () => {
   const { workspaceId } = useParams();
+  const navigate = useNavigate();
 
   if (!workspaceId) {
     throw new Error("Workspace ID is required");
@@ -51,7 +52,7 @@ export const WorkspaceDetailPage = () => {
           toolsLoading={false}
           onLibraryClick={() => {}}
           onServerClick={(serverId: string) => {
-            console.log(serverId);
+            navigate(`/${workspaceId}/${serverId}`);
           }}
         />
       </LayoutViewContent>

@@ -13,6 +13,7 @@ import { RegistryListPage } from "./pages/registry-list-page";
 import { SettingsPage } from "./pages/settings-page";
 import { NewProxyPage } from "./pages/workspace-create-page";
 import { WorkspaceDetailPage } from "./pages/workspace-detail-page";
+import { WorkspaceTargetDetailPage } from "./pages/workspace-target-detail-page";
 import { RootLayout } from "./root-layout";
 
 import "./fonts.css";
@@ -39,6 +40,10 @@ export const App = () => {
           />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/:workspaceId" element={<WorkspaceDetailPage />} />
+          <Route
+            path="/:workspaceId/:targetId"
+            element={<WorkspaceTargetDetailPage />}
+          />
           <Route path="/new" element={<NewProxyPage />} />
           <Route path="*" element={<Navigate to="/settings" replace />} />
         </Routes>

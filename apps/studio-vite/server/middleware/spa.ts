@@ -1,42 +1,47 @@
 import fs from "fs";
 import path from "path";
-import type { Request, Response } from "express";
+import express from "express";
 
-export const createSPAMiddleware = (options: {
+export const spaMiddleware = (options: {
   distPath: string;
-  config: Record<string, unknown>;
+  config?: Record<string, unknown>;
 }) => {
   const { distPath, config } = options;
+  const indexPath = path.join(distPath, "index.html");
 
-  return (req: Request, res: Response) => {
-    const indexPath = path.join(distPath, "index.html");
+  // Create a router to handle all middleware logic
+  const router = express.Router();
 
+  // Helper function to serve index.html with optional config injection
+  const serveIndex = (req: express.Request, res: express.Response) => {
     if (!fs.existsSync(indexPath)) {
-      return res.status(404).send(`
-        <h1>Application not built</h1>
-        <p>Please run <code>npm run build</code> first to generate the dist folder.</p>
-        <p>Looking for: ${indexPath}</p>
-      `);
+      return res.status(404).send("index.html not found");
     }
 
-    try {
-      let html = fs.readFileSync(indexPath, "utf8");
+    let html = fs.readFileSync(indexPath, "utf-8");
 
-      // Inject configuration if available
-      if (req.appConfig) {
-        html = html.replace(
-          "</head>",
-          `    <script>
-            window.__APP_CONFIG__ = ${JSON.stringify(config)};
-        </script>
+    // Inject configuration if available
+    if (config) {
+      html = html.replace(
+        "</head>",
+        `    <script>
+      window.__APP_CONFIG__ = ${JSON.stringify(config)};
+    </script>
     </head>`,
-        );
-      }
-
-      res.send(html);
-    } catch (error) {
-      console.error("Error serving SPA:", error);
-      res.status(500).send("Internal Server Error");
+      );
     }
+
+    res.type("html").send(html);
   };
+
+  // Intercept requests for index.html (including "/")
+  router.get(["/", "/index.html"], serveIndex);
+
+  // Serve static files
+  router.use(express.static(distPath));
+
+  // Fallback to index.html for client-side routing
+  router.get("*", serveIndex);
+
+  return router;
 };

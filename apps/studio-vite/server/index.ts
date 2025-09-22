@@ -1,7 +1,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import express from "express";
-import { createSPAMiddleware } from "./middleware/spa.js";
+import { spaMiddleware } from "./middleware/spa.js";
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -16,10 +16,9 @@ const config = {
   version: process.env.APP_VERSION || "1.0.0",
 };
 
-app.use("*", express.static(path.join(__dirname, "../dist")));
-app.get(
-  "*",
-  createSPAMiddleware({
+app.use(
+  "/",
+  spaMiddleware({
     distPath: path.join(__dirname, "../dist"),
     config,
   }),

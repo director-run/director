@@ -22,7 +22,7 @@ export function createRegistryClient(
           } as RequestInit).catch((error) => {
             if (error.code === "ConnectionRefused") {
               throw new Error(
-                `Could not connect to the gateway service on ${baseURL}. Is it running?`,
+                `Could not connect to the registry service on ${baseURL}. Is it running?`,
               );
             }
             throw error;

@@ -18,6 +18,7 @@ import { ProxySkeleton } from "../../../components/proxies/proxy-skeleton";
 import { Badge, BadgeLabel } from "../../../components/ui/badge";
 import { toast } from "../../../components/ui/toast";
 import { DIRECTOR_URL } from "../../../config";
+import { useClients } from "../../../hooks/use-clients";
 import { trpc } from "../../../state/client";
 import { useInspectMcp } from "../../../state/use-inspect-mcp";
 import { useProxy } from "../../../state/use-proxy";
@@ -67,6 +68,9 @@ export default function ProxyPage() {
   const { proxy, isLoading, installers } = useProxy(params.proxyId);
   const { toolId, serverId, setProxyQuery } = useProxyQuery();
 
+  const cData = useClients(params.proxyId);
+
+  console.log("cData", cData);
   // Find the server and tool data
   const server = proxy?.servers.find((server) => server.name === serverId);
   const { tools, isLoading: toolsLoading } = useInspectMcp(
@@ -79,6 +83,8 @@ export default function ProxyPage() {
     trpc.installer.allClients.useQuery();
 
   const utils = trpc.useUtils();
+
+  console.log("installers", installers, availableClients);
 
   const updateProxyMutation = trpc.store.update.useMutation({
     onSuccess: async () => {

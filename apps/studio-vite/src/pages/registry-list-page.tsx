@@ -46,7 +46,7 @@ export const RegistryListPage: React.FC = () => {
   });
 
   if (isLoading) {
-    return <div className="page">Loading...</div>;
+    return <RegistryLibrarySkeleton />;
   }
 
   if (!data || error) {

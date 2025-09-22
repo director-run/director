@@ -18,7 +18,9 @@ export function createRegistryClient(
         async fetch(url, options) {
           return fetch(url, {
             ...options,
-            headers: apiKey ? { "x-api-key": apiKey } : undefined,
+            headers: apiKey
+              ? { ...options?.headers, "x-api-key": apiKey }
+              : options?.headers,
           } as RequestInit).catch((error) => {
             if (error.code === "ConnectionRefused") {
               throw new Error(

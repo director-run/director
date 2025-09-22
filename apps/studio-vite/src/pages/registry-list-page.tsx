@@ -56,8 +56,6 @@ export const RegistryListPage: React.FC = () => {
   });
 
   const handleAddServer = async (data: WorkspaceTargetFormData) => {
-    const server = data.server;
-
     if (!data.workspaceId) {
       toast({
         title: "No workspace selected",
@@ -66,29 +64,13 @@ export const RegistryListPage: React.FC = () => {
       return;
     }
 
-    const proxyId = data.workspaceId;
-
-    if (server.type === "stdio") {
-      await addServerMutation.mutateAsync({
-        proxyId,
-        server: {
-          name: server.name,
-          transport: server,
-        },
-      });
-    } else {
-      await addServerMutation.mutateAsync({
-        proxyId,
-        server: {
-          name: data.server.name,
-          transport: {
-            type: "http",
-            url: server.url,
-            headers: server.headers,
-          },
-        },
-      });
-    }
+    await addServerMutation.mutateAsync({
+      proxyId: data.workspaceId,
+      server: {
+        name: data.server.name,
+        transport: data.server,
+      },
+    });
   };
 
   if (isLoading) {

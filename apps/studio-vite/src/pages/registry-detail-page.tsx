@@ -82,7 +82,7 @@ export function RegistryDetailPage() {
       });
       navigate("/library");
     }
-  }, [registryEntry, isLoading]);
+  }, [registryEntry, isLoading, navigate]);
 
   if (isLoading || !registryEntry) {
     return <RegistryEntrySkeleton />;

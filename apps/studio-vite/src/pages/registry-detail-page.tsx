@@ -59,7 +59,6 @@ export function RegistryDetailPage() {
 
   const handleInstall = async (values: {
     proxyId?: string;
-    entryId: string;
     parameters?: Record<string, string>;
   }) => {
     if (!registryEntry) {

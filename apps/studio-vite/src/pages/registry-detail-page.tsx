@@ -13,6 +13,7 @@ import {
   SplitViewMain,
   SplitViewSide,
 } from "@director.run/studio/components/split-view.tsx";
+import type { MCPTool } from "@director.run/studio/components/types.js";
 import { Button } from "@director.run/studio/components/ui/button.tsx";
 import { Container } from "@director.run/studio/components/ui/container.tsx";
 import {
@@ -31,12 +32,11 @@ export function RegistryDetailPage() {
   const navigate = useNavigate();
 
   const { entryName } = useParams<{ entryName: string }>();
-  const [toolId, setToolId] = useState<string | null>(null);
+  const [selectedTool, setSelectedTool] = useState<MCPTool | null>(null);
+  const [installFormOpen, setInstallFormOpen] = useState(false);
 
   const entryQuery = useRegistryEntry({ entryName });
   const storeQuery = useWorkspaces();
-
-  const [installFormOpen, setInstallFormOpen] = useState(false);
 
   const { install, isPending } = useInstallServerFromRegistry({
     onError: (error) => {
@@ -55,14 +55,14 @@ export function RegistryDetailPage() {
   });
 
   const isLoading = entryQuery.isLoading || storeQuery.isLoading;
-  const entry = entryQuery.data;
+  const registryEntry = entryQuery.data;
 
   const handleInstall = async (values: {
     proxyId?: string;
     entryId: string;
     parameters?: Record<string, string>;
   }) => {
-    if (!entry) {
+    if (!registryEntry) {
       return;
     }
 
@@ -76,22 +76,20 @@ export function RegistryDetailPage() {
   };
 
   useEffect(() => {
-    if (!isLoading && !entry) {
+    if (!isLoading && !registryEntry) {
       toast({
         title: "Library entry not found",
         description: "The library entry you are looking for does not exist.",
       });
       navigate("/library");
     }
-  }, [entry, isLoading]);
+  }, [registryEntry, isLoading]);
 
-  if (isLoading || !entry) {
+  if (isLoading || !registryEntry) {
     return <RegistryEntrySkeleton />;
   }
 
-  const selectedTool = entry.tools?.find((tool) => tool.name === toolId);
-
-  const proxies = storeQuery.data ?? [];
+  const workspaces = storeQuery.data ?? [];
 
   return (
     <LayoutView>
@@ -102,7 +100,7 @@ export function RegistryDetailPage() {
             onClick: () => navigate("/library"),
           },
           {
-            title: entry.title,
+            title: registryEntry.title,
           },
         ]}
       >
@@ -117,8 +115,8 @@ export function RegistryDetailPage() {
             className="w-sm max-w-[80dvw] rounded-[20px] lg:hidden"
           >
             <RegistryInstallForm
-              registryEntry={entry}
-              proxies={proxies}
+              registryEntry={registryEntry}
+              proxies={workspaces}
               onSubmit={handleInstall}
               isSubmitting={isPending}
             />
@@ -131,14 +129,14 @@ export function RegistryDetailPage() {
           <SplitView>
             <SplitViewMain>
               <RegistryItem
-                entry={entry}
-                onToolClick={(tool) => setToolId(tool.name)}
+                entry={registryEntry}
+                onToolClick={(tool) => setSelectedTool(tool)}
               />
             </SplitViewMain>
             <SplitViewSide>
               <RegistryDetailSidebar
-                entry={entry}
-                proxies={proxies}
+                entry={registryEntry}
+                proxies={workspaces}
                 onClickInstall={handleInstall}
                 isInstalling={isPending}
               />
@@ -149,8 +147,8 @@ export function RegistryDetailPage() {
         {selectedTool && (
           <RegistryToolSheet
             tool={selectedTool}
-            mcpName={entry.title}
-            onClose={() => setToolId(null)}
+            mcpName={registryEntry.title}
+            onClose={() => setSelectedTool(null)}
           />
         )}
       </LayoutViewContent>

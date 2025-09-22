@@ -6,7 +6,7 @@ type C = GatewayRouterOutputs["installer"]["allClients"][number] & {
   present: boolean;
   label: string;
   image: string;
-  type: "installer" | "deep-link";
+  type: "installer";
 };
 
 const cc = [

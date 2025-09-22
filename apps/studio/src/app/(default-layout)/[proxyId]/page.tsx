@@ -23,6 +23,7 @@ import { Container } from "../../../components/ui/container";
 import { SectionSeparator } from "../../../components/ui/section";
 import { toast } from "../../../components/ui/toast";
 import { DIRECTOR_URL } from "../../../config";
+import { useChangeInstallState } from "../../../hooks/use-change-install-state";
 import { useClients } from "../../../hooks/use-clients";
 import { trpc } from "../../../state/client";
 import { useInspectMcp } from "../../../state/use-inspect-mcp";
@@ -69,6 +70,9 @@ export default function ProxyPage() {
   const params = useParams<{ proxyId: string }>();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const { changeInstallState, isPending } = useChangeInstallState(
+    params.proxyId,
+  );
 
   const { proxy, isLoading, installers } = useProxy(params.proxyId);
   const { toolId, serverId, setProxyQuery } = useProxyQuery();

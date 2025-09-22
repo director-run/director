@@ -13,15 +13,11 @@ import {
   PlusIcon,
 } from "@phosphor-icons/react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { gatewayClient } from "./contexts/gateway-context";
+import { useWorkspaces } from "./hooks/use-workspaces";
 
 export const RootLayout = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
-  const {
-    data: servers,
-    isLoading,
-    error,
-  } = gatewayClient.store.getAll.useQuery();
+  const { data: servers, isLoading, error } = useWorkspaces();
   const showLoading = isLoading || error?.message === "Failed to fetch";
   const location = useLocation();
 

@@ -11,35 +11,25 @@ import { EmptyStateDescription } from "@director.run/studio/components/ui/empty-
 import { toast } from "@director.run/studio/components/ui/toast.js";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { registryClient } from "../contexts/gateway-context";
-import { gatewayClient } from "../contexts/gateway-context";
+import { useAddServer } from "../hooks/use-add-server";
+import { useRegistryEntries } from "../hooks/use-registry-entries";
+import { useWorkspaces } from "../hooks/use-workspaces";
 
 export const RegistryListPage: React.FC = () => {
+  const navigate = useNavigate();
+
   const [pageIndex, setPageIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [addSheetOpen, setAddSheetOpen] = useState(false);
-  const { data: workspaces } = gatewayClient.store.getAll.useQuery();
 
-  const navigate = useNavigate();
-
-  const { data, isLoading, error } = registryClient.entries.getEntries.useQuery(
-    {
-      pageIndex,
-      pageSize: 20,
-      searchQuery,
-    },
-    {
-      placeholderData: (prev) => prev,
-    },
-  );
-
-  const utils = gatewayClient.useUtils();
-
-  const addServerMutation = gatewayClient.store.addServer.useMutation({
-    onSuccess: async (data, variables) => {
-      await utils.store.getAll.invalidate();
-      await utils.store.get.invalidate({ proxyId: variables.proxyId });
-
+  const { data: workspaces } = useWorkspaces();
+  const { data, isLoading, error } = useRegistryEntries({
+    pageIndex,
+    pageSize: 20,
+    searchQuery,
+  });
+  const { addServer, isPending } = useAddServer({
+    onSuccess: (_data, variables) => {
       toast({
         title: "Server added",
         description: "The server has been added to the proxy",
@@ -54,24 +44,6 @@ export const RegistryListPage: React.FC = () => {
       });
     },
   });
-
-  const handleAddServer = async (data: WorkspaceTargetFormData) => {
-    if (!data.workspaceId) {
-      toast({
-        title: "No workspace selected",
-        description: "Please select a proxy before adding a server.",
-      });
-      return;
-    }
-
-    await addServerMutation.mutateAsync({
-      proxyId: data.workspaceId,
-      server: {
-        name: data.server.name,
-        transport: data.server,
-      },
-    });
-  };
 
   if (isLoading) {
     return <div className="page">Loading...</div>;
@@ -115,8 +87,24 @@ export const RegistryListPage: React.FC = () => {
           open={addSheetOpen}
           onOpenChange={setAddSheetOpen}
           workspaces={workspaces}
-          onSubmit={handleAddServer}
-          isSubmitting={addServerMutation.isPending}
+          onSubmit={async (data: WorkspaceTargetFormData) => {
+            if (!data.workspaceId) {
+              toast({
+                title: "No workspace selected",
+                description: "Please select a proxy before adding a server.",
+              });
+              return;
+            }
+
+            await addServer({
+              proxyId: data.workspaceId,
+              server: {
+                name: data.server.name,
+                transport: data.server,
+              },
+            });
+          }}
+          isSubmitting={isPending}
         />
       </LayoutViewContent>
     </LayoutView>

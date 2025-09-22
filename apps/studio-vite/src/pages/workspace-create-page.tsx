@@ -6,15 +6,13 @@ import { ProxyNew } from "@director.run/studio/components/pages/proxy-new.tsx";
 import type { ProxyFormData } from "@director.run/studio/components/proxies/proxy-form.tsx";
 import { toast } from "@director.run/studio/components/ui/toast.tsx";
 import { useNavigate } from "react-router-dom";
-import { gatewayClient } from "../contexts/gateway-context";
+import { useCreateProxy } from "../hooks/use-create-proxy";
 
 export function NewProxyPage() {
   const navigate = useNavigate();
 
-  const utils = gatewayClient.useUtils();
-  const mutation = gatewayClient.store.create.useMutation({
-    onSuccess: async (response) => {
-      await utils.store.getAll.refetch();
+  const { createProxy, isPending } = useCreateProxy({
+    onSuccess: (response) => {
       toast({
         title: "Proxy created",
         description: "This proxy was successfully created.",
@@ -24,7 +22,7 @@ export function NewProxyPage() {
   });
 
   const handleSubmit = async (values: ProxyFormData) => {
-    await mutation.mutateAsync({ ...values, servers: [] });
+    await createProxy({ ...values, servers: [] });
   };
 
   return (
@@ -38,7 +36,7 @@ export function NewProxyPage() {
       />
 
       <LayoutViewContent>
-        <ProxyNew onSubmit={handleSubmit} isSubmitting={mutation.isPending} />
+        <ProxyNew onSubmit={handleSubmit} isSubmitting={isPending} />
       </LayoutViewContent>
     </>
   );

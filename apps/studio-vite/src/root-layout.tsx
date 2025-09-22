@@ -13,9 +13,10 @@ import {
   PlusIcon,
 } from "@phosphor-icons/react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { useWorkspaces } from "./hooks/use-workspaces";
 
-export const RootLayout = ({ children }: { children: React.ReactNode }) => {
+export const RootLayout = () => {
   const navigate = useNavigate();
   const { data: servers, isLoading, error } = useWorkspaces();
   const showLoading = isLoading || error?.message === "Failed to fetch";
@@ -92,7 +93,9 @@ export const RootLayout = ({ children }: { children: React.ReactNode }) => {
         },
       ]}
     >
-      <LayoutView>{children}</LayoutView>
+      <LayoutView>
+        <Outlet />
+      </LayoutView>
       <ChatToUs />
     </LayoutRoot>
   );

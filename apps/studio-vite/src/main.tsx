@@ -31,8 +31,8 @@ export const App = () => {
 
   if (isAuthenticated) {
     return (
-      <RootLayout>
-        <Routes>
+      <Routes>
+        <Route path="/" element={<RootLayout />}>
           <Route path="/library" element={<RegistryListPage />} />
           <Route
             path="/library/mcp/:entryName"
@@ -46,8 +46,8 @@ export const App = () => {
           />
           <Route path="/new" element={<NewProxyPage />} />
           <Route path="*" element={<Navigate to="/settings" replace />} />
-        </Routes>
-      </RootLayout>
+        </Route>
+      </Routes>
     );
   } else {
     return (

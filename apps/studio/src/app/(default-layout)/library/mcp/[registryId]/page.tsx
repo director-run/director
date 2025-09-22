@@ -113,9 +113,6 @@ export default function RegistryEntryPage() {
   const selectedTool = entry.tools?.find((tool) => tool.name === toolId);
 
   const proxies = storeQuery.data ?? [];
-  const entryInstalledOn = proxies
-    .filter((proxy) => proxy.servers.some((it) => it.name === entry.name))
-    .map((p) => p.id);
 
   const handleToolClick = (toolName: string) => {
     setRegistryQuery({ toolId: toolName, serverId });
@@ -147,7 +144,6 @@ export default function RegistryEntryPage() {
             <RegistryInstallForm
               registryEntry={entry}
               proxies={proxies}
-              entryInstalledOn={entryInstalledOn}
               onSubmit={handleInstall}
               isSubmitting={installMutation.isPending}
             />
@@ -168,7 +164,6 @@ export default function RegistryEntryPage() {
               <RegistryDetailSidebar
                 entry={entry}
                 proxies={proxies}
-                entryInstalledOn={entryInstalledOn}
                 onClickInstall={handleInstall}
                 isInstalling={installMutation.isPending}
               />

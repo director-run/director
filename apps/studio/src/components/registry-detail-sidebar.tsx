@@ -6,7 +6,6 @@ import { Section, SectionHeader, SectionTitle } from "./ui/section";
 interface RegistryDetailSidebarProps {
   entry: Pick<RegistryEntryDetail, "name" | "id" | "parameters">;
   proxies?: WorkspaceList;
-  entryInstalledOn?: string[];
   onClickInstall: (params: {
     proxyId?: string;
     entryId: string;
@@ -19,11 +18,13 @@ interface RegistryDetailSidebarProps {
 export function RegistryDetailSidebar({
   entry,
   proxies,
-  entryInstalledOn = [],
   onClickInstall,
   onClickCancel,
   isInstalling = false,
 }: RegistryDetailSidebarProps) {
+  const entryInstalledOn = (proxies ?? [])
+    .filter((proxy) => proxy.servers.some((it) => it.name === entry.name))
+    .map((p) => p.id);
   return (
     <>
       {entryInstalledOn.length > 0 && (
@@ -55,7 +56,6 @@ export function RegistryDetailSidebar({
         <RegistryInstallForm
           registryEntry={entry}
           proxies={proxies}
-          entryInstalledOn={entryInstalledOn}
           onSubmit={onClickInstall}
           isSubmitting={isInstalling}
           onClickCancel={onClickCancel}

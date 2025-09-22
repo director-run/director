@@ -75,10 +75,6 @@ export function RegistryDetailPage() {
     }
   };
 
-  const handleCloseTool = () => {
-    setToolId(null);
-  };
-
   useEffect(() => {
     if (!isLoading && !entry) {
       toast({
@@ -96,13 +92,6 @@ export function RegistryDetailPage() {
   const selectedTool = entry.tools?.find((tool) => tool.name === toolId);
 
   const proxies = storeQuery.data ?? [];
-  const entryInstalledOn = proxies
-    .filter((proxy) => proxy.servers.some((it) => it.name === entry.name))
-    .map((p) => p.id);
-
-  const handleToolClick = (toolName: string) => {
-    setToolId(toolName);
-  };
 
   return (
     <LayoutView>
@@ -143,14 +132,13 @@ export function RegistryDetailPage() {
             <SplitViewMain>
               <RegistryItem
                 entry={entry}
-                onToolClick={(tool) => handleToolClick(tool.name)}
+                onToolClick={(tool) => setToolId(tool.name)}
               />
             </SplitViewMain>
             <SplitViewSide>
               <RegistryDetailSidebar
                 entry={entry}
                 proxies={proxies}
-                entryInstalledOn={entryInstalledOn}
                 onClickInstall={handleInstall}
                 isInstalling={isPending}
               />
@@ -162,7 +150,7 @@ export function RegistryDetailPage() {
           <RegistryToolSheet
             tool={selectedTool}
             mcpName={entry.title}
-            onClose={handleCloseTool}
+            onClose={() => setToolId(null)}
           />
         )}
       </LayoutViewContent>

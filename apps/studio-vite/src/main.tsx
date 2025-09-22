@@ -5,8 +5,8 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./contexts/auth-context";
 import { useAuth } from "./contexts/auth-context";
 import { GatewayProvider } from "./contexts/gateway-context";
-import { GlobalErrorBoundary } from "./helpers/global-error-boundry";
 import { LoginPage } from "./pages/login-page";
+import { RegistryDetailPage } from "./pages/registry-detail-page";
 import { RegistryListPage } from "./pages/registry-list-page";
 import { SettingsPage } from "./pages/settings-page";
 import { NewProxyPage } from "./pages/workspace-create-page";
@@ -35,6 +35,10 @@ export const App = () => {
       <RootLayout>
         <Routes>
           <Route path="/library" element={<RegistryListPage />} />
+          <Route
+            path="/library/mcp/:entryName"
+            element={<RegistryDetailPage />}
+          />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/:workspaceId" element={<WorkspaceDetailPage />} />
           <Route path="/new" element={<NewProxyPage />} />
@@ -54,14 +58,14 @@ export const App = () => {
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <GlobalErrorBoundary>
-      <BrowserRouter>
-        <GatewayProvider gatewayUrl={GATEWAY_URL} registryUrl={REGISTRY_URL}>
-          <AuthProvider>
-            <App />
-          </AuthProvider>
-        </GatewayProvider>
-      </BrowserRouter>
-    </GlobalErrorBoundary>
+    {/* <GlobalErrorBoundary> */}
+    <BrowserRouter>
+      <GatewayProvider gatewayUrl={GATEWAY_URL} registryUrl={REGISTRY_URL}>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </GatewayProvider>
+    </BrowserRouter>
+    {/* </GlobalErrorBoundary> */}
   </React.StrictMode>,
 );

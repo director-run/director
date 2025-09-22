@@ -1,3 +1,5 @@
+import { ChatToUs } from "@director.run/studio/components/chat-to-us.tsx";
+import { Toaster } from "@director.run/studio/components/ui/toast.tsx";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Navigate, Route, Routes } from "react-router-dom";
@@ -63,9 +65,12 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <GatewayProvider gatewayUrl={GATEWAY_URL} registryUrl={REGISTRY_URL}>
         <AuthProvider>
           <App />
+          <Toaster />
+          <ChatToUs />
         </AuthProvider>
       </GatewayProvider>
     </BrowserRouter>
+
     {/* </GlobalErrorBoundary> */}
   </React.StrictMode>,
 );

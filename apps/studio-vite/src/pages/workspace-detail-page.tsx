@@ -50,7 +50,9 @@ export const WorkspaceDetailPage = () => {
           isUninstalling={false}
           toolLinks={[]}
           toolsLoading={false}
-          onLibraryClick={() => {}}
+          onLibraryClick={() => {
+            navigate(`/library`);
+          }}
           onServerClick={(serverId: string) => {
             navigate(`/${workspaceId}/${serverId}`);
           }}

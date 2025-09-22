@@ -9,13 +9,18 @@ import {
 } from "../../../components/layout/layout";
 import { LayoutBreadcrumbHeader } from "../../../components/layout/layout-breadcrumb-header";
 import { McpToolSheet } from "../../../components/mcp-servers/mcp-tool-sheet";
-import { WorkspaceDetail } from "../../../components/pages/workspace-detail";
 import { ProxyActionsDropdown } from "../../../components/proxies/proxy-actions-dropdown";
 import { ProxyDeleteConfirmation } from "../../../components/proxies/proxy-delete-confirmation";
 import type { Client } from "../../../components/proxies/proxy-installers";
 import { ProxySettingsSheet } from "../../../components/proxies/proxy-settings-sheet";
 import { ProxySkeleton } from "../../../components/proxies/proxy-skeleton";
+import { WorkspaceSectionClients } from "../../../components/proxies/workspace-section-clients";
+import { WorkspaceSectionHeader } from "../../../components/proxies/workspace-section-header";
+import { WorkspaceSectionServers } from "../../../components/proxies/workspace-section-servers";
+import { WorkspaceSectionTools } from "../../../components/proxies/workspace-section-tools";
 import { Badge, BadgeLabel } from "../../../components/ui/badge";
+import { Container } from "../../../components/ui/container";
+import { SectionSeparator } from "../../../components/ui/section";
 import { toast } from "../../../components/ui/toast";
 import { DIRECTOR_URL } from "../../../config";
 import { useClients } from "../../../hooks/use-clients";
@@ -211,6 +216,8 @@ export default function ProxyPage() {
       };
     });
 
+  const workspace = proxy;
+
   return (
     <LayoutView>
       <LayoutBreadcrumbHeader
@@ -227,24 +234,33 @@ export default function ProxyPage() {
       </LayoutBreadcrumbHeader>
 
       <LayoutViewContent>
-        <WorkspaceDetail
-          workspace={proxy}
-          gatewayBaseUrl={DIRECTOR_URL}
-          clients={clients}
-          installers={installers}
-          availableClients={availableClients ?? []}
-          isClientsLoading={isClientsLoading}
-          onInstall={handleInstall}
-          onUninstall={handleUninstall}
-          isInstalling={installationMutation.isPending}
-          isUninstalling={uninstallationMutation.isPending}
-          toolLinks={toolLinks}
-          toolsLoading={toolsLoading}
-          onLibraryClick={() => router.push("/library")}
-          onServerClick={(serverId) =>
-            router.push(`/${params.proxyId}/mcp/${serverId}`)
-          }
-        />
+        <Container size="lg">
+          <WorkspaceSectionHeader workspace={workspace} />
+          <SectionSeparator />
+          <WorkspaceSectionClients
+            workspace={workspace}
+            gatewayBaseUrl={DIRECTOR_URL}
+            clients={clients}
+            installers={installers}
+            availableClients={availableClients ?? []}
+            isClientsLoading={isClientsLoading}
+            onInstall={handleInstall}
+            onUninstall={handleUninstall}
+            isInstalling={installationMutation.isPending}
+            isUninstalling={uninstallationMutation.isPending}
+          />
+          <SectionSeparator />
+          <WorkspaceSectionServers
+            workspace={workspace}
+            onLibraryClick={() => router.push("/library")}
+            onServerClick={handleServerClick}
+          />
+          <SectionSeparator />
+          <WorkspaceSectionTools
+            toolLinks={toolLinks}
+            toolsLoading={toolsLoading}
+          />
+        </Container>
       </LayoutViewContent>
 
       <McpToolSheet

@@ -11,7 +11,6 @@ interface RegistryInstallFormProps {
   registryEntry: Pick<RegistryEntryDetail, "name" | "id" | "parameters">;
   proxies?: WorkspaceList;
   defaultProxyId?: string;
-  entryInstalledOn?: string[];
   onClickCancel?: () => void;
   onSubmit: (params: {
     proxyId?: string;
@@ -25,7 +24,6 @@ export function RegistryInstallForm({
   registryEntry,
   proxies,
   defaultProxyId,
-  entryInstalledOn = [],
   onClickCancel,
   onSubmit,
   isSubmitting = false,
@@ -34,6 +32,13 @@ export function RegistryInstallForm({
     (parameter, index, array) =>
       array.findIndex((p) => p.name === parameter.name) === index,
   );
+
+  // Calculate which proxies already have this entry installed
+  const entryInstalledOn = (proxies ?? [])
+    .filter((proxy) =>
+      proxy.servers.some((it) => it.name === registryEntry.name),
+    )
+    .map((p) => p.id);
 
   // Filter out proxies where the entry is already installed
   const availableProxies = proxies?.filter(

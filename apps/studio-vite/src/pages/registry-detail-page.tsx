@@ -130,7 +130,6 @@ export function RegistryDetailPage() {
             <RegistryInstallForm
               registryEntry={entry}
               proxies={proxies}
-              entryInstalledOn={entryInstalledOn}
               onSubmit={handleInstall}
               isSubmitting={isPending}
             />

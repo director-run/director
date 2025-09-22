@@ -34,7 +34,6 @@ export function GatewayProvider(
     children: React.ReactNode;
   }>,
 ) {
-  console.log("GatewayProvider", props.gatewayUrl);
   const [trpcClient] = useState(() =>
     createGatewayClient(`${props.gatewayUrl}/trpc`),
   );

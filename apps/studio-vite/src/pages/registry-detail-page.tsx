@@ -1,5 +1,3 @@
-"use client";
-
 import { LayoutBreadcrumbHeader } from "@director.run/studio/components/layout/layout-breadcrumb-header.tsx";
 import {
   LayoutView,

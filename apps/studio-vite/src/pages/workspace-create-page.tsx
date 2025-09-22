@@ -1,5 +1,3 @@
-"use client";
-
 import { LayoutBreadcrumbHeader } from "@director.run/studio/components/layout/layout-breadcrumb-header.tsx";
 import { LayoutViewContent } from "@director.run/studio/components/layout/layout.tsx";
 import { ProxyNew } from "@director.run/studio/components/pages/proxy-new.tsx";

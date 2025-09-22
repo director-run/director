@@ -15,7 +15,6 @@ export function LoginPage() {
         password: "password",
       }}
       onSubmit={async (user) => {
-        console.log("user", user);
         try {
           await setIsLoading(true);
           await login(user);

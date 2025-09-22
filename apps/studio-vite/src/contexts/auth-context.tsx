@@ -54,7 +54,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const login = async (params: { email: string; password: string }) => {
-    console.log("loginnnnnn", params);
     await simulateApiCall();
 
     if (
@@ -69,9 +68,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));
-      console.log("good!");
     } else {
-      console.log("invalid!");
       throw new Error("Invalid email or password");
     }
   };

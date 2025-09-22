@@ -72,14 +72,32 @@ export default function ProxyPage() {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const { changeInstallState, isPending } = useChangeInstallState(
     params.proxyId,
+    {
+      onSuccess: (_client, install) => {
+        toast({
+          title: install ? "Proxy installed" : "Proxy uninstalled",
+          description: install
+            ? "This proxy was successfully installed"
+            : "This proxy was successfully uninstalled",
+        });
+      },
+      onError: (_client, install) => {
+        toast({
+          title: "Error",
+          description: install
+            ? "Failed to install this proxy"
+            : "Failed to uninstall this proxy",
+        });
+      },
+    },
   );
 
   const { proxy, isLoading, installers } = useProxy(params.proxyId);
   const { toolId, serverId, setProxyQuery } = useProxyQuery();
 
-  const cData = useClients(params.proxyId);
-
-  console.log("cData", cData);
+  const { data: clientData, isLoading: isClientsLoading } = useClients(
+    params.proxyId,
+  );
   // Find the server and tool data
   const server = proxy?.servers.find((server) => server.name === serverId);
   const { tools, isLoading: toolsLoading } = useInspectMcp(
@@ -88,12 +106,15 @@ export default function ProxyPage() {
   );
   const tool = tools.find((tool) => tool.name === toolId);
 
-  const { data: availableClients, isLoading: isClientsLoading } =
-    trpc.installer.allClients.useQuery();
-
   const utils = trpc.useUtils();
 
-  console.log("installers", installers, availableClients);
+  // Map hook data to legacy props expected by WorkspaceSectionClients
+  const derivedInstallers = clientData
+    ? Object.fromEntries(clientData.map((c) => [c.name, !!c.present]))
+    : installers;
+  const mappedAvailableClients = clientData
+    ? clientData.map((c) => ({ name: c.name, installed: c.installed }))
+    : [];
 
   const updateProxyMutation = trpc.store.update.useMutation({
     onSuccess: async () => {
@@ -120,31 +141,7 @@ export default function ProxyPage() {
     },
   });
 
-  const installationMutation = trpc.installer.byProxy.install.useMutation({
-    onSuccess: () => {
-      utils.installer.byProxy.list.invalidate();
-      toast({
-        title: "Proxy installed",
-        description: `This proxy was successfully installed`,
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error.message,
-      });
-    },
-  });
-
-  const uninstallationMutation = trpc.installer.byProxy.uninstall.useMutation({
-    onSuccess: () => {
-      utils.installer.byProxy.list.invalidate();
-      toast({
-        title: "Proxy uninstalled",
-        description: `This proxy was successfully uninstalled`,
-      });
-    },
-  });
+  // remove local install/uninstall mutations in favor of useChangeInstallState
 
   const handleUpdateProxy = async (values: {
     name: string;
@@ -160,19 +157,18 @@ export default function ProxyPage() {
     await deleteProxyMutation.mutateAsync({ proxyId: params.proxyId });
   };
 
-  const handleInstall = (proxyId: string, client: ConfiguratorTarget) => {
-    installationMutation.mutate({
-      proxyId,
-      client,
-      baseUrl: DIRECTOR_URL,
-    });
+  const handleInstall = async (
+    _proxyId: string,
+    client: ConfiguratorTarget,
+  ) => {
+    await changeInstallState(client, true);
   };
 
-  const handleUninstall = (proxyId: string, client: ConfiguratorTarget) => {
-    uninstallationMutation.mutate({
-      proxyId,
-      client,
-    });
+  const handleUninstall = async (
+    _proxyId: string,
+    client: ConfiguratorTarget,
+  ) => {
+    await changeInstallState(client, false);
   };
 
   const handleServerClick = (serverId: string) => {
@@ -245,13 +241,13 @@ export default function ProxyPage() {
             workspace={workspace}
             gatewayBaseUrl={DIRECTOR_URL}
             clients={clients}
-            installers={installers}
-            availableClients={availableClients ?? []}
+            installers={derivedInstallers}
+            availableClients={mappedAvailableClients}
             isClientsLoading={isClientsLoading}
             onInstall={handleInstall}
             onUninstall={handleUninstall}
-            isInstalling={installationMutation.isPending}
-            isUninstalling={uninstallationMutation.isPending}
+            isInstalling={isPending}
+            isUninstalling={isPending}
           />
           <SectionSeparator />
           <WorkspaceSectionServers

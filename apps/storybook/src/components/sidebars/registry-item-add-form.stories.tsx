@@ -113,14 +113,12 @@ type Story = StoryObj<typeof meta>;
 const BaseStory = ({
   entry = mockRegistryEntry,
   proxies,
-  entryInstalledOn,
   isInstalling = false,
   showDebug = true,
   onClickCancel,
 }: {
   entry?: typeof mockRegistryEntry;
   proxies?: WorkspaceList;
-  entryInstalledOn?: string[];
   isInstalling?: boolean;
   showDebug?: boolean;
   onClickCancel?: () => void;
@@ -171,7 +169,6 @@ const BaseStory = ({
             <RegistryDetailSidebar
               entry={entry}
               proxies={proxies}
-              entryInstalledOn={entryInstalledOn}
               onClickInstall={handleClickInstall}
               isInstalling={isInstalling}
               onClickCancel={onClickCancel}
@@ -189,7 +186,7 @@ export const NotInstalled: Story = {
     entry: mockRegistryEntry,
     onClickInstall: async () => {},
   },
-  render: () => <BaseStory proxies={mockProxies} entryInstalledOn={[]} />,
+  render: () => <BaseStory proxies={mockProxies} />,
 };
 
 // 2. With proxies, installed on some
@@ -199,7 +196,22 @@ export const PartiallyInstalled: Story = {
     onClickInstall: async () => {},
   },
   render: () => (
-    <BaseStory proxies={mockProxies} entryInstalledOn={["dev-proxy"]} />
+    <BaseStory
+      proxies={mockProxies.map((p) =>
+        p.id === "dev-proxy"
+          ? {
+              ...p,
+              servers: [
+                {
+                  name: mockRegistryEntry.name,
+                  status: "connected",
+                  transport: { type: "mem" },
+                },
+              ],
+            }
+          : { ...p, servers: [] },
+      )}
+    />
   ),
 };
 
@@ -211,8 +223,16 @@ export const FullyInstalled: Story = {
   },
   render: () => (
     <BaseStory
-      proxies={mockProxies}
-      entryInstalledOn={["dev-proxy", "staging-proxy", "production-proxy"]}
+      proxies={mockProxies.map((p) => ({
+        ...p,
+        servers: [
+          {
+            name: mockRegistryEntry.name,
+            status: "connected",
+            transport: { type: "mem" },
+          },
+        ],
+      }))}
     />
   ),
 };
@@ -223,13 +243,7 @@ export const UndefinedProxies: Story = {
     entry: mockRegistryEntry,
     onClickInstall: async () => {},
   },
-  render: () => (
-    <BaseStory
-      proxies={undefined}
-      entryInstalledOn={[]}
-      onClickCancel={() => {}}
-    />
-  ),
+  render: () => <BaseStory proxies={undefined} onClickCancel={() => {}} />,
 };
 
 // 5. Empty proxies array - should show "already installed" message
@@ -238,7 +252,7 @@ export const EmptyProxies: Story = {
     entry: mockRegistryEntry,
     onClickInstall: async () => {},
   },
-  render: () => <BaseStory proxies={[]} entryInstalledOn={[]} />,
+  render: () => <BaseStory proxies={[]} />,
 };
 
 // 6. Installing state
@@ -249,8 +263,20 @@ export const Installing: Story = {
   },
   render: () => (
     <BaseStory
-      proxies={mockProxies}
-      entryInstalledOn={["dev-proxy"]}
+      proxies={mockProxies.map((p) =>
+        p.id === "dev-proxy"
+          ? {
+              ...p,
+              servers: [
+                {
+                  name: mockRegistryEntry.name,
+                  status: "connected",
+                  transport: { type: "mem" },
+                },
+              ],
+            }
+          : { ...p, servers: [] },
+      )}
       isInstalling={true}
     />
   ),
@@ -269,7 +295,6 @@ export const NoParameters: Story = {
         parameters: [],
       }}
       proxies={mockProxies}
-      entryInstalledOn={[]}
     />
   ),
 };
@@ -306,8 +331,20 @@ export const ComplexParameters: Story = {
           },
         ],
       }}
-      proxies={mockProxies}
-      entryInstalledOn={["dev-proxy"]}
+      proxies={mockProxies.map((p) =>
+        p.id === "dev-proxy"
+          ? {
+              ...p,
+              servers: [
+                {
+                  name: mockRegistryEntry.name,
+                  status: "connected",
+                  transport: { type: "mem" },
+                },
+              ],
+            }
+          : { ...p, servers: [] },
+      )}
     />
   ),
 };

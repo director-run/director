@@ -37,7 +37,6 @@ const mockProxies: WorkspaceList = [
 const RegistryItemDetailComponent = ({
   entry,
   proxies,
-  entryInstalledOn,
   onClickInstall,
   isInstalling,
   onToolClick,
@@ -45,7 +44,6 @@ const RegistryItemDetailComponent = ({
 }: {
   entry: typeof mockRegistryEntry;
   proxies?: WorkspaceList;
-  entryInstalledOn?: string[];
   onClickInstall: (params: {
     proxyId?: string;
     entryId: string;
@@ -66,7 +64,6 @@ const RegistryItemDetailComponent = ({
         <RegistryDetailSidebar
           entry={entry}
           proxies={proxies}
-          entryInstalledOn={entryInstalledOn}
           onClickInstall={onClickInstall}
           isInstalling={isInstalling}
         />
@@ -90,8 +87,20 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     entry: mockRegistryEntry,
-    proxies: mockProxies,
-    entryInstalledOn: ["dev-proxy"],
+    proxies: mockProxies.map((p) =>
+      p.id === "dev-proxy"
+        ? {
+            ...p,
+            servers: [
+              {
+                name: mockRegistryEntry.name,
+                status: "connected",
+                transport: { type: "mem" },
+              },
+            ],
+          }
+        : { ...p, servers: [] },
+    ),
     onClickInstall: async (values) => {
       console.log("Installing MCP server:", values);
       // Simulate installation delay
@@ -126,8 +135,20 @@ export const WithToolSelected: Story = {
             <SplitViewSide>
               <RegistryDetailSidebar
                 entry={mockRegistryEntry}
-                proxies={mockProxies}
-                entryInstalledOn={["dev-proxy"]}
+                proxies={mockProxies.map((p) =>
+                  p.id === "dev-proxy"
+                    ? {
+                        ...p,
+                        servers: [
+                          {
+                            name: mockRegistryEntry.name,
+                            status: "connected",
+                            transport: { type: "mem" },
+                          },
+                        ],
+                      }
+                    : { ...p, servers: [] },
+                )}
                 onClickInstall={args.onClickInstall || (async () => {})}
                 isInstalling={args.isInstalling || false}
               />

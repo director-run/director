@@ -6,13 +6,13 @@ import { ProxyNew } from "@director.run/studio/components/pages/proxy-new.tsx";
 import type { ProxyFormData } from "@director.run/studio/components/proxies/proxy-form.tsx";
 import { toast } from "@director.run/studio/components/ui/toast.tsx";
 import { useNavigate } from "react-router-dom";
-import { trpc } from "../contexts/gateway-context";
+import { gatewayClient } from "../contexts/gateway-context";
 
 export function NewProxyPage() {
   const navigate = useNavigate();
 
-  const utils = trpc.useUtils();
-  const mutation = trpc.store.create.useMutation({
+  const utils = gatewayClient.useUtils();
+  const mutation = gatewayClient.store.create.useMutation({
     onSuccess: async (response) => {
       await utils.store.getAll.refetch();
       toast({

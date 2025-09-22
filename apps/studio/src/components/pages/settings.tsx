@@ -18,7 +18,7 @@ export function SettingsPage(props: Props) {
           </SectionTitle>
         </SectionHeader>
 
-        <List {...props}>
+        <List>
           {Object.entries(settings).map(([key, value]) => (
             <ListItem key={key}>
               <ListItemDetails>

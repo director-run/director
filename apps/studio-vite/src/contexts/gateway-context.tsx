@@ -9,7 +9,7 @@ import { createTRPCReact } from "@trpc/react-query";
 import { useState } from "react";
 import superjson from "superjson";
 
-export const trpc = createTRPCReact<AppRouter>();
+export const gatewayClient = createTRPCReact<AppRouter>();
 
 const eueryClientSingleton = new QueryClient({
   defaultOptions: {
@@ -35,15 +35,19 @@ export function GatewayProvider(
     children: React.ReactNode;
   }>,
 ) {
+  console.log("GatewayProvider", props.gatewayUrl);
   const [trpcClient] = useState(() =>
     createGatewayClient(`${props.gatewayUrl}/trpc`),
   );
 
   return (
-    <trpc.Provider client={trpcClient} queryClient={eueryClientSingleton}>
+    <gatewayClient.Provider
+      client={trpcClient}
+      queryClient={eueryClientSingleton}
+    >
       <QueryClientProvider client={eueryClientSingleton}>
         {props.children}
       </QueryClientProvider>
-    </trpc.Provider>
+    </gatewayClient.Provider>
   );
 }

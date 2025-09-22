@@ -5,6 +5,8 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./contexts/auth-context";
 import { useAuth } from "./contexts/auth-context";
 import { GatewayProvider } from "./contexts/gateway-context";
+import { RegistryProvider } from "./contexts/registry-context";
+import { GlobalErrorBoundary } from "./helpers/global-error-boundry";
 import { LoginPage } from "./pages/login-page";
 import { RegistryListPage } from "./pages/registry-list-page";
 import { SettingsPage } from "./pages/settings-page";
@@ -14,9 +16,9 @@ import { RootLayout } from "./root-layout";
 
 import "./fonts.css";
 import "./globals.css";
-import { GlobalErrorBoundary } from "./helpers/global-error-boundry";
 
 const GATEWAY_URL = "http://localhost:3673";
+const REGISTRY_URL = "https://registry.director.run";
 
 export const App = () => {
   const { isAuthenticated, isInitializing } = useAuth();
@@ -56,9 +58,11 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <GlobalErrorBoundary>
       <BrowserRouter>
         <GatewayProvider gatewayUrl={GATEWAY_URL}>
-          <AuthProvider>
-            <App />
-          </AuthProvider>
+          <RegistryProvider registryUrl={REGISTRY_URL}>
+            <AuthProvider>
+              <App />
+            </AuthProvider>
+          </RegistryProvider>
         </GatewayProvider>
       </BrowserRouter>
     </GlobalErrorBoundary>

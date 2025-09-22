@@ -1,23 +1,36 @@
-import { createClient } from "@director.run/utilities/trpc";
 import { joinURL } from "@director.run/utilities/url";
+import { createTRPCClient } from "@trpc/client";
+import { httpBatchLink } from "@trpc/client/links/httpBatchLink";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
+import superjson from "superjson";
 import type { AppRouter } from "./routers/trpc";
 
 export function createRegistryClient(
   baseURL: string,
-  options: { apiKey?: string } = {},
+  { apiKey }: { apiKey?: string } = {},
 ) {
   const url = joinURL(baseURL, "/trpc");
-  return createClient<AppRouter>(
-    url,
-    options.apiKey
-      ? {
-          headers: {
-            "x-api-key": options.apiKey,
-          },
-        }
-      : undefined,
-  );
+  return createTRPCClient<AppRouter>({
+    links: [
+      httpBatchLink({
+        url,
+        transformer: superjson,
+        async fetch(url, options) {
+          return fetch(url, {
+            ...options,
+            headers: apiKey ? { "x-api-key": apiKey } : undefined,
+          } as RequestInit).catch((error) => {
+            if (error.code === "ConnectionRefused") {
+              throw new Error(
+                `Could not connect to the gateway service on ${baseURL}. Is it running?`,
+              );
+            }
+            throw error;
+          });
+        },
+      }),
+    ],
+  });
 }
 
 export type RegistryClient = ReturnType<typeof createRegistryClient>;

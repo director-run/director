@@ -1,5 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
+import { trpc } from "../contexts/registry-context";
 
 export const RegistryListPage: React.FC = () => {
-  return <div className="page">Registry List Page</div>;
+  const [pageIndex, setPageIndex] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+  const { data, isLoading, error } = trpc.entries.getEntries.useQuery(
+    {
+      pageIndex,
+      pageSize: 20,
+      searchQuery,
+    },
+    {
+      placeholderData: (prev) => prev,
+    },
+  );
+
+  if (isLoading) {
+    return <div className="page">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="page">Error: {error.message}</div>;
+  }
+
+  return <div className="page">{JSON.stringify(data)}</div>;
 };

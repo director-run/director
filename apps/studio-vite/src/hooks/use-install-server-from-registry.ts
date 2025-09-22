@@ -1,4 +1,4 @@
-import { gatewayClient, registryClient } from "../contexts/gateway-context";
+import { gatewayClient, registryClient } from "../contexts/backend-context";
 
 type InstallFromRegistryInput = {
   proxyId: string;

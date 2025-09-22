@@ -16,7 +16,7 @@ export const registryClient = createTRPCReact<RegistryAppRouter>({
 const gatewayQueryClient = new QueryClient();
 const registryQueryClient = new QueryClient();
 
-export function GatewayProvider(
+export function BackendProvider(
   props: Readonly<{
     gatewayUrl: string;
     registryUrl: string;

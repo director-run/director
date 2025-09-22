@@ -1,4 +1,4 @@
-import { gatewayClient } from "../contexts/gateway-context";
+import { gatewayClient } from "../contexts/backend-context";
 
 export function useWorkspace(workspaceId: string) {
   const [workspace, clients] = gatewayClient.useQueries((t) => [

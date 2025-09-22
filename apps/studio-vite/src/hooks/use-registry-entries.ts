@@ -1,4 +1,4 @@
-import { registryClient } from "../contexts/gateway-context";
+import { registryClient } from "../contexts/backend-context";
 
 export function useRegistryEntries(params: {
   pageIndex: number;

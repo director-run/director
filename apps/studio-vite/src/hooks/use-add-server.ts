@@ -1,4 +1,4 @@
-import { gatewayClient } from "../contexts/gateway-context";
+import { gatewayClient } from "../contexts/backend-context";
 
 type AddServerMutationOptions = Parameters<
   typeof gatewayClient.store.addServer.useMutation

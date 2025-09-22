@@ -6,7 +6,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./contexts/auth-context";
 import { useAuth } from "./contexts/auth-context";
-import { GatewayProvider } from "./contexts/gateway-context";
+import { BackendProvider } from "./contexts/backend-context";
 import { LoginPage } from "./pages/login-page";
 import { RegistryDetailPage } from "./pages/registry-detail-page";
 import { RegistryListPage } from "./pages/registry-list-page";
@@ -63,13 +63,13 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     {/* <GlobalErrorBoundary> */}
     <BrowserRouter>
-      <GatewayProvider gatewayUrl={GATEWAY_URL} registryUrl={REGISTRY_URL}>
+      <BackendProvider gatewayUrl={GATEWAY_URL} registryUrl={REGISTRY_URL}>
         <AuthProvider>
           <App />
           <Toaster />
           <ChatToUs />
         </AuthProvider>
-      </GatewayProvider>
+      </BackendProvider>
     </BrowserRouter>
     {/* </GlobalErrorBoundary> */}
   </React.StrictMode>,

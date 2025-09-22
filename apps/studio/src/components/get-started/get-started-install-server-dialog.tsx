@@ -68,7 +68,6 @@ function GetStartedInstallServerDialogPresentation({
                     <RegistryInstallForm
                       registryEntry={mcp}
                       proxies={proxies}
-                      entryInstalledOn={entryInstalledOn}
                       onSubmit={onClickInstall}
                       isSubmitting={isInstalling}
                       onClickCancel={() => onOpenChange(false)}
@@ -87,7 +86,6 @@ function GetStartedInstallServerDialogPresentation({
               <RegistryInstallForm
                 registryEntry={mcp}
                 proxies={proxies}
-                entryInstalledOn={entryInstalledOn}
                 onSubmit={onClickInstall}
                 isSubmitting={isInstalling}
                 onClickCancel={() => onOpenChange(false)}

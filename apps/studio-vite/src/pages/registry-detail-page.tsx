@@ -21,10 +21,9 @@ import {
   PopoverTrigger,
 } from "@director.run/studio/components/ui/popover.tsx";
 import { toast } from "@director.run/studio/components/ui/toast.tsx";
-import { useCopyToClipboard } from "@director.run/studio/hooks/use-copy-to-clipboard.ts";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { gatewayClient, registryClient } from "../contexts/gateway-context";
+import { useInstallServerFromRegistry } from "../hooks/use-install-server-from-registry";
 import { useRegistryEntry } from "../hooks/use-registry-entry";
 import { useWorkspaces } from "../hooks/use-workspaces";
 
@@ -37,25 +36,16 @@ export function RegistryDetailPage() {
   const entryQuery = useRegistryEntry({ entryName });
   const storeQuery = useWorkspaces();
 
-  const [_, copy] = useCopyToClipboard();
   const [installFormOpen, setInstallFormOpen] = useState(false);
 
-  const transportMutation =
-    registryClient.entries.getTransportForEntry.useQuery({
-      entryName: entryName ?? "",
-    });
-  const utils = gatewayClient.useUtils();
-
-  const installMutation = gatewayClient.store.addServer.useMutation({
+  const { install, isPending } = useInstallServerFromRegistry({
     onError: (error) => {
       toast({
         title: "Error",
         description: error.message,
       });
     },
-    onSuccess: (data, variables) => {
-      utils.store.get.invalidate({ proxyId: variables.proxyId });
-      utils.store.getAll.invalidate();
+    onSuccess: (_data, variables) => {
       toast({
         title: "Proxy installed",
         description: "This proxy was successfully installed.",
@@ -76,17 +66,11 @@ export function RegistryDetailPage() {
       return;
     }
 
-    const transport = await transportMutation.mutateAsync({
-      entryName: entry.name,
-      parameters: values.parameters ?? {},
-    });
-    if (values.proxyId) {
-      installMutation.mutate({
+    if (values.proxyId && entryName) {
+      await install({
         proxyId: values.proxyId,
-        server: {
-          name: entry.name,
-          transport,
-        },
+        entryName,
+        parameters: values.parameters ?? {},
       });
     }
   };
@@ -148,7 +132,7 @@ export function RegistryDetailPage() {
               proxies={proxies}
               entryInstalledOn={entryInstalledOn}
               onSubmit={handleInstall}
-              isSubmitting={installMutation.isPending}
+              isSubmitting={isPending}
             />
           </PopoverContent>
         </Popover>
@@ -169,7 +153,7 @@ export function RegistryDetailPage() {
                 proxies={proxies}
                 entryInstalledOn={entryInstalledOn}
                 onClickInstall={handleInstall}
-                isInstalling={installMutation.isPending}
+                isInstalling={isPending}
               />
             </SplitViewSide>
           </SplitView>

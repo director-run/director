@@ -51,14 +51,16 @@ export const RegistryListPage: React.FC = () => {
 
   if (!data || error) {
     return (
-      <RegistryLibrarySkeleton>
-        <div className="absolute inset-0 grid place-items-center">
-          <EmptyState>
-            <EmptyStateTitle>Something went wrong.</EmptyStateTitle>
-            <EmptyStateDescription>Please try again</EmptyStateDescription>
-          </EmptyState>
-        </div>
-      </RegistryLibrarySkeleton>
+      <LayoutView>
+        <LayoutViewContent>
+          <div className="inset-0 grid place-items-center">
+            <EmptyState>
+              <EmptyStateTitle>Something went wrong.</EmptyStateTitle>
+              <EmptyStateDescription>Please try again</EmptyStateDescription>
+            </EmptyState>
+          </div>
+        </LayoutViewContent>
+      </LayoutView>
     );
   }
 

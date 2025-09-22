@@ -5,7 +5,6 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./contexts/auth-context";
 import { useAuth } from "./contexts/auth-context";
 import { GatewayProvider } from "./contexts/gateway-context";
-import { RegistryProvider } from "./contexts/registry-context";
 import { GlobalErrorBoundary } from "./helpers/global-error-boundry";
 import { LoginPage } from "./pages/login-page";
 import { RegistryListPage } from "./pages/registry-list-page";
@@ -57,12 +56,10 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <GlobalErrorBoundary>
       <BrowserRouter>
-        <GatewayProvider gatewayUrl={GATEWAY_URL}>
-          <RegistryProvider registryUrl={REGISTRY_URL}>
-            <AuthProvider>
-              <App />
-            </AuthProvider>
-          </RegistryProvider>
+        <GatewayProvider gatewayUrl={GATEWAY_URL} registryUrl={REGISTRY_URL}>
+          <AuthProvider>
+            <App />
+          </AuthProvider>
         </GatewayProvider>
       </BrowserRouter>
     </GlobalErrorBoundary>

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { trpc } from "../contexts/registry-context";
+import { registryClient } from "../contexts/gateway-context";
 
 export const RegistryListPage: React.FC = () => {
   const [pageIndex, setPageIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const { data, isLoading, error } = trpc.entries.getEntries.useQuery(
+  const { data, isLoading, error } = registryClient.entries.getEntries.useQuery(
     {
       pageIndex,
       pageSize: 20,

@@ -4,9 +4,11 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { BrowserRouter } from "react-router-dom";
+import { GATEWAY_URL, REGISTRY_URL } from "./config";
 import { AuthProvider } from "./contexts/auth-context";
 import { useAuth } from "./contexts/auth-context";
 import { BackendProvider } from "./contexts/backend-context";
+import { GetStartedPage } from "./pages/get-started";
 import { LoginPage } from "./pages/login-page";
 import { RegistryDetailPage } from "./pages/registry-detail-page";
 import { RegistryListPage } from "./pages/registry-list-page";
@@ -19,9 +21,6 @@ import { RootLayout } from "./root-layout";
 import "./fonts.css";
 import "./globals.css";
 
-const GATEWAY_URL = "http://localhost:3673";
-const REGISTRY_URL = "https://registry.director.run";
-
 export const App = () => {
   const { isAuthenticated, isInitializing } = useAuth();
 
@@ -32,7 +31,7 @@ export const App = () => {
   if (isAuthenticated) {
     return (
       <Routes>
-        <Route path="/" element={<RootLayout />}>
+        <Route element={<RootLayout />}>
           <Route path="/library" element={<RegistryListPage />} />
           <Route
             path="/library/mcp/:entryName"
@@ -45,8 +44,9 @@ export const App = () => {
             element={<WorkspaceTargetDetailPage />}
           />
           <Route path="/new" element={<NewProxyPage />} />
-          <Route path="*" element={<Navigate to="/settings" replace />} />
         </Route>
+        <Route path="/get-started" element={<GetStartedPage />} />
+        <Route path="*" element={<Navigate to="/settings" replace />} />
       </Routes>
     );
   } else {

@@ -2,7 +2,7 @@ import { ChatToUs } from "@director.run/studio/components/chat-to-us.tsx";
 import { Toaster } from "@director.run/studio/components/ui/toast.tsx";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { BrowserRouter } from "react-router-dom";
 import { GATEWAY_URL, REGISTRY_URL } from "./config";
 import { AuthProvider } from "./contexts/auth-context";
@@ -30,21 +30,24 @@ export const App = () => {
 
   return (
     <Routes>
-      <Route element={<RootLayout />}>
-        <Route path="/library" element={<RegistryListPage />} />
-        <Route
-          path="/library/mcp/:entryName"
-          element={<RegistryDetailPage />}
-        />
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/:workspaceId" element={<WorkspaceDetailPage />} />
-        <Route
-          path="/:workspaceId/:targetId"
-          element={<WorkspaceTargetDetailPage />}
-        />
-        <Route path="/new" element={<NewProxyPage />} />
+      <Route element={<ProtectedRoute />}>
+        <Route element={<RootLayout />}>
+          <Route path="/library" element={<RegistryListPage />} />
+          <Route
+            path="/library/mcp/:entryName"
+            element={<RegistryDetailPage />}
+          />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/:workspaceId" element={<WorkspaceDetailPage />} />
+          <Route
+            path="/:workspaceId/:targetId"
+            element={<WorkspaceTargetDetailPage />}
+          />
+          <Route path="/new" element={<NewProxyPage />} />
+        </Route>
+        <Route path="/get-started" element={<GetStartedPage />} />
       </Route>
-      <Route path="/get-started" element={<GetStartedPage />} />
+
       <Route path="/login" element={<LoginPage />} />
       <Route path="*" element={<Navigate to="/settings" replace />} />
     </Routes>
@@ -66,3 +69,17 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     {/* </GlobalErrorBoundary> */}
   </React.StrictMode>,
 );
+
+function ProtectedRoute() {
+  const { isAuthenticated, isInitializing } = useAuth();
+
+  if (isInitializing) {
+    return <div>Initializing Auth...</div>;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to={"/login"} replace />;
+  }
+
+  return <Outlet />;
+}

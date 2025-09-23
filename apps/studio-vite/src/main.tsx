@@ -8,6 +8,7 @@ import { GATEWAY_URL, REGISTRY_URL } from "./config";
 import { AuthProvider } from "./contexts/auth-context";
 import { useAuth } from "./contexts/auth-context";
 import { BackendProvider } from "./contexts/backend-context";
+import { useWorkspaces } from "./hooks/use-workspaces";
 import { GetStartedPage } from "./pages/get-started";
 import { LoginPage } from "./pages/login-page";
 import { RegistryDetailPage } from "./pages/registry-detail-page";
@@ -30,6 +31,7 @@ export const App = () => {
 
   return (
     <Routes>
+      <Route path="/login" element={<LoginPage />} />
       <Route element={<ProtectedRoute />}>
         <Route element={<RootLayout />}>
           <Route path="/library" element={<RegistryListPage />} />
@@ -46,10 +48,8 @@ export const App = () => {
           <Route path="/new" element={<NewProxyPage />} />
         </Route>
         <Route path="/get-started" element={<GetStartedPage />} />
+        <Route path="*" element={<DefaultRoute />} />
       </Route>
-
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="*" element={<Navigate to="/settings" replace />} />
     </Routes>
   );
 };
@@ -82,4 +82,18 @@ function ProtectedRoute() {
   }
 
   return <Outlet />;
+}
+
+function DefaultRoute() {
+  const { data: workspaces, isLoading: isWorkspacesLoading } = useWorkspaces();
+
+  if (isWorkspacesLoading) {
+    return <div>Initializing Auth...</div>;
+  }
+
+  if (workspaces?.length && workspaces.length > 0) {
+    return <Navigate to={`/${workspaces[0].id}`} replace />;
+  } else {
+    return <Navigate to={"/get-started"} replace />;
+  }
 }

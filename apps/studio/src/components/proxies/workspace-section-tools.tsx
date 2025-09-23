@@ -10,11 +10,13 @@ import { Section, SectionHeader, SectionTitle } from "../ui/section";
 export interface WorkspaceSectionToolsProps {
   tools: McpSdkTool[];
   toolsLoading: boolean;
+  onToolClick: (tool: McpSdkTool) => void | Promise<void>;
 }
 
 export function WorkspaceSectionTools({
   tools,
   toolsLoading,
+  onToolClick,
 }: WorkspaceSectionToolsProps) {
   const { setProxyQuery } = useProxyQuery();
 
@@ -31,11 +33,7 @@ export function WorkspaceSectionTools({
           toolId: tool.name,
           serverId: server,
         })}`,
-        onClick: () =>
-          setProxyQuery({
-            toolId: tool.name,
-            serverId: server,
-          }),
+        onClick: () => onToolClick(tool),
         badges: server && (
           <Badge>
             <BadgeLabel uppercase>{server}</BadgeLabel>

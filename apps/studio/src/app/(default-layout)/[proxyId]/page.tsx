@@ -1,6 +1,7 @@
 "use client";
 
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
+import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
@@ -11,7 +12,6 @@ import { LayoutBreadcrumbHeader } from "../../../components/layout/layout-breadc
 import { McpToolSheet } from "../../../components/mcp-servers/mcp-tool-sheet";
 import { ProxyActionsDropdown } from "../../../components/proxies/proxy-actions-dropdown";
 import { ProxyDeleteConfirmation } from "../../../components/proxies/proxy-delete-confirmation";
-import type { Client } from "../../../components/proxies/proxy-installers";
 import { ProxySettingsSheet } from "../../../components/proxies/proxy-settings-sheet";
 import { ProxySkeleton } from "../../../components/proxies/proxy-skeleton";
 import { WorkspaceSectionClients } from "../../../components/proxies/workspace-section-clients";
@@ -33,6 +33,7 @@ export default function ProxyPage() {
   const router = useRouter();
   const params = useParams<{ proxyId: string }>();
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [selectedTool, setSelectedTool] = useState<Tool | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const { changeInstallState, isPending } = useChangeInstallState(
     params.proxyId,
@@ -59,7 +60,7 @@ export default function ProxyPage() {
   const { proxy: workspace, isLoading } = useProxy(params.proxyId);
   const { toolId, serverId, setProxyQuery } = useProxyQuery();
 
-  const { data: clientData, isLoading: isClientsLoading } = useClients(
+  const { data: clients, isLoading: isClientsLoading } = useClients(
     params.proxyId,
   );
   // Find the server and tool data
@@ -69,11 +70,7 @@ export default function ProxyPage() {
     serverId || undefined,
   );
   const tool = tools.find((tool) => tool.name === toolId);
-
   const utils = trpc.useUtils();
-
-  // Build clients array enriched with install state
-  const clients: Client[] = clientData ?? [];
 
   const updateProxyMutation = trpc.store.update.useMutation({
     onSuccess: async () => {
@@ -100,8 +97,6 @@ export default function ProxyPage() {
     },
   });
 
-  // remove local install/uninstall mutations in favor of useChangeInstallState
-
   const handleUpdateProxy = async (values: {
     name: string;
     description?: string;
@@ -114,14 +109,6 @@ export default function ProxyPage() {
 
   const handleDeleteProxy = async () => {
     await deleteProxyMutation.mutateAsync({ proxyId: params.proxyId });
-  };
-
-  const handleChangeInstall = async (
-    _proxyId: string,
-    client: ConfiguratorTarget,
-    install: boolean,
-  ) => {
-    await changeInstallState(client, install);
   };
 
   const handleServerClick = (serverId: string) => {
@@ -164,9 +151,15 @@ export default function ProxyPage() {
           <WorkspaceSectionClients
             workspace={workspace}
             gatewayBaseUrl={DIRECTOR_URL}
-            clients={clients}
+            clients={clients ?? []}
             isClientsLoading={isClientsLoading}
-            onChangeInstall={handleChangeInstall}
+            onChangeInstall={async (
+              _proxyId: string,
+              client: ConfiguratorTarget,
+              install: boolean,
+            ) => {
+              await changeInstallState(client, install);
+            }}
             isChanging={isPending}
           />
           <SectionSeparator />
@@ -176,13 +169,17 @@ export default function ProxyPage() {
             onServerClick={handleServerClick}
           />
           <SectionSeparator />
-          <WorkspaceSectionTools tools={tools} toolsLoading={toolsLoading} />
+          <WorkspaceSectionTools
+            tools={tools}
+            toolsLoading={toolsLoading}
+            onToolClick={(tool) => setSelectedTool(tool)}
+          />
         </Container>
       </LayoutViewContent>
 
       <McpToolSheet
-        open={serverId !== null && toolId !== null && !!server && !!workspace}
-        onOpenChange={() => setProxyQuery({ toolId: null, serverId: null })}
+        open={!!selectedTool}
+        onOpenChange={() => setSelectedTool(null)}
         toolId={toolId}
         serverId={serverId}
         server={server}

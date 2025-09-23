@@ -16,25 +16,11 @@ import {
 } from "../get-started/get-started-proxy-form";
 import { proxySchema } from "../get-started/get-started-proxy-form";
 import type { RegistryEntryList } from "../types";
+import type { Client } from "../types.ts";
 import { Container } from "../ui/container";
 import { Section } from "../ui/section";
 
 type StepStatus = "not-started" | "in-progress" | "completed";
-
-export type ClientId = "claude" | "cursor" | "vscode";
-
-const clients: { id: ClientId; label: string; image: string }[] = [
-  { id: "claude", label: "Claude", image: "/icons/claude-icon.png" },
-  { id: "cursor", label: "Cursor", image: "/icons/cursor-icon.png" },
-  { id: "vscode", label: "VSCode", image: "/icons/code-icon.png" },
-];
-
-type InstallerClientStatus = {
-  name: string;
-  installed: boolean;
-  configExists: boolean;
-  configPath: string;
-};
 
 export interface GetStartedPageViewProps {
   // Step 1: Create workspace
@@ -51,8 +37,8 @@ export interface GetStartedPageViewProps {
   }) => void;
 
   // Actions
-  onAddWorkspaceToClient: (clientId: ClientId) => void;
-  clientStatuses: InstallerClientStatus[];
+  onAddWorkspaceToClient: (clientId: string) => void;
+  clientStatuses: Client[];
   isAddingWorkspaceToClient: boolean;
 }
 
@@ -70,7 +56,7 @@ export function GetStartedPageView(props: GetStartedPageViewProps) {
     onAddWorkspaceToClient: onInstallClient,
   } = props;
 
-  const [selectedClient, setSelectedClient] = useState<ClientId | undefined>();
+  const [selectedClient, setSelectedClient] = useState<string | undefined>();
   const proxyForm = useZodForm({
     schema: proxySchema,
     defaultValues: { name: "", description: "A proxy for getting started" },
@@ -139,8 +125,7 @@ export function GetStartedPageView(props: GetStartedPageViewProps) {
             <GetStartedInstallers
               selectedClient={selectedClient}
               onClientSelect={setSelectedClient}
-              availableClients={clientStatuses}
-              clients={clients}
+              clients={clientStatuses}
               isLoading={false}
               isInstalling={isInstallingClient}
               onInstall={onInstallClient}

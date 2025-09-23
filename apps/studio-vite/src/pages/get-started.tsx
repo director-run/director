@@ -13,6 +13,7 @@ import type { SubmitHandler } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { GATEWAY_URL } from "../config";
 import { gatewayClient as trpc } from "../contexts/backend-context";
+import { useClients } from "../hooks/use-clients.ts";
 import { useRegistryEntries } from "../hooks/use-registry-entries";
 import { useWorkspaces } from "../hooks/use-workspaces";
 
@@ -64,7 +65,10 @@ export function GetStartedPage() {
   );
 
   // Additional queries for installers
-  const listClientsQuery = trpc.installer.allClients.useQuery();
+  //   const listClientsQuery = trpc.installer.allClients.useQuery();
+
+  const listClientsQuery = useClients(currentProxyId as string);
+
   const entryQuery = trpc.registry.getEntryByName.useQuery(
     {
       name: selectedRegistryEntryName || "",
@@ -145,7 +149,7 @@ export function GetStartedPage() {
     await createProxyMutation.mutateAsync({ ...values, servers: [] });
   };
 
-  const handleClientInstall = (client: ClientId) => {
+  const handleClientInstall = (client: string) => {
     if (!currentProxy?.id) {
       return;
     }

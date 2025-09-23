@@ -28,35 +28,27 @@ export const App = () => {
     return <div>Initializing Auth...</div>;
   }
 
-  if (isAuthenticated) {
-    return (
-      <Routes>
-        <Route element={<RootLayout />}>
-          <Route path="/library" element={<RegistryListPage />} />
-          <Route
-            path="/library/mcp/:entryName"
-            element={<RegistryDetailPage />}
-          />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/:workspaceId" element={<WorkspaceDetailPage />} />
-          <Route
-            path="/:workspaceId/:targetId"
-            element={<WorkspaceTargetDetailPage />}
-          />
-          <Route path="/new" element={<NewProxyPage />} />
-        </Route>
-        <Route path="/get-started" element={<GetStartedPage />} />
-        <Route path="*" element={<Navigate to="/settings" replace />} />
-      </Routes>
-    );
-  } else {
-    return (
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    );
-  }
+  return (
+    <Routes>
+      <Route element={<RootLayout />}>
+        <Route path="/library" element={<RegistryListPage />} />
+        <Route
+          path="/library/mcp/:entryName"
+          element={<RegistryDetailPage />}
+        />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/:workspaceId" element={<WorkspaceDetailPage />} />
+        <Route
+          path="/:workspaceId/:targetId"
+          element={<WorkspaceTargetDetailPage />}
+        />
+        <Route path="/new" element={<NewProxyPage />} />
+      </Route>
+      <Route path="/get-started" element={<GetStartedPage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="*" element={<Navigate to="/settings" replace />} />
+    </Routes>
+  );
 };
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(

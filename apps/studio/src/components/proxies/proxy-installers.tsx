@@ -8,6 +8,9 @@ export interface Client {
   label: string;
   image: string;
   type: "installer" | "deep-link";
+  // For installer-type clients only
+  installed?: boolean; // whether the client app is available on the system
+  present?: boolean; // whether the proxy is currently installed in that client
 }
 
 export interface AvailableClient {
@@ -19,26 +22,22 @@ interface ProxyInstallersProps {
   proxyId: string;
   gatewayBaseUrl: string;
   clients: Client[];
-  installers: Record<string, boolean>;
-  availableClients: AvailableClient[];
   isLoading: boolean;
-  onInstall: (proxyId: string, client: ConfiguratorTarget) => void;
-  onUninstall: (proxyId: string, client: ConfiguratorTarget) => void;
-  isInstalling: boolean;
-  isUninstalling: boolean;
+  onChangeInstall: (
+    proxyId: string,
+    client: ConfiguratorTarget,
+    install: boolean,
+  ) => void;
+  isChanging: boolean;
 }
 
 export function ProxyInstallers({
   proxyId,
   gatewayBaseUrl,
   clients,
-  installers,
-  availableClients,
   isLoading,
-  onInstall,
-  onUninstall,
-  isInstalling,
-  isUninstalling,
+  onChangeInstall,
+  isChanging,
 }: ProxyInstallersProps) {
   return (
     <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-3">
@@ -85,9 +84,7 @@ export function ProxyInstallers({
           );
         }
 
-        const isAvailable = availableClients.some(
-          (client) => client.name === it.id && client.installed,
-        );
+        const isAvailable = !!it.installed;
 
         return (
           <label
@@ -112,17 +109,11 @@ export function ProxyInstallers({
 
             <Switch
               id={it.id}
-              checked={installers[it.id]}
+              checked={!!it.present}
               onCheckedChange={(checked) => {
-                if (checked) {
-                  onInstall(proxyId, it.id as ConfiguratorTarget);
-                } else {
-                  onUninstall(proxyId, it.id as ConfiguratorTarget);
-                }
+                onChangeInstall(proxyId, it.id as ConfiguratorTarget, checked);
               }}
-              disabled={
-                isInstalling || isUninstalling || isLoading || !isAvailable
-              }
+              disabled={isChanging || isLoading || !isAvailable}
             />
           </label>
         );

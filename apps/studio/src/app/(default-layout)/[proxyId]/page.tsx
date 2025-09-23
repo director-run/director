@@ -32,38 +32,6 @@ import {
   proxyQuerySerializer,
   useProxyQuery,
 } from "../../../state/use-proxy-query";
-const clients: Client[] = [
-  {
-    id: "claude",
-    label: "Claude",
-    image: "/icons/claude-icon.png",
-    type: "installer",
-  },
-  {
-    id: "cursor",
-    label: "Cursor",
-    image: "/icons/cursor-icon.png",
-    type: "installer",
-  },
-  {
-    id: "vscode",
-    label: "VSCode",
-    image: "/icons/code-icon.png",
-    type: "installer",
-  },
-  {
-    id: "goose",
-    label: "Goose",
-    image: "/icons/goose-icon.png",
-    type: "deep-link",
-  },
-  {
-    id: "raycast",
-    label: "Raycast",
-    image: "/icons/raycast-icon.png",
-    type: "deep-link",
-  },
-];
 
 export default function ProxyPage() {
   const router = useRouter();
@@ -92,7 +60,7 @@ export default function ProxyPage() {
     },
   );
 
-  const { proxy, isLoading, installers } = useProxy(params.proxyId);
+  const { proxy, isLoading } = useProxy(params.proxyId);
   const { toolId, serverId, setProxyQuery } = useProxyQuery();
 
   const { data: clientData, isLoading: isClientsLoading } = useClients(
@@ -108,13 +76,8 @@ export default function ProxyPage() {
 
   const utils = trpc.useUtils();
 
-  // Map hook data to legacy props expected by WorkspaceSectionClients
-  const derivedInstallers = clientData
-    ? Object.fromEntries(clientData.map((c) => [c.name, !!c.present]))
-    : installers;
-  const mappedAvailableClients = clientData
-    ? clientData.map((c) => ({ name: c.name, installed: c.installed }))
-    : [];
+  // Build clients array enriched with install state
+  const clients: Client[] = clientData ?? [];
 
   const updateProxyMutation = trpc.store.update.useMutation({
     onSuccess: async () => {
@@ -157,18 +120,12 @@ export default function ProxyPage() {
     await deleteProxyMutation.mutateAsync({ proxyId: params.proxyId });
   };
 
-  const handleInstall = async (
+  const handleChangeInstall = async (
     _proxyId: string,
     client: ConfiguratorTarget,
+    install: boolean,
   ) => {
-    await changeInstallState(client, true);
-  };
-
-  const handleUninstall = async (
-    _proxyId: string,
-    client: ConfiguratorTarget,
-  ) => {
-    await changeInstallState(client, false);
+    await changeInstallState(client, install);
   };
 
   const handleServerClick = (serverId: string) => {
@@ -241,13 +198,9 @@ export default function ProxyPage() {
             workspace={workspace}
             gatewayBaseUrl={DIRECTOR_URL}
             clients={clients}
-            installers={derivedInstallers}
-            availableClients={mappedAvailableClients}
             isClientsLoading={isClientsLoading}
-            onInstall={handleInstall}
-            onUninstall={handleUninstall}
-            isInstalling={isPending}
-            isUninstalling={isPending}
+            onChangeInstall={handleChangeInstall}
+            isChanging={isPending}
           />
           <SectionSeparator />
           <WorkspaceSectionServers

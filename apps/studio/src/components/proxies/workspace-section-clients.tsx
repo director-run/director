@@ -4,7 +4,7 @@ import type { WorkspaceDetail } from "../types";
 import { Button } from "../ui/button";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
 import { toast } from "../ui/toast";
-import type { AvailableClient, Client } from "./proxy-installers";
+import type { Client } from "./proxy-installers";
 import { ProxyInstallers } from "./proxy-installers";
 import { ProxyManualDialog } from "./proxy-manual-dialog";
 
@@ -12,26 +12,22 @@ export interface WorkspaceSectionClientsProps {
   workspace: WorkspaceDetail;
   gatewayBaseUrl: string;
   clients: Client[];
-  installers: Record<string, boolean>;
-  availableClients: AvailableClient[];
   isClientsLoading: boolean;
-  onInstall: (proxyId: string, client: ConfiguratorTarget) => void;
-  onUninstall: (proxyId: string, client: ConfiguratorTarget) => void;
-  isInstalling: boolean;
-  isUninstalling: boolean;
+  onChangeInstall: (
+    proxyId: string,
+    client: ConfiguratorTarget,
+    install: boolean,
+  ) => void;
+  isChanging: boolean;
 }
 
 export function WorkspaceSectionClients({
   workspace,
   gatewayBaseUrl,
   clients,
-  installers,
-  availableClients,
   isClientsLoading,
-  onInstall,
-  onUninstall,
-  isInstalling,
-  isUninstalling,
+  onChangeInstall,
+  isChanging,
 }: WorkspaceSectionClientsProps) {
   const [_, copy] = useCopyToClipboard();
 
@@ -60,13 +56,9 @@ export function WorkspaceSectionClients({
         proxyId={workspace.id}
         gatewayBaseUrl={gatewayBaseUrl}
         clients={clients}
-        installers={installers}
-        availableClients={availableClients}
         isLoading={isClientsLoading}
-        onInstall={onInstall}
-        onUninstall={onUninstall}
-        isInstalling={isInstalling}
-        isUninstalling={isUninstalling}
+        onChangeInstall={onChangeInstall}
+        isChanging={isChanging}
       />
     </Section>
   );

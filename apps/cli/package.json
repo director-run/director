@@ -20,12 +20,12 @@
   "scripts": {
     "lint": "biome check .",
     "format": "biome format --write .",
-    "clean": "rm -rf .turbo dist/*",
+    "clean": "rm -rf dist/*",
     "test": "bun run vitest  --fileParallelism=false",
     "cli": "NODE_ENV=development bun run bin/cli.ts",
     "cli:dev": "NODE_ENV=development bun --watch bin/cli.ts",
     "typecheck": "tsc --noEmit",
-    "build": "bun build --production --target=node bin/cli.ts --outdir dist",
+    "build": "bun run clean && bun build --production --target=node bin/cli.ts --outdir dist && cp -r ../studio-vite/dist dist/studio",
     "release": "changeset publish",
     "prepare": "bun run build",
     "dev": "bun --watch bin/cli.ts"

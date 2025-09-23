@@ -8,6 +8,12 @@
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
       "env": ["DATABASE_URL"]
     },
+    "@director.run/cli#build": {
+      "dependsOn": ["^build", "@director.run/studio-vite#build"],
+      "inputs": ["$TURBO_DEFAULT$"],
+      "outputs": ["dist/**"],
+      "env": ["DATABASE_URL"]
+    },
     "dev": {
       "inputs": ["$TURBO_DEFAULT$"],
       "persistent": true,

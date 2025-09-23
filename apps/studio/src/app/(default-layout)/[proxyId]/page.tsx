@@ -18,7 +18,6 @@ import { WorkspaceSectionClients } from "../../../components/proxies/workspace-s
 import { WorkspaceSectionHeader } from "../../../components/proxies/workspace-section-header";
 import { WorkspaceSectionServers } from "../../../components/proxies/workspace-section-servers";
 import { WorkspaceSectionTools } from "../../../components/proxies/workspace-section-tools";
-import { Badge, BadgeLabel } from "../../../components/ui/badge";
 import { Container } from "../../../components/ui/container";
 import { SectionSeparator } from "../../../components/ui/section";
 import { toast } from "../../../components/ui/toast";
@@ -28,10 +27,7 @@ import { useClients } from "../../../hooks/use-clients";
 import { trpc } from "../../../state/client";
 import { useInspectMcp } from "../../../state/use-inspect-mcp";
 import { useProxy } from "../../../state/use-proxy";
-import {
-  proxyQuerySerializer,
-  useProxyQuery,
-} from "../../../state/use-proxy-query";
+import { useProxyQuery } from "../../../state/use-proxy-query";
 
 export default function ProxyPage() {
   const router = useRouter();
@@ -60,14 +56,14 @@ export default function ProxyPage() {
     },
   );
 
-  const { proxy, isLoading } = useProxy(params.proxyId);
+  const { proxy: workspace, isLoading } = useProxy(params.proxyId);
   const { toolId, serverId, setProxyQuery } = useProxyQuery();
 
   const { data: clientData, isLoading: isClientsLoading } = useClients(
     params.proxyId,
   );
   // Find the server and tool data
-  const server = proxy?.servers.find((server) => server.name === serverId);
+  const server = workspace?.servers.find((server) => server.name === serverId);
   const { tools, isLoading: toolsLoading } = useInspectMcp(
     params.proxyId,
     serverId || undefined,
@@ -133,54 +129,25 @@ export default function ProxyPage() {
   };
 
   useEffect(() => {
-    if (!isLoading && !proxy) {
+    if (!isLoading && !workspace) {
       toast({
         title: "Proxy not found",
         description: "The proxy you are looking for does not exist.",
       });
       router.push("/");
     }
-  }, [proxy, isLoading]);
+  }, [workspace, isLoading]);
 
-  if (isLoading || !proxy) {
+  if (isLoading || !workspace) {
     return <ProxySkeleton />;
   }
-
-  // Generate toolLinks for the ProxyDetail component
-  const toolLinks = tools
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .map((it) => {
-      const server = it.description?.match(/\[([^\]]+)\]/)?.[1];
-
-      return {
-        title: it.name,
-        subtitle: it.description?.replace(/\[([^\]]+)\]/g, "") || "",
-        scroll: false,
-        href: `${proxyQuerySerializer({
-          toolId: it.name,
-          serverId: server,
-        })}`,
-        onClick: () =>
-          setProxyQuery({
-            toolId: it.name,
-            serverId: server,
-          }),
-        badges: server && (
-          <Badge>
-            <BadgeLabel uppercase>{server}</BadgeLabel>
-          </Badge>
-        ),
-      };
-    });
-
-  const workspace = proxy;
 
   return (
     <LayoutView>
       <LayoutBreadcrumbHeader
         breadcrumbs={[
           {
-            title: proxy.name,
+            title: workspace.name,
           },
         ]}
       >
@@ -209,20 +176,17 @@ export default function ProxyPage() {
             onServerClick={handleServerClick}
           />
           <SectionSeparator />
-          <WorkspaceSectionTools
-            toolLinks={toolLinks}
-            toolsLoading={toolsLoading}
-          />
+          <WorkspaceSectionTools tools={tools} toolsLoading={toolsLoading} />
         </Container>
       </LayoutViewContent>
 
       <McpToolSheet
-        open={serverId !== null && toolId !== null && !!server && !!proxy}
+        open={serverId !== null && toolId !== null && !!server && !!workspace}
         onOpenChange={() => setProxyQuery({ toolId: null, serverId: null })}
         toolId={toolId}
         serverId={serverId}
         server={server}
-        proxy={proxy}
+        proxy={workspace}
         tool={tool}
         isLoading={toolsLoading}
         onServerClick={handleServerClick}
@@ -230,7 +194,7 @@ export default function ProxyPage() {
       />
 
       <ProxySettingsSheet
-        proxy={proxy}
+        proxy={workspace}
         onSubmit={handleUpdateProxy}
         isSubmitting={updateProxyMutation.isPending}
         open={settingsOpen}

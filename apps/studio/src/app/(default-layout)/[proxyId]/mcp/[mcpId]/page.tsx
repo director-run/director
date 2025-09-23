@@ -25,15 +25,12 @@ export default function McpServerPage() {
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   const { proxy, isLoading } = useProxy(params.proxyId);
-  const { toolId, serverId, setProxyQuery } = useProxyQuery();
+  const { setProxyQuery } = useProxyQuery();
 
-  // Find the server and tool data
-  const server = proxy?.servers.find((server) => server.name === serverId);
   const { tools, isLoading: toolsLoading } = useInspectMcp(
     params.proxyId,
-    serverId || undefined,
+    undefined,
   );
-  const tool = tools.find((tool) => tool.name === toolId);
 
   const registryEntryQuery = trpc.registry.getEntryByName.useQuery(
     {

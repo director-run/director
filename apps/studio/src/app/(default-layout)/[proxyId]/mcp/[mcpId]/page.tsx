@@ -7,25 +7,33 @@ import {
   LayoutViewContent,
 } from "../../../../../components/layout/layout";
 import { LayoutBreadcrumbHeader } from "../../../../../components/layout/layout-breadcrumb-header";
-import { WorkspaceTargetDetail } from "../../../../../components/pages/workspace-target-detail";
+import { McpLogo } from "../../../../../components/mcp-logo";
+import { McpDescriptionList } from "../../../../../components/mcp-servers/mcp-description-list";
 import { ProxySkeleton } from "../../../../../components/proxies/proxy-skeleton";
+import { WorkspaceSectionTools } from "../../../../../components/proxies/workspace-section-tools";
 import { WorkspaceTargetDetailDropDownMenu } from "../../../../../components/proxies/workspace-target-detail-dropdown-menu";
+import type { RegistryEntryDetail } from "../../../../../components/types";
+import { Container } from "../../../../../components/ui/container";
+import {
+  EmptyState,
+  EmptyStateTitle,
+} from "../../../../../components/ui/empty-state";
+import { Markdown } from "../../../../../components/ui/markdown";
+import { Section } from "../../../../../components/ui/section";
+import { SectionHeader } from "../../../../../components/ui/section";
+import { SectionTitle } from "../../../../../components/ui/section";
+import { SectionDescription } from "../../../../../components/ui/section";
 import { toast } from "../../../../../components/ui/toast";
 import { trpc } from "../../../../../state/client";
 import { useInspectMcp } from "../../../../../state/use-inspect-mcp";
 import { useProxy } from "../../../../../state/use-proxy";
-import {
-  proxyQuerySerializer,
-  useProxyQuery,
-} from "../../../../../state/use-proxy-query";
 
 export default function McpServerPage() {
   const router = useRouter();
   const params = useParams<{ proxyId: string; mcpId: string }>();
   const [deleteOpen, setDeleteOpen] = useState(false);
 
-  const { proxy, isLoading } = useProxy(params.proxyId);
-  const { setProxyQuery } = useProxyQuery();
+  const { proxy: workspace, isLoading } = useProxy(params.proxyId);
 
   const { tools, isLoading: toolsLoading } = useInspectMcp(
     params.proxyId,
@@ -57,7 +65,9 @@ export default function McpServerPage() {
     },
   });
 
-  const mcp = proxy?.servers.find((server) => server.name === params.mcpId);
+  const workspaceTarget = workspace?.servers.find(
+    (server) => server.name === params.mcpId,
+  );
 
   const handleDeleteServer = async () => {
     await deleteServerMutation.mutateAsync({
@@ -66,73 +76,46 @@ export default function McpServerPage() {
     });
   };
 
-  const handleServerClick = (serverId: string) => {
-    router.push(`/${params.proxyId}/mcp/${serverId}`);
-  };
-
   useEffect(() => {
-    if (!isLoading && (!proxy || !mcp)) {
+    if (!isLoading && (!workspace || !workspaceTarget)) {
       toast({
         title: "MCP server not found",
         description: "The MCP server you are looking for does not exist.",
       });
 
-      if (!proxy) {
+      if (!workspace) {
         router.push("/");
       }
 
-      if (!mcp) {
+      if (!workspaceTarget) {
         router.push(`/${params.proxyId}`);
       }
     }
-  }, [proxy, isLoading]);
+  }, [workspace, isLoading]);
 
-  if (isLoading || registryEntryQuery.isLoading || !proxy || !mcp) {
+  if (
+    isLoading ||
+    registryEntryQuery.isLoading ||
+    !workspace ||
+    !workspaceTarget
+  ) {
     return <ProxySkeleton />;
   }
 
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  const entryData: any = registryEntryQuery.data ?? {};
-  const description =
-    typeof entryData === "object" &&
-    entryData !== null &&
-    typeof (entryData as { description: string }).description === "string"
-      ? (entryData as { description: string }).description
-      : null;
-
-  // Generate toolLinks for the McpServerDetail component
-  const toolLinks = tools
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .map((it) => {
-      const server = it.description?.match(/\[([^\]]+)\]/)?.[1];
-
-      return {
-        title: it.name,
-        subtitle: it.description?.replace(/\[([^\]]+)\]/g, "") || "",
-        scroll: false,
-        href: `${proxyQuerySerializer({
-          toolId: it.name,
-          serverId: server,
-        })}`,
-        onClick: () =>
-          setProxyQuery({
-            toolId: it.name,
-            serverId: server,
-          }),
-        badges: undefined, // No badges needed since we're in a specific server context
-      };
-    });
+  const registryEntry: RegistryEntryDetail | undefined =
+    registryEntryQuery.data ?? undefined;
+  const description = registryEntry?.description;
 
   return (
     <LayoutView>
       <LayoutBreadcrumbHeader
         breadcrumbs={[
           {
-            title: proxy?.name || "",
-            onClick: () => router.push(`/${proxy.id}`),
+            title: workspace?.name || "",
+            onClick: () => router.push(`/${workspace.id}`),
           },
           {
-            title: mcp.name,
+            title: workspaceTarget.name,
           },
         ]}
       >
@@ -144,15 +127,58 @@ export default function McpServerPage() {
       </LayoutBreadcrumbHeader>
 
       <LayoutViewContent>
-        <WorkspaceTargetDetail
-          workspaceTarget={mcp}
-          workspace={proxy}
-          entryData={entryData}
-          description={description}
-          toolLinks={toolLinks}
-          toolsLoading={toolsLoading}
-          onProxyClick={(proxyId) => router.push(`/${proxyId}`)}
-        />
+        <Container size="lg">
+          <Section>
+            <McpLogo src={registryEntry?.icon} className="size-9" />
+            <SectionHeader>
+              <SectionTitle>{workspaceTarget.name}</SectionTitle>
+              <SectionDescription>
+                Installed on{" "}
+                <button
+                  onClick={() => router.push(`/${workspace.id}`)}
+                  className="cursor-pointer text-fg underline"
+                >
+                  {workspace?.name}
+                </button>
+              </SectionDescription>
+            </SectionHeader>
+
+            {description ? <Markdown>{description}</Markdown> : null}
+          </Section>
+
+          <Section>
+            <SectionHeader>
+              <SectionTitle variant="h2" asChild>
+                <h3>Transport</h3>
+              </SectionTitle>
+            </SectionHeader>
+
+            <McpDescriptionList transport={workspaceTarget.transport} />
+          </Section>
+
+          <WorkspaceSectionTools
+            tools={tools}
+            toolsLoading={toolsLoading}
+            onToolClick={(tool) => console.log(tool)}
+          />
+
+          <Section>
+            <SectionHeader>
+              <SectionTitle variant="h2" asChild>
+                <h3>Readme</h3>
+              </SectionTitle>
+            </SectionHeader>
+            {registryEntry?.readme ? (
+              <div className="rounded-md border-[0.5px] bg-accent-subtle/20 px-4 py-8">
+                <Markdown className="mx-auto">{registryEntry?.readme}</Markdown>
+              </div>
+            ) : (
+              <EmptyState>
+                <EmptyStateTitle>No readme found</EmptyStateTitle>
+              </EmptyState>
+            )}
+          </Section>
+        </Container>
       </LayoutViewContent>
     </LayoutView>
   );

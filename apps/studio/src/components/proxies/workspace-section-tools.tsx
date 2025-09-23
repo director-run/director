@@ -1,8 +1,5 @@
 import type { Tool as McpSdkTool } from "@modelcontextprotocol/sdk/types.js";
-import {
-  proxyQuerySerializer,
-  useProxyQuery,
-} from "../../state/use-proxy-query";
+import { proxyQuerySerializer } from "../../state/use-proxy-query";
 import { McpToolsTable } from "../mcp-servers/mcp-tools-table";
 import { Badge, BadgeLabel } from "../ui/badge";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
@@ -18,8 +15,6 @@ export function WorkspaceSectionTools({
   toolsLoading,
   onToolClick,
 }: WorkspaceSectionToolsProps) {
-  const { setProxyQuery } = useProxyQuery();
-
   const toolLinks = tools
     .slice()
     .sort((a, b) => a.name.localeCompare(b.name))

@@ -60,6 +60,8 @@ export function WorkspaceTargetDetailPage() {
 
   const deleteServerMutation = gatewayClient.store.removeServer.useMutation({
     onSuccess: async () => {
+      navigate(`/${workspaceId}`);
+
       await utils.store.get.invalidate({ proxyId: workspaceId });
       await utils.store.getAll.invalidate();
 
@@ -67,8 +69,6 @@ export function WorkspaceTargetDetailPage() {
         title: "Server deleted",
         description: "This server was successfully deleted.",
       });
-      setDeleteOpen(false);
-      navigate(`/${workspaceId}`);
     },
   });
 

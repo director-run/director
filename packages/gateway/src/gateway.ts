@@ -116,7 +116,7 @@ export class Gateway {
     );
     app.use(logRequests());
     if (attribs.studioDistPath) {
-      console.log("attribs.studioDistPath", attribs.studioDistPath);
+      logger.info("serving studio assets from", attribs.studioDistPath);
       app.use("/studio", spaMiddleware({ distPath: attribs.studioDistPath }));
     }
     app.use("/", createSSERouter({ proxyStore, telemetry }));

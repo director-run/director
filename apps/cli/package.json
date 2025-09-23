@@ -27,7 +27,6 @@
     "typecheck": "tsc --noEmit",
     "build": "bun run clean && bun build --production --target=node bin/cli.ts --outdir dist && cp -r ../studio-vite/dist dist/studio",
     "release": "changeset publish",
-    "prepare": "bun run build",
     "dev": "bun --watch bin/cli.ts"
   },
   "peerDependencies": {

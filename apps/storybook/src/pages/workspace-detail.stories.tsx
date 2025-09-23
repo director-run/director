@@ -10,6 +10,7 @@ import type {
 import { Container } from "@director.run/studio/components/ui/container.tsx";
 import { SectionSeparator } from "@director.run/studio/components/ui/section.tsx";
 import { mockTools } from "@director.run/studio/test/fixtures/mcp/tools.js";
+import { mockClients } from "@director.run/studio/test/fixtures/workspace/clients.ts";
 import { mockWorkspace } from "@director.run/studio/test/fixtures/workspace/workspace.ts";
 import type { Tool as McpSdkTool } from "@modelcontextprotocol/sdk/types.js";
 import type { Meta, StoryObj } from "@storybook/react";
@@ -64,50 +65,10 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// Mock clients data
-const mockClients = [
-  {
-    id: "claude",
-    label: "Claude",
-    image: "/icons/claude-icon.png",
-    type: "installer",
-    installed: true,
-    present: true,
-  },
-  {
-    id: "cursor",
-    label: "Cursor",
-    image: "/icons/cursor-icon.png",
-    type: "installer",
-    installed: true,
-    present: false,
-  },
-  {
-    id: "vscode",
-    label: "VSCode",
-    image: "/icons/code-icon.png",
-    type: "installer",
-    installed: true,
-    present: false,
-  },
-  {
-    id: "goose",
-    label: "Goose",
-    image: "/icons/goose-icon.png",
-    type: "deep-link",
-  },
-  {
-    id: "raycast",
-    label: "Raycast",
-    image: "/icons/raycast-icon.png",
-    type: "deep-link",
-  },
-];
-
 export const Default: Story = {
   args: {
     workspace: mockWorkspace,
-    clients: mockClients as Client[],
+    clients: mockClients,
     tools: mockTools as McpSdkTool[],
   },
 };

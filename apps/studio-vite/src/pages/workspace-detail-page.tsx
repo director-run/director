@@ -1,11 +1,19 @@
 import { LayoutBreadcrumbHeader } from "@director.run/studio/components/layout/layout-breadcrumb-header.tsx";
 import { LayoutViewContent } from "@director.run/studio/components/layout/layout.tsx";
+import { ProxyActionsDropdown } from "@director.run/studio/components/proxies/proxy-actions-dropdown.tsx";
+import { ProxyDeleteConfirmation } from "@director.run/studio/components/proxies/proxy-delete-confirmation.tsx";
+import { ProxySettingsSheet } from "@director.run/studio/components/proxies/proxy-settings-sheet.tsx";
 import { ProxySkeleton } from "@director.run/studio/components/proxies/proxy-skeleton.tsx";
 import { WorkspaceSectionClients } from "@director.run/studio/components/proxies/workspace-section-clients.tsx";
 import { WorkspaceSectionHeader } from "@director.run/studio/components/proxies/workspace-section-header.tsx";
 import { WorkspaceSectionServers } from "@director.run/studio/components/proxies/workspace-section-servers.tsx";
 import { WorkspaceSectionTools } from "@director.run/studio/components/proxies/workspace-section-tools.tsx";
+import { RegistryToolSheet } from "@director.run/studio/components/registry/registry-tool-sheet.js";
 import { ConfiguratorTarget } from "@director.run/studio/components/types.ts";
+import type {
+  MCPTool,
+  WorkspaceDetail,
+} from "@director.run/studio/components/types.ts";
 import { Container } from "@director.run/studio/components/ui/container.tsx";
 import { SectionSeparator } from "@director.run/studio/components/ui/section.tsx";
 import { toast } from "@director.run/studio/components/ui/toast.js";
@@ -13,6 +21,7 @@ import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { GATEWAY_URL } from "../config";
+import { gatewayClient } from "../contexts/backend-context.tsx";
 import { useChangeInstallState } from "../hooks/use-change-install-state";
 import { useClients } from "../hooks/use-clients";
 import { useInspectMcp } from "../hooks/use-inspect-mcp";
@@ -21,7 +30,6 @@ import { useWorkspace } from "../hooks/use-workspace";
 export const WorkspaceDetailPage = () => {
   const { workspaceId } = useParams();
   const navigate = useNavigate();
-  const [selectedTool, setSelectedTool] = useState<Tool | null>(null);
 
   if (!workspaceId) {
     throw new Error("Workspace ID is required");
@@ -50,8 +58,6 @@ export const WorkspaceDetailPage = () => {
     },
   });
 
-  const { tools, isLoading: toolsLoading } = useInspectMcp(workspaceId);
-
   if (isLoading) {
     return <ProxySkeleton />;
   }
@@ -71,7 +77,9 @@ export const WorkspaceDetailPage = () => {
             title: workspaceId,
           },
         ]}
-      />
+      >
+        <WorkspaceEditMenu workspace={workspace} />
+      </LayoutBreadcrumbHeader>
 
       <LayoutViewContent>
         <Container size="lg">
@@ -99,13 +107,101 @@ export const WorkspaceDetailPage = () => {
             }
           />
           <SectionSeparator />
-          <WorkspaceSectionTools
-            tools={tools}
-            toolsLoading={toolsLoading}
-            onToolClick={(tool) => setSelectedTool(tool)}
-          />
+          <WorkspaceTools workspace={workspace} />
         </Container>
       </LayoutViewContent>
     </>
   );
 };
+
+function WorkspaceTools({ workspace }: { workspace: WorkspaceDetail }) {
+  const [selectedTool, setSelectedTool] = useState<Tool | null>(null);
+  const { tools, isLoading: toolsLoading } = useInspectMcp(workspace.id);
+
+  return (
+    <>
+      <WorkspaceSectionTools
+        tools={tools}
+        toolsLoading={toolsLoading}
+        onToolClick={(tool) => setSelectedTool(tool)}
+      />
+
+      {selectedTool && (
+        <RegistryToolSheet
+          tool={selectedTool as MCPTool}
+          mcpName={workspace.name}
+          onClose={() => setSelectedTool(null)}
+        />
+      )}
+    </>
+  );
+}
+
+function WorkspaceEditMenu({ workspace }: { workspace: WorkspaceDetail }) {
+  const navigate = useNavigate();
+
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+
+  const utils = gatewayClient.useUtils();
+
+  const updateProxyMutation = gatewayClient.store.update.useMutation({
+    onSuccess: async () => {
+      await utils.store.getAll.invalidate();
+      await utils.store.get.invalidate({ proxyId: workspace.id });
+      toast({
+        title: "Proxy updated",
+        description: "This proxy was successfully updated.",
+      });
+      setSettingsOpen(false);
+    },
+  });
+
+  const deleteProxyMutation = gatewayClient.store.delete.useMutation({
+    onSuccess: async () => {
+      await utils.store.getAll.invalidate();
+      toast({
+        title: "Proxy deleted",
+        description: "This proxy was successfully deleted.",
+      });
+      setDeleteOpen(false);
+      navigate("/");
+    },
+  });
+
+  const handleUpdateProxy = async (values: {
+    name: string;
+    description?: string;
+  }) => {
+    await updateProxyMutation.mutateAsync({
+      proxyId: workspace.id,
+      attributes: values,
+    });
+  };
+
+  const handleDeleteProxy = async () => {
+    await deleteProxyMutation.mutateAsync({ proxyId: workspace.id });
+  };
+
+  return (
+    <>
+      <ProxyActionsDropdown
+        onSettingsClick={() => setSettingsOpen(true)}
+        onDeleteClick={() => setDeleteOpen(true)}
+      />
+      <ProxySettingsSheet
+        proxy={workspace}
+        onSubmit={handleUpdateProxy}
+        isSubmitting={updateProxyMutation.isPending}
+        open={settingsOpen}
+        onOpenChange={setSettingsOpen}
+      />
+
+      <ProxyDeleteConfirmation
+        onConfirm={handleDeleteProxy}
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+      />
+    </>
+  );
+}

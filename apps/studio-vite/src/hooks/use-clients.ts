@@ -9,31 +9,31 @@ const catalog: Array<Omit<Client, "installed" | "present">> = [
   {
     id: "claude",
     label: "Claude",
-    image: "/icons/claude-icon.png",
+    image: "/assets/icons/claude-icon.png",
     type: "installer",
   },
   {
     id: "cursor",
     label: "Cursor",
-    image: "/icons/cursor-icon.png",
+    image: "/assets/icons/cursor-icon.png",
     type: "installer",
   },
   {
     id: "vscode",
     label: "VSCode",
-    image: "/icons/code-icon.png",
+    image: "/assets/icons/code-icon.png",
     type: "installer",
   },
   {
     id: "goose",
     label: "Goose",
-    image: "/icons/goose-icon.png",
+    image: "/assets/icons/goose-icon.png",
     type: "deep-link",
   },
   {
     id: "raycast",
     label: "Raycast",
-    image: "/icons/raycast-icon.png",
+    image: "/assets/icons/raycast-icon.png",
     type: "deep-link",
   },
 ];

@@ -1,7 +1,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import express from "express";
-import { spaMiddleware } from "./middleware/spa.js";
+import { spaMiddleware } from "./middleware/spa";
 
 const app = express();
 const PORT = process.env.PORT || 8080;

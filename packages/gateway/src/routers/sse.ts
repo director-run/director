@@ -2,7 +2,7 @@ import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { parseMCPMessageBody } from "@director.run/utilities/mcp";
-import { asyncHandler } from "@director.run/utilities/middleware";
+import { asyncHandler } from "@director.run/utilities/middleware/index";
 import { Telemetry } from "@director.run/utilities/telemetry";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";

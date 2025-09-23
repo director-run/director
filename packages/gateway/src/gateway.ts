@@ -5,8 +5,9 @@ import { getLogger } from "@director.run/utilities/logger";
 import {
   errorRequestHandler,
   notFoundHandler,
-} from "@director.run/utilities/middleware";
-import { logRequests } from "@director.run/utilities/middleware";
+} from "@director.run/utilities/middleware/index";
+import { logRequests } from "@director.run/utilities/middleware/index";
+import { spaMiddleware } from "@director.run/utilities/middleware/spa";
 import { Telemetry } from "@director.run/utilities/telemetry";
 import cors from "cors";
 import express from "express";
@@ -39,6 +40,7 @@ export class Gateway {
   public static async start(
     attribs: {
       port: number;
+      studioDistPath?: string;
       configuration: {
         type: "yaml";
         filePath: string;
@@ -113,6 +115,10 @@ export class Gateway {
       }),
     );
     app.use(logRequests());
+    if (attribs.studioDistPath) {
+      console.log("attribs.studioDistPath", attribs.studioDistPath);
+      app.use("/studio", spaMiddleware({ distPath: attribs.studioDistPath }));
+    }
     app.use("/", createSSERouter({ proxyStore, telemetry }));
     app.use("/", createStreamableRouter({ proxyStore, telemetry }));
     app.use(

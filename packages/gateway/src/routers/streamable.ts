@@ -1,7 +1,7 @@
 import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
-import { asyncHandler } from "@director.run/utilities/middleware";
+import { asyncHandler } from "@director.run/utilities/middleware/index";
 import { Telemetry } from "@director.run/utilities/telemetry";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";

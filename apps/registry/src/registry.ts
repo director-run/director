@@ -1,9 +1,9 @@
 import { Server } from "http";
 import path from "node:path";
 import { getLogger } from "@director.run/utilities/logger";
-import { errorRequestHandler } from "@director.run/utilities/middleware";
-import { notFoundHandler } from "@director.run/utilities/middleware";
-import { logRequests } from "@director.run/utilities/middleware";
+import { errorRequestHandler } from "@director.run/utilities/middleware/index";
+import { notFoundHandler } from "@director.run/utilities/middleware/index";
+import { logRequests } from "@director.run/utilities/middleware/index";
 import cors from "cors";
 import express, { type Express } from "express";
 import { type Store, createStore } from "./db/store";

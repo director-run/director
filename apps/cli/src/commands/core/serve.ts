@@ -1,3 +1,4 @@
+import path from "path";
 import { Gateway } from "@director.run/gateway/gateway";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import {
@@ -35,6 +36,7 @@ export async function startGateway(successCallback?: () => void) {
         filePath: env.CONFIG_FILE_PATH,
       },
       registryURL: env.REGISTRY_API_URL,
+      studioDistPath: path.join(__dirname, "../../../dist/studio"),
       allowedOrigins: [env.STUDIO_URL, /^https?:\/\/localhost(:\d+)?$/],
       telemetry: {
         writeKey: env.SEGMENT_WRITE_KEY,

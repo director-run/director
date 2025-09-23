@@ -23,11 +23,7 @@ interface ProxyInstallersProps {
   gatewayBaseUrl: string;
   clients: Client[];
   isLoading: boolean;
-  onChangeInstall: (
-    proxyId: string,
-    client: ConfiguratorTarget,
-    install: boolean,
-  ) => void;
+  onChangeInstall: (client: ConfiguratorTarget, install: boolean) => void;
   isChanging: boolean;
 }
 
@@ -111,7 +107,7 @@ export function ProxyInstallers({
               id={it.id}
               checked={!!it.present}
               onCheckedChange={(checked) => {
-                onChangeInstall(proxyId, it.id as ConfiguratorTarget, checked);
+                onChangeInstall(it.id as ConfiguratorTarget, checked);
               }}
               disabled={isChanging || isLoading || !isAvailable}
             />

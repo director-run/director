@@ -46,8 +46,6 @@ export function RegistryToolSheet({
         <SheetActions>
           <Breadcrumb className="grow">
             <BreadcrumbList>
-              <BreadcrumbItem>Library</BreadcrumbItem>
-              <BreadcrumbSeparator />
               <BreadcrumbItem>{mcpName}</BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbPage>{tool.name}</BreadcrumbPage>

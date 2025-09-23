@@ -13,11 +13,7 @@ export interface WorkspaceSectionClientsProps {
   gatewayBaseUrl: string;
   clients: Client[];
   isClientsLoading: boolean;
-  onChangeInstall: (
-    proxyId: string,
-    client: ConfiguratorTarget,
-    install: boolean,
-  ) => void;
+  onChangeInstall: (client: ConfiguratorTarget, install: boolean) => void;
   isChanging: boolean;
 }
 

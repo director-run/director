@@ -9,7 +9,6 @@ import {
   LayoutViewContent,
 } from "../../../components/layout/layout";
 import { LayoutBreadcrumbHeader } from "../../../components/layout/layout-breadcrumb-header";
-import { McpToolSheet } from "../../../components/mcp-servers/mcp-tool-sheet";
 import { ProxyActionsDropdown } from "../../../components/proxies/proxy-actions-dropdown";
 import { ProxyDeleteConfirmation } from "../../../components/proxies/proxy-delete-confirmation";
 import { ProxySettingsSheet } from "../../../components/proxies/proxy-settings-sheet";
@@ -18,6 +17,8 @@ import { WorkspaceSectionClients } from "../../../components/proxies/workspace-s
 import { WorkspaceSectionHeader } from "../../../components/proxies/workspace-section-header";
 import { WorkspaceSectionServers } from "../../../components/proxies/workspace-section-servers";
 import { WorkspaceSectionTools } from "../../../components/proxies/workspace-section-tools";
+import { RegistryToolSheet } from "../../../components/registry/registry-tool-sheet";
+import type { MCPTool } from "../../../components/types";
 import { Container } from "../../../components/ui/container";
 import { SectionSeparator } from "../../../components/ui/section";
 import { toast } from "../../../components/ui/toast";
@@ -27,7 +28,6 @@ import { useClients } from "../../../hooks/use-clients";
 import { trpc } from "../../../state/client";
 import { useInspectMcp } from "../../../state/use-inspect-mcp";
 import { useProxy } from "../../../state/use-proxy";
-import { useProxyQuery } from "../../../state/use-proxy-query";
 
 export default function ProxyPage() {
   const router = useRouter();
@@ -58,18 +58,10 @@ export default function ProxyPage() {
   );
 
   const { proxy: workspace, isLoading } = useProxy(params.proxyId);
-  const { toolId, serverId, setProxyQuery } = useProxyQuery();
-
   const { data: clients, isLoading: isClientsLoading } = useClients(
     params.proxyId,
   );
-  // Find the server and tool data
-  const server = workspace?.servers.find((server) => server.name === serverId);
-  const { tools, isLoading: toolsLoading } = useInspectMcp(
-    params.proxyId,
-    serverId || undefined,
-  );
-  const tool = tools.find((tool) => tool.name === toolId);
+  const { tools, isLoading: toolsLoading } = useInspectMcp(params.proxyId);
   const utils = trpc.useUtils();
 
   const updateProxyMutation = trpc.store.update.useMutation({
@@ -154,7 +146,6 @@ export default function ProxyPage() {
             clients={clients ?? []}
             isClientsLoading={isClientsLoading}
             onChangeInstall={async (
-              _proxyId: string,
               client: ConfiguratorTarget,
               install: boolean,
             ) => {
@@ -177,18 +168,13 @@ export default function ProxyPage() {
         </Container>
       </LayoutViewContent>
 
-      <McpToolSheet
-        open={!!selectedTool}
-        onOpenChange={() => setSelectedTool(null)}
-        toolId={toolId}
-        serverId={serverId}
-        server={server}
-        proxy={workspace}
-        tool={tool}
-        isLoading={toolsLoading}
-        onServerClick={handleServerClick}
-        onProxyClick={(proxyId) => router.push(`/${proxyId}`)}
-      />
+      {selectedTool && (
+        <RegistryToolSheet
+          tool={selectedTool as MCPTool}
+          mcpName={workspace.name}
+          onClose={() => setSelectedTool(null)}
+        />
+      )}
 
       <ProxySettingsSheet
         proxy={workspace}

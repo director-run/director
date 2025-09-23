@@ -7,7 +7,6 @@ import {
   LayoutViewContent,
 } from "../../../../../components/layout/layout";
 import { LayoutBreadcrumbHeader } from "../../../../../components/layout/layout-breadcrumb-header";
-import { McpToolSheet } from "../../../../../components/mcp-servers/mcp-tool-sheet";
 import { WorkspaceTargetDetail } from "../../../../../components/pages/workspace-target-detail";
 import { ProxySkeleton } from "../../../../../components/proxies/proxy-skeleton";
 import { WorkspaceTargetDetailDropDownMenu } from "../../../../../components/proxies/workspace-target-detail-dropdown-menu";
@@ -158,19 +157,6 @@ export default function McpServerPage() {
           onProxyClick={(proxyId) => router.push(`/${proxyId}`)}
         />
       </LayoutViewContent>
-
-      <McpToolSheet
-        open={serverId !== null && toolId !== null && !!server && !!proxy}
-        onOpenChange={() => setProxyQuery({ toolId: null, serverId: null })}
-        toolId={toolId}
-        serverId={serverId}
-        server={server}
-        proxy={proxy}
-        tool={tool}
-        isLoading={toolsLoading}
-        onServerClick={handleServerClick}
-        onProxyClick={(proxyId) => router.push(`/${proxyId}`)}
-      />
     </LayoutView>
   );
 }

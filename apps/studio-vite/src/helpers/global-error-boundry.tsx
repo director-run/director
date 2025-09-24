@@ -25,6 +25,8 @@ export class GlobalErrorBoundary extends React.Component<
       return (
         <FullScreenError
           title={"Unexpected Error"}
+          icon="dead-smiley"
+          fullScreen={true}
           subtitle={this.state.error.message}
         />
       );

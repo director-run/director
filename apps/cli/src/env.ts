@@ -13,7 +13,7 @@ export const env = createEnv({
   envVars: {
     GATEWAY_PORT: z.number({ coerce: true }).optional().default(3673),
     GATEWAY_URL: z.string().optional().default(`http://localhost:3673`),
-    STUDIO_URL: z.string().optional().default(`https://studio.director.run`),
+    STUDIO_URL: z.string().optional().default(`http://localhost:3673/studio`),
     SEGMENT_WRITE_KEY: z
       .string()
       .optional()

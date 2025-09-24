@@ -2,10 +2,12 @@ import { resolve } from "path";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
+const basePath = process.env.BASE_PATH || "/";
+
 export default defineConfig({
   plugins: [react()],
   root: "src",
-  base: "", // use relative path
+  base: basePath,
   build: {
     outDir: "../dist",
     emptyOutDir: true,

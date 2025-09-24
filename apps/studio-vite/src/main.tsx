@@ -4,7 +4,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { BrowserRouter } from "react-router-dom";
-import { GATEWAY_URL, REGISTRY_URL } from "./config";
+import { BASE_PATH, GATEWAY_URL, REGISTRY_URL } from "./config";
 import { AuthProvider } from "./contexts/auth-context";
 import { useAuth } from "./contexts/auth-context";
 import { BackendProvider } from "./contexts/backend-context";
@@ -57,7 +57,7 @@ export const App = () => {
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     {/* <GlobalErrorBoundary> */}
-    <BrowserRouter>
+    <BrowserRouter basename={BASE_PATH}>
       <BackendProvider gatewayUrl={GATEWAY_URL} registryUrl={REGISTRY_URL}>
         <AuthProvider>
           <App />

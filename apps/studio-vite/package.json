@@ -5,10 +5,10 @@
 
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "bun run clean && vite build",
     "preview": "vite preview",
     "serve": "bun run server/index.ts",
-    "clean": "rm -rf dist/*",
+    "clean": "rm -rf dist",
     "start": "bun run build && bun run serve",
     "typecheck": "tsc --noEmit",
     "lint": "biome check ./src && biome check ./server",

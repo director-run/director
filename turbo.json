@@ -9,7 +9,7 @@
       "env": ["DATABASE_URL"]
     },
     "@director.run/cli#build": {
-      "dependsOn": ["^build", "@director.run/studio-vite#build"],
+      "dependsOn": ["^build", "@director.run/studio#build"],
       "inputs": ["$TURBO_DEFAULT$"],
       "outputs": ["dist/**"],
       "env": ["DATABASE_URL"]

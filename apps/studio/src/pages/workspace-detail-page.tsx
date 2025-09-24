@@ -21,12 +21,12 @@ import { toast } from "@director.run/design/components/ui/toast.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { GATEWAY_URL } from "../config";
+import { GATEWAY_URL } from "../config.ts";
 import { gatewayClient } from "../contexts/backend-context.tsx";
-import { useChangeInstallState } from "../hooks/use-change-install-state";
-import { useClients } from "../hooks/use-clients";
-import { useInspectMcp } from "../hooks/use-inspect-mcp";
-import { useWorkspace } from "../hooks/use-workspace";
+import { useChangeInstallState } from "../hooks/use-change-install-state.ts";
+import { useClients } from "../hooks/use-clients.ts";
+import { useInspectMcp } from "../hooks/use-inspect-mcp.ts";
+import { useWorkspace } from "../hooks/use-workspace.ts";
 
 export const WorkspaceDetailPage = () => {
   const { workspaceId } = useParams();

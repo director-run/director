@@ -25,7 +25,7 @@
     "cli": "NODE_ENV=development bun run bin/cli.ts",
     "cli:dev": "NODE_ENV=development bun --watch bin/cli.ts",
     "typecheck": "tsc --noEmit",
-    "build": "bun run clean && bun build --production --target=node bin/cli.ts --outdir dist && cp -r ../studio-vite/dist dist/studio",
+    "build": "bun run clean && bun build --production --target=node bin/cli.ts --outdir dist && cp -r ../studio/dist dist/studio",
     "release": "changeset publish",
     "dev": "bun --watch bin/cli.ts"
   },

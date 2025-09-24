@@ -11,11 +11,11 @@ import { useZodForm } from "@director.run/design/hooks/use-zod-form.tsx";
 import { useEffect, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { GATEWAY_URL } from "../config";
-import { gatewayClient as trpc } from "../contexts/backend-context";
+import { GATEWAY_URL } from "../config.ts";
+import { gatewayClient as trpc } from "../contexts/backend-context.tsx";
 import { useClients } from "../hooks/use-clients.ts";
-import { useRegistryEntries } from "../hooks/use-registry-entries";
-import { useWorkspaces } from "../hooks/use-workspaces";
+import { useRegistryEntries } from "../hooks/use-registry-entries.ts";
+import { useWorkspaces } from "../hooks/use-workspaces.ts";
 
 export type ClientId = "claude" | "cursor" | "vscode";
 

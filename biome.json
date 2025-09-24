@@ -4,17 +4,7 @@
     "enabled": true
   },
   "files": {
-    "ignore": [
-      "node_modules",
-      "test",
-      "public",
-      "dist",
-      "db.test.json",
-      "db.json",
-      "*.css",
-      "development/config.json",
-      "db/seed/entries.ts"
-    ]
+    "ignore": ["node_modules", "dist"]
   },
   "formatter": {
     "enabled": true,

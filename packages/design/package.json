@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "next build",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf .next node_modules",
     "dev": "next dev --turbopack --port 3001",
@@ -11,11 +10,7 @@
     "format:fix-all": "biome format --write ./src",
     "format:fix-imports": "biome check --formatter-enabled=false --linter-enabled=false --organize-imports-enabled=true --write ./src",
     "format:fix-classnames": "biome lint --fix --unsafe --only=lint/nursery/useSortedClasses ./src",
-    "lint": "biome check ./src",
-    "start": "next start",
-    "tools:shadcn": "bunx --bun shadcn@latest",
-    "storybook": "storybook dev -p 6007",
-    "build-storybook": "storybook build"
+    "lint": "biome check ./src"
   },
   "exports": {
     "./*": "./src/*"

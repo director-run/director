@@ -1,5 +1,4 @@
 import type { Tool as McpSdkTool } from "@modelcontextprotocol/sdk/types.js";
-import { proxyQuerySerializer } from "../../state/use-proxy-query";
 import { McpToolsTable } from "../mcp-servers/mcp-tools-table";
 import { Badge, BadgeLabel } from "../ui/badge";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
@@ -24,10 +23,7 @@ export function WorkspaceSectionTools({
         title: tool.name,
         subtitle: tool.description?.replace(/\[([^\]]+)\]/g, "") || "",
         scroll: false,
-        href: `${proxyQuerySerializer({
-          toolId: tool.name,
-          serverId: server,
-        })}`,
+        href: `#`,
         onClick: () => onToolClick(tool),
         badges: server && (
           <Badge>

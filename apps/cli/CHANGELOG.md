@@ -1,5 +1,11 @@
 # @director.run/cli
 
+## 0.3.0
+
+### Minor Changes
+
+- [#373](https://github.com/director-run/director/pull/373) [`5d0d956`](https://github.com/director-run/director/commit/5d0d95697e0c33f97ae7934e728c27026e8ba77f) Thanks [@barnaby](https://github.com/barnaby)! - 'director studio' opens up the locally hosted version of the studio
+
 ## 0.2.2
 
 ### Patch Changes

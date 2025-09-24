@@ -32,10 +32,10 @@
       },
       "correctness": {
         "noUnusedImports": "error",
-        "noUnusedVariables": "off",
+        "noUnusedVariables": "error",
         "noPrecisionLoss": "error",
         "useHookAtTopLevel": "error",
-        "useExhaustiveDependencies": "off"
+        "useExhaustiveDependencies": "error"
       },
       "style": {
         "noDefaultExport": "error",
@@ -84,14 +84,6 @@
     {
       "include": [
         "**/*.d.ts",
-        "app/**/layout.tsx",
-        "app/**/page.tsx",
-        "app/**/route.ts",
-        "app/**/loading.tsx",
-        "app/**/error.tsx",
-        "app/**/global-error.tsx",
-        "app/**/global-not-found.tsx",
-        "app/**/not-found.tsx",
         "*.config.*",
         "**/*.stories.ts",
         "**/*.stories.tsx",

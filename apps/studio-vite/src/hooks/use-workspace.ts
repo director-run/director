@@ -5,6 +5,7 @@ export function useWorkspace(workspaceId: string) {
     { proxyId: workspaceId },
     {
       throwOnError: false,
+      retry: false,
     },
   );
 

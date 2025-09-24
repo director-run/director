@@ -3,6 +3,8 @@ import { LayoutViewContent } from "@director.run/studio/components/layout/layout
 import { LayoutView } from "@director.run/studio/components/layout/layout.tsx";
 import { McpLogo } from "@director.run/studio/components/mcp-logo.tsx";
 import { McpDescriptionList } from "@director.run/studio/components/mcp-servers/mcp-description-list.tsx";
+import { FullScreenError } from "@director.run/studio/components/pages/global/error.js";
+import { ProxySkeleton } from "@director.run/studio/components/proxies/proxy-skeleton.tsx";
 import { WorkspaceSectionTools } from "@director.run/studio/components/proxies/workspace-section-tools.tsx";
 import { WorkspaceTargetDetailDropDownMenu } from "@director.run/studio/components/proxies/workspace-target-detail-dropdown-menu.tsx";
 import { Container } from "@director.run/studio/components/ui/container.tsx";
@@ -17,9 +19,10 @@ import { toast } from "@director.run/studio/components/ui/toast.tsx";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { gatewayClient, registryClient } from "../contexts/backend-context.tsx";
+import { gatewayClient } from "../contexts/backend-context.tsx";
 import { useInspectMcp } from "../hooks/use-inspect-mcp.ts";
-import { useWorkspace } from "../hooks/use-workspace.ts";
+import { useRegistryEntry } from "../hooks/use-registry-entry.ts";
+import { useWorkspaceTarget } from "../hooks/use-workspace-target.ts";
 
 export function WorkspaceTargetDetailPage() {
   const { workspaceId, targetId } = useParams();
@@ -30,32 +33,21 @@ export function WorkspaceTargetDetailPage() {
   }
 
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const { workspace, isWorkspaceLoading } = useWorkspace(workspaceId);
-
-  const workspaceTarget = workspace?.servers.find(
-    (server) => server.name === targetId,
-  );
-
-  if (!workspaceTarget) {
-    throw new Error("Workspace target not found");
-  }
+  const {
+    workspace,
+    workspaceTarget,
+    isWorkspaceTargetLoading,
+    workspaceTargetError,
+  } = useWorkspaceTarget(workspaceId, targetId);
 
   const { tools, isLoading: toolsLoading } = useInspectMcp(
     workspaceId,
     targetId,
   );
 
-  const registryEntryQuery = registryClient.entries.getEntryByName.useQuery(
-    {
-      name: targetId,
-    },
-    {
-      throwOnError: false,
-    },
-  );
+  const registryEntryQuery = useRegistryEntry({ entryName: targetId });
 
   const utils = gatewayClient.useUtils();
-
   const registryEntry = registryEntryQuery.data;
 
   const deleteServerMutation = gatewayClient.store.removeServer.useMutation({
@@ -78,6 +70,21 @@ export function WorkspaceTargetDetailPage() {
       serverName: targetId,
     });
   };
+
+  if (isWorkspaceTargetLoading) {
+    return <ProxySkeleton />;
+  }
+
+  if (workspaceTargetError || !workspaceTarget) {
+    return (
+      <FullScreenError
+        icon="dead-smiley"
+        fullScreen={true}
+        title={"Unexpected Error"}
+        subtitle={workspaceTargetError?.toString() || "Unknown error"}
+      />
+    );
+  }
 
   return (
     <LayoutView>

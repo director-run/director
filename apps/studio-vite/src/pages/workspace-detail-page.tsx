@@ -1,5 +1,6 @@
 import { LayoutBreadcrumbHeader } from "@director.run/studio/components/layout/layout-breadcrumb-header.tsx";
 import { LayoutViewContent } from "@director.run/studio/components/layout/layout.tsx";
+import { FullScreenError } from "@director.run/studio/components/pages/global/error.js";
 import { ProxyActionsDropdown } from "@director.run/studio/components/proxies/proxy-actions-dropdown.tsx";
 import { ProxyDeleteConfirmation } from "@director.run/studio/components/proxies/proxy-delete-confirmation.tsx";
 import { ProxySettingsSheet } from "@director.run/studio/components/proxies/proxy-settings-sheet.tsx";
@@ -64,7 +65,14 @@ export const WorkspaceDetailPage = () => {
   }
 
   if (workspaceError) {
-    return <div>Error: {workspaceError.message}</div>;
+    return (
+      <FullScreenError
+        icon="dead-smiley"
+        fullScreen={true}
+        title={"Unexpected Error"}
+        subtitle={workspaceError.message}
+      />
+    );
   }
 
   if (!workspace) {

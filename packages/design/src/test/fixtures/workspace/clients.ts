@@ -1,4 +1,4 @@
-import type { Client } from "@director.run/studio/components/types.ts";
+import type { Client } from "../../../components/types.ts";
 
 export const mockClients: Client[] = [
     {

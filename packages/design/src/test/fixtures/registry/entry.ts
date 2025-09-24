@@ -1,4 +1,4 @@
-import type { RegistryEntryDetail } from "@director.run/studio/components/types.ts";
+import type { RegistryEntryDetail } from "../../../components/types.ts";
 import { mockTools } from "../mcp/tools";
 import { mockRegistryEntryReadme } from "./entry-readme";
 

@@ -1,4 +1,4 @@
-import type { MCPTool } from "@director.run/studio/components/types.ts";
+import type { MCPTool } from "../../../components/types.ts";
 
 export const mockTools: MCPTool[] = [
   {

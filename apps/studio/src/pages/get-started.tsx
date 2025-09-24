@@ -79,7 +79,7 @@ export function GetStartedPage() {
   );
 
   // Proxy form
-  const proxyForm = useZodForm({
+  const _proxyForm = useZodForm({
     schema: proxySchema,
     defaultValues: { name: "", description: "A proxy for getting started" },
   });
@@ -120,7 +120,7 @@ export function GetStartedPage() {
         description: error.message,
       });
     },
-    onSuccess: (data) => {
+    onSuccess: (_data) => {
       utils.store.getAll.invalidate();
       toast({
         title: "Proxy installed",
@@ -141,7 +141,7 @@ export function GetStartedPage() {
   const hasData = proxyListQuery.data && registryEntriesQuery.data;
   const hasProxy = proxyListQuery.data && proxyListQuery.data.length > 0;
   const currentProxy = hasProxy ? proxyListQuery.data[0] : null;
-  const hasInstallers =
+  const _hasInstallers =
     installersQuery.data && Object.values(installersQuery.data).some(Boolean);
 
   // Event handlers

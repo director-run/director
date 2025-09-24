@@ -44,7 +44,7 @@ const mockProxies: WorkspaceList = [
 // Debug component to show onClickInstall results
 const DebugPanel = ({
   installResults,
-  clearResults,
+  clearResults: _clearResults,
 }: {
   installResults: Array<{
     timestamp: string;

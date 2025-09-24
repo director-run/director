@@ -40,7 +40,7 @@ const RegistryItemDetailComponent = ({
   onClickInstall,
   isInstalling,
   onToolClick,
-  onProxyServerClick,
+  onProxyServerClick: _onProxyServerClick,
 }: {
   entry: typeof mockRegistryEntry;
   proxies?: WorkspaceList;

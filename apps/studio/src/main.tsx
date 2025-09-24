@@ -2,7 +2,7 @@ import { ChatToUs } from "@director.run/design/components/chat-to-us.tsx";
 import { Toaster } from "@director.run/design/components/ui/toast.tsx";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { Navigate, Outlet, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { BrowserRouter } from "react-router-dom";
 import { BASE_PATH, GATEWAY_URL, REGISTRY_URL } from "./config";
 import { AuthProvider } from "./contexts/auth-context";
@@ -23,7 +23,7 @@ import "./globals.css";
 import { ConnectionBoundary } from "./helpers/connection-boundry";
 
 export const App = () => {
-  const { isAuthenticated, isInitializing } = useAuth();
+  const { isInitializing } = useAuth();
 
   if (isInitializing) {
     return <div>Initializing Auth...</div>;
@@ -71,20 +71,6 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     </GlobalErrorBoundary>
   </React.StrictMode>,
 );
-
-function ProtectedRoute() {
-  const { isAuthenticated, isInitializing } = useAuth();
-
-  if (isInitializing) {
-    return <div>Initializing Auth...</div>;
-  }
-
-  if (!isAuthenticated) {
-    return <Navigate to={"/login"} replace />;
-  }
-
-  return <Outlet />;
-}
 
 function DefaultRoute() {
   const { data: workspaces, isLoading: isWorkspacesLoading } = useWorkspaces();

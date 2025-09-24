@@ -41,7 +41,7 @@ async function main(): Promise<void> {
     }),
   );
 
-  const server = app.listen(port, () => {
+  const _server = app.listen(port, () => {
     logger.info(
       `OAuth callback server (Express) started on http://localhost:${port}`,
     );

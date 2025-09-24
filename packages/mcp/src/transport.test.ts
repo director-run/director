@@ -50,7 +50,7 @@ describe("transport", () => {
   describe("serveOverSSE", () => {
     test("should expose a server over stdio", async () => {
       const server = makeEchoServer();
-      const app = serveOverSSE(server, 3000);
+      const _app = serveOverSSE(server, 3000);
       const client = await HTTPClient.createAndConnectToHTTP(
         `http://localhost:3000/sse`,
       );

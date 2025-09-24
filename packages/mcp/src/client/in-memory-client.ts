@@ -6,7 +6,7 @@ import { z } from "zod";
 import type { ClientStatus } from "./abstract-client";
 import { AbsractClientSchema, AbstractClient } from "./abstract-client";
 
-const logger = getLogger("client/in-memory");
+const _logger = getLogger("client/in-memory");
 
 export const InMemoryClientSchema = AbsractClientSchema.extend({});
 
@@ -40,7 +40,9 @@ export class InMemoryClient extends AbstractClient<InMemoryClientParams> {
     return client;
   }
 
-  public async connectToTarget({ throwOnError }: { throwOnError: boolean }) {
+  public async connectToTarget({
+    throwOnError: _throwOnError,
+  }: { throwOnError: boolean }) {
     if (this._disabled) {
       this.status = "disconnected";
       return false;

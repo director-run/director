@@ -14,7 +14,7 @@ export function serveOverSSE(server: Server, port: number) {
 
   let transport: SSEServerTransport;
 
-  app.get("/sse", async (req, res) => {
+  app.get("/sse", async (_req, res) => {
     transport = new SSEServerTransport("/message", res);
     await server.connect(transport);
   });

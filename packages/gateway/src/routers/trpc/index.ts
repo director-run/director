@@ -19,7 +19,7 @@ export function createAppRouter({
     }),
     store: createProxyStoreRouter({ proxyStore }),
     installer: createInstallerRouter({ proxyStore }),
-    registry: createRegistryRouter({ registryURL, proxyStore }),
+    registry: createRegistryRouter({ registryURL }),
   });
 }
 

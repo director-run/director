@@ -1,46 +1,58 @@
-import { faker } from "@faker-js/faker";
-import { type ClaudeConfig, type ClaudeMCPServer, type ClaudeServerEntry } from "../claude";
-import { type CursorConfig } from "../cursor";
-import {type Installable } from "../types";
-import { type VSCodeConfig } from "../vscode";
-import path from "node:path";
-import { writeJSONFile } from "@director.run/utilities/json";
-import { ConfiguratorTarget } from "..";
 import fs from "node:fs/promises";
+import path from "node:path";
 import { ErrorCode } from "@director.run/utilities/error";
-import { expectToThrowAppError } from "@director.run/utilities/test";
-import {  test, vi } from "vitest";
-import { AbstractConfigurator } from "../types";
-import { getConfigurator } from "..";
+import { writeJSONFile } from "@director.run/utilities/json";
 import { isFilePresent } from "@director.run/utilities/os";
+import { expectToThrowAppError } from "@director.run/utilities/test";
+import { faker } from "@faker-js/faker";
+import { test, vi } from "vitest";
+import { getConfigurator } from "..";
+import { ConfiguratorTarget } from "..";
+import {
+  type ClaudeConfig,
+  type ClaudeMCPServer,
+  type ClaudeServerEntry,
+} from "../claude";
+import { type CursorConfig } from "../cursor";
+import { type Installable } from "../types";
+import { AbstractConfigurator } from "../types";
+import { type VSCodeConfig } from "../vscode";
 
 export function createVSCodeConfig(entries: Array<Installable>): VSCodeConfig {
   return {
     mcp: {
-      servers: entries.reduce((acc, entry) => {
-        acc[entry.name] = { url: entry.url };
-        return acc;
-      }, {} as Record<string, { url: string }>),
+      servers: entries.reduce(
+        (acc, entry) => {
+          acc[entry.name] = { url: entry.url };
+          return acc;
+        },
+        {} as Record<string, { url: string }>,
+      ),
     },
   };
 }
 
 export function createCursorConfig(entries: Array<Installable>): CursorConfig {
   return {
-    mcpServers: entries.reduce((acc, entry) => {
-      acc[entry.name] = { url: entry.url };
-      return acc;
-    }, {} as Record<string, { url: string }>),
+    mcpServers: entries.reduce(
+      (acc, entry) => {
+        acc[entry.name] = { url: entry.url };
+        return acc;
+      },
+      {} as Record<string, { url: string }>,
+    ),
   };
 }
 
-
 export function createClaudeConfig(entries: ClaudeServerEntry[]): ClaudeConfig {
   return {
-    mcpServers: entries.reduce((acc, entry) => {
-      acc[entry.name] = entry.transport;
-      return acc;
-    }, {} as Record<string, ClaudeMCPServer>),
+    mcpServers: entries.reduce(
+      (acc, entry) => {
+        acc[entry.name] = entry.transport;
+        return acc;
+      },
+      {} as Record<string, ClaudeMCPServer>,
+    ),
   };
 }
 
@@ -51,16 +63,28 @@ export function createInstallable(): { url: string; name: string } {
   };
 }
 
-export async function createConfigFile(target: ConfiguratorTarget, config?: unknown) {
+export async function createConfigFile(
+  target: ConfiguratorTarget,
+  config?: unknown,
+) {
   switch (target) {
     case ConfiguratorTarget.VSCode:
-      await writeJSONFile(getConfigPath(target), config ?? createVSCodeConfig([]));
+      await writeJSONFile(
+        getConfigPath(target),
+        config ?? createVSCodeConfig([]),
+      );
       break;
     case ConfiguratorTarget.Cursor:
-      await writeJSONFile(getConfigPath(target), config ?? createCursorConfig([]));
+      await writeJSONFile(
+        getConfigPath(target),
+        config ?? createCursorConfig([]),
+      );
       break;
     case ConfiguratorTarget.Claude:
-      await writeJSONFile(getConfigPath(target), config ?? createClaudeConfig([]));
+      await writeJSONFile(
+        getConfigPath(target),
+        config ?? createClaudeConfig([]),
+      );
       break;
   }
 }

@@ -1,7 +1,7 @@
-import { z } from "zod";
-import { SimpleServer } from "../simple-server";
 import path from "path";
+import { z } from "zod";
 import { StdioClient } from "../client/stdio-client";
+import { SimpleServer } from "../simple-server";
 
 export function makeEchoServer() {
   const server = new SimpleServer("echo-server");
@@ -9,7 +9,7 @@ export function makeEchoServer() {
     .tool("echo")
     .description("Echo a message")
     .schema(z.object({ message: z.string() }))
-    .handle(async ({ message }) => {
+    .handle(({ message }) => {
       return { message };
     });
   return server;
@@ -21,12 +21,11 @@ export function makeFooBarServer() {
     .tool("foo")
     .description("Foo the bar")
     .schema(z.object({ message: z.string() }))
-    .handle(async ({ message }) => {
+    .handle(({ message }) => {
       return { message };
     });
   return server;
 }
-
 
 export function makeKitchenSinkServer() {
   const server = new SimpleServer("kitchen-sink-server");
@@ -34,7 +33,7 @@ export function makeKitchenSinkServer() {
     .tool("ping")
     .description("returns a pong message")
     .schema(z.object({}))
-    .handle(async () => {
+    .handle(() => {
       return { message: "pong" };
     });
 
@@ -42,24 +41,23 @@ export function makeKitchenSinkServer() {
     .tool("add")
     .description("adds two numbers")
     .schema(z.object({ a: z.number(), b: z.number() }))
-    .handle(async ({ a, b }) => {
+    .handle(({ a, b }) => {
       return { result: a + b };
-        });
+    });
 
   server
     .tool("subtract")
     .description("subtracts two numbers")
     .schema(z.object({ a: z.number(), b: z.number() }))
-    .handle(async ({ a, b }) => {
+    .handle(({ a, b }) => {
       return { result: a - b };
     });
-
 
   server
     .tool("multiply")
     .description("multiplies two numbers")
     .schema(z.object({ a: z.number(), b: z.number() }))
-    .handle(async ({ a, b }) => {
+    .handle(({ a, b }) => {
       return { result: a * b };
     });
 

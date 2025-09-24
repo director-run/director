@@ -8,7 +8,7 @@ import { z } from "zod";
 import { AbsractClientSchema, AbstractClient } from "./abstract-client";
 import type { ClientStatus } from "./abstract-client";
 
-const logger = getLogger("client/stdio");
+const _logger = getLogger("client/stdio");
 
 export const StdioClientSchema = AbsractClientSchema.extend({
   command: requiredStringSchema,

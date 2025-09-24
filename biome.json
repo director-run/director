@@ -90,6 +90,7 @@
         "app/**/loading.tsx",
         "app/**/error.tsx",
         "app/**/global-error.tsx",
+        "app/**/global-not-found.tsx",
         "app/**/not-found.tsx",
         "*.config.*",
         "**/*.stories.ts",

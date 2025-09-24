@@ -15,7 +15,6 @@
   "ignore": [
     "@director.run/studio",
     "@director.run/sandbox",
-    "@director.run/storybook",
-    "@director.run/studio-vite"
+    "@director.run/storybook"
   ]
 }

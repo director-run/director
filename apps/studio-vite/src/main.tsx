@@ -20,6 +20,7 @@ import { RootLayout } from "./root-layout";
 
 import "./fonts.css";
 import "./globals.css";
+import { ConnectionBoundary } from "./helpers/connection-boundry";
 
 export const App = () => {
   const { isAuthenticated, isInitializing } = useAuth();
@@ -58,11 +59,13 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <GlobalErrorBoundary>
       <BrowserRouter basename={BASE_PATH}>
         <BackendProvider gatewayUrl={GATEWAY_URL} registryUrl={REGISTRY_URL}>
-          <AuthProvider>
-            <App />
-            <Toaster />
-            <ChatToUs />
-          </AuthProvider>
+          <ConnectionBoundary>
+            <AuthProvider>
+              <App />
+              <Toaster />
+              <ChatToUs />
+            </AuthProvider>
+          </ConnectionBoundary>
         </BackendProvider>
       </BrowserRouter>
     </GlobalErrorBoundary>

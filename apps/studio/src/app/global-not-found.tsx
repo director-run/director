@@ -1,7 +1,7 @@
 "use client";
 
+import { FullScreenError } from "@director.run/design/components/pages/global/error.tsx";
 import { Inter, JetBrains_Mono } from "next/font/google";
-import { FullScreenError } from "../components/pages/global/error";
 
 import "./globals.css";
 

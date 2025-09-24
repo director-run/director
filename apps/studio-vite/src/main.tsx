@@ -8,6 +8,7 @@ import { BASE_PATH, GATEWAY_URL, REGISTRY_URL } from "./config";
 import { AuthProvider } from "./contexts/auth-context";
 import { useAuth } from "./contexts/auth-context";
 import { BackendProvider } from "./contexts/backend-context";
+import { GlobalErrorBoundary } from "./helpers/global-error-boundry";
 import { useWorkspaces } from "./hooks/use-workspaces";
 import { GetStartedPage } from "./pages/get-started";
 import { RegistryDetailPage } from "./pages/registry-detail-page";
@@ -54,17 +55,17 @@ export const App = () => {
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    {/* <GlobalErrorBoundary> */}
-    <BrowserRouter basename={BASE_PATH}>
-      <BackendProvider gatewayUrl={GATEWAY_URL} registryUrl={REGISTRY_URL}>
-        <AuthProvider>
-          <App />
-          <Toaster />
-          <ChatToUs />
-        </AuthProvider>
-      </BackendProvider>
-    </BrowserRouter>
-    {/* </GlobalErrorBoundary> */}
+    <GlobalErrorBoundary>
+      <BrowserRouter basename={BASE_PATH}>
+        <BackendProvider gatewayUrl={GATEWAY_URL} registryUrl={REGISTRY_URL}>
+          <AuthProvider>
+            <App />
+            <Toaster />
+            <ChatToUs />
+          </AuthProvider>
+        </BackendProvider>
+      </BrowserRouter>
+    </GlobalErrorBoundary>
   </React.StrictMode>,
 );
 

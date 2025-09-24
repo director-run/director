@@ -10,7 +10,7 @@ export function makeEchoServer() {
     .description("Echo a message")
     .schema(z.object({ message: z.string() }))
     .handle(({ message }) => {
-      return { message };
+      return Promise.resolve({ message });
     });
   return server;
 }
@@ -22,7 +22,7 @@ export function makeFooBarServer() {
     .description("Foo the bar")
     .schema(z.object({ message: z.string() }))
     .handle(({ message }) => {
-      return { message };
+      return Promise.resolve({ message });
     });
   return server;
 }
@@ -34,7 +34,7 @@ export function makeKitchenSinkServer() {
     .description("returns a pong message")
     .schema(z.object({}))
     .handle(() => {
-      return { message: "pong" };
+      return Promise.resolve({ message: "pong" });
     });
 
   server
@@ -42,7 +42,7 @@ export function makeKitchenSinkServer() {
     .description("adds two numbers")
     .schema(z.object({ a: z.number(), b: z.number() }))
     .handle(({ a, b }) => {
-      return { result: a + b };
+      return Promise.resolve({ result: a + b });
     });
 
   server
@@ -50,7 +50,7 @@ export function makeKitchenSinkServer() {
     .description("subtracts two numbers")
     .schema(z.object({ a: z.number(), b: z.number() }))
     .handle(({ a, b }) => {
-      return { result: a - b };
+      return Promise.resolve({ result: a - b });
     });
 
   server
@@ -58,7 +58,7 @@ export function makeKitchenSinkServer() {
     .description("multiplies two numbers")
     .schema(z.object({ a: z.number(), b: z.number() }))
     .handle(({ a, b }) => {
-      return { result: a * b };
+      return Promise.resolve({ result: a * b });
     });
 
   return server;

@@ -116,7 +116,7 @@ export class Gateway {
     );
     app.use(logRequests());
     if (attribs.studioDistPath) {
-      logger.info({
+      logger.trace({
         message: "serving studio assets from",
         distPath: attribs.studioDistPath,
       });

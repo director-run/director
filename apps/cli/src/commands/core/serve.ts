@@ -1,3 +1,4 @@
+import fs from "fs";
 import path from "path";
 import { Gateway } from "@director.run/gateway/gateway";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
@@ -36,7 +37,7 @@ export async function startGateway(successCallback?: () => void) {
         filePath: env.CONFIG_FILE_PATH,
       },
       registryURL: env.REGISTRY_API_URL,
-      studioDistPath: path.join(__dirname, "../../../dist/studio"),
+      studioDistPath: resolveStudioDistPath(),
       allowedOrigins: [env.STUDIO_URL, /^https?:\/\/localhost(:\d+)?$/],
       telemetry: {
         writeKey: env.SEGMENT_WRITE_KEY,
@@ -57,3 +58,24 @@ export async function startGateway(successCallback?: () => void) {
     successCallback,
   );
 }
+
+const resolveStudioDistPath = (): string => {
+  const candidates = [
+    // Running in development
+    path.join(__dirname, "../../../dist/studio"),
+    // Running from compiled JS
+    path.join(__dirname, "./studio"),
+  ];
+
+  for (const candidate of candidates) {
+    const indexFile = path.join(candidate, "index.html");
+    try {
+      if (fs.existsSync(indexFile)) {
+        return candidate;
+      }
+    } catch {}
+  }
+
+  // Final fallback to a sensible default relative to __dirname
+  return path.join(__dirname, "../../studio");
+};

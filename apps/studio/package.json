@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@director.run/gateway": "workspace:*",
+    "@director.run/design": "workspace:*",
     "@director.run/mcp": "workspace:*",
     "@director.run/registry": "workspace:*",
     "@hookform/resolvers": "^5.0.1",

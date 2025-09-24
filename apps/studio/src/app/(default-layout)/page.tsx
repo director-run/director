@@ -1,6 +1,6 @@
 "use client";
 
-import { FullScreenError } from "../../components/pages/global/error";
+import { FullScreenError } from "@director.run/design/components/pages/global/error.tsx";
 
 export default function PleaseUpdate() {
   return (

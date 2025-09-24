@@ -20,6 +20,7 @@
     "./*": "./src/*.ts"
   },
   "devDependencies": {
+    "@types/express": "^5.0.0",
     "@types/bun": "latest",
     "@types/pg": "^8.11.14",
     "@director.run/utilities": "workspace:*",
@@ -30,6 +31,7 @@
     "@faker-js/faker": "^9.7.0"
   },
   "dependencies": {
+    "express": "^4.21.2",
     "commander": "^13.1.0",
     "drizzle-orm": "^0.43.1",
     "git-url-parse": "^16.1.0",

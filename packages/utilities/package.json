@@ -14,6 +14,7 @@
     "test": "vitest"
   },
   "devDependencies": {
+    "@types/express": "^5.0.0",
     "@types/bun": "latest",
     "type-fest": "^4.40.0",
     "typescript": "^5.8.3",
@@ -22,6 +23,7 @@
   "dependencies": {
     "ora": "^8.2.0",
     "picocolors": "^1.1.1",
-    "pino-http": "^10.4.0"
+    "pino-http": "^10.4.0",
+    "express": "^4.21.2"
   }
 }

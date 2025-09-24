@@ -1,5 +1,11 @@
 # @director.run/sdk
 
+## 0.2.2
+
+### Patch Changes
+
+- [#371](https://github.com/director-run/director/pull/371) [`b7645d7`](https://github.com/director-run/director/commit/b7645d7588df323ef8230363d50e81297b9743d5) Thanks [@barnaby](https://github.com/barnaby)! - fix: studio path resolution in compiled cli JS
+
 ## 0.2.1
 
 ### Patch Changes

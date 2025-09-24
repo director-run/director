@@ -1,4 +1,4 @@
-import { ConnectionUpdateState } from "@director.run/studio/components/connect/connection-update-state";
+import { ConnectionUpdateState } from "@director.run/studio/components/connect/connection-update-state.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {

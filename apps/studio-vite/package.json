@@ -2,7 +2,6 @@
   "name": "@director.run/studio-vite",
   "version": "0.1.0",
   "private": true,
-
   "scripts": {
     "dev": "vite",
     "build": "bun run clean && BASE_PATH=/studio vite build",
@@ -26,6 +25,7 @@
   "dependencies": {
     "@director.run/design": "workspace:*",
     "@director.run/utilities": "workspace:*",
+    "@trpc/react-query": "^11.5.1",
     "express": "^4.21.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

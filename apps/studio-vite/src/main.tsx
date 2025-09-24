@@ -10,7 +10,6 @@ import { useAuth } from "./contexts/auth-context";
 import { BackendProvider } from "./contexts/backend-context";
 import { useWorkspaces } from "./hooks/use-workspaces";
 import { GetStartedPage } from "./pages/get-started";
-import { LoginPage } from "./pages/login-page";
 import { RegistryDetailPage } from "./pages/registry-detail-page";
 import { RegistryListPage } from "./pages/registry-list-page";
 import { NewProxyPage } from "./pages/workspace-create-page";
@@ -30,25 +29,25 @@ export const App = () => {
 
   return (
     <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route element={<ProtectedRoute />}>
-        <Route element={<RootLayout />}>
-          <Route path="/library" element={<RegistryListPage />} />
-          <Route
-            path="/library/mcp/:entryName"
-            element={<RegistryDetailPage />}
-          />
-          {/* <Route path="/settings" element={<SettingsPage />} /> */}
-          <Route path="/:workspaceId" element={<WorkspaceDetailPage />} />
-          <Route
-            path="/:workspaceId/:targetId"
-            element={<WorkspaceTargetDetailPage />}
-          />
-          <Route path="/new" element={<NewProxyPage />} />
-        </Route>
-        <Route path="/get-started" element={<GetStartedPage />} />
-        <Route path="*" element={<DefaultRoute />} />
+      {/* <Route path="/login" element={<LoginPage />} /> */}
+      {/* <Route element={<ProtectedRoute />}> */}
+      <Route element={<RootLayout />}>
+        <Route path="/library" element={<RegistryListPage />} />
+        <Route
+          path="/library/mcp/:entryName"
+          element={<RegistryDetailPage />}
+        />
+        {/* <Route path="/settings" element={<SettingsPage />} /> */}
+        <Route path="/:workspaceId" element={<WorkspaceDetailPage />} />
+        <Route
+          path="/:workspaceId/:targetId"
+          element={<WorkspaceTargetDetailPage />}
+        />
+        <Route path="/new" element={<NewProxyPage />} />
       </Route>
+      <Route path="/get-started" element={<GetStartedPage />} />
+      <Route path="*" element={<DefaultRoute />} />
+      {/* </Route> */}
     </Routes>
   );
 };
@@ -87,7 +86,7 @@ function DefaultRoute() {
   const { data: workspaces, isLoading: isWorkspacesLoading } = useWorkspaces();
 
   if (isWorkspacesLoading) {
-    return <div>Initializing Auth...</div>;
+    return <div>Initializing Workspaces...</div>;
   }
 
   if (workspaces?.length && workspaces.length > 0) {

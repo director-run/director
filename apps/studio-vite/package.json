@@ -25,7 +25,9 @@
   "dependencies": {
     "@director.run/design": "workspace:*",
     "@director.run/utilities": "workspace:*",
-    "@trpc/react-query": "^11.5.1",
+    "@trpc/next": "^11.1.3",
+    "@trpc/react-query": "^11.1.3",
+    "@trpc/tanstack-react-query": "^11.1.3",
     "express": "^4.21.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

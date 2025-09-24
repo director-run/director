@@ -35,7 +35,7 @@ export class DirectorCommand extends Command {
     }
   }
 
-  helpInformation(context?: HelpContext): string {
+  helpInformation(_context?: HelpContext): string {
     return makeHelpText(this);
   }
 

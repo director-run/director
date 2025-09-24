@@ -27,7 +27,7 @@ export class LinuxController extends AbstractController {
         execSync(`which ${command}`, { stdio: "pipe" }).toString().trim()
           .length > 0
       );
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }

@@ -35,7 +35,7 @@ export class MacOSController extends AbstractController {
         execSync(`which ${command}`, { stdio: "pipe" }).toString().trim()
           .length > 0
       );
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -71,7 +71,7 @@ export class MacOSController extends AbstractController {
         },
       );
       return result.trim().length > 0;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -90,7 +90,7 @@ export class MacOSController extends AbstractController {
       // Use pgrep -x for exact process name matching
       execSync(`pgrep -x "${app}"`, { stdio: "pipe" });
       return true;
-    } catch (error) {
+    } catch (_error) {
       // pgrep returns exit code 1 when no processes are found
       return false;
     }

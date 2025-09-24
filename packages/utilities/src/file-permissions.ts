@@ -15,7 +15,7 @@ export function hasSecurePermissions(filePath: string): boolean {
     // Check if file is readable/writable only by owner (600)
     // Also allow 400 (read-only by owner) for read-only files
     return mode === 0o600 || mode === 0o400;
-  } catch (error) {
+  } catch (_error) {
     // If file doesn't exist, consider it secure (will be created with correct permissions)
     return true;
   }

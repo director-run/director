@@ -1,28 +1,28 @@
 import { AbstractController, App } from "./abstract-controller";
 
 export class UnsupportedController extends AbstractController {
-  restartApp(app: App) {
+  restartApp(_app: App) {
     return Promise.resolve();
   }
-  openFileInCode(filePath: string): Promise<void> {
+  openFileInCode(_filePath: string): Promise<void> {
     return Promise.resolve();
   }
-  isCommandInPath(command: string): boolean {
+  isCommandInPath(_command: string): boolean {
     return false;
   }
-  isAppInstalled(app: App): boolean {
+  isAppInstalled(_app: App): boolean {
     return false;
   }
-  isFilePresent(filePath: string): boolean {
+  isFilePresent(_filePath: string): boolean {
     return false;
   }
-  isAppRunning(app: App): boolean {
+  isAppRunning(_app: App): boolean {
     return false;
   }
-  openUrl(url: string): Promise<void> {
+  openUrl(_url: string): Promise<void> {
     return Promise.resolve();
   }
-  getConfigFileForApp(app: App): string {
+  getConfigFileForApp(_app: App): string {
     return "";
   }
 }

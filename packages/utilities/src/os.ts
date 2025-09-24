@@ -29,7 +29,7 @@ export function isCommandInPath(command: string): boolean {
       execSync(`which ${command}`, { stdio: "pipe" }).toString().trim().length >
       0
     );
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 }

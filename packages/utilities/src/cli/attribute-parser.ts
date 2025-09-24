@@ -117,7 +117,7 @@ function parseAttributeValue(
         });
 
       return items;
-    } catch (error) {
+    } catch (_error) {
       throw new Error(
         `Invalid array format for ${key}: ${value}. Expected format: ['item1', 'item2']`,
       );

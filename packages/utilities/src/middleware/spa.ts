@@ -13,7 +13,7 @@ export const spaMiddleware = (options: {
   const router = express.Router();
 
   // Helper function to serve index.html with optional config injection
-  const serveIndex = (req: express.Request, res: express.Response) => {
+  const serveIndex = (_req: express.Request, res: express.Response) => {
     if (!fs.existsSync(indexPath)) {
       return res.status(404).send("index.html not found");
     }

@@ -201,7 +201,6 @@ function WorkspaceEditMenu({ workspace }: { workspace: WorkspaceDetail }) {
       <ProxySettingsSheet
         proxy={workspace}
         onSubmit={handleUpdateProxy}
-        isSubmitting={updateProxyMutation.isPending}
         open={settingsOpen}
         onOpenChange={setSettingsOpen}
       />

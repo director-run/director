@@ -16,7 +16,6 @@ import type { ProxyFormData } from "./proxy-form";
 interface ProxySettingsSheetProps {
   proxy: WorkspaceDetail;
   onSubmit: (values: ProxyFormData) => Promise<void>;
-  isSubmitting?: boolean;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
@@ -24,7 +23,6 @@ interface ProxySettingsSheetProps {
 export function ProxySettingsSheet({
   proxy,
   onSubmit,
-  isSubmitting = false,
   open,
   onOpenChange,
 }: ProxySettingsSheetProps) {
@@ -48,7 +46,6 @@ export function ProxySettingsSheet({
               description: proxy.description ?? undefined,
             }}
             onSubmit={onSubmit}
-            isSubmitting={isSubmitting}
           >
             <Button>Save changes</Button>
           </ProxyForm>

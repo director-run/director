@@ -58,7 +58,6 @@ export const Default: Story = {
           onOpenChange={setOpen}
           proxy={proxy}
           onSubmit={handleSubmit}
-          isSubmitting={false}
         />
       </div>
     );

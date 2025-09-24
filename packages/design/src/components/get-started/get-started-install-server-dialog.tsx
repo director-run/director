@@ -97,9 +97,7 @@ function GetStartedInstallServerDialogPresentation({
 // Main dialog component - presentational only
 export function GetStartedInstallServerDialog({
   registryEntry,
-
   proxies,
-
   onClickInstall,
   isInstalling,
   open,

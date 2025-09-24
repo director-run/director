@@ -29,7 +29,6 @@ export function ProxyNew({ onSubmit, isSubmitting }: ProxyNewProps) {
           onSubmit={async (values) => {
             await onSubmit(values);
           }}
-          isSubmitting={isSubmitting}
         >
           <ProxyFormButton isSubmitting={isSubmitting}>
             Create proxy

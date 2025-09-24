@@ -95,7 +95,6 @@ export const Step2b_RegistryEntryDetail: Story = {
         <StatefulPage {...args} />
         <GetStartedInstallServerDialog
           registryEntry={mockRegistryEntry}
-          isRegistryEntryLoading={false}
           proxies={[]}
           onClickInstall={async () => {}}
           isInstalling={false}

@@ -210,9 +210,7 @@ export function GetStartedPage() {
       {selectedRegistryEntryName && (
         <GetStartedInstallServerDialog
           registryEntry={entryQuery.data}
-          isRegistryEntryLoading={entryQuery.isLoading}
           proxies={proxyListQuery.data}
-          entryInstalledOn={[]} // No existing installations in get-started flow
           onClickInstall={handleMcpFormSubmit}
           isInstalling={installServerMutation.isPending}
           open={isInstallDialogOpen}

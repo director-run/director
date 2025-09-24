@@ -1,6 +1,6 @@
-import { RegistryToolSheet } from "@director.run/studio/components/registry/registry-tool-sheet.tsx";
-import type { MCPTool } from "@director.run/studio/components/types.ts";
-import { Button } from "@director.run/studio/components/ui/button.tsx";
+import { RegistryToolSheet } from "@director.run/design/components/registry/registry-tool-sheet.tsx";
+import type { MCPTool } from "@director.run/design/components/types.ts";
+import { Button } from "@director.run/design/components/ui/button.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 

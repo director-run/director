@@ -1,6 +1,6 @@
-import type { ProxyFormData } from "@director.run/studio/components/proxies/proxy-form.tsx";
-import { ProxySettingsSheet } from "@director.run/studio/components/proxies/proxy-settings-sheet.tsx";
-import { Button } from "@director.run/studio/components/ui/button.tsx";
+import type { ProxyFormData } from "@director.run/design/components/proxies/proxy-form.tsx";
+import { ProxySettingsSheet } from "@director.run/design/components/proxies/proxy-settings-sheet.tsx";
+import { Button } from "@director.run/design/components/ui/button.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 

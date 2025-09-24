@@ -1,27 +1,27 @@
-import { LayoutBreadcrumbHeader } from "@director.run/studio/components/layout/layout-breadcrumb-header.tsx";
+import { LayoutBreadcrumbHeader } from "@director.run/design/components/layout/layout-breadcrumb-header.tsx";
 import {
   LayoutView,
   LayoutViewContent,
-} from "@director.run/studio/components/layout/layout.tsx";
-import { RegistryDetailSidebar } from "@director.run/studio/components/registry-detail-sidebar.tsx";
-import { RegistryItem } from "@director.run/studio/components/registry-item.tsx";
-import { RegistryEntrySkeleton } from "@director.run/studio/components/registry/registry-entry-skeleton.tsx";
-import { RegistryInstallForm } from "@director.run/studio/components/registry/registry-install-form.tsx";
-import { RegistryToolSheet } from "@director.run/studio/components/registry/registry-tool-sheet.tsx";
+} from "@director.run/design/components/layout/layout.tsx";
+import { RegistryDetailSidebar } from "@director.run/design/components/registry-detail-sidebar.tsx";
+import { RegistryItem } from "@director.run/design/components/registry-item.tsx";
+import { RegistryEntrySkeleton } from "@director.run/design/components/registry/registry-entry-skeleton.tsx";
+import { RegistryInstallForm } from "@director.run/design/components/registry/registry-install-form.tsx";
+import { RegistryToolSheet } from "@director.run/design/components/registry/registry-tool-sheet.tsx";
 import {
   SplitView,
   SplitViewMain,
   SplitViewSide,
-} from "@director.run/studio/components/split-view.tsx";
-import type { MCPTool } from "@director.run/studio/components/types.js";
-import { Button } from "@director.run/studio/components/ui/button.tsx";
-import { Container } from "@director.run/studio/components/ui/container.tsx";
+} from "@director.run/design/components/split-view.tsx";
+import type { MCPTool } from "@director.run/design/components/types.js";
+import { Button } from "@director.run/design/components/ui/button.tsx";
+import { Container } from "@director.run/design/components/ui/container.tsx";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@director.run/studio/components/ui/popover.tsx";
-import { toast } from "@director.run/studio/components/ui/toast.tsx";
+} from "@director.run/design/components/ui/popover.tsx";
+import { toast } from "@director.run/design/components/ui/toast.tsx";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useInstallServerFromRegistry } from "../hooks/use-install-server-from-registry";

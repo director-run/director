@@ -1,5 +1,5 @@
 {
-  "name": "@director.run/studio-vite",
+  "name": "@director.run/design-vite",
   "version": "0.1.0",
   "private": true,
 
@@ -24,7 +24,7 @@
     "vite": "^7.1.5"
   },
   "dependencies": {
-    "@director.run/studio": "workspace:*",
+    "@director.run/design": "workspace:*",
     "@director.run/utilities": "workspace:*",
     "express": "^4.21.2",
     "react": "^19.1.0",

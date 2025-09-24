@@ -1,8 +1,8 @@
-import { LayoutBreadcrumbHeader } from "@director.run/studio/components/layout/layout-breadcrumb-header.tsx";
-import { LayoutViewContent } from "@director.run/studio/components/layout/layout.tsx";
-import { ProxyNew } from "@director.run/studio/components/pages/proxy-new.tsx";
-import type { ProxyFormData } from "@director.run/studio/components/proxies/proxy-form.tsx";
-import { toast } from "@director.run/studio/components/ui/toast.tsx";
+import { LayoutBreadcrumbHeader } from "@director.run/design/components/layout/layout-breadcrumb-header.tsx";
+import { LayoutViewContent } from "@director.run/design/components/layout/layout.tsx";
+import { ProxyNew } from "@director.run/design/components/pages/proxy-new.tsx";
+import type { ProxyFormData } from "@director.run/design/components/proxies/proxy-form.tsx";
+import { toast } from "@director.run/design/components/ui/toast.tsx";
 import { useNavigate } from "react-router-dom";
 import { useCreateProxy } from "../hooks/use-create-proxy";
 

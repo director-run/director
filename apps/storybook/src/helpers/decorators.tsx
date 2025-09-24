@@ -1,12 +1,12 @@
-import { ChatToUs } from "@director.run/studio/components/chat-to-us.tsx";
-import { LayoutBreadcrumbHeader } from "@director.run/studio/components/layout/layout-breadcrumb-header.js";
+import { ChatToUs } from "@director.run/design/components/chat-to-us.tsx";
+import { LayoutBreadcrumbHeader } from "@director.run/design/components/layout/layout-breadcrumb-header.js";
 import {
   LayoutRoot,
   LayoutView,
   LayoutViewContent,
-} from "@director.run/studio/components/layout/layout.tsx";
-import type { NavigationSection } from "@director.run/studio/components/layout/navigation.js";
-import { MCPIcon } from "@director.run/studio/components/ui/icons/mcp-icon.js";
+} from "@director.run/design/components/layout/layout.tsx";
+import type { NavigationSection } from "@director.run/design/components/layout/navigation.js";
+import { MCPIcon } from "@director.run/design/components/ui/icons/mcp-icon.js";
 import {
   BookOpenTextIcon,
   GithubLogoIcon,

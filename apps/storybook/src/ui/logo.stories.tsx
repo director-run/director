@@ -1,4 +1,4 @@
-import { Logo } from "@director.run/studio/components/ui/icons/logo.tsx";
+import { Logo } from "@director.run/design/components/ui/icons/logo.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {

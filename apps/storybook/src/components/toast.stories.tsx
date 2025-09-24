@@ -1,5 +1,5 @@
-import { Button } from "@director.run/studio/components/ui/button.tsx";
-import { Toaster, toast } from "@director.run/studio/components/ui/toast.tsx";
+import { Button } from "@director.run/design/components/ui/button.tsx";
+import { Toaster, toast } from "@director.run/design/components/ui/toast.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 

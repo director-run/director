@@ -1,14 +1,14 @@
-import { RegistryDetailSidebar } from "@director.run/studio/components/registry-detail-sidebar.tsx";
-import { RegistryItem } from "@director.run/studio/components/registry-item.tsx";
-import { RegistryToolSheet } from "@director.run/studio/components/registry/registry-tool-sheet.tsx";
+import { RegistryDetailSidebar } from "@director.run/design/components/registry-detail-sidebar.tsx";
+import { RegistryItem } from "@director.run/design/components/registry-item.tsx";
+import { RegistryToolSheet } from "@director.run/design/components/registry/registry-tool-sheet.tsx";
 import {
   SplitView,
   SplitViewMain,
   SplitViewSide,
-} from "@director.run/studio/components/split-view.tsx";
-import type { WorkspaceList } from "@director.run/studio/components/types.ts";
-import { Container } from "@director.run/studio/components/ui/container.tsx";
-import { mockRegistryEntry } from "@director.run/studio/test/fixtures/registry/entry.ts";
+} from "@director.run/design/components/split-view.tsx";
+import type { WorkspaceList } from "@director.run/design/components/types.ts";
+import { Container } from "@director.run/design/components/ui/container.tsx";
+import { mockRegistryEntry } from "@director.run/design/test/fixtures/registry/entry.ts";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { withLayoutView } from "../helpers/decorators";

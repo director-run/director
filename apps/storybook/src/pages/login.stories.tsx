@@ -1,4 +1,4 @@
-import { LoginPage } from "@director.run/studio/components/pages/auth/login.tsx";
+import { LoginPage } from "@director.run/design/components/pages/auth/login.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {

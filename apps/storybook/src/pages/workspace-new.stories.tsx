@@ -1,5 +1,5 @@
-import { ProxyNew } from "@director.run/studio/components/pages/proxy-new.tsx";
-import type { ProxyFormData } from "@director.run/studio/components/proxies/proxy-form.tsx";
+import { ProxyNew } from "@director.run/design/components/pages/proxy-new.tsx";
+import type { ProxyFormData } from "@director.run/design/components/proxies/proxy-form.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../helpers/decorators";
 

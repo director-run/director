@@ -1,6 +1,6 @@
+import type { Client } from "@director.run/design/components/proxies/proxy-installers.tsx";
+import type { ConfiguratorTarget } from "@director.run/design/components/types.ts";
 import type { GatewayRouterOutputs } from "@director.run/gateway/client";
-import type { Client } from "@director.run/studio/components/proxies/proxy-installers.tsx";
-import type { ConfiguratorTarget } from "@director.run/studio/components/types.ts";
 import { gatewayClient } from "../contexts/backend-context";
 
 type InstallerApi = GatewayRouterOutputs["installer"]["allClients"][number];

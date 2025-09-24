@@ -1,17 +1,17 @@
-import type { Client } from "@director.run/studio/components/proxies/proxy-installers.js";
-import { WorkspaceSectionClients } from "@director.run/studio/components/proxies/workspace-section-clients.tsx";
-import { WorkspaceSectionHeader } from "@director.run/studio/components/proxies/workspace-section-header.tsx";
-import { WorkspaceSectionServers } from "@director.run/studio/components/proxies/workspace-section-servers.tsx";
-import { WorkspaceSectionTools } from "@director.run/studio/components/proxies/workspace-section-tools.tsx";
+import type { Client } from "@director.run/design/components/proxies/proxy-installers.js";
+import { WorkspaceSectionClients } from "@director.run/design/components/proxies/workspace-section-clients.tsx";
+import { WorkspaceSectionHeader } from "@director.run/design/components/proxies/workspace-section-header.tsx";
+import { WorkspaceSectionServers } from "@director.run/design/components/proxies/workspace-section-servers.tsx";
+import { WorkspaceSectionTools } from "@director.run/design/components/proxies/workspace-section-tools.tsx";
 import type {
   ConfiguratorTarget,
   WorkspaceDetail,
-} from "@director.run/studio/components/types.ts";
-import { Container } from "@director.run/studio/components/ui/container.tsx";
-import { SectionSeparator } from "@director.run/studio/components/ui/section.tsx";
-import { mockTools } from "@director.run/studio/test/fixtures/mcp/tools.js";
-import { mockClients } from "@director.run/studio/test/fixtures/workspace/clients.ts";
-import { mockWorkspace } from "@director.run/studio/test/fixtures/workspace/workspace.ts";
+} from "@director.run/design/components/types.ts";
+import { Container } from "@director.run/design/components/ui/container.tsx";
+import { SectionSeparator } from "@director.run/design/components/ui/section.tsx";
+import { mockTools } from "@director.run/design/test/fixtures/mcp/tools.js";
+import { mockClients } from "@director.run/design/test/fixtures/workspace/clients.ts";
+import { mockWorkspace } from "@director.run/design/test/fixtures/workspace/workspace.ts";
 import type { Tool as McpSdkTool } from "@modelcontextprotocol/sdk/types.js";
 import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../helpers/decorators";

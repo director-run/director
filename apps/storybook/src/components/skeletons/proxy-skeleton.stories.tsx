@@ -1,4 +1,4 @@
-import { ProxySkeleton } from "@director.run/studio/components/proxies/proxy-skeleton.tsx";
+import { ProxySkeleton } from "@director.run/design/components/proxies/proxy-skeleton.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {

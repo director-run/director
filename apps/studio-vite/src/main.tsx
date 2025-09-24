@@ -1,5 +1,5 @@
-import { ChatToUs } from "@director.run/studio/components/chat-to-us.tsx";
-import { Toaster } from "@director.run/studio/components/ui/toast.tsx";
+import { ChatToUs } from "@director.run/design/components/chat-to-us.tsx";
+import { Toaster } from "@director.run/design/components/ui/toast.tsx";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";

@@ -17,7 +17,7 @@
     "./*": "./src/*"
   },
   "dependencies": {
-    "@director.run/studio": "workspace:*",
+    "@director.run/design": "workspace:*",
     "@hookform/resolvers": "^5.0.1",
     "@modelcontextprotocol/sdk": "1.11.4",
     "@phosphor-icons/react": "^2.1.10",

@@ -1,6 +1,6 @@
-import { LayoutBreadcrumbHeader } from "@director.run/studio/components/layout/layout-breadcrumb-header.tsx";
-import { LayoutViewContent } from "@director.run/studio/components/layout/layout.tsx";
-import { SettingsPage as SettingsPageComponent } from "@director.run/studio/components/pages/settings.tsx";
+import { LayoutBreadcrumbHeader } from "@director.run/design/components/layout/layout-breadcrumb-header.tsx";
+import { LayoutViewContent } from "@director.run/design/components/layout/layout.tsx";
+import { SettingsPage as SettingsPageComponent } from "@director.run/design/components/pages/settings.tsx";
 import { useAuth } from "../contexts/auth-context";
 
 export function SettingsPage() {

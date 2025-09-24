@@ -1,4 +1,4 @@
-import { ConnectionEmptyState } from "@director.run/studio/components/connect/connection-empty-state.tsx";
+import { ConnectionEmptyState } from "@director.run/design/components/connect/connection-empty-state.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {

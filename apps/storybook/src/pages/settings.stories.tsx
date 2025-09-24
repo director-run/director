@@ -1,4 +1,4 @@
-import { SettingsPage } from "@director.run/studio/components/pages/settings.tsx";
+import { SettingsPage } from "@director.run/design/components/pages/settings.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../helpers/decorators";
 

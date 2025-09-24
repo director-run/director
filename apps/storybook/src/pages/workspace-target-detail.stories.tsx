@@ -1,25 +1,25 @@
-import { McpLogo } from "@director.run/studio/components/mcp-logo.tsx";
-import { McpDescriptionList } from "@director.run/studio/components/mcp-servers/mcp-description-list.tsx";
-import { WorkspaceSectionTools } from "@director.run/studio/components/proxies/workspace-section-tools.tsx";
+import { McpLogo } from "@director.run/design/components/mcp-logo.tsx";
+import { McpDescriptionList } from "@director.run/design/components/mcp-servers/mcp-description-list.tsx";
+import { WorkspaceSectionTools } from "@director.run/design/components/proxies/workspace-section-tools.tsx";
 import type {
   RegistryEntryDetail,
   WorkspaceDetail,
   WorkspaceTarget,
-} from "@director.run/studio/components/types.js";
-import { Container } from "@director.run/studio/components/ui/container.tsx";
+} from "@director.run/design/components/types.js";
+import { Container } from "@director.run/design/components/ui/container.tsx";
 import {
   EmptyState,
   EmptyStateTitle,
-} from "@director.run/studio/components/ui/empty-state.tsx";
-import { Markdown } from "@director.run/studio/components/ui/markdown.tsx";
-import { Section } from "@director.run/studio/components/ui/section.js";
-import { SectionHeader } from "@director.run/studio/components/ui/section.js";
-import { SectionTitle } from "@director.run/studio/components/ui/section.js";
-import { SectionDescription } from "@director.run/studio/components/ui/section.js";
-import { mockTools } from "@director.run/studio/test/fixtures/mcp/tools.ts";
-import { mockRegistryEntry } from "@director.run/studio/test/fixtures/registry/entry.ts";
-import { mockWorkspace } from "@director.run/studio/test/fixtures/workspace/workspace.ts";
-import { mockWorkspaceTarget } from "@director.run/studio/test/fixtures/workspace/worskspace-target.ts";
+} from "@director.run/design/components/ui/empty-state.tsx";
+import { Markdown } from "@director.run/design/components/ui/markdown.tsx";
+import { Section } from "@director.run/design/components/ui/section.js";
+import { SectionHeader } from "@director.run/design/components/ui/section.js";
+import { SectionTitle } from "@director.run/design/components/ui/section.js";
+import { SectionDescription } from "@director.run/design/components/ui/section.js";
+import { mockTools } from "@director.run/design/test/fixtures/mcp/tools.ts";
+import { mockRegistryEntry } from "@director.run/design/test/fixtures/registry/entry.ts";
+import { mockWorkspace } from "@director.run/design/test/fixtures/workspace/workspace.ts";
+import { mockWorkspaceTarget } from "@director.run/design/test/fixtures/workspace/worskspace-target.ts";
 import type { Tool as McpSdkTool } from "@modelcontextprotocol/sdk/types.js";
 import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../helpers/decorators";

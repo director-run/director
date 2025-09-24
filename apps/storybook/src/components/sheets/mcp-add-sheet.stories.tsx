@@ -1,6 +1,6 @@
-import { WorkspaceTargetAddSheet } from "@director.run/studio/components/mcp-servers/mcp-add-sheet.tsx";
-import type { WorkspaceTargetFormData } from "@director.run/studio/components/mcp-servers/mcp-add-sheet.tsx";
-import { Button } from "@director.run/studio/components/ui/button.tsx";
+import { WorkspaceTargetAddSheet } from "@director.run/design/components/mcp-servers/mcp-add-sheet.tsx";
+import type { WorkspaceTargetFormData } from "@director.run/design/components/mcp-servers/mcp-add-sheet.tsx";
+import { Button } from "@director.run/design/components/ui/button.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 

@@ -1,9 +1,9 @@
-import { GetStartedCompleteDialog } from "@director.run/studio/components/get-started/get-started-complete-dialog.tsx";
-import { GetStartedInstallServerDialog } from "@director.run/studio/components/get-started/get-started-install-server-dialog.tsx";
-import { GetStartedPageView } from "@director.run/studio/components/pages/get-started.tsx";
-import { mockRegistryEntryList } from "@director.run/studio/test/fixtures/registry/entry-list.ts";
-import { mockRegistryEntry } from "@director.run/studio/test/fixtures/registry/entry.ts";
-import { mockClients } from "@director.run/studio/test/fixtures/workspace/clients.ts";
+import { GetStartedCompleteDialog } from "@director.run/design/components/get-started/get-started-complete-dialog.tsx";
+import { GetStartedInstallServerDialog } from "@director.run/design/components/get-started/get-started-install-server-dialog.tsx";
+import { GetStartedPageView } from "@director.run/design/components/pages/get-started.tsx";
+import { mockRegistryEntryList } from "@director.run/design/test/fixtures/registry/entry-list.ts";
+import { mockRegistryEntry } from "@director.run/design/test/fixtures/registry/entry.ts";
+import { mockClients } from "@director.run/design/test/fixtures/workspace/clients.ts";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 

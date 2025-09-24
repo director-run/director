@@ -1,4 +1,4 @@
-import { McpLogo } from "@director.run/studio/components/mcp-logo.tsx";
+import { McpLogo } from "@director.run/design/components/mcp-logo.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {

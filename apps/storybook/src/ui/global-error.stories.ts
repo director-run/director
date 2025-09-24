@@ -1,4 +1,4 @@
-import { FullScreenError } from "@director.run/studio/components/pages/global/error.tsx";
+import { FullScreenError } from "@director.run/design/components/pages/global/error.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../helpers/decorators";
 

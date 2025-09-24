@@ -1,11 +1,11 @@
 import "./fonts.css";
 import "./globals.css";
-import { ChatToUs } from "@director.run/studio/components/chat-to-us.tsx";
+import { ChatToUs } from "@director.run/design/components/chat-to-us.tsx";
 import {
   LayoutRoot,
   LayoutView,
-} from "@director.run/studio/components/layout/layout.tsx";
-import { MCPIcon } from "@director.run/studio/components/ui/icons/mcp-icon.tsx";
+} from "@director.run/design/components/layout/layout.tsx";
+import { MCPIcon } from "@director.run/design/components/ui/icons/mcp-icon.tsx";
 import {
   BookOpenTextIcon,
   GithubLogoIcon,

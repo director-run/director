@@ -1,5 +1,5 @@
-import { RegistryItemList } from "@director.run/studio/components/pages/registry-item-list.tsx";
-import { mockRegistryEntryList } from "@director.run/studio/test/fixtures/registry/entry-list.ts";
+import { RegistryItemList } from "@director.run/design/components/pages/registry-item-list.tsx";
+import { mockRegistryEntryList } from "@director.run/design/test/fixtures/registry/entry-list.ts";
 import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../helpers/decorators";
 

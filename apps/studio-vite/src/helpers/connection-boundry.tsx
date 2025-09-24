@@ -1,5 +1,5 @@
-import { FullScreenError } from "@director.run/studio/components/pages/global/error.tsx";
-import { FullScreenLoader } from "@director.run/studio/components/pages/global/loader.tsx";
+import { FullScreenError } from "@director.run/design/components/pages/global/error.tsx";
+import { FullScreenLoader } from "@director.run/design/components/pages/global/loader.tsx";
 import { gatewayClient } from "../contexts/backend-context";
 
 const REFRESH_INTERVAL = 5_000;

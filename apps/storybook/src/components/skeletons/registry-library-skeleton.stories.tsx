@@ -1,4 +1,4 @@
-import { RegistryLibrarySkeleton } from "@director.run/studio/components/registry/registry-library-skeleton.tsx";
+import { RegistryLibrarySkeleton } from "@director.run/design/components/registry/registry-library-skeleton.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {

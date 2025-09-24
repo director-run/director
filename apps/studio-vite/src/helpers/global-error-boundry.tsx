@@ -1,4 +1,4 @@
-import { FullScreenError } from "@director.run/studio/components/pages/global/error.tsx";
+import { FullScreenError } from "@director.run/design/components/pages/global/error.tsx";
 import * as React from "react";
 
 export class GlobalErrorBoundary extends React.Component<

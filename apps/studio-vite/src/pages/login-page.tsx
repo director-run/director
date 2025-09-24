@@ -1,4 +1,4 @@
-import { LoginPage as LoginPageComponent } from "@director.run/studio/components/pages/auth/login.tsx";
+import { LoginPage as LoginPageComponent } from "@director.run/design/components/pages/auth/login.tsx";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/auth-context.tsx";

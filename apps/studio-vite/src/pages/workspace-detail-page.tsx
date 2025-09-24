@@ -1,23 +1,23 @@
-import { LayoutBreadcrumbHeader } from "@director.run/studio/components/layout/layout-breadcrumb-header.tsx";
-import { LayoutViewContent } from "@director.run/studio/components/layout/layout.tsx";
-import { FullScreenError } from "@director.run/studio/components/pages/global/error.tsx";
-import { ProxyActionsDropdown } from "@director.run/studio/components/proxies/proxy-actions-dropdown.tsx";
-import { ProxyDeleteConfirmation } from "@director.run/studio/components/proxies/proxy-delete-confirmation.tsx";
-import { ProxySettingsSheet } from "@director.run/studio/components/proxies/proxy-settings-sheet.tsx";
-import { ProxySkeleton } from "@director.run/studio/components/proxies/proxy-skeleton.tsx";
-import { WorkspaceSectionClients } from "@director.run/studio/components/proxies/workspace-section-clients.tsx";
-import { WorkspaceSectionHeader } from "@director.run/studio/components/proxies/workspace-section-header.tsx";
-import { WorkspaceSectionServers } from "@director.run/studio/components/proxies/workspace-section-servers.tsx";
-import { WorkspaceSectionTools } from "@director.run/studio/components/proxies/workspace-section-tools.tsx";
-import { RegistryToolSheet } from "@director.run/studio/components/registry/registry-tool-sheet.js";
-import { ConfiguratorTarget } from "@director.run/studio/components/types.ts";
+import { LayoutBreadcrumbHeader } from "@director.run/design/components/layout/layout-breadcrumb-header.tsx";
+import { LayoutViewContent } from "@director.run/design/components/layout/layout.tsx";
+import { FullScreenError } from "@director.run/design/components/pages/global/error.tsx";
+import { ProxyActionsDropdown } from "@director.run/design/components/proxies/proxy-actions-dropdown.tsx";
+import { ProxyDeleteConfirmation } from "@director.run/design/components/proxies/proxy-delete-confirmation.tsx";
+import { ProxySettingsSheet } from "@director.run/design/components/proxies/proxy-settings-sheet.tsx";
+import { ProxySkeleton } from "@director.run/design/components/proxies/proxy-skeleton.tsx";
+import { WorkspaceSectionClients } from "@director.run/design/components/proxies/workspace-section-clients.tsx";
+import { WorkspaceSectionHeader } from "@director.run/design/components/proxies/workspace-section-header.tsx";
+import { WorkspaceSectionServers } from "@director.run/design/components/proxies/workspace-section-servers.tsx";
+import { WorkspaceSectionTools } from "@director.run/design/components/proxies/workspace-section-tools.tsx";
+import { RegistryToolSheet } from "@director.run/design/components/registry/registry-tool-sheet.js";
+import { ConfiguratorTarget } from "@director.run/design/components/types.ts";
 import type {
   MCPTool,
   WorkspaceDetail,
-} from "@director.run/studio/components/types.ts";
-import { Container } from "@director.run/studio/components/ui/container.tsx";
-import { SectionSeparator } from "@director.run/studio/components/ui/section.tsx";
-import { toast } from "@director.run/studio/components/ui/toast.js";
+} from "@director.run/design/components/types.ts";
+import { Container } from "@director.run/design/components/ui/container.tsx";
+import { SectionSeparator } from "@director.run/design/components/ui/section.tsx";
+import { toast } from "@director.run/design/components/ui/toast.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";

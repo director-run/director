@@ -13,7 +13,6 @@ import { GetStartedPage } from "./pages/get-started";
 import { LoginPage } from "./pages/login-page";
 import { RegistryDetailPage } from "./pages/registry-detail-page";
 import { RegistryListPage } from "./pages/registry-list-page";
-import { SettingsPage } from "./pages/settings-page";
 import { NewProxyPage } from "./pages/workspace-create-page";
 import { WorkspaceDetailPage } from "./pages/workspace-detail-page";
 import { WorkspaceTargetDetailPage } from "./pages/workspace-target-detail-page";
@@ -39,7 +38,7 @@ export const App = () => {
             path="/library/mcp/:entryName"
             element={<RegistryDetailPage />}
           />
-          <Route path="/settings" element={<SettingsPage />} />
+          {/* <Route path="/settings" element={<SettingsPage />} /> */}
           <Route path="/:workspaceId" element={<WorkspaceDetailPage />} />
           <Route
             path="/:workspaceId/:targetId"

@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
+const ENABLE_AUTH = false;
+
 const AuthContext = createContext<{
   user: User | null;
   isAuthenticated: boolean;
@@ -25,7 +27,6 @@ export const useAuth = () => {
 type User = {
   id: number;
   email: string;
-  password: string;
 };
 
 async function simulateApiCall() {
@@ -44,6 +45,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const checkAuthStatus = async () => {
+    if (!ENABLE_AUTH) {
+      setIsInitializing(false);
+      setUser({
+        id: 1,
+        email: "anonymous@example.com",
+      });
+      return;
+    }
+
     setIsInitializing(true);
     await simulateApiCall();
     const savedUser = localStorage.getItem("user");
@@ -63,7 +73,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const userData = {
         id: 1,
         email: params.email,
-        password: params.password,
       };
 
       setUser(userData);

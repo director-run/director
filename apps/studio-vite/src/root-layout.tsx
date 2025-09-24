@@ -8,7 +8,6 @@ import {
 import { MCPIcon } from "@director.run/studio/components/ui/icons/mcp-icon.tsx";
 import {
   BookOpenTextIcon,
-  GearIcon,
   GithubLogoIcon,
   PlusIcon,
 } from "@phosphor-icons/react";
@@ -82,13 +81,13 @@ export const RootLayout = () => {
                   "noopener noreferrer",
                 ),
             },
-            {
-              id: "settings",
-              label: "Settings",
-              icon: <GearIcon />,
-              isActive: location.pathname === "/settings",
-              onClick: () => navigate("/settings"),
-            },
+            // {
+            //   id: "settings",
+            //   label: "Settings",
+            //   icon: <GearIcon />,
+            //   isActive: location.pathname === "/settings",
+            //   onClick: () => navigate("/settings"),
+            // },
           ],
         },
       ]}

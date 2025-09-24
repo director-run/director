@@ -2,7 +2,7 @@
 import { SidebarIcon } from "@phosphor-icons/react";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import type { ComponentProps, ReactNode } from "react";
+import type { ComponentProps } from "react";
 import { createContext, useContext } from "react";
 import { cn } from "../../helpers/cn";
 import { Button } from "../ui/button";
@@ -11,10 +11,6 @@ import { SidebarContent } from "./navigation";
 import type { NavigationSection } from "./navigation";
 
 const NavigationContext = createContext<NavigationSection[]>([]);
-
-interface SidebarSheetProps extends ComponentProps<typeof Sheet> {
-  children?: ReactNode;
-}
 
 interface LayoutRootProps extends ComponentProps<"div"> {
   sections?: NavigationSection[];

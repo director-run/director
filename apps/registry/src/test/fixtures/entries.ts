@@ -1,9 +1,11 @@
-import { faker } from '@faker-js/faker';
+import { faker } from "@faker-js/faker";
 import type { EntryCreateParams } from "../../db/schema";
 
-const makeEntryName = () => faker.hacker.noun() + '_' + faker.string.uuid();
+const makeEntryName = () => faker.hacker.noun() + "_" + faker.string.uuid();
 
-export function makeTestEntry(overrides: Partial<EntryCreateParams> = {}): EntryCreateParams {
+export function makeTestEntry(
+  overrides: Partial<EntryCreateParams> = {},
+): EntryCreateParams {
   const name = makeEntryName();
   return {
     name,
@@ -20,13 +22,12 @@ export function makeTestEntry(overrides: Partial<EntryCreateParams> = {}): Entry
   };
 }
 
-
 type MakeStdioTransportOptions = {
   command?: string;
   args?: string[];
   type?: "stdio";
   env?: Record<string, string>;
-}
+};
 
 export function makeStdioTransport(overrides: MakeStdioTransportOptions = {}) {
   return {
@@ -38,7 +39,5 @@ export function makeStdioTransport(overrides: MakeStdioTransportOptions = {}) {
 }
 
 export function makeTestEntries(count: number): EntryCreateParams[] {
-  return Array.from({ length: count }, (_, i) => 
-    makeTestEntry()
-  );
-} 
+  return Array.from({ length: count }, (_, _i) => makeTestEntry());
+}

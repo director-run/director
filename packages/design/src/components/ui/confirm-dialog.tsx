@@ -44,7 +44,7 @@ export function ConfirmDialog({
     if (!open && form.formState.isSubmitSuccessful) {
       form.reset();
     }
-  }, [open, form.formState.isSubmitSuccessful]);
+  }, [open, form.formState.isSubmitSuccessful, form.reset]);
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>

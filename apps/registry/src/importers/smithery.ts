@@ -128,7 +128,7 @@ export class SmitheryClient {
 
     try {
       return await response.json();
-    } catch (error) {
+    } catch (_error) {
       throw new SmitheryAPIError("Failed to parse response as JSON");
     }
   }

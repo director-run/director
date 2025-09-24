@@ -649,7 +649,7 @@ export function SafariBrand({ className, ...props }: ComponentProps<"svg">) {
   );
 }
 
-export function BraveBrand({ className, ...props }: ComponentProps<"svg">) {
+export function BraveBrand({ className }: ComponentProps<"svg">) {
   return (
     <svg
       className={cn("size-12", className)}

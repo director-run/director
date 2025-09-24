@@ -1,10 +1,17 @@
-import type { Prompt } from "../capabilities/prompt-manager";
 import { faker } from "@faker-js/faker";
-import { type WorkspaceHTTPTarget, type WorkspaceStdioTarget } from "../workspaces/workspace";
+import type { Prompt } from "../capabilities/prompt-manager";
+import {
+  type WorkspaceHTTPTarget,
+  type WorkspaceStdioTarget,
+} from "../workspaces/workspace";
 
-export const makeHTTPTargetConfig = (params: { name: string; url: string; headers?: Record<string, string> }): WorkspaceHTTPTarget => ({
+export const makeHTTPTargetConfig = (params: {
+  name: string;
+  url: string;
+  headers?: Record<string, string>;
+}): WorkspaceHTTPTarget => ({
   name: params.name,
-  type: "http" ,
+  type: "http",
   url: params.url,
   headers: params.headers,
 });
@@ -15,7 +22,7 @@ export const makeStdioTargetConfig = (params: {
   args: string[];
 }): WorkspaceStdioTarget => ({
   name: params.name,
-  type: "stdio" ,
+  type: "stdio",
   command: params.command,
   args: params.args,
 });

@@ -21,14 +21,12 @@ interface ProxyFormProps {
   children: ReactNode;
   defaultValues?: Partial<ProxyFormData>;
   onSubmit: (values: ProxyFormData) => Promise<void>;
-  isSubmitting?: boolean;
 }
 
 export function ProxyForm({
   children,
   onSubmit,
   defaultValues,
-  isSubmitting = false,
 }: ProxyFormProps) {
   const formDefaultValues = {
     name: defaultValues?.name ?? "",

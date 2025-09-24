@@ -31,10 +31,10 @@ function parseTartOutput(output: string): VM[] {
       const parts = line.trim().split(/\s+/);
 
       // The last 4 parts are always: Disk Size, SizeOnDisk, State, Status
-      const sizeOnDisk = parts[parts.length - 2];
+      const _sizeOnDisk = parts[parts.length - 2];
       const state = parts[parts.length - 1] as VMState;
-      const size = parts[parts.length - 3];
-      const diskSize = parts[parts.length - 4];
+      const _size = parts[parts.length - 3];
+      const _diskSize = parts[parts.length - 4];
 
       // Everything before the last 4 parts is the source name
       const source = parts[0];

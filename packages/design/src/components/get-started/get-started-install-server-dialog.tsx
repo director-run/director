@@ -14,9 +14,7 @@ import { Section, SectionHeader, SectionTitle } from "../ui/section";
 
 type GetStartedInstallServerDialogProps = {
   registryEntry?: RegistryEntryDetail | null;
-  isRegistryEntryLoading?: boolean;
   proxies?: WorkspaceList;
-  entryInstalledOn?: string[];
   onClickInstall: (params: {
     proxyId?: string;
     entryId: string;
@@ -29,9 +27,7 @@ type GetStartedInstallServerDialogProps = {
 
 function GetStartedInstallServerDialogPresentation({
   registryEntry,
-  isRegistryEntryLoading,
   proxies,
-  entryInstalledOn = [],
   onClickInstall,
   isInstalling,
   open,
@@ -101,9 +97,9 @@ function GetStartedInstallServerDialogPresentation({
 // Main dialog component - presentational only
 export function GetStartedInstallServerDialog({
   registryEntry,
-  isRegistryEntryLoading,
+
   proxies,
-  entryInstalledOn = [],
+
   onClickInstall,
   isInstalling,
   open,
@@ -112,9 +108,7 @@ export function GetStartedInstallServerDialog({
   return (
     <GetStartedInstallServerDialogPresentation
       registryEntry={registryEntry}
-      isRegistryEntryLoading={isRegistryEntryLoading}
       proxies={proxies}
-      entryInstalledOn={entryInstalledOn}
       onClickInstall={onClickInstall}
       isInstalling={isInstalling}
       open={open}

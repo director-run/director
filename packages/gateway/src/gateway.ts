@@ -101,7 +101,7 @@ export class Gateway {
     const registryURL = attribs.registryURL;
 
     if (attribs.headers) {
-      app.use((req, res, next) => {
+      app.use((_req, res, next) => {
         Object.entries(attribs.headers || {}).forEach(([key, value]) => {
           res.setHeader(key, value);
         });

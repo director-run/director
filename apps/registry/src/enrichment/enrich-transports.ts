@@ -26,7 +26,7 @@ export async function enrichEntryTransports(registryClient: RegistryClient) {
   }
 }
 
-function extractTransportForEntry(entry: Entry): Promise<ProxyTransport> {
+function extractTransportForEntry(_entry: Entry): Promise<ProxyTransport> {
   return Promise.resolve({
     type: "http",
     url: "http://some-extracted-transport-url.com",

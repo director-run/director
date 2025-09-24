@@ -120,7 +120,7 @@ program
 program
   .command("provision <name>")
   .description("provision a VM")
-  .action(async (name, options) => {
+  .action(async (name) => {
     await provision({
       name,
       password: DEFAULT_PASSWORD,

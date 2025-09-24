@@ -8,7 +8,7 @@ const CHARS = "░▒▓█";
 const shuffleText = (text: string) => {
   return text
     .split("")
-    .map((char) => CHARS[Math.floor(Math.random() * CHARS.length)])
+    .map(() => CHARS[Math.floor(Math.random() * CHARS.length)])
     .join("");
 };
 

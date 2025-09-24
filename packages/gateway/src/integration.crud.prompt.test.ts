@@ -309,7 +309,7 @@ describe("Prompt Capabilities", () => {
     });
 
     it("should update the config file when a prompt is updated", async () => {
-      const updatedPrompt = await harness.client.store.updatePrompt.mutate({
+      const _updatedPrompt = await harness.client.store.updatePrompt.mutate({
         proxyId: proxy.id,
         promptName: originalPrompt.name,
         prompt: {

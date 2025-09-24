@@ -5,7 +5,7 @@ export async function destroy(name: string) {
 
   try {
     await $`tart stop ${name}`;
-  } catch (e) {
+  } catch (_e) {
     console.log(`${name} is not running, skipping stop`);
   }
   await $`tart delete ${name}`;

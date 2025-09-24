@@ -3,7 +3,7 @@ import { LayoutViewContent } from "@director.run/studio/components/layout/layout
 import { LayoutView } from "@director.run/studio/components/layout/layout.tsx";
 import { McpLogo } from "@director.run/studio/components/mcp-logo.tsx";
 import { McpDescriptionList } from "@director.run/studio/components/mcp-servers/mcp-description-list.tsx";
-import { FullScreenError } from "@director.run/studio/components/pages/global/error.js";
+import { FullScreenError } from "@director.run/studio/components/pages/global/error.tsx";
 import { ProxySkeleton } from "@director.run/studio/components/proxies/proxy-skeleton.tsx";
 import { WorkspaceSectionTools } from "@director.run/studio/components/proxies/workspace-section-tools.tsx";
 import { WorkspaceTargetDetailDropDownMenu } from "@director.run/studio/components/proxies/workspace-target-detail-dropdown-menu.tsx";

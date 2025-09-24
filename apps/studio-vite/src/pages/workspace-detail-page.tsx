@@ -64,19 +64,15 @@ export const WorkspaceDetailPage = () => {
     return <ProxySkeleton />;
   }
 
-  if (workspaceError) {
+  if (workspaceError || !workspace) {
     return (
       <FullScreenError
         icon="dead-smiley"
         fullScreen={true}
         title={"Unexpected Error"}
-        subtitle={workspaceError.message}
+        subtitle={workspaceError?.message}
       />
     );
-  }
-
-  if (!workspace) {
-    throw new Error("Workspace not found");
   }
 
   return (

@@ -16,7 +16,7 @@ export function useWorkspaceTarget(workspaceId: string, targetId: string) {
       workspaceTargetError: null,
     };
   } else {
-    const workspaceTargetError = !workspaceTarget
+    const targetNotFoundError = !workspaceTarget
       ? `Workspace target '${targetId}' not found`
       : null;
 
@@ -24,7 +24,7 @@ export function useWorkspaceTarget(workspaceId: string, targetId: string) {
       workspace,
       workspaceTarget,
       isWorkspaceTargetLoading: isWorkspaceLoading,
-      workspaceTargetError: workspaceError || workspaceTargetError,
+      workspaceTargetError: workspaceError || targetNotFoundError,
     };
   }
 }

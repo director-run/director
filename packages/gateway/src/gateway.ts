@@ -46,7 +46,7 @@ export class Gateway {
         filePath: string;
       };
       registryURL: string;
-      allowedOrigins?: string[];
+      allowedOrigins?: (string | RegExp)[];
       telemetry?: {
         enabled: boolean;
         writeKey: string;

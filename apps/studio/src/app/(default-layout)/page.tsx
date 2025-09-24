@@ -1,31 +1,19 @@
 "use client";
-
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { ProxySkeleton } from "../../components/proxies/proxy-skeleton";
-import { trpc } from "../../state/client";
+import { FullScreenError } from "../../components/pages/global/error";
 
 export default function ProxiesPage() {
-  const router = useRouter();
-  const { data, isLoading, error } = trpc.store.getAll.useQuery();
-
-  useEffect(() => {
-    if (data) {
-      if (data.length > 0) {
-        router.replace(`/${data[0].id}`);
-      } else if (data.length === 0) {
-        router.replace("/get-started");
+  return (
+    <FullScreenError
+      title={"Please Update Director"}
+      fullScreen={true}
+      subtitle={
+        "This version of the studio is out of date. Please update the CLI to continue."
       }
-    }
-  }, [data, router]);
-
-  if (isLoading) {
-    return <ProxySkeleton />;
-  }
-
-  if (error) {
-    return <div>Error loading proxies: {error.message}</div>;
-  }
-
-  return <ProxySkeleton />;
+      data={[
+        "# Update CLI",
+        "$ npm install -g @director.run/cli@latest",
+        "$ director quickstart",
+      ].join("\n")}
+    />
+  );
 }

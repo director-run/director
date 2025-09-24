@@ -9,7 +9,7 @@ export function registerRemoveCommand(program: DirectorCommand) {
     .description("Remove a server from a proxy")
     .action(
       actionWithErrorHandler(async (proxyId: string, serverName: string) => {
-        const proxy = await spinnerWrap(() =>
+        await spinnerWrap(() =>
           gatewayClient.store.removeServer.mutate({
             proxyId,
             serverName,

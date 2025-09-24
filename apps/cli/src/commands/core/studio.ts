@@ -15,7 +15,7 @@ export function registerStudioCommand(program: DirectorCommand) {
         spinner.start("opening studio...");
         try {
           await gatewayClient.health.query();
-        } catch (error) {
+        } catch (_error) {
           spinner.fail(
             "Failed to connect to gateway. Have you ran `director serve`?",
           );
@@ -23,7 +23,7 @@ export function registerStudioCommand(program: DirectorCommand) {
         }
         try {
           openStudio();
-        } catch (error) {
+        } catch (_error) {
           spinner.fail(`failed to open ${env.STUDIO_URL}, try manually`);
         }
         spinner.stop();

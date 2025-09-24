@@ -1,4 +1,3 @@
-import { green, red } from "@director.run/utilities/cli/colors";
 import { makeTable } from "@director.run/utilities/cli/index";
 import { registryClient } from "../client";
 
@@ -11,20 +10,6 @@ export function listEntries(items: Entries) {
   table.push(
     ...items.map((item) => {
       return [item.name, printUrl(item.homepage), item.tools?.length];
-    }),
-  );
-  console.log(table.toString());
-}
-
-function listDevEntries(items: Entries) {
-  const table = makeTable(["Name", "Is Connectable", "hasTools?"]);
-  table.push(
-    ...items.map((item) => {
-      return [
-        item.name,
-        item.isConnectable ? green("yes") : red("no"),
-        item.tools?.length,
-      ];
     }),
   );
   console.log(table.toString());

@@ -8,7 +8,7 @@ export function registerDebugCommands(program: DirectorCommand) {
     .debugCommand("reset")
     .description("Delete proxies, clear the config file, and reset all clients")
     .action(
-      actionWithErrorHandler(async ({ target }) => {
+      actionWithErrorHandler(async () => {
         console.log("resetting service");
         await gatewayClient.store.purge.mutate();
         console.log("resetting clients");

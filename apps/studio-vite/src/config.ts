@@ -1,4 +1,6 @@
-const appConfig = (window as any).__APP_CONFIG__;
+const appConfig = (
+  window as unknown as { __APP_CONFIG__: Record<string, unknown> | undefined }
+).__APP_CONFIG__;
 
 export const GATEWAY_URL = appConfig?.gatewayUrl || "http://localhost:3673";
 export const REGISTRY_URL =

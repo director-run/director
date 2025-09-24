@@ -35,11 +35,8 @@ export const WorkspaceDetailPage = () => {
     throw new Error("Workspace ID is required");
   }
 
-  const {
-    data: workspace,
-    isLoading,
-    error: workspaceError,
-  } = useWorkspace(workspaceId);
+  const { workspace, isWorkspaceLoading, workspaceError } =
+    useWorkspace(workspaceId);
 
   const { data: clients, isLoading: isClientsLoading } =
     useClients(workspaceId);
@@ -62,7 +59,7 @@ export const WorkspaceDetailPage = () => {
     },
   });
 
-  if (isLoading) {
+  if (isWorkspaceLoading) {
     return <ProxySkeleton />;
   }
 

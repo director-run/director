@@ -30,7 +30,7 @@ export function WorkspaceTargetDetailPage() {
   }
 
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const { workspace, isLoading } = useWorkspace(workspaceId);
+  const { workspace, isWorkspaceLoading } = useWorkspace(workspaceId);
 
   const workspaceTarget = workspace?.servers.find(
     (server) => server.name === targetId,

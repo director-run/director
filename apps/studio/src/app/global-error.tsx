@@ -9,8 +9,9 @@ export default function GlobalError({
 }) {
   return (
     <FullScreenError
-      errorMessage={error.message}
-      errorData={error instanceof TRPCClientError ? error.data : undefined}
+      title={"Unexpected Error"}
+      subtitle={error.message}
+      data={error instanceof TRPCClientError ? error.data : undefined}
     />
   );
 }

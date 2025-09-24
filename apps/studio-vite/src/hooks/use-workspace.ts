@@ -1,10 +1,16 @@
 import { gatewayClient } from "../contexts/backend-context";
 
 export function useWorkspace(workspaceId: string) {
-  return gatewayClient.store.get.useQuery(
+  const { data, isLoading, error } = gatewayClient.store.get.useQuery(
     { proxyId: workspaceId },
     {
       throwOnError: false,
     },
   );
+
+  return {
+    workspace: data,
+    isWorkspaceLoading: isLoading,
+    workspaceError: error,
+  };
 }

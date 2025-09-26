@@ -47,18 +47,12 @@ export function createProxyStoreRouter({
       .input(
         z.object({
           proxyId: z.string(),
-          queryParams: z
-            .object({
-              includeInMemoryTargets: z.boolean().optional(),
-            })
-            .optional(),
+          queryParams: z.object({}).optional(),
         }),
       )
       .query(async ({ input }) => {
         const proxy = await proxyStore.get(input.proxyId);
-        return await proxy.toPlainObject({
-          includeInMemoryTargets: input.queryParams?.includeInMemoryTargets,
-        });
+        return await proxy.toPlainObject();
       }),
 
     create: t.procedure.input(ProxyCreateSchema).mutation(async ({ input }) => {

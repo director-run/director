@@ -1,5 +1,5 @@
 import { McpLogo } from "@director.run/design/components/mcp-logo.tsx";
-import { WorkspaceTargetPropertyList } from "@director.run/design/components/mcp-servers/mcp-description-list.tsx";
+import { WorkspaceTargetPropertyList } from "@director.run/design/components/mcp-servers/workspace-target-property-list.tsx";
 import { WorkspaceSectionTools } from "@director.run/design/components/proxies/workspace-section-tools.tsx";
 import type {
   RegistryEntryDetail,
@@ -65,7 +65,7 @@ const WorkspaceTargetDetailComponent = ({
         </SectionTitle>
       </SectionHeader>
 
-      <WorkspaceTargetPropertyList transport={workspaceTarget.transport} />
+      <WorkspaceTargetPropertyList target={workspaceTarget} />
     </Section>
 
     <WorkspaceSectionTools
@@ -108,12 +108,6 @@ type Story = StoryObj<typeof meta>;
 const mockDescription =
   "A comprehensive GitHub integration that provides tools to interact with repositories, issues, pull requests, and more through the Model Context Protocol.";
 
-// Different transport types for variety
-const mockHttpTransport = {
-  type: "http" as const,
-  url: "https://api.github.com/mcp",
-};
-
 export const Default: Story = {
   args: {
     workspaceTarget: mockWorkspaceTarget,
@@ -130,7 +124,8 @@ export const WithHttpTransport: Story = {
     ...Default.args,
     workspaceTarget: {
       ...mockWorkspaceTarget,
-      transport: mockHttpTransport,
+      type: "http",
+      url: "https://api.github.com/mcp",
     },
   },
 };

@@ -1,6 +1,7 @@
 import type { ProxyFormData } from "@director.run/design/components/proxies/proxy-form.tsx";
 import { ProxySettingsSheet } from "@director.run/design/components/proxies/proxy-settings-sheet.tsx";
 import { Button } from "@director.run/design/components/ui/button.tsx";
+import { mockWorkspace } from "@director.run/design/test/fixtures/workspace/workspace.ts";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
@@ -17,29 +18,13 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    proxy: {
-      id: "proxy-1",
-      name: "Local Proxy",
-      description: "A local development proxy for testing MCP servers",
-      prompts: [],
-      targets: [],
-      servers: [],
-      path: "/proxy/proxy-1",
-    },
+    proxy: mockWorkspace,
     onSubmit: (_data: ProxyFormData) => Promise.resolve(),
   },
   render: () => {
     const [open, setOpen] = useState(true);
 
-    const proxy = {
-      id: "proxy-1",
-      name: "Local Proxy",
-      description: "A local development proxy for testing MCP servers",
-      prompts: [],
-      targets: [],
-      servers: [],
-      path: "/proxy/proxy-1",
-    };
+    const proxy = mockWorkspace;
 
     const handleSubmit = (data: ProxyFormData) => {
       console.log("Updated proxy settings:", JSON.stringify(data, null, 2));

@@ -17,27 +17,33 @@ const mockProxies: WorkspaceList = [
     name: "Development Proxy",
     description: "Main development proxy",
     prompts: undefined,
-    targets: [],
     servers: [],
-    path: "/ws/dev-proxy",
+    paths: {
+      streamable: "/ws/dev-proxy",
+      sse: "/ws/dev-proxy",
+    },
   },
   {
     id: "staging-proxy",
     name: "Staging Proxy",
     description: "Staging environment proxy",
     prompts: undefined,
-    targets: [],
     servers: [],
-    path: "/ws/staging-proxy",
+    paths: {
+      streamable: "/ws/staging-proxy",
+      sse: "/ws/staging-proxy",
+    },
   },
   {
     id: "production-proxy",
     name: "Production Proxy",
     description: "Production environment proxy",
     prompts: undefined,
-    targets: [],
     servers: [],
-    path: "/ws/production-proxy",
+    paths: {
+      streamable: "/ws/production-proxy",
+      sse: "/ws/production-proxy",
+    },
   },
 ];
 
@@ -204,8 +210,10 @@ export const PartiallyInstalled: Story = {
               servers: [
                 {
                   name: mockRegistryEntry.name,
-                  status: "connected",
-                  transport: { type: "mem" },
+                  type: "stdio",
+                  command: "npx",
+                  args: ["-y", "@upstash/context7-mcp"],
+                  env: {},
                 },
               ],
             }
@@ -228,8 +236,10 @@ export const FullyInstalled: Story = {
         servers: [
           {
             name: mockRegistryEntry.name,
-            status: "connected",
-            transport: { type: "mem" },
+            type: "stdio",
+            command: "npx",
+            args: ["-y", "@upstash/context7-mcp"],
+            env: {},
           },
         ],
       }))}
@@ -270,8 +280,10 @@ export const Installing: Story = {
               servers: [
                 {
                   name: mockRegistryEntry.name,
-                  status: "connected",
-                  transport: { type: "mem" },
+                  type: "stdio",
+                  command: "npx",
+                  args: ["-y", "@upstash/context7-mcp"],
+                  env: {},
                 },
               ],
             }
@@ -338,8 +350,10 @@ export const ComplexParameters: Story = {
               servers: [
                 {
                   name: mockRegistryEntry.name,
-                  status: "connected",
-                  transport: { type: "mem" },
+                  type: "stdio",
+                  command: "npx",
+                  args: ["-y", "@upstash/context7-mcp"],
+                  env: {},
                 },
               ],
             }

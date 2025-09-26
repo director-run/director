@@ -19,18 +19,22 @@ const mockProxies: WorkspaceList = [
     name: "Development Proxy",
     description: "Main development proxy",
     prompts: undefined,
-    targets: [],
     servers: [],
-    path: "/ws/dev-proxy",
+    paths: {
+      streamable: "/ws/dev-proxy",
+      sse: "/ws/dev-proxy",
+    },
   },
   {
     id: "staging-proxy",
     name: "Staging Proxy",
     description: "Staging environment proxy",
     prompts: undefined,
-    targets: [],
     servers: [],
-    path: "/ws/staging-proxy",
+    paths: {
+      streamable: "/ws/staging-proxy",
+      sse: "/ws/staging-proxy",
+    },
   },
 ];
 
@@ -94,8 +98,10 @@ export const Default: Story = {
             servers: [
               {
                 name: mockRegistryEntry.name,
-                status: "connected",
-                transport: { type: "mem" },
+                type: "stdio",
+                command: "npx",
+                args: ["-y", "@upstash/context7-mcp"],
+                env: {},
               },
             ],
           }
@@ -142,8 +148,10 @@ export const WithToolSelected: Story = {
                         servers: [
                           {
                             name: mockRegistryEntry.name,
-                            status: "connected",
-                            transport: { type: "mem" },
+                            type: "stdio",
+                            command: "npx",
+                            args: ["-y", "@upstash/context7-mcp"],
+                            env: {},
                           },
                         ],
                       }

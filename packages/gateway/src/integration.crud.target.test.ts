@@ -3,6 +3,7 @@ import {} from "@director.run/mcp/transport";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { GatewayRouterOutputs } from "./client";
 import { IntegrationTestHarness } from "./test/integration";
+import { type WorkspaceHTTPTarget } from "./workspaces/workspace";
 
 describe("Proxy Target CRUD operations", () => {
   let harness: IntegrationTestHarness;
@@ -32,10 +33,10 @@ describe("Proxy Target CRUD operations", () => {
 
       expect(retrievedTarget).toBeDefined();
       expect(retrievedTarget.name).toBe("echo");
-      expect(retrievedTarget.status).toBe("connected");
-      expect(retrievedTarget.transport.type).toBe("http");
-      expect(retrievedTarget.transport).toEqual(
-        harness.getConfigForTarget("echo").transport,
+      expect(retrievedTarget.connectionInfo?.status).toBe("connected");
+      expect(retrievedTarget.type).toBe("http");
+      expect((retrievedTarget as WorkspaceHTTPTarget).url).toEqual(
+        harness.getConfigForTarget("echo").transport.url,
       );
     });
 
@@ -74,12 +75,12 @@ describe("Proxy Target CRUD operations", () => {
           },
         });
 
-        expect(target.status).toBe("unauthorized");
+        expect(target.connectionInfo?.status).toBe("unauthorized");
 
-        expect(target.transport).toEqual({
-          type: "http",
-          url: `https://mcp.notion.com/mcp`,
-        });
+        expect((target as WorkspaceHTTPTarget).url).toEqual(
+          `https://mcp.notion.com/mcp`,
+        );
+        expect((target as WorkspaceHTTPTarget).type).toEqual(`http`);
       });
 
       it("should update the configuration file", async () => {
@@ -245,10 +246,11 @@ describe("Proxy Target CRUD operations", () => {
       });
 
       it("should succeed", () => {
-        expect(addServerResponse.status).toBe("connected");
-        expect(addServerResponse.transport).toEqual(
-          harness.getConfigForTarget("echo").transport,
+        expect(addServerResponse.connectionInfo?.status).toBe("connected");
+        expect((addServerResponse as WorkspaceHTTPTarget).url).toEqual(
+          harness.getConfigForTarget("echo").transport.url,
         );
+        expect((addServerResponse as WorkspaceHTTPTarget).type).toEqual("http");
       });
 
       it("should update the configuration file", async () => {
@@ -333,7 +335,7 @@ describe("Proxy Target CRUD operations", () => {
         serverName: "echo",
       });
 
-      expect(deletedTarget.status).toBe("disconnected");
+      expect(deletedTarget.connectionInfo?.status).toBe("disconnected");
       expect(deletedTarget.name).toBe("echo");
 
       const proxyResponse = await harness.client.store.get.query({
@@ -451,13 +453,13 @@ describe("Proxy Target CRUD operations", () => {
           serverName: "echo",
         });
         expect(disabledTarget.disabled).toBe(true);
-        expect(disabledTarget.status).toBe("disconnected");
+        expect(disabledTarget.connectionInfo?.status).toBe("disconnected");
         const enabledTarget = await harness.client.store.getServer.query({
           proxyId: proxy.id,
           serverName: "kitchen-sink",
         });
         expect(enabledTarget.disabled).toBeFalsy();
-        expect(enabledTarget.status).toBe("connected");
+        expect(enabledTarget.connectionInfo?.status).toBe("connected");
       });
       it("should be stored in the configuration file", async () => {
         const configEntry = (
@@ -476,7 +478,7 @@ describe("Proxy Target CRUD operations", () => {
         });
         it("should return the updated target", () => {
           expect(updatedResponse.disabled).toBe(false);
-          expect(updatedResponse.status).toBe("connected");
+          expect(updatedResponse.connectionInfo?.status).toBe("connected");
         });
         it("should be reflected in the proxy", async () => {
           const target = await harness.client.store.getServer.query({
@@ -484,7 +486,7 @@ describe("Proxy Target CRUD operations", () => {
             serverName: "echo",
           });
           expect(target.disabled).toBe(false);
-          expect(target.status).toBe("connected");
+          expect(target.connectionInfo?.status).toBe("connected");
         });
         it("should be reflected in the configuration file", async () => {
           const configEntry = (

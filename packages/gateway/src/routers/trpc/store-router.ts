@@ -7,7 +7,6 @@ import {
   ServerConfigEntrySchema,
 } from "../../config/schema";
 import { restartConnectedClients } from "../../helpers";
-import { serializeProxyServerTarget } from "../../serializers";
 import type { WorkspaceTarget } from "../../workspaces/workspace";
 import { WorkspaceStore } from "../../workspaces/workspace-store";
 
@@ -105,7 +104,10 @@ export function createProxyStoreRouter({
         );
 
         await restartConnectedClients(proxy);
-        return await serializeProxyServerTarget(target, input.queryParams);
+        return await target.toPlainObject({
+          tools: input.queryParams?.includeTools,
+          connectionInfo: true,
+        });
       }),
 
     callTool: t.procedure
@@ -146,7 +148,10 @@ export function createProxyStoreRouter({
           input.attributes,
         );
         await restartConnectedClients(proxy);
-        return await serializeProxyServerTarget(server, input.queryParams);
+        return await server.toPlainObject({
+          tools: input.queryParams?.includeTools,
+          connectionInfo: true,
+        });
       }),
 
     getServer: t.procedure
@@ -165,7 +170,10 @@ export function createProxyStoreRouter({
         const proxy = await proxyStore.get(input.proxyId);
         const target = await proxy.getTarget(input.serverName);
 
-        return await serializeProxyServerTarget(target, input.queryParams);
+        return await target.toPlainObject({
+          tools: input.queryParams?.includeTools,
+          connectionInfo: true,
+        });
       }),
 
     authenticate: t.procedure
@@ -204,7 +212,9 @@ export function createProxyStoreRouter({
         const proxy = await proxyStore.get(input.proxyId);
         const server = await proxy.removeTarget(input.serverName);
         await restartConnectedClients(proxy);
-        return await serializeProxyServerTarget(server);
+        return await server.toPlainObject({
+          connectionInfo: true,
+        });
       }),
 
     addPrompt: t.procedure

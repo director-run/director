@@ -1,5 +1,5 @@
 import { McpLogo } from "@director.run/design/components/mcp-logo.tsx";
-import { McpDescriptionList } from "@director.run/design/components/mcp-servers/mcp-description-list.tsx";
+import { WorkspaceTargetPropertyList } from "@director.run/design/components/mcp-servers/mcp-description-list.tsx";
 import { WorkspaceSectionTools } from "@director.run/design/components/proxies/workspace-section-tools.tsx";
 import type {
   RegistryEntryDetail,
@@ -65,7 +65,7 @@ const WorkspaceTargetDetailComponent = ({
         </SectionTitle>
       </SectionHeader>
 
-      <McpDescriptionList transport={workspaceTarget.transport} />
+      <WorkspaceTargetPropertyList transport={workspaceTarget.transport} />
     </Section>
 
     <WorkspaceSectionTools

@@ -2,7 +2,7 @@ import { LayoutBreadcrumbHeader } from "@director.run/design/components/layout/l
 import { LayoutViewContent } from "@director.run/design/components/layout/layout.tsx";
 import { LayoutView } from "@director.run/design/components/layout/layout.tsx";
 import { McpLogo } from "@director.run/design/components/mcp-logo.tsx";
-import { McpDescriptionList } from "@director.run/design/components/mcp-servers/mcp-description-list.tsx";
+import { WorkspaceTargetPropertyList } from "@director.run/design/components/mcp-servers/workspace-target-property-list.tsx";
 import { FullScreenError } from "@director.run/design/components/pages/global/error.tsx";
 import { ProxySkeleton } from "@director.run/design/components/proxies/proxy-skeleton.tsx";
 import { WorkspaceSectionTools } from "@director.run/design/components/proxies/workspace-section-tools.tsx";
@@ -135,7 +135,7 @@ export function WorkspaceTargetDetailPage() {
               </SectionTitle>
             </SectionHeader>
 
-            <McpDescriptionList transport={workspaceTarget.transport} />
+            <WorkspaceTargetPropertyList target={workspaceTarget} />
           </Section>
 
           <WorkspaceSectionTools

@@ -11,7 +11,7 @@ export type RegistryEntryDetail =
 export type WorkspaceList = GatewayRouterOutputs["store"]["getAll"];
 export type WorkspaceDetail = GatewayRouterOutputs["store"]["get"];
 export type WorkspaceTarget =
-  GatewayRouterOutputs["store"]["get"]["targets"][number];
+  GatewayRouterOutputs["store"]["get"]["servers"][number];
 
 // Client
 export interface Client {
@@ -26,9 +26,6 @@ export interface Client {
 
 // MCP
 export type MCPTool = NonNullable<RegistryEntryDetail["tools"]>[number];
-
-// Trash
-export type DeprecatedWorkspaceTargetTransport = WorkspaceTarget["transport"];
 
 export enum ConfiguratorTarget {
   Claude = "claude",

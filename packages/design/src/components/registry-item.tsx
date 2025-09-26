@@ -6,7 +6,7 @@ import {
   ToolboxIcon,
 } from "@phosphor-icons/react";
 import { McpLogo } from "./mcp-logo";
-import { McpDescriptionList } from "./mcp-servers/mcp-description-list";
+import { RegistryEntryPropertyList } from "./registry/registry-entry-property-list";
 import { RegistryParameters } from "./registry/registry-parameters";
 import { RegistryTools } from "./registry/registry-tools";
 import type { RegistryEntryDetail } from "./types";
@@ -121,7 +121,7 @@ export function RegistryItem({ entry, onToolClick }: RegistryItemProps) {
                 <h3>Overview</h3>
               </SectionTitle>
             </SectionHeader>
-            <McpDescriptionList transport={entry.transport} />
+            <RegistryEntryPropertyList entry={entry} />
           </Section>
 
           <Section>

@@ -7,7 +7,7 @@ import {
 } from "@director.run/mcp/test/fixtures";
 import { serveOverSSE, serveOverStreamable } from "@director.run/mcp/transport";
 import { createGatewayClient } from "../client";
-import type { ServerConfigEntry } from "../config/schema";
+import type { HTTPTransport } from "../config/schema";
 import { Gateway } from "../gateway";
 
 const PROXY_TARGET_PORT = 4521;
@@ -89,8 +89,17 @@ export class IntegrationTestHarness {
     await this.fooBarServerInstance?.close();
   }
 
-  public getConfigForTarget(targetName: string): ServerConfigEntry {
-    const configs: Record<string, ServerConfigEntry> = {
+  public getConfigForTarget(targetName: string): {
+    name: string;
+    transport: HTTPTransport;
+  } {
+    const configs: Record<
+      string,
+      {
+        name: string;
+        transport: HTTPTransport;
+      }
+    > = {
       echo: makeHTTPTargetConfig({
         name: "echo",
         url: `http://localhost:${PROXY_TARGET_PORT}/sse`,
@@ -116,7 +125,7 @@ export class IntegrationTestHarness {
 export function makeHTTPTargetConfig(params: {
   name: string;
   url: string;
-}): ServerConfigEntry {
+}): { name: string; transport: HTTPTransport } {
   return {
     name: params.name,
     transport: {

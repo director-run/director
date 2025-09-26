@@ -28,18 +28,8 @@ describe("Installer Router", () => {
       const ret = await harness.client.store.get.query({
         proxyId: proxy.id,
       });
-      expect(ret.targets).toHaveLength(1); // Only echo server, prompt manager is filtered out
-      expect(ret.targets).not.toContainEqual(
-        expect.objectContaining({ name: "__prompts__" }),
-      );
-    });
-    it("should return in memory targets when includeInMemoryTargets is true", async () => {
-      const ret = await harness.client.store.get.query({
-        proxyId: proxy.id,
-        queryParams: { includeInMemoryTargets: true },
-      });
-      expect(ret.targets).toHaveLength(2);
-      expect(ret.targets).toContainEqual(
+      expect(ret.servers).toHaveLength(1); // Only echo server, prompt manager is filtered out
+      expect(ret.servers).not.toContainEqual(
         expect.objectContaining({ name: "__prompts__" }),
       );
     });

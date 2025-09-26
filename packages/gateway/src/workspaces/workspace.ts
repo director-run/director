@@ -247,6 +247,27 @@ export class Workspace extends ProxyServer {
       ),
     };
   }
+
+  public async toPlainObject(): Promise<WorkspaceParams> {
+    return {
+      id: this.id,
+      name: this.name,
+      description: this.description,
+      prompts: await this.listPrompts(),
+      servers: await Promise.all(
+        this.targets
+          .filter(
+            (target) =>
+              target instanceof HTTPClient || target instanceof StdioClient,
+          )
+          .map((target) =>
+            target.toPlainObject({
+              connectionInfo: true,
+            }),
+          ),
+      ),
+    };
+  }
 }
 
 function createClientForTarget(params: {

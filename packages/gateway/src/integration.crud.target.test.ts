@@ -272,12 +272,23 @@ describe("Proxy Target CRUD operations", () => {
         const proxyResponse = await harness.client.store.get.query({
           proxyId: proxy.id,
         });
+        const echoConfig = harness.getConfigForTarget("echo");
         expect(proxyResponse.servers[0]).toEqual(
           expect.objectContaining({
-            ...harness.getConfigForTarget("echo"),
-            status: "connected",
+            url: echoConfig.transport.url,
+            type: echoConfig.transport.type,
             toolPrefix: "echo",
             disabledTools: ["echo"],
+            disabled: false,
+            name: echoConfig.name,
+            source: undefined,
+            tools: undefined,
+            headers: echoConfig.transport.headers,
+            connectionInfo: {
+              status: "connected",
+              lastConnectedAt: expect.any(Date),
+              lastErrorMessage: undefined,
+            },
           }),
         );
       });

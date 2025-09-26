@@ -50,18 +50,12 @@ describe("CLI integration tests", () => {
       await runCLICommand("add", "test", "--entry", "hackernews");
 
       const proxy = await gatewayClient.store.get.query({ proxyId: "test" });
-      expect(proxy.targets).toContainEqual(
+      expect(proxy.servers).toContainEqual(
         expect.objectContaining({
           name: "hackernews",
-          transport: expect.objectContaining({
-            type: "stdio",
-            command: "uvx",
-            args: [
-              "--from",
-              "git+https://github.com/erithwik/mcp-hn",
-              "mcp-hn",
-            ],
-          }),
+          type: "stdio",
+          command: "uvx",
+          args: ["--from", "git+https://github.com/erithwik/mcp-hn", "mcp-hn"],
         }),
       );
     });
@@ -77,14 +71,12 @@ describe("CLI integration tests", () => {
       );
 
       const proxy = await gatewayClient.store.get.query({ proxyId: "test" });
-      expect(proxy.targets).toContainEqual(
+      expect(proxy.servers).toContainEqual(
         expect.objectContaining({
           name: "custom-fetch",
-          transport: expect.objectContaining({
-            type: "stdio",
-            command: "uvx",
-            args: ["mcp-server-fetch"],
-          }),
+          type: "stdio",
+          command: "uvx",
+          args: ["mcp-server-fetch"],
         }),
       );
     });
@@ -100,13 +92,11 @@ describe("CLI integration tests", () => {
       );
 
       const proxy = await gatewayClient.store.get.query({ proxyId: "test" });
-      expect(proxy.targets).toContainEqual(
+      expect(proxy.servers).toContainEqual(
         expect.objectContaining({
           name: "notion",
-          transport: expect.objectContaining({
-            type: "http",
-            url: "https://mcp.notion.com/mcp",
-          }),
+          type: "http",
+          url: "https://mcp.notion.com/mcp",
         }),
       );
     });
@@ -153,7 +143,7 @@ describe("CLI integration tests", () => {
       );
 
       const proxy = await gatewayClient.store.get.query({ proxyId: "test" });
-      const hackernewsTarget = proxy.targets.find(
+      const hackernewsTarget = proxy.servers.find(
         (t) => t.name === "hackernews",
       );
 
@@ -185,7 +175,7 @@ describe("CLI integration tests", () => {
       );
 
       const proxy = await gatewayClient.store.get.query({ proxyId: "test" });
-      const customFetchTarget = proxy.targets.find(
+      const customFetchTarget = proxy.servers.find(
         (t) => t.name === "custom-fetch",
       );
 
@@ -236,8 +226,8 @@ describe("CLI integration tests", () => {
       const proxy = await gatewayClient.store.get.query({ proxyId: "test" });
       expect(proxy.id).toBe("test");
       expect(proxy.name).toBe("test");
-      expect(proxy.targets).toHaveLength(1);
-      expect(proxy.targets[0].name).toBe("hackernews");
+      expect(proxy.servers).toHaveLength(1);
+      expect(proxy.servers[0].name).toBe("hackernews");
     });
 
     test("should be able to delete a proxy", async () => {
@@ -269,8 +259,8 @@ describe("CLI integration tests", () => {
       await runCLICommand("remove", "test", "hackernews");
 
       const proxy = await gatewayClient.store.get.query({ proxyId: "test" });
-      expect(proxy.targets).toHaveLength(1);
-      expect(proxy.targets[0].name).toBe("custom-fetch");
+      expect(proxy.servers).toHaveLength(1);
+      expect(proxy.servers[0].name).toBe("custom-fetch");
     });
 
     test("should be able to get server details", async () => {
@@ -282,7 +272,7 @@ describe("CLI integration tests", () => {
       });
 
       expect(server.name).toBe("hackernews");
-      expect(server.transport.type).toBe("stdio");
+      expect(server.type).toBe("stdio");
     });
   });
 });

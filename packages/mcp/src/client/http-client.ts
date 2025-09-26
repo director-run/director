@@ -25,6 +25,15 @@ export const HTTPClientSchema = AbsractClientSchema.extend({
 });
 
 export type HTTPClientParams = z.infer<typeof HTTPClientSchema>;
+export type HTTPClientPlainObject = HTTPClientParams & {
+  type: "http";
+  tools?: Tool[];
+  connectionInfo?: {
+    status: ClientStatus;
+    lastConnectedAt?: Date;
+    lastErrorMessage?: string;
+  };
+};
 
 export type HTTPClientOptions = {
   oAuthHandler?: OAuthHandler;
@@ -262,17 +271,7 @@ export class HTTPClient extends AbstractClient<HTTPClientParams> {
   public async toPlainObject(include?: {
     tools?: boolean;
     connectionInfo?: boolean;
-  }): Promise<
-    HTTPClientParams & {
-      type: "http";
-      tools?: Tool[];
-      connectionInfo?: {
-        status: ClientStatus;
-        lastConnectedAt?: Date;
-        lastErrorMessage?: string;
-      };
-    }
-  > {
+  }): Promise<HTTPClientPlainObject> {
     return {
       type: "http",
       name: this.name,

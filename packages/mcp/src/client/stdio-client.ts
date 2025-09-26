@@ -17,6 +17,15 @@ export const StdioClientSchema = AbsractClientSchema.extend({
 });
 
 export type StdioClientParams = z.infer<typeof StdioClientSchema>;
+export type StdioClientPlainObject = StdioClientParams & {
+  type: "stdio";
+  tools?: Tool[];
+  connectionInfo?: {
+    status: ClientStatus;
+    lastConnectedAt?: Date;
+    lastErrorMessage?: string;
+  };
+};
 
 export class StdioClient extends AbstractClient<StdioClientParams> {
   public readonly command: string;
@@ -83,17 +92,7 @@ export class StdioClient extends AbstractClient<StdioClientParams> {
   public async toPlainObject(include?: {
     tools?: boolean;
     connectionInfo?: boolean;
-  }): Promise<
-    StdioClientParams & {
-      type: "stdio";
-      tools?: Tool[];
-      connectionInfo?: {
-        status: ClientStatus;
-        lastConnectedAt?: Date;
-        lastErrorMessage?: string;
-      };
-    }
-  > {
+  }): Promise<StdioClientPlainObject> {
     return {
       type: "stdio",
       name: this.name,

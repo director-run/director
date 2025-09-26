@@ -47,7 +47,7 @@ export function registerCoreCommands(program: DirectorCommand): void {
             ...proxies.map((proxy) => [
               proxy.id,
               proxy.name,
-              joinURL(env.GATEWAY_URL, proxy.path),
+              joinURL(env.GATEWAY_URL, proxy.paths.streamable),
             ]),
           );
 

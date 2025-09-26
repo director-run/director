@@ -58,10 +58,8 @@ export function printTargetDetails(
 ) {
   const {
     name,
-    status,
-    transport,
-    lastConnectedAt,
-    lastErrorMessage,
+    type,
+    connectionInfo,
     source,
     toolPrefix,
     disabledTools,
@@ -73,14 +71,21 @@ export function printTargetDetails(
   console.log(whiteBold(`PROXIES > ${proxyId} > ${blue(name)}`));
   console.log();
 
+  let transport = {};
+  if (type === "http") {
+    transport = { url: target.url, headers: target.headers };
+  } else if (type === "stdio") {
+    transport = { command: target.command, args: target.args, env: target.env };
+  }
+
   console.log(
     attributeTable({
       name,
       status: targetStatus(status),
-      type: transport.type,
+      type: type,
       transport: JSON.stringify(transport, null, 2),
-      lastConnectedAt: lastConnectedAt?.toISOString() ?? "--",
-      lastErrorMessage: lastErrorMessage ?? "--",
+      lastConnectedAt: connectionInfo?.lastConnectedAt?.toISOString() ?? "--",
+      lastErrorMessage: connectionInfo?.lastErrorMessage ?? "--",
       sourceName: source?.name ?? "--",
       sourceId: source?.entryId ?? "--",
       toolPrefix: toolPrefix ?? "''",
@@ -129,12 +134,12 @@ export function printProxyDetails(proxy: GatewayRouterOutputs["store"]["get"]) {
     "lastErrorMessage",
   ]);
   table.push(
-    ...proxy.targets.map((target) => [
+    ...proxy.servers.map((target) => [
       target.name,
-      target.transport.type,
-      targetStatus(target.status),
-      target.lastConnectedAt?.toISOString() ?? "--",
-      target.lastErrorMessage ?? "--",
+      target.type,
+      targetStatus(target.connectionInfo?.status ?? "--"),
+      target.connectionInfo?.lastConnectedAt?.toISOString() ?? "--",
+      target.connectionInfo?.lastErrorMessage ?? "--",
     ]),
   );
   console.log(table.toString());

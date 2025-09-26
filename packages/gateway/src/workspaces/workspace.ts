@@ -1,10 +1,12 @@
 import { AbstractClient } from "@director.run/mcp/client/abstract-client";
 import {
   HTTPClient,
+  type HTTPClientPlainObject,
   HTTPClientSchema,
 } from "@director.run/mcp/client/http-client";
 import {
   StdioClient,
+  type StdioClientPlainObject,
   StdioClientSchema,
 } from "@director.run/mcp/client/stdio-client";
 import type { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
@@ -26,6 +28,7 @@ import {
   PromptSchema,
 } from "../capabilities/prompt-manager";
 import { Config } from "../config";
+import { getSSEPathForProxy, getStreamablePathForProxy } from "../helpers";
 
 export const WorkspaceHTTPTargetSchema = HTTPClientSchema.extend({
   type: z.literal("http"),
@@ -55,6 +58,14 @@ export const WorkspaceSchema = z.object({
 });
 
 export type WorkspaceParams = z.infer<typeof WorkspaceSchema>;
+
+export type WorkspacePlainObject = Omit<WorkspaceParams, "servers"> & {
+  servers: (HTTPClientPlainObject | StdioClientPlainObject)[];
+  paths: {
+    streamable: string;
+    sse: string;
+  };
+};
 
 export class Workspace extends ProxyServer {
   private _config?: Config;
@@ -248,7 +259,7 @@ export class Workspace extends ProxyServer {
     };
   }
 
-  public async toPlainObject(): Promise<WorkspaceParams> {
+  public async toPlainObject(): Promise<WorkspacePlainObject> {
     return {
       id: this.id,
       name: this.name,
@@ -266,6 +277,10 @@ export class Workspace extends ProxyServer {
             }),
           ),
       ),
+      paths: {
+        streamable: getStreamablePathForProxy(this.id),
+        sse: getSSEPathForProxy(this.id),
+      },
     };
   }
 }

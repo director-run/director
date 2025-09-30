@@ -81,7 +81,7 @@ export function printTargetDetails(
   console.log(
     attributeTable({
       name,
-      status: targetStatus(status),
+      status: targetStatus(connectionInfo?.status ?? "--"),
       type: type,
       transport: JSON.stringify(transport, null, 2),
       lastConnectedAt: connectionInfo?.lastConnectedAt?.toISOString() ?? "--",

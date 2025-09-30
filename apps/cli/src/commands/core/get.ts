@@ -68,7 +68,7 @@ export function printTargetDetails(
   } = target;
 
   console.log();
-  console.log(whiteBold(`PROXIES > ${proxyId} > ${blue(name)}`));
+  console.log(whiteBold(`WORKSPACES > ${proxyId} > ${blue(name)}`));
   console.log();
 
   let transport = {};

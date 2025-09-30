@@ -1,6 +1,6 @@
 import type { WorkspaceDetail } from "../../../components/types.ts";
 
-export const mockWorkspace: WorkspaceDetail = {
+export const mockWorkspace: () => WorkspaceDetail = () => ({
   id: "test",
   name: "test",
   description: "A proxy for getting started",
@@ -45,4 +45,4 @@ export const mockWorkspace: WorkspaceDetail = {
     streamable: "/test/mcp",
     sse: "/test/sse",
   },
-};
+});

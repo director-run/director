@@ -39,7 +39,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    workspace: mockWorkspace,
+    workspace: mockWorkspace(),
     clients: mockClients,
     tools: mockTools as McpSdkTool[],
   },

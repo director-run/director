@@ -111,7 +111,7 @@ const mockDescription =
 export const Default: Story = {
   args: {
     workspaceTarget: mockWorkspaceTarget,
-    workspace: mockWorkspace,
+    workspace: mockWorkspace(),
     registryEntry: mockRegistryEntry,
     description: mockDescription,
     tools: mockTools as McpSdkTool[],
@@ -145,7 +145,7 @@ export const LongStrings: Story = {
   args: {
     ...Default.args,
     workspace: {
-      ...mockWorkspace,
+      ...mockWorkspace(),
       id: "very-long-proxy-name-that-should-wrap",
       name: "Very Long Proxy Name That Should Wrap Nicely in the UI",
     },

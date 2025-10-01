@@ -17,7 +17,7 @@ import { useWorkspaces } from "./hooks/use-workspaces";
 
 export const RootLayout = () => {
   const navigate = useNavigate();
-  const { data: servers, isLoading, error } = useWorkspaces();
+  const { data: workspaces, isLoading, error } = useWorkspaces();
   const showLoading = isLoading || error?.message === "Failed to fetch";
   const location = useLocation();
 
@@ -25,8 +25,8 @@ export const RootLayout = () => {
     <LayoutRoot
       sections={[
         {
-          id: "library",
-          label: "Library",
+          id: "registries",
+          label: "Registries",
           items: [
             {
               id: "mcp",
@@ -38,23 +38,23 @@ export const RootLayout = () => {
           ],
         },
         {
-          id: "servers",
-          label: "Servers",
+          id: "workspaces",
+          label: "Workspaces",
           isLoading: showLoading,
           items:
-            servers?.map((server) => ({
-              id: server.id,
-              label: server.name,
-              isActive: location.pathname === `/${server.id}`,
-              onClick: () => navigate(`/${server.id}`),
+            workspaces?.map((workspace) => ({
+              id: workspace.id,
+              label: workspace.name,
+              isActive: location.pathname === `/${workspace.id}`,
+              onClick: () => navigate(`/${workspace.id}`),
             })) || [],
         },
         {
           id: "actions",
           items: [
             {
-              id: "new-server",
-              label: "New server",
+              id: "new-workspace",
+              label: "New Workspace",
               icon: <PlusIcon />,
               isActive: location.pathname === "/new",
               onClick: () => navigate(`/new`),

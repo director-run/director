@@ -1,4 +1,4 @@
-import { ProxyForm, ProxyFormButton } from "../proxies/proxy-form";
+import { ProxyForm, WorkspaceFormButton } from "../proxies/proxy-form";
 import type { ProxyFormData } from "../proxies/proxy-form";
 import { Container } from "../ui/container";
 import {
@@ -14,14 +14,14 @@ interface ProxyNewProps {
   isSubmitting: boolean;
 }
 
-export function ProxyNew({ onSubmit, isSubmitting }: ProxyNewProps) {
+export function WorkspaceCreate({ onSubmit, isSubmitting }: ProxyNewProps) {
   return (
     <Container size="sm">
       <Section className="gap-y-8">
         <SectionHeader>
-          <SectionTitle>New proxy</SectionTitle>
+          <SectionTitle>New workspace</SectionTitle>
           <SectionDescription>
-            Create a new proxy to start using MCP.
+            Create a new workspace to start using MCP.
           </SectionDescription>
         </SectionHeader>
         <SectionSeparator />
@@ -30,9 +30,9 @@ export function ProxyNew({ onSubmit, isSubmitting }: ProxyNewProps) {
             await onSubmit(values);
           }}
         >
-          <ProxyFormButton isSubmitting={isSubmitting}>
-            Create proxy
-          </ProxyFormButton>
+          <WorkspaceFormButton isSubmitting={isSubmitting}>
+            Create workspace
+          </WorkspaceFormButton>
         </ProxyForm>
       </Section>
     </Container>

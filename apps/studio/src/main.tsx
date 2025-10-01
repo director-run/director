@@ -13,7 +13,7 @@ import { useWorkspaces } from "./hooks/use-workspaces";
 import { GetStartedPage } from "./pages/get-started";
 import { RegistryDetailPage } from "./pages/registry-detail-page";
 import { RegistryListPage } from "./pages/registry-list-page";
-import { NewProxyPage } from "./pages/workspace-create-page";
+import { WorkspaceCreatePage } from "./pages/workspace-create-page";
 import { WorkspaceDetailPage } from "./pages/workspace-detail-page";
 import { WorkspaceTargetDetailPage } from "./pages/workspace-target-detail-page";
 import { RootLayout } from "./root-layout";
@@ -45,7 +45,7 @@ export const App = () => {
           path="/:workspaceId/:targetId"
           element={<WorkspaceTargetDetailPage />}
         />
-        <Route path="/new" element={<NewProxyPage />} />
+        <Route path="/new" element={<WorkspaceCreatePage />} />
       </Route>
       <Route path="/get-started" element={<GetStartedPage />} />
       <Route path="*" element={<DefaultRoute />} />

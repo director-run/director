@@ -1,16 +1,16 @@
-import { ProxyNew } from "@director.run/design/components/pages/proxy-new.tsx";
+import { WorkspaceCreate } from "@director.run/design/components/pages/proxy-new.tsx";
 import type { ProxyFormData } from "@director.run/design/components/proxies/proxy-form.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../helpers/decorators";
 
 const meta = {
   title: "pages/workspaces/new",
-  component: ProxyNew,
+  component: WorkspaceCreate,
   parameters: {
     layout: "fullscreen",
   },
   decorators: [withLayoutView],
-} satisfies Meta<typeof ProxyNew>;
+} satisfies Meta<typeof WorkspaceCreate>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

@@ -7,7 +7,6 @@ import { ProxySettingsSheet } from "@director.run/design/components/proxies/prox
 import { ProxySkeleton } from "@director.run/design/components/proxies/proxy-skeleton.tsx";
 import { WorkspaceSectionClients } from "@director.run/design/components/proxies/workspace-section-clients.tsx";
 import { WorkspaceSectionHeader } from "@director.run/design/components/proxies/workspace-section-header.tsx";
-import { WorkspaceSectionServers } from "@director.run/design/components/proxies/workspace-section-servers.tsx";
 import { WorkspaceSectionTools } from "@director.run/design/components/proxies/workspace-section-tools.tsx";
 import { RegistryToolSheet } from "@director.run/design/components/registry/registry-tool-sheet.js";
 import { ConfiguratorTarget } from "@director.run/design/components/types.ts";
@@ -18,6 +17,7 @@ import type {
 import { Container } from "@director.run/design/components/ui/container.tsx";
 import { SectionSeparator } from "@director.run/design/components/ui/section.tsx";
 import { toast } from "@director.run/design/components/ui/toast.js";
+import { WorkspaceServerList } from "@director.run/design/components/workspaces/server-list.tsx";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
@@ -108,12 +108,12 @@ export const WorkspaceDetailPage = () => {
             isChanging={isPending}
           />
           <SectionSeparator />
-          <WorkspaceSectionServers
-            workspace={workspace}
-            onLibraryClick={() => navigate("/library")}
-            onServerClick={(serverId) =>
-              navigate(`/${workspaceId}/${serverId}`)
+          <WorkspaceServerList
+            servers={workspace.servers}
+            onClickServer={(server) =>
+              navigate(`/${workspaceId}/${server.name}`)
             }
+            onClickAddServer={() => navigate("/library")}
           />
           <SectionSeparator />
           <WorkspaceTools workspace={workspace} />

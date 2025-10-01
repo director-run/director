@@ -135,6 +135,7 @@ export function SidebarContent({ sections }: SidebarContentProps) {
                 <MenuItem
                   key={item.id}
                   data-state={item.isActive ? "active" : "inactive"}
+                  className="cursor-pointer"
                   onClick={item.onClick}
                 >
                   {item.icon && <MenuItemIcon>{item.icon}</MenuItemIcon>}

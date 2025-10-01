@@ -40,12 +40,12 @@ export function ProxyForm({
       onSubmit={onSubmit}
     >
       <div className="flex w-full flex-col gap-y-6">
-        <InputField label="Name" name="name" placeholder="My Proxy" />
+        <InputField label="Name" name="name" placeholder="My workspace" />
         <TextareaField
           label="Description"
           name="description"
           helperLabel="Optional"
-          placeholder="A description of the proxy"
+          placeholder="A description of the workspace"
         />
       </div>
 
@@ -54,17 +54,17 @@ export function ProxyForm({
   );
 }
 
-interface ProxyFormButtonProps {
+interface WorkspaceFormButtonProps {
   isSubmitting?: boolean;
   children?: ReactNode;
   className?: string;
 }
 
-export function ProxyFormButton({
+export function WorkspaceFormButton({
   isSubmitting = false,
   children,
   className = "self-start",
-}: ProxyFormButtonProps) {
+}: WorkspaceFormButtonProps) {
   return (
     <Button
       size="lg"

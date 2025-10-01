@@ -1,7 +1,6 @@
 import type { Client } from "@director.run/design/components/proxies/proxy-installers.js";
 import { WorkspaceSectionClients } from "@director.run/design/components/proxies/workspace-section-clients.tsx";
 import { WorkspaceSectionHeader } from "@director.run/design/components/proxies/workspace-section-header.tsx";
-import { WorkspaceSectionServers } from "@director.run/design/components/proxies/workspace-section-servers.tsx";
 import { WorkspaceSectionTools } from "@director.run/design/components/proxies/workspace-section-tools.tsx";
 import type {
   ConfiguratorTarget,
@@ -9,6 +8,7 @@ import type {
 } from "@director.run/design/components/types.ts";
 import { Container } from "@director.run/design/components/ui/container.tsx";
 import { SectionSeparator } from "@director.run/design/components/ui/section.tsx";
+import { WorkspaceServerList } from "@director.run/design/components/workspaces/server-list.tsx";
 import { mockTools } from "@director.run/design/test/fixtures/mcp/tools.js";
 import { mockClients } from "@director.run/design/test/fixtures/workspace/clients.ts";
 import { mockWorkspace } from "@director.run/design/test/fixtures/workspace/workspace.ts";
@@ -39,10 +39,10 @@ const WorkspaceDetailComponent = ({
       isChanging={false}
     />
     <SectionSeparator />
-    <WorkspaceSectionServers
-      workspace={workspace}
-      onLibraryClick={() => console.log("library click")}
-      onServerClick={() => console.log("server click")}
+    <WorkspaceServerList
+      servers={workspace.servers}
+      onClickServer={() => console.log("library click")}
+      onClickAddServer={() => console.log("server click")}
     />
     <SectionSeparator />
     <WorkspaceSectionTools

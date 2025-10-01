@@ -4,7 +4,11 @@ import {
   BadgeIcon,
   BadgeLabel,
 } from "@director.run/design/components/ui/badge.tsx";
-import { CheckCircle, Info, WarningCircle } from "@phosphor-icons/react";
+import {
+  CheckCircleIcon,
+  InfoIcon,
+  WarningCircleIcon,
+} from "@phosphor-icons/react";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
@@ -53,19 +57,19 @@ export const AllStates: Story = {
         <BadgeGroup>
           <Badge>
             <BadgeIcon>
-              <Info />
+              <InfoIcon />
             </BadgeIcon>
             <BadgeLabel>info</BadgeLabel>
           </Badge>
           <Badge variant="success">
             <BadgeIcon>
-              <CheckCircle />
+              <CheckCircleIcon />
             </BadgeIcon>
             <BadgeLabel>success</BadgeLabel>
           </Badge>
           <Badge variant="destructive">
             <BadgeIcon>
-              <WarningCircle />
+              <WarningCircleIcon />
             </BadgeIcon>
             <BadgeLabel>destructive</BadgeLabel>
           </Badge>

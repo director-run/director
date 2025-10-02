@@ -93,13 +93,8 @@ export const WorkspaceDetailPage = () => {
             <SplitViewMain>
               <WorkspaceDetailContent
                 workspace={workspace}
-                clients={clients ?? []}
-                isClientsLoading={isClientsLoading}
-                isChanging={isPending}
                 tools={tools as MCPTool[]}
                 toolsLoading={toolsLoading}
-                gatewayBaseUrl={GATEWAY_URL}
-                onChangeInstall={changeInstallState}
                 onClickServer={(server) =>
                   navigate(`/${workspaceId}/${server.name}`)
                 }

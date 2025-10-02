@@ -1,6 +1,4 @@
 import type {
-  Client,
-  ConfiguratorTarget,
   MCPTool,
   WorkspaceDetail,
   WorkspaceTarget,
@@ -43,13 +41,8 @@ export const WorkspaceDetailContent = ({
 
 interface WorkspaceDetailContentProps {
   workspace: WorkspaceDetail;
-  clients: Client[];
-  isClientsLoading: boolean;
-  isChanging: boolean;
   tools: MCPTool[];
   toolsLoading: boolean;
-  gatewayBaseUrl: string;
-  onChangeInstall: (client: ConfiguratorTarget, install: boolean) => void;
   onClickServer: (server: WorkspaceTarget) => void;
   onClickAddServer: () => void;
 }

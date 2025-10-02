@@ -5,7 +5,6 @@ import type {
   WorkspaceDetail,
   WorkspaceTarget,
 } from "@director.run/design/components/types.ts";
-import { Container } from "@director.run/design/components/ui/container.tsx";
 import { SectionSeparator } from "@director.run/design/components/ui/section.tsx";
 import { Section } from "@director.run/design/components/ui/section.tsx";
 import { SectionHeader } from "@director.run/design/components/ui/section.tsx";
@@ -23,7 +22,7 @@ export const WorkspaceDetailContent = ({
   onClickAddServer,
 }: WorkspaceDetailContentProps) => {
   return (
-    <Container size="lg">
+    <Section className="gap-y-8">
       <Section>
         <SectionHeader>
           <SectionTitle>{workspace.name}</SectionTitle>
@@ -38,7 +37,7 @@ export const WorkspaceDetailContent = ({
       />
       <SectionSeparator />
       <ToolsList tools={tools as MCPTool[]} toolsLoading={toolsLoading} />
-    </Container>
+    </Section>
   );
 };
 

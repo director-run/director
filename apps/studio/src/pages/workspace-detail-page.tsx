@@ -5,14 +5,17 @@ import { ProxyActionsDropdown } from "@director.run/design/components/proxies/pr
 import { ProxyDeleteConfirmation } from "@director.run/design/components/proxies/proxy-delete-confirmation.tsx";
 import { ProxySettingsSheet } from "@director.run/design/components/proxies/proxy-settings-sheet.tsx";
 import { ProxySkeleton } from "@director.run/design/components/proxies/proxy-skeleton.tsx";
+import { RegistryDetailSidebar } from "@director.run/design/components/registry-detail-sidebar.tsx";
 import { SplitViewMain } from "@director.run/design/components/split-view.tsx";
 import { SplitViewSide } from "@director.run/design/components/split-view.tsx";
 import { SplitView } from "@director.run/design/components/split-view.tsx";
 import type { WorkspaceDetail } from "@director.run/design/components/types.ts";
 import type { MCPTool } from "@director.run/design/components/types.ts";
+import { Container } from "@director.run/design/components/ui/container.tsx";
 import { toast } from "@director.run/design/components/ui/toast.js";
 import { WorkspaceDetailContent } from "@director.run/design/components/workspaces/workspace-detail-content.tsx";
 import { WorkspaceSectionClients } from "@director.run/design/components/workspaces/workspace-section-clients.tsx";
+import { mockRegistryEntry } from "@director.run/design/test/fixtures/registry/entry.ts";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { GATEWAY_URL } from "../config.ts";
@@ -85,34 +88,52 @@ export const WorkspaceDetailPage = () => {
       </LayoutBreadcrumbHeader>
 
       <LayoutViewContent>
-        <SplitView>
-          <SplitViewMain>
-            <WorkspaceDetailContent
-              workspace={workspace}
-              clients={clients ?? []}
-              isClientsLoading={isClientsLoading}
-              isChanging={isPending}
-              tools={tools as MCPTool[]}
-              toolsLoading={toolsLoading}
-              gatewayBaseUrl={GATEWAY_URL}
-              onChangeInstall={changeInstallState}
-              onClickServer={(server) =>
-                navigate(`/${workspaceId}/${server.name}`)
-              }
-              onClickAddServer={() => navigate("/library")}
-            />
-          </SplitViewMain>
-          <SplitViewSide>
-            <WorkspaceSectionClients
-              workspace={workspace}
-              gatewayBaseUrl={GATEWAY_URL}
-              clients={clients ?? []}
-              isClientsLoading={isClientsLoading}
-              onChangeInstall={changeInstallState}
-              isChanging={isPending}
-            />
-          </SplitViewSide>
-        </SplitView>
+        <Container size="xl">
+          <SplitView>
+            <SplitViewMain>
+              <WorkspaceDetailContent
+                workspace={workspace}
+                clients={clients ?? []}
+                isClientsLoading={isClientsLoading}
+                isChanging={isPending}
+                tools={tools as MCPTool[]}
+                toolsLoading={toolsLoading}
+                gatewayBaseUrl={GATEWAY_URL}
+                onChangeInstall={changeInstallState}
+                onClickServer={(server) =>
+                  navigate(`/${workspaceId}/${server.name}`)
+                }
+                onClickAddServer={() => navigate("/library")}
+              />
+            </SplitViewMain>
+            <SplitViewSide>
+              <WorkspaceSectionClients
+                workspace={workspace}
+                gatewayBaseUrl={GATEWAY_URL}
+                clients={clients ?? []}
+                isClientsLoading={isClientsLoading}
+                onChangeInstall={changeInstallState}
+                isChanging={isPending}
+              />
+              <RegistryDetailSidebar
+                entry={mockRegistryEntry}
+                proxies={[workspace]}
+                onClickInstall={(params) => {
+                  console.log(params);
+                }}
+                isInstalling={isPending}
+              />
+              <RegistryDetailSidebar
+                entry={mockRegistryEntry}
+                proxies={[workspace]}
+                onClickInstall={(params) => {
+                  console.log(params);
+                }}
+                isInstalling={isPending}
+              />
+            </SplitViewSide>
+          </SplitView>
+        </Container>
       </LayoutViewContent>
     </>
   );

@@ -46,59 +46,57 @@ export function WorkspaceSectionClients({
           <Button size="sm">Connect manually</Button>
         </ProxyManualDialog>
       </SectionHeader>
-      <ProxyInstallers
-        clients={clients}
-        isLoading={isLoading}
-        onChangeInstall={onChangeInstall}
-      />
+      <div className="grid grid-cols-1 gap-2">
+        {clients.map((client) => (
+          <InstallerRow
+            key={client.id}
+            client={client}
+            onChangeInstall={onChangeInstall}
+            isLoading={isLoading}
+          />
+        ))}
+      </div>
     </Section>
   );
 }
 
-interface ProxyInstallersProps {
-  clients: Client[];
-  isLoading: boolean;
-  onChangeInstall: (client: ConfiguratorTarget, install: boolean) => void;
-}
-
-function ProxyInstallers({
-  clients,
-  isLoading,
+function InstallerRow({
+  client,
   onChangeInstall,
-}: ProxyInstallersProps) {
+  isLoading,
+}: {
+  client: Client;
+  onChangeInstall: (client: ConfiguratorTarget, install: boolean) => void;
+  isLoading: boolean;
+}) {
   return (
-    <div className="grid grid-cols-1 gap-1">
-      {clients.map((it) => (
-        <label
-          htmlFor={it.id}
-          key={it.id}
-          className={cn(
-            "flex cursor-pointer flex-row items-center justify-between rounded-lg bg-accent-subtle p-1 pr-2.5 transition-colors duration-200 ease-in-out hover:bg-accent",
-            !it.installed &&
-              "opacity-50 hover:cursor-not-allowed hover:bg-accent-subtle",
-          )}
-        >
-          <div className="flex grow flex-row items-center gap-x-1">
-            <img
-              src={it.image}
-              alt={`${it.label} icon`}
-              height={32}
-              width={32}
-            />
+    <label
+      htmlFor={client.id}
+      className={cn(
+        "flex cursor-pointer flex-row items-center justify-between rounded-lg bg-accent-subtle p-1 pr-2.5 transition-colors duration-200 ease-in-out hover:bg-accent",
+        !client.installed &&
+          "opacity-50 hover:cursor-not-allowed hover:bg-accent-subtle",
+      )}
+    >
+      <div className="flex grow flex-row items-center gap-x-1">
+        <img
+          src={client.image}
+          alt={`${client.label} icon`}
+          height={32}
+          width={32}
+        />
 
-            <span className="font-medium text-[15px]">{it.label}</span>
-          </div>
+        <span className="font-medium text-[15px]">{client.label}</span>
+      </div>
 
-          <Switch
-            id={it.id}
-            checked={!!it.present}
-            onCheckedChange={(checked) => {
-              onChangeInstall(it.id as ConfiguratorTarget, checked);
-            }}
-            disabled={isLoading || !it.installed}
-          />
-        </label>
-      ))}
-    </div>
+      <Switch
+        id={client.id}
+        checked={!!client.present}
+        onCheckedChange={(checked) => {
+          onChangeInstall(client.id as ConfiguratorTarget, checked);
+        }}
+        disabled={isLoading || !client.installed}
+      />
+    </label>
   );
 }

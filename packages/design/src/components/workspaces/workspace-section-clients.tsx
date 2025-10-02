@@ -68,39 +68,37 @@ function ProxyInstallers({
 }: ProxyInstallersProps) {
   return (
     <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-3">
-      {clients.map((it) => {
-        return (
-          <label
-            htmlFor={it.id}
-            key={it.id}
-            className={cn(
-              "flex cursor-pointer flex-row items-center justify-between rounded-lg bg-accent-subtle p-1 pr-2.5 transition-colors duration-200 ease-in-out hover:bg-accent",
-              !it.installed &&
-                "opacity-50 hover:cursor-not-allowed hover:bg-accent-subtle",
-            )}
-          >
-            <div className="flex grow flex-row items-center gap-x-1">
-              <img
-                src={it.image}
-                alt={`${it.label} icon`}
-                height={32}
-                width={32}
-              />
-
-              <span className="font-medium text-[15px]">{it.label}</span>
-            </div>
-
-            <Switch
-              id={it.id}
-              checked={!!it.present}
-              onCheckedChange={(checked) => {
-                onChangeInstall(it.id as ConfiguratorTarget, checked);
-              }}
-              disabled={isLoading || !it.installed}
+      {clients.map((it) => (
+        <label
+          htmlFor={it.id}
+          key={it.id}
+          className={cn(
+            "flex cursor-pointer flex-row items-center justify-between rounded-lg bg-accent-subtle p-1 pr-2.5 transition-colors duration-200 ease-in-out hover:bg-accent",
+            !it.installed &&
+              "opacity-50 hover:cursor-not-allowed hover:bg-accent-subtle",
+          )}
+        >
+          <div className="flex grow flex-row items-center gap-x-1">
+            <img
+              src={it.image}
+              alt={`${it.label} icon`}
+              height={32}
+              width={32}
             />
-          </label>
-        );
-      })}
+
+            <span className="font-medium text-[15px]">{it.label}</span>
+          </div>
+
+          <Switch
+            id={it.id}
+            checked={!!it.present}
+            onCheckedChange={(checked) => {
+              onChangeInstall(it.id as ConfiguratorTarget, checked);
+            }}
+            disabled={isLoading || !it.installed}
+          />
+        </label>
+      ))}
     </div>
   );
 }

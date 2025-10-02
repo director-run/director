@@ -61,49 +61,6 @@ export function WorkspaceSectionClients({
   );
 }
 
-// export function WorkspaceSectionClients({
-//   workspace,
-//   gatewayBaseUrl,
-//   clients,
-//   isClientsLoading,
-//   onChangeInstall,
-//   isChanging,
-// }: WorkspaceSectionClientsProps) {
-//   const [_, copy] = useCopyToClipboard();
-
-//   const handleCopy = async (text: string) => {
-//     await copy(text);
-//     toast({
-//       title: "Copied to clipboard",
-//       description: "The endpoint has been copied to your clipboard.",
-//     });
-//   };
-//   return (
-//     <Section>
-//       <SectionHeader className="flex flex-row items-center justify-between">
-//         <SectionTitle variant="h2" asChild>
-//           <h2>Clients</h2>
-//         </SectionTitle>
-//         <ProxyManualDialog
-//           proxyId={workspace.id}
-//           gatewayBaseUrl={gatewayBaseUrl}
-//           onCopy={handleCopy}
-//         >
-//           <Button size="sm">Connect manually</Button>
-//         </ProxyManualDialog>
-//       </SectionHeader>
-//       <ProxyInstallers
-//         proxyId={workspace.id}
-//         gatewayBaseUrl={gatewayBaseUrl}
-//         clients={clients}
-//         isLoading={isClientsLoading}
-//         onChangeInstall={onChangeInstall}
-//         isChanging={isChanging}
-//       />
-//     </Section>
-//   );
-// }
-
 interface ProxyInstallersProps {
   proxyId: string;
   gatewayBaseUrl: string;

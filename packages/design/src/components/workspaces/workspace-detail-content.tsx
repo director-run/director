@@ -34,7 +34,7 @@ export const WorkspaceDetailContent = ({
         </TabsList>
         <TabsContent
           value="servers"
-          className="flex flex-col gap-y-10 rounded-xl border-[0.5px] bg-accent-subtle/20 p-6"
+          className="rounded-xl border-[0.5px] bg-accent-subtle/20 p-6"
         >
           <WorkspaceServerList
             servers={workspace.servers}

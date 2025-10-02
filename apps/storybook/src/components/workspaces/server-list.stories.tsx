@@ -1,6 +1,7 @@
-import type { Client } from "@director.run/design/components/proxies/proxy-installers.js";
-import type { WorkspaceDetail } from "@director.run/design/components/types.ts";
-import {} from "@director.run/design/components/ui/badge.tsx";
+import type {
+  Client,
+  WorkspaceDetail,
+} from "@director.run/design/components/types.ts";
 import { Container } from "@director.run/design/components/ui/container.tsx";
 import { WorkspaceServerList } from "@director.run/design/components/workspaces/server-list.tsx";
 import { mockTools } from "@director.run/design/test/fixtures/mcp/tools.js";

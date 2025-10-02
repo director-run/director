@@ -5,6 +5,10 @@ import { ProxyActionsDropdown } from "@director.run/design/components/proxies/pr
 import { ProxyDeleteConfirmation } from "@director.run/design/components/proxies/proxy-delete-confirmation.tsx";
 import { ProxySettingsSheet } from "@director.run/design/components/proxies/proxy-settings-sheet.tsx";
 import { ProxySkeleton } from "@director.run/design/components/proxies/proxy-skeleton.tsx";
+import { WorkspaceSectionClients } from "@director.run/design/components/proxies/workspace-section-clients.tsx";
+import { SplitViewMain } from "@director.run/design/components/split-view.tsx";
+import { SplitViewSide } from "@director.run/design/components/split-view.tsx";
+import { SplitView } from "@director.run/design/components/split-view.tsx";
 import type { WorkspaceDetail } from "@director.run/design/components/types.ts";
 import type { MCPTool } from "@director.run/design/components/types.ts";
 import { toast } from "@director.run/design/components/ui/toast.js";
@@ -81,18 +85,34 @@ export const WorkspaceDetailPage = () => {
       </LayoutBreadcrumbHeader>
 
       <LayoutViewContent>
-        <WorkspaceDetailContent
-          workspace={workspace}
-          clients={clients ?? []}
-          isClientsLoading={isClientsLoading}
-          isChanging={isPending}
-          tools={tools as MCPTool[]}
-          toolsLoading={toolsLoading}
-          gatewayBaseUrl={GATEWAY_URL}
-          onChangeInstall={changeInstallState}
-          onClickServer={(server) => navigate(`/${workspaceId}/${server.name}`)}
-          onClickAddServer={() => navigate("/library")}
-        />
+        <SplitView>
+          <SplitViewMain>
+            <WorkspaceDetailContent
+              workspace={workspace}
+              clients={clients ?? []}
+              isClientsLoading={isClientsLoading}
+              isChanging={isPending}
+              tools={tools as MCPTool[]}
+              toolsLoading={toolsLoading}
+              gatewayBaseUrl={GATEWAY_URL}
+              onChangeInstall={changeInstallState}
+              onClickServer={(server) =>
+                navigate(`/${workspaceId}/${server.name}`)
+              }
+              onClickAddServer={() => navigate("/library")}
+            />
+          </SplitViewMain>
+          <SplitViewSide>
+            <WorkspaceSectionClients
+              workspace={workspace}
+              gatewayBaseUrl={GATEWAY_URL}
+              clients={clients ?? []}
+              isClientsLoading={isClientsLoading}
+              onChangeInstall={changeInstallState}
+              isChanging={isPending}
+            />
+          </SplitViewSide>
+        </SplitView>
       </LayoutViewContent>
     </>
   );

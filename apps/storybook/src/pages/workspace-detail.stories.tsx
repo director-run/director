@@ -1,5 +1,5 @@
-import type { Client } from "@director.run/design/components/proxies/proxy-installers.js";
 import type {
+  Client,
   ConfiguratorTarget,
   MCPTool,
   WorkspaceDetail,

@@ -1,4 +1,3 @@
-import { WorkspaceSectionClients } from "@director.run/design/components/proxies/workspace-section-clients.tsx";
 import type {
   Client,
   ConfiguratorTarget,
@@ -18,13 +17,8 @@ import { ToolsList } from "../tools/tool-list";
 
 export const WorkspaceDetailContent = ({
   workspace,
-  clients,
-  isClientsLoading,
-  isChanging,
   tools,
   toolsLoading,
-  gatewayBaseUrl,
-  onChangeInstall,
   onClickServer,
   onClickAddServer,
 }: WorkspaceDetailContentProps) => {
@@ -36,15 +30,6 @@ export const WorkspaceDetailContent = ({
           <SectionDescription>{workspace.description}</SectionDescription>
         </SectionHeader>
       </Section>
-      <SectionSeparator />
-      <WorkspaceSectionClients
-        workspace={workspace}
-        gatewayBaseUrl={gatewayBaseUrl}
-        clients={clients ?? []}
-        isClientsLoading={isClientsLoading}
-        onChangeInstall={onChangeInstall}
-        isChanging={isChanging}
-      />
       <SectionSeparator />
       <WorkspaceServerList
         servers={workspace.servers}

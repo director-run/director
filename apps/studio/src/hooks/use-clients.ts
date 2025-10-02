@@ -1,5 +1,7 @@
-import type { Client } from "@director.run/design/components/proxies/proxy-installers.tsx";
-import type { ConfiguratorTarget } from "@director.run/design/components/types.ts";
+import type {
+  Client,
+  ConfiguratorTarget,
+} from "@director.run/design/components/types.ts";
 import type { GatewayRouterOutputs } from "@director.run/gateway/client";
 import { gatewayClient } from "../contexts/backend-context";
 

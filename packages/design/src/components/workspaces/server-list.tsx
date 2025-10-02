@@ -27,6 +27,7 @@ export function WorkspaceServerList({
       <List.List>
         {servers.map((server) => (
           <WorkspaceServerListItem
+            key={`li-${server.name}`}
             server={server}
             onClick={onClickServer && (() => onClickServer(server))}
           />
@@ -42,7 +43,6 @@ function WorkspaceServerListItem({
 }: { server: WorkspaceTarget; onClick?: () => void }) {
   return (
     <List.ListItem
-      key={`li-${server.name}`}
       onClick={onClick}
       className={
         onClick

@@ -37,8 +37,8 @@ export function WorkspaceSectionClients({
   return (
     <Section>
       <SectionHeader className="flex flex-row items-center justify-between">
-        <SectionTitle variant="h2" asChild>
-          <h2>Clients</h2>
+        <SectionTitle variant="h3" asChild>
+          <h3>Client Connections</h3>
         </SectionTitle>
         <ProxyManualDialog
           proxyId={workspace.id}
@@ -74,15 +74,13 @@ function ProxyInstallers({
   return (
     <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-3">
       {clients.map((it) => {
-        const isAvailable = !!it.installed;
-
         return (
           <label
             htmlFor={it.id}
             key={it.id}
             className={cn(
               "flex cursor-pointer flex-row items-center justify-between rounded-lg bg-accent-subtle p-1 pr-2.5 transition-colors duration-200 ease-in-out hover:bg-accent",
-              !isAvailable &&
+              !it.installed &&
                 "opacity-50 hover:cursor-not-allowed hover:bg-accent-subtle",
             )}
           >
@@ -103,7 +101,7 @@ function ProxyInstallers({
               onCheckedChange={(checked) => {
                 onChangeInstall(it.id as ConfiguratorTarget, checked);
               }}
-              disabled={isChanging || isLoading || !isAvailable}
+              disabled={isChanging || isLoading || !it.installed}
             />
           </label>
         );

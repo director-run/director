@@ -38,7 +38,7 @@ export function WorkspaceSectionClients({
     <Section>
       <SectionHeader className="flex flex-row items-center justify-between">
         <SectionTitle variant="h3" asChild>
-          <h3>Client Connections</h3>
+          <h3>Client connections</h3>
         </SectionTitle>
         <ProxyManualDialog
           proxyId={workspace.id}

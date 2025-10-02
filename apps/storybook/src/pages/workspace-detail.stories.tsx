@@ -1,17 +1,10 @@
 import type { Client } from "@director.run/design/components/proxies/proxy-installers.js";
-import { WorkspaceSectionClients } from "@director.run/design/components/proxies/workspace-section-clients.tsx";
-import { WorkspaceSectionTools } from "@director.run/design/components/proxies/workspace-section-tools.tsx";
 import type {
   ConfiguratorTarget,
+  MCPTool,
   WorkspaceDetail,
 } from "@director.run/design/components/types.ts";
-import { Container } from "@director.run/design/components/ui/container.tsx";
-import { SectionSeparator } from "@director.run/design/components/ui/section.tsx";
-import { Section } from "@director.run/design/components/ui/section.tsx";
-import { SectionHeader } from "@director.run/design/components/ui/section.tsx";
-import { SectionTitle } from "@director.run/design/components/ui/section.tsx";
-import { SectionDescription } from "@director.run/design/components/ui/section.tsx";
-import { WorkspaceServerList } from "@director.run/design/components/workspaces/server-list.tsx";
+import { WorkspaceDetailContent } from "@director.run/design/components/workspaces/workspace-detail-content.tsx";
 import { mockTools } from "@director.run/design/test/fixtures/mcp/tools.js";
 import { mockClients } from "@director.run/design/test/fixtures/workspace/clients.ts";
 import { mockWorkspace } from "@director.run/design/test/fixtures/workspace/workspace.ts";
@@ -28,37 +21,20 @@ const WorkspaceDetailComponent = ({
   clients: Client[];
   tools: McpSdkTool[];
 }) => (
-  <Container size="lg">
-    <Section>
-      <SectionHeader>
-        <SectionTitle>{workspace.name}</SectionTitle>
-        <SectionDescription>{workspace.description}</SectionDescription>
-      </SectionHeader>
-    </Section>
-    <SectionSeparator />
-    <WorkspaceSectionClients
-      workspace={workspace}
-      gatewayBaseUrl={"https://some.url.com"}
-      clients={clients ?? []}
-      isClientsLoading={false}
-      onChangeInstall={async (client: ConfiguratorTarget, install: boolean) => {
-        await console.log(client, install);
-      }}
-      isChanging={false}
-    />
-    <SectionSeparator />
-    <WorkspaceServerList
-      servers={workspace.servers}
-      onClickServer={() => console.log("library click")}
-      onClickAddServer={() => console.log("server click")}
-    />
-    <SectionSeparator />
-    <WorkspaceSectionTools
-      tools={tools ?? []}
-      toolsLoading={false}
-      onToolClick={(tool) => console.log(tool)}
-    />
-  </Container>
+  <WorkspaceDetailContent
+    workspace={workspace}
+    clients={clients}
+    tools={tools as MCPTool[]}
+    isClientsLoading={false}
+    isChanging={false}
+    toolsLoading={false}
+    gatewayBaseUrl={"https://some.url.com"}
+    onChangeInstall={async (client: ConfiguratorTarget, install: boolean) => {
+      await console.log(client, install);
+    }}
+    onClickServer={() => console.log("library click")}
+    onClickAddServer={() => console.log("server click")}
+  />
 );
 
 const meta = {

@@ -5,19 +5,10 @@ import { ProxyActionsDropdown } from "@director.run/design/components/proxies/pr
 import { ProxyDeleteConfirmation } from "@director.run/design/components/proxies/proxy-delete-confirmation.tsx";
 import { ProxySettingsSheet } from "@director.run/design/components/proxies/proxy-settings-sheet.tsx";
 import { ProxySkeleton } from "@director.run/design/components/proxies/proxy-skeleton.tsx";
-import { WorkspaceSectionClients } from "@director.run/design/components/proxies/workspace-section-clients.tsx";
-import { ToolsList } from "@director.run/design/components/tools/tools-list.tsx";
-import { ConfiguratorTarget } from "@director.run/design/components/types.ts";
 import type { WorkspaceDetail } from "@director.run/design/components/types.ts";
 import type { MCPTool } from "@director.run/design/components/types.ts";
-import { Container } from "@director.run/design/components/ui/container.tsx";
-import { SectionSeparator } from "@director.run/design/components/ui/section.tsx";
-import { Section } from "@director.run/design/components/ui/section.tsx";
-import { SectionHeader } from "@director.run/design/components/ui/section.tsx";
-import { SectionTitle } from "@director.run/design/components/ui/section.tsx";
-import { SectionDescription } from "@director.run/design/components/ui/section.tsx";
 import { toast } from "@director.run/design/components/ui/toast.js";
-import { WorkspaceServerList } from "@director.run/design/components/workspaces/server-list.tsx";
+import { WorkspaceDetailContent } from "@director.run/design/components/workspaces/workspace-detail-content.tsx";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { GATEWAY_URL } from "../config.ts";
@@ -90,38 +81,18 @@ export const WorkspaceDetailPage = () => {
       </LayoutBreadcrumbHeader>
 
       <LayoutViewContent>
-        <Container size="lg">
-          <Section>
-            <SectionHeader>
-              <SectionTitle>{workspace.name}</SectionTitle>
-              <SectionDescription>{workspace.description}</SectionDescription>
-            </SectionHeader>
-          </Section>
-          <SectionSeparator />
-          <WorkspaceSectionClients
-            workspace={workspace}
-            gatewayBaseUrl={GATEWAY_URL}
-            clients={clients ?? []}
-            isClientsLoading={isClientsLoading}
-            onChangeInstall={async (
-              client: ConfiguratorTarget,
-              install: boolean,
-            ) => {
-              await changeInstallState(client, install);
-            }}
-            isChanging={isPending}
-          />
-          <SectionSeparator />
-          <WorkspaceServerList
-            servers={workspace.servers}
-            onClickServer={(server) =>
-              navigate(`/${workspaceId}/${server.name}`)
-            }
-            onClickAddServer={() => navigate("/library")}
-          />
-          <SectionSeparator />
-          <ToolsList tools={tools as MCPTool[]} toolsLoading={toolsLoading} />
-        </Container>
+        <WorkspaceDetailContent
+          workspace={workspace}
+          clients={clients ?? []}
+          isClientsLoading={isClientsLoading}
+          isChanging={isPending}
+          tools={tools as MCPTool[]}
+          toolsLoading={toolsLoading}
+          gatewayBaseUrl={GATEWAY_URL}
+          onChangeInstall={changeInstallState}
+          onClickServer={(server) => navigate(`/${workspaceId}/${server.name}`)}
+          onClickAddServer={() => navigate("/library")}
+        />
       </LayoutViewContent>
     </>
   );

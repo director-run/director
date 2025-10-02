@@ -18,13 +18,13 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    proxy: mockWorkspace,
+    proxy: mockWorkspace(),
     onSubmit: (_data: ProxyFormData) => Promise.resolve(),
   },
   render: () => {
     const [open, setOpen] = useState(true);
 
-    const proxy = mockWorkspace;
+    const proxy = mockWorkspace();
 
     const handleSubmit = (data: ProxyFormData) => {
       console.log("Updated proxy settings:", JSON.stringify(data, null, 2));

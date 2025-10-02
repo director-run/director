@@ -1,5 +1,4 @@
 import { WorkspaceSectionClients } from "@director.run/design/components/proxies/workspace-section-clients.tsx";
-import { ToolsList } from "@director.run/design/components/tools/tools-list.tsx";
 import type {
   Client,
   ConfiguratorTarget,
@@ -15,6 +14,7 @@ import { SectionTitle } from "@director.run/design/components/ui/section.tsx";
 import { SectionDescription } from "@director.run/design/components/ui/section.tsx";
 import { WorkspaceServerList } from "@director.run/design/components/workspaces/server-list.tsx";
 import {} from "react-router";
+import { ToolsList } from "../tools/tool-list";
 
 export const WorkspaceDetailContent = ({
   workspace,

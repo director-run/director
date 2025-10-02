@@ -8,7 +8,7 @@ import {
 import { McpLogo } from "./mcp-logo";
 import { RegistryEntryPropertyList } from "./registry/registry-entry-property-list";
 import { RegistryParameters } from "./registry/registry-parameters";
-import { ToolsList } from "./tools/tools-list";
+import { ToolsList } from "./tools/tool-list";
 import type { RegistryEntryDetail } from "./types";
 import type { MCPTool } from "./types";
 import { Badge, BadgeGroup, BadgeIcon, BadgeLabel } from "./ui/badge";

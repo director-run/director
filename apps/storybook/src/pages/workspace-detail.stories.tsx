@@ -1,6 +1,5 @@
 import type { Client } from "@director.run/design/components/proxies/proxy-installers.js";
 import { WorkspaceSectionClients } from "@director.run/design/components/proxies/workspace-section-clients.tsx";
-import { WorkspaceSectionHeader } from "@director.run/design/components/proxies/workspace-section-header.tsx";
 import { WorkspaceSectionTools } from "@director.run/design/components/proxies/workspace-section-tools.tsx";
 import type {
   ConfiguratorTarget,
@@ -8,6 +7,10 @@ import type {
 } from "@director.run/design/components/types.ts";
 import { Container } from "@director.run/design/components/ui/container.tsx";
 import { SectionSeparator } from "@director.run/design/components/ui/section.tsx";
+import { Section } from "@director.run/design/components/ui/section.tsx";
+import { SectionHeader } from "@director.run/design/components/ui/section.tsx";
+import { SectionTitle } from "@director.run/design/components/ui/section.tsx";
+import { SectionDescription } from "@director.run/design/components/ui/section.tsx";
 import { WorkspaceServerList } from "@director.run/design/components/workspaces/server-list.tsx";
 import { mockTools } from "@director.run/design/test/fixtures/mcp/tools.js";
 import { mockClients } from "@director.run/design/test/fixtures/workspace/clients.ts";
@@ -26,7 +29,12 @@ const WorkspaceDetailComponent = ({
   tools: McpSdkTool[];
 }) => (
   <Container size="lg">
-    <WorkspaceSectionHeader workspace={workspace} />
+    <Section>
+      <SectionHeader>
+        <SectionTitle>{workspace.name}</SectionTitle>
+        <SectionDescription>{workspace.description}</SectionDescription>
+      </SectionHeader>
+    </Section>
     <SectionSeparator />
     <WorkspaceSectionClients
       workspace={workspace}

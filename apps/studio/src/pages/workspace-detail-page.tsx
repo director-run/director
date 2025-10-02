@@ -6,7 +6,6 @@ import { ProxyDeleteConfirmation } from "@director.run/design/components/proxies
 import { ProxySettingsSheet } from "@director.run/design/components/proxies/proxy-settings-sheet.tsx";
 import { ProxySkeleton } from "@director.run/design/components/proxies/proxy-skeleton.tsx";
 import { WorkspaceSectionClients } from "@director.run/design/components/proxies/workspace-section-clients.tsx";
-import { WorkspaceSectionHeader } from "@director.run/design/components/proxies/workspace-section-header.tsx";
 import { WorkspaceSectionTools } from "@director.run/design/components/proxies/workspace-section-tools.tsx";
 import { RegistryToolSheet } from "@director.run/design/components/registry/registry-tool-sheet.js";
 import { ConfiguratorTarget } from "@director.run/design/components/types.ts";
@@ -16,6 +15,10 @@ import type {
 } from "@director.run/design/components/types.ts";
 import { Container } from "@director.run/design/components/ui/container.tsx";
 import { SectionSeparator } from "@director.run/design/components/ui/section.tsx";
+import { Section } from "@director.run/design/components/ui/section.tsx";
+import { SectionHeader } from "@director.run/design/components/ui/section.tsx";
+import { SectionTitle } from "@director.run/design/components/ui/section.tsx";
+import { SectionDescription } from "@director.run/design/components/ui/section.tsx";
 import { toast } from "@director.run/design/components/ui/toast.js";
 import { WorkspaceServerList } from "@director.run/design/components/workspaces/server-list.tsx";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
@@ -92,7 +95,12 @@ export const WorkspaceDetailPage = () => {
 
       <LayoutViewContent>
         <Container size="lg">
-          <WorkspaceSectionHeader workspace={workspace} />
+          <Section>
+            <SectionHeader>
+              <SectionTitle>{workspace.name}</SectionTitle>
+              <SectionDescription>{workspace.description}</SectionDescription>
+            </SectionHeader>
+          </Section>
           <SectionSeparator />
           <WorkspaceSectionClients
             workspace={workspace}

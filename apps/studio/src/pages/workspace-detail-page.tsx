@@ -5,7 +5,6 @@ import { ProxyActionsDropdown } from "@director.run/design/components/proxies/pr
 import { ProxyDeleteConfirmation } from "@director.run/design/components/proxies/proxy-delete-confirmation.tsx";
 import { ProxySettingsSheet } from "@director.run/design/components/proxies/proxy-settings-sheet.tsx";
 import { ProxySkeleton } from "@director.run/design/components/proxies/proxy-skeleton.tsx";
-import { WorkspaceSectionClients } from "@director.run/design/components/proxies/workspace-section-clients.tsx";
 import { SplitViewMain } from "@director.run/design/components/split-view.tsx";
 import { SplitViewSide } from "@director.run/design/components/split-view.tsx";
 import { SplitView } from "@director.run/design/components/split-view.tsx";
@@ -13,6 +12,7 @@ import type { WorkspaceDetail } from "@director.run/design/components/types.ts";
 import type { MCPTool } from "@director.run/design/components/types.ts";
 import { toast } from "@director.run/design/components/ui/toast.js";
 import { WorkspaceDetailContent } from "@director.run/design/components/workspaces/workspace-detail-content.tsx";
+import { WorkspaceSectionClients } from "@director.run/design/components/workspaces/workspace-section-clients.tsx";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { GATEWAY_URL } from "../config.ts";

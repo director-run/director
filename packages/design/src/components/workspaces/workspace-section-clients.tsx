@@ -1,13 +1,13 @@
 import { ArrowUpRightIcon } from "@phosphor-icons/react";
 import { cn } from "../../helpers/cn";
 import { useCopyToClipboard } from "../../hooks/use-copy-to-clipboard";
+import { ProxyManualDialog } from "../proxies/proxy-manual-dialog";
 import { type Client, type ConfiguratorTarget } from "../types";
 import type { WorkspaceDetail } from "../types";
 import { Button } from "../ui/button";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
 import { Switch } from "../ui/switch";
 import { toast } from "../ui/toast";
-import { ProxyManualDialog } from "./proxy-manual-dialog";
 
 export interface WorkspaceSectionClientsProps {
   workspace: WorkspaceDetail;

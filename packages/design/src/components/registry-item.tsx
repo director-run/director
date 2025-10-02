@@ -8,8 +8,9 @@ import {
 import { McpLogo } from "./mcp-logo";
 import { RegistryEntryPropertyList } from "./registry/registry-entry-property-list";
 import { RegistryParameters } from "./registry/registry-parameters";
-import { RegistryTools } from "./registry/registry-tools";
+import { ToolsList } from "./tools/tools-list";
 import type { RegistryEntryDetail } from "./types";
+import type { MCPTool } from "./types";
 import { Badge, BadgeGroup, BadgeIcon, BadgeLabel } from "./ui/badge";
 import { EmptyState, EmptyStateTitle } from "./ui/empty-state";
 import { Markdown } from "./ui/markdown";
@@ -23,12 +24,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
 interface RegistryItemProps {
   entry: RegistryEntryDetail;
-  onToolClick?: (
-    tool: NonNullable<RegistryEntryDetail["tools"]>[number],
-  ) => void;
 }
 
-export function RegistryItem({ entry, onToolClick }: RegistryItemProps) {
+export function RegistryItem({ entry }: RegistryItemProps) {
   return (
     <Section className="gap-y-8">
       <McpLogo src={entry.icon} className="size-9" />
@@ -91,24 +89,7 @@ export function RegistryItem({ entry, onToolClick }: RegistryItemProps) {
           value="tools"
           className="rounded-xl border-[0.5px] bg-accent-subtle/20 p-6"
         >
-          <Section>
-            <SectionHeader>
-              <SectionTitle variant="h2" asChild>
-                <h3>Tools</h3>
-              </SectionTitle>
-            </SectionHeader>
-            <RegistryTools
-              links={(entry.tools ?? [])
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map((tool) => ({
-                  title: tool.name,
-                  subtitle: tool.description?.replace(/\[([^\]]+)\]/g, ""),
-                  scroll: false,
-                  href: "#",
-                  onClick: () => onToolClick?.(tool),
-                }))}
-            />
-          </Section>
+          <ToolsList tools={entry.tools as MCPTool[]} toolsLoading={false} />
         </TabsContent>
 
         <TabsContent

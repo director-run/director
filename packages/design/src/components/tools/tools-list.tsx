@@ -1,4 +1,3 @@
-import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { useState } from "react";
 import { ListOfLinks } from "../list-of-links";
 import { RegistryToolSheet } from "../registry/registry-tool-sheet";
@@ -7,7 +6,7 @@ import { Badge, BadgeLabel } from "../ui/badge";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
 
 export function ToolsList({ tools, toolsLoading }: WorkspaceSectionToolsProps) {
-  const [selectedTool, setSelectedTool] = useState<Tool | null>(null);
+  const [selectedTool, setSelectedTool] = useState<MCPTool | null>(null);
 
   const toolLinks = tools
     .slice()
@@ -50,6 +49,6 @@ export function ToolsList({ tools, toolsLoading }: WorkspaceSectionToolsProps) {
 }
 
 interface WorkspaceSectionToolsProps {
-  tools: Tool[];
+  tools: MCPTool[];
   toolsLoading: boolean;
 }

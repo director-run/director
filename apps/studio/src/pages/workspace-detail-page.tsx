@@ -6,8 +6,10 @@ import { ProxyDeleteConfirmation } from "@director.run/design/components/proxies
 import { ProxySettingsSheet } from "@director.run/design/components/proxies/proxy-settings-sheet.tsx";
 import { ProxySkeleton } from "@director.run/design/components/proxies/proxy-skeleton.tsx";
 import { WorkspaceSectionClients } from "@director.run/design/components/proxies/workspace-section-clients.tsx";
+import { ToolsList } from "@director.run/design/components/tools/tools-list.tsx";
 import { ConfiguratorTarget } from "@director.run/design/components/types.ts";
 import type { WorkspaceDetail } from "@director.run/design/components/types.ts";
+import type { MCPTool } from "@director.run/design/components/types.ts";
 import { Container } from "@director.run/design/components/ui/container.tsx";
 import { SectionSeparator } from "@director.run/design/components/ui/section.tsx";
 import { Section } from "@director.run/design/components/ui/section.tsx";
@@ -24,8 +26,6 @@ import { useChangeInstallState } from "../hooks/use-change-install-state.ts";
 import { useClients } from "../hooks/use-clients.ts";
 import { useInspectMcp } from "../hooks/use-inspect-mcp.ts";
 import { useWorkspace } from "../hooks/use-workspace.ts";
-
-import { ToolsList } from "@director.run/design/components/tools/tools-list.tsx";
 
 export const WorkspaceDetailPage = () => {
   const { workspaceId } = useParams();
@@ -120,7 +120,7 @@ export const WorkspaceDetailPage = () => {
             onClickAddServer={() => navigate("/library")}
           />
           <SectionSeparator />
-          <ToolsList tools={tools} toolsLoading={toolsLoading} />
+          <ToolsList tools={tools as MCPTool[]} toolsLoading={toolsLoading} />
         </Container>
       </LayoutViewContent>
     </>

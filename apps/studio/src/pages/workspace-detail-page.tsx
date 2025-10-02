@@ -106,9 +106,8 @@ export const WorkspaceDetailPage = () => {
                 workspace={workspace}
                 gatewayBaseUrl={GATEWAY_URL}
                 clients={clients ?? []}
-                isClientsLoading={isClientsLoading}
                 onChangeInstall={changeInstallState}
-                isChanging={isPending}
+                isLoading={isPending || isClientsLoading}
               />
               <RegistryDetailSidebar
                 entry={mockRegistryEntry}

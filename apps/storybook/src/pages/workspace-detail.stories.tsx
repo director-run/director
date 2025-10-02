@@ -1,6 +1,5 @@
 import type {
   Client,
-  ConfiguratorTarget,
   MCPTool,
   WorkspaceDetail,
 } from "@director.run/design/components/types.ts";
@@ -14,7 +13,6 @@ import { withLayoutView } from "../helpers/decorators";
 
 const WorkspaceDetailComponent = ({
   workspace,
-  clients,
   tools,
 }: {
   workspace: WorkspaceDetail;
@@ -23,15 +21,8 @@ const WorkspaceDetailComponent = ({
 }) => (
   <WorkspaceDetailContent
     workspace={workspace}
-    clients={clients}
     tools={tools as MCPTool[]}
-    isClientsLoading={false}
-    isChanging={false}
     toolsLoading={false}
-    gatewayBaseUrl={"https://some.url.com"}
-    onChangeInstall={async (client: ConfiguratorTarget, install: boolean) => {
-      await console.log(client, install);
-    }}
     onClickServer={() => console.log("library click")}
     onClickAddServer={() => console.log("server click")}
   />

@@ -12,18 +12,16 @@ export interface WorkspaceSectionClientsProps {
   workspace: WorkspaceDetail;
   gatewayBaseUrl: string;
   clients: Client[];
-  isClientsLoading: boolean;
   onChangeInstall: (client: ConfiguratorTarget, install: boolean) => void;
-  isChanging: boolean;
+  isLoading: boolean;
 }
 
 export function WorkspaceSectionClients({
   workspace,
   gatewayBaseUrl,
   clients,
-  isClientsLoading,
   onChangeInstall,
-  isChanging,
+  isLoading,
 }: WorkspaceSectionClientsProps) {
   const [_, copy] = useCopyToClipboard();
 
@@ -50,9 +48,8 @@ export function WorkspaceSectionClients({
       </SectionHeader>
       <ProxyInstallers
         clients={clients}
-        isLoading={isClientsLoading}
+        isLoading={isLoading}
         onChangeInstall={onChangeInstall}
-        isChanging={isChanging}
       />
     </Section>
   );
@@ -62,14 +59,12 @@ interface ProxyInstallersProps {
   clients: Client[];
   isLoading: boolean;
   onChangeInstall: (client: ConfiguratorTarget, install: boolean) => void;
-  isChanging: boolean;
 }
 
 function ProxyInstallers({
   clients,
   isLoading,
   onChangeInstall,
-  isChanging,
 }: ProxyInstallersProps) {
   return (
     <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-3">
@@ -101,7 +96,7 @@ function ProxyInstallers({
               onCheckedChange={(checked) => {
                 onChangeInstall(it.id as ConfiguratorTarget, checked);
               }}
-              disabled={isChanging || isLoading || !it.installed}
+              disabled={isLoading || !it.installed}
             />
           </label>
         );

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { ListOfLinks } from "../list-of-links";
-import { RegistryToolSheet } from "../registry/registry-tool-sheet";
 import type { MCPTool } from "../types";
 import { Badge, BadgeLabel } from "../ui/badge";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
+import { ToolSheet } from "./tool-sheet";
 
 export function ToolsList({ tools, toolsLoading }: WorkspaceSectionToolsProps) {
   const [selectedTool, setSelectedTool] = useState<MCPTool | null>(null);
@@ -38,7 +38,7 @@ export function ToolsList({ tools, toolsLoading }: WorkspaceSectionToolsProps) {
         <ListOfLinks isLoading={toolsLoading} links={toolLinks} />
       </Section>
       {selectedTool && (
-        <RegistryToolSheet
+        <ToolSheet
           tool={selectedTool as MCPTool}
           mcpName={"XXXXXXXXXXX"}
           onClose={() => setSelectedTool(null)}

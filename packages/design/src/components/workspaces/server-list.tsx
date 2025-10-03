@@ -2,6 +2,11 @@ import { CheckCircleIcon, WarningCircleIcon } from "@phosphor-icons/react";
 import type { WorkspaceTarget } from "../types.ts";
 import { Badge, BadgeGroup, BadgeIcon, BadgeLabel } from "../ui/badge.tsx";
 import { Button } from "../ui/button.tsx";
+import {
+  EmptyState,
+  EmptyStateDescription,
+  EmptyStateTitle,
+} from "../ui/empty-state.tsx";
 import * as List from "../ui/list.tsx";
 import { Section, SectionHeader, SectionTitle } from "../ui/section.tsx";
 
@@ -24,15 +29,22 @@ export function WorkspaceServerList({
           Add MCP server
         </Button>
       </SectionHeader>
-      <List.List>
-        {servers.map((server) => (
-          <WorkspaceServerListItem
-            key={`li-${server.name}`}
-            server={server}
-            onClick={onClickServer && (() => onClickServer(server))}
-          />
-        ))}
-      </List.List>
+      {servers.length === 0 ? (
+        <EmptyState>
+          <EmptyStateTitle>No items</EmptyStateTitle>
+          <EmptyStateDescription>This list is empty.</EmptyStateDescription>
+        </EmptyState>
+      ) : (
+        <List.List>
+          {servers.map((server) => (
+            <WorkspaceServerListItem
+              key={`li-${server.name}`}
+              server={server}
+              onClick={onClickServer && (() => onClickServer(server))}
+            />
+          ))}
+        </List.List>
+      )}
     </Section>
   );
 }

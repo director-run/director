@@ -21,7 +21,7 @@ interface ManualInputProps {
   onCopy: (text: string) => void;
 }
 
-function ManualInput({ id, gatewayBaseUrl, onCopy }: ManualInputProps) {
+export function ManualInput({ id, gatewayBaseUrl, onCopy }: ManualInputProps) {
   const [transportType, setTransportType] = useState<TransportType>("http");
 
   const transports: Record<TransportType, string> = {
@@ -31,12 +31,12 @@ function ManualInput({ id, gatewayBaseUrl, onCopy }: ManualInputProps) {
   };
 
   return (
-    <div className="relative flex">
+    <div className="relative flex pt-1">
       <div className="w-fit">
         <SelectNative
           value={transportType}
           onChange={(e) => setTransportType(e.target.value as TransportType)}
-          className="h-10 rounded-r-none border-[0.5px] border-fg/20 bg-accent-subtle font-medium text-[13px] text-muted-foreground shadow-none ring-0 hover:text-foreground focus-visible:border-fg/30 focus-visible:ring-0"
+          className="h-8 rounded-r-none border-[0.5px] border-fg/20 bg-accent-subtle font-medium text-[13px] text-muted-foreground shadow-none ring-0 hover:text-foreground focus-visible:border-fg/30 focus-visible:ring-0"
         >
           <option value="http">HTTP</option>
           <option value="sse">SSE</option>
@@ -45,11 +45,11 @@ function ManualInput({ id, gatewayBaseUrl, onCopy }: ManualInputProps) {
       </div>
       <Input
         autoFocus
-        className="-mx-px h-10 rounded-none border-[0.5px] border-fg/30 pr-0 font-medium font-mono text-[13px] shadow-none focus-visible:border-fg/30 focus-visible:ring-0"
+        className="-mx-px h-8 rounded-none border-[0.5px] border-fg/30 pr-0 font-medium font-mono text-[13px] shadow-none focus-visible:border-fg/30 focus-visible:ring-0"
         readOnly
         value={transports[transportType]}
       />
-      <div className="flex size-10 shrink-0 items-center justify-center rounded-r-md border-[0.5px] border-fg/20 bg-accent-subtle">
+      <div className="flex size-8 shrink-0 items-center justify-center rounded-r-md border-[0.5px] border-fg/20 bg-accent-subtle">
         <Button
           size="icon"
           variant="ghost"

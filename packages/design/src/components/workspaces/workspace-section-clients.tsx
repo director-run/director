@@ -1,12 +1,14 @@
 import { cn } from "../../helpers/cn";
 import { useCopyToClipboard } from "../../hooks/use-copy-to-clipboard";
-import { ProxyManualDialog } from "../proxies/proxy-manual-dialog";
 import { type Client, type ConfiguratorTarget } from "../types";
 import type { WorkspaceDetail } from "../types";
-import { Button } from "../ui/button";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
 import { Switch } from "../ui/switch";
 import { toast } from "../ui/toast";
+import {
+  ManualInput,
+  ProxyManualDialog,
+} from "./workspace-manual-connection-dialog";
 
 export interface WorkspaceSectionClientsProps {
   workspace: WorkspaceDetail;
@@ -42,11 +44,10 @@ export function WorkspaceSectionClients({
           proxyId={workspace.id}
           gatewayBaseUrl={gatewayBaseUrl}
           onCopy={handleCopy}
-        >
-          <Button size="sm">Connect manually</Button>
-        </ProxyManualDialog>
+        ></ProxyManualDialog>
       </SectionHeader>
-      <div className="grid grid-cols-1 gap-2">
+      <div className="p-4 overflow-hidden rounded-xl bg-accent-subtle shadow-[0_0_0_0.5px_rgba(55,50,46,0.15)]">
+        <LittleLabel>Connect Automatically</LittleLabel>
         {clients.map((client) => (
           <InstallerRow
             key={client.id}
@@ -55,8 +56,23 @@ export function WorkspaceSectionClients({
             isLoading={isLoading}
           />
         ))}
+        <LittleLabel>Connect Manually</LittleLabel>
+
+        <ManualInput
+          id={workspace.id}
+          gatewayBaseUrl={gatewayBaseUrl}
+          onCopy={handleCopy}
+        />
       </div>
     </Section>
+  );
+}
+
+function LittleLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <label className="font-medium font-mono text-[11px] uppercase leading-none tracking-widest peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+      {children}
+    </label>
   );
 }
 
@@ -73,17 +89,17 @@ function InstallerRow({
     <label
       htmlFor={client.id}
       className={cn(
-        "flex cursor-pointer flex-row items-center justify-between rounded-lg bg-accent-subtle p-1 pr-2.5 transition-colors duration-200 ease-in-out hover:bg-accent",
+        "flex cursor-pointer flex-row items-center justify-between rounded-lg bg-accent-subtle pt-2 pb-2 transition-colors duration-200 ease-in-out hover:bg-accent",
         !client.installed &&
           "opacity-50 hover:cursor-not-allowed hover:bg-accent-subtle",
       )}
     >
-      <div className="flex grow flex-row items-center gap-x-1">
+      <div className="flex grow flex-row items-center gap-x-1.5">
         <img
           src={client.image}
           alt={`${client.label} icon`}
-          height={32}
-          width={32}
+          height={26}
+          width={26}
         />
 
         <span className="font-medium text-[15px]">{client.label}</span>

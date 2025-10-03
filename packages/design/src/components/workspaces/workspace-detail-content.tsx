@@ -20,6 +20,7 @@ export const WorkspaceDetailContent = ({
   onClickAddServer,
   onCreatePrompt,
   onEditPrompt,
+  onClickAuthorize,
   isSavingPrompt,
 }: WorkspaceDetailContentProps) => {
   return (
@@ -49,6 +50,7 @@ export const WorkspaceDetailContent = ({
             servers={workspace.servers}
             onClickServer={onClickServer}
             onClickAddServer={onClickAddServer}
+            onClickAuthorize={onClickAuthorize}
           />
         </TabsContent>
 
@@ -67,6 +69,7 @@ export const WorkspaceDetailContent = ({
             workspace={workspace}
             onCreatePrompt={onCreatePrompt}
             onEditPrompt={onEditPrompt}
+            onClickAuthorize={onClickAuthorize}
             isSavingPrompt={isSavingPrompt}
           />
         </TabsContent>
@@ -80,7 +83,8 @@ interface WorkspaceDetailContentProps {
   tools: MCPTool[];
   toolsLoading: boolean;
   onClickServer: (server: WorkspaceTarget) => void;
-  onClickAddServer: () => void;
+  onClickAddServer?: () => void;
+  onClickAuthorize?: (server: WorkspaceTarget) => void;
   onCreatePrompt?: (values: {
     title: string;
     description?: string;
@@ -110,6 +114,7 @@ function WorkspacePrompts({
     values: { title?: string; description?: string; body?: string },
   ) => Promise<void> | void;
   isSavingPrompt?: boolean;
+  onClickAuthorize?: (server: WorkspaceTarget) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<

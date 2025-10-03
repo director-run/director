@@ -14,10 +14,12 @@ export function WorkspaceServerList({
   servers,
   onClickServer,
   onClickAddServer,
+  onClickAuthorize,
 }: {
   servers: WorkspaceTarget[];
   onClickServer?: (server: WorkspaceTarget) => void;
   onClickAddServer?: () => void;
+  onClickAuthorize?: (server: WorkspaceTarget) => void;
 }) {
   return (
     <Section>
@@ -25,9 +27,11 @@ export function WorkspaceServerList({
         <SectionTitle variant="h2" asChild>
           <h2>Servers</h2>
         </SectionTitle>
-        <Button size="sm" onClick={onClickAddServer}>
-          Add MCP server
-        </Button>
+        {onClickAddServer && (
+          <Button size="sm" onClick={onClickAddServer}>
+            Add MCP server
+          </Button>
+        )}
       </SectionHeader>
       {servers.length === 0 ? (
         <EmptyState>
@@ -41,6 +45,7 @@ export function WorkspaceServerList({
               key={`li-${server.name}`}
               server={server}
               onClick={onClickServer && (() => onClickServer(server))}
+              onClickAuthorize={onClickAuthorize}
             />
           ))}
         </List.List>
@@ -52,7 +57,12 @@ export function WorkspaceServerList({
 function WorkspaceServerListItem({
   server,
   onClick,
-}: { server: WorkspaceTarget; onClick?: () => void }) {
+  onClickAuthorize,
+}: {
+  server: WorkspaceTarget;
+  onClick?: () => void;
+  onClickAuthorize?: (server: WorkspaceTarget) => void;
+}) {
   return (
     <List.ListItem
       onClick={onClick}
@@ -67,7 +77,10 @@ function WorkspaceServerListItem({
         <WorkspaceServerListItemDescription server={server} />
       </List.ListItemDetails>
       <BadgeGroup>
-        <WorkspaceServerListItemStatus server={server} />
+        <WorkspaceServerListItemStatus
+          server={server}
+          onClickAuthorize={onClickAuthorize}
+        />
       </BadgeGroup>
     </List.ListItem>
   );
@@ -91,7 +104,11 @@ function WorkspaceServerListItemDescription({
 
 function WorkspaceServerListItemStatus({
   server,
-}: { server: WorkspaceTarget }) {
+  onClickAuthorize,
+}: {
+  server: WorkspaceTarget;
+  onClickAuthorize?: (server: WorkspaceTarget) => void;
+}) {
   switch (server.connectionInfo?.status) {
     case "connected":
       return (
@@ -106,7 +123,19 @@ function WorkspaceServerListItemStatus({
       );
     case "unauthorized":
       return (
-        <Badge variant="destructive">
+        <Badge
+          variant="destructive"
+          className={
+            onClickAuthorize
+              ? "cursor-pointer outline-none transition-colors hover:bg-destructive/50 focus-visible:bg-destructive/90"
+              : undefined
+          }
+          onClick={(event) => {
+            event.stopPropagation();
+            onClickAuthorize?.(server);
+          }}
+          title="Click to authorize"
+        >
           <BadgeIcon>
             <WarningCircleIcon />
           </BadgeIcon>

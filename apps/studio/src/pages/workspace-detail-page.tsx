@@ -129,6 +129,9 @@ export const WorkspaceDetailPage = () => {
                 onCreatePrompt={createPrompt}
                 onEditPrompt={editPrompt}
                 isSavingPrompt={isCreatingPrompt || isEditingPrompt}
+                onClickAuthorize={(server) => {
+                  console.log("Authorize server clicked", server);
+                }}
               />
             </SplitViewMain>
             <SplitViewSide>

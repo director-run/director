@@ -20,12 +20,15 @@ import { GATEWAY_URL } from "../config.ts";
 import { gatewayClient } from "../contexts/backend-context.tsx";
 import { useChangeInstallState } from "../hooks/use-change-install-state.ts";
 import { useClients } from "../hooks/use-clients.ts";
+import { useCreatePrompt } from "../hooks/use-create-prompt.ts";
+import { useEditPrompt } from "../hooks/use-edit-prompt.ts";
 import { useInspectMcp } from "../hooks/use-inspect-mcp.ts";
 import { useWorkspace } from "../hooks/use-workspace.ts";
 
 export const WorkspaceDetailPage = () => {
   const { workspaceId } = useParams();
   const navigate = useNavigate();
+  const utils = gatewayClient.useUtils();
 
   if (!workspaceId) {
     throw new Error("Workspace ID is required");
@@ -54,6 +57,32 @@ export const WorkspaceDetailPage = () => {
       });
     },
   });
+
+  const { createPrompt, isPending: isCreatingPrompt } = useCreatePrompt(
+    workspaceId,
+    {
+      onSuccess: async () => {
+        await utils.store.get.invalidate({
+          proxyId: workspaceId,
+        });
+        toast({ title: "Prompt saved", description: "Your prompt was saved." });
+      },
+    },
+  );
+  const { editPrompt, isPending: isEditingPrompt } = useEditPrompt(
+    workspaceId,
+    {
+      onSuccess: async () => {
+        await utils.store.get.invalidate({
+          proxyId: workspaceId,
+        });
+        toast({
+          title: "Prompt updated",
+          description: "Your prompt was updated.",
+        });
+      },
+    },
+  );
 
   if (isWorkspaceLoading) {
     return <ProxySkeleton />;
@@ -97,6 +126,9 @@ export const WorkspaceDetailPage = () => {
                   navigate(`/${workspaceId}/${server.name}`)
                 }
                 onClickAddServer={() => navigate("/library")}
+                onCreatePrompt={createPrompt}
+                onEditPrompt={editPrompt}
+                isSavingPrompt={isCreatingPrompt || isEditingPrompt}
               />
             </SplitViewMain>
             <SplitViewSide>

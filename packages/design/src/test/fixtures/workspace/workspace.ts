@@ -4,7 +4,18 @@ export const mockWorkspace: () => WorkspaceDetail = () => ({
   id: "test",
   name: "test",
   description: "A proxy for getting started",
-  prompts: [],
+  prompts: [
+    {
+      name: "Test prompt",
+      title: "Test prompt",
+      body: "Greet the user with a friendly hello message",
+    },
+    {
+      name: "Identify",
+      title: "identify",
+      body: "Identif yourelf to the user as batman",
+    },
+  ],
   servers: [
     {
       type: "stdio",

@@ -42,10 +42,7 @@ export const WorkspaceDetailContent = ({
             <NotebookIcon /> Prompts
           </TabsTrigger>
         </TabsList>
-        <TabsContent
-          value="servers"
-          className="rounded-xl border-[0.5px] bg-accent-subtle/20 p-6"
-        >
+        <TabsContent value="servers">
           <WorkspaceServerList
             servers={workspace.servers}
             onClickServer={onClickServer}
@@ -54,17 +51,11 @@ export const WorkspaceDetailContent = ({
           />
         </TabsContent>
 
-        <TabsContent
-          value="tools"
-          className="rounded-xl border-[0.5px] bg-accent-subtle/20 p-6"
-        >
+        <TabsContent value="tools">
           <ToolsList tools={tools as MCPTool[]} toolsLoading={toolsLoading} />
         </TabsContent>
 
-        <TabsContent
-          value="prompts"
-          className="rounded-xl border-[0.5px] bg-accent-subtle/20 p-6"
-        >
+        <TabsContent value="prompts">
           <WorkspacePrompts
             workspace={workspace}
             onCreatePrompt={onCreatePrompt}

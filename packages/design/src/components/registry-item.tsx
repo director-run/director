@@ -76,17 +76,11 @@ export function RegistryItem({ entry }: RegistryItemProps) {
           <RegistryEntryReadme readme={entry.readme} />
         </TabsContent>
 
-        <TabsContent
-          value="tools"
-          className="rounded-xl border-[0.5px] bg-accent-subtle/20 p-6"
-        >
+        <TabsContent value="tools">
           <ToolsList tools={entry.tools as MCPTool[]} toolsLoading={false} />
         </TabsContent>
 
-        <TabsContent
-          value="transport"
-          className="flex flex-col gap-y-10 rounded-xl border-[0.5px] bg-accent-subtle/20 p-6"
-        >
+        <TabsContent value="transport" className="flex flex-col gap-y-10">
           <Section>
             <SectionHeader>
               <SectionTitle variant="h2" asChild>

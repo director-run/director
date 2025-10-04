@@ -1,4 +1,4 @@
-import { RegistryToolSheet } from "@director.run/design/components/registry/registry-tool-sheet.tsx";
+import { ToolSheet } from "@director.run/design/components/tools/tool-sheet.tsx";
 import type { MCPTool } from "@director.run/design/components/types.ts";
 import { Button } from "@director.run/design/components/ui/button.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
@@ -56,12 +56,12 @@ const mockToolWithComplexSchema: MCPTool = {
 };
 
 const meta = {
-  title: "components/sheets/registry-tool-sheet",
-  component: RegistryToolSheet,
+  title: "components/tools/tool-sheet",
+  component: ToolSheet,
   parameters: {
     layout: "fullscreen",
   },
-} satisfies Meta<typeof RegistryToolSheet>;
+} satisfies Meta<typeof ToolSheet>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -88,7 +88,7 @@ export const Default: Story = {
           </Button>
         </div>
         {open && (
-          <RegistryToolSheet
+          <ToolSheet
             tool={mockToolWithComplexSchema}
             mcpName="GitHub"
             onClose={handleClose}
@@ -121,7 +121,7 @@ export const WithoutInputSchema: Story = {
           </Button>
         </div>
         {open && (
-          <RegistryToolSheet
+          <ToolSheet
             tool={mockToolWithoutSchema}
             mcpName="GitHub"
             onClose={handleClose}

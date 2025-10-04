@@ -10,7 +10,7 @@ interface RegistryDetailSidebarProps {
     proxyId?: string;
     entryId: string;
     parameters?: Record<string, string>;
-  }) => Promise<void>;
+  }) => Promise<void> | void;
   onClickCancel?: () => void;
   isInstalling?: boolean;
 }

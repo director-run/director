@@ -7,12 +7,12 @@ import {
 } from "@phosphor-icons/react";
 import { McpLogo } from "./mcp-logo";
 import { RegistryEntryPropertyList } from "./registry/registry-entry-property-list";
+import { RegistryEntryReadme } from "./registry/registry-entry-readme";
 import { RegistryParameters } from "./registry/registry-parameters";
-import { RegistryTools } from "./registry/registry-tools";
+import { ToolsList } from "./tools/tool-list";
 import type { RegistryEntryDetail } from "./types";
+import type { MCPTool } from "./types";
 import { Badge, BadgeGroup, BadgeIcon, BadgeLabel } from "./ui/badge";
-import { EmptyState, EmptyStateTitle } from "./ui/empty-state";
-import { Markdown } from "./ui/markdown";
 import {
   Section,
   SectionDescription,
@@ -23,12 +23,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
 interface RegistryItemProps {
   entry: RegistryEntryDetail;
-  onToolClick?: (
-    tool: NonNullable<RegistryEntryDetail["tools"]>[number],
-  ) => void;
 }
 
-export function RegistryItem({ entry, onToolClick }: RegistryItemProps) {
+export function RegistryItem({ entry }: RegistryItemProps) {
   return (
     <Section className="gap-y-8">
       <McpLogo src={entry.icon} className="size-9" />
@@ -76,45 +73,14 @@ export function RegistryItem({ entry, onToolClick }: RegistryItemProps) {
         </TabsList>
 
         <TabsContent value="readme">
-          {entry.readme ? (
-            <Markdown className="!max-w-none rounded-xl border-[0.5px] bg-accent-subtle/20 p-6">
-              {entry.readme}
-            </Markdown>
-          ) : (
-            <EmptyState>
-              <EmptyStateTitle>No readme found</EmptyStateTitle>
-            </EmptyState>
-          )}
+          <RegistryEntryReadme readme={entry.readme} />
         </TabsContent>
 
-        <TabsContent
-          value="tools"
-          className="rounded-xl border-[0.5px] bg-accent-subtle/20 p-6"
-        >
-          <Section>
-            <SectionHeader>
-              <SectionTitle variant="h2" asChild>
-                <h3>Tools</h3>
-              </SectionTitle>
-            </SectionHeader>
-            <RegistryTools
-              links={(entry.tools ?? [])
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map((tool) => ({
-                  title: tool.name,
-                  subtitle: tool.description?.replace(/\[([^\]]+)\]/g, ""),
-                  scroll: false,
-                  href: "#",
-                  onClick: () => onToolClick?.(tool),
-                }))}
-            />
-          </Section>
+        <TabsContent value="tools">
+          <ToolsList tools={entry.tools as MCPTool[]} toolsLoading={false} />
         </TabsContent>
 
-        <TabsContent
-          value="transport"
-          className="flex flex-col gap-y-10 rounded-xl border-[0.5px] bg-accent-subtle/20 p-6"
-        >
+        <TabsContent value="transport" className="flex flex-col gap-y-10">
           <Section>
             <SectionHeader>
               <SectionTitle variant="h2" asChild>

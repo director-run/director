@@ -21,6 +21,8 @@
     "typecheck": "turbo run typecheck",
     "clean": "turbo run clean && rm -rf .turbo node_modules",
     "cli": "NODE_ENV=development bun run ./apps/cli/bin/cli.ts",
+    "studio": "turbo run dev --filter=@director.run/studio",
+    "storybook": "turbo run dev --filter=@director.run/storybook",
     "cli:dev": "NODE_ENV=development bun --watch ./apps/cli/bin/cli.ts",
     "registry": "NODE_ENV=development bun run ./apps/registry/bin/api.ts",
     "registry:dev": "NODE_ENV=development bun  --watch ./apps/registry/bin/api.ts",

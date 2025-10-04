@@ -29,17 +29,8 @@ import {
   SheetHeader,
   SheetTitle,
 } from "../ui/sheet";
-interface RegistryToolSheetProps {
-  tool: MCPTool;
-  mcpName: string;
-  onClose: () => void;
-}
 
-export function RegistryToolSheet({
-  tool,
-  mcpName,
-  onClose,
-}: RegistryToolSheetProps) {
+export function ToolSheet({ tool, mcpName, onClose }: ToolSheetProps) {
   return (
     <Sheet open={!!tool} onOpenChange={onClose}>
       <SheetContent>
@@ -89,4 +80,10 @@ export function RegistryToolSheet({
       </SheetContent>
     </Sheet>
   );
+}
+
+interface ToolSheetProps {
+  tool: MCPTool;
+  mcpName: string;
+  onClose: () => void;
 }

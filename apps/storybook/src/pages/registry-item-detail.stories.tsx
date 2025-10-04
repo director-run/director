@@ -1,6 +1,5 @@
 import { RegistryDetailSidebar } from "@director.run/design/components/registry-detail-sidebar.tsx";
 import { RegistryItem } from "@director.run/design/components/registry-item.tsx";
-import { RegistryToolSheet } from "@director.run/design/components/registry/registry-tool-sheet.tsx";
 import {
   SplitView,
   SplitViewMain,
@@ -10,7 +9,6 @@ import type { WorkspaceList } from "@director.run/design/components/types.ts";
 import { Container } from "@director.run/design/components/ui/container.tsx";
 import { mockRegistryEntry } from "@director.run/design/test/fixtures/registry/entry.ts";
 import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
 import { withLayoutView } from "../helpers/decorators";
 
 const mockProxies: WorkspaceList = [
@@ -43,7 +41,6 @@ const RegistryItemDetailComponent = ({
   proxies,
   onClickInstall,
   isInstalling,
-  onToolClick,
   onProxyServerClick: _onProxyServerClick,
 }: {
   entry: typeof mockRegistryEntry;
@@ -62,7 +59,7 @@ const RegistryItemDetailComponent = ({
   <Container size="xl">
     <SplitView>
       <SplitViewMain>
-        <RegistryItem entry={entry} onToolClick={onToolClick} />
+        <RegistryItem entry={entry} />
       </SplitViewMain>
       <SplitViewSide>
         <RegistryDetailSidebar
@@ -113,64 +110,5 @@ export const Default: Story = {
       await new Promise((resolve) => setTimeout(resolve, 2000));
     },
     isInstalling: false,
-  },
-};
-
-export const WithToolSelected: Story = {
-  args: {
-    ...Default.args,
-  },
-  render: (args) => {
-    const [selectedToolName, setSelectedToolName] = useState<string | null>(
-      mockRegistryEntry.tools?.[0]?.name ?? null,
-    );
-    const selectedTool = mockRegistryEntry.tools?.find(
-      (t) => t.name === selectedToolName,
-    );
-
-    return (
-      <>
-        <Container size="xl">
-          <SplitView>
-            <SplitViewMain>
-              <RegistryItem
-                entry={mockRegistryEntry}
-                onToolClick={(tool) => setSelectedToolName(tool.name)}
-              />
-            </SplitViewMain>
-            <SplitViewSide>
-              <RegistryDetailSidebar
-                entry={mockRegistryEntry}
-                proxies={mockProxies.map((p) =>
-                  p.id === "dev-proxy"
-                    ? {
-                        ...p,
-                        servers: [
-                          {
-                            name: mockRegistryEntry.name,
-                            type: "stdio",
-                            command: "npx",
-                            args: ["-y", "@upstash/context7-mcp"],
-                            env: {},
-                          },
-                        ],
-                      }
-                    : { ...p, servers: [] },
-                )}
-                onClickInstall={args.onClickInstall || (async () => {})}
-                isInstalling={args.isInstalling || false}
-              />
-            </SplitViewSide>
-          </SplitView>
-        </Container>
-        {selectedTool && (
-          <RegistryToolSheet
-            tool={selectedTool}
-            mcpName={mockRegistryEntry.title}
-            onClose={() => setSelectedToolName(null)}
-          />
-        )}
-      </>
-    );
   },
 };

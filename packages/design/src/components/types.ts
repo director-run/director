@@ -18,8 +18,6 @@ export interface Client {
   id: string;
   label: string;
   image: string;
-  type: "installer" | "deep-link";
-  // For installer-type clients only
   installed?: boolean; // whether the client app is available on the system
   present?: boolean; // whether the proxy is currently installed in that client
 }

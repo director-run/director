@@ -7,13 +7,11 @@ import { RegistryDetailSidebar } from "@director.run/design/components/registry-
 import { RegistryItem } from "@director.run/design/components/registry-item.tsx";
 import { RegistryEntrySkeleton } from "@director.run/design/components/registry/registry-entry-skeleton.tsx";
 import { RegistryInstallForm } from "@director.run/design/components/registry/registry-install-form.tsx";
-import { RegistryToolSheet } from "@director.run/design/components/registry/registry-tool-sheet.tsx";
 import {
   SplitView,
   SplitViewMain,
   SplitViewSide,
 } from "@director.run/design/components/split-view.tsx";
-import type { MCPTool } from "@director.run/design/components/types.js";
 import { Button } from "@director.run/design/components/ui/button.tsx";
 import { Container } from "@director.run/design/components/ui/container.tsx";
 import {
@@ -32,7 +30,6 @@ export function RegistryDetailPage() {
   const navigate = useNavigate();
 
   const { entryName } = useParams<{ entryName: string }>();
-  const [selectedTool, setSelectedTool] = useState<MCPTool | null>(null);
   const [installFormOpen, setInstallFormOpen] = useState(false);
 
   const entryQuery = useRegistryEntry({ entryName });
@@ -127,10 +124,7 @@ export function RegistryDetailPage() {
         <Container size="xl">
           <SplitView>
             <SplitViewMain>
-              <RegistryItem
-                entry={registryEntry}
-                onToolClick={(tool) => setSelectedTool(tool)}
-              />
+              <RegistryItem entry={registryEntry} />
             </SplitViewMain>
             <SplitViewSide>
               <RegistryDetailSidebar
@@ -142,14 +136,6 @@ export function RegistryDetailPage() {
             </SplitViewSide>
           </SplitView>
         </Container>
-
-        {selectedTool && (
-          <RegistryToolSheet
-            tool={selectedTool}
-            mcpName={registryEntry.title}
-            onClose={() => setSelectedTool(null)}
-          />
-        )}
       </LayoutViewContent>
     </LayoutView>
   );

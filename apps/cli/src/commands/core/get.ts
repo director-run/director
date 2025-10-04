@@ -68,7 +68,7 @@ export function printTargetDetails(
   } = target;
 
   console.log();
-  console.log(whiteBold(`PROXIES > ${proxyId} > ${blue(name)}`));
+  console.log(whiteBold(`WORKSPACES > ${proxyId} > ${blue(name)}`));
   console.log();
 
   let transport = {};
@@ -81,7 +81,7 @@ export function printTargetDetails(
   console.log(
     attributeTable({
       name,
-      status: targetStatus(status),
+      status: targetStatus(connectionInfo?.status ?? "--"),
       type: type,
       transport: JSON.stringify(transport, null, 2),
       lastConnectedAt: connectionInfo?.lastConnectedAt?.toISOString() ?? "--",

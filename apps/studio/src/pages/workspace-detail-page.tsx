@@ -5,32 +5,31 @@ import { ProxyActionsDropdown } from "@director.run/design/components/proxies/pr
 import { ProxyDeleteConfirmation } from "@director.run/design/components/proxies/proxy-delete-confirmation.tsx";
 import { ProxySettingsSheet } from "@director.run/design/components/proxies/proxy-settings-sheet.tsx";
 import { ProxySkeleton } from "@director.run/design/components/proxies/proxy-skeleton.tsx";
-import { WorkspaceSectionClients } from "@director.run/design/components/proxies/workspace-section-clients.tsx";
-import { WorkspaceSectionHeader } from "@director.run/design/components/proxies/workspace-section-header.tsx";
-import { WorkspaceSectionServers } from "@director.run/design/components/proxies/workspace-section-servers.tsx";
-import { WorkspaceSectionTools } from "@director.run/design/components/proxies/workspace-section-tools.tsx";
-import { RegistryToolSheet } from "@director.run/design/components/registry/registry-tool-sheet.js";
-import { ConfiguratorTarget } from "@director.run/design/components/types.ts";
-import type {
-  MCPTool,
-  WorkspaceDetail,
-} from "@director.run/design/components/types.ts";
+import { SplitViewMain } from "@director.run/design/components/split-view.tsx";
+import { SplitViewSide } from "@director.run/design/components/split-view.tsx";
+import { SplitView } from "@director.run/design/components/split-view.tsx";
+import type { WorkspaceDetail } from "@director.run/design/components/types.ts";
+import type { MCPTool } from "@director.run/design/components/types.ts";
 import { Container } from "@director.run/design/components/ui/container.tsx";
-import { SectionSeparator } from "@director.run/design/components/ui/section.tsx";
 import { toast } from "@director.run/design/components/ui/toast.js";
-import type { Tool } from "@modelcontextprotocol/sdk/types.js";
+import { WorkspaceDetailContent } from "@director.run/design/components/workspaces/workspace-detail-content.tsx";
+import { WorkspaceSectionClients } from "@director.run/design/components/workspaces/workspace-section-clients.tsx";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { GATEWAY_URL } from "../config.ts";
 import { gatewayClient } from "../contexts/backend-context.tsx";
+import { useAuthenticate } from "../hooks/use-authenticate.ts";
 import { useChangeInstallState } from "../hooks/use-change-install-state.ts";
 import { useClients } from "../hooks/use-clients.ts";
+import { useCreatePrompt } from "../hooks/use-create-prompt.ts";
+import { useEditPrompt } from "../hooks/use-edit-prompt.ts";
 import { useInspectMcp } from "../hooks/use-inspect-mcp.ts";
 import { useWorkspace } from "../hooks/use-workspace.ts";
 
 export const WorkspaceDetailPage = () => {
   const { workspaceId } = useParams();
   const navigate = useNavigate();
+  const utils = gatewayClient.useUtils();
 
   if (!workspaceId) {
     throw new Error("Workspace ID is required");
@@ -38,7 +37,7 @@ export const WorkspaceDetailPage = () => {
 
   const { workspace, isWorkspaceLoading, workspaceError } =
     useWorkspace(workspaceId);
-
+  const { tools, isLoading: toolsLoading } = useInspectMcp(workspaceId);
   const { data: clients, isLoading: isClientsLoading } =
     useClients(workspaceId);
   const { changeInstallState, isPending } = useChangeInstallState(workspaceId, {
@@ -59,6 +58,34 @@ export const WorkspaceDetailPage = () => {
       });
     },
   });
+
+  const { createPrompt, isPending: isCreatingPrompt } = useCreatePrompt(
+    workspaceId,
+    {
+      onSuccess: async () => {
+        await utils.store.get.invalidate({
+          proxyId: workspaceId,
+        });
+        toast({ title: "Prompt saved", description: "Your prompt was saved." });
+      },
+    },
+  );
+  const { editPrompt, isPending: isEditingPrompt } = useEditPrompt(
+    workspaceId,
+    {
+      onSuccess: async () => {
+        await utils.store.get.invalidate({
+          proxyId: workspaceId,
+        });
+        toast({
+          title: "Prompt updated",
+          description: "Your prompt was updated.",
+        });
+      },
+    },
+  );
+
+  const { authenticate } = useAuthenticate();
 
   if (isWorkspaceLoading) {
     return <ProxySkeleton />;
@@ -91,60 +118,53 @@ export const WorkspaceDetailPage = () => {
       </LayoutBreadcrumbHeader>
 
       <LayoutViewContent>
-        <Container size="lg">
-          <WorkspaceSectionHeader workspace={workspace} />
-          <SectionSeparator />
-          <WorkspaceSectionClients
-            workspace={workspace}
-            gatewayBaseUrl={GATEWAY_URL}
-            clients={clients ?? []}
-            isClientsLoading={isClientsLoading}
-            onChangeInstall={async (
-              client: ConfiguratorTarget,
-              install: boolean,
-            ) => {
-              await changeInstallState(client, install);
-            }}
-            isChanging={isPending}
-          />
-          <SectionSeparator />
-          <WorkspaceSectionServers
-            workspace={workspace}
-            onLibraryClick={() => navigate("/library")}
-            onServerClick={(serverId) =>
-              navigate(`/${workspaceId}/${serverId}`)
-            }
-          />
-          <SectionSeparator />
-          <WorkspaceTools workspace={workspace} />
+        <Container size="xl">
+          <SplitView>
+            <SplitViewMain>
+              <WorkspaceDetailContent
+                workspace={workspace}
+                tools={tools as MCPTool[]}
+                toolsLoading={toolsLoading}
+                onClickServer={(server) =>
+                  navigate(`/${workspaceId}/${server.name}`)
+                }
+                onClickAddServer={() => navigate("/library")}
+                onCreatePrompt={createPrompt}
+                onEditPrompt={editPrompt}
+                isSavingPrompt={isCreatingPrompt || isEditingPrompt}
+                onClickAuthorize={async (server) => {
+                  try {
+                    await authenticate({
+                      proxyId: workspaceId,
+                      serverName: server.name,
+                    });
+                  } catch (error) {
+                    toast({
+                      title: "Authentication failed",
+                      description:
+                        error instanceof Error
+                          ? error.message
+                          : "Unknown error",
+                    });
+                  }
+                }}
+              />
+            </SplitViewMain>
+            <SplitViewSide>
+              <WorkspaceSectionClients
+                workspace={workspace}
+                gatewayBaseUrl={GATEWAY_URL}
+                clients={clients ?? []}
+                onChangeInstall={changeInstallState}
+                isLoading={isPending || isClientsLoading}
+              />
+            </SplitViewSide>
+          </SplitView>
         </Container>
       </LayoutViewContent>
     </>
   );
 };
-
-function WorkspaceTools({ workspace }: { workspace: WorkspaceDetail }) {
-  const [selectedTool, setSelectedTool] = useState<Tool | null>(null);
-  const { tools, isLoading: toolsLoading } = useInspectMcp(workspace.id);
-
-  return (
-    <>
-      <WorkspaceSectionTools
-        tools={tools}
-        toolsLoading={toolsLoading}
-        onToolClick={(tool) => setSelectedTool(tool)}
-      />
-
-      {selectedTool && (
-        <RegistryToolSheet
-          tool={selectedTool as MCPTool}
-          mcpName={workspace.name}
-          onClose={() => setSelectedTool(null)}
-        />
-      )}
-    </>
-  );
-}
 
 function WorkspaceEditMenu({ workspace }: { workspace: WorkspaceDetail }) {
   const navigate = useNavigate();

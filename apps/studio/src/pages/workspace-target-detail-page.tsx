@@ -1,21 +1,12 @@
 import { LayoutBreadcrumbHeader } from "@director.run/design/components/layout/layout-breadcrumb-header.tsx";
 import { LayoutViewContent } from "@director.run/design/components/layout/layout.tsx";
 import { LayoutView } from "@director.run/design/components/layout/layout.tsx";
-import { McpLogo } from "@director.run/design/components/mcp-logo.tsx";
-import { WorkspaceTargetPropertyList } from "@director.run/design/components/mcp-servers/workspace-target-property-list.tsx";
 import { FullScreenError } from "@director.run/design/components/pages/global/error.tsx";
 import { ProxySkeleton } from "@director.run/design/components/proxies/proxy-skeleton.tsx";
-import { WorkspaceSectionTools } from "@director.run/design/components/proxies/workspace-section-tools.tsx";
 import { WorkspaceTargetDetailDropDownMenu } from "@director.run/design/components/proxies/workspace-target-detail-dropdown-menu.tsx";
-import { Container } from "@director.run/design/components/ui/container.tsx";
-import { EmptyState } from "@director.run/design/components/ui/empty-state.tsx";
-import { EmptyStateTitle } from "@director.run/design/components/ui/empty-state.tsx";
-import { Markdown } from "@director.run/design/components/ui/markdown.tsx";
-import { Section } from "@director.run/design/components/ui/section.tsx";
-import { SectionHeader } from "@director.run/design/components/ui/section.tsx";
-import { SectionTitle } from "@director.run/design/components/ui/section.tsx";
-import { SectionDescription } from "@director.run/design/components/ui/section.tsx";
+import type { MCPTool } from "@director.run/design/components/types.js";
 import { toast } from "@director.run/design/components/ui/toast.tsx";
+import { WorkspaceTargetDetailContent } from "@director.run/design/components/workspaces/workspace-target-detail-content.tsx";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -75,7 +66,7 @@ export function WorkspaceTargetDetailPage() {
     return <ProxySkeleton />;
   }
 
-  if (workspaceTargetError || !workspaceTarget) {
+  if (workspaceTargetError || !workspaceTarget || !workspace) {
     return (
       <FullScreenError
         icon="dead-smiley"
@@ -107,60 +98,15 @@ export function WorkspaceTargetDetailPage() {
       </LayoutBreadcrumbHeader>
 
       <LayoutViewContent>
-        <Container size="lg">
-          <Section>
-            <McpLogo src={registryEntry?.icon} className="size-9" />
-            <SectionHeader>
-              <SectionTitle>{workspaceTarget.name}</SectionTitle>
-              <SectionDescription>
-                Installed on{" "}
-                <button
-                  onClick={() => navigate(`/${workspaceId}`)}
-                  className="cursor-pointer text-fg underline"
-                >
-                  {workspace?.name}
-                </button>
-              </SectionDescription>
-            </SectionHeader>
-
-            {registryEntry?.description ? (
-              <Markdown>{registryEntry?.description}</Markdown>
-            ) : null}
-          </Section>
-
-          <Section>
-            <SectionHeader>
-              <SectionTitle variant="h2" asChild>
-                <h3>Transport</h3>
-              </SectionTitle>
-            </SectionHeader>
-
-            <WorkspaceTargetPropertyList target={workspaceTarget} />
-          </Section>
-
-          <WorkspaceSectionTools
-            tools={tools}
-            toolsLoading={toolsLoading}
-            onToolClick={(tool) => console.log(tool)}
-          />
-
-          <Section>
-            <SectionHeader>
-              <SectionTitle variant="h2" asChild>
-                <h3>Readme</h3>
-              </SectionTitle>
-            </SectionHeader>
-            {registryEntry?.readme ? (
-              <div className="rounded-md border-[0.5px] bg-accent-subtle/20 px-4 py-8">
-                <Markdown className="mx-auto">{registryEntry?.readme}</Markdown>
-              </div>
-            ) : (
-              <EmptyState>
-                <EmptyStateTitle>No readme found</EmptyStateTitle>
-              </EmptyState>
-            )}
-          </Section>
-        </Container>
+        <WorkspaceTargetDetailContent
+          workspaceTarget={workspaceTarget}
+          workspace={workspace}
+          registryEntry={registryEntry}
+          navigate={navigate}
+          workspaceId={workspaceId}
+          tools={tools as MCPTool[]}
+          toolsLoading={toolsLoading}
+        />
       </LayoutViewContent>
     </LayoutView>
   );

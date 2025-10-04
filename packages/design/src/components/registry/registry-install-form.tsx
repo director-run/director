@@ -16,7 +16,7 @@ interface RegistryInstallFormProps {
     proxyId?: string;
     entryId: string;
     parameters?: Record<string, string>;
-  }) => Promise<void>;
+  }) => Promise<void> | void;
   isSubmitting?: boolean;
 }
 

@@ -44,14 +44,7 @@ function GetStartedInstallServerDialogPresentation({
         </VisuallyHidden>
         <Container size="xl">
           <SplitView>
-            <SplitViewMain>
-              {mcp && (
-                <RegistryItem
-                  entry={mcp}
-                  onToolClick={() => {}} // No tool interaction in get-started flow
-                />
-              )}
-            </SplitViewMain>
+            <SplitViewMain>{mcp && <RegistryItem entry={mcp} />}</SplitViewMain>
             <SplitViewSide>
               <div className="sticky top-0 flex flex-col gap-y-8">
                 <Section>

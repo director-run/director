@@ -18,6 +18,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { GATEWAY_URL } from "../config.ts";
 import { gatewayClient } from "../contexts/backend-context.tsx";
+import { useAuthenticate } from "../hooks/use-authenticate.ts";
 import { useChangeInstallState } from "../hooks/use-change-install-state.ts";
 import { useClients } from "../hooks/use-clients.ts";
 import { useCreatePrompt } from "../hooks/use-create-prompt.ts";
@@ -84,6 +85,8 @@ export const WorkspaceDetailPage = () => {
     },
   );
 
+  const { authenticate } = useAuthenticate();
+
   if (isWorkspaceLoading) {
     return <ProxySkeleton />;
   }
@@ -129,8 +132,21 @@ export const WorkspaceDetailPage = () => {
                 onCreatePrompt={createPrompt}
                 onEditPrompt={editPrompt}
                 isSavingPrompt={isCreatingPrompt || isEditingPrompt}
-                onClickAuthorize={(server) => {
-                  console.log("Authorize server clicked", server);
+                onClickAuthorize={async (server) => {
+                  try {
+                    await authenticate({
+                      proxyId: workspaceId,
+                      serverName: server.name,
+                    });
+                  } catch (error) {
+                    toast({
+                      title: "Authentication failed",
+                      description:
+                        error instanceof Error
+                          ? error.message
+                          : "Unknown error",
+                    });
+                  }
                 }}
               />
             </SplitViewMain>

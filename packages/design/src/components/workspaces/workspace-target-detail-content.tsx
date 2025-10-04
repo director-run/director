@@ -1,5 +1,6 @@
 import { McpLogo } from "@director.run/design/components/mcp-logo.tsx";
 import { WorkspaceTargetPropertyList } from "@director.run/design/components/mcp-servers/workspace-target-property-list.tsx";
+import { RegistryEntryReadme } from "@director.run/design/components/registry/registry-entry-readme.tsx";
 import { ToolsList } from "@director.run/design/components/tools/tool-list.js";
 import type {
   MCPTool,
@@ -8,13 +9,22 @@ import type {
 } from "@director.run/design/components/types.js";
 import type { WorkspaceDetail } from "@director.run/design/components/types.js";
 import { Container } from "@director.run/design/components/ui/container.tsx";
-import { EmptyState } from "@director.run/design/components/ui/empty-state.tsx";
-import { EmptyStateTitle } from "@director.run/design/components/ui/empty-state.tsx";
 import { Markdown } from "@director.run/design/components/ui/markdown.tsx";
 import { Section } from "@director.run/design/components/ui/section.tsx";
 import { SectionHeader } from "@director.run/design/components/ui/section.tsx";
 import { SectionTitle } from "@director.run/design/components/ui/section.tsx";
 import { SectionDescription } from "@director.run/design/components/ui/section.tsx";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@director.run/design/components/ui/tabs.tsx";
+import {
+  BookOpenTextIcon,
+  HardDriveIcon,
+  ToolboxIcon,
+} from "@phosphor-icons/react";
 
 export function WorkspaceTargetDetailContent({
   workspaceTarget,
@@ -27,7 +37,7 @@ export function WorkspaceTargetDetailContent({
 }: WorkspaceTargetDetailContentProps) {
   return (
     <Container size="lg">
-      <Section>
+      <Section className="gap-y-8">
         <McpLogo src={registryEntry?.icon} className="size-9" />
         <SectionHeader>
           <SectionTitle>{workspaceTarget.name}</SectionTitle>
@@ -47,34 +57,38 @@ export function WorkspaceTargetDetailContent({
         ) : null}
       </Section>
 
-      <Section>
-        <SectionHeader>
-          <SectionTitle variant="h2" asChild>
-            <h3>Transport</h3>
-          </SectionTitle>
-        </SectionHeader>
+      <Tabs defaultValue="readme">
+        <TabsList>
+          <TabsTrigger value="readme">
+            <BookOpenTextIcon /> Readme
+          </TabsTrigger>
+          <TabsTrigger value="tools">
+            <ToolboxIcon /> Tools
+          </TabsTrigger>
+          <TabsTrigger value="transport">
+            <HardDriveIcon /> Transport
+          </TabsTrigger>
+        </TabsList>
 
-        <WorkspaceTargetPropertyList target={workspaceTarget} />
-      </Section>
+        <TabsContent value="readme">
+          <RegistryEntryReadme readme={registryEntry?.readme ?? null} />
+        </TabsContent>
 
-      <ToolsList tools={tools as MCPTool[]} toolsLoading={toolsLoading} />
+        <TabsContent value="tools">
+          <ToolsList tools={tools as MCPTool[]} toolsLoading={toolsLoading} />
+        </TabsContent>
 
-      <Section>
-        <SectionHeader>
-          <SectionTitle variant="h2" asChild>
-            <h3>Readme</h3>
-          </SectionTitle>
-        </SectionHeader>
-        {registryEntry?.readme ? (
-          <div className="rounded-md border-[0.5px] bg-accent-subtle/20 px-4 py-8">
-            <Markdown className="mx-auto">{registryEntry?.readme}</Markdown>
-          </div>
-        ) : (
-          <EmptyState>
-            <EmptyStateTitle>No readme found</EmptyStateTitle>
-          </EmptyState>
-        )}
-      </Section>
+        <TabsContent value="transport">
+          <Section>
+            <SectionHeader>
+              <SectionTitle variant="h2" asChild>
+                <h3>Transport Configuration</h3>
+              </SectionTitle>
+            </SectionHeader>
+            <WorkspaceTargetPropertyList target={workspaceTarget} />
+          </Section>
+        </TabsContent>
+      </Tabs>
     </Container>
   );
 }

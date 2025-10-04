@@ -72,7 +72,7 @@ function PromptListItem({
         <List.ListItemDetails>
           <List.ListItemTitle>{prompt.title ?? prompt.name}</List.ListItemTitle>
           <List.ListItemDescription>
-            {prompt.description ?? prompt.body}
+            {prompt.description || prompt.body}
           </List.ListItemDescription>
         </List.ListItemDetails>
       </button>

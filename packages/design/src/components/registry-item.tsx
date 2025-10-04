@@ -7,13 +7,12 @@ import {
 } from "@phosphor-icons/react";
 import { McpLogo } from "./mcp-logo";
 import { RegistryEntryPropertyList } from "./registry/registry-entry-property-list";
+import { RegistryEntryReadme } from "./registry/registry-entry-readme";
 import { RegistryParameters } from "./registry/registry-parameters";
 import { ToolsList } from "./tools/tool-list";
 import type { RegistryEntryDetail } from "./types";
 import type { MCPTool } from "./types";
 import { Badge, BadgeGroup, BadgeIcon, BadgeLabel } from "./ui/badge";
-import { EmptyState, EmptyStateTitle } from "./ui/empty-state";
-import { Markdown } from "./ui/markdown";
 import {
   Section,
   SectionDescription,
@@ -74,15 +73,7 @@ export function RegistryItem({ entry }: RegistryItemProps) {
         </TabsList>
 
         <TabsContent value="readme">
-          {entry.readme ? (
-            <Markdown className="!max-w-none rounded-xl border-[0.5px] bg-accent-subtle/20 p-6">
-              {entry.readme}
-            </Markdown>
-          ) : (
-            <EmptyState>
-              <EmptyStateTitle>No readme found</EmptyStateTitle>
-            </EmptyState>
-          )}
+          <RegistryEntryReadme readme={entry.readme} />
         </TabsContent>
 
         <TabsContent

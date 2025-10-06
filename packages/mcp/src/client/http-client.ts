@@ -333,8 +333,12 @@ function transportErrorToAppError(
     lastErrorMessage = error instanceof Error ? error.message : "unknown error";
     appError = new AppError(
       ErrorCode.CONNECTION_REFUSED,
-      `connection refused, [${serverName}] failed to connect to ${serverUrl}`,
-      { targetName: serverName, url: serverUrl },
+      (error as Error).message ||
+        `connection refused, [${serverName}] failed to connect to ${serverUrl}`,
+      {
+        targetName: serverName,
+        url: serverUrl,
+      },
     );
   }
   return { appError, lastErrorMessage, status };

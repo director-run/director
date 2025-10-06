@@ -51,24 +51,10 @@ export const entries: EntryCreateParams[] = [
     icon: "https://registry.director.run/notion.svg",
     homepage: "https://github.com/makenotion/notion-mcp-server",
     transport: {
-      type: "stdio",
-      command: "npx",
-      args: ["-y", "@notionhq/notion-mcp-server"],
-      env: {
-        OPENAPI_MCP_HEADERS:
-          '{"Authorization": "Bearer <notion-bearer-token>", "Notion-Version": "2022-06-28" }',
-      },
+      type: "http",
+      url: "https://mcp.notion.com/mcp",
     },
-    parameters: [
-      {
-        name: "notion-bearer-token",
-        description:
-          "Get a bearer token from [Notion Settings](https://www.notion.so/profile/integrations)",
-        type: "string",
-        required: true,
-        password: true,
-      },
-    ],
+    parameters: [],
   },
   {
     name: "hackernews",

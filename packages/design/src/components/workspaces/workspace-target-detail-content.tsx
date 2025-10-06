@@ -57,7 +57,7 @@ export function WorkspaceTargetDetailContent({
         ) : null}
       </Section>
 
-      <Tabs defaultValue="readme">
+      <Tabs defaultValue="properties">
         <TabsList>
           <TabsTrigger value="readme">
             <BookOpenTextIcon /> Readme
@@ -65,8 +65,8 @@ export function WorkspaceTargetDetailContent({
           <TabsTrigger value="tools">
             <ToolboxIcon /> Tools
           </TabsTrigger>
-          <TabsTrigger value="transport">
-            <HardDriveIcon /> Transport
+          <TabsTrigger value="properties">
+            <HardDriveIcon /> Properties
           </TabsTrigger>
         </TabsList>
 
@@ -78,7 +78,7 @@ export function WorkspaceTargetDetailContent({
           <ToolsList tools={tools as MCPTool[]} toolsLoading={toolsLoading} />
         </TabsContent>
 
-        <TabsContent value="transport">
+        <TabsContent value="properties">
           <Section>
             <SectionHeader>
               <SectionTitle variant="h2" asChild>

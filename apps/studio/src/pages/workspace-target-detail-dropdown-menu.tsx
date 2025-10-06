@@ -15,6 +15,7 @@ import {
 } from "@director.run/design/components/ui/menu.js";
 import { toast } from "@director.run/design/components/ui/toast.js";
 import { DotsThreeOutlineVerticalIcon, TrashIcon } from "@phosphor-icons/react";
+import { SignOutIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { gatewayClient } from "../contexts/backend-context";
@@ -31,6 +32,7 @@ export function WorkspaceTargetDetailDropDownMenu({
   const navigate = useNavigate();
 
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [logoutOpen, setLogoutOpen] = useState(false);
 
   const utils = gatewayClient.useUtils();
 
@@ -55,6 +57,10 @@ export function WorkspaceTargetDetailDropDownMenu({
     });
   };
 
+  const handleLogoutServer = () => {
+    console.log("logout server");
+  };
+
   return (
     <>
       <DropdownMenu>
@@ -70,6 +76,17 @@ export function WorkspaceTargetDetailDropDownMenu({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuGroup>
+            {workspaceTarget.type === "http" &&
+              workspaceTarget.connectionInfo?.isAuthenticated && (
+                <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
+                  <MenuItemIcon>
+                    <SignOutIcon />
+                  </MenuItemIcon>
+                  <MenuItemLabel onClick={() => setDeleteOpen(true)}>
+                    Logout
+                  </MenuItemLabel>
+                </DropdownMenuItem>
+              )}
             <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
               <MenuItemIcon>
                 <TrashIcon />
@@ -87,6 +104,13 @@ export function WorkspaceTargetDetailDropDownMenu({
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
         onConfirm={handleDeleteServer}
+      />
+      <ConfirmDialog
+        title="Logout this server"
+        description="Are you sure you want to logout this server? This action cannot be undone."
+        open={logoutOpen}
+        onOpenChange={setLogoutOpen}
+        onConfirm={handleLogoutServer}
       />
     </>
   );

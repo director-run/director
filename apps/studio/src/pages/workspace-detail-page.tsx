@@ -22,6 +22,7 @@ import { useAuthenticate } from "../hooks/use-authenticate.ts";
 import { useChangeInstallState } from "../hooks/use-change-install-state.ts";
 import { useClients } from "../hooks/use-clients.ts";
 import { useCreatePrompt } from "../hooks/use-create-prompt.ts";
+import { useDeletePrompt } from "../hooks/use-delete-prompt.ts";
 import { useEditPrompt } from "../hooks/use-edit-prompt.ts";
 import { useInspectMcp } from "../hooks/use-inspect-mcp.ts";
 import { useWorkspace } from "../hooks/use-workspace.ts";
@@ -85,6 +86,21 @@ export const WorkspaceDetailPage = () => {
     },
   );
 
+  const { deletePrompt, isPending: isDeletingPrompt } = useDeletePrompt(
+    workspaceId,
+    {
+      onSuccess: async () => {
+        await utils.store.get.invalidate({
+          proxyId: workspaceId,
+        });
+        toast({
+          title: "Prompt deleted",
+          description: "Your prompt was deleted.",
+        });
+      },
+    },
+  );
+
   const { authenticate } = useAuthenticate();
 
   if (isWorkspaceLoading) {
@@ -131,10 +147,10 @@ export const WorkspaceDetailPage = () => {
                 onClickAddServer={() => navigate("/library")}
                 onCreatePrompt={createPrompt}
                 onEditPrompt={editPrompt}
-                isSavingPrompt={isCreatingPrompt || isEditingPrompt}
-                onDeletePrompt={(promptName) => {
-                  console.log("DELETE", promptName);
-                }}
+                isSavingPrompt={
+                  isCreatingPrompt || isEditingPrompt || isDeletingPrompt
+                }
+                onDeletePrompt={deletePrompt}
                 onClickAuthorize={async (server) => {
                   try {
                     await authenticate({

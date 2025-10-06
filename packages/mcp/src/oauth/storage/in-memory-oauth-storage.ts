@@ -58,11 +58,7 @@ export class InMemoryOAuthStorage extends AbstractOAuthStorage {
 
   deleteTokens(providerId: string): Promise<void> {
     logger.info("deleting tokens", { providerId });
-    const data = this._data.get(providerId) || {};
-    if ("tokens" in data) {
-      delete (data as { tokens?: OAuthTokens }).tokens;
-    }
-    this._data.set(providerId, data);
+    this._data.delete(providerId);
     return Promise.resolve();
   }
 

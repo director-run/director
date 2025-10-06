@@ -1,0 +1,93 @@
+import type { WorkspaceTarget } from "@director.run/design/components/types.js";
+import type { WorkspaceDetail } from "@director.run/design/components/types.js";
+import { Button } from "@director.run/design/components/ui/button.js";
+import { ConfirmDialog } from "@director.run/design/components/ui/confirm-dialog.js";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@director.run/design/components/ui/dropdown-menu.js";
+import {
+  MenuItemIcon,
+  MenuItemLabel,
+} from "@director.run/design/components/ui/menu.js";
+import { toast } from "@director.run/design/components/ui/toast.js";
+import { DotsThreeOutlineVerticalIcon, TrashIcon } from "@phosphor-icons/react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { gatewayClient } from "../contexts/backend-context";
+
+interface WorkspaceTargetDetailDropDownMenuProps {
+  workspaceTarget: WorkspaceTarget;
+  workspace: WorkspaceDetail;
+}
+
+export function WorkspaceTargetDetailDropDownMenu({
+  workspaceTarget,
+  workspace,
+}: WorkspaceTargetDetailDropDownMenuProps) {
+  const navigate = useNavigate();
+
+  const [deleteOpen, setDeleteOpen] = useState(false);
+
+  const utils = gatewayClient.useUtils();
+
+  const deleteServerMutation = gatewayClient.store.removeServer.useMutation({
+    onSuccess: async () => {
+      navigate(`/${workspace.id}`);
+
+      await utils.store.get.invalidate({ proxyId: workspace.id });
+      await utils.store.getAll.invalidate();
+
+      toast({
+        title: "Server deleted",
+        description: "This server was successfully deleted.",
+      });
+    },
+  });
+
+  const handleDeleteServer = async () => {
+    await deleteServerMutation.mutateAsync({
+      proxyId: workspace.id,
+      serverName: workspaceTarget.name,
+    });
+  };
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="radix-state-[open]:bg-accent-subtle"
+          >
+            <DotsThreeOutlineVerticalIcon weight="fill" className="!size-4" />
+            <span className="sr-only">Settings</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuGroup>
+            <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
+              <MenuItemIcon>
+                <TrashIcon />
+              </MenuItemIcon>
+              <MenuItemLabel onClick={() => setDeleteOpen(true)}>
+                Delete
+              </MenuItemLabel>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <ConfirmDialog
+        title="Delete this server"
+        description="Are you sure you want to delete this server? This action cannot be undone."
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        onConfirm={handleDeleteServer}
+      />
+    </>
+  );
+}

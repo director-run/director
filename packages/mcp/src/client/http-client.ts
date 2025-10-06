@@ -32,6 +32,7 @@ export type HTTPClientPlainObject = HTTPClientParams & {
     status: ClientStatus;
     lastConnectedAt?: Date;
     lastErrorMessage?: string;
+    isAuthenticated?: boolean;
   };
 };
 
@@ -289,6 +290,7 @@ export class HTTPClient extends AbstractClient<HTTPClientParams> {
             status: this.status,
             lastConnectedAt: this.lastConnectedAt,
             lastErrorMessage: this.lastErrorMessage,
+            isAuthenticated: await this.isAuthenticated(),
           }
         : undefined,
     };
@@ -308,6 +310,15 @@ export class HTTPClient extends AbstractClient<HTTPClientParams> {
     this.status = "unauthorized";
     this.lastErrorMessage = undefined;
     this.lastConnectedAt = undefined;
+  }
+
+  public async isAuthenticated(): Promise<boolean> {
+    if (!this.oAuthHandler) {
+      return false;
+    }
+    const provider = this.oAuthHandler.getProvider({ serverUrl: this._url });
+    const tokens = await provider.tokens();
+    return tokens !== undefined && this.status === "connected";
   }
 }
 

@@ -175,7 +175,10 @@ export function PromptSheet({
           description="Are you sure you want to delete this prompt?"
           open={deleteOpen}
           onOpenChange={setDeleteOpen}
-          onConfirm={onClickDelete}
+          onConfirm={() => {
+            setDeleteOpen(false);
+            onClickDelete();
+          }}
         />
       )}
     </>

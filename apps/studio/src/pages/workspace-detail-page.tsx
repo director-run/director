@@ -132,6 +132,9 @@ export const WorkspaceDetailPage = () => {
                 onCreatePrompt={createPrompt}
                 onEditPrompt={editPrompt}
                 isSavingPrompt={isCreatingPrompt || isEditingPrompt}
+                onDeletePrompt={(promptName) => {
+                  console.log("DELETE", promptName);
+                }}
                 onClickAuthorize={async (server) => {
                   try {
                     await authenticate({

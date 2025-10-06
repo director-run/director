@@ -22,6 +22,7 @@ export const WorkspaceDetailContent = ({
   onEditPrompt,
   onClickAuthorize,
   isSavingPrompt,
+  onDeletePrompt,
 }: WorkspaceDetailContentProps) => {
   return (
     <Section className="gap-y-8">
@@ -61,6 +62,7 @@ export const WorkspaceDetailContent = ({
             onCreatePrompt={onCreatePrompt}
             onEditPrompt={onEditPrompt}
             onClickAuthorize={onClickAuthorize}
+            onDeletePrompt={onDeletePrompt}
             isSavingPrompt={isSavingPrompt}
           />
         </TabsContent>
@@ -76,6 +78,7 @@ interface WorkspaceDetailContentProps {
   onClickServer: (server: WorkspaceTarget) => void;
   onClickAddServer?: () => void;
   onClickAuthorize?: (server: WorkspaceTarget) => void;
+  onDeletePrompt?: (promptName: string) => Promise<void> | void;
   onCreatePrompt?: (values: {
     title: string;
     description?: string;
@@ -92,6 +95,7 @@ function WorkspacePrompts({
   workspace,
   onCreatePrompt,
   onEditPrompt,
+  onDeletePrompt,
   isSavingPrompt = false,
 }: {
   workspace: WorkspaceDetail;
@@ -100,6 +104,7 @@ function WorkspacePrompts({
     description?: string;
     body: string;
   }) => Promise<void> | void;
+  onDeletePrompt?: (promptName: string) => Promise<void> | void;
   onEditPrompt?: (
     promptName: string,
     values: { title?: string; description?: string; body?: string },
@@ -131,6 +136,13 @@ function WorkspacePrompts({
         onOpenChange={setOpen}
         prompt={selected}
         isSubmitting={isSavingPrompt}
+        onClickDelete={async () => {
+          if (selected) {
+            await onDeletePrompt?.(selected.name);
+            setOpen(false);
+            return;
+          }
+        }}
         onSubmit={async (values) => {
           if (selected && onEditPrompt) {
             await onEditPrompt(selected.name, values);

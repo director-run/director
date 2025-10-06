@@ -1,6 +1,5 @@
-import { CheckCircleIcon, WarningCircleIcon } from "@phosphor-icons/react";
 import type { WorkspaceTarget } from "../types.ts";
-import { Badge, BadgeGroup, BadgeIcon, BadgeLabel } from "../ui/badge.tsx";
+import { BadgeGroup } from "../ui/badge.tsx";
 import { Button } from "../ui/button.tsx";
 import {
   EmptyState,
@@ -9,6 +8,7 @@ import {
 } from "../ui/empty-state.tsx";
 import * as List from "../ui/list.tsx";
 import { Section, SectionHeader, SectionTitle } from "../ui/section.tsx";
+import { ServerStatusBadge } from "./server-status-badge.tsx";
 
 export function WorkspaceServerList({
   servers,
@@ -70,7 +70,7 @@ function WorkspaceServerListItem({
         <WorkspaceServerListItemDescription server={server} />
       </List.ListItemDetails>
       <BadgeGroup>
-        <WorkspaceServerListItemStatus
+        <ServerStatusBadge
           server={server}
           onClickAuthorize={onClickAuthorize}
         />
@@ -92,58 +92,5 @@ function WorkspaceServerListItemDescription({
     );
   } else {
     return <List.ListItemDescription>--</List.ListItemDescription>;
-  }
-}
-
-function WorkspaceServerListItemStatus({
-  server,
-  onClickAuthorize,
-}: {
-  server: WorkspaceTarget;
-  onClickAuthorize?: (server: WorkspaceTarget) => void;
-}) {
-  switch (server.connectionInfo?.status) {
-    case "connected":
-      return (
-        <Badge variant="success">
-          <BadgeIcon>
-            <CheckCircleIcon />
-          </BadgeIcon>
-          <BadgeLabel uppercase>
-            {server.connectionInfo?.status || "--"}
-          </BadgeLabel>
-        </Badge>
-      );
-    case "unauthorized":
-      return (
-        <Badge
-          variant="destructive"
-          className={
-            onClickAuthorize
-              ? "cursor-pointer outline-none transition-colors hover:bg-destructive/50 focus-visible:bg-destructive/90"
-              : undefined
-          }
-          onClick={(event) => {
-            event.stopPropagation();
-            onClickAuthorize?.(server);
-          }}
-          title="Click to authorize"
-        >
-          <BadgeIcon>
-            <WarningCircleIcon />
-          </BadgeIcon>
-          <BadgeLabel uppercase>
-            {server.connectionInfo?.status || "--"}
-          </BadgeLabel>
-        </Badge>
-      );
-    default:
-      return (
-        <Badge>
-          <BadgeLabel uppercase>
-            {server.connectionInfo?.status || "--"}
-          </BadgeLabel>
-        </Badge>
-      );
   }
 }

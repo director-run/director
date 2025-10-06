@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import path from "node:path";
 import { ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
@@ -121,6 +122,16 @@ export class OnDiskOAuthStorage extends AbstractOAuthStorage {
       path: filePath,
     });
     await this._saveData(filePath, { tokens });
+  }
+
+  async deleteTokens(providerId: string): Promise<void> {
+    const filePath = this._getFilePath(providerId);
+    logger.info({
+      message: "deleting tokens from disk",
+      providerId,
+      path: filePath,
+    });
+    await fs.promises.unlink(filePath);
   }
 
   async getCodeVerifier(providerId: string): Promise<string | undefined> {

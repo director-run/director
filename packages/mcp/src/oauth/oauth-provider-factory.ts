@@ -84,6 +84,11 @@ export class OAuthProvider implements OAuthClientProvider {
     await this._storage.saveTokens(this._id, tokens);
   }
 
+  async deleteTokens(): Promise<void> {
+    this._tokens = undefined;
+    await this._storage.deleteTokens(this._id);
+  }
+
   redirectToAuthorization(authorizationUrl: URL): void {
     if (this._onRedirect) {
       this._onRedirect(authorizationUrl);

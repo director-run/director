@@ -56,6 +56,12 @@ export class InMemoryOAuthStorage extends AbstractOAuthStorage {
     return Promise.resolve();
   }
 
+  deleteTokens(providerId: string): Promise<void> {
+    logger.info("deleting tokens", { providerId });
+    this._data.delete(providerId);
+    return Promise.resolve();
+  }
+
   getCodeVerifier(providerId: string): Promise<string | undefined> {
     const data = this._data.get(providerId);
     return Promise.resolve(data?.codeVerifier);

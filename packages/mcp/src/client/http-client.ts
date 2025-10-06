@@ -293,6 +293,22 @@ export class HTTPClient extends AbstractClient<HTTPClientParams> {
         : undefined,
     };
   }
+
+  public async logout(): Promise<void> {
+    if (!this.oAuthHandler) {
+      throw new AppError(
+        ErrorCode.BAD_REQUEST,
+        "Only supported for OAuth clients",
+      );
+    }
+
+    await this.close();
+    const provider = this.oAuthHandler.getProvider({ serverUrl: this._url });
+    await provider.deleteTokens();
+    this.status = "unauthorized";
+    this.lastErrorMessage = undefined;
+    this.lastConnectedAt = undefined;
+  }
 }
 
 function transportErrorToAppError(
@@ -333,8 +349,12 @@ function transportErrorToAppError(
     lastErrorMessage = error instanceof Error ? error.message : "unknown error";
     appError = new AppError(
       ErrorCode.CONNECTION_REFUSED,
-      `connection refused, [${serverName}] failed to connect to ${serverUrl}`,
-      { targetName: serverName, url: serverUrl },
+      (error as Error).message ||
+        `connection refused, [${serverName}] failed to connect to ${serverUrl}`,
+      {
+        targetName: serverName,
+        url: serverUrl,
+      },
     );
   }
   return { appError, lastErrorMessage, status };

@@ -18,4 +18,13 @@ export function registerAuthCommand(program: DirectorCommand) {
         }
       }),
     );
+
+  program
+    .command("logout <proxyId> <serverName>")
+    .description("Logout a server")
+    .action(
+      actionWithErrorHandler(async (proxyId: string, serverName: string) => {
+        await gatewayClient.store.logout.mutate({ proxyId, serverName });
+      }),
+    );
 }

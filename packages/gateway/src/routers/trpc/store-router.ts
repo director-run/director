@@ -199,6 +199,21 @@ export function createProxyStoreRouter({
         }
       }),
 
+    logout: t.procedure
+      .input(z.object({ proxyId: z.string(), serverName: z.string() }))
+      .mutation(async ({ input }) => {
+        const proxy = await proxyStore.get(input.proxyId);
+        const target = await proxy.getTarget(input.serverName);
+        if (target instanceof HTTPClient) {
+          await target.logout();
+        } else {
+          throw new AppError(
+            ErrorCode.BAD_REQUEST,
+            "can only logout http clients",
+          );
+        }
+      }),
+
     purge: t.procedure.mutation(() => proxyStore.purge()),
 
     removeServer: t.procedure

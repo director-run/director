@@ -293,6 +293,22 @@ export class HTTPClient extends AbstractClient<HTTPClientParams> {
         : undefined,
     };
   }
+
+  public async logout(): Promise<void> {
+    if (!this.oAuthHandler) {
+      throw new AppError(
+        ErrorCode.BAD_REQUEST,
+        "Only supported for OAuth clients",
+      );
+    }
+
+    await this.close();
+    const provider = this.oAuthHandler.getProvider({ serverUrl: this._url });
+    await provider.deleteTokens();
+    this.status = "unauthorized";
+    this.lastErrorMessage = undefined;
+    this.lastConnectedAt = undefined;
+  }
 }
 
 function transportErrorToAppError(

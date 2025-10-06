@@ -14,6 +14,7 @@ export abstract class AbstractOAuthStorage {
   abstract getTokens(providerId: string): Promise<OAuthTokens | undefined>;
   abstract saveTokens(providerId: string, tokens: OAuthTokens): Promise<void>;
   abstract getCodeVerifier(providerId: string): Promise<string | undefined>;
+  abstract deleteTokens(providerId: string): Promise<void>;
   abstract saveCodeVerifier(
     providerId: string,
     codeVerifier: string,

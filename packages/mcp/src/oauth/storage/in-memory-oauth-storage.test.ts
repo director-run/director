@@ -47,6 +47,24 @@ describe("InMemoryOAuthStorage", () => {
     expect(loaded).toEqual(tokens);
   });
 
+  it("should delete tokens", async () => {
+    const tokens: OAuthTokens = {
+      access_token: "test-access-token",
+      token_type: "Bearer",
+      expires_in: 3600,
+      refresh_token: "test-refresh-token",
+      scope: "test:scope",
+    };
+
+    await storage.saveTokens(testProviderId, tokens);
+    expect(await storage.getTokens(testProviderId)).toEqual(tokens);
+
+    await storage.deleteTokens(testProviderId);
+
+    const loaded = await storage.getTokens(testProviderId);
+    expect(loaded).toBeUndefined();
+  });
+
   it("should save and load code verifier", async () => {
     const codeVerifier = "test-code-verifier";
 

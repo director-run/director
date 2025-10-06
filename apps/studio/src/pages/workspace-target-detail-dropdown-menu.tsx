@@ -19,6 +19,8 @@ import { SignOutIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { gatewayClient } from "../contexts/backend-context";
+import { useAuthenticate } from "../hooks/use-authenticate";
+import { useLogout } from "../hooks/use-logout";
 
 interface WorkspaceTargetDetailDropDownMenuProps {
   workspaceTarget: WorkspaceTarget;
@@ -57,8 +59,16 @@ export function WorkspaceTargetDetailDropDownMenu({
     });
   };
 
-  const handleLogoutServer = () => {
-    console.log("logout server");
+  const { logout } = useLogout();
+  const { authenticate } = useAuthenticate();
+
+  const handleLogoutServer = async () => {
+    await logout({ proxyId: workspace.id, serverName: workspaceTarget.name });
+    setLogoutOpen(false);
+    toast({
+      title: "Logged out",
+      description: "This server was successfully logged out.",
+    });
   };
 
   return (
@@ -78,12 +88,27 @@ export function WorkspaceTargetDetailDropDownMenu({
           <DropdownMenuGroup>
             {workspaceTarget.type === "http" &&
               workspaceTarget.connectionInfo?.isAuthenticated && (
-                <DropdownMenuItem onSelect={(event) => event.preventDefault()}>
+                <DropdownMenuItem>
                   <MenuItemIcon>
                     <SignOutIcon />
                   </MenuItemIcon>
-                  <MenuItemLabel onClick={() => setDeleteOpen(true)}>
+                  <MenuItemLabel onClick={() => setLogoutOpen(true)}>
                     Logout
+                  </MenuItemLabel>
+                </DropdownMenuItem>
+              )}
+            {workspaceTarget.type === "http" &&
+              !workspaceTarget.connectionInfo?.isAuthenticated && (
+                <DropdownMenuItem>
+                  <MenuItemLabel
+                    onClick={async () => {
+                      await authenticate({
+                        proxyId: workspace.id,
+                        serverName: workspaceTarget.name,
+                      });
+                    }}
+                  >
+                    Authenticate
                   </MenuItemLabel>
                 </DropdownMenuItem>
               )}

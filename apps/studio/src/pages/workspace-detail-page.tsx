@@ -2,7 +2,6 @@ import { LayoutBreadcrumbHeader } from "@director.run/design/components/layout/l
 import { LayoutViewContent } from "@director.run/design/components/layout/layout.tsx";
 import { FullScreenError } from "@director.run/design/components/pages/global/error.tsx";
 import { ProxyActionsDropdown } from "@director.run/design/components/proxies/proxy-actions-dropdown.tsx";
-import { ProxyDeleteConfirmation } from "@director.run/design/components/proxies/proxy-delete-confirmation.tsx";
 import { ProxySettingsSheet } from "@director.run/design/components/proxies/proxy-settings-sheet.tsx";
 import { ProxySkeleton } from "@director.run/design/components/proxies/proxy-skeleton.tsx";
 import { SplitViewMain } from "@director.run/design/components/split-view.tsx";
@@ -10,6 +9,7 @@ import { SplitViewSide } from "@director.run/design/components/split-view.tsx";
 import { SplitView } from "@director.run/design/components/split-view.tsx";
 import type { WorkspaceDetail } from "@director.run/design/components/types.ts";
 import type { MCPTool } from "@director.run/design/components/types.ts";
+import { ConfirmDialog } from "@director.run/design/components/ui/confirm-dialog.tsx";
 import { Container } from "@director.run/design/components/ui/container.tsx";
 import { toast } from "@director.run/design/components/ui/toast.js";
 import { WorkspaceDetailContent } from "@director.run/design/components/workspaces/workspace-detail-content.tsx";
@@ -224,11 +224,12 @@ function WorkspaceEditMenu({ workspace }: { workspace: WorkspaceDetail }) {
         open={settingsOpen}
         onOpenChange={setSettingsOpen}
       />
-
-      <ProxyDeleteConfirmation
-        onConfirm={handleDeleteProxy}
+      <ConfirmDialog
+        title="Delete workspace?"
+        description="Are you sure you want to delete this workspace? This action cannot be undone."
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
+        onConfirm={handleDeleteProxy}
       />
     </>
   );

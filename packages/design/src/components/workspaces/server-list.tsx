@@ -64,14 +64,7 @@ function WorkspaceServerListItem({
   onClickAuthorize?: (server: WorkspaceTarget) => void;
 }) {
   return (
-    <List.ListItem
-      onClick={onClick}
-      className={
-        onClick
-          ? "cursor-pointer hover:bg-accent-subtle/50 focus-visible:bg-accent-subtle/50"
-          : undefined
-      }
-    >
+    <List.ListItem onClick={onClick}>
       <List.ListItemDetails>
         <List.ListItemTitle>{server.name}</List.ListItemTitle>
         <WorkspaceServerListItemDescription server={server} />

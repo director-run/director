@@ -67,15 +67,13 @@ function PromptListItem({
   onClick?: () => void;
 }) {
   return (
-    <List.ListItem asChild>
-      <button type="button" onClick={onClick} className="text-left">
-        <List.ListItemDetails>
-          <List.ListItemTitle>{prompt.title ?? prompt.name}</List.ListItemTitle>
-          <List.ListItemDescription>
-            {prompt.description || prompt.body}
-          </List.ListItemDescription>
-        </List.ListItemDetails>
-      </button>
+    <List.ListItem onClick={onClick}>
+      <List.ListItemDetails>
+        <List.ListItemTitle>{prompt.title ?? prompt.name}</List.ListItemTitle>
+        <List.ListItemDescription>
+          {prompt.description || prompt.body}
+        </List.ListItemDescription>
+      </List.ListItemDetails>
     </List.ListItem>
   );
 }

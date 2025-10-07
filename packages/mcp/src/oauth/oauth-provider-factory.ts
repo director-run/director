@@ -37,7 +37,7 @@ export class OAuthProvider implements OAuthClientProvider {
     this._onRedirect = params.onRedirect;
 
     this._clientMetadata = {
-      client_name: "Simple OAuth MCP Client",
+      client_name: "Director OAuth Client",
       redirect_uris: [this._redirectUrl.toString()],
       grant_types: ["authorization_code", "refresh_token"],
       response_types: ["code"],
@@ -117,14 +117,16 @@ export class OAuthProvider implements OAuthClientProvider {
 export class OAuthProviderFactory {
   private _baseCallbackUrl: string;
   private _storage: AbstractOAuthStorage;
+  private _id: string;
 
   constructor(params: OAuthProviderFactoryParams) {
     this._baseCallbackUrl = params.baseCallbackUrl;
+    this._id = params.id || "default";
 
     if (params.storage === "disk") {
       this._storage = new OnDiskOAuthStorage({
         directory: params.tokenDirectory,
-        filePrefix: params.filePrefix,
+        filePrefix: [params.filePrefix, this._id].filter(Boolean).join("-"),
       });
     } else {
       this._storage = new InMemoryOAuthStorage();
@@ -135,10 +137,13 @@ export class OAuthProviderFactory {
     serverUrl: string;
     onRedirect?: (url: URL) => void;
   }) {
-    const id = encodeUrl(params.serverUrl);
+    const providerId = encodeUrl(params.serverUrl);
     return new OAuthProvider({
-      id,
-      redirectUrl: joinURL(this._baseCallbackUrl, `oauth/${id}/callback`),
+      id: providerId,
+      redirectUrl: joinURL(
+        this._baseCallbackUrl,
+        `oauth/${this._id}/${providerId}/callback`,
+      ),
       storage: this._storage,
       onRedirect: params.onRedirect,
     });
@@ -151,8 +156,10 @@ export type OAuthProviderFactoryParams =
       tokenDirectory: string;
       baseCallbackUrl: string;
       filePrefix?: string;
+      id?: string;
     }
   | {
       storage: "memory";
       baseCallbackUrl: string;
+      id?: string;
     };

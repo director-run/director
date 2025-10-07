@@ -18,12 +18,12 @@ export function createOauthCallbackRouter(params: {
   const router = express.Router();
 
   router.get(
-    "/oauth/:clientId/callback",
+    "/oauth/:factoryId/:providerId/callback",
     asyncHandler(async (req: Request, res: Response) => {
       const code = req.query.code?.toString();
       const error = req.query.error?.toString();
-      const clientId = req.params.clientId;
-      const serverUrl = decodeUrl(clientId);
+      const providerId = req.params.providerId;
+      const serverUrl = decodeUrl(providerId);
 
       if (code) {
         logger.info({

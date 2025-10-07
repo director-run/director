@@ -137,6 +137,7 @@ export class Workspace extends ProxyServer {
 
   public async removeTarget(serverName: string): Promise<ProxyTarget> {
     await this.trackEvent("server_removed");
+
     const removedTarget = await super.removeTarget(serverName);
 
     await this.persistToConfig();

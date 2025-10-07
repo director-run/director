@@ -9,7 +9,7 @@ import * as eventsource from "eventsource";
 import _ from "lodash";
 import packageJson from "../../package.json";
 import type { AbstractClientParams } from "../client/abstract-client";
-import type { HTTPClient } from "../client/http-client";
+import { HTTPClient } from "../client/http-client";
 import type { InMemoryClient } from "../client/in-memory-client";
 import type { StdioClient } from "../client/stdio-client";
 import { setupPromptHandlers } from "./handlers/prompts-handler";
@@ -158,6 +158,14 @@ export class ProxyServer extends Server {
         `Target ${targetName} does not exists`,
       );
     }
+
+    if (
+      existingTarget instanceof HTTPClient &&
+      (await existingTarget.isAuthenticated())
+    ) {
+      await existingTarget.logout();
+    }
+
     await existingTarget.close();
 
     _.remove(

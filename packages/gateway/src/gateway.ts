@@ -135,8 +135,8 @@ export class Gateway {
     app.use(
       "/",
       createOauthCallbackRouter({
-        onAuthorizationSuccess: (serverUrl, code) => {
-          proxyStore.onAuthorizationSuccess(serverUrl, code);
+        onAuthorizationSuccess: async (serverUrl, code) => {
+          await proxyStore.onAuthorizationSuccess(serverUrl, code);
         },
         onAuthorizationError: (serverUrl, error) => {
           logger.error(

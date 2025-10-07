@@ -11,7 +11,7 @@ import { openUrl } from "@director.run/utilities/os";
 import express from "express";
 import { HTTPClient } from "../src/client/http-client";
 import { createOauthCallbackRouter } from "../src/oauth/oauth-callback-router";
-import { OAuthHandler } from "../src/oauth/oauth-provider-factory";
+import { OAuthProviderFactory } from "../src/oauth/oauth-provider-factory";
 
 const logger = getLogger("examples/oauth");
 
@@ -20,7 +20,7 @@ async function main(): Promise<void> {
   const httpTarget = new HTTPClient({
     name: "oauth-test-client",
     url: "https://mcp.notion.com/mcp",
-    oAuthHandler: OAuthHandler.createDiskBackedHandler({
+    oAuthHandler: OAuthProviderFactory.createDiskBackedHandler({
       directory: path.join(__dirname, "tokens"),
       baseCallbackUrl: `http://localhost:${port}`,
     }),

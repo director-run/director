@@ -13,7 +13,7 @@ import {
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
-import { OAuthHandler } from "../oauth/oauth-provider-factory";
+import { OAuthProviderFactory } from "../oauth/oauth-provider-factory";
 import { AbsractClientSchema, AbstractClient } from "./abstract-client";
 import type { ClientStatus } from "./abstract-client";
 
@@ -37,13 +37,13 @@ export type HTTPClientPlainObject = HTTPClientParams & {
 };
 
 export type HTTPClientOptions = {
-  oAuthHandler?: OAuthHandler;
+  oAuthHandler?: OAuthProviderFactory;
 };
 
 export class HTTPClient extends AbstractClient<HTTPClientParams> {
   private _url: string;
   private headers?: Record<string, string>;
-  private oAuthHandler?: OAuthHandler;
+  private oAuthHandler?: OAuthProviderFactory;
 
   constructor(params: HTTPClientParams, options?: HTTPClientOptions) {
     super(params);
@@ -255,7 +255,7 @@ export class HTTPClient extends AbstractClient<HTTPClientParams> {
   public static async createAndConnectToHTTP(
     url: string,
     headers?: Record<string, string>,
-    oAuthHandler?: OAuthHandler,
+    oAuthHandler?: OAuthProviderFactory,
   ) {
     const client = new HTTPClient(
       {

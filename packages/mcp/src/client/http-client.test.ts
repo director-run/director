@@ -2,7 +2,7 @@ import { Server } from "http";
 import { ErrorCode } from "@director.run/utilities/error";
 import { expectToThrowAppError } from "@director.run/utilities/test";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { OAuthHandler } from "../oauth/oauth-provider-factory";
+import { OAuthProviderFactory } from "../oauth/oauth-provider-factory";
 import { makeEchoServer } from "../test/fixtures";
 import { serveOverStreamable } from "../transport";
 import { serveOverSSE } from "../transport";
@@ -99,7 +99,7 @@ describe("HTTPClient", () => {
             url: "https://mcp.notion.com/mcp",
           },
           {
-            oAuthHandler: OAuthHandler.createMemoryBackedHandler({
+            oAuthHandler: OAuthProviderFactory.createMemoryBackedHandler({
               baseCallbackUrl: "http://localhost:8999",
             }),
           },

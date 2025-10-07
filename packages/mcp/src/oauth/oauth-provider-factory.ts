@@ -119,7 +119,7 @@ export interface OAuthHandlerParams {
   baseCallbackUrl: string;
 }
 
-export class OAuthHandler {
+export class OAuthProviderFactory {
   private _baseCallbackUrl: string;
   private _storage: AbstractOAuthStorage;
 
@@ -133,7 +133,7 @@ export class OAuthHandler {
     filePrefix?: string;
     baseCallbackUrl: string;
   }) {
-    return new OAuthHandler({
+    return new OAuthProviderFactory({
       storage: new OnDiskOAuthStorage({
         directory: params.directory,
         filePrefix: params.filePrefix,
@@ -145,7 +145,7 @@ export class OAuthHandler {
   public static createMemoryBackedHandler(params: {
     baseCallbackUrl: string;
   }) {
-    return new OAuthHandler({
+    return new OAuthProviderFactory({
       storage: new InMemoryOAuthStorage(),
       baseCallbackUrl: params.baseCallbackUrl,
     });

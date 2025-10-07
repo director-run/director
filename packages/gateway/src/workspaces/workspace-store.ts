@@ -1,5 +1,5 @@
 import { HTTPClient } from "@director.run/mcp/client/http-client";
-import { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
+import { OAuthProviderFactory } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { Telemetry } from "@director.run/utilities/telemetry";
@@ -16,12 +16,12 @@ export class WorkspaceStore {
   private workspaces: Map<string, Workspace> = new Map();
   private config: Config;
   private telemetry: Telemetry;
-  private _oAuthHandler?: OAuthHandler;
+  private _oAuthHandler?: OAuthProviderFactory;
 
   private constructor(params: {
     config: Config;
     telemetry?: Telemetry;
-    oAuthHandler?: OAuthHandler;
+    oAuthHandler?: OAuthProviderFactory;
   }) {
     this.config = params.config;
     this.telemetry = params.telemetry || Telemetry.noTelemetry();
@@ -35,7 +35,7 @@ export class WorkspaceStore {
   }: {
     config: Config;
     telemetry?: Telemetry;
-    oAuthHandler?: OAuthHandler;
+    oAuthHandler?: OAuthProviderFactory;
   }): Promise<WorkspaceStore> {
     logger.debug("initializing WorkspaceStore");
     const store = new WorkspaceStore({

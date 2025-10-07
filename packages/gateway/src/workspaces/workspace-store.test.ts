@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { HTTPClient } from "@director.run/mcp/client/http-client";
-import { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
+import { OAuthProviderFactory } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { YAMLConfig } from "../config";
 import { makeHTTPTargetConfig } from "../test/fixtures";
@@ -18,7 +18,7 @@ describe("WorkspaceStore", () => {
     const db = await YAMLConfig.connect(dbPath);
     workspaceStore = await WorkspaceStore.create({
       config: db,
-      oAuthHandler: OAuthHandler.createMemoryBackedHandler({
+      oAuthHandler: OAuthProviderFactory.createMemoryBackedHandler({
         baseCallbackUrl: "http://localhost:3000/callback",
       }),
     });

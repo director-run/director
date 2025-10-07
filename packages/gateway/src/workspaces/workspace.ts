@@ -9,7 +9,7 @@ import {
   type StdioClientPlainObject,
   StdioClientSchema,
 } from "@director.run/mcp/client/stdio-client";
-import type { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
+import type { OAuthProviderFactory } from "@director.run/mcp/oauth/oauth-provider-factory";
 import {
   ProxyServer,
   type ProxyTarget,
@@ -70,14 +70,14 @@ export type WorkspacePlainObject = Omit<WorkspaceParams, "servers"> & {
 export class Workspace extends ProxyServer {
   private _config?: Config;
   private _telemetry?: Telemetry;
-  private _oAuthHandler?: OAuthHandler;
+  private _oAuthHandler?: OAuthProviderFactory;
   private _description?: string;
   private _name: string; // TODO: change to 'displayName'
 
   constructor(
     attributes: WorkspaceParams,
     params?: {
-      oAuthHandler?: OAuthHandler;
+      oAuthHandler?: OAuthProviderFactory;
       config?: Config;
       telemetry?: Telemetry;
     },
@@ -216,7 +216,7 @@ export class Workspace extends ProxyServer {
   static async fromConfig(
     attributes: WorkspaceParams,
     params?: {
-      oAuthHandler?: OAuthHandler;
+      oAuthHandler?: OAuthProviderFactory;
       config?: Config;
       telemetry?: Telemetry;
     },
@@ -287,7 +287,7 @@ export class Workspace extends ProxyServer {
 
 function createClientForTarget(params: {
   target: WorkspaceTarget;
-  oAuthHandler?: OAuthHandler;
+  oAuthHandler?: OAuthProviderFactory;
 }) {
   const { target, oAuthHandler } = params;
   switch (target.type) {

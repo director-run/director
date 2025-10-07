@@ -1,6 +1,6 @@
 import { Server } from "http";
 import { createOauthCallbackRouter } from "@director.run/mcp/oauth/oauth-callback-router";
-import { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
+import { OAuthProviderFactory } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { getLogger } from "@director.run/utilities/logger";
 import {
   errorRequestHandler,
@@ -77,16 +77,16 @@ export class Gateway {
         })
       : Telemetry.noTelemetry();
 
-    let oAuthHandler: OAuthHandler | undefined;
+    let oAuthHandler: OAuthProviderFactory | undefined;
 
     if (attribs.oauth && attribs.oauth.enabled) {
       if (attribs.oauth.storage === "disk") {
-        oAuthHandler = OAuthHandler.createDiskBackedHandler({
+        oAuthHandler = OAuthProviderFactory.createDiskBackedHandler({
           directory: attribs.oauth.tokenDirectory,
           baseCallbackUrl: `http://localhost:${attribs.port}`,
         });
       } else if (attribs.oauth.storage === "memory") {
-        oAuthHandler = OAuthHandler.createMemoryBackedHandler({
+        oAuthHandler = OAuthProviderFactory.createMemoryBackedHandler({
           baseCallbackUrl: `http://localhost:${attribs.port}`,
         });
       }

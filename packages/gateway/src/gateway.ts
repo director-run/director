@@ -122,12 +122,12 @@ export class Gateway {
     app.use(
       "/",
       createOauthCallbackRouter({
-        onAuthorizationSuccess: async (serverUrl, code) => {
-          await proxyStore.onAuthorizationSuccess(serverUrl, code);
+        onAuthorizationSuccess: async (factoryId, providerId, code) => {
+          await proxyStore.onAuthorizationSuccess(factoryId, providerId, code);
         },
-        onAuthorizationError: (serverUrl, error) => {
+        onAuthorizationError: (factoryId, providerId, error) => {
           logger.error(
-            `failed to authorize ${serverUrl}: ${error.message}`,
+            `failed to authorize ${factoryId} ${providerId}: ${error.message}`,
             error,
           );
         },

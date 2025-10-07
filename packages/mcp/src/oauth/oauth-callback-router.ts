@@ -7,11 +7,13 @@ const logger = getLogger("oauth/callback-router");
 
 export function createOauthCallbackRouter(params: {
   onAuthorizationSuccess: (
-    clientId: string,
+    factoryId: string,
+    providerId: string,
     code: string,
   ) => void | Promise<void>;
   onAuthorizationError: (
-    clientId: string,
+    factoryId: string,
+    providerId: string,
     error: Error,
   ) => void | Promise<void>;
 }) {
@@ -22,15 +24,17 @@ export function createOauthCallbackRouter(params: {
     asyncHandler(async (req: Request, res: Response) => {
       const code = req.query.code?.toString();
       const error = req.query.error?.toString();
-      const providerId = req.params.providerId;
-      const serverUrl = decodeUrl(providerId);
+
+      const factoryId = req.params.factoryId;
+      const providerIdEncoded = req.params.providerId;
+      const providerId = decodeUrl(providerIdEncoded);
 
       if (code) {
         logger.info({
           message: "received oauth callback, authorization successful",
         });
 
-        await params.onAuthorizationSuccess(serverUrl, code);
+        await params.onAuthorizationSuccess(factoryId, providerId, code);
 
         res.send({
           status: "success",
@@ -44,7 +48,8 @@ export function createOauthCallbackRouter(params: {
         });
 
         await params.onAuthorizationError(
-          serverUrl,
+          factoryId,
+          providerId,
           new Error(`OAuth authorization failed: ${error}`),
         );
 
@@ -58,7 +63,8 @@ export function createOauthCallbackRouter(params: {
         });
 
         await params.onAuthorizationError(
-          serverUrl,
+          factoryId,
+          providerId,
           new Error("No authorization code provided"),
         );
 

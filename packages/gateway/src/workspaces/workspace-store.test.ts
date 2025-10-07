@@ -47,7 +47,11 @@ describe("WorkspaceStore", () => {
         .getTarget("http1")) as HTTPClient;
       httpClient.completeAuthFlow = vi.fn();
 
-      await workspaceStore.onAuthorizationSuccess(serverUrl, "some-code");
+      await workspaceStore.onAuthorizationSuccess(
+        workspace.id,
+        serverUrl,
+        "some-code",
+      );
 
       expect(httpClient.completeAuthFlow).toHaveBeenCalledWith("some-code");
     });

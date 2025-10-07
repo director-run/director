@@ -106,14 +106,16 @@ export class WorkspaceStore {
     return Array.from(this.workspaces.values());
   }
 
-  public async onAuthorizationSuccess(serverUrl: string, code: string) {
-    const proxies = this.getAll();
-    for (const proxy of proxies) {
-      const targets = proxy.targets;
-      for (const target of targets) {
-        if (target instanceof HTTPClient && target.url === serverUrl) {
-          await target.completeAuthFlow(code);
-        }
+  public async onAuthorizationSuccess(
+    factoryId: string,
+    providerId: string,
+    code: string,
+  ) {
+    const workspace = await this.get(factoryId);
+    const targets = workspace.targets;
+    for (const target of targets) {
+      if (target instanceof HTTPClient && target.url === providerId) {
+        await target.completeAuthFlow(code);
       }
     }
   }
@@ -134,7 +136,6 @@ export class WorkspaceStore {
       description,
       servers: servers ?? [],
     });
-
     const proxyServer = await this.initializeAndAddProxy({
       name,
       description,
@@ -145,10 +146,13 @@ export class WorkspaceStore {
     return proxyServer;
   }
 
-  private async initializeAndAddProxy(proxy: WorkspaceParams) {
-    const workspace = await Workspace.fromConfig(proxy, {
+  private async initializeAndAddProxy(workspaceParams: WorkspaceParams) {
+    const workspace = await Workspace.fromConfig(workspaceParams, {
       oAuthHandler: this._oauth
-        ? new OAuthProviderFactory(this._oauth)
+        ? new OAuthProviderFactory({
+            ...this._oauth,
+            id: workspaceParams.id,
+          })
         : undefined,
       config: this.config,
     });

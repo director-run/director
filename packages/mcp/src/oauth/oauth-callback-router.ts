@@ -5,17 +5,20 @@ import express, { type Request, type Response } from "express";
 
 const logger = getLogger("oauth/callback-router");
 
+type MaybePromise<T> = T | Promise<T>;
+type RedirectResult = { redirectUrl: string };
+
 export function createOauthCallbackRouter(params: {
   onAuthorizationSuccess: (
     factoryId: string,
     providerId: string,
     code: string,
-  ) => void | Promise<void>;
+  ) => MaybePromise<void | RedirectResult>;
   onAuthorizationError: (
     factoryId: string,
     providerId: string,
     error: Error,
-  ) => void | Promise<void>;
+  ) => MaybePromise<void | RedirectResult>;
 }) {
   const router = express.Router();
 
@@ -34,44 +37,60 @@ export function createOauthCallbackRouter(params: {
           message: "received oauth callback, authorization successful",
         });
 
-        await params.onAuthorizationSuccess(factoryId, providerId, code);
+        const result = await params.onAuthorizationSuccess(
+          factoryId,
+          providerId,
+          code,
+        );
 
-        res.send({
-          status: "success",
-          message:
-            "Authorization successful, you can close this window and return to the terminal.",
-        });
+        if (result?.redirectUrl) {
+          res.redirect(result.redirectUrl);
+        } else {
+          res.send({
+            status: "success",
+            message:
+              "Authorization successful, you can close this window and return to the terminal.",
+          });
+        }
       } else if (error) {
         logger.error({
           message: "received oauth callback, authorization failed",
           error,
         });
 
-        await params.onAuthorizationError(
+        const result = await params.onAuthorizationError(
           factoryId,
           providerId,
           new Error(`OAuth authorization failed: ${error}`),
         );
 
-        res.status(400).send({
-          status: "error",
-          message: `oauth authorization failed: ${error}`,
-        });
+        if (result?.redirectUrl) {
+          res.redirect(result.redirectUrl);
+        } else {
+          res.status(400).send({
+            status: "error",
+            message: `oauth authorization failed: ${error}`,
+          });
+        }
       } else {
         logger.error({
           message: "received oauth callback, no authorization code or error",
         });
 
-        await params.onAuthorizationError(
+        const result = await params.onAuthorizationError(
           factoryId,
           providerId,
           new Error("No authorization code provided"),
         );
 
-        res.status(400).send({
-          status: "error",
-          message: "no authorization code or error in callback",
-        });
+        if (result?.redirectUrl) {
+          res.redirect(result.redirectUrl);
+        } else {
+          res.status(400).send({
+            status: "error",
+            message: "no authorization code or error in callback",
+          });
+        }
       }
     }),
   );

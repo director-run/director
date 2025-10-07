@@ -123,9 +123,6 @@ export const WorkspaceDetailPage = () => {
       <LayoutBreadcrumbHeader
         breadcrumbs={[
           {
-            title: "Workspaces",
-          },
-          {
             title: workspaceId,
           },
         ]}

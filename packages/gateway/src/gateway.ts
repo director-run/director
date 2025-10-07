@@ -1,5 +1,6 @@
 import { Server } from "http";
 import { createOauthCallbackRouter } from "@director.run/mcp/oauth/oauth-callback-router";
+import { isDevelopment } from "@director.run/utilities/env";
 import { getLogger } from "@director.run/utilities/logger";
 import {
   errorRequestHandler,
@@ -124,12 +125,18 @@ export class Gateway {
       createOauthCallbackRouter({
         onAuthorizationSuccess: async (factoryId, providerId, code) => {
           await proxyStore.onAuthorizationSuccess(factoryId, providerId, code);
+          return {
+            redirectUrl: `http://localhost:${isDevelopment() ? 3000 : attribs.port}/${factoryId}`,
+          };
         },
         onAuthorizationError: (factoryId, providerId, error) => {
           logger.error(
             `failed to authorize ${factoryId} ${providerId}: ${error.message}`,
             error,
           );
+          return {
+            redirectUrl: `http://localhost:${isDevelopment() ? 3000 : attribs.port}/${factoryId}`,
+          };
         },
       }),
     );

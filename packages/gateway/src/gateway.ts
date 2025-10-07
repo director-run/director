@@ -126,7 +126,7 @@ export class Gateway {
         onAuthorizationSuccess: async (factoryId, providerId, code) => {
           await proxyStore.onAuthorizationSuccess(factoryId, providerId, code);
           return {
-            redirectUrl: `http://localhost:${isDevelopment() ? 3000 : attribs.port}/${factoryId}`,
+            redirectUrl: `http://localhost:${isDevelopment() ? 3000 : attribs.port}/oauth/${factoryId}/${providerId}/callback`,
           };
         },
         onAuthorizationError: (factoryId, providerId, error) => {
@@ -135,7 +135,7 @@ export class Gateway {
             error,
           );
           return {
-            redirectUrl: `http://localhost:${isDevelopment() ? 3000 : attribs.port}/${factoryId}`,
+            redirectUrl: `http://localhost:${isDevelopment() ? 3000 : attribs.port}/oauth/${factoryId}/${providerId}/callback?error=${JSON.stringify(error)}`,
           };
         },
       }),

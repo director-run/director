@@ -112,11 +112,15 @@ export class WorkspaceStore {
     code: string,
   ) {
     const workspace = await this.get(factoryId);
-    const targets = workspace.targets;
-    for (const target of targets) {
-      if (target instanceof HTTPClient && target.url === providerId) {
-        await target.completeAuthFlow(code);
-      }
+    const target = await workspace.getTarget(providerId);
+
+    if (target instanceof HTTPClient) {
+      await target.completeAuthFlow(code);
+    } else {
+      throw new AppError(
+        ErrorCode.BAD_REQUEST,
+        `target ${providerId} is not an HTTP client`,
+      );
     }
   }
 

@@ -1,6 +1,5 @@
 import { getLogger } from "@director.run/utilities/logger";
 import { asyncHandler } from "@director.run/utilities/middleware/index";
-import { decodeUrl } from "@director.run/utilities/url";
 import express, { type Request, type Response } from "express";
 
 const logger = getLogger("oauth/callback-router");
@@ -29,8 +28,7 @@ export function createOauthCallbackRouter(params: {
       const error = req.query.error?.toString();
 
       const factoryId = req.params.factoryId;
-      const providerIdEncoded = req.params.providerId;
-      const providerId = decodeUrl(providerIdEncoded);
+      const providerId = req.params.providerId;
 
       if (code) {
         logger.info({

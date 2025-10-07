@@ -1,5 +1,5 @@
 import { getLogger } from "@director.run/utilities/logger";
-import { encodeUrl, joinURL } from "@director.run/utilities/url";
+import { joinURL } from "@director.run/utilities/url";
 import { type OAuthClientProvider } from "@modelcontextprotocol/sdk/client/auth.js";
 import {
   type OAuthClientInformation,
@@ -133,19 +133,21 @@ export class OAuthProviderFactory {
     }
   }
 
-  getProvider(params: {
+  getProvider({
+    providerId,
+    onRedirect,
+  }: {
     providerId: string;
     onRedirect?: (url: URL) => void;
   }) {
-    const providerId = encodeUrl(params.providerId);
     return new OAuthProvider({
+      onRedirect,
       id: providerId,
       redirectUrl: joinURL(
         this._baseCallbackUrl,
         `oauth/${this._id}/${providerId}/callback`,
       ),
       storage: this._storage,
-      onRedirect: params.onRedirect,
     });
   }
 }

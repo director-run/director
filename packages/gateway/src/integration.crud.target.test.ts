@@ -290,6 +290,7 @@ describe("Proxy Target CRUD operations", () => {
               status: "connected",
               lastConnectedAt: expect.any(Date),
               lastErrorMessage: undefined,
+              isAuthenticated: false,
             },
           }),
         );

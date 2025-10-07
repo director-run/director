@@ -13,7 +13,7 @@ import { OnDiskOAuthStorage } from "./storage/on-disk-oauth-storage";
 
 const logger = getLogger("oauth/provider");
 
-export interface OAuthProviderParams {
+interface OAuthProviderParams {
   id: string;
   redirectUrl: string | URL;
   storage: AbstractOAuthStorage;
@@ -114,16 +114,11 @@ export class OAuthProvider implements OAuthClientProvider {
   }
 }
 
-export interface OAuthHandlerParams {
-  storage: AbstractOAuthStorage;
-  baseCallbackUrl: string;
-}
-
 export class OAuthProviderFactory {
   private _baseCallbackUrl: string;
   private _storage: AbstractOAuthStorage;
 
-  constructor(params: OAuthHandlerParams) {
+  constructor(params: OAuthProviderFactoryParams) {
     this._baseCallbackUrl = params.baseCallbackUrl;
     this._storage = params.storage;
   }
@@ -163,4 +158,9 @@ export class OAuthProviderFactory {
       onRedirect: params.onRedirect,
     });
   }
+}
+
+interface OAuthProviderFactoryParams {
+  storage: AbstractOAuthStorage;
+  baseCallbackUrl: string;
 }

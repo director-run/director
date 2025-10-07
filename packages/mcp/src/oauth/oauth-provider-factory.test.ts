@@ -19,7 +19,7 @@ describe("OAuthProvider", () => {
         baseCallbackUrl: "http://localhost:8080/",
       });
       provider = factory.getProvider({
-        serverUrl: "https://provider.example/a",
+        providerId: "https://provider.example/a",
       });
     });
 
@@ -90,7 +90,7 @@ describe("OAuthProvider", () => {
     it("should call onRedirect callback when provided", () => {
       const onRedirect = vi.fn();
       const providerWithCallback = factory.getProvider({
-        serverUrl: "https://provider.example/a",
+        providerId: "https://provider.example/a",
         onRedirect,
       });
 
@@ -108,10 +108,10 @@ describe("OAuthProvider", () => {
 
     it("should support multiple providers with separate data", async () => {
       const provider1 = factory.getProvider({
-        serverUrl: "https://provider.example/one",
+        providerId: "https://provider.example/one",
       });
       const provider2 = factory.getProvider({
-        serverUrl: "https://provider.example/two",
+        providerId: "https://provider.example/two",
       });
 
       const clientInfo1: OAuthClientInformationFull = {
@@ -166,7 +166,7 @@ describe("OAuthProvider", () => {
         filePrefix: "test-oauth",
       });
       provider = factory.getProvider({
-        serverUrl: "https://provider.example/a",
+        providerId: "https://provider.example/a",
       });
     });
 
@@ -233,10 +233,10 @@ describe("OAuthProvider", () => {
 
     it("should support multiple providers with separate files", async () => {
       const provider1 = factory.getProvider({
-        serverUrl: "https://provider.example/one",
+        providerId: "https://provider.example/one",
       });
       const provider2 = factory.getProvider({
-        serverUrl: "https://provider.example/two",
+        providerId: "https://provider.example/two",
       });
 
       const clientInfo1: OAuthClientInformationFull = {

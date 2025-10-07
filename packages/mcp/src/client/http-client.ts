@@ -102,7 +102,7 @@ export class HTTPClient extends AbstractClient<HTTPClientParams> {
       throwOnError,
       transport: new SSEClientTransport(new URL(this._url), {
         requestInit: { headers: this.headers },
-        authProvider: this.oAuthHandler?.getProvider({ serverUrl: this._url }),
+        authProvider: this.oAuthHandler?.getProvider({ providerId: this._url }),
       }),
     });
   }
@@ -116,7 +116,7 @@ export class HTTPClient extends AbstractClient<HTTPClientParams> {
       throwOnError,
       transport: new StreamableHTTPClientTransport(new URL(this._url), {
         requestInit: { headers: this.headers },
-        authProvider: this.oAuthHandler?.getProvider({ serverUrl: this._url }),
+        authProvider: this.oAuthHandler?.getProvider({ providerId: this._url }),
       }),
     });
   }
@@ -152,7 +152,7 @@ export class HTTPClient extends AbstractClient<HTTPClientParams> {
         transport: new StreamableHTTPClientTransport(new URL(this._url), {
           requestInit: { headers: this.headers },
           authProvider: this.oAuthHandler.getProvider({
-            serverUrl: this._url,
+            providerId: this._url,
             onRedirect: (url: URL) => {
               redirectUrl = url.toString();
             },
@@ -206,7 +206,7 @@ export class HTTPClient extends AbstractClient<HTTPClientParams> {
       new URL(this._url),
       {
         requestInit: { headers: this.headers },
-        authProvider: this.oAuthHandler.getProvider({ serverUrl: this._url }),
+        authProvider: this.oAuthHandler.getProvider({ providerId: this._url }),
       },
     );
 
@@ -218,7 +218,7 @@ export class HTTPClient extends AbstractClient<HTTPClientParams> {
       throwOnError: true,
       transport: new StreamableHTTPClientTransport(new URL(this._url), {
         requestInit: { headers: this.headers },
-        authProvider: this.oAuthHandler.getProvider({ serverUrl: this._url }),
+        authProvider: this.oAuthHandler.getProvider({ providerId: this._url }),
       }),
     });
   }
@@ -305,7 +305,7 @@ export class HTTPClient extends AbstractClient<HTTPClientParams> {
     }
 
     await this.close();
-    const provider = this.oAuthHandler.getProvider({ serverUrl: this._url });
+    const provider = this.oAuthHandler.getProvider({ providerId: this._url });
     await provider.deleteTokens();
     this.status = "unauthorized";
     this.lastErrorMessage = undefined;
@@ -316,7 +316,7 @@ export class HTTPClient extends AbstractClient<HTTPClientParams> {
     if (!this.oAuthHandler) {
       return false;
     }
-    const provider = this.oAuthHandler.getProvider({ serverUrl: this._url });
+    const provider = this.oAuthHandler.getProvider({ providerId: this._url });
     const tokens = await provider.tokens();
     return tokens !== undefined && this.status === "connected";
   }

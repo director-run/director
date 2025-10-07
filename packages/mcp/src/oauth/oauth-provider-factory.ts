@@ -134,10 +134,10 @@ export class OAuthProviderFactory {
   }
 
   getProvider(params: {
-    serverUrl: string;
+    providerId: string;
     onRedirect?: (url: URL) => void;
   }) {
-    const providerId = encodeUrl(params.serverUrl);
+    const providerId = encodeUrl(params.providerId);
     return new OAuthProvider({
       id: providerId,
       redirectUrl: joinURL(

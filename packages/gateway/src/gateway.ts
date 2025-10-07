@@ -81,12 +81,14 @@ export class Gateway {
 
     if (attribs.oauth && attribs.oauth.enabled) {
       if (attribs.oauth.storage === "disk") {
-        oAuthHandler = OAuthProviderFactory.createDiskBackedHandler({
-          directory: attribs.oauth.tokenDirectory,
+        oAuthHandler = new OAuthProviderFactory({
+          storage: "disk",
+          tokenDirectory: attribs.oauth.tokenDirectory,
           baseCallbackUrl: `http://localhost:${attribs.port}`,
         });
       } else if (attribs.oauth.storage === "memory") {
-        oAuthHandler = OAuthProviderFactory.createMemoryBackedHandler({
+        oAuthHandler = new OAuthProviderFactory({
+          storage: "memory",
           baseCallbackUrl: `http://localhost:${attribs.port}`,
         });
       }

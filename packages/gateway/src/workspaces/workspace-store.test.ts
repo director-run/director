@@ -18,7 +18,8 @@ describe("WorkspaceStore", () => {
     const db = await YAMLConfig.connect(dbPath);
     workspaceStore = await WorkspaceStore.create({
       config: db,
-      oAuthHandler: OAuthProviderFactory.createMemoryBackedHandler({
+      oAuthHandler: new OAuthProviderFactory({
+        storage: "memory",
         baseCallbackUrl: "http://localhost:3000/callback",
       }),
     });

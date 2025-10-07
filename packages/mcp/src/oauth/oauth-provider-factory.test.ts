@@ -6,22 +6,20 @@ import {
   type OAuthTokens,
 } from "@modelcontextprotocol/sdk/shared/auth.js";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { OAuthProvider } from "./oauth-provider-factory";
-import { InMemoryOAuthStorage } from "./storage/in-memory-oauth-storage";
-import { OnDiskOAuthStorage } from "./storage/on-disk-oauth-storage";
+import { OAuthProvider, OAuthProviderFactory } from "./oauth-provider-factory";
 
 describe("OAuthProvider", () => {
   describe("with InMemoryOAuthStorage", () => {
     let provider: OAuthProvider;
-    let storage: InMemoryOAuthStorage;
-    const providerId = "test-provider";
+    let factory: OAuthProviderFactory;
 
     beforeEach(() => {
-      storage = new InMemoryOAuthStorage();
-      provider = new OAuthProvider({
-        id: providerId,
-        redirectUrl: "http://localhost:8080/callback",
-        storage,
+      factory = new OAuthProviderFactory({
+        storage: "memory",
+        baseCallbackUrl: "http://localhost:8080/",
+      });
+      provider = factory.getProvider({
+        serverUrl: "https://provider.example/a",
       });
     });
 
@@ -83,16 +81,16 @@ describe("OAuthProvider", () => {
     });
 
     it("should have correct redirect URL and client metadata", () => {
-      expect(provider.redirectUrl).toBe("http://localhost:8080/callback");
+      const urlStr = provider.redirectUrl.toString();
+      expect(urlStr.startsWith("http://localhost:8080/oauth/")).toBe(true);
+      expect(urlStr.endsWith("/callback")).toBe(true);
       // expect(provider.clientMetadata).toEqual(clientMetadata);
     });
 
     it("should call onRedirect callback when provided", () => {
       const onRedirect = vi.fn();
-      const providerWithCallback = new OAuthProvider({
-        id: providerId,
-        redirectUrl: "http://localhost:8080/callback",
-        storage,
+      const providerWithCallback = factory.getProvider({
+        serverUrl: "https://provider.example/a",
         onRedirect,
       });
 
@@ -109,16 +107,11 @@ describe("OAuthProvider", () => {
     });
 
     it("should support multiple providers with separate data", async () => {
-      const provider1 = new OAuthProvider({
-        id: "provider-1",
-        redirectUrl: "http://localhost:8080/callback",
-        storage,
+      const provider1 = factory.getProvider({
+        serverUrl: "https://provider.example/one",
       });
-
-      const provider2 = new OAuthProvider({
-        id: "provider-2",
-        redirectUrl: "http://localhost:8080/callback",
-        storage,
+      const provider2 = factory.getProvider({
+        serverUrl: "https://provider.example/two",
       });
 
       const clientInfo1: OAuthClientInformationFull = {
@@ -160,21 +153,20 @@ describe("OAuthProvider", () => {
   describe("with OnDiskOAuthStorage", () => {
     let tempDir: string;
     let provider: OAuthProvider;
-    let storage: OnDiskOAuthStorage;
-    const testProviderId = "test-provider";
+    let factory: OAuthProviderFactory;
 
     beforeEach(async () => {
       tempDir = await fs.promises.mkdtemp(
         path.join(os.tmpdir(), "oauth-test-"),
       );
-      storage = new OnDiskOAuthStorage({
-        directory: tempDir,
+      factory = new OAuthProviderFactory({
+        storage: "disk",
+        tokenDirectory: tempDir,
+        baseCallbackUrl: "http://localhost:8080/",
         filePrefix: "test-oauth",
       });
-      provider = new OAuthProvider({
-        id: testProviderId,
-        redirectUrl: "http://localhost:8080/callback",
-        storage,
+      provider = factory.getProvider({
+        serverUrl: "https://provider.example/a",
       });
     });
 
@@ -240,16 +232,11 @@ describe("OAuthProvider", () => {
     });
 
     it("should support multiple providers with separate files", async () => {
-      const provider1 = new OAuthProvider({
-        id: "provider-1",
-        redirectUrl: "http://localhost:8080/callback",
-        storage,
+      const provider1 = factory.getProvider({
+        serverUrl: "https://provider.example/one",
       });
-
-      const provider2 = new OAuthProvider({
-        id: "provider-2",
-        redirectUrl: "http://localhost:8080/callback",
-        storage,
+      const provider2 = factory.getProvider({
+        serverUrl: "https://provider.example/two",
       });
 
       const clientInfo1: OAuthClientInformationFull = {
@@ -286,11 +273,13 @@ describe("OAuthProvider", () => {
       expect(loaded2).toEqual(clientInfo2);
       expect(loaded1).not.toEqual(loaded2);
 
-      // Check that separate files were created
+      // Check that separate files were created with the filePrefix and encoded IDs
       const files = await fs.promises.readdir(tempDir);
       expect(files).toHaveLength(2);
-      expect(files).toContain("test-oauth-provider-1.json");
-      expect(files).toContain("test-oauth-provider-2.json");
+      for (const f of files) {
+        expect(f.startsWith("test-oauth-")).toBe(true);
+        expect(f.endsWith(".json")).toBe(true);
+      }
     });
   });
 });

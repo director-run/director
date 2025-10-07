@@ -148,7 +148,8 @@ describe("ProxyServer", () => {
                   url: `https://mcp.notion.com/mcp`,
                 },
                 {
-                  oAuthHandler: OAuthProviderFactory.createMemoryBackedHandler({
+                  oAuthHandler: new OAuthProviderFactory({
+                    storage: "memory",
                     baseCallbackUrl: "http://localhost:8999",
                   }),
                 },
@@ -172,7 +173,8 @@ describe("ProxyServer", () => {
                   url: `https://mcp.notion.com/mcp`,
                 },
                 {
-                  oAuthHandler: OAuthProviderFactory.createMemoryBackedHandler({
+                  oAuthHandler: new OAuthProviderFactory({
+                    storage: "memory",
                     baseCallbackUrl: "http://localhost:8999",
                   }),
                 },

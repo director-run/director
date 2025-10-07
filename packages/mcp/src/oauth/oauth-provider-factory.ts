@@ -120,30 +120,15 @@ export class OAuthProviderFactory {
 
   constructor(params: OAuthProviderFactoryParams) {
     this._baseCallbackUrl = params.baseCallbackUrl;
-    this._storage = params.storage;
-  }
 
-  public static createDiskBackedHandler(params: {
-    directory: string;
-    filePrefix?: string;
-    baseCallbackUrl: string;
-  }) {
-    return new OAuthProviderFactory({
-      storage: new OnDiskOAuthStorage({
-        directory: params.directory,
+    if (params.storage === "disk") {
+      this._storage = new OnDiskOAuthStorage({
+        directory: params.tokenDirectory,
         filePrefix: params.filePrefix,
-      }),
-      baseCallbackUrl: params.baseCallbackUrl,
-    });
-  }
-
-  public static createMemoryBackedHandler(params: {
-    baseCallbackUrl: string;
-  }) {
-    return new OAuthProviderFactory({
-      storage: new InMemoryOAuthStorage(),
-      baseCallbackUrl: params.baseCallbackUrl,
-    });
+      });
+    } else {
+      this._storage = new InMemoryOAuthStorage();
+    }
   }
 
   getProvider(params: {
@@ -160,7 +145,14 @@ export class OAuthProviderFactory {
   }
 }
 
-interface OAuthProviderFactoryParams {
-  storage: AbstractOAuthStorage;
-  baseCallbackUrl: string;
-}
+type OAuthProviderFactoryParams =
+  | {
+      storage: "disk";
+      tokenDirectory: string;
+      baseCallbackUrl: string;
+      filePrefix?: string;
+    }
+  | {
+      storage: "memory";
+      baseCallbackUrl: string;
+    };

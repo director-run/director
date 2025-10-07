@@ -18,7 +18,6 @@ describe("Gateway", () => {
         "x-cli-version": "1.2.3",
       },
       oauth: {
-        enabled: true,
         storage: "memory",
       },
     });

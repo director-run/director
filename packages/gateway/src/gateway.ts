@@ -1,6 +1,5 @@
 import { Server } from "http";
 import { createOauthCallbackRouter } from "@director.run/mcp/oauth/oauth-callback-router";
-import { OAuthProviderFactory } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { getLogger } from "@director.run/utilities/logger";
 import {
   errorRequestHandler,
@@ -75,27 +74,15 @@ export class Gateway {
         })
       : Telemetry.noTelemetry();
 
-    let oAuthHandler: OAuthProviderFactory | undefined;
-
-    if (attribs.oauth) {
-      if (attribs.oauth.storage === "disk") {
-        oAuthHandler = new OAuthProviderFactory({
-          storage: "disk",
-          tokenDirectory: attribs.oauth.tokenDirectory,
-          baseCallbackUrl: `http://localhost:${attribs.port}`,
-        });
-      } else if (attribs.oauth.storage === "memory") {
-        oAuthHandler = new OAuthProviderFactory({
-          storage: "memory",
-          baseCallbackUrl: `http://localhost:${attribs.port}`,
-        });
-      }
-    }
-
     const proxyStore = await WorkspaceStore.create({
       config: db,
       telemetry,
-      oAuthHandler,
+      oauth: attribs.oauth
+        ? {
+            ...attribs.oauth,
+            baseCallbackUrl: `http://localhost:${attribs.port}`,
+          }
+        : undefined,
     });
     const app = express();
     const registryURL = attribs.registryURL;

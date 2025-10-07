@@ -145,7 +145,7 @@ export class OAuthProviderFactory {
   }
 }
 
-type OAuthProviderFactoryParams =
+export type OAuthProviderFactoryParams =
   | {
       storage: "disk";
       tokenDirectory: string;

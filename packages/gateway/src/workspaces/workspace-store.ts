@@ -1,5 +1,8 @@
 import { HTTPClient } from "@director.run/mcp/client/http-client";
-import { OAuthProviderFactory } from "@director.run/mcp/oauth/oauth-provider-factory";
+import {
+  OAuthProviderFactory,
+  type OAuthProviderFactoryParams,
+} from "@director.run/mcp/oauth/oauth-provider-factory";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { Telemetry } from "@director.run/utilities/telemetry";
@@ -16,32 +19,32 @@ export class WorkspaceStore {
   private workspaces: Map<string, Workspace> = new Map();
   private config: Config;
   private telemetry: Telemetry;
-  private _oAuthHandler?: OAuthProviderFactory;
+  private _oauth?: OAuthProviderFactoryParams;
 
   private constructor(params: {
     config: Config;
     telemetry?: Telemetry;
-    oAuthHandler?: OAuthProviderFactory;
+    oauth?: OAuthProviderFactoryParams;
   }) {
     this.config = params.config;
     this.telemetry = params.telemetry || Telemetry.noTelemetry();
-    this._oAuthHandler = params.oAuthHandler;
+    this._oauth = params.oauth;
   }
 
   public static async create({
     config,
     telemetry,
-    oAuthHandler,
+    oauth,
   }: {
     config: Config;
     telemetry?: Telemetry;
-    oAuthHandler?: OAuthProviderFactory;
+    oauth?: OAuthProviderFactoryParams;
   }): Promise<WorkspaceStore> {
     logger.debug("initializing WorkspaceStore");
     const store = new WorkspaceStore({
       config,
       telemetry,
-      oAuthHandler,
+      oauth,
     });
     await store.initialize();
     logger.debug("initialization complete");
@@ -144,7 +147,9 @@ export class WorkspaceStore {
 
   private async initializeAndAddProxy(proxy: WorkspaceParams) {
     const workspace = await Workspace.fromConfig(proxy, {
-      oAuthHandler: this._oAuthHandler,
+      oAuthHandler: this._oauth
+        ? new OAuthProviderFactory(this._oauth)
+        : undefined,
       config: this.config,
     });
 

@@ -37,7 +37,7 @@ describe("WorkspaceStore", () => {
       });
 
       const serverUrl = "https://mcp.notion.com/mcp";
-      await workspace.addTarget(
+      const target = await workspace.addTarget(
         makeHTTPTargetConfig({ name: "http1", url: serverUrl }),
         { throwOnError: false },
       );
@@ -49,7 +49,7 @@ describe("WorkspaceStore", () => {
 
       await workspaceStore.onAuthorizationSuccess(
         workspace.id,
-        serverUrl,
+        target.name,
         "some-code",
       );
 

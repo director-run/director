@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { faker } from "@faker-js/faker";
 import {
   type OAuthClientInformationFull,
   type OAuthTokens,
@@ -19,7 +20,7 @@ describe("OAuthProvider", () => {
         baseCallbackUrl: "http://localhost:8080/",
       });
       provider = factory.getProvider({
-        providerId: "https://provider.example/a",
+        providerId: faker.string.uuid(),
       });
     });
 
@@ -108,10 +109,10 @@ describe("OAuthProvider", () => {
 
     it("should support multiple providers with separate data", async () => {
       const provider1 = factory.getProvider({
-        providerId: "https://provider.example/one",
+        providerId: faker.string.uuid(),
       });
       const provider2 = factory.getProvider({
-        providerId: "https://provider.example/two",
+        providerId: faker.string.uuid(),
       });
 
       const clientInfo1: OAuthClientInformationFull = {
@@ -166,7 +167,7 @@ describe("OAuthProvider", () => {
         filePrefix: "test-oauth",
       });
       provider = factory.getProvider({
-        providerId: "https://provider.example/a",
+        providerId: faker.string.uuid(),
       });
     });
 
@@ -233,10 +234,10 @@ describe("OAuthProvider", () => {
 
     it("should support multiple providers with separate files", async () => {
       const provider1 = factory.getProvider({
-        providerId: "https://provider.example/one",
+        providerId: faker.string.uuid(),
       });
       const provider2 = factory.getProvider({
-        providerId: "https://provider.example/two",
+        providerId: faker.string.uuid(),
       });
 
       const clientInfo1: OAuthClientInformationFull = {

@@ -53,7 +53,6 @@ export async function startGateway(successCallback?: () => void) {
         "X-Cli-Version": packageJson.version,
       },
       oauth: {
-        enabled: true,
         storage: "disk",
         tokenDirectory: env.OAUTH_TOKEN_DIRECTORY,
       },

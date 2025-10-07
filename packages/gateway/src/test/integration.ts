@@ -52,7 +52,6 @@ export class IntegrationTestHarness {
       },
       registryURL: "http://localhost:3000",
       oauth: {
-        enabled: true,
         storage: "memory",
       },
     });

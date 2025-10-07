@@ -55,12 +55,10 @@ export class Gateway {
       headers?: Record<string, string>;
       oauth?:
         | {
-            enabled: boolean;
             storage: "disk";
             tokenDirectory: string;
           }
         | {
-            enabled: boolean;
             storage: "memory";
           };
     },
@@ -79,7 +77,7 @@ export class Gateway {
 
     let oAuthHandler: OAuthProviderFactory | undefined;
 
-    if (attribs.oauth && attribs.oauth.enabled) {
+    if (attribs.oauth) {
       if (attribs.oauth.storage === "disk") {
         oAuthHandler = new OAuthProviderFactory({
           storage: "disk",

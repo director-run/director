@@ -11,7 +11,7 @@ export function OAuthCallbackPage() {
 
   useEffect(() => {
     if (!error && workspaceId && targetId) {
-      navigate(`/${workspaceId}/${targetId}`);
+      navigate(`/${workspaceId}`);
     }
   }, [error, workspaceId, targetId, navigate]);
 

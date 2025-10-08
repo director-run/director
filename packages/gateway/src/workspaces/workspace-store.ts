@@ -80,8 +80,12 @@ export class WorkspaceStore {
 
   async delete(proxyId: string) {
     this.telemetry.trackEvent("proxy_deleted");
-
     const proxy = this.get(proxyId);
+    for (const server of proxy.targets) {
+      if (server instanceof HTTPClient && (await server.isAuthenticated())) {
+        await server.logout();
+      }
+    }
     await proxy.close();
     await this.config.unsetWorkspace(proxyId);
     this.workspaces.delete(proxyId);

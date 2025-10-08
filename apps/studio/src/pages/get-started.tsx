@@ -13,6 +13,7 @@ import { GATEWAY_URL } from "../config.ts";
 import { gatewayClient as trpc } from "../contexts/backend-context.tsx";
 import { useClients } from "../hooks/use-clients.ts";
 import { useInstallServerFromRegistry } from "../hooks/use-install-server-from-registry.ts";
+import { useOnboardingProgress } from "../hooks/use-onboarding-progress.ts";
 import { useRegistryEntries } from "../hooks/use-registry-entries.ts";
 import { useWorkspaces } from "../hooks/use-workspaces.ts";
 
@@ -30,6 +31,20 @@ export function GetStartedPage() {
   >(null);
   const [isInstallDialogOpen, setIsInstallDialogOpen] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
+
+  const { setInProgress } = useOnboardingProgress();
+
+  // When this page renders, set onboarding to true
+  useEffect(() => {
+    setInProgress(true);
+  }, [setInProgress]);
+
+  // When process completes, set onboarding to false
+  useEffect(() => {
+    if (isCompleted) {
+      setInProgress(false);
+    }
+  }, [isCompleted, setInProgress]);
 
   const utils = trpc.useUtils();
 

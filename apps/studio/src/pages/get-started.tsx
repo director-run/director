@@ -1,19 +1,18 @@
 // import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import { GetStartedCompleteDialog } from "@director.run/design/components/get-started/get-started-complete-dialog.tsx";
 import { GetStartedInstallServerDialog } from "@director.run/design/components/get-started/get-started-install-server-dialog.tsx";
-import { proxySchema } from "@director.run/design/components/get-started/get-started-proxy-form.tsx";
 import type { FormValues as ProxyFormValues } from "@director.run/design/components/get-started/get-started-proxy-form.tsx";
 import { GetStartedPageView } from "@director.run/design/components/pages/get-started.tsx";
 import { FullScreenLoader } from "@director.run/design/components/pages/global/loader.tsx";
 import { ConfiguratorTarget } from "@director.run/design/components/types.ts";
 import { toast } from "@director.run/design/components/ui/toast.tsx";
-import { useZodForm } from "@director.run/design/hooks/use-zod-form.tsx";
 import { useEffect, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { GATEWAY_URL } from "../config.ts";
 import { gatewayClient as trpc } from "../contexts/backend-context.tsx";
 import { useClients } from "../hooks/use-clients.ts";
+import { useInstallServerFromRegistry } from "../hooks/use-install-server-from-registry.ts";
 import { useRegistryEntries } from "../hooks/use-registry-entries.ts";
 import { useWorkspaces } from "../hooks/use-workspaces.ts";
 
@@ -32,11 +31,7 @@ export function GetStartedPage() {
   const [isInstallDialogOpen, setIsInstallDialogOpen] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
 
-  // tRPC utils
   const utils = trpc.useUtils();
-
-  // Proxy queries
-  //   const proxyListQuery = trpc.store.getAll.useQuery();
 
   const proxyListQuery = useWorkspaces();
   const registryEntriesQuery = useRegistryEntries({
@@ -44,28 +39,6 @@ export function GetStartedPage() {
     pageSize: 20,
     searchQuery,
   });
-  //   const registryEntriesQuery = trpc.registry.getEntries.useQuery(
-  //     {
-  //       pageIndex: 0,
-  //       pageSize: 20,
-  //       searchQuery,
-  //     },
-  //     {
-  //       placeholderData: (prev) => prev,
-  //     },
-  //   );
-
-  const installersQuery = trpc.installer.byProxy.list.useQuery(
-    {
-      proxyId: currentProxyId as string,
-    },
-    {
-      enabled: !!currentProxyId,
-    },
-  );
-
-  // Additional queries for installers
-  //   const listClientsQuery = trpc.installer.allClients.useQuery();
 
   const listClientsQuery = useClients(currentProxyId as string);
 
@@ -78,13 +51,6 @@ export function GetStartedPage() {
     },
   );
 
-  // Proxy form
-  const _proxyForm = useZodForm({
-    schema: proxySchema,
-    defaultValues: { name: "", description: "A proxy for getting started" },
-  });
-
-  // Mutations
   const createProxyMutation = trpc.store.create.useMutation({
     onSuccess: async () => {
       await utils.store.getAll.refetch();
@@ -112,8 +78,7 @@ export function GetStartedPage() {
     },
   });
 
-  const transportMutation = trpc.registry.getTransportForEntry.useMutation();
-  const installServerMutation = trpc.store.addServer.useMutation({
+  const { install, isPending: isInstalling } = useInstallServerFromRegistry({
     onError: (error) => {
       toast({
         title: "Error",
@@ -130,7 +95,6 @@ export function GetStartedPage() {
     },
   });
 
-  // Auto-select proxy when only one exists
   useEffect(() => {
     if (proxyListQuery.data && proxyListQuery.data.length === 1) {
       setCurrentProxyId(proxyListQuery.data[0].id);
@@ -141,8 +105,6 @@ export function GetStartedPage() {
   const hasData = proxyListQuery.data && registryEntriesQuery.data;
   const hasProxy = proxyListQuery.data && proxyListQuery.data.length > 0;
   const currentProxy = hasProxy ? proxyListQuery.data[0] : null;
-  const _hasInstallers =
-    installersQuery.data && Object.values(installersQuery.data).some(Boolean);
 
   // Event handlers
   const handleProxySubmit: SubmitHandler<ProxyFormValues> = async (values) => {
@@ -170,22 +132,15 @@ export function GetStartedPage() {
     entryId: string;
     parameters?: Record<string, string>;
   }) => {
-    if (!selectedRegistryEntryName) {
+    if (!selectedRegistryEntryName || !values.proxyId) {
       return;
     }
-    const transport = await transportMutation.mutateAsync({
+
+    await install({
+      proxyId: values.proxyId,
       entryName: selectedRegistryEntryName,
       parameters: values.parameters ?? {},
     });
-    if (values.proxyId) {
-      installServerMutation.mutate({
-        proxyId: values.proxyId,
-        server: {
-          name: selectedRegistryEntryName,
-          transport,
-        },
-      });
-    }
   };
 
   if (!hasData) {
@@ -212,7 +167,7 @@ export function GetStartedPage() {
           registryEntry={entryQuery.data}
           proxies={proxyListQuery.data}
           onClickInstall={handleMcpFormSubmit}
-          isInstalling={installServerMutation.isPending}
+          isInstalling={isInstalling}
           open={isInstallDialogOpen}
           onOpenChange={setIsInstallDialogOpen}
         />

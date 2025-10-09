@@ -25,6 +25,9 @@ export const Default: Story = {
     tools: mockTools(),
     toolsLoading: false,
     editable: true,
+    onUpdateTools: (tools) => {
+      console.log("onUpdateTools", tools);
+    },
   },
 };
 

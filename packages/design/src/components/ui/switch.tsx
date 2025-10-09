@@ -14,6 +14,7 @@ function Switch({
       data-slot="switch"
       className={cn(
         "peer inline-flex w-9 shrink-0 items-center rounded-full border border-fg/10 p-0.5 outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-success data-[state=unchecked]:bg-fg/20",
+        "cursor-pointer",
         className,
       )}
       {...props}

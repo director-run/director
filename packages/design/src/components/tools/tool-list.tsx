@@ -15,9 +15,15 @@ import { Section, SectionHeader, SectionTitle } from "../ui/section";
 import { Switch } from "../ui/switch";
 import { ToolSheet } from "./tool-sheet";
 
-export function ToolList({ tools, toolsLoading, editable }: ToolListProps) {
+export function ToolList({
+  tools,
+  toolsLoading,
+  editable,
+  onUpdateTools,
+}: ToolListProps) {
   const [selectedTool, setSelectedTool] = useState<MCPTool | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [draftTools, setDraftTools] = useState<MCPTool[] | null>(null);
 
   if (toolsLoading) {
     return <LoadingToolList />;
@@ -26,6 +32,8 @@ export function ToolList({ tools, toolsLoading, editable }: ToolListProps) {
   if (tools.length === 0) {
     return <EmptyToolList />;
   }
+
+  const toolsToDisplay = isEditing && draftTools ? draftTools : tools;
 
   return (
     <>
@@ -36,19 +44,44 @@ export function ToolList({ tools, toolsLoading, editable }: ToolListProps) {
           </SectionTitle>
 
           {editable && !isEditing && (
-            <Button size="sm" onClick={() => setIsEditing(true)}>
+            <Button
+              size="sm"
+              onClick={() => {
+                setDraftTools(tools.map((t) => ({ ...t })));
+                setIsEditing(true);
+              }}
+            >
               Edit
             </Button>
           )}
           {isEditing && (
             <>
-              <Button size="sm" onClick={() => setIsEditing(false)}>
+              <Button
+                size="sm"
+                onClick={() => {
+                  if (draftTools) {
+                    const updates = draftTools.map((t) => ({
+                      name: t.name,
+                      disabled: t.disabled,
+                      serverName: t.serverName,
+                    }));
+                    if (typeof onUpdateTools === "function") {
+                      onUpdateTools(updates);
+                    }
+                  }
+                  setIsEditing(false);
+                  setDraftTools(null);
+                }}
+              >
                 Save
               </Button>
               <Button
                 size="sm"
                 variant="secondary"
-                onClick={() => setIsEditing(false)}
+                onClick={() => {
+                  setIsEditing(false);
+                  setDraftTools(null);
+                }}
               >
                 <XIcon weight="bold" />
               </Button>
@@ -57,14 +90,26 @@ export function ToolList({ tools, toolsLoading, editable }: ToolListProps) {
         </SectionHeader>
 
         <List.List>
-          {tools.map((tool) => (
+          {toolsToDisplay.map((tool) => (
             <ToolListItem
-              key={`li-${tool.name}`}
+              key={`li-${tool.serverName}:${tool.name}`}
               tool={tool}
               onClick={() => setSelectedTool(tool)}
               isEditing={isEditing}
               onDisabledChange={(tool, disabled) => {
-                console.log(tool, disabled);
+                if (!isEditing || !draftTools) {
+                  return;
+                }
+                setDraftTools((prev) => {
+                  if (!prev) {
+                    return prev;
+                  }
+                  return prev.map((t) => {
+                    const sameTool =
+                      t.name === tool.name && t.serverName === tool.serverName;
+                    return sameTool ? { ...t, disabled } : t;
+                  });
+                });
               }}
             />
           ))}
@@ -124,7 +169,7 @@ function ToolListItem({
           id={tool.name}
           checked={!tool.disabled}
           onCheckedChange={(checked) => {
-            onDisabledChange(tool, checked);
+            onDisabledChange(tool, !checked);
           }}
         />
       )}

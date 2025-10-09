@@ -23,7 +23,7 @@ export const Default: Story = {
     workspaceTarget: mockWorkspaceTarget,
     workspace: mockWorkspace(),
     registryEntry: mockRegistryEntry,
-    tools: mockTools,
+    tools: mockTools(),
     toolsLoading: false,
     navigate: () => console.log("navigate"),
     workspaceId: "workspace-id",

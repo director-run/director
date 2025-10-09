@@ -29,7 +29,7 @@ export const mockRegistryEntry: RegistryEntryDetail = {
   homepage: "https://github.com/github/github-mcp-server",
   source_registry: null,
   categories: [],
-  tools: mockTools.map((tool) => ({
+  tools: mockTools().map((tool) => ({
     name: tool.name,
     description: tool.description ?? "",
     inputSchema: {

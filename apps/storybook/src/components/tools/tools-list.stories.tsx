@@ -22,7 +22,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    tools: mockTools,
+    tools: mockTools(),
     toolsLoading: false,
     editable: true,
   },
@@ -30,7 +30,7 @@ export const Default: Story = {
 
 export const NotEditable: Story = {
   args: {
-    tools: mockTools,
+    tools: mockTools(),
     toolsLoading: false,
   },
 };

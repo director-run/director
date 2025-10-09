@@ -14,7 +14,6 @@ import { WorkspaceSectionClients } from "@director.run/design/components/workspa
 import { mockTools } from "@director.run/design/test/fixtures/mcp/tools.js";
 import { mockClients } from "@director.run/design/test/fixtures/workspace/clients.ts";
 import { mockWorkspace } from "@director.run/design/test/fixtures/workspace/workspace.ts";
-import type { Tool as McpSdkTool } from "@modelcontextprotocol/sdk/types.js";
 import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../helpers/decorators";
 
@@ -25,14 +24,14 @@ const WorkspaceDetailComponent = ({
 }: {
   workspace: WorkspaceDetail;
   clients: Client[];
-  tools: McpSdkTool[];
+  tools: MCPTool[];
 }) => (
   <Container size="xl">
     <SplitView>
       <SplitViewMain>
         <WorkspaceDetailContent
           workspace={workspace}
-          tools={tools as MCPTool[]}
+          tools={tools}
           toolsLoading={false}
           onClickServer={() => console.log("library click")}
           onClickAddServer={() => console.log("server click")}
@@ -67,6 +66,6 @@ export const Default: Story = {
   args: {
     workspace: mockWorkspace(),
     clients: mockClients,
-    tools: mockTools as McpSdkTool[],
+    tools: mockTools(),
   },
 };

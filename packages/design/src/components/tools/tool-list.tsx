@@ -1,6 +1,5 @@
 import { XIcon } from "@phosphor-icons/react";
 import { useState } from "react";
-import type { ReactNode } from "react";
 import { ListSkeleton } from "../loaders/list-skeleton";
 import type { MCPTool } from "../types";
 import { Badge, BadgeLabel } from "../ui/badge";
@@ -19,27 +18,11 @@ export function ToolList({ tools, toolsLoading, editable }: ToolListProps) {
   const [selectedTool, setSelectedTool] = useState<MCPTool | null>(null);
   const [editing, setEditing] = useState(false);
 
-  const toolLinks = (tools || []).slice().map((tool) => {
-    const server = tool.description?.match(/\[([^\]]+)\]/)?.[1];
-    return {
-      title: tool.name,
-      subtitle: tool.description?.replace(/\[([^\]]+)\]/g, "") || "",
-      scroll: false,
-      href: `#`,
-      onClick: () => setSelectedTool(tool),
-      badges: server && (
-        <Badge>
-          <BadgeLabel uppercase>{server}</BadgeLabel>
-        </Badge>
-      ),
-    };
-  });
-
   if (toolsLoading) {
     return <LoadingToolList />;
   }
 
-  if (toolLinks.length === 0) {
+  if (tools.length === 0) {
     return <EmptyToolList />;
   }
 
@@ -73,8 +56,12 @@ export function ToolList({ tools, toolsLoading, editable }: ToolListProps) {
         </SectionHeader>
 
         <List.List>
-          {toolLinks.map((it) => (
-            <ListItem key={`li-${it.title}`} link={it} />
+          {tools.map((tool) => (
+            <ToolListItem
+              key={`li-${tool.name}`}
+              tool={tool}
+              onClick={() => setSelectedTool(tool)}
+            />
           ))}
         </List.List>
       </Section>
@@ -98,27 +85,27 @@ interface ToolListProps {
   ) => void;
 }
 
-interface LinkItem {
-  href: string;
-  scroll?: boolean;
-  subtitle?: string;
-  title: string;
-  badges?: ReactNode;
-  onClick?: () => void;
-}
+function ToolListItem({
+  tool,
+  onClick,
+}: { tool: MCPTool; onClick: () => void }) {
+  const subtitle = tool.description?.replace(/\[([^\]]+)\]/g, "") || "";
 
-function ListItem({ link }: { link: LinkItem }) {
   return (
-    <List.ListItem onClick={link.onClick}>
+    <List.ListItem onClick={onClick}>
       <List.ListItemDetails>
-        <List.ListItemTitle>{link.title}</List.ListItemTitle>
-        {link.subtitle && (
-          <List.ListItemDescription>{link.subtitle}</List.ListItemDescription>
+        <List.ListItemTitle>{tool.name}</List.ListItemTitle>
+        {subtitle && (
+          <List.ListItemDescription>{subtitle}</List.ListItemDescription>
         )}
       </List.ListItemDetails>
 
-      {link.badges && (
-        <BadgeGroup className="ml-auto">{link.badges}</BadgeGroup>
+      {tool.disabled && (
+        <BadgeGroup className="ml-auto">
+          <Badge>
+            <BadgeLabel uppercase>Disabled</BadgeLabel>
+          </Badge>
+        </BadgeGroup>
       )}
     </List.ListItem>
   );

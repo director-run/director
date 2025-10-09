@@ -1,10 +1,8 @@
-"use client";
-
 import { LinkIcon, SpinnerGapIcon } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
 import { LayoutView, LayoutViewContent } from "../layout/layout";
 import { LayoutBreadcrumbHeader } from "../layout/layout-breadcrumb-header";
-import { ListOfLinks } from "../list-of-links";
+import { ListSkeleton } from "../loaders/list-skeleton";
 import { Badge, BadgeIcon, BadgeLabel } from "../ui/badge";
 import { BadgeGroup } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -77,7 +75,7 @@ export function RegistryEntrySkeleton({ children }: { children?: ReactNode }) {
                 <h3>Transport</h3>
               </SectionTitle>
             </SectionHeader>
-            <ListOfLinks isLoading={true} links={[]} />
+            <ListSkeleton />
           </Section>
 
           <SectionSeparator />
@@ -88,7 +86,7 @@ export function RegistryEntrySkeleton({ children }: { children?: ReactNode }) {
                 <h3>Parameters</h3>
               </SectionTitle>
             </SectionHeader>
-            <ListOfLinks isLoading={true} links={[]} />
+            <ListSkeleton />
           </Section>
 
           <SectionSeparator />
@@ -99,7 +97,7 @@ export function RegistryEntrySkeleton({ children }: { children?: ReactNode }) {
                 <h3>Tools</h3>
               </SectionTitle>
             </SectionHeader>
-            <ListOfLinks isLoading={true} links={[]} />
+            <ListSkeleton />
           </Section>
         </Container>
       </LayoutViewContent>

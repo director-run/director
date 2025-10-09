@@ -1,10 +1,8 @@
-"use client";
-
 import { DotsThreeOutlineVerticalIcon } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
 import { LayoutView, LayoutViewContent } from "../layout/layout";
 import { LayoutBreadcrumbHeader } from "../layout/layout-breadcrumb-header";
-import { ListOfLinks } from "../list-of-links";
+import { ListSkeleton } from "../loaders/list-skeleton";
 import { Button } from "../ui/button";
 import { Container } from "../ui/container";
 import { ScrambleText } from "../ui/scramble-text";
@@ -66,7 +64,7 @@ export function ProxySkeleton({ children }: { children?: ReactNode }) {
               </SectionTitle>
               <Button disabled>Add</Button>
             </SectionHeader>
-            <ListOfLinks isLoading={true} links={[]} />
+            <ListSkeleton />
           </Section>
 
           <Section>
@@ -75,7 +73,7 @@ export function ProxySkeleton({ children }: { children?: ReactNode }) {
                 <h2>Tools</h2>
               </SectionTitle>
             </SectionHeader>
-            <ListOfLinks isLoading={true} links={[]} />
+            <ListSkeleton />
           </Section>
         </Container>
       </LayoutViewContent>

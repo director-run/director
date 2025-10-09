@@ -4,7 +4,7 @@ import { DotsThreeOutlineVerticalIcon } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
 import { LayoutView, LayoutViewContent } from "../layout/layout";
 import { LayoutBreadcrumbHeader } from "../layout/layout-breadcrumb-header";
-import { ListOfLinks } from "../list-of-links";
+import { ListSkeleton } from "../loaders/list-skeleton";
 import { Button } from "../ui/button";
 import { Container } from "../ui/container";
 import {
@@ -49,7 +49,7 @@ export function RegistryLibrarySkeleton({
               </SectionDescription>
             </SectionHeader>
 
-            <ListOfLinks isLoading={true} links={[]} />
+            <ListSkeleton />
           </Section>
         </Container>
       </LayoutViewContent>

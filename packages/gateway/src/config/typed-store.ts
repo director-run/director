@@ -10,6 +10,7 @@ export abstract class TypedStore<TSchema extends Record<string, z.ZodType>> {
     this._data = validateAndParseData(config.schema, config.data ?? {});
   }
 
+  protected abstract init(): Promise<void>;
   protected abstract readData(): Promise<Record<string, unknown>>;
   protected abstract writeData(data: Record<string, unknown>): Promise<void>;
 
@@ -61,19 +62,27 @@ export abstract class TypedStore<TSchema extends Record<string, z.ZodType>> {
 export class InMemoryTypedStore<
   TSchema extends Record<string, z.ZodType>,
 > extends TypedStore<TSchema> {
-  private _dataa: Record<string, unknown> = {};
+  private _dataa?: Record<string, unknown>;
 
   constructor(config: { schema: TSchema; data?: Record<string, unknown> }) {
-    super(config);
+    super({ schema: config.schema, data: config.data });
+    this._dataa = config.data;
   }
 
-  async readData() {
-    return await Promise.resolve(this._dataa);
+  init() {
+    return Promise.resolve();
   }
 
-  async writeData(data: Record<string, unknown>) {
+  readData() {
+    if (!this._dataa) {
+      throw new Error("Data not initialized");
+    }
+    return Promise.resolve(this._dataa);
+  }
+
+  writeData(data: Record<string, unknown>) {
     this._dataa = data;
-    return await Promise.resolve();
+    return Promise.resolve();
   }
 }
 

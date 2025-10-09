@@ -55,7 +55,7 @@ export function createToolsRouter({
             })),
           );
         }
-        return ret;
+        return ret.sort((a, b) => a.name.localeCompare(b.name));
       }),
     updateBatch: t.procedure
       .input(

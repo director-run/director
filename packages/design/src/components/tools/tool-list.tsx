@@ -8,24 +8,21 @@ import { ToolSheet } from "./tool-sheet";
 export function ToolsList({ tools, toolsLoading }: WorkspaceSectionToolsProps) {
   const [selectedTool, setSelectedTool] = useState<MCPTool | null>(null);
 
-  const toolLinks = (tools || [])
-    .slice()
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .map((tool) => {
-      const server = tool.description?.match(/\[([^\]]+)\]/)?.[1];
-      return {
-        title: tool.name,
-        subtitle: tool.description?.replace(/\[([^\]]+)\]/g, "") || "",
-        scroll: false,
-        href: `#`,
-        onClick: () => setSelectedTool(tool),
-        badges: server && (
-          <Badge>
-            <BadgeLabel uppercase>{server}</BadgeLabel>
-          </Badge>
-        ),
-      };
-    });
+  const toolLinks = (tools || []).slice().map((tool) => {
+    const server = tool.description?.match(/\[([^\]]+)\]/)?.[1];
+    return {
+      title: tool.name,
+      subtitle: tool.description?.replace(/\[([^\]]+)\]/g, "") || "",
+      scroll: false,
+      href: `#`,
+      onClick: () => setSelectedTool(tool),
+      badges: server && (
+        <Badge>
+          <BadgeLabel uppercase>{server}</BadgeLabel>
+        </Badge>
+      ),
+    };
+  });
 
   return (
     <>

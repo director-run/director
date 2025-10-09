@@ -17,12 +17,7 @@ export const databaseAttributesSchema = z.object({
 export type ConfigurationData = z.infer<typeof databaseAttributesSchema>;
 
 export abstract class Config {
-  public readonly filePath: string;
   protected _data?: ConfigurationData;
-
-  protected constructor(filePath: string) {
-    this.filePath = filePath;
-  }
 
   protected abstract init(): Promise<void>;
   protected abstract readData(): Promise<ConfigurationData>;
@@ -101,6 +96,13 @@ export abstract class Config {
 }
 
 export class YAMLConfig extends Config {
+  public readonly filePath: string;
+
+  constructor(filePath: string) {
+    super();
+    this.filePath = filePath;
+  }
+
   static async connect(filePath: string): Promise<YAMLConfig> {
     const db = new YAMLConfig(filePath);
     await db.init();

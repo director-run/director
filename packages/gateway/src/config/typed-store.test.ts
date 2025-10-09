@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 import { WorkspaceSchema } from "../workspaces/workspace";
-import { TypedStore } from "./typed-store";
+import { InMemoryTypedStore } from "./typed-store";
 
 const configSchema = {
   "server.port": z.number().min(0).default(3673),
@@ -24,7 +24,7 @@ const configSchema = {
 
 describe("TypedStore", () => {
   it("should set and get valid values", () => {
-    const store = new TypedStore({ schema: configSchema });
+    const store = new InMemoryTypedStore({ schema: configSchema });
     expect(store.get("server.port")).toBe(3673);
     store.set("server.port", 1234);
     store.set("registry.url", "https://example.com");
@@ -41,7 +41,7 @@ describe("TypedStore", () => {
   });
 
   it("should return undefined for non-existent keys", () => {
-    const store = new TypedStore({ schema: configSchema });
+    const store = new InMemoryTypedStore({ schema: configSchema });
 
     expect(store.get("workspaces")).toBeUndefined();
   });
@@ -56,7 +56,7 @@ describe("TypedStore", () => {
         url: "https://example.com",
       },
     };
-    const store = new TypedStore({
+    const store = new InMemoryTypedStore({
       schema: configSchema,
       data: seedData,
     });
@@ -67,22 +67,22 @@ describe("TypedStore", () => {
   });
 
   it("should throw validation error for invalid values", () => {
-    const store = new TypedStore({ schema: configSchema });
+    const store = new InMemoryTypedStore({ schema: configSchema });
     expect(() => store.set("server.port", -5)).toThrow();
   });
 
   it("should not return default values in data when no data is set", () => {
-    const store = new TypedStore({ schema: configSchema });
+    const store = new InMemoryTypedStore({ schema: configSchema });
     expect(store.data).toMatchObject({});
   });
 
   it("should not return default", () => {
-    const store = new TypedStore({ schema: configSchema });
+    const store = new InMemoryTypedStore({ schema: configSchema });
     expect(store.get("server.port")).toBe(3673);
   });
 
   it("should set data", () => {
-    const store = new TypedStore({ schema: configSchema });
+    const store = new InMemoryTypedStore({ schema: configSchema });
     store.set("server.port", 1234);
     expect(store.data).toMatchObject({ server: { port: 1234 } });
   });
@@ -94,7 +94,7 @@ describe("TypedStore", () => {
       },
     };
     expect(
-      () => new TypedStore({ schema: configSchema, data: invalidData }),
+      () => new InMemoryTypedStore({ schema: configSchema, data: invalidData }),
     ).toThrow(/Invalid data for key "server\.port"/);
   });
 
@@ -105,7 +105,7 @@ describe("TypedStore", () => {
       },
     };
     expect(
-      () => new TypedStore({ schema: configSchema, data: invalidData }),
+      () => new InMemoryTypedStore({ schema: configSchema, data: invalidData }),
     ).toThrow(/Invalid data for key "server\.port"/);
   });
 });

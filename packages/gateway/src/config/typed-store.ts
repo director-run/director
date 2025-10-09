@@ -1,7 +1,7 @@
 import { get, set } from "lodash";
 import { z } from "zod";
 
-export class TypedStore<TSchema extends Record<string, z.ZodType>> {
+export abstract class TypedStore<TSchema extends Record<string, z.ZodType>> {
   private _data: Record<string, unknown> = {};
   private schema: TSchema;
 
@@ -9,6 +9,9 @@ export class TypedStore<TSchema extends Record<string, z.ZodType>> {
     this.schema = config.schema;
     this._data = validateAndParseData(config.schema, config.data ?? {});
   }
+
+  protected abstract readData(): Promise<Record<string, unknown>>;
+  protected abstract writeData(data: Record<string, unknown>): Promise<void>;
 
   get data(): Record<string, unknown> {
     return this._data;
@@ -52,6 +55,21 @@ export class TypedStore<TSchema extends Record<string, z.ZodType>> {
     }
 
     return undefined;
+  }
+}
+
+export class InMemoryTypedStore<
+  TSchema extends Record<string, z.ZodType>,
+> extends TypedStore<TSchema> {
+  private _dataa: Record<string, unknown> = {};
+
+  async readData() {
+    return await Promise.resolve(this._dataa);
+  }
+
+  async writeData(data: Record<string, unknown>) {
+    this._dataa = data;
+    return await Promise.resolve();
   }
 }
 

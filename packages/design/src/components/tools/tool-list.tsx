@@ -1,5 +1,6 @@
 import { XIcon } from "@phosphor-icons/react";
 import { useState } from "react";
+import { useEffect } from "react";
 import { ListSkeleton } from "../loaders/list-skeleton";
 import type { MCPTool } from "../types";
 import { Badge, BadgeLabel } from "../ui/badge";
@@ -15,6 +16,12 @@ import { Section, SectionHeader, SectionTitle } from "../ui/section";
 import { Switch } from "../ui/switch";
 import { ToolSheet } from "./tool-sheet";
 
+type ToolUpdateAttribs = {
+  name: string;
+  disabled: boolean;
+  serverName: string;
+};
+
 export function ToolList({
   tools,
   toolsLoading,
@@ -24,7 +31,17 @@ export function ToolList({
 }: ToolListProps) {
   const [selectedTool, setSelectedTool] = useState<MCPTool | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [draftTools, setDraftTools] = useState<MCPTool[] | null>(null);
+  const [draftTools, setDraftTools] = useState<ToolUpdateAttribs[]>([]);
+
+  useEffect(() => {
+    setDraftTools(
+      (tools ?? []).map((t) => ({
+        name: t.name,
+        disabled: !!t.disabled,
+        serverName: t.serverName ?? "",
+      })),
+    );
+  }, [tools]);
 
   if (toolsLoading) {
     return <LoadingToolList />;
@@ -33,8 +50,6 @@ export function ToolList({
   if (!tools || tools.length === 0) {
     return <EmptyToolList />;
   }
-
-  const toolsToDisplay = isEditing && draftTools ? draftTools : tools;
 
   return (
     <>
@@ -48,7 +63,13 @@ export function ToolList({
             <Button
               size="sm"
               onClick={() => {
-                setDraftTools(tools.map((t) => ({ ...t })));
+                setDraftTools(
+                  tools.map((t) => ({
+                    name: t.name,
+                    disabled: !!t.disabled,
+                    serverName: t.serverName ?? "",
+                  })),
+                );
                 setIsEditing(true);
               }}
             >
@@ -62,17 +83,17 @@ export function ToolList({
                 disabled={isSaving}
                 onClick={async () => {
                   if (draftTools) {
-                    const updates = draftTools.map((t) => ({
-                      name: t.name,
-                      disabled: t.disabled,
-                      serverName: t.serverName,
-                    }));
-                    if (typeof onUpdateTools === "function") {
-                      await onUpdateTools(updates);
-                    }
+                    // const updates = draftTools.map((t) => ({
+                    //   name: t.name,
+                    //   disabled: t.disabled,
+                    //   serverName: t.serverName,
+                    // }));
+                    // if (typeof onUpdateTools === "function") {
+                    await onUpdateTools?.(draftTools);
+                    // }
                   }
                   setIsEditing(false);
-                  setDraftTools(null);
+                  setDraftTools([]);
                 }}
               >
                 Save
@@ -83,7 +104,7 @@ export function ToolList({
                 disabled={isSaving}
                 onClick={() => {
                   setIsEditing(false);
-                  setDraftTools(null);
+                  setDraftTools([]);
                 }}
               >
                 <XIcon weight="bold" />
@@ -93,27 +114,29 @@ export function ToolList({
         </SectionHeader>
 
         <List.List>
-          {toolsToDisplay.map((tool) => (
+          {tools.map((tool) => (
             <ToolListItem
               key={`li-${tool.serverName}:${tool.name}`}
               tool={tool}
               onClick={() => setSelectedTool(tool)}
+              draftTool={draftTools.find(
+                (t) => t.name === tool.name && t.serverName === tool.serverName,
+              )}
               isEditing={isEditing}
               isSaving={isSaving}
               onDisabledChange={(tool, disabled) => {
-                if (!isEditing || !draftTools) {
-                  return;
-                }
-                setDraftTools((prev) => {
-                  if (!prev) {
-                    return prev;
-                  }
-                  return prev.map((t) => {
-                    const sameTool =
-                      t.name === tool.name && t.serverName === tool.serverName;
-                    return sameTool ? { ...t, disabled } : t;
-                  });
-                });
+                console.log("onDisabledChange", draftTools, tool, disabled);
+                setDraftTools(
+                  draftTools.map((t) => {
+                    if (
+                      t.name === tool.name &&
+                      t.serverName === tool.serverName
+                    ) {
+                      return { ...t, disabled };
+                    }
+                    return t;
+                  }),
+                );
               }}
             />
           ))}
@@ -135,19 +158,19 @@ interface ToolListProps {
   toolsLoading: boolean;
   editable?: boolean;
   isSaving?: boolean;
-  onUpdateTools?: (
-    tools: Pick<MCPTool, "name" | "disabled" | "serverName">[],
-  ) => void | Promise<void>;
+  onUpdateTools?: (tools: ToolUpdateAttribs[]) => void | Promise<void>;
 }
 
 function ToolListItem({
   tool,
+  draftTool,
   onClick,
   isEditing,
   isSaving,
   onDisabledChange,
 }: {
   tool: MCPTool;
+  draftTool?: ToolUpdateAttribs;
   onClick: () => void;
   isEditing: boolean;
   isSaving?: boolean;
@@ -164,7 +187,7 @@ function ToolListItem({
         )}
       </List.ListItemDetails>
 
-      {tool.disabled && !isEditing && (
+      {draftTool?.disabled && !isEditing && (
         <BadgeGroup className="ml-auto">
           <Badge>
             <BadgeLabel uppercase>Disabled</BadgeLabel>
@@ -174,7 +197,7 @@ function ToolListItem({
       {isEditing && (
         <Switch
           id={tool.name}
-          checked={!tool.disabled}
+          checked={!draftTool?.disabled}
           disabled={isSaving}
           onCheckedChange={(checked) => {
             onDisabledChange(tool, !checked);

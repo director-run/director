@@ -1,4 +1,3 @@
-import type { MCPTool } from "@director.run/design/components/types.ts";
 import { gatewayClient } from "../contexts/backend-context";
 
 type UpdateToolsOptions = {
@@ -21,13 +20,13 @@ export function useUpdateTools(
     },
     onError: async (error) => {
       if (options?.onError) {
-        await options.onError(error);
+        await options.onError(error as unknown as Error);
       }
     },
   });
 
   const updateTools = async (
-    tools: Pick<MCPTool, "name" | "disabled" | "serverName">[],
+    tools: { name: string; disabled: boolean; serverName: string }[],
   ) => {
     await mutation.mutateAsync({
       workspaceId,

@@ -27,9 +27,9 @@ export abstract class Config {
     proxy: Omit<WorkspaceParams, "id">,
   ): Promise<WorkspaceParams> {
     const workspaceId = slugifyName(proxy.name);
-    const store = await this.readData();
+    const workspaces = await this.allWorkspaces();
 
-    const existingWorkspace = _.find(store.workspaces, { id: workspaceId });
+    const existingWorkspace = _.find(workspaces, { id: workspaceId });
     if (existingWorkspace) {
       throw new AppError(
         ErrorCode.DUPLICATE,
@@ -48,8 +48,8 @@ export abstract class Config {
   }
 
   async getWorkspace(id: string): Promise<WorkspaceParams> {
-    const store = await this.readData();
-    const proxy = _.find(store.workspaces, { id });
+    const workspaces = await this.allWorkspaces();
+    const proxy = _.find(workspaces, { id });
     if (!proxy) {
       throw new Error("Workspace not found");
     }
@@ -63,26 +63,25 @@ export abstract class Config {
     if (proxy.id !== id) {
       throw new Error("Id mismatch");
     }
-    const store = await this.readData();
-    const proxyIndex = _.findIndex(store.workspaces, { id });
+    const workspaces = await this.allWorkspaces();
+    const proxyIndex = _.findIndex(workspaces, { id });
     if (proxyIndex === -1) {
-      store.workspaces.push(proxy);
+      workspaces.push(proxy);
     } else {
-      store.workspaces[proxyIndex] = proxy;
+      workspaces[proxyIndex] = proxy;
     }
-    await this.writeData(store);
+    await this.writeData({ workspaces });
     return proxy;
   }
 
   async unsetWorkspace(id: string): Promise<void> {
-    const store = await this.readData();
-    store.workspaces = _.reject(store.workspaces, { id });
-    await this.writeData(store);
+    const workspaces = await this.allWorkspaces();
+    await this.writeData({ workspaces: _.reject(workspaces, { id }) });
   }
 
   async countWorkspaces(): Promise<number> {
-    const store = await this.readData();
-    return store.workspaces.length;
+    const workspaces = await this.allWorkspaces();
+    return workspaces.length;
   }
 
   async allWorkspaces(): Promise<WorkspaceParams[]> {

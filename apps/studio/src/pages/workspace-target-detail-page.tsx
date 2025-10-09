@@ -7,7 +7,6 @@ import { FullScreenError } from "@director.run/design/components/pages/global/er
 import { ProxySkeleton } from "@director.run/design/components/proxies/proxy-skeleton.tsx";
 import { RegistryEntryReadme } from "@director.run/design/components/registry/registry-entry-readme.tsx";
 import { ToolList } from "@director.run/design/components/tools/tool-list.js";
-import type { MCPTool } from "@director.run/design/components/types.js";
 import { Container } from "@director.run/design/components/ui/container.tsx";
 import { Markdown } from "@director.run/design/components/ui/markdown.tsx";
 import { Section } from "@director.run/design/components/ui/section.tsx";
@@ -115,12 +114,7 @@ export function WorkspaceTargetDetailPage() {
               id="tools"
               label="Tools"
               icon={<ToolboxIcon />}
-              content={
-                <ToolList
-                  tools={tools as MCPTool[]}
-                  toolsLoading={isToolsLoading}
-                />
-              }
+              content={<ToolList tools={tools} toolsLoading={isToolsLoading} />}
             />
             <Tab
               id="properties"

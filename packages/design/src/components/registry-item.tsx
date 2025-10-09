@@ -19,7 +19,7 @@ import {
   SectionHeader,
   SectionTitle,
 } from "./ui/section";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { Tab, Tabs } from "./ui/tabs";
 
 interface RegistryItemProps {
   entry: RegistryEntryDetail;
@@ -59,46 +59,47 @@ export function RegistryItem({ entry }: RegistryItemProps) {
         )}
       </BadgeGroup>
 
-      <Tabs defaultValue="readme">
-        <TabsList>
-          <TabsTrigger value="readme">
-            <BookOpenTextIcon /> Readme
-          </TabsTrigger>
-          <TabsTrigger value="tools">
-            <ToolboxIcon /> Tools
-          </TabsTrigger>
-          <TabsTrigger value="transport">
-            <HardDriveIcon /> Transport
-          </TabsTrigger>
-        </TabsList>
+      <Tabs default="readme">
+        <Tab
+          id="readme"
+          label="Readme"
+          icon={<BookOpenTextIcon />}
+          content={<RegistryEntryReadme readme={entry.readme} />}
+        />
+        <Tab
+          id="tools"
+          label="Tools"
+          icon={<ToolboxIcon />}
+          content={
+            <ToolList tools={entry.tools as MCPTool[]} toolsLoading={false} />
+          }
+        />
+        <Tab
+          id="transport"
+          label="Transport"
+          icon={<HardDriveIcon />}
+          content={
+            <div className="flex flex-col gap-y-10">
+              <Section>
+                <SectionHeader>
+                  <SectionTitle variant="h2" asChild>
+                    <h3>Overview</h3>
+                  </SectionTitle>
+                </SectionHeader>
+                <RegistryEntryPropertyList entry={entry} />
+              </Section>
 
-        <TabsContent value="readme">
-          <RegistryEntryReadme readme={entry.readme} />
-        </TabsContent>
-
-        <TabsContent value="tools">
-          <ToolList tools={entry.tools as MCPTool[]} toolsLoading={false} />
-        </TabsContent>
-
-        <TabsContent value="transport" className="flex flex-col gap-y-10">
-          <Section>
-            <SectionHeader>
-              <SectionTitle variant="h2" asChild>
-                <h3>Overview</h3>
-              </SectionTitle>
-            </SectionHeader>
-            <RegistryEntryPropertyList entry={entry} />
-          </Section>
-
-          <Section>
-            <SectionHeader>
-              <SectionTitle variant="h2" asChild>
-                <h3>Parameters</h3>
-              </SectionTitle>
-            </SectionHeader>
-            <RegistryParameters parameters={entry.parameters ?? []} />
-          </Section>
-        </TabsContent>
+              <Section>
+                <SectionHeader>
+                  <SectionTitle variant="h2" asChild>
+                    <h3>Parameters</h3>
+                  </SectionTitle>
+                </SectionHeader>
+                <RegistryParameters parameters={entry.parameters ?? []} />
+              </Section>
+            </div>
+          }
+        />
       </Tabs>
     </Section>
   );

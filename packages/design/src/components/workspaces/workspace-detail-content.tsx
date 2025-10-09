@@ -10,7 +10,7 @@ import { PromptSheet } from "../prompts/prompt-sheet";
 import { WorkspaceServerList } from "../servers/server-list";
 import { ToolList } from "../tools/tool-list";
 import type { WorkspaceDetail, WorkspaceTarget } from "../types";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { Tab, Tabs } from "../ui/tabs";
 
 export const WorkspaceDetailContent = ({
   workspace,
@@ -31,41 +31,43 @@ export const WorkspaceDetailContent = ({
         <SectionDescription>{workspace.description}</SectionDescription>
       </SectionHeader>
 
-      <Tabs defaultValue="tools">
-        <TabsList>
-          <TabsTrigger value="servers">
-            <DesktopIcon /> Servers
-          </TabsTrigger>
-          <TabsTrigger value="tools">
-            <ToolboxIcon /> Tools
-          </TabsTrigger>
-          <TabsTrigger value="prompts">
-            <NotebookIcon /> Prompts
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="servers">
-          <WorkspaceServerList
-            servers={workspace.servers}
-            onClickServer={onClickServer}
-            onClickAddServer={onClickAddServer}
-            onClickAuthorize={onClickAuthorize}
-          />
-        </TabsContent>
-
-        <TabsContent value="tools">
-          <ToolList tools={tools as MCPTool[]} toolsLoading={toolsLoading} />
-        </TabsContent>
-
-        <TabsContent value="prompts">
-          <WorkspacePrompts
-            workspace={workspace}
-            onCreatePrompt={onCreatePrompt}
-            onEditPrompt={onEditPrompt}
-            onClickAuthorize={onClickAuthorize}
-            onDeletePrompt={onDeletePrompt}
-            isSavingPrompt={isSavingPrompt}
-          />
-        </TabsContent>
+      <Tabs default="tools">
+        <Tab
+          id="servers"
+          label="Servers"
+          icon={<DesktopIcon />}
+          content={
+            <WorkspaceServerList
+              servers={workspace.servers}
+              onClickServer={onClickServer}
+              onClickAddServer={onClickAddServer}
+              onClickAuthorize={onClickAuthorize}
+            />
+          }
+        />
+        <Tab
+          id="tools"
+          label="Tools"
+          icon={<ToolboxIcon />}
+          content={
+            <ToolList tools={tools as MCPTool[]} toolsLoading={toolsLoading} />
+          }
+        />
+        <Tab
+          id="prompts"
+          label="Prompts"
+          icon={<NotebookIcon />}
+          content={
+            <WorkspacePrompts
+              workspace={workspace}
+              onCreatePrompt={onCreatePrompt}
+              onEditPrompt={onEditPrompt}
+              onClickAuthorize={onClickAuthorize}
+              onDeletePrompt={onDeletePrompt}
+              isSavingPrompt={isSavingPrompt}
+            />
+          }
+        />
       </Tabs>
     </Section>
   );

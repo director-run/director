@@ -14,12 +14,7 @@ import { Section } from "@director.run/design/components/ui/section.tsx";
 import { SectionHeader } from "@director.run/design/components/ui/section.tsx";
 import { SectionTitle } from "@director.run/design/components/ui/section.tsx";
 import { SectionDescription } from "@director.run/design/components/ui/section.tsx";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@director.run/design/components/ui/tabs.tsx";
+import { Tab, Tabs } from "@director.run/design/components/ui/tabs.tsx";
 import {
   BookOpenTextIcon,
   HardDriveIcon,
@@ -57,37 +52,38 @@ export function WorkspaceTargetDetailContent({
         ) : null}
       </Section>
 
-      <Tabs defaultValue="tools">
-        <TabsList>
-          <TabsTrigger value="readme">
-            <BookOpenTextIcon /> Readme
-          </TabsTrigger>
-          <TabsTrigger value="tools">
-            <ToolboxIcon /> Tools
-          </TabsTrigger>
-          <TabsTrigger value="properties">
-            <HardDriveIcon /> Properties
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="readme">
-          <RegistryEntryReadme readme={registryEntry?.readme ?? null} />
-        </TabsContent>
-
-        <TabsContent value="tools">
-          <ToolList tools={tools as MCPTool[]} toolsLoading={toolsLoading} />
-        </TabsContent>
-
-        <TabsContent value="properties">
-          <Section>
-            <SectionHeader>
-              <SectionTitle variant="h2" asChild>
-                <h3>Transport Configuration</h3>
-              </SectionTitle>
-            </SectionHeader>
-            <WorkspaceTargetPropertyList target={workspaceTarget} />
-          </Section>
-        </TabsContent>
+      <Tabs default="tools">
+        <Tab
+          id="readme"
+          label="Readme"
+          icon={<BookOpenTextIcon />}
+          content={
+            <RegistryEntryReadme readme={registryEntry?.readme ?? null} />
+          }
+        />
+        <Tab
+          id="tools"
+          label="Tools"
+          icon={<ToolboxIcon />}
+          content={
+            <ToolList tools={tools as MCPTool[]} toolsLoading={toolsLoading} />
+          }
+        />
+        <Tab
+          id="properties"
+          label="Properties"
+          icon={<HardDriveIcon />}
+          content={
+            <Section>
+              <SectionHeader>
+                <SectionTitle variant="h2" asChild>
+                  <h3>Transport Configuration</h3>
+                </SectionTitle>
+              </SectionHeader>
+              <WorkspaceTargetPropertyList target={workspaceTarget} />
+            </Section>
+          }
+        />
       </Tabs>
     </Container>
   );

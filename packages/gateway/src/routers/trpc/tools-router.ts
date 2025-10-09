@@ -59,7 +59,7 @@ export function createToolsRouter({
           tools: z.array(
             z.object({
               serverName: z.string(),
-              toolName: z.string(),
+              name: z.string(),
               disabled: z.boolean(),
             }),
           ),
@@ -72,7 +72,7 @@ export function createToolsRouter({
           await workspace.updateTarget(serverName, {
             disabledTools: groupedTools[serverName]
               .filter((tool) => tool.disabled)
-              .map((tool) => tool.toolName),
+              .map((tool) => tool.name),
           });
         }
       }),

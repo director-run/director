@@ -28,16 +28,45 @@ describe("Tools Router", () => {
 
   describe("listTools", () => {
     it("should list tools", async () => {
-      const result = await harness.client.tools.list.query({
+      const toolsResult = await harness.client.tools.list.query({
         workspaceId: workspace.id,
       });
-      expect(result.map((t) => t.name)).toEqual([
+      expect(toolsResult.map((t) => t.name)).toEqual([
         "echo",
         "ping",
         "add",
         "subtract",
         "multiply",
       ]);
+    });
+  });
+
+  describe("updateBatch", () => {
+    it("should update tools", async () => {
+      await harness.client.tools.updateBatch.mutate({
+        workspaceId: workspace.id,
+        tools: [
+          {
+            serverName: "echo",
+            name: "echo",
+            disabled: true,
+          },
+        ],
+      });
+
+      const toolsResult = await harness.client.tools.list.query({
+        workspaceId: workspace.id,
+      });
+
+      expect(toolsResult.map((t) => t.name)).toEqual([
+        "echo",
+        "ping",
+        "add",
+        "subtract",
+        "multiply",
+      ]);
+
+      expect(toolsResult.find((t) => t.name === "echo")?.disabled).toBe(true);
     });
   });
 

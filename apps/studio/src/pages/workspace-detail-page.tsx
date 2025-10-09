@@ -167,7 +167,7 @@ export const WorkspaceDetailPage = () => {
                   </SectionDescription>
                 </SectionHeader>
 
-                <Tabs default="tools">
+                <Tabs default="servers">
                   <Tab
                     id="servers"
                     label="Servers"

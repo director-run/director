@@ -31,7 +31,7 @@ export function ToolList({
   onUpdateTools,
 }: ToolListProps) {
   const [selectedTool, setSelectedTool] = useState<MCPTool | null>(null);
-  const [isEditing, setIsEditing] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
   const [draftTools, setDraftTools] = useState<ToolUpdateAttribs[]>([]);
 
   useEffect(() => {
@@ -90,7 +90,7 @@ export function ToolList({
                   setDraftTools([]);
                 }}
               >
-                Save
+                {isSaving ? "Saving..." : "Save"}
               </Button>
               <Button
                 size="sm"

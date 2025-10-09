@@ -11,7 +11,7 @@ import { type WorkspaceParams, WorkspaceSchema } from "../workspaces/workspace";
 
 export const databaseAttributesSchema = z.object({
   version: z.string().optional(),
-  playbooks: z.array(WorkspaceSchema),
+  workspaces: z.array(WorkspaceSchema),
 });
 
 export type ConfigurationData = z.infer<typeof databaseAttributesSchema>;
@@ -31,7 +31,7 @@ export abstract class Config {
   async addProxy(proxy: Omit<WorkspaceParams, "id">): Promise<WorkspaceParams> {
     const store = await this.readData();
 
-    if (_.find(store.playbooks, { name: proxy.name })) {
+    if (_.find(store.workspaces, { name: proxy.name })) {
       throw new Error("Proxy already exists");
     }
 
@@ -44,14 +44,14 @@ export abstract class Config {
       })),
     };
 
-    store.playbooks.push(newProxy);
+    store.workspaces.push(newProxy);
     await this.writeData(store);
     return newProxy;
   }
 
   async getWorkspace(id: string): Promise<WorkspaceParams> {
     const store = await this.readData();
-    const proxy = _.find(store.playbooks, { id });
+    const proxy = _.find(store.workspaces, { id });
     if (!proxy) {
       throw new Error("Workspace not found");
     }
@@ -63,29 +63,29 @@ export abstract class Config {
       throw new Error("Id mismatch");
     }
     const store = await this.readData();
-    const proxyIndex = _.findIndex(store.playbooks, { id });
+    const proxyIndex = _.findIndex(store.workspaces, { id });
     if (proxyIndex === -1) {
-      store.playbooks.push(proxy);
+      store.workspaces.push(proxy);
     } else {
-      store.playbooks[proxyIndex] = proxy;
+      store.workspaces[proxyIndex] = proxy;
     }
     await this.writeData(store);
   }
 
   async unsetWorkspace(id: string): Promise<void> {
     const store = await this.readData();
-    store.playbooks = _.reject(store.playbooks, { id });
+    store.workspaces = _.reject(store.workspaces, { id });
     await this.writeData(store);
   }
 
   async countWorkspaces(): Promise<number> {
     const store = await this.readData();
-    return store.playbooks.length;
+    return store.workspaces.length;
   }
 
   async getAll(): Promise<WorkspaceParams[]> {
     const store = await this.readData();
-    return store.playbooks;
+    return store.workspaces;
   }
 
   async purge(): Promise<void> {
@@ -172,7 +172,7 @@ export class YAMLConfig extends Config {
 function defaultConfiguration(): ConfigurationData {
   return {
     version: "1.0.0",
-    playbooks: [],
+    workspaces: [],
   };
 }
 

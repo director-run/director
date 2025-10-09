@@ -7,5 +7,3 @@ export const GATEWAY_URL: string =
 export const REGISTRY_URL: string =
   appConfig?.registryUrl || "https://registry.director.run";
 export const BASE_PATH: string = appConfig?.basePath || "/";
-
-console.log("config is", { GATEWAY_URL, REGISTRY_URL, BASE_PATH });

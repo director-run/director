@@ -1,12 +1,15 @@
+import { XIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import { ListOfLinks } from "../list-of-links";
 import type { MCPTool } from "../types";
 import { Badge, BadgeLabel } from "../ui/badge";
+import { Button } from "../ui/button";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
 import { ToolSheet } from "./tool-sheet";
 
-export function ToolList({ tools, toolsLoading }: ToolListProps) {
+export function ToolList({ tools, toolsLoading, editable }: ToolListProps) {
   const [selectedTool, setSelectedTool] = useState<MCPTool | null>(null);
+  const [editing, setEditing] = useState(false);
 
   const toolLinks = (tools || []).slice().map((tool) => {
     const server = tool.description?.match(/\[([^\]]+)\]/)?.[1];
@@ -27,10 +30,30 @@ export function ToolList({ tools, toolsLoading }: ToolListProps) {
   return (
     <>
       <Section>
-        <SectionHeader>
-          <SectionTitle variant="h2" asChild>
+        <SectionHeader className="flex flex-row items-center justify-between">
+          <SectionTitle variant="h2" className="flex-1" asChild>
             <h2>Tools</h2>
           </SectionTitle>
+
+          {editable && !editing && (
+            <Button size="sm" onClick={() => setEditing(true)}>
+              Edit
+            </Button>
+          )}
+          {editing && (
+            <>
+              <Button size="sm" onClick={() => setEditing(false)}>
+                Save
+              </Button>
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => setEditing(false)}
+              >
+                <XIcon weight="bold" />
+              </Button>
+            </>
+          )}
         </SectionHeader>
         <ListOfLinks isLoading={toolsLoading} links={toolLinks} />
       </Section>
@@ -48,4 +71,8 @@ export function ToolList({ tools, toolsLoading }: ToolListProps) {
 interface ToolListProps {
   tools: MCPTool[];
   toolsLoading: boolean;
+  editable?: boolean;
+  onUpdateTools?: (
+    tools: Pick<MCPTool, "name" | "disabled" | "serverName">[],
+  ) => void;
 }

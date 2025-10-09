@@ -24,6 +24,14 @@ export const Default: Story = {
   args: {
     tools: mockTools,
     toolsLoading: false,
+    editable: true,
+  },
+};
+
+export const NotEditable: Story = {
+  args: {
+    tools: mockTools,
+    toolsLoading: false,
   },
 };
 

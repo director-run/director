@@ -80,7 +80,7 @@ export abstract class Config {
     return store.workspaces.length;
   }
 
-  async getAll(): Promise<WorkspaceParams[]> {
+  async allWorkspaces(): Promise<WorkspaceParams[]> {
     const store = await this.readData();
     return store.workspaces;
   }

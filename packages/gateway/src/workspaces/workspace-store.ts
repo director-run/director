@@ -52,7 +52,7 @@ export class WorkspaceStore {
   }
 
   private async initialize(): Promise<void> {
-    let proxies = await this.config.getAll();
+    let proxies = await this.config.allWorkspaces();
 
     for (const proxyConfig of proxies) {
       const proxyId = proxyConfig.id;

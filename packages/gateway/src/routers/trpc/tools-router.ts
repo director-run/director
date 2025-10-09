@@ -6,7 +6,7 @@ import { WorkspaceStore } from "../../workspaces/workspace-store";
 
 type EnhancedTool = Tool & {
   serverName: string;
-  disabled: boolean;
+  disabled?: boolean;
 };
 
 export function createToolsRouter({
@@ -38,9 +38,14 @@ export function createToolsRouter({
         }),
       )
       .query(async ({ input }) => {
+        console.log("listTools", input);
         const workspace = await workspaceStore.get(input.workspaceId);
         const ret: EnhancedTool[] = [];
         for (const target of workspace.targets) {
+          if (input.serverName && input.serverName !== target.name) {
+            continue;
+          }
+
           const tools = await target.originalListTools();
           ret.push(
             ...tools.tools.map((tool) => ({

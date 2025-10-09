@@ -8,7 +8,7 @@ import { ToolSheet } from "./tool-sheet";
 export function ToolsList({ tools, toolsLoading }: WorkspaceSectionToolsProps) {
   const [selectedTool, setSelectedTool] = useState<MCPTool | null>(null);
 
-  const toolLinks = tools
+  const toolLinks = (tools || [])
     .slice()
     .sort((a, b) => a.name.localeCompare(b.name))
     .map((tool) => {

@@ -24,7 +24,7 @@ import { useClients } from "../hooks/use-clients.ts";
 import { useCreatePrompt } from "../hooks/use-create-prompt.ts";
 import { useDeletePrompt } from "../hooks/use-delete-prompt.ts";
 import { useEditPrompt } from "../hooks/use-edit-prompt.ts";
-import { useInspectMcp } from "../hooks/use-inspect-mcp.ts";
+import { useListTools } from "../hooks/use-list-tools.ts";
 import { useWorkspace } from "../hooks/use-workspace.ts";
 
 export const WorkspaceDetailPage = () => {
@@ -38,7 +38,7 @@ export const WorkspaceDetailPage = () => {
 
   const { workspace, isWorkspaceLoading, workspaceError } =
     useWorkspace(workspaceId);
-  const { tools, isLoading: toolsLoading } = useInspectMcp(workspaceId);
+  const { tools, isToolsLoading } = useListTools(workspaceId);
   const { data: clients, isLoading: isClientsLoading } =
     useClients(workspaceId);
   const { changeInstallState, isPending } = useChangeInstallState(workspaceId, {
@@ -137,7 +137,7 @@ export const WorkspaceDetailPage = () => {
               <WorkspaceDetailContent
                 workspace={workspace}
                 tools={tools as MCPTool[]}
-                toolsLoading={toolsLoading}
+                toolsLoading={isToolsLoading}
                 onClickServer={(server) =>
                   navigate(`/${workspaceId}/${server.name}`)
                 }

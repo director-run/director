@@ -57,7 +57,7 @@ export function WorkspaceTargetDetailContent({
         ) : null}
       </Section>
 
-      <Tabs defaultValue="properties">
+      <Tabs defaultValue="tools">
         <TabsList>
           <TabsTrigger value="readme">
             <BookOpenTextIcon /> Readme

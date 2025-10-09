@@ -7,7 +7,7 @@ import type { MCPTool } from "@director.run/design/components/types.js";
 import { WorkspaceTargetDetailContent } from "@director.run/design/components/workspaces/workspace-target-detail-content.tsx";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useInspectMcp } from "../hooks/use-inspect-mcp.ts";
+import { useListTools } from "../hooks/use-list-tools.ts";
 import { useRegistryEntry } from "../hooks/use-registry-entry.ts";
 import { useWorkspaceTarget } from "../hooks/use-workspace-target.ts";
 import { WorkspaceTargetDetailDropDownMenu } from "./workspace-target-detail-dropdown-menu.tsx";
@@ -27,11 +27,7 @@ export function WorkspaceTargetDetailPage() {
     workspaceTargetError,
   } = useWorkspaceTarget(workspaceId, targetId);
 
-  const { tools, isLoading: toolsLoading } = useInspectMcp(
-    workspaceId,
-    targetId,
-  );
-
+  const { tools, isToolsLoading } = useListTools(workspaceId, targetId);
   const registryEntryQuery = useRegistryEntry({ entryName: targetId });
   const registryEntry = registryEntryQuery.data;
 
@@ -77,7 +73,7 @@ export function WorkspaceTargetDetailPage() {
           navigate={navigate}
           workspaceId={workspaceId}
           tools={tools as MCPTool[]}
-          toolsLoading={toolsLoading}
+          toolsLoading={isToolsLoading}
         />
       </LayoutViewContent>
     </LayoutView>

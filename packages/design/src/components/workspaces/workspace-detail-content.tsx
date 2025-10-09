@@ -31,7 +31,7 @@ export const WorkspaceDetailContent = ({
         <SectionDescription>{workspace.description}</SectionDescription>
       </SectionHeader>
 
-      <Tabs defaultValue="servers">
+      <Tabs defaultValue="tools">
         <TabsList>
           <TabsTrigger value="servers">
             <DesktopIcon /> Servers

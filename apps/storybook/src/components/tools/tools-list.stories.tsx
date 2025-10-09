@@ -6,11 +6,15 @@ import { withLayoutView } from "../../helpers/decorators";
 
 const meta = {
   title: "components/tools/tools-list",
-  component: ToolsList,
   parameters: {
     layout: "fullscreen",
   },
   decorators: [withLayoutView],
+  render: (args) => (
+    <Container size="lg">
+      <ToolsList {...args} />
+    </Container>
+  ),
 } satisfies Meta<typeof ToolsList>;
 
 export default meta;
@@ -21,11 +25,6 @@ export const Default: Story = {
     tools: mockTools,
     toolsLoading: false,
   },
-  render: (args) => (
-    <Container size="lg">
-      <ToolsList {...args} />
-    </Container>
-  ),
 };
 
 export const Loading: Story = {
@@ -33,11 +32,6 @@ export const Loading: Story = {
     tools: [],
     toolsLoading: true,
   },
-  render: (args) => (
-    <Container size="lg">
-      <ToolsList {...args} />
-    </Container>
-  ),
 };
 
 export const Empty: Story = {
@@ -45,9 +39,4 @@ export const Empty: Story = {
     tools: [],
     toolsLoading: false,
   },
-  render: (args) => (
-    <Container size="lg">
-      <ToolsList {...args} />
-    </Container>
-  ),
 };

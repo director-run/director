@@ -120,7 +120,7 @@ describe("Config", () => {
     });
   });
 
-  describe("addProxy", () => {
+  describe("addWorkspace", () => {
     it("should add a new proxy successfully", async () => {
       const proxyData = {
         name: "test-proxy",

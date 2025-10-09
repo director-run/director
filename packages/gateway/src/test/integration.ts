@@ -40,7 +40,7 @@ export class IntegrationTestHarness {
   }
 
   public get database() {
-    return this.gateway.config;
+    return this.gateway.db;
   }
 
   public static async start() {

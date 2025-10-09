@@ -1,19 +1,26 @@
 import { LayoutBreadcrumbHeader } from "@director.run/design/components/layout/layout-breadcrumb-header.tsx";
 import { LayoutViewContent } from "@director.run/design/components/layout/layout.tsx";
 import { FullScreenError } from "@director.run/design/components/pages/global/error.tsx";
+import { PromptList } from "@director.run/design/components/prompts/prompt-list.tsx";
 import { ProxyActionsDropdown } from "@director.run/design/components/proxies/proxy-actions-dropdown.tsx";
 import { ProxySettingsSheet } from "@director.run/design/components/proxies/proxy-settings-sheet.tsx";
 import { ProxySkeleton } from "@director.run/design/components/proxies/proxy-skeleton.tsx";
+import { WorkspaceServerList } from "@director.run/design/components/servers/server-list.tsx";
 import { SplitViewMain } from "@director.run/design/components/split-view.tsx";
 import { SplitViewSide } from "@director.run/design/components/split-view.tsx";
 import { SplitView } from "@director.run/design/components/split-view.tsx";
+import { ToolList } from "@director.run/design/components/tools/tool-list.tsx";
 import type { WorkspaceDetail } from "@director.run/design/components/types.ts";
-import type { MCPTool } from "@director.run/design/components/types.ts";
 import { ConfirmDialog } from "@director.run/design/components/ui/confirm-dialog.tsx";
 import { Container } from "@director.run/design/components/ui/container.tsx";
+import { Section } from "@director.run/design/components/ui/section.tsx";
+import { SectionHeader } from "@director.run/design/components/ui/section.tsx";
+import { SectionTitle } from "@director.run/design/components/ui/section.tsx";
+import { SectionDescription } from "@director.run/design/components/ui/section.tsx";
+import { Tab, Tabs } from "@director.run/design/components/ui/tabs.tsx";
 import { toast } from "@director.run/design/components/ui/toast.js";
-import { WorkspaceDetailContent } from "@director.run/design/components/workspaces/workspace-detail-content.tsx";
 import { WorkspaceSectionClients } from "@director.run/design/components/workspaces/workspace-section-clients.tsx";
+import { DesktopIcon, NotebookIcon, ToolboxIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { GATEWAY_URL } from "../config.ts";
@@ -24,7 +31,8 @@ import { useClients } from "../hooks/use-clients.ts";
 import { useCreatePrompt } from "../hooks/use-create-prompt.ts";
 import { useDeletePrompt } from "../hooks/use-delete-prompt.ts";
 import { useEditPrompt } from "../hooks/use-edit-prompt.ts";
-import { useInspectMcp } from "../hooks/use-inspect-mcp.ts";
+import { useListTools } from "../hooks/use-list-tools.ts";
+import { useUpdateTools } from "../hooks/use-update-tools.ts";
 import { useWorkspace } from "../hooks/use-workspace.ts";
 
 export const WorkspaceDetailPage = () => {
@@ -38,9 +46,26 @@ export const WorkspaceDetailPage = () => {
 
   const { workspace, isWorkspaceLoading, workspaceError } =
     useWorkspace(workspaceId);
-  const { tools, isLoading: toolsLoading } = useInspectMcp(workspaceId);
+  const { tools, isToolsLoading } = useListTools(workspaceId);
   const { data: clients, isLoading: isClientsLoading } =
     useClients(workspaceId);
+  const { updateTools, isPending: isUpdatingTools } = useUpdateTools(
+    workspaceId,
+    {
+      onSuccess: () => {
+        toast({
+          title: "Tools updated",
+          description: "Your tools have been successfully updated.",
+        });
+      },
+      onError: (error) => {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to update tools",
+        });
+      },
+    },
+  );
   const { changeInstallState, isPending } = useChangeInstallState(workspaceId, {
     onSuccess: (_client, install) => {
       toast({
@@ -134,37 +159,79 @@ export const WorkspaceDetailPage = () => {
         <Container size="xl">
           <SplitView>
             <SplitViewMain>
-              <WorkspaceDetailContent
-                workspace={workspace}
-                tools={tools as MCPTool[]}
-                toolsLoading={toolsLoading}
-                onClickServer={(server) =>
-                  navigate(`/${workspaceId}/${server.name}`)
-                }
-                onClickAddServer={() => navigate("/library")}
-                onCreatePrompt={createPrompt}
-                onEditPrompt={editPrompt}
-                isSavingPrompt={
-                  isCreatingPrompt || isEditingPrompt || isDeletingPrompt
-                }
-                onDeletePrompt={deletePrompt}
-                onClickAuthorize={async (server) => {
-                  try {
-                    await authenticate({
-                      proxyId: workspaceId,
-                      serverName: server.name,
-                    });
-                  } catch (error) {
-                    toast({
-                      title: "Authentication failed",
-                      description:
-                        error instanceof Error
-                          ? error.message
-                          : "Unknown error",
-                    });
-                  }
-                }}
-              />
+              <Section className="gap-y-8">
+                <SectionHeader>
+                  <SectionTitle>{workspace.name}</SectionTitle>
+                  <SectionDescription>
+                    {workspace.description}
+                  </SectionDescription>
+                </SectionHeader>
+
+                <Tabs default="servers">
+                  <Tab
+                    id="servers"
+                    label="Servers"
+                    icon={<DesktopIcon />}
+                    content={
+                      <WorkspaceServerList
+                        servers={workspace.servers}
+                        onClickServer={(server) =>
+                          navigate(`/${workspaceId}/${server.name}`)
+                        }
+                        onClickAddServer={() => navigate("/library")}
+                        onClickAuthorize={async (server) => {
+                          try {
+                            await authenticate({
+                              proxyId: workspaceId,
+                              serverName: server.name,
+                            });
+                          } catch (error) {
+                            toast({
+                              title: "Authentication failed",
+                              description:
+                                error instanceof Error
+                                  ? error.message
+                                  : "Unknown error",
+                            });
+                          }
+                        }}
+                      />
+                    }
+                  />
+                  <Tab
+                    id="tools"
+                    label="Tools"
+                    icon={<ToolboxIcon />}
+                    content={
+                      <ToolList
+                        tools={tools}
+                        toolsLoading={isToolsLoading}
+                        editable={true}
+                        isSaving={isUpdatingTools}
+                        onUpdateTools={updateTools}
+                      />
+                    }
+                  />
+                  <Tab
+                    id="prompts"
+                    label="Prompts"
+                    icon={<NotebookIcon />}
+                    content={
+                      <PromptList
+                        prompts={workspace.prompts ?? []}
+                        onCreatePrompt={createPrompt}
+                        onEditPrompt={editPrompt}
+                        onDeletePrompt={deletePrompt}
+                        isSavingPrompt={
+                          isCreatingPrompt ||
+                          isEditingPrompt ||
+                          isDeletingPrompt
+                        }
+                      />
+                    }
+                  />
+                </Tabs>
+              </Section>
             </SplitViewMain>
             <SplitViewSide>
               <WorkspaceSectionClients

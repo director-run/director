@@ -1,20 +1,27 @@
+import { PromptList } from "@director.run/design/components/prompts/prompt-list.tsx";
+import { WorkspaceServerList } from "@director.run/design/components/servers/server-list.tsx";
 import {
   SplitView,
   SplitViewMain,
   SplitViewSide,
 } from "@director.run/design/components/split-view.tsx";
+import { ToolList } from "@director.run/design/components/tools/tool-list.tsx";
 import type {
   Client,
   MCPTool,
   WorkspaceDetail,
 } from "@director.run/design/components/types.ts";
 import { Container } from "@director.run/design/components/ui/container.tsx";
-import { WorkspaceDetailContent } from "@director.run/design/components/workspaces/workspace-detail-content.tsx";
+import { Section } from "@director.run/design/components/ui/section.tsx";
+import { SectionHeader } from "@director.run/design/components/ui/section.tsx";
+import { SectionTitle } from "@director.run/design/components/ui/section.tsx";
+import { SectionDescription } from "@director.run/design/components/ui/section.tsx";
+import { Tab, Tabs } from "@director.run/design/components/ui/tabs.tsx";
 import { WorkspaceSectionClients } from "@director.run/design/components/workspaces/workspace-section-clients.tsx";
 import { mockTools } from "@director.run/design/test/fixtures/mcp/tools.js";
 import { mockClients } from "@director.run/design/test/fixtures/workspace/clients.ts";
 import { mockWorkspace } from "@director.run/design/test/fixtures/workspace/workspace.ts";
-import type { Tool as McpSdkTool } from "@modelcontextprotocol/sdk/types.js";
+import { DesktopIcon, NotebookIcon, ToolboxIcon } from "@phosphor-icons/react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../helpers/decorators";
 
@@ -25,18 +32,46 @@ const WorkspaceDetailComponent = ({
 }: {
   workspace: WorkspaceDetail;
   clients: Client[];
-  tools: McpSdkTool[];
+  tools: MCPTool[];
 }) => (
   <Container size="xl">
     <SplitView>
       <SplitViewMain>
-        <WorkspaceDetailContent
-          workspace={workspace}
-          tools={tools as MCPTool[]}
-          toolsLoading={false}
-          onClickServer={() => console.log("library click")}
-          onClickAddServer={() => console.log("server click")}
-        />
+        <Section className="gap-y-8">
+          <SectionHeader>
+            <SectionTitle>{workspace.name}</SectionTitle>
+            <SectionDescription>{workspace.description}</SectionDescription>
+          </SectionHeader>
+
+          <Tabs default="tools">
+            <Tab
+              id="servers"
+              label="Servers"
+              icon={<DesktopIcon />}
+              content={
+                <WorkspaceServerList
+                  servers={workspace.servers}
+                  onClickServer={() => console.log("library click")}
+                  onClickAddServer={() => console.log("server click")}
+                />
+              }
+            />
+            <Tab
+              id="tools"
+              label="Tools"
+              icon={<ToolboxIcon />}
+              content={
+                <ToolList tools={tools as MCPTool[]} toolsLoading={false} />
+              }
+            />
+            <Tab
+              id="prompts"
+              label="Prompts"
+              icon={<NotebookIcon />}
+              content={<PromptList prompts={workspace.prompts ?? []} />}
+            />
+          </Tabs>
+        </Section>
       </SplitViewMain>
       <SplitViewSide>
         <WorkspaceSectionClients
@@ -67,6 +102,6 @@ export const Default: Story = {
   args: {
     workspace: mockWorkspace(),
     clients: mockClients,
-    tools: mockTools as McpSdkTool[],
+    tools: mockTools(),
   },
 };

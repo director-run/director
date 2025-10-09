@@ -5,33 +5,35 @@ import { WorkspaceStore } from "../../workspaces/workspace-store";
 import { createInstallerRouter } from "./installer-router";
 import { createRegistryRouter } from "./registry-router";
 import { createProxyStoreRouter } from "./store-router";
+import { createToolsRouter } from "./tools-router";
 
 export function createAppRouter({
-  proxyStore,
+  workspaceStore,
   registryURL,
 }: {
-  proxyStore: WorkspaceStore;
+  workspaceStore: WorkspaceStore;
   registryURL: string;
 }) {
   return t.router({
     health: t.procedure.query(({ ctx }) => {
       return getStatus(ctx.cliVersion);
     }),
-    store: createProxyStoreRouter({ proxyStore }),
-    installer: createInstallerRouter({ proxyStore }),
+    store: createProxyStoreRouter({ workspaceStore }),
+    installer: createInstallerRouter({ workspaceStore }),
     registry: createRegistryRouter({ registryURL }),
+    tools: createToolsRouter({ workspaceStore }),
   });
 }
 
 export function createTRPCExpressMiddleware({
-  proxyStore,
+  workspaceStore,
   registryURL,
 }: {
-  proxyStore: WorkspaceStore;
+  workspaceStore: WorkspaceStore;
   registryURL: string;
 }) {
   return trpcExpress.createExpressMiddleware({
-    router: createAppRouter({ proxyStore, registryURL }),
+    router: createAppRouter({ workspaceStore, registryURL }),
     createContext: ({ res }) => {
       const cliVersion = res.getHeader("x-cli-version") ?? null;
 

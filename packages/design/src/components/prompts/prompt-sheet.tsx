@@ -155,6 +155,7 @@ export function PromptSheet({
                   {prompt && onClickDelete && (
                     <Button
                       type="button"
+                      variant="secondary"
                       onClick={() => {
                         setDeleteOpen(true);
                       }}

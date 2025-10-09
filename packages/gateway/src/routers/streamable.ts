@@ -11,10 +11,10 @@ import type { WorkspaceStore } from "../workspaces/workspace-store";
 const logger = getLogger("mcp/streamable");
 
 export const createStreamableRouter = ({
-  proxyStore,
+  workspaceStore: proxyStore,
   telemetry,
 }: {
-  proxyStore: WorkspaceStore;
+  workspaceStore: WorkspaceStore;
   telemetry: Telemetry;
 }) => {
   const router = express.Router();

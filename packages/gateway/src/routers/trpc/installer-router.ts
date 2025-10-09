@@ -11,8 +11,8 @@ import { getSSEPathForProxy } from "../../helpers";
 import type { WorkspaceStore } from "../../workspaces/workspace-store";
 
 export function createInstallerRouter({
-  proxyStore,
-}: { proxyStore: WorkspaceStore }) {
+  workspaceStore: proxyStore,
+}: { workspaceStore: WorkspaceStore }) {
   return t.router({
     allClients: t.procedure.query(() => allClientStatuses()),
     byProxy: t.router({

@@ -23,7 +23,8 @@ export interface Client {
 }
 
 // MCP
-export type MCPTool = NonNullable<RegistryEntryDetail["tools"]>[number];
+// export type MCPTool = NonNullable<RegistryEntryDetail["tools"]>[number];
+export type MCPTool = GatewayRouterOutputs["tools"]["list"][number];
 
 export enum ConfiguratorTarget {
   Claude = "claude",

@@ -33,8 +33,8 @@ const PromptSchema = z.object({
 });
 
 export function createProxyStoreRouter({
-  proxyStore,
-}: { proxyStore: WorkspaceStore }) {
+  workspaceStore: proxyStore,
+}: { workspaceStore: WorkspaceStore }) {
   return t.router({
     getAll: t.procedure.query(async () => {
       return await Promise.all(
@@ -107,24 +107,6 @@ export function createProxyStoreRouter({
         return await target.toPlainObject({
           tools: input.queryParams?.includeTools,
           connectionInfo: true,
-        });
-      }),
-
-    callTool: t.procedure
-      .input(
-        z.object({
-          proxyId: z.string(),
-          serverName: z.string(),
-          toolName: z.string(),
-          arguments: z.any(),
-        }),
-      )
-      .mutation(async ({ input }) => {
-        const proxy = await proxyStore.get(input.proxyId);
-        const target = await proxy.getTarget(input.serverName);
-        return await target.originalCallTool({
-          name: input.toolName,
-          arguments: input.arguments,
         });
       }),
 

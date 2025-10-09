@@ -1,4 +1,5 @@
 import type { ComponentProps } from "react";
+import { useState } from "react";
 import type { WorkspaceDetail } from "../types";
 import { Button } from "../ui/button";
 import {
@@ -8,53 +9,104 @@ import {
 } from "../ui/empty-state";
 import * as List from "../ui/list";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
+import { PromptSheet } from "./prompt-sheet";
 
 type Prompt = NonNullable<WorkspaceDetail["prompts"]>[number];
 
 export interface PromptListProps extends ComponentProps<typeof Section> {
   prompts?: Prompt[];
-  onClickPrompt?: (prompt: Prompt) => void;
-  onClickAddPrompt?: () => void;
+  onCreatePrompt?: (values: {
+    title: string;
+    description?: string;
+    body: string;
+  }) => Promise<void> | void;
+  onEditPrompt?: (
+    promptName: string,
+    values: { title?: string; description?: string; body?: string },
+  ) => Promise<void> | void;
+  onDeletePrompt?: (promptName: string) => Promise<void> | void;
+  isSavingPrompt?: boolean;
 }
 
 export function PromptList({
   prompts,
-  onClickPrompt,
-  onClickAddPrompt,
+  onCreatePrompt,
+  onEditPrompt,
+  onDeletePrompt,
+  isSavingPrompt = false,
   ...props
 }: PromptListProps) {
   const list = prompts ?? [];
+  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState<Prompt | null>(null);
 
   return (
-    <Section {...props}>
-      <SectionHeader className="flex flex-row items-center justify-between">
-        <SectionTitle variant="h2" asChild>
-          <h2>Prompts</h2>
-        </SectionTitle>
-        <Button size="sm" onClick={onClickAddPrompt}>
-          Add prompt
-        </Button>
-      </SectionHeader>
+    <>
+      <Section {...props}>
+        <SectionHeader className="flex flex-row items-center justify-between">
+          <SectionTitle variant="h2" asChild>
+            <h2>Prompts</h2>
+          </SectionTitle>
+          <Button
+            size="sm"
+            onClick={() => {
+              setSelected(null);
+              setOpen(true);
+            }}
+          >
+            Add prompt
+          </Button>
+        </SectionHeader>
 
-      {list.length === 0 ? (
-        <EmptyState>
-          <EmptyStateTitle>No prompts</EmptyStateTitle>
-          <EmptyStateDescription>
-            Create your first prompt to reuse instructions across tools.
-          </EmptyStateDescription>
-        </EmptyState>
-      ) : (
-        <List.List>
-          {list.map((prompt) => (
-            <PromptListItem
-              key={`prompt-${prompt.name}`}
-              prompt={prompt}
-              onClick={onClickPrompt && (() => onClickPrompt(prompt))}
-            />
-          ))}
-        </List.List>
-      )}
-    </Section>
+        {list.length === 0 ? (
+          <EmptyState>
+            <EmptyStateTitle>No prompts</EmptyStateTitle>
+            <EmptyStateDescription>
+              Create your first prompt to reuse instructions across tools.
+            </EmptyStateDescription>
+          </EmptyState>
+        ) : (
+          <List.List>
+            {list.map((prompt) => (
+              <PromptListItem
+                key={`prompt-${prompt.name}`}
+                prompt={prompt}
+                onClick={() => {
+                  setSelected(prompt);
+                  setOpen(true);
+                }}
+              />
+            ))}
+          </List.List>
+        )}
+      </Section>
+
+      <PromptSheet
+        open={open}
+        onOpenChange={setOpen}
+        prompt={selected}
+        isSubmitting={isSavingPrompt}
+        onClickDelete={
+          selected
+            ? async () => {
+                await onDeletePrompt?.(selected.name);
+                setOpen(false);
+              }
+            : undefined
+        }
+        onSubmit={async (values) => {
+          if (selected && onEditPrompt) {
+            await onEditPrompt(selected.name, values);
+            setOpen(false);
+            return;
+          }
+          if (onCreatePrompt) {
+            await onCreatePrompt(values);
+            setOpen(false);
+          }
+        }}
+      />
+    </>
   );
 }
 

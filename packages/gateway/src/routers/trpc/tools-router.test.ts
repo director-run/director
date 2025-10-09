@@ -1,0 +1,97 @@
+import { type CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import type { GatewayRouterOutputs } from "../../client";
+import { IntegrationTestHarness } from "../../test/integration";
+
+describe("Tools Router", () => {
+  let harness: IntegrationTestHarness;
+  let workspace: GatewayRouterOutputs["store"]["create"];
+
+  beforeAll(async () => {
+    harness = await IntegrationTestHarness.start();
+  });
+
+  afterAll(async () => {
+    await harness.stop();
+  });
+
+  beforeEach(async () => {
+    await harness.purge();
+    workspace = await harness.client.store.create.mutate({
+      name: "Test Workspace",
+      servers: [
+        harness.getConfigForTarget("echo"),
+        harness.getConfigForTarget("kitchenSink"),
+      ],
+    });
+  });
+
+  describe("listTools", () => {
+    it("should list tools", async () => {
+      const toolsResult = await harness.client.tools.list.query({
+        workspaceId: workspace.id,
+      });
+      expect(toolsResult.map((t) => t.name)).toEqual([
+        "add",
+        "echo",
+        "multiply",
+        "ping",
+        "subtract",
+      ]);
+    });
+
+    it("should return only return tools for the given server name", async () => {
+      const toolsResult = await harness.client.tools.list.query({
+        workspaceId: workspace.id,
+        serverName: "echo",
+      });
+      expect(toolsResult.map((t) => t.name)).toEqual(["echo"]);
+    });
+  });
+
+  describe("updateBatch", () => {
+    it("should update tools", async () => {
+      await harness.client.tools.updateBatch.mutate({
+        workspaceId: workspace.id,
+        tools: [
+          {
+            serverName: "echo",
+            name: "echo",
+            disabled: true,
+          },
+        ],
+      });
+
+      const toolsResult = await harness.client.tools.list.query({
+        workspaceId: workspace.id,
+      });
+
+      expect(toolsResult.map((t) => t.name)).toEqual([
+        "add",
+        "echo",
+        "multiply",
+        "ping",
+        "subtract",
+      ]);
+
+      expect(toolsResult.find((t) => t.name === "echo")?.disabled).toBe(true);
+    });
+  });
+
+  describe("callTool", () => {
+    it("should call a tool", async () => {
+      const result = (await harness.client.tools.callTool.mutate({
+        workspaceId: workspace.id,
+        serverName: "echo",
+        toolName: "echo",
+        arguments: {
+          message: "hello",
+        },
+      })) as CallToolResult;
+
+      expect(JSON.parse(result?.content?.[0]?.text as string)).toEqual({
+        message: "hello",
+      });
+    });
+  });
+});

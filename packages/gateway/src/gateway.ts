@@ -20,19 +20,19 @@ import { WorkspaceStore } from "./workspaces/workspace-store";
 const logger = getLogger("Gateway");
 
 export class Gateway {
-  public readonly proxyStore: WorkspaceStore;
+  public readonly workspaceStore: WorkspaceStore;
   public readonly port: number;
   private server: Server;
   public readonly db: Config;
 
   private constructor(attribs: {
-    proxyStore: WorkspaceStore;
+    workspaceStore: WorkspaceStore;
     port: number;
     db: Config;
     server: Server;
   }) {
     this.port = attribs.port;
-    this.proxyStore = attribs.proxyStore;
+    this.workspaceStore = attribs.workspaceStore;
     this.server = attribs.server;
     this.db = attribs.db;
   }
@@ -75,7 +75,7 @@ export class Gateway {
         })
       : Telemetry.noTelemetry();
 
-    const proxyStore = await WorkspaceStore.create({
+    const workspaceStore = await WorkspaceStore.create({
       config: db,
       telemetry,
       oauth: attribs.oauth
@@ -118,13 +118,17 @@ export class Gateway {
         }),
       );
     }
-    app.use("/", createSSERouter({ proxyStore, telemetry }));
-    app.use("/", createStreamableRouter({ proxyStore, telemetry }));
+    app.use("/", createSSERouter({ workspaceStore, telemetry }));
+    app.use("/", createStreamableRouter({ workspaceStore, telemetry }));
     app.use(
       "/",
       createOauthCallbackRouter({
         onAuthorizationSuccess: async (factoryId, providerId, code) => {
-          await proxyStore.onAuthorizationSuccess(factoryId, providerId, code);
+          await workspaceStore.onAuthorizationSuccess(
+            factoryId,
+            providerId,
+            code,
+          );
           return {
             redirectUrl: `http://localhost:${isDevelopment() ? 3000 : attribs.port}/oauth/${factoryId}/${providerId}/callback`,
           };
@@ -142,7 +146,10 @@ export class Gateway {
     );
     // TODO: add a router to handle the incoming oauth tokens
     // onTokenReceived((token) => OauthBroker.registerToken(token))
-    app.use("/trpc", createTRPCExpressMiddleware({ proxyStore, registryURL }));
+    app.use(
+      "/trpc",
+      createTRPCExpressMiddleware({ workspaceStore, registryURL }),
+    );
     app.all("*", notFoundHandler);
     app.use(errorRequestHandler);
 
@@ -156,7 +163,7 @@ export class Gateway {
     const gateway = new Gateway({
       port: attribs.port,
       db,
-      proxyStore,
+      workspaceStore,
       server,
     });
 
@@ -170,7 +177,7 @@ export class Gateway {
   }
 
   async stop() {
-    await this.proxyStore.closeAll();
+    await this.workspaceStore.closeAll();
     await new Promise<void>((resolve) => {
       // Close all existing connections
       this.server.closeAllConnections();

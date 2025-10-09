@@ -29,7 +29,24 @@ export const mockRegistryEntry: RegistryEntryDetail = {
   homepage: "https://github.com/github/github-mcp-server",
   source_registry: null,
   categories: [],
-  tools: mockTools,
+  tools: mockTools().map((tool) => ({
+    name: tool.name,
+    description: tool.description ?? "",
+    inputSchema: {
+      type: tool.inputSchema.type ?? "object",
+      required: tool.inputSchema.required,
+      properties: tool.inputSchema.properties as Record<
+        string,
+        {
+          type?: string;
+          description?: string;
+          title?: string;
+          default?: unknown;
+          anyOf?: unknown;
+        }
+      >,
+    },
+  })),
   parameters: [
     {
       name: "github-personal-access-token",

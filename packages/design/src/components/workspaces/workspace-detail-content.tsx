@@ -4,9 +4,7 @@ import { SectionHeader } from "@director.run/design/components/ui/section.tsx";
 import { SectionTitle } from "@director.run/design/components/ui/section.tsx";
 import { SectionDescription } from "@director.run/design/components/ui/section.tsx";
 import { DesktopIcon, NotebookIcon, ToolboxIcon } from "@phosphor-icons/react";
-import { useState } from "react";
 import { PromptList } from "../prompts/prompt-list";
-import { PromptSheet } from "../prompts/prompt-sheet";
 import { WorkspaceServerList } from "../servers/server-list";
 import { ToolList } from "../tools/tool-list";
 import type { WorkspaceDetail, WorkspaceTarget } from "../types";
@@ -58,11 +56,10 @@ export const WorkspaceDetailContent = ({
           label="Prompts"
           icon={<NotebookIcon />}
           content={
-            <WorkspacePrompts
-              workspace={workspace}
+            <PromptList
+              prompts={workspace.prompts ?? []}
               onCreatePrompt={onCreatePrompt}
               onEditPrompt={onEditPrompt}
-              onClickAuthorize={onClickAuthorize}
               onDeletePrompt={onDeletePrompt}
               isSavingPrompt={isSavingPrompt}
             />
@@ -91,72 +88,4 @@ interface WorkspaceDetailContentProps {
     values: { title?: string; description?: string; body?: string },
   ) => Promise<void> | void;
   isSavingPrompt?: boolean;
-}
-
-function WorkspacePrompts({
-  workspace,
-  onCreatePrompt,
-  onEditPrompt,
-  onDeletePrompt,
-  isSavingPrompt = false,
-}: {
-  workspace: WorkspaceDetail;
-  onCreatePrompt?: (values: {
-    title: string;
-    description?: string;
-    body: string;
-  }) => Promise<void> | void;
-  onDeletePrompt?: (promptName: string) => Promise<void> | void;
-  onEditPrompt?: (
-    promptName: string,
-    values: { title?: string; description?: string; body?: string },
-  ) => Promise<void> | void;
-  isSavingPrompt?: boolean;
-  onClickAuthorize?: (server: WorkspaceTarget) => void;
-}) {
-  const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState<
-    NonNullable<WorkspaceDetail["prompts"]>[number] | null
-  >(null);
-
-  return (
-    <>
-      <PromptList
-        prompts={workspace.prompts ?? []}
-        onClickAddPrompt={() => {
-          setSelected(null);
-          setOpen(true);
-        }}
-        onClickPrompt={(p) => {
-          setSelected(p);
-          setOpen(true);
-        }}
-      />
-
-      <PromptSheet
-        open={open}
-        onOpenChange={setOpen}
-        prompt={selected}
-        isSubmitting={isSavingPrompt}
-        onClickDelete={async () => {
-          if (selected) {
-            await onDeletePrompt?.(selected.name);
-            setOpen(false);
-            return;
-          }
-        }}
-        onSubmit={async (values) => {
-          if (selected && onEditPrompt) {
-            await onEditPrompt(selected.name, values);
-            setOpen(false);
-            return;
-          }
-          if (onCreatePrompt) {
-            await onCreatePrompt(values);
-            setOpen(false);
-          }
-        }}
-      />
-    </>
-  );
 }

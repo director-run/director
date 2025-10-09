@@ -63,6 +63,10 @@ export class InMemoryTypedStore<
 > extends TypedStore<TSchema> {
   private _dataa: Record<string, unknown> = {};
 
+  constructor(config: { schema: TSchema; data?: Record<string, unknown> }) {
+    super(config);
+  }
+
   async readData() {
     return await Promise.resolve(this._dataa);
   }

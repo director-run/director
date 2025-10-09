@@ -5,7 +5,7 @@ import { z } from "zod";
 import { WorkspaceStore } from "../../workspaces/workspace-store";
 
 type EnhancedTool = Tool & {
-  serverName: string;
+  serverName?: string;
   disabled?: boolean;
 };
 

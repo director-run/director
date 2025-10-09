@@ -1,9 +1,17 @@
 import { XIcon } from "@phosphor-icons/react";
 import { useState } from "react";
-import { ListOfLinks } from "../list-of-links";
+import type { ReactNode } from "react";
+import { ListSkeleton } from "../loaders/list-skeleton";
 import type { MCPTool } from "../types";
 import { Badge, BadgeLabel } from "../ui/badge";
+import { BadgeGroup } from "../ui/badge";
 import { Button } from "../ui/button";
+import {
+  EmptyState,
+  EmptyStateDescription,
+  EmptyStateTitle,
+} from "../ui/empty-state";
+import * as List from "../ui/list";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
 import { ToolSheet } from "./tool-sheet";
 
@@ -75,4 +83,59 @@ interface ToolListProps {
   onUpdateTools?: (
     tools: Pick<MCPTool, "name" | "disabled" | "serverName">[],
   ) => void;
+}
+
+interface LinkItem {
+  href: string;
+  scroll?: boolean;
+  subtitle?: string;
+  title: string;
+  badges?: ReactNode;
+  onClick?: () => void;
+}
+
+function ListItem({ link }: { link: LinkItem }) {
+  return (
+    <List.ListItem onClick={link.onClick}>
+      <List.ListItemDetails>
+        <List.ListItemTitle>{link.title}</List.ListItemTitle>
+        {link.subtitle && (
+          <List.ListItemDescription>{link.subtitle}</List.ListItemDescription>
+        )}
+      </List.ListItemDetails>
+
+      {link.badges && (
+        <BadgeGroup className="ml-auto">{link.badges}</BadgeGroup>
+      )}
+    </List.ListItem>
+  );
+}
+
+interface ListOfLinksProps {
+  links: LinkItem[];
+  isLoading: boolean;
+  className?: string;
+}
+
+export function ListOfLinks({ links, isLoading, className }: ListOfLinksProps) {
+  if (isLoading) {
+    return <ListSkeleton />;
+  }
+
+  if (links.length === 0) {
+    return (
+      <EmptyState>
+        <EmptyStateTitle>No items</EmptyStateTitle>
+        <EmptyStateDescription>This list is empty.</EmptyStateDescription>
+      </EmptyState>
+    );
+  }
+
+  return (
+    <List.List className={className}>
+      {links.map((it) => (
+        <ListItem key={`li-${it.title}`} link={it} />
+      ))}
+    </List.List>
+  );
 }

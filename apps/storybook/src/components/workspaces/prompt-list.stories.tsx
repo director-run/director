@@ -9,8 +9,10 @@ const Component = ({ workspace }: { workspace: WorkspaceDetail }) => (
   <Container size="lg">
     <PromptList
       prompts={workspace.prompts ?? []}
-      onClickAddPrompt={() => console.log("add")}
-      onClickPrompt={(p) => console.log(p)}
+      onCreatePrompt={() => console.log("add")}
+      onEditPrompt={(p) => console.log(p)}
+      onDeletePrompt={(p) => console.log(p)}
+      isSavingPrompt={false}
     />
   </Container>
 );

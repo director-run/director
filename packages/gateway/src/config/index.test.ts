@@ -191,7 +191,7 @@ describe("Config", () => {
       await db.createWorkspace(proxyData);
 
       await expect(db.createWorkspace(proxyData)).rejects.toThrow(
-        "Proxy already exists",
+        "Workspace with this name already exists",
       );
     });
   });

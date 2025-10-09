@@ -32,6 +32,16 @@ export abstract class Config {
     proxy: Omit<WorkspaceParams, "id">,
   ): Promise<WorkspaceParams> {
     const workspaceId = slugifyName(proxy.name);
+    const store = await this.readData();
+
+    const existingWorkspace = _.find(store.workspaces, { id: workspaceId });
+    if (existingWorkspace) {
+      throw new AppError(
+        ErrorCode.DUPLICATE,
+        "Workspace with this name already exists",
+      );
+    }
+
     return this.setWorkspace(workspaceId, {
       id: workspaceId,
       ...proxy,
@@ -89,38 +99,6 @@ export abstract class Config {
     await this.writeData(defaultConfiguration());
   }
 }
-
-//
-// JSONConfiguration
-//
-// class JSONConfiguration extends Config {
-//   static async connect(filePath: string): Promise<JSONConfiguration> {
-//     const db = new JSONConfiguration(filePath);
-//     await db.init();
-//     return db;
-//   }
-
-//   async init() {
-//     if (!existsSync(this.filePath)) {
-//       await this.writeData(defaultConfiguration());
-//     } else {
-//       const store = await readJSONFile(this.filePath);
-//       this._data = databaseAttributesSchema.parse(store);
-//     }
-//   }
-
-//   async readData(): Promise<ConfigurationData> {
-//     if (!this._data) {
-//       await this.init();
-//     }
-//     return this._data as ConfigurationData;
-//   }
-
-//   async writeData(data: ConfigurationData): Promise<void> {
-//     await writeJSONFile(this.filePath, data);
-//     this._data = _.cloneDeep(data);
-//   }
-// }
 
 export class YAMLConfig extends Config {
   static async connect(filePath: string): Promise<YAMLConfig> {

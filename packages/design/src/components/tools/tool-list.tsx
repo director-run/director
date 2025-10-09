@@ -12,11 +12,12 @@ import {
 } from "../ui/empty-state";
 import * as List from "../ui/list";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
+import { Switch } from "../ui/switch";
 import { ToolSheet } from "./tool-sheet";
 
 export function ToolList({ tools, toolsLoading, editable }: ToolListProps) {
   const [selectedTool, setSelectedTool] = useState<MCPTool | null>(null);
-  const [editing, setEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   if (toolsLoading) {
     return <LoadingToolList />;
@@ -34,20 +35,20 @@ export function ToolList({ tools, toolsLoading, editable }: ToolListProps) {
             <h2>Tools</h2>
           </SectionTitle>
 
-          {editable && !editing && (
-            <Button size="sm" onClick={() => setEditing(true)}>
+          {editable && !isEditing && (
+            <Button size="sm" onClick={() => setIsEditing(true)}>
               Edit
             </Button>
           )}
-          {editing && (
+          {isEditing && (
             <>
-              <Button size="sm" onClick={() => setEditing(false)}>
+              <Button size="sm" onClick={() => setIsEditing(false)}>
                 Save
               </Button>
               <Button
                 size="sm"
                 variant="secondary"
-                onClick={() => setEditing(false)}
+                onClick={() => setIsEditing(false)}
               >
                 <XIcon weight="bold" />
               </Button>
@@ -61,6 +62,10 @@ export function ToolList({ tools, toolsLoading, editable }: ToolListProps) {
               key={`li-${tool.name}`}
               tool={tool}
               onClick={() => setSelectedTool(tool)}
+              isEditing={isEditing}
+              onDisabledChange={(tool, disabled) => {
+                console.log(tool, disabled);
+              }}
             />
           ))}
         </List.List>
@@ -88,11 +93,18 @@ interface ToolListProps {
 function ToolListItem({
   tool,
   onClick,
-}: { tool: MCPTool; onClick: () => void }) {
+  isEditing,
+  onDisabledChange,
+}: {
+  tool: MCPTool;
+  onClick: () => void;
+  isEditing: boolean;
+  onDisabledChange: (tool: MCPTool, disabled: boolean) => void;
+}) {
   const subtitle = tool.description?.replace(/\[([^\]]+)\]/g, "") || "";
 
   return (
-    <List.ListItem onClick={onClick}>
+    <List.ListItem onClick={!isEditing ? onClick : undefined}>
       <List.ListItemDetails>
         <List.ListItemTitle>{tool.name}</List.ListItemTitle>
         {subtitle && (
@@ -100,12 +112,21 @@ function ToolListItem({
         )}
       </List.ListItemDetails>
 
-      {tool.disabled && (
+      {tool.disabled && !isEditing && (
         <BadgeGroup className="ml-auto">
           <Badge>
             <BadgeLabel uppercase>Disabled</BadgeLabel>
           </Badge>
         </BadgeGroup>
+      )}
+      {isEditing && (
+        <Switch
+          id={tool.name}
+          checked={!tool.disabled}
+          onCheckedChange={(checked) => {
+            onDisabledChange(tool, checked);
+          }}
+        />
       )}
     </List.ListItem>
   );

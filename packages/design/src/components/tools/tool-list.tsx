@@ -67,7 +67,7 @@ export function ToolList({ tools, toolsLoading, editable }: ToolListProps) {
       </Section>
       {selectedTool && (
         <ToolSheet
-          tool={selectedTool as MCPTool}
+          tool={selectedTool}
           mcpName={"XXXXXXXXXXX"}
           onClose={() => setSelectedTool(null)}
         />

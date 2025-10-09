@@ -51,7 +51,7 @@ describe("Config", () => {
 
       // Connect to the same file
       const connectedDb = await YAMLConfig.connect(dbPath);
-      const proxies = await connectedDb.allWorkspaces();
+      const proxies = await connectedDb.getWorkspaces();
 
       expect(proxies).toHaveLength(1);
       expect(proxies[0].name).toBe("test-proxy");
@@ -198,7 +198,7 @@ describe("Config", () => {
 
   describe("getAll", () => {
     it("should return empty array for empty database", async () => {
-      const allProxies = await db.allWorkspaces();
+      const allProxies = await db.getWorkspaces();
       expect(allProxies).toEqual([]);
     });
 
@@ -221,7 +221,7 @@ describe("Config", () => {
         ],
       });
 
-      const allProxies = await db.allWorkspaces();
+      const allProxies = await db.getWorkspaces();
 
       expect(allProxies).toHaveLength(2);
       expect(allProxies).toEqual([proxy1, proxy2]);
@@ -250,7 +250,7 @@ describe("Config", () => {
 
       // Verify it's empty
       expect(await db.countWorkspaces()).toBe(0);
-      expect(await db.allWorkspaces()).toEqual([]);
+      expect(await db.getWorkspaces()).toEqual([]);
     });
 
     it("should reset database to initial state", async () => {

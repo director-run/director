@@ -27,7 +27,7 @@ export abstract class Config {
     proxy: Omit<WorkspaceParams, "id">,
   ): Promise<WorkspaceParams> {
     const workspaceId = slugifyName(proxy.name);
-    const workspaces = await this.allWorkspaces();
+    const workspaces = await this.getWorkspaces();
 
     const existingWorkspace = _.find(workspaces, { id: workspaceId });
     if (existingWorkspace) {
@@ -48,7 +48,7 @@ export abstract class Config {
   }
 
   async getWorkspace(id: string): Promise<WorkspaceParams> {
-    const workspaces = await this.allWorkspaces();
+    const workspaces = await this.getWorkspaces();
     const proxy = _.find(workspaces, { id });
     if (!proxy) {
       throw new Error("Workspace not found");
@@ -63,30 +63,34 @@ export abstract class Config {
     if (proxy.id !== id) {
       throw new Error("Id mismatch");
     }
-    const workspaces = await this.allWorkspaces();
+    const workspaces = await this.getWorkspaces();
     const proxyIndex = _.findIndex(workspaces, { id });
     if (proxyIndex === -1) {
       workspaces.push(proxy);
     } else {
       workspaces[proxyIndex] = proxy;
     }
-    await this.writeData({ workspaces });
+    await this.setWorkspaces(workspaces);
     return proxy;
   }
 
   async unsetWorkspace(id: string): Promise<void> {
-    const workspaces = await this.allWorkspaces();
-    await this.writeData({ workspaces: _.reject(workspaces, { id }) });
+    const workspaces = await this.getWorkspaces();
+    await this.setWorkspaces(_.reject(workspaces, { id }));
   }
 
   async countWorkspaces(): Promise<number> {
-    const workspaces = await this.allWorkspaces();
+    const workspaces = await this.getWorkspaces();
     return workspaces.length;
   }
 
-  async allWorkspaces(): Promise<WorkspaceParams[]> {
+  async getWorkspaces(): Promise<WorkspaceParams[]> {
     const store = await this.readData();
     return store.workspaces;
+  }
+
+  async setWorkspaces(workspaces: WorkspaceParams[]): Promise<void> {
+    await this.writeData({ workspaces });
   }
 
   async purge(): Promise<void> {

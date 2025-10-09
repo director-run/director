@@ -31,6 +31,15 @@ export const Default: Story = {
   },
 };
 
+export const Saving: Story = {
+  args: {
+    tools: mockTools(),
+    toolsLoading: false,
+    editable: true,
+    isSaving: true,
+  },
+};
+
 export const NotEditable: Story = {
   args: {
     tools: mockTools(),

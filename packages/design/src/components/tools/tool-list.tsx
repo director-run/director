@@ -12,6 +12,7 @@ import {
   EmptyStateTitle,
 } from "../ui/empty-state";
 import * as List from "../ui/list";
+import { ScrambleText } from "../ui/scramble-text";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
 import { Switch } from "../ui/switch";
 import { ToolSheet } from "./tool-sheet";
@@ -30,7 +31,7 @@ export function ToolList({
   onUpdateTools,
 }: ToolListProps) {
   const [selectedTool, setSelectedTool] = useState<MCPTool | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(true);
   const [draftTools, setDraftTools] = useState<ToolUpdateAttribs[]>([]);
 
   useEffect(() => {
@@ -83,14 +84,7 @@ export function ToolList({
                 disabled={isSaving}
                 onClick={async () => {
                   if (draftTools) {
-                    // const updates = draftTools.map((t) => ({
-                    //   name: t.name,
-                    //   disabled: t.disabled,
-                    //   serverName: t.serverName,
-                    // }));
-                    // if (typeof onUpdateTools === "function") {
                     await onUpdateTools?.(draftTools);
-                    // }
                   }
                   setIsEditing(false);
                   setDraftTools([]);
@@ -125,7 +119,6 @@ export function ToolList({
               isEditing={isEditing}
               isSaving={isSaving}
               onDisabledChange={(tool, disabled) => {
-                console.log("onDisabledChange", draftTools, tool, disabled);
                 setDraftTools(
                   draftTools.map((t) => {
                     if (
@@ -195,10 +188,10 @@ function ToolListItem({
         </BadgeGroup>
       )}
       {isEditing && (
-        <Switch
+        <ToolSwitch
           id={tool.name}
           checked={!draftTool?.disabled}
-          disabled={isSaving}
+          loading={isSaving ?? false}
           onCheckedChange={(checked) => {
             onDisabledChange(tool, !checked);
           }}
@@ -208,7 +201,35 @@ function ToolListItem({
   );
 }
 
-export function EmptyToolList() {
+function ToolSwitch({
+  id,
+  checked,
+  loading,
+  onCheckedChange,
+}: {
+  id: string;
+  checked: boolean;
+  loading: boolean;
+  onCheckedChange: (checked: boolean) => void;
+}) {
+  if (loading) {
+    return (
+      <BadgeGroup>
+        <Badge>
+          <BadgeLabel>
+            <ScrambleText text="Loading" />
+          </BadgeLabel>
+        </Badge>
+      </BadgeGroup>
+    );
+  } else {
+    return (
+      <Switch id={id} checked={checked} onCheckedChange={onCheckedChange} />
+    );
+  }
+}
+
+function EmptyToolList() {
   return (
     <>
       <Section>
@@ -227,7 +248,7 @@ export function EmptyToolList() {
   );
 }
 
-export function LoadingToolList() {
+function LoadingToolList() {
   return (
     <>
       <Section>

@@ -86,4 +86,26 @@ describe("TypedStore", () => {
     store.set("server.port", 1234);
     expect(store.data).toMatchObject({ server: { port: 1234 } });
   });
+
+  it("should throw validation error for invalid data in constructor", () => {
+    const invalidData = {
+      server: {
+        port: -5, // Invalid: port must be >= 0
+      },
+    };
+    expect(
+      () => new TypedStore({ schema: configSchema, data: invalidData }),
+    ).toThrow(/Invalid data for key "server\.port"/);
+  });
+
+  it("should throw validation error for wrong type in constructor", () => {
+    const invalidData = {
+      server: {
+        port: "not a number", // Invalid: port must be a number
+      },
+    };
+    expect(
+      () => new TypedStore({ schema: configSchema, data: invalidData }),
+    ).toThrow(/Invalid data for key "server\.port"/);
+  });
 });

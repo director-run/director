@@ -7,7 +7,7 @@ export class TypedStore<TSchema extends Record<string, z.ZodType>> {
 
   constructor(config: { schema: TSchema; data?: Record<string, unknown> }) {
     this.schema = config.schema;
-    this._data = config.data ?? {};
+    this._data = validateAndParseData(config.schema, config.data ?? {});
   }
 
   get data(): Record<string, unknown> {
@@ -55,22 +55,26 @@ export class TypedStore<TSchema extends Record<string, z.ZodType>> {
   }
 }
 
-// // Usage
-// const allowedSchema = {
-//   "user.name": z.string().default("Bob"),
-//   "user.age": z.number().min(0),
-//   "settings.theme": z.enum(["light", "dark"]).default("light"),
-//   "config.maxItems": z.number().int().positive(),
-// } as const;
+function validateAndParseData<TSchema extends Record<string, z.ZodType>>(
+  schema: TSchema,
+  data: Record<string, unknown>,
+): Record<string, unknown> {
+  const validatedData = { ...data };
 
-// const store = new TypedStore({ schema: allowedSchema });
+  for (const key in schema) {
+    const value = get(validatedData, key);
+    if (value !== undefined) {
+      const keySchema = schema[key];
+      try {
+        const parsed = keySchema.parse(value);
+        set(validatedData, key, parsed);
+      } catch (error) {
+        throw new Error(
+          `Invalid data for key "${key}": ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+    }
+  }
 
-// store.set('user.name', 'Alice'); // ✅ OK
-// store.set('user.age', 25); // ✅ OK
-// store.set('user.age', -5); // ❌ Throws: validation error
-// store.set('forbidden.key', 'value'); // ❌ TypeScript error + runtime error
-
-// const name = store.get('user.name'); // type: string | undefined (returns "Alice")
-// const theme = store.get('settings.theme'); // type: "light" | "dark" | undefined (returns "light" default)
-// const age = store.get('user.age'); // type: number | undefined (returns undefined, no default)
-// store.get('forbidden.key'); // ❌ TypeScript error + runtime error
+  return validatedData;
+}

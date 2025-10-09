@@ -28,25 +28,18 @@ export abstract class Config {
   protected abstract readData(): Promise<ConfigurationData>;
   protected abstract writeData(data: ConfigurationData): Promise<void>;
 
-  async addProxy(proxy: Omit<WorkspaceParams, "id">): Promise<WorkspaceParams> {
-    const store = await this.readData();
-
-    if (_.find(store.workspaces, { name: proxy.name })) {
-      throw new Error("Proxy already exists");
-    }
-
-    const newProxy: WorkspaceParams = {
-      id: slugifyName(proxy.name),
+  async createWorkspace(
+    proxy: Omit<WorkspaceParams, "id">,
+  ): Promise<WorkspaceParams> {
+    const workspaceId = slugifyName(proxy.name);
+    return this.setWorkspace(workspaceId, {
+      id: workspaceId,
       ...proxy,
       servers: _.map(proxy.servers || [], (s) => ({
         ...s,
         name: slugifyName(s.name),
       })),
-    };
-
-    store.workspaces.push(newProxy);
-    await this.writeData(store);
-    return newProxy;
+    });
   }
 
   async getWorkspace(id: string): Promise<WorkspaceParams> {
@@ -58,7 +51,10 @@ export abstract class Config {
     return proxy;
   }
 
-  async setWorkspace(id: string, proxy: WorkspaceParams): Promise<void> {
+  async setWorkspace(
+    id: string,
+    proxy: WorkspaceParams,
+  ): Promise<WorkspaceParams> {
     if (proxy.id !== id) {
       throw new Error("Id mismatch");
     }
@@ -70,6 +66,7 @@ export abstract class Config {
       store.workspaces[proxyIndex] = proxy;
     }
     await this.writeData(store);
+    return proxy;
   }
 
   async unsetWorkspace(id: string): Promise<void> {

@@ -43,7 +43,7 @@ describe("Config", () => {
     it("should connect to existing database file", async () => {
       // Create a database first
       const existingDb = await YAMLConfig.connect(dbPath);
-      await existingDb.addProxy({
+      await existingDb.createWorkspace({
         name: "test-proxy",
         description: "Test proxy",
         servers: [],
@@ -128,7 +128,7 @@ describe("Config", () => {
         servers: [],
       };
 
-      const addedProxy = await db.addProxy(proxyData);
+      const addedProxy = await db.createWorkspace(proxyData);
 
       expect(addedProxy.id).toBe("test-proxy");
       expect(addedProxy.name).toBe("test-proxy");
@@ -155,7 +155,7 @@ describe("Config", () => {
         ],
       };
 
-      const addedProxy = await db.addProxy(proxyData);
+      const addedProxy = await db.createWorkspace(proxyData);
 
       expect(addedProxy.id).toBe("test-proxy-with-servers");
       expect(addedProxy.servers).toHaveLength(2);
@@ -176,7 +176,7 @@ describe("Config", () => {
         ],
       };
 
-      const addedProxy = await db.addProxy(proxyData);
+      const addedProxy = await db.createWorkspace(proxyData);
 
       expect(addedProxy.servers[0].name).toBe("server-name-with-spaces");
     });
@@ -188,9 +188,9 @@ describe("Config", () => {
         servers: [],
       };
 
-      await db.addProxy(proxyData);
+      await db.createWorkspace(proxyData);
 
-      await expect(db.addProxy(proxyData)).rejects.toThrow(
+      await expect(db.createWorkspace(proxyData)).rejects.toThrow(
         "Proxy already exists",
       );
     });
@@ -203,13 +203,13 @@ describe("Config", () => {
     });
 
     it("should return all proxies", async () => {
-      const proxy1 = await db.addProxy({
+      const proxy1 = await db.createWorkspace({
         name: "proxy-1",
         description: "First proxy",
         servers: [],
       });
 
-      const proxy2 = await db.addProxy({
+      const proxy2 = await db.createWorkspace({
         name: "proxy-2",
         description: "Second proxy",
         servers: [
@@ -231,13 +231,13 @@ describe("Config", () => {
   describe("purge", () => {
     it("should clear all data from database", async () => {
       // Add some data first
-      await db.addProxy({
+      await db.createWorkspace({
         name: "proxy-1",
         description: "First proxy",
         servers: [],
       });
 
-      await db.addProxy({
+      await db.createWorkspace({
         name: "proxy-2",
         description: "Second proxy",
         servers: [],
@@ -255,7 +255,7 @@ describe("Config", () => {
 
     it("should reset database to initial state", async () => {
       // Add some data
-      await db.addProxy({
+      await db.createWorkspace({
         name: "test-proxy",
         description: "A test proxy",
         servers: [],
@@ -264,7 +264,7 @@ describe("Config", () => {
       await db.purge();
 
       // Verify we can still add new data after purge
-      const newProxy = await db.addProxy({
+      const newProxy = await db.createWorkspace({
         name: "new-proxy",
         description: "New proxy after purge",
         servers: [],

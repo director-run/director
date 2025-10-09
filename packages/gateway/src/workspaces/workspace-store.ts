@@ -139,7 +139,7 @@ export class WorkspaceStore {
   }): Promise<Workspace> {
     this.telemetry.trackEvent("proxy_created");
 
-    const configEntry = await this.config.addProxy({
+    const configEntry = await this.config.createWorkspace({
       name,
       description,
       servers: servers ?? [],

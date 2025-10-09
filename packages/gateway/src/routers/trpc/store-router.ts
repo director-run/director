@@ -33,8 +33,8 @@ const PromptSchema = z.object({
 });
 
 export function createProxyStoreRouter({
-  proxyStore,
-}: { proxyStore: WorkspaceStore }) {
+  workspaceStore: proxyStore,
+}: { workspaceStore: WorkspaceStore }) {
   return t.router({
     getAll: t.procedure.query(async () => {
       return await Promise.all(

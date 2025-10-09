@@ -24,7 +24,7 @@ describe("Gateway", () => {
   });
 
   afterAll(async () => {
-    await gateway.proxyStore.purge();
+    await gateway.workspaceStore.purge();
     await gateway.stop();
   });
 

@@ -19,6 +19,7 @@ export function ToolList({
   tools,
   toolsLoading,
   editable,
+  isSaving,
   onUpdateTools,
 }: ToolListProps) {
   const [selectedTool, setSelectedTool] = useState<MCPTool | null>(null);
@@ -29,7 +30,7 @@ export function ToolList({
     return <LoadingToolList />;
   }
 
-  if (tools.length === 0) {
+  if (!tools || tools.length === 0) {
     return <EmptyToolList />;
   }
 
@@ -58,7 +59,8 @@ export function ToolList({
             <>
               <Button
                 size="sm"
-                onClick={() => {
+                disabled={isSaving}
+                onClick={async () => {
                   if (draftTools) {
                     const updates = draftTools.map((t) => ({
                       name: t.name,
@@ -66,7 +68,7 @@ export function ToolList({
                       serverName: t.serverName,
                     }));
                     if (typeof onUpdateTools === "function") {
-                      onUpdateTools(updates);
+                      await onUpdateTools(updates);
                     }
                   }
                   setIsEditing(false);
@@ -78,6 +80,7 @@ export function ToolList({
               <Button
                 size="sm"
                 variant="secondary"
+                disabled={isSaving}
                 onClick={() => {
                   setIsEditing(false);
                   setDraftTools(null);
@@ -96,6 +99,7 @@ export function ToolList({
               tool={tool}
               onClick={() => setSelectedTool(tool)}
               isEditing={isEditing}
+              isSaving={isSaving}
               onDisabledChange={(tool, disabled) => {
                 if (!isEditing || !draftTools) {
                   return;
@@ -127,23 +131,26 @@ export function ToolList({
 }
 
 interface ToolListProps {
-  tools: MCPTool[];
+  tools?: MCPTool[];
   toolsLoading: boolean;
   editable?: boolean;
+  isSaving?: boolean;
   onUpdateTools?: (
     tools: Pick<MCPTool, "name" | "disabled" | "serverName">[],
-  ) => void;
+  ) => void | Promise<void>;
 }
 
 function ToolListItem({
   tool,
   onClick,
   isEditing,
+  isSaving,
   onDisabledChange,
 }: {
   tool: MCPTool;
   onClick: () => void;
   isEditing: boolean;
+  isSaving?: boolean;
   onDisabledChange: (tool: MCPTool, disabled: boolean) => void;
 }) {
   const subtitle = tool.description?.replace(/\[([^\]]+)\]/g, "") || "";
@@ -168,6 +175,7 @@ function ToolListItem({
         <Switch
           id={tool.name}
           checked={!tool.disabled}
+          disabled={isSaving}
           onCheckedChange={(checked) => {
             onDisabledChange(tool, !checked);
           }}

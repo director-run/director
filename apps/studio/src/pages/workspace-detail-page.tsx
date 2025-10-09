@@ -11,7 +11,6 @@ import { SplitViewSide } from "@director.run/design/components/split-view.tsx";
 import { SplitView } from "@director.run/design/components/split-view.tsx";
 import { ToolList } from "@director.run/design/components/tools/tool-list.tsx";
 import type { WorkspaceDetail } from "@director.run/design/components/types.ts";
-import type { MCPTool } from "@director.run/design/components/types.ts";
 import { ConfirmDialog } from "@director.run/design/components/ui/confirm-dialog.tsx";
 import { Container } from "@director.run/design/components/ui/container.tsx";
 import { Section } from "@director.run/design/components/ui/section.tsx";
@@ -33,6 +32,7 @@ import { useCreatePrompt } from "../hooks/use-create-prompt.ts";
 import { useDeletePrompt } from "../hooks/use-delete-prompt.ts";
 import { useEditPrompt } from "../hooks/use-edit-prompt.ts";
 import { useListTools } from "../hooks/use-list-tools.ts";
+import { useUpdateTools } from "../hooks/use-update-tools.ts";
 import { useWorkspace } from "../hooks/use-workspace.ts";
 
 export const WorkspaceDetailPage = () => {
@@ -49,6 +49,23 @@ export const WorkspaceDetailPage = () => {
   const { tools, isToolsLoading } = useListTools(workspaceId);
   const { data: clients, isLoading: isClientsLoading } =
     useClients(workspaceId);
+  const { updateTools, isPending: isUpdatingTools } = useUpdateTools(
+    workspaceId,
+    {
+      onSuccess: () => {
+        toast({
+          title: "Tools updated",
+          description: "Your tools have been successfully updated.",
+        });
+      },
+      onError: (error) => {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to update tools",
+        });
+      },
+    },
+  );
   const { changeInstallState, isPending } = useChangeInstallState(workspaceId, {
     onSuccess: (_client, install) => {
       toast({
@@ -187,8 +204,11 @@ export const WorkspaceDetailPage = () => {
                     icon={<ToolboxIcon />}
                     content={
                       <ToolList
-                        tools={tools as MCPTool[]}
+                        tools={tools}
                         toolsLoading={isToolsLoading}
+                        editable={true}
+                        isSaving={isUpdatingTools}
+                        onUpdateTools={updateTools}
                       />
                     }
                   />

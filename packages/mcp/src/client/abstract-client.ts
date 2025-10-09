@@ -118,7 +118,19 @@ export abstract class AbstractClient<
     params?: ListToolsRequest["params"],
     options?: RequestOptions,
   ) {
-    return await super.listTools(params, options);
+    try {
+      return await super.listTools(params, options);
+    } catch (error) {
+      if (
+        error instanceof McpError &&
+        error.code === ErrorCode.MethodNotFound
+      ) {
+        // No tools available
+        return { tools: [] };
+      } else {
+        throw error;
+      }
+    }
   }
 
   public async callTool(

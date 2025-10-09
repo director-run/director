@@ -110,24 +110,6 @@ export function createProxyStoreRouter({
         });
       }),
 
-    callTool: t.procedure
-      .input(
-        z.object({
-          proxyId: z.string(),
-          serverName: z.string(),
-          toolName: z.string(),
-          arguments: z.any(),
-        }),
-      )
-      .mutation(async ({ input }) => {
-        const proxy = await proxyStore.get(input.proxyId);
-        const target = await proxy.getTarget(input.serverName);
-        return await target.originalCallTool({
-          name: input.toolName,
-          arguments: input.arguments,
-        });
-      }),
-
     updateServer: t.procedure
       .input(
         z.object({

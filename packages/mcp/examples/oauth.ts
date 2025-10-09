@@ -17,14 +17,19 @@ const logger = getLogger("examples/oauth");
 
 async function main(): Promise<void> {
   const port = 8090;
-  const httpTarget = new HTTPClient({
-    name: "oauth-test-client",
-    url: "https://mcp.notion.com/mcp",
-    oAuthHandler: OAuthProviderFactory.createDiskBackedHandler({
-      directory: path.join(__dirname, "tokens"),
-      baseCallbackUrl: `http://localhost:${port}`,
-    }),
-  });
+  const httpTarget = new HTTPClient(
+    {
+      name: "oauth-test-client",
+      url: "https://mcp.notion.com/mcp",
+    },
+    {
+      oAuthHandler: new OAuthProviderFactory({
+        storage: "disk",
+        tokenDirectory: path.join(__dirname, "tokens"),
+        baseCallbackUrl: `http://localhost:${port}`,
+      }),
+    },
+  );
 
   const app = express();
 

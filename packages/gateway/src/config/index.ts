@@ -17,8 +17,6 @@ export const databaseAttributesSchema = z.object({
 export type ConfigurationData = z.infer<typeof databaseAttributesSchema>;
 
 export abstract class Config {
-  protected _data?: ConfigurationData;
-
   protected abstract init(): Promise<void>;
   protected abstract readData(): Promise<ConfigurationData>;
   protected abstract writeData(data: ConfigurationData): Promise<void>;
@@ -100,6 +98,7 @@ export abstract class Config {
 
 export class YAMLConfig extends Config {
   public readonly filePath: string;
+  protected _data?: ConfigurationData;
 
   constructor(filePath: string) {
     super();

@@ -1,59 +1,76 @@
 import { get, set } from "lodash";
 import { z } from "zod";
 
-// Define your allowed keys and their schemas
-const allowedSchemas = {
-  "user.name": z.string(),
-  "user.age": z.number().min(0),
-  "settings.theme": z.enum(["light", "dark"]),
-  "config.maxItems": z.number().int().positive(),
-} as const;
+export class TypedStore<TSchema extends Record<string, z.ZodType>> {
+  private _data: Record<string, unknown> = {};
+  private schema: TSchema;
 
-type AllowedKey = keyof typeof allowedSchemas;
-
-export class TypedStore {
-  private data: Record<string, unknown> = {};
-
-  constructor(data: Record<string, unknown>) {
-    this.data = data;
+  constructor(config: { schema: TSchema; data?: Record<string, unknown> }) {
+    this.schema = config.schema;
+    this._data = config.data ?? {};
   }
 
-  set<K extends AllowedKey>(
+  get data(): Record<string, unknown> {
+    return this._data;
+  }
+
+  set<K extends keyof TSchema & string>(
     key: K,
-    value: z.infer<(typeof allowedSchemas)[K]>,
+    value: z.infer<TSchema[K]>,
   ): void {
-    if (!(key in allowedSchemas)) {
+    if (!(key in this.schema)) {
       throw new Error(`Key "${key}" is not allowed`);
     }
 
     // Validate against the schema
-    const schema = allowedSchemas[key];
+    const schema = this.schema[key];
     const parsed = schema.parse(value); // Throws if invalid
 
-    set(this.data, key, parsed);
+    set(this._data, key, parsed);
   }
 
-  get<K extends AllowedKey>(
+  get<K extends keyof TSchema & string>(
     key: K,
-  ): z.infer<(typeof allowedSchemas)[K]> | undefined {
-    if (!(key in allowedSchemas)) {
+  ): z.infer<TSchema[K]> | undefined {
+    if (!(key in this.schema)) {
       throw new Error(`Key "${key}" is not allowed`);
     }
 
-    return get(this.data, key) as
-      | z.infer<(typeof allowedSchemas)[K]>
-      | undefined;
+    const value = get(this._data, key);
+
+    // If value exists, return it
+    if (value !== undefined) {
+      return value as z.infer<TSchema[K]>;
+    }
+
+    // If value doesn't exist, check if schema has a default
+    const schema = this.schema[key];
+    const result = schema.safeParse(undefined);
+
+    if (result.success) {
+      return result.data as z.infer<TSchema[K]>;
+    }
+
+    return undefined;
   }
 }
 
 // // Usage
-// const store = new TypedStore<keyof typeof allowedSchemas>();
+// const allowedSchema = {
+//   "user.name": z.string().default("Bob"),
+//   "user.age": z.number().min(0),
+//   "settings.theme": z.enum(["light", "dark"]).default("light"),
+//   "config.maxItems": z.number().int().positive(),
+// } as const;
+
+// const store = new TypedStore({ schema: allowedSchema });
 
 // store.set('user.name', 'Alice'); // ✅ OK
 // store.set('user.age', 25); // ✅ OK
 // store.set('user.age', -5); // ❌ Throws: validation error
 // store.set('forbidden.key', 'value'); // ❌ TypeScript error + runtime error
 
-// const name = store.get('user.name'); // type: string | undefined
-// const age = store.get('user.age'); // type: number | undefined
+// const name = store.get('user.name'); // type: string | undefined (returns "Alice")
+// const theme = store.get('settings.theme'); // type: "light" | "dark" | undefined (returns "light" default)
+// const age = store.get('user.age'); // type: number | undefined (returns undefined, no default)
 // store.get('forbidden.key'); // ❌ TypeScript error + runtime error

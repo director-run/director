@@ -35,6 +35,14 @@ export function ToolList({ tools, toolsLoading, editable }: ToolListProps) {
     };
   });
 
+  if (toolsLoading) {
+    return <LoadingToolList />;
+  }
+
+  if (toolLinks.length === 0) {
+    return <EmptyToolList />;
+  }
+
   return (
     <>
       <Section>
@@ -63,7 +71,12 @@ export function ToolList({ tools, toolsLoading, editable }: ToolListProps) {
             </>
           )}
         </SectionHeader>
-        <ListOfLinks isLoading={toolsLoading} links={toolLinks} />
+
+        <List.List>
+          {toolLinks.map((it) => (
+            <ListItem key={`li-${it.title}`} link={it} />
+          ))}
+        </List.List>
       </Section>
       {selectedTool && (
         <ToolSheet
@@ -111,31 +124,37 @@ function ListItem({ link }: { link: LinkItem }) {
   );
 }
 
-interface ListOfLinksProps {
-  links: LinkItem[];
-  isLoading: boolean;
-  className?: string;
+export function EmptyToolList() {
+  return (
+    <>
+      <Section>
+        <SectionHeader>
+          <SectionTitle variant="h2" className="flex-1" asChild>
+            <h2>Tools</h2>
+          </SectionTitle>
+        </SectionHeader>
+
+        <EmptyState>
+          <EmptyStateTitle>No items</EmptyStateTitle>
+          <EmptyStateDescription>This list is empty.</EmptyStateDescription>
+        </EmptyState>
+      </Section>
+    </>
+  );
 }
 
-export function ListOfLinks({ links, isLoading, className }: ListOfLinksProps) {
-  if (isLoading) {
-    return <ListSkeleton />;
-  }
-
-  if (links.length === 0) {
-    return (
-      <EmptyState>
-        <EmptyStateTitle>No items</EmptyStateTitle>
-        <EmptyStateDescription>This list is empty.</EmptyStateDescription>
-      </EmptyState>
-    );
-  }
-
+export function LoadingToolList() {
   return (
-    <List.List className={className}>
-      {links.map((it) => (
-        <ListItem key={`li-${it.title}`} link={it} />
-      ))}
-    </List.List>
+    <>
+      <Section>
+        <SectionHeader>
+          <SectionTitle variant="h2" className="flex-1" asChild>
+            <h2>Tools</h2>
+          </SectionTitle>
+        </SectionHeader>
+
+        <ListSkeleton />
+      </Section>
+    </>
   );
 }

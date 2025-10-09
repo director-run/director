@@ -38,7 +38,6 @@ export function createToolsRouter({
         }),
       )
       .query(async ({ input }) => {
-        console.log("listTools", input);
         const workspace = await workspaceStore.get(input.workspaceId);
         const ret: EnhancedTool[] = [];
         for (const target of workspace.targets) {

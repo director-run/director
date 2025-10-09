@@ -35,6 +35,9 @@ export function ToolList({
   const [draftTools, setDraftTools] = useState<ToolUpdateAttribs[]>([]);
 
   useEffect(() => {
+    if (isEditing) {
+      return;
+    }
     setDraftTools(
       (tools ?? []).map((t) => ({
         name: t.name,
@@ -42,7 +45,7 @@ export function ToolList({
         serverName: t.serverName ?? "",
       })),
     );
-  }, [tools]);
+  }, [tools, isEditing]);
 
   if (toolsLoading) {
     return <LoadingToolList />;

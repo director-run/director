@@ -20,7 +20,7 @@ export function useUpdateTools(
     },
     onError: async (error) => {
       if (options?.onError) {
-        await options.onError(error as unknown as Error);
+        await options.onError(new Error(error.message));
       }
     },
   });

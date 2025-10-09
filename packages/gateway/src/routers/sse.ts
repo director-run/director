@@ -11,7 +11,7 @@ import type { WorkspaceStore } from "../workspaces/workspace-store";
 const logger = getLogger("mcp/sse");
 
 export const createSSERouter = ({
-  workspaceStore: proxyStore,
+  workspaceStore,
   telemetry,
 }: {
   workspaceStore: WorkspaceStore;
@@ -24,7 +24,7 @@ export const createSSERouter = ({
     "/:proxy_id/sse",
     asyncHandler(async (req, res) => {
       const proxyId = req.params.proxy_id;
-      const proxy = proxyStore.get(proxyId);
+      const proxy = workspaceStore.get(proxyId);
       const transport = new SSEServerTransport(`/${proxy.id}/message`, res);
 
       transports.set(transport.sessionId, transport);
@@ -64,7 +64,7 @@ export const createSSERouter = ({
     "/:proxy_id/message",
     asyncHandler(async (req, res) => {
       const proxyId = req.params.proxy_id;
-      const proxy = proxyStore.get(proxyId);
+      const proxy = workspaceStore.get(proxyId);
       const sessionId = req.query.sessionId?.toString();
 
       if (!sessionId) {

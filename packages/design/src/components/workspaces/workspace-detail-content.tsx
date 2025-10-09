@@ -8,7 +8,7 @@ import { useState } from "react";
 import { PromptList } from "../prompts/prompt-list";
 import { PromptSheet } from "../prompts/prompt-sheet";
 import { WorkspaceServerList } from "../servers/server-list";
-import { ToolsList } from "../tools/tool-list";
+import { ToolList } from "../tools/tool-list";
 import type { WorkspaceDetail, WorkspaceTarget } from "../types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
@@ -53,7 +53,7 @@ export const WorkspaceDetailContent = ({
         </TabsContent>
 
         <TabsContent value="tools">
-          <ToolsList tools={tools as MCPTool[]} toolsLoading={toolsLoading} />
+          <ToolList tools={tools as MCPTool[]} toolsLoading={toolsLoading} />
         </TabsContent>
 
         <TabsContent value="prompts">

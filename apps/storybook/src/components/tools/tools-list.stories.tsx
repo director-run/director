@@ -1,4 +1,4 @@
-import { ToolsList } from "@director.run/design/components/tools/tool-list.tsx";
+import { ToolList } from "@director.run/design/components/tools/tool-list.tsx";
 import { Container } from "@director.run/design/components/ui/container.tsx";
 import { mockTools } from "@director.run/design/test/fixtures/mcp/tools.ts";
 import type { Meta, StoryObj } from "@storybook/react";
@@ -12,10 +12,10 @@ const meta = {
   decorators: [withLayoutView],
   render: (args) => (
     <Container size="lg">
-      <ToolsList {...args} />
+      <ToolList {...args} />
     </Container>
   ),
-} satisfies Meta<typeof ToolsList>;
+} satisfies Meta<typeof ToolList>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

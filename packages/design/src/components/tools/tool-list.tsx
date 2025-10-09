@@ -5,7 +5,7 @@ import { Badge, BadgeLabel } from "../ui/badge";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
 import { ToolSheet } from "./tool-sheet";
 
-export function ToolsList({ tools, toolsLoading }: WorkspaceSectionToolsProps) {
+export function ToolList({ tools, toolsLoading }: ToolListProps) {
   const [selectedTool, setSelectedTool] = useState<MCPTool | null>(null);
 
   const toolLinks = (tools || []).slice().map((tool) => {
@@ -45,7 +45,7 @@ export function ToolsList({ tools, toolsLoading }: WorkspaceSectionToolsProps) {
   );
 }
 
-interface WorkspaceSectionToolsProps {
+interface ToolListProps {
   tools: MCPTool[];
   toolsLoading: boolean;
 }

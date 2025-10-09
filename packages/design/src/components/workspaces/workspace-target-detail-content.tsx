@@ -1,7 +1,7 @@
 import { McpLogo } from "@director.run/design/components/mcp-logo.tsx";
 import { WorkspaceTargetPropertyList } from "@director.run/design/components/mcp-servers/workspace-target-property-list.tsx";
 import { RegistryEntryReadme } from "@director.run/design/components/registry/registry-entry-readme.tsx";
-import { ToolsList } from "@director.run/design/components/tools/tool-list.js";
+import { ToolList } from "@director.run/design/components/tools/tool-list.js";
 import type {
   MCPTool,
   RegistryEntryDetail,
@@ -75,7 +75,7 @@ export function WorkspaceTargetDetailContent({
         </TabsContent>
 
         <TabsContent value="tools">
-          <ToolsList tools={tools as MCPTool[]} toolsLoading={toolsLoading} />
+          <ToolList tools={tools as MCPTool[]} toolsLoading={toolsLoading} />
         </TabsContent>
 
         <TabsContent value="properties">

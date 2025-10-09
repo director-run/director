@@ -9,7 +9,7 @@ import { McpLogo } from "./mcp-logo";
 import { RegistryEntryPropertyList } from "./registry/registry-entry-property-list";
 import { RegistryEntryReadme } from "./registry/registry-entry-readme";
 import { RegistryParameters } from "./registry/registry-parameters";
-import { ToolsList } from "./tools/tool-list";
+import { ToolList } from "./tools/tool-list";
 import type { RegistryEntryDetail } from "./types";
 import type { MCPTool } from "./types";
 import { Badge, BadgeGroup, BadgeIcon, BadgeLabel } from "./ui/badge";
@@ -77,7 +77,7 @@ export function RegistryItem({ entry }: RegistryItemProps) {
         </TabsContent>
 
         <TabsContent value="tools">
-          <ToolsList tools={entry.tools as MCPTool[]} toolsLoading={false} />
+          <ToolList tools={entry.tools as MCPTool[]} toolsLoading={false} />
         </TabsContent>
 
         <TabsContent value="transport" className="flex flex-col gap-y-10">

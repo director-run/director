@@ -45,14 +45,7 @@ interface LinkItem {
 
 function ListItem({ link }: { link: LinkItem }) {
   return (
-    <List.ListItem
-      onClick={link.onClick}
-      className={
-        link.onClick
-          ? "cursor-pointer hover:bg-accent-subtle/50 focus-visible:bg-accent-subtle/50"
-          : undefined
-      }
-    >
+    <List.ListItem onClick={link.onClick}>
       <List.ListItemDetails>
         <List.ListItemTitle>{link.title}</List.ListItemTitle>
         {link.subtitle && (

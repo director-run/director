@@ -1,9 +1,9 @@
+import { WorkspaceServerList } from "@director.run/design/components/servers/server-list.js";
 import type {
   Client,
   WorkspaceDetail,
 } from "@director.run/design/components/types.ts";
 import { Container } from "@director.run/design/components/ui/container.tsx";
-import { WorkspaceServerList } from "@director.run/design/components/workspaces/server-list.tsx";
 import { mockTools } from "@director.run/design/test/fixtures/mcp/tools.js";
 import { mockClients } from "@director.run/design/test/fixtures/workspace/clients.ts";
 import { mockWorkspace } from "@director.run/design/test/fixtures/workspace/workspace.ts";

@@ -1,6 +1,7 @@
 import type { ComponentProps } from "react";
 
 import { GlobeIcon, TerminalIcon } from "@phosphor-icons/react";
+import { ServerStatusBadge } from "../servers/server-status-badge.tsx";
 import type { WorkspaceTarget } from "../types";
 import { Badge, BadgeGroup, BadgeIcon, BadgeLabel } from "../ui/badge";
 import {
@@ -79,6 +80,15 @@ function SpecificTargetPropertyList({ target }: { target: WorkspaceTarget }) {
             </BadgeGroup>
           </ListItem>
         )}
+        <ListItem>
+          <ListItemDetails>
+            <ListItemTitle>Status</ListItemTitle>
+          </ListItemDetails>
+
+          <BadgeGroup className="ml-auto justify-end">
+            <ServerStatusBadge server={target} />
+          </BadgeGroup>
+        </ListItem>
       </>
     );
   } else if (target.type === "http") {
@@ -102,6 +112,15 @@ function SpecificTargetPropertyList({ target }: { target: WorkspaceTarget }) {
           <ListItemDescription className="ml-auto">
             {target.url}
           </ListItemDescription>
+        </ListItem>
+        <ListItem>
+          <ListItemDetails>
+            <ListItemTitle>Status</ListItemTitle>
+          </ListItemDetails>
+
+          <BadgeGroup className="ml-auto justify-end">
+            <ServerStatusBadge server={target} />
+          </BadgeGroup>
         </ListItem>
       </>
     );

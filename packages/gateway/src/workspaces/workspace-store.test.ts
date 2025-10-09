@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
 import { HTTPClient } from "@director.run/mcp/client/http-client";
-import { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { YAMLConfig } from "../config";
 import { makeHTTPTargetConfig } from "../test/fixtures";
@@ -18,9 +17,10 @@ describe("WorkspaceStore", () => {
     const db = await YAMLConfig.connect(dbPath);
     workspaceStore = await WorkspaceStore.create({
       config: db,
-      oAuthHandler: OAuthHandler.createMemoryBackedHandler({
+      oauth: {
+        storage: "memory",
         baseCallbackUrl: "http://localhost:3000/callback",
-      }),
+      },
     });
     await workspaceStore.create({
       name: "test-workspace",
@@ -37,7 +37,7 @@ describe("WorkspaceStore", () => {
       });
 
       const serverUrl = "https://mcp.notion.com/mcp";
-      await workspace.addTarget(
+      const target = await workspace.addTarget(
         makeHTTPTargetConfig({ name: "http1", url: serverUrl }),
         { throwOnError: false },
       );
@@ -47,7 +47,11 @@ describe("WorkspaceStore", () => {
         .getTarget("http1")) as HTTPClient;
       httpClient.completeAuthFlow = vi.fn();
 
-      await workspaceStore.onAuthorizationSuccess(serverUrl, "some-code");
+      await workspaceStore.onAuthorizationSuccess(
+        workspace.id,
+        target.name,
+        "some-code",
+      );
 
       expect(httpClient.completeAuthFlow).toHaveBeenCalledWith("some-code");
     });

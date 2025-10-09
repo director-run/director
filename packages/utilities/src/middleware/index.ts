@@ -27,6 +27,7 @@ export const errorRequestHandler: ErrorRequestHandler = (
   logger.error({
     message: `${req.method} ${req.originalUrl} failed: ${message}`,
     code,
+    error,
   });
 
   res.status(status).json({ message, code });

@@ -11,6 +11,7 @@ import { BackendProvider } from "./contexts/backend-context";
 import { GlobalErrorBoundary } from "./helpers/global-error-boundry";
 import { useWorkspaces } from "./hooks/use-workspaces";
 import { GetStartedPage } from "./pages/get-started";
+import { OAuthCallbackPage } from "./pages/oauth-callback-page";
 import { RegistryDetailPage } from "./pages/registry-detail-page";
 import { RegistryListPage } from "./pages/registry-list-page";
 import { WorkspaceCreatePage } from "./pages/workspace-create-page";
@@ -33,6 +34,10 @@ export const App = () => {
     <Routes>
       {/* <Route path="/login" element={<LoginPage />} /> */}
       {/* <Route element={<ProtectedRoute />}> */}
+      <Route
+        path="/oauth/:workspaceId/:targetId/callback"
+        element={<OAuthCallbackPage />}
+      />
       <Route element={<RootLayout />}>
         <Route path="/library" element={<RegistryListPage />} />
         <Route

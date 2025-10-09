@@ -1,0 +1,1 @@
+bun cli get test

@@ -1,5 +1,5 @@
 import { getLogger } from "@director.run/utilities/logger";
-import { encodeUrl, joinURL } from "@director.run/utilities/url";
+import { joinURL } from "@director.run/utilities/url";
 import { type OAuthClientProvider } from "@modelcontextprotocol/sdk/client/auth.js";
 import {
   type OAuthClientInformation,
@@ -13,7 +13,7 @@ import { OnDiskOAuthStorage } from "./storage/on-disk-oauth-storage";
 
 const logger = getLogger("oauth/provider");
 
-export interface OAuthProviderParams {
+interface OAuthProviderParams {
   id: string;
   redirectUrl: string | URL;
   storage: AbstractOAuthStorage;
@@ -37,7 +37,7 @@ export class OAuthProvider implements OAuthClientProvider {
     this._onRedirect = params.onRedirect;
 
     this._clientMetadata = {
-      client_name: "Simple OAuth MCP Client",
+      client_name: "Director OAuth Client",
       redirect_uris: [this._redirectUrl.toString()],
       grant_types: ["authorization_code", "refresh_token"],
       response_types: ["code"],
@@ -114,53 +114,54 @@ export class OAuthProvider implements OAuthClientProvider {
   }
 }
 
-export interface OAuthHandlerParams {
-  storage: AbstractOAuthStorage;
-  baseCallbackUrl: string;
-}
-
-export class OAuthHandler {
+export class OAuthProviderFactory {
   private _baseCallbackUrl: string;
   private _storage: AbstractOAuthStorage;
+  private _id: string;
 
-  constructor(params: OAuthHandlerParams) {
+  constructor(params: OAuthProviderFactoryParams) {
     this._baseCallbackUrl = params.baseCallbackUrl;
-    this._storage = params.storage;
+    this._id = params.id || "default";
+
+    if (params.storage === "disk") {
+      this._storage = new OnDiskOAuthStorage({
+        directory: params.tokenDirectory,
+        filePrefix: [params.filePrefix, this._id].filter(Boolean).join("-"),
+      });
+    } else {
+      this._storage = new InMemoryOAuthStorage();
+    }
   }
 
-  public static createDiskBackedHandler(params: {
-    directory: string;
-    filePrefix?: string;
-    baseCallbackUrl: string;
-  }) {
-    return new OAuthHandler({
-      storage: new OnDiskOAuthStorage({
-        directory: params.directory,
-        filePrefix: params.filePrefix,
-      }),
-      baseCallbackUrl: params.baseCallbackUrl,
-    });
-  }
-
-  public static createMemoryBackedHandler(params: {
-    baseCallbackUrl: string;
-  }) {
-    return new OAuthHandler({
-      storage: new InMemoryOAuthStorage(),
-      baseCallbackUrl: params.baseCallbackUrl,
-    });
-  }
-
-  getProvider(params: {
-    serverUrl: string;
+  getProvider({
+    providerId,
+    onRedirect,
+  }: {
+    providerId: string;
     onRedirect?: (url: URL) => void;
   }) {
-    const id = encodeUrl(params.serverUrl);
     return new OAuthProvider({
-      id,
-      redirectUrl: joinURL(this._baseCallbackUrl, `oauth/${id}/callback`),
+      onRedirect,
+      id: providerId,
+      redirectUrl: joinURL(
+        this._baseCallbackUrl,
+        `oauth/${this._id}/${providerId}/callback`,
+      ),
       storage: this._storage,
-      onRedirect: params.onRedirect,
     });
   }
 }
+
+export type OAuthProviderFactoryParams =
+  | {
+      storage: "disk";
+      tokenDirectory: string;
+      baseCallbackUrl: string;
+      filePrefix?: string;
+      id?: string;
+    }
+  | {
+      storage: "memory";
+      baseCallbackUrl: string;
+      id?: string;
+    };

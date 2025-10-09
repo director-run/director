@@ -7,7 +7,7 @@ import { useState } from "react";
 import { withLayoutView } from "../../helpers/decorators";
 
 const Component = () => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const prompt = mockWorkspace().prompts?.[0] ?? null;
   return (
     <Container size="lg">
@@ -22,6 +22,7 @@ const Component = () => {
         onOpenChange={setOpen}
         prompt={prompt}
         onSubmit={() => setOpen(false)}
+        onClickDelete={() => setOpen(false)}
       />
     </Container>
   );

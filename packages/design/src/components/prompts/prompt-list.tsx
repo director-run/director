@@ -1,4 +1,3 @@
-import { PlusIcon } from "@phosphor-icons/react";
 import type { ComponentProps } from "react";
 import type { WorkspaceDetail } from "../types";
 import { Button } from "../ui/button";
@@ -33,7 +32,7 @@ export function PromptList({
           <h2>Prompts</h2>
         </SectionTitle>
         <Button size="sm" onClick={onClickAddPrompt}>
-          <PlusIcon /> Add prompt
+          Add prompt
         </Button>
       </SectionHeader>
 
@@ -67,15 +66,13 @@ function PromptListItem({
   onClick?: () => void;
 }) {
   return (
-    <List.ListItem asChild>
-      <button type="button" onClick={onClick} className="text-left">
-        <List.ListItemDetails>
-          <List.ListItemTitle>{prompt.title ?? prompt.name}</List.ListItemTitle>
-          <List.ListItemDescription>
-            {prompt.description || prompt.body}
-          </List.ListItemDescription>
-        </List.ListItemDetails>
-      </button>
+    <List.ListItem onClick={onClick}>
+      <List.ListItemDetails>
+        <List.ListItemTitle>{prompt.title ?? prompt.name}</List.ListItemTitle>
+        <List.ListItemDescription>
+          {prompt.description || prompt.body}
+        </List.ListItemDescription>
+      </List.ListItemDetails>
     </List.ListItem>
   );
 }

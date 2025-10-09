@@ -3,17 +3,14 @@ import { LayoutViewContent } from "@director.run/design/components/layout/layout
 import { LayoutView } from "@director.run/design/components/layout/layout.tsx";
 import { FullScreenError } from "@director.run/design/components/pages/global/error.tsx";
 import { ProxySkeleton } from "@director.run/design/components/proxies/proxy-skeleton.tsx";
-import { WorkspaceTargetDetailDropDownMenu } from "@director.run/design/components/proxies/workspace-target-detail-dropdown-menu.tsx";
 import type { MCPTool } from "@director.run/design/components/types.js";
-import { toast } from "@director.run/design/components/ui/toast.tsx";
 import { WorkspaceTargetDetailContent } from "@director.run/design/components/workspaces/workspace-target-detail-content.tsx";
-import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { gatewayClient } from "../contexts/backend-context.tsx";
 import { useInspectMcp } from "../hooks/use-inspect-mcp.ts";
 import { useRegistryEntry } from "../hooks/use-registry-entry.ts";
 import { useWorkspaceTarget } from "../hooks/use-workspace-target.ts";
+import { WorkspaceTargetDetailDropDownMenu } from "./workspace-target-detail-dropdown-menu.tsx";
 
 export function WorkspaceTargetDetailPage() {
   const { workspaceId, targetId } = useParams();
@@ -23,7 +20,6 @@ export function WorkspaceTargetDetailPage() {
     throw new Error("Workspace ID and target ID are required");
   }
 
-  const [deleteOpen, setDeleteOpen] = useState(false);
   const {
     workspace,
     workspaceTarget,
@@ -37,30 +33,7 @@ export function WorkspaceTargetDetailPage() {
   );
 
   const registryEntryQuery = useRegistryEntry({ entryName: targetId });
-
-  const utils = gatewayClient.useUtils();
   const registryEntry = registryEntryQuery.data;
-
-  const deleteServerMutation = gatewayClient.store.removeServer.useMutation({
-    onSuccess: async () => {
-      navigate(`/${workspaceId}`);
-
-      await utils.store.get.invalidate({ proxyId: workspaceId });
-      await utils.store.getAll.invalidate();
-
-      toast({
-        title: "Server deleted",
-        description: "This server was successfully deleted.",
-      });
-    },
-  });
-
-  const handleDeleteServer = async () => {
-    await deleteServerMutation.mutateAsync({
-      proxyId: workspaceId,
-      serverName: targetId,
-    });
-  };
 
   if (isWorkspaceTargetLoading) {
     return <ProxySkeleton />;
@@ -91,9 +64,8 @@ export function WorkspaceTargetDetailPage() {
         ]}
       >
         <WorkspaceTargetDetailDropDownMenu
-          onDelete={handleDeleteServer}
-          open={deleteOpen}
-          onOpenChange={setDeleteOpen}
+          workspaceTarget={workspaceTarget}
+          workspace={workspace}
         />
       </LayoutBreadcrumbHeader>
 

@@ -1,5 +1,8 @@
 import { HTTPClient } from "@director.run/mcp/client/http-client";
-import { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
+import {
+  OAuthProviderFactory,
+  type OAuthProviderFactoryParams,
+} from "@director.run/mcp/oauth/oauth-provider-factory";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { Telemetry } from "@director.run/utilities/telemetry";
@@ -16,32 +19,32 @@ export class WorkspaceStore {
   private workspaces: Map<string, Workspace> = new Map();
   private config: Config;
   private telemetry: Telemetry;
-  private _oAuthHandler?: OAuthHandler;
+  private _oauth?: OAuthProviderFactoryParams;
 
   private constructor(params: {
     config: Config;
     telemetry?: Telemetry;
-    oAuthHandler?: OAuthHandler;
+    oauth?: OAuthProviderFactoryParams;
   }) {
     this.config = params.config;
     this.telemetry = params.telemetry || Telemetry.noTelemetry();
-    this._oAuthHandler = params.oAuthHandler;
+    this._oauth = params.oauth;
   }
 
   public static async create({
     config,
     telemetry,
-    oAuthHandler,
+    oauth,
   }: {
     config: Config;
     telemetry?: Telemetry;
-    oAuthHandler?: OAuthHandler;
+    oauth?: OAuthProviderFactoryParams;
   }): Promise<WorkspaceStore> {
     logger.debug("initializing WorkspaceStore");
     const store = new WorkspaceStore({
       config,
       telemetry,
-      oAuthHandler,
+      oauth,
     });
     await store.initialize();
     logger.debug("initialization complete");
@@ -77,8 +80,12 @@ export class WorkspaceStore {
 
   async delete(proxyId: string) {
     this.telemetry.trackEvent("proxy_deleted");
-
     const proxy = this.get(proxyId);
+    for (const server of proxy.targets) {
+      if (server instanceof HTTPClient && (await server.isAuthenticated())) {
+        await server.logout();
+      }
+    }
     await proxy.close();
     await this.config.unsetWorkspace(proxyId);
     this.workspaces.delete(proxyId);
@@ -103,15 +110,21 @@ export class WorkspaceStore {
     return Array.from(this.workspaces.values());
   }
 
-  public async onAuthorizationSuccess(serverUrl: string, code: string) {
-    const proxies = this.getAll();
-    for (const proxy of proxies) {
-      const targets = proxy.targets;
-      for (const target of targets) {
-        if (target instanceof HTTPClient && target.url === serverUrl) {
-          await target.completeAuthFlow(code);
-        }
-      }
+  public async onAuthorizationSuccess(
+    factoryId: string,
+    providerId: string,
+    code: string,
+  ) {
+    const workspace = await this.get(factoryId);
+    const target = await workspace.getTarget(providerId);
+
+    if (target instanceof HTTPClient) {
+      await target.completeAuthFlow(code);
+    } else {
+      throw new AppError(
+        ErrorCode.BAD_REQUEST,
+        `target ${providerId} is not an HTTP client`,
+      );
     }
   }
 
@@ -131,7 +144,6 @@ export class WorkspaceStore {
       description,
       servers: servers ?? [],
     });
-
     const proxyServer = await this.initializeAndAddProxy({
       name,
       description,
@@ -142,9 +154,14 @@ export class WorkspaceStore {
     return proxyServer;
   }
 
-  private async initializeAndAddProxy(proxy: WorkspaceParams) {
-    const workspace = await Workspace.fromConfig(proxy, {
-      oAuthHandler: this._oAuthHandler,
+  private async initializeAndAddProxy(workspaceParams: WorkspaceParams) {
+    const workspace = await Workspace.fromConfig(workspaceParams, {
+      oAuthHandler: this._oauth
+        ? new OAuthProviderFactory({
+            ...this._oauth,
+            id: workspaceParams.id,
+          })
+        : undefined,
       config: this.config,
     });
 

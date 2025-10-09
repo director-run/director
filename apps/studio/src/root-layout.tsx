@@ -11,8 +11,10 @@ import {
   GithubLogoIcon,
   PlusIcon,
 } from "@phosphor-icons/react";
+import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
+import { useOnboardingProgress } from "./hooks/use-onboarding-progress";
 import { useWorkspaces } from "./hooks/use-workspaces";
 
 export const RootLayout = () => {
@@ -20,6 +22,12 @@ export const RootLayout = () => {
   const { data: workspaces, isLoading, error } = useWorkspaces();
   const showLoading = isLoading || error?.message === "Failed to fetch";
   const location = useLocation();
+  const { setInProgress } = useOnboardingProgress();
+
+  // Unset onboarding flag when RootLayout renders
+  useEffect(() => {
+    setInProgress(false);
+  }, [setInProgress]);
 
   return (
     <LayoutRoot

@@ -50,9 +50,9 @@ describe("transport", () => {
   describe("serveOverSSE", () => {
     test("should expose a server over stdio", async () => {
       const server = makeEchoServer();
-      const _app = serveOverSSE(server, 3000);
+      const _app = serveOverSSE(server, 3214);
       const client = await HTTPClient.createAndConnectToHTTP(
-        `http://localhost:3000/sse`,
+        `http://localhost:3214/sse`,
       );
       const tools = await client.listTools();
       expect(tools.tools).toHaveLength(1);

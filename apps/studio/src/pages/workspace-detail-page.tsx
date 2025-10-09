@@ -2,7 +2,6 @@ import { LayoutBreadcrumbHeader } from "@director.run/design/components/layout/l
 import { LayoutViewContent } from "@director.run/design/components/layout/layout.tsx";
 import { FullScreenError } from "@director.run/design/components/pages/global/error.tsx";
 import { ProxyActionsDropdown } from "@director.run/design/components/proxies/proxy-actions-dropdown.tsx";
-import { ProxyDeleteConfirmation } from "@director.run/design/components/proxies/proxy-delete-confirmation.tsx";
 import { ProxySettingsSheet } from "@director.run/design/components/proxies/proxy-settings-sheet.tsx";
 import { ProxySkeleton } from "@director.run/design/components/proxies/proxy-skeleton.tsx";
 import { SplitViewMain } from "@director.run/design/components/split-view.tsx";
@@ -10,6 +9,7 @@ import { SplitViewSide } from "@director.run/design/components/split-view.tsx";
 import { SplitView } from "@director.run/design/components/split-view.tsx";
 import type { WorkspaceDetail } from "@director.run/design/components/types.ts";
 import type { MCPTool } from "@director.run/design/components/types.ts";
+import { ConfirmDialog } from "@director.run/design/components/ui/confirm-dialog.tsx";
 import { Container } from "@director.run/design/components/ui/container.tsx";
 import { toast } from "@director.run/design/components/ui/toast.js";
 import { WorkspaceDetailContent } from "@director.run/design/components/workspaces/workspace-detail-content.tsx";
@@ -22,6 +22,7 @@ import { useAuthenticate } from "../hooks/use-authenticate.ts";
 import { useChangeInstallState } from "../hooks/use-change-install-state.ts";
 import { useClients } from "../hooks/use-clients.ts";
 import { useCreatePrompt } from "../hooks/use-create-prompt.ts";
+import { useDeletePrompt } from "../hooks/use-delete-prompt.ts";
 import { useEditPrompt } from "../hooks/use-edit-prompt.ts";
 import { useInspectMcp } from "../hooks/use-inspect-mcp.ts";
 import { useWorkspace } from "../hooks/use-workspace.ts";
@@ -85,6 +86,21 @@ export const WorkspaceDetailPage = () => {
     },
   );
 
+  const { deletePrompt, isPending: isDeletingPrompt } = useDeletePrompt(
+    workspaceId,
+    {
+      onSuccess: async () => {
+        await utils.store.get.invalidate({
+          proxyId: workspaceId,
+        });
+        toast({
+          title: "Prompt deleted",
+          description: "Your prompt was deleted.",
+        });
+      },
+    },
+  );
+
   const { authenticate } = useAuthenticate();
 
   if (isWorkspaceLoading) {
@@ -107,9 +123,6 @@ export const WorkspaceDetailPage = () => {
       <LayoutBreadcrumbHeader
         breadcrumbs={[
           {
-            title: "Workspaces",
-          },
-          {
             title: workspaceId,
           },
         ]}
@@ -131,7 +144,10 @@ export const WorkspaceDetailPage = () => {
                 onClickAddServer={() => navigate("/library")}
                 onCreatePrompt={createPrompt}
                 onEditPrompt={editPrompt}
-                isSavingPrompt={isCreatingPrompt || isEditingPrompt}
+                isSavingPrompt={
+                  isCreatingPrompt || isEditingPrompt || isDeletingPrompt
+                }
+                onDeletePrompt={deletePrompt}
                 onClickAuthorize={async (server) => {
                   try {
                     await authenticate({
@@ -224,11 +240,12 @@ function WorkspaceEditMenu({ workspace }: { workspace: WorkspaceDetail }) {
         open={settingsOpen}
         onOpenChange={setSettingsOpen}
       />
-
-      <ProxyDeleteConfirmation
-        onConfirm={handleDeleteProxy}
+      <ConfirmDialog
+        title="Delete workspace?"
+        description="Are you sure you want to delete this workspace? This action cannot be undone."
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
+        onConfirm={handleDeleteProxy}
       />
     </>
   );

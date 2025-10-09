@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { gatewayClient } from "../contexts/backend-context";
 
 type AuthenticateParams = {
@@ -6,78 +6,44 @@ type AuthenticateParams = {
   serverName: string;
 };
 
-type AuthenticateResult =
+type AuthenticateResponse =
   | { result: "AUTHORIZED" }
   | { result: "REDIRECT"; redirectUrl: string };
 
 export function useAuthenticate() {
-  const [params, setParams] = useState<AuthenticateParams | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [pendingResolve, setPendingResolve] = useState<{
-    resolve: (value: AuthenticateResult) => void;
-    reject: (error: Error) => void;
-  } | null>(null);
+  const utils = gatewayClient.useUtils();
 
-  // Use a query that's enabled when params are set
-  const authenticateQuery = gatewayClient.store.authenticate.useQuery(
-    params || { proxyId: "", serverName: "" },
-    {
-      enabled: !!params,
-    },
-  );
-
-  // Handle query results
-  useEffect(() => {
-    if (authenticateQuery.data && pendingResolve) {
-      // If we get a redirect URL, open it in a new window
-      if (
-        authenticateQuery.data.result === "REDIRECT" &&
-        authenticateQuery.data.redirectUrl
-      ) {
-        window.open(
-          authenticateQuery.data.redirectUrl,
-          "_blank",
-          "noopener,noreferrer",
-        );
-      }
-
-      setIsLoading(false);
-      setParams(null); // Reset params to disable the query
-      pendingResolve.resolve(authenticateQuery.data);
-      setPendingResolve(null);
-    } else if (authenticateQuery.error && pendingResolve) {
-      const error =
-        authenticateQuery.error instanceof Error
-          ? authenticateQuery.error
-          : new Error("Authentication failed");
-      setError(error);
-      setIsLoading(false);
-      setParams(null); // Reset params to disable the query
-      pendingResolve.reject(error);
-      setPendingResolve(null);
-    }
-  }, [authenticateQuery.data, authenticateQuery.error, pendingResolve]);
-
-  const authenticate = async (
-    authenticateParams: AuthenticateParams,
-  ): Promise<AuthenticateResult> => {
+  const authenticate = async ({
+    proxyId,
+    serverName,
+  }: AuthenticateParams): Promise<boolean> => {
     setIsLoading(true);
     setError(null);
-    setParams(authenticateParams);
+    try {
+      const result: AuthenticateResponse = await utils.store.authenticate.fetch(
+        {
+          proxyId,
+          serverName,
+        },
+      );
 
-    // Return a promise that resolves when the query completes
-    return new Promise((resolve, reject) => {
-      setPendingResolve({ resolve, reject });
+      if (result.result === "REDIRECT" && result.redirectUrl) {
+        window.location.assign(result.redirectUrl);
+        // Navigation is happening; return a value for completeness
+        return false;
+      }
 
-      // Clean up after 10 seconds
-      setTimeout(() => {
-        if (pendingResolve) {
-          setPendingResolve(null);
-          reject(new Error("Authentication timeout"));
-        }
-      }, 10000);
-    });
+      // Authorized: nothing else to do
+      return true;
+    } catch (e) {
+      const err = e instanceof Error ? e : new Error("Authentication failed");
+      setError(err);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return {

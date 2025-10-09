@@ -1,6 +1,6 @@
 import { Server } from "http";
 import { createOauthCallbackRouter } from "@director.run/mcp/oauth/oauth-callback-router";
-import { OAuthHandler } from "@director.run/mcp/oauth/oauth-provider-factory";
+import { isDevelopment } from "@director.run/utilities/env";
 import { getLogger } from "@director.run/utilities/logger";
 import {
   errorRequestHandler,
@@ -55,12 +55,10 @@ export class Gateway {
       headers?: Record<string, string>;
       oauth?:
         | {
-            enabled: boolean;
             storage: "disk";
             tokenDirectory: string;
           }
         | {
-            enabled: boolean;
             storage: "memory";
           };
     },
@@ -77,25 +75,15 @@ export class Gateway {
         })
       : Telemetry.noTelemetry();
 
-    let oAuthHandler: OAuthHandler | undefined;
-
-    if (attribs.oauth && attribs.oauth.enabled) {
-      if (attribs.oauth.storage === "disk") {
-        oAuthHandler = OAuthHandler.createDiskBackedHandler({
-          directory: attribs.oauth.tokenDirectory,
-          baseCallbackUrl: `http://localhost:${attribs.port}`,
-        });
-      } else if (attribs.oauth.storage === "memory") {
-        oAuthHandler = OAuthHandler.createMemoryBackedHandler({
-          baseCallbackUrl: `http://localhost:${attribs.port}`,
-        });
-      }
-    }
-
     const proxyStore = await WorkspaceStore.create({
       config: db,
       telemetry,
-      oAuthHandler,
+      oauth: attribs.oauth
+        ? {
+            ...attribs.oauth,
+            baseCallbackUrl: `http://localhost:${attribs.port}`,
+          }
+        : undefined,
     });
     const app = express();
     const registryURL = attribs.registryURL;
@@ -135,14 +123,20 @@ export class Gateway {
     app.use(
       "/",
       createOauthCallbackRouter({
-        onAuthorizationSuccess: (serverUrl, code) => {
-          proxyStore.onAuthorizationSuccess(serverUrl, code);
+        onAuthorizationSuccess: async (factoryId, providerId, code) => {
+          await proxyStore.onAuthorizationSuccess(factoryId, providerId, code);
+          return {
+            redirectUrl: `http://localhost:${isDevelopment() ? 3000 : attribs.port}/oauth/${factoryId}/${providerId}/callback`,
+          };
         },
-        onAuthorizationError: (serverUrl, error) => {
+        onAuthorizationError: (factoryId, providerId, error) => {
           logger.error(
-            `failed to authorize ${serverUrl}: ${error.message}`,
+            `failed to authorize ${factoryId} ${providerId}: ${error.message}`,
             error,
           );
+          return {
+            redirectUrl: `http://localhost:${isDevelopment() ? 3000 : attribs.port}/oauth/${factoryId}/${providerId}/callback?error=${JSON.stringify(error)}`,
+          };
         },
       }),
     );

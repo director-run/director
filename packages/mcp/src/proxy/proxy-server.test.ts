@@ -12,7 +12,7 @@ import {
 } from "vitest";
 import { HTTPClient } from "../client/http-client";
 import { InMemoryClient } from "../client/in-memory-client";
-import { OAuthHandler } from "../oauth/oauth-provider-factory";
+import { OAuthProviderFactory } from "../oauth/oauth-provider-factory";
 import { makeEchoServer, makeKitchenSinkServer } from "../test/fixtures";
 import {
   expectListToolsToReturnToolNames,
@@ -148,7 +148,8 @@ describe("ProxyServer", () => {
                   url: `https://mcp.notion.com/mcp`,
                 },
                 {
-                  oAuthHandler: OAuthHandler.createMemoryBackedHandler({
+                  oAuthHandler: new OAuthProviderFactory({
+                    storage: "memory",
                     baseCallbackUrl: "http://localhost:8999",
                   }),
                 },
@@ -172,7 +173,8 @@ describe("ProxyServer", () => {
                   url: `https://mcp.notion.com/mcp`,
                 },
                 {
-                  oAuthHandler: OAuthHandler.createMemoryBackedHandler({
+                  oAuthHandler: new OAuthProviderFactory({
+                    storage: "memory",
                     baseCallbackUrl: "http://localhost:8999",
                   }),
                 },

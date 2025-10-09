@@ -18,6 +18,18 @@ export function useInstallServerFromRegistry(
 
   const addServerMutation = gatewayClient.store.addServer.useMutation({
     async onSuccess(data, variables, context) {
+      if (data.connectionInfo?.status === "unauthorized") {
+        const authRes = await gatewayUtils.store.authenticate.fetch({
+          proxyId: variables.proxyId,
+          serverName: data.name,
+        });
+
+        if (authRes.result === "REDIRECT") {
+          window.location.assign(authRes.redirectUrl);
+        }
+        return;
+      }
+
       await gatewayUtils.store.getAll.invalidate();
       if (variables?.proxyId) {
         await gatewayUtils.store.get.invalidate({ proxyId: variables.proxyId });

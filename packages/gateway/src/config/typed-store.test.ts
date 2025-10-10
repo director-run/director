@@ -55,7 +55,7 @@ describe("TypedStore", () => {
 
     expect(store.get("server.port")).toBe(3333);
     expect(store.get("registry.url")).toBe("https://example.com");
-    expect(store.readData()).toMatchObject(seedData);
+    expect(store.data).toMatchObject(seedData);
   });
 
   it("should throw validation error for invalid values", async () => {
@@ -65,7 +65,7 @@ describe("TypedStore", () => {
 
   it("should not return default values in data when no data is set", () => {
     const store = new InMemoryTypedStore({ schema: configSchema });
-    expect(store.readData()).toMatchObject({});
+    expect(store.data).toMatchObject({});
   });
 
   it("should not return default", () => {
@@ -76,7 +76,7 @@ describe("TypedStore", () => {
   it("should set data", async () => {
     const store = new InMemoryTypedStore({ schema: configSchema });
     await store.set("server.port", 1234);
-    expect(store.readData()).toMatchObject({ server: { port: 1234 } });
+    expect(store.data).toMatchObject({ server: { port: 1234 } });
   });
 
   it("should throw validation error for invalid data in constructor", async () => {

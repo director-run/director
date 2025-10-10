@@ -3,19 +3,27 @@ import { z } from "zod";
 
 export abstract class TypedStore<TSchema extends Record<string, z.ZodType>> {
   private schema: TSchema;
+  protected _data?: Record<string, unknown>;
 
   constructor(config: { schema: TSchema }) {
     this.schema = config.schema;
   }
 
+  get data() {
+    return this._data;
+  }
+
   abstract init(): Promise<void>;
-  abstract readData(): Record<string, unknown>;
-  protected abstract writeData(data: Record<string, unknown>): Promise<void>;
+  protected abstract persist(): Promise<void>;
 
   async set<K extends keyof TSchema & string>(
     key: K,
     value: z.infer<TSchema[K]>,
   ): Promise<void> {
+    if (!this._data) {
+      throw new Error("Data not initialized");
+    }
+
     if (!(key in this.schema)) {
       throw new Error(`Key "${key}" is not allowed`);
     }
@@ -24,7 +32,9 @@ export abstract class TypedStore<TSchema extends Record<string, z.ZodType>> {
     const schema = this.schema[key];
     const parsed = schema.parse(value); // Throws if invalid
 
-    await this.writeData(set(this.readData(), key, parsed));
+    set(this._data, key, parsed);
+
+    await this.persist();
   }
 
   get<K extends keyof TSchema & string>(
@@ -34,7 +44,7 @@ export abstract class TypedStore<TSchema extends Record<string, z.ZodType>> {
       throw new Error(`Key "${key}" is not allowed`);
     }
 
-    const value = get(this.readData(), key);
+    const value = get(this._data, key);
 
     // If value exists, return it
     if (value !== undefined) {
@@ -51,58 +61,45 @@ export abstract class TypedStore<TSchema extends Record<string, z.ZodType>> {
 
     return undefined;
   }
+
+  protected validateAndSetData(data: Record<string, unknown>) {
+    const validatedData = { ...data };
+
+    for (const key in this.schema) {
+      const value = get(validatedData, key);
+      if (value !== undefined) {
+        const keySchema = this.schema[key];
+        try {
+          const parsed = keySchema.parse(value);
+          set(validatedData, key, parsed);
+        } catch (error) {
+          throw new Error(
+            `Invalid data for key "${key}": ${error instanceof Error ? error.message : String(error)}`,
+          );
+        }
+      }
+    }
+
+    this._data = validatedData;
+  }
 }
 
 export class InMemoryTypedStore<
   TSchema extends Record<string, z.ZodType>,
 > extends TypedStore<TSchema> {
-  private _dataa?: Record<string, unknown>;
-
   constructor(config: {
     schema: TSchema;
     data?: Record<string, unknown>;
   }) {
     super({ schema: config.schema });
-    this._dataa = validateAndParseData(config.schema, config.data ?? {});
+    this.validateAndSetData(config.data ?? {});
   }
 
   init() {
     return Promise.resolve();
   }
 
-  readData() {
-    if (!this._dataa) {
-      throw new Error("Data not initialized");
-    }
-    return this._dataa;
-  }
-
-  writeData(data: Record<string, unknown>) {
-    this._dataa = data;
+  persist() {
     return Promise.resolve();
   }
-}
-
-function validateAndParseData<TSchema extends Record<string, z.ZodType>>(
-  schema: TSchema,
-  data: Record<string, unknown>,
-): Record<string, unknown> {
-  const validatedData = { ...data };
-
-  for (const key in schema) {
-    const value = get(validatedData, key);
-    if (value !== undefined) {
-      const keySchema = schema[key];
-      try {
-        const parsed = keySchema.parse(value);
-        set(validatedData, key, parsed);
-      } catch (error) {
-        throw new Error(
-          `Invalid data for key "${key}": ${error instanceof Error ? error.message : String(error)}`,
-        );
-      }
-    }
-  }
-
-  return validatedData;
 }

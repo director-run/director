@@ -14,7 +14,7 @@ import { TypedStore } from "./typed-store";
 
 export const databaseAttributesSchema = {
   version: z.string().optional(),
-  workspaces: z.array(WorkspaceSchema),
+  workspaces: z.array(WorkspaceSchema).default([]),
 };
 
 export abstract class Config extends TypedStore<
@@ -69,13 +69,13 @@ export abstract class Config extends TypedStore<
     } else {
       workspaces[proxyIndex] = proxy;
     }
-    await this.setWorkspaces(workspaces);
+    await this.set("workspaces", workspaces);
     return proxy;
   }
 
   async unsetWorkspace(id: string): Promise<void> {
     const workspaces = await this.getWorkspaces();
-    await this.setWorkspaces(_.reject(workspaces, { id }));
+    await this.set("workspaces", _.reject(workspaces, { id }));
   }
 
   async countWorkspaces(): Promise<number> {
@@ -86,14 +86,6 @@ export abstract class Config extends TypedStore<
   async getWorkspaces(): Promise<WorkspaceParams[]> {
     return (await this.get("workspaces")) || [];
   }
-
-  async setWorkspaces(workspaces: WorkspaceParams[]): Promise<void> {
-    await this.set("workspaces", workspaces);
-  }
-
-  // async purge(): Promise<void> {
-  //   await this.writeData(defaultConfiguration());
-  // }
 }
 
 export class YAMLConfig extends Config {
@@ -140,42 +132,6 @@ export class YAMLConfig extends Config {
     await db.init();
     return db;
   }
-
-  // async init() {
-  //   if (!existsSync(this.filePath)) {
-  //     await this.writeData(defaultConfiguration());
-  //   } else {
-  //     const data = await fs.promises.readFile(this.filePath, "utf8");
-  //     try {
-  //       this._data = databaseAttributesSchema.parse(YAML.parse(data));
-  //     } catch (e) {
-  //       if (e instanceof ZodError) {
-  //         throw new AppError(
-  //           ErrorCode.INVALID_CONFIGURATION,
-  //           "Invalid configuration file",
-  //           {
-  //             filePath: this.filePath,
-  //             parseErrors: e.errors,
-  //           },
-  //         );
-  //       } else {
-  //         throw e;
-  //       }
-  //     }
-  //   }
-  // }
-
-  // async readData(): Promise<ConfigurationData> {
-  //   if (!this._data) {
-  //     await this.init();
-  //   }
-  //   return _.cloneDeep(this._data) as ConfigurationData;
-  // }
-
-  // async writeData(data: ConfigurationData): Promise<void> {
-  //   await fs.promises.writeFile(this.filePath, YAML.stringify(data));
-  //   this._data = _.cloneDeep(data);
-  // }
 }
 
 function defaultConfiguration(): Record<string, unknown> {

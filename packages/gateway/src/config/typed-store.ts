@@ -129,10 +129,10 @@ export class YAMLTypedStore<
         this.filePath,
         YAML.stringify(this.defaultData),
       );
-      await this.validateAndSetData(this.defaultData);
+      this.validateAndSetData(this.defaultData);
     } else {
       const data = await fs.promises.readFile(this.filePath, "utf8");
-      await this.validateAndSetData(YAML.parse(data));
+      this.validateAndSetData(YAML.parse(data));
     }
   }
 

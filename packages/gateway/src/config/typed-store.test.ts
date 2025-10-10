@@ -22,7 +22,7 @@ const configSchema = {
   version: z.string().default("1.0.0"),
 };
 
-describe("TypedStore", () => {
+describe("InMemoryTypedStore", () => {
   it("should set and get valid values", async () => {
     const store = new InMemoryTypedStore({ schema: configSchema });
     expect(store.get("server.port")).toBe(3673);

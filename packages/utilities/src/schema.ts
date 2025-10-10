@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const requiredStringSchema = z.string().trim().min(1, "Required");
-export const optionalStringSchema = requiredStringSchema.optional();
+export const optionalStringSchema = z.string().trim().optional();
 export const slugStringSchema = z
   .string()
   .trim()

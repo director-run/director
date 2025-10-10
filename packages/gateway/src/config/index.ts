@@ -1,16 +1,13 @@
-import fs from "fs";
-import { existsSync } from "node:fs";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import _ from "lodash";
 import slugify from "slugify";
-import YAML from "yaml";
 import { z } from "zod";
 
 import {
   type WorkspaceParams,
   WorkspaceSchema,
 } from "../workspaces/workspace-schema";
-import { BaseConfig } from "./base-config";
+import { YAMLConfig } from "./base-config";
 
 export const databaseAttributesSchema = {
   version: z.string().optional(),
@@ -90,71 +87,32 @@ export class WorkspacesConfig {
   }
 }
 
-export abstract class Config extends BaseConfig<
-  typeof databaseAttributesSchema
-> {
+export class Config extends YAMLConfig<typeof databaseAttributesSchema> {
   public readonly workspaces: WorkspacesConfig;
-
-  constructor(config: { schema: typeof databaseAttributesSchema }) {
-    super({ schema: config.schema });
-    this.workspaces = new WorkspacesConfig(this);
-  }
-
-  abstract purge(): Promise<void>;
-}
-
-export class YAMLConfig extends Config {
-  public readonly filePath: string;
-  private defaultData: Record<string, unknown>;
 
   constructor(config: {
     filePath: string;
     defaultData: Record<string, unknown>;
   }) {
-    super({ schema: databaseAttributesSchema });
-    this.filePath = config.filePath;
-    this.defaultData = config.defaultData;
-  }
-  async init() {
-    if (!existsSync(this.filePath)) {
-      await fs.promises.writeFile(
-        this.filePath,
-        YAML.stringify(this.defaultData),
-      );
-      this.validateAndSetData(this.defaultData);
-    } else {
-      const data = await fs.promises.readFile(this.filePath, "utf8");
-      this.validateAndSetData(YAML.parse(data));
-    }
+    super({
+      schema: databaseAttributesSchema,
+      filePath: config.filePath,
+      defaultData: config.defaultData,
+    });
+    this.workspaces = new WorkspacesConfig(this);
   }
 
-  async persist() {
-    await fs.promises.writeFile(this.filePath, YAML.stringify(this.data));
-  }
-
-  async purge() {
-    await fs.promises.writeFile(
-      this.filePath,
-      YAML.stringify(this.defaultData),
-    );
-    await this.validateAndSetData(this.defaultData);
-  }
-
-  static async connect(filePath: string): Promise<YAMLConfig> {
-    const config = new YAMLConfig({
+  static async connect(filePath: string): Promise<Config> {
+    const config = new Config({
       filePath,
-      defaultData: defaultConfiguration(),
+      defaultData: {
+        version: "1.0.0",
+        workspaces: [],
+      },
     });
     await config.init();
     return config;
   }
-}
-
-function defaultConfiguration(): Record<string, unknown> {
-  return {
-    version: "1.0.0",
-    workspaces: [],
-  };
 }
 
 function slugifyName(name: string): string {

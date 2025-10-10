@@ -1,12 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import { beforeEach, describe, expect, it } from "vitest";
-import { YAMLConfig } from "../config";
+import { Config } from "../config";
 import { makeFooBarServerStdioConfig } from "../test/fixtures";
 import { Workspace } from "./workspace";
 
 describe("Workspace", () => {
-  let config: YAMLConfig;
+  let config: Config;
   const dbPath = path.join(__dirname, "../test/config.test.yaml");
   let workspace: Workspace;
 
@@ -14,7 +14,7 @@ describe("Workspace", () => {
     if (fs.existsSync(dbPath)) {
       await fs.promises.unlink(dbPath);
     }
-    config = await YAMLConfig.connect(dbPath);
+    config = await Config.connect(dbPath);
     await config.purge();
     workspace = await Workspace.fromConfig(
       {
@@ -50,7 +50,7 @@ describe("Workspace", () => {
       expect(workspace.targets).toHaveLength(1); // Only prompt manager remains
       expect(removedTarget.status).toBe("disconnected");
 
-      const db = await YAMLConfig.connect(dbPath);
+      const db = await Config.connect(dbPath);
       const workspaceEntry = await db.workspaces.getWorkspace("test-workspace");
       expect(workspaceEntry.servers).toHaveLength(0);
     });

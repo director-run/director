@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { YAMLConfig } from "../config";
+import { Config } from "../config";
 import { makeHTTPTargetConfig } from "../test/fixtures";
 import { WorkspaceStore } from "./workspace-store";
 
@@ -14,7 +14,7 @@ describe("WorkspaceStore", () => {
     if (fs.existsSync(dbPath)) {
       await fs.promises.unlink(dbPath);
     }
-    const db = await YAMLConfig.connect(dbPath);
+    const db = await Config.connect(dbPath);
     workspaceStore = await WorkspaceStore.create({
       config: db,
       oauth: {

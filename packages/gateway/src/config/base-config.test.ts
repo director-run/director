@@ -2,7 +2,7 @@ import fs from "fs";
 import { beforeAll, describe, expect, it } from "vitest";
 import { z } from "zod";
 import { WorkspaceSchema } from "../workspaces/workspace";
-import { InMemoryTypedStore, YAMLTypedStore } from "./base-config";
+import { InMemoryConfig, YAMLConfig } from "./base-config";
 
 const configSchema = {
   "server.port": z.number().min(0).default(3673),
@@ -25,7 +25,7 @@ const configSchema = {
 
 describe("BaseConfig", () => {
   it("should set and get valid values", async () => {
-    const store = new InMemoryTypedStore({ schema: configSchema });
+    const store = new InMemoryConfig({ schema: configSchema });
     expect(store.get("server.port")).toBe(3673);
     await store.set("server.port", 1234);
     await store.set("registry.url", "https://example.com");
@@ -34,7 +34,7 @@ describe("BaseConfig", () => {
   });
 
   it("should return undefined for non-existent keys", () => {
-    const store = new InMemoryTypedStore({ schema: configSchema });
+    const store = new InMemoryConfig({ schema: configSchema });
 
     expect(store.get("workspaces")).toBeUndefined();
   });
@@ -49,7 +49,7 @@ describe("BaseConfig", () => {
         url: "https://example.com",
       },
     };
-    const store = new InMemoryTypedStore({
+    const store = new InMemoryConfig({
       schema: configSchema,
       data: seedData,
     });
@@ -60,22 +60,22 @@ describe("BaseConfig", () => {
   });
 
   it("should throw validation error for invalid values", async () => {
-    const store = new InMemoryTypedStore({ schema: configSchema });
+    const store = new InMemoryConfig({ schema: configSchema });
     await expect(store.set("server.port", -5)).rejects.toThrow();
   });
 
   it("should not return default values in data when no data is set", () => {
-    const store = new InMemoryTypedStore({ schema: configSchema });
+    const store = new InMemoryConfig({ schema: configSchema });
     expect(store.data).toMatchObject({});
   });
 
   it("should return default value when key is not set", () => {
-    const store = new InMemoryTypedStore({ schema: configSchema });
+    const store = new InMemoryConfig({ schema: configSchema });
     expect(store.get("server.port")).toBe(3673);
   });
 
   it("should set data", async () => {
-    const store = new InMemoryTypedStore({ schema: configSchema });
+    const store = new InMemoryConfig({ schema: configSchema });
     await store.set("server.port", 1234);
     expect(store.data).toMatchObject({ server: { port: 1234 } });
   });
@@ -87,7 +87,7 @@ describe("BaseConfig", () => {
       },
     };
     await expect(
-      () => new InMemoryTypedStore({ schema: configSchema, data: invalidData }),
+      () => new InMemoryConfig({ schema: configSchema, data: invalidData }),
     ).toThrow(/Invalid data for key "server\.port"/);
   });
 
@@ -98,7 +98,7 @@ describe("BaseConfig", () => {
       },
     };
     expect(
-      () => new InMemoryTypedStore({ schema: configSchema, data: invalidData }),
+      () => new InMemoryConfig({ schema: configSchema, data: invalidData }),
     ).toThrow(/Invalid data for key "server\.port"/);
   });
 });
@@ -111,7 +111,7 @@ describe("YAMLBaseConfig", () => {
   });
 
   it("should set and get valid values", async () => {
-    const store = new YAMLTypedStore({
+    const store = new YAMLConfig({
       schema: configSchema,
       filePath: "config.test.yaml",
       defaultData: {

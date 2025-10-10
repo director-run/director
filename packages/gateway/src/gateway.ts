@@ -11,7 +11,7 @@ import { spaMiddleware } from "@director.run/utilities/middleware/spa";
 import { Telemetry } from "@director.run/utilities/telemetry";
 import cors from "cors";
 import express from "express";
-import { Config, YAMLConfig } from "./config";
+import { Config } from "./config";
 import { createSSERouter } from "./routers/sse";
 import { createStreamableRouter } from "./routers/streamable";
 import { createTRPCExpressMiddleware } from "./routers/trpc";
@@ -66,7 +66,7 @@ export class Gateway {
   ) {
     logger.info(`starting director gateway`);
 
-    const db = await YAMLConfig.connect(attribs.configuration.filePath);
+    const db = await Config.connect(attribs.configuration.filePath);
     const telemetry = attribs.telemetry
       ? new Telemetry({
           writeKey: attribs.telemetry.writeKey,

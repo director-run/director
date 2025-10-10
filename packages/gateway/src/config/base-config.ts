@@ -18,6 +18,7 @@ export abstract class BaseConfig<TSchema extends Record<string, z.ZodType>> {
 
   abstract init(): Promise<void>;
   protected abstract persist(): Promise<void>;
+  abstract purge(): Promise<void>;
 
   async set<K extends keyof TSchema & string>(
     key: K,
@@ -87,7 +88,7 @@ export abstract class BaseConfig<TSchema extends Record<string, z.ZodType>> {
   }
 }
 
-export class InMemoryTypedStore<
+export class InMemoryConfig<
   TSchema extends Record<string, z.ZodType>,
 > extends BaseConfig<TSchema> {
   constructor(params: {
@@ -105,12 +106,17 @@ export class InMemoryTypedStore<
   persist() {
     return Promise.resolve();
   }
+
+  purge() {
+    this._data = {};
+    return Promise.resolve();
+  }
 }
 
-export class YAMLTypedStore<
+export class YAMLConfig<
   TSchema extends Record<string, z.ZodType>,
 > extends BaseConfig<TSchema> {
-  private filePath: string;
+  public readonly filePath: string;
   private defaultData: Record<string, unknown>;
 
   constructor(params: {
@@ -138,5 +144,13 @@ export class YAMLTypedStore<
 
   async persist() {
     await fs.promises.writeFile(this.filePath, YAML.stringify(this.data));
+  }
+
+  async purge() {
+    await fs.promises.writeFile(
+      this.filePath,
+      YAML.stringify(this.defaultData),
+    );
+    await this.validateAndSetData(this.defaultData);
   }
 }

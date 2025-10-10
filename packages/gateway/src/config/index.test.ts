@@ -1,17 +1,17 @@
 import fs from "node:fs";
 import path from "node:path";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { YAMLConfig } from "./index";
+import { Config } from "./index";
 
 describe("Config", () => {
-  let db: YAMLConfig;
+  let db: Config;
   const dbPath = path.join(__dirname, "./config.test.yaml");
 
   beforeAll(async () => {
     if (fs.existsSync(dbPath)) {
       await fs.promises.unlink(dbPath);
     }
-    db = await YAMLConfig.connect(dbPath);
+    db = await Config.connect(dbPath);
   });
 
   beforeEach(async () => {
@@ -31,7 +31,7 @@ describe("Config", () => {
         await fs.promises.unlink(newDbPath);
       }
 
-      const newDb = await YAMLConfig.connect(newDbPath);
+      const newDb = await Config.connect(newDbPath);
 
       expect(fs.existsSync(newDbPath)).toBe(true);
       expect(newDb.filePath).toBe(newDbPath);
@@ -42,7 +42,7 @@ describe("Config", () => {
 
     it("should connect to existing database file", async () => {
       // Create a database first
-      const existingDb = await YAMLConfig.connect(dbPath);
+      const existingDb = await Config.connect(dbPath);
       await existingDb.workspaces.create({
         name: "test-proxy",
         description: "Test proxy",
@@ -50,7 +50,7 @@ describe("Config", () => {
       });
 
       // Connect to the same file
-      const connectedDb = await YAMLConfig.connect(dbPath);
+      const connectedDb = await Config.connect(dbPath);
       const proxies = await connectedDb.workspaces.all();
 
       expect(proxies).toHaveLength(1);

@@ -105,15 +105,15 @@ describe("InMemoryTypedStore", () => {
 
 describe("YAMLTypedStore", () => {
   beforeAll(async () => {
-    if (fs.existsSync("test.yaml")) {
-      await fs.promises.unlink("test.yaml");
+    if (fs.existsSync("config.test.yaml")) {
+      await fs.promises.unlink("config.test.yaml");
     }
   });
 
   it("should set and get valid values", async () => {
     const store = new YAMLTypedStore({
       schema: configSchema,
-      filePath: "test.yaml",
+      filePath: "config.test.yaml",
       defaultData: {
         version: "1.0.0",
         workspaces: [],

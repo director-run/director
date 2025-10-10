@@ -94,47 +94,13 @@ export abstract class Config extends TypedStore<
   typeof databaseAttributesSchema
 > {
   public readonly workspaces: WorkspacesConfig;
+
   constructor(config: { schema: typeof databaseAttributesSchema }) {
     super({ schema: config.schema });
     this.workspaces = new WorkspacesConfig(this);
   }
 
   abstract purge(): Promise<void>;
-
-  // Deprecated: Use workspaces.create() instead
-  createWorkspace(
-    workspace: Omit<WorkspaceParams, "id">,
-  ): Promise<WorkspaceParams> {
-    return this.workspaces.create(workspace);
-  }
-
-  // Deprecated: Use workspaces.getWorkspace() instead
-  getWorkspace(id: string): Promise<WorkspaceParams> {
-    return this.workspaces.getWorkspace(id);
-  }
-
-  // Deprecated: Use workspaces.update() instead
-  setWorkspace(
-    id: string,
-    workspace: WorkspaceParams,
-  ): Promise<WorkspaceParams> {
-    return this.workspaces.update(id, workspace);
-  }
-
-  // Deprecated: Use workspaces.remove() instead
-  unsetWorkspace(id: string): Promise<void> {
-    return this.workspaces.remove(id);
-  }
-
-  // Deprecated: Use workspaces.count() instead
-  countWorkspaces(): Promise<number> {
-    return this.workspaces.count();
-  }
-
-  // Deprecated: Use workspaces.all() instead
-  getWorkspaces(): Promise<WorkspaceParams[]> {
-    return this.workspaces.all();
-  }
 }
 
 export class YAMLConfig extends Config {

@@ -10,7 +10,7 @@ import {
   type WorkspaceParams,
   WorkspaceSchema,
 } from "../workspaces/workspace-schema";
-import { BaseConfig } from "./typed-store";
+import { BaseConfig } from "./base-config";
 
 export const databaseAttributesSchema = {
   version: z.string().optional(),

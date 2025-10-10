@@ -2,7 +2,7 @@ import fs from "fs";
 import { beforeAll, describe, expect, it } from "vitest";
 import { z } from "zod";
 import { WorkspaceSchema } from "../workspaces/workspace";
-import { InMemoryTypedStore, YAMLTypedStore } from "./typed-store";
+import { InMemoryTypedStore, YAMLTypedStore } from "./base-config";
 
 const configSchema = {
   "server.port": z.number().min(0).default(3673),

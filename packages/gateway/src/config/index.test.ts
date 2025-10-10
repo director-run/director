@@ -43,7 +43,7 @@ describe("Config", () => {
     it("should connect to existing database file", async () => {
       // Create a database first
       const existingDb = await YAMLConfig.connect(dbPath);
-      await existingDb.createWorkspace({
+      await existingDb.workspaces.create({
         name: "test-proxy",
         description: "Test proxy",
         servers: [],
@@ -51,7 +51,7 @@ describe("Config", () => {
 
       // Connect to the same file
       const connectedDb = await YAMLConfig.connect(dbPath);
-      const proxies = await connectedDb.getWorkspaces();
+      const proxies = await connectedDb.workspaces.all();
 
       expect(proxies).toHaveLength(1);
       expect(proxies[0].name).toBe("test-proxy");
@@ -85,37 +85,39 @@ describe("Config", () => {
     };
     describe("set", () => {
       it("should add a workspace", async () => {
-        await db.setWorkspace(workspaceAttribs1.id, workspaceAttribs1);
-        const retrievedProxy = await db.getWorkspace(workspaceAttribs1.id);
+        await db.workspaces.update(workspaceAttribs1.id, workspaceAttribs1);
+        const retrievedProxy = await db.workspaces.getWorkspace(
+          workspaceAttribs1.id,
+        );
         expect(retrievedProxy).toEqual(workspaceAttribs1);
       });
       it("should throw an error if there is an id mismatch", async () => {
         await expect(
-          db.setWorkspace(workspaceAttribs2.id, workspaceAttribs1),
+          db.workspaces.update(workspaceAttribs2.id, workspaceAttribs1),
         ).rejects.toThrow("Id mismatch");
       });
     });
     describe("unset", () => {
       it("should delete a workspace", async () => {
-        await db.setWorkspace(workspaceAttribs2.id, workspaceAttribs2);
-        await db.setWorkspace(workspaceAttribs1.id, workspaceAttribs1);
-        await db.unsetWorkspace(workspaceAttribs2.id);
-        await expect(db.getWorkspace(workspaceAttribs2.id)).rejects.toThrow(
-          "Workspace not found",
-        );
+        await db.workspaces.update(workspaceAttribs2.id, workspaceAttribs2);
+        await db.workspaces.update(workspaceAttribs1.id, workspaceAttribs1);
+        await db.workspaces.remove(workspaceAttribs2.id);
+        await expect(
+          db.workspaces.getWorkspace(workspaceAttribs2.id),
+        ).rejects.toThrow("Workspace not found");
       });
     });
     describe("count", () => {
       it("should count the number of workspaces", async () => {
-        expect(await db.countWorkspaces()).toBe(0);
-        await db.setWorkspace(workspaceAttribs1.id, workspaceAttribs1);
-        expect(await db.countWorkspaces()).toBe(1);
-        await db.setWorkspace(workspaceAttribs2.id, workspaceAttribs2);
-        expect(await db.countWorkspaces()).toBe(2);
-        await db.unsetWorkspace(workspaceAttribs2.id);
-        expect(await db.countWorkspaces()).toBe(1);
-        await db.unsetWorkspace(workspaceAttribs1.id);
-        expect(await db.countWorkspaces()).toBe(0);
+        expect(await db.workspaces.count()).toBe(0);
+        await db.workspaces.update(workspaceAttribs1.id, workspaceAttribs1);
+        expect(await db.workspaces.count()).toBe(1);
+        await db.workspaces.update(workspaceAttribs2.id, workspaceAttribs2);
+        expect(await db.workspaces.count()).toBe(2);
+        await db.workspaces.remove(workspaceAttribs2.id);
+        expect(await db.workspaces.count()).toBe(1);
+        await db.workspaces.remove(workspaceAttribs1.id);
+        expect(await db.workspaces.count()).toBe(0);
       });
     });
   });
@@ -128,7 +130,7 @@ describe("Config", () => {
         servers: [],
       };
 
-      const addedProxy = await db.createWorkspace(proxyData);
+      const addedProxy = await db.workspaces.create(proxyData);
 
       expect(addedProxy.id).toBe("test-proxy");
       expect(addedProxy.name).toBe("test-proxy");
@@ -155,7 +157,7 @@ describe("Config", () => {
         ],
       };
 
-      const addedProxy = await db.createWorkspace(proxyData);
+      const addedProxy = await db.workspaces.create(proxyData);
 
       expect(addedProxy.id).toBe("test-proxy-with-servers");
       expect(addedProxy.servers).toHaveLength(2);
@@ -176,7 +178,7 @@ describe("Config", () => {
         ],
       };
 
-      const addedProxy = await db.createWorkspace(proxyData);
+      const addedProxy = await db.workspaces.create(proxyData);
 
       expect(addedProxy.servers[0].name).toBe("server-name-with-spaces");
     });
@@ -188,9 +190,9 @@ describe("Config", () => {
         servers: [],
       };
 
-      await db.createWorkspace(proxyData);
+      await db.workspaces.create(proxyData);
 
-      await expect(db.createWorkspace(proxyData)).rejects.toThrow(
+      await expect(db.workspaces.create(proxyData)).rejects.toThrow(
         "Workspace with this name already exists",
       );
     });
@@ -198,18 +200,18 @@ describe("Config", () => {
 
   describe("getAll", () => {
     it("should return empty array for empty database", async () => {
-      const allProxies = await db.getWorkspaces();
+      const allProxies = await db.workspaces.all();
       expect(allProxies).toEqual([]);
     });
 
     it("should return all proxies", async () => {
-      const proxy1 = await db.createWorkspace({
+      const proxy1 = await db.workspaces.create({
         name: "proxy-1",
         description: "First proxy",
         servers: [],
       });
 
-      const proxy2 = await db.createWorkspace({
+      const proxy2 = await db.workspaces.create({
         name: "proxy-2",
         description: "Second proxy",
         servers: [
@@ -221,7 +223,7 @@ describe("Config", () => {
         ],
       });
 
-      const allProxies = await db.getWorkspaces();
+      const allProxies = await db.workspaces.all();
 
       expect(allProxies).toHaveLength(2);
       expect(allProxies).toEqual([proxy1, proxy2]);
@@ -231,31 +233,31 @@ describe("Config", () => {
   describe("purge", () => {
     it("should clear all data from database", async () => {
       // Add some data first
-      await db.createWorkspace({
+      await db.workspaces.create({
         name: "proxy-1",
         description: "First proxy",
         servers: [],
       });
 
-      await db.createWorkspace({
+      await db.workspaces.create({
         name: "proxy-2",
         description: "Second proxy",
         servers: [],
       });
 
-      expect(await db.countWorkspaces()).toBe(2);
+      expect(await db.workspaces.count()).toBe(2);
 
       // Purge the database
       await db.purge();
 
       // Verify it's empty
-      expect(await db.countWorkspaces()).toBe(0);
-      expect(await db.getWorkspaces()).toEqual([]);
+      expect(await db.workspaces.count()).toBe(0);
+      expect(await db.workspaces.all()).toEqual([]);
     });
 
     it("should reset database to initial state", async () => {
       // Add some data
-      await db.createWorkspace({
+      await db.workspaces.create({
         name: "test-proxy",
         description: "A test proxy",
         servers: [],
@@ -264,14 +266,14 @@ describe("Config", () => {
       await db.purge();
 
       // Verify we can still add new data after purge
-      const newProxy = await db.createWorkspace({
+      const newProxy = await db.workspaces.create({
         name: "new-proxy",
         description: "New proxy after purge",
         servers: [],
       });
 
       expect(newProxy.name).toBe("new-proxy");
-      expect(await db.countWorkspaces()).toBe(1);
+      expect(await db.workspaces.count()).toBe(1);
     });
   });
 });

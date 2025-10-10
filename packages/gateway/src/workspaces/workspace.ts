@@ -214,7 +214,7 @@ export class Workspace extends ProxyServer {
 
   private async persistToConfig(): Promise<void> {
     if (this._config) {
-      await this._config.setWorkspace(this.id, await this.toConfig());
+      await this._config.workspaces.update(this.id, await this.toConfig());
     }
   }
 

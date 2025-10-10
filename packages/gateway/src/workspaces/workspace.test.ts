@@ -35,7 +35,8 @@ describe("Workspace", () => {
 
       expect(workspace.targets).toHaveLength(2); // 1 server + 1 prompt manager
 
-      const workspaceEntry = await config.getWorkspace("test-workspace");
+      const workspaceEntry =
+        await config.workspaces.getWorkspace("test-workspace");
       expect(workspaceEntry.servers).toHaveLength(1);
       expect(workspaceEntry.servers[0].name).toBe("foo");
     });
@@ -50,7 +51,7 @@ describe("Workspace", () => {
       expect(removedTarget.status).toBe("disconnected");
 
       const db = await YAMLConfig.connect(dbPath);
-      const workspaceEntry = await db.getWorkspace("test-workspace");
+      const workspaceEntry = await db.workspaces.getWorkspace("test-workspace");
       expect(workspaceEntry.servers).toHaveLength(0);
     });
   });
@@ -58,7 +59,8 @@ describe("Workspace", () => {
   describe("update", () => {
     it("should persist target changes to the config", async () => {
       await workspace.addTarget(makeFooBarServerStdioConfig());
-      const workspaceEntry = await config.getWorkspace("test-workspace");
+      const workspaceEntry =
+        await config.workspaces.getWorkspace("test-workspace");
 
       expect(workspaceEntry.servers).toHaveLength(1);
       expect(workspaceEntry.servers[0].name).toBe("foo");
@@ -73,7 +75,8 @@ describe("Workspace", () => {
       expect(workspace.name).toBe("test-workspace-updated");
       expect(workspace.description).toBe("test-workspace-updated");
 
-      const workspaceEntry = await config.getWorkspace("test-workspace");
+      const workspaceEntry =
+        await config.workspaces.getWorkspace("test-workspace");
 
       expect(workspaceEntry.name).toBe("test-workspace-updated");
       expect(workspaceEntry.description).toBe("test-workspace-updated");

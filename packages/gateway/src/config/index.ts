@@ -17,16 +17,18 @@ export const databaseAttributesSchema = {
   workspaces: z.array(WorkspaceSchema).default([]),
 };
 
-export abstract class Config extends TypedStore<
-  typeof databaseAttributesSchema
-> {
-  abstract purge(): Promise<void>;
+export class WorkspacesConfig {
+  private config: Config;
 
-  async createWorkspace(
+  constructor(config: Config) {
+    this.config = config;
+  }
+
+  async create(
     workspace: Omit<WorkspaceParams, "id">,
   ): Promise<WorkspaceParams> {
     const workspaceId = slugifyName(workspace.name);
-    const workspaces = await this.getWorkspaces();
+    const workspaces = await this.all();
 
     const existingWorkspace = _.find(workspaces, { id: workspaceId });
     if (existingWorkspace) {
@@ -36,7 +38,7 @@ export abstract class Config extends TypedStore<
       );
     }
 
-    return this.setWorkspace(workspaceId, {
+    return this.update(workspaceId, {
       id: workspaceId,
       ...workspace,
       servers: _.map(workspace.servers || [], (s) => ({
@@ -47,7 +49,7 @@ export abstract class Config extends TypedStore<
   }
 
   async getWorkspace(id: string): Promise<WorkspaceParams> {
-    const workspaces = await this.getWorkspaces();
+    const workspaces = await this.all();
     const workspace = _.find(workspaces, { id });
     if (!workspace) {
       throw new Error("Workspace not found");
@@ -55,36 +57,83 @@ export abstract class Config extends TypedStore<
     return workspace;
   }
 
-  async setWorkspace(
+  async update(
     id: string,
     workspace: WorkspaceParams,
   ): Promise<WorkspaceParams> {
     if (workspace.id !== id) {
       throw new Error("Id mismatch");
     }
-    const workspaces = await this.getWorkspaces();
+    const workspaces = await this.all();
     const workspaceIndex = _.findIndex(workspaces, { id });
     if (workspaceIndex === -1) {
       workspaces.push(workspace);
     } else {
       workspaces[workspaceIndex] = workspace;
     }
-    await this.set("workspaces", workspaces);
+    await this.config.set("workspaces", workspaces);
     return workspace;
   }
 
-  async unsetWorkspace(id: string): Promise<void> {
-    const workspaces = await this.getWorkspaces();
-    await this.set("workspaces", _.reject(workspaces, { id }));
+  async remove(id: string): Promise<void> {
+    const workspaces = await this.all();
+    await this.config.set("workspaces", _.reject(workspaces, { id }));
   }
 
-  async countWorkspaces(): Promise<number> {
-    const workspaces = await this.getWorkspaces();
+  async count(): Promise<number> {
+    const workspaces = await this.all();
     return workspaces.length;
   }
 
-  async getWorkspaces(): Promise<WorkspaceParams[]> {
-    return (await this.get("workspaces")) || [];
+  async all(): Promise<WorkspaceParams[]> {
+    return (await this.config.get("workspaces")) || [];
+  }
+}
+
+export abstract class Config extends TypedStore<
+  typeof databaseAttributesSchema
+> {
+  public readonly workspaces: WorkspacesConfig;
+  constructor(config: { schema: typeof databaseAttributesSchema }) {
+    super({ schema: config.schema });
+    this.workspaces = new WorkspacesConfig(this);
+  }
+
+  abstract purge(): Promise<void>;
+
+  // Deprecated: Use workspaces.create() instead
+  createWorkspace(
+    workspace: Omit<WorkspaceParams, "id">,
+  ): Promise<WorkspaceParams> {
+    return this.workspaces.create(workspace);
+  }
+
+  // Deprecated: Use workspaces.getWorkspace() instead
+  getWorkspace(id: string): Promise<WorkspaceParams> {
+    return this.workspaces.getWorkspace(id);
+  }
+
+  // Deprecated: Use workspaces.update() instead
+  setWorkspace(
+    id: string,
+    workspace: WorkspaceParams,
+  ): Promise<WorkspaceParams> {
+    return this.workspaces.update(id, workspace);
+  }
+
+  // Deprecated: Use workspaces.remove() instead
+  unsetWorkspace(id: string): Promise<void> {
+    return this.workspaces.remove(id);
+  }
+
+  // Deprecated: Use workspaces.count() instead
+  countWorkspaces(): Promise<number> {
+    return this.workspaces.count();
+  }
+
+  // Deprecated: Use workspaces.all() instead
+  getWorkspaces(): Promise<WorkspaceParams[]> {
+    return this.workspaces.all();
   }
 }
 
@@ -124,13 +173,14 @@ export class YAMLConfig extends Config {
     );
     await this.validateAndSetData(this.defaultData);
   }
+
   static async connect(filePath: string): Promise<YAMLConfig> {
-    const db = new YAMLConfig({
+    const config = new YAMLConfig({
       filePath,
       defaultData: defaultConfiguration(),
     });
-    await db.init();
-    return db;
+    await config.init();
+    return config;
   }
 }
 

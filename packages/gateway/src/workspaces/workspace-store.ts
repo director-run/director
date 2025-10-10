@@ -52,7 +52,7 @@ export class WorkspaceStore {
   }
 
   private async initialize(): Promise<void> {
-    let proxies = await this.config.getWorkspaces();
+    let proxies = await this.config.workspaces.all();
 
     for (const proxyConfig of proxies) {
       const proxyId = proxyConfig.id;
@@ -87,7 +87,7 @@ export class WorkspaceStore {
       }
     }
     await proxy.close();
-    await this.config.unsetWorkspace(proxyId);
+    await this.config.workspaces.remove(proxyId);
     this.workspaces.delete(proxyId);
     logger.info(`successfully deleted proxy server configuration: ${proxyId}`);
   }
@@ -139,7 +139,7 @@ export class WorkspaceStore {
   }): Promise<Workspace> {
     this.telemetry.trackEvent("proxy_created");
 
-    const configEntry = await this.config.createWorkspace({
+    const configEntry = await this.config.workspaces.create({
       name,
       description,
       servers: servers ?? [],

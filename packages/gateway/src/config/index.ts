@@ -4,22 +4,28 @@ import { AppError, ErrorCode } from "@director.run/utilities/error";
 import _ from "lodash";
 import slugify from "slugify";
 import YAML from "yaml";
-import { ZodError } from "zod";
 import { z } from "zod";
 
-import { type WorkspaceParams, WorkspaceSchema } from "../workspaces/workspace";
+import {
+  type WorkspaceParams,
+  WorkspaceSchema,
+} from "../workspaces/workspace-schema";
+import { TypedStore } from "./typed-store";
 
-export const databaseAttributesSchema = z.object({
+export const databaseAttributesSchema = {
   version: z.string().optional(),
   workspaces: z.array(WorkspaceSchema),
-});
+};
 
-export type ConfigurationData = z.infer<typeof databaseAttributesSchema>;
+// export type ConfigurationData = z.infer<typeof databaseAttributesSchema>;
 
-export abstract class Config {
-  protected abstract init(): Promise<void>;
-  protected abstract readData(): Promise<ConfigurationData>;
-  protected abstract writeData(data: ConfigurationData): Promise<void>;
+export abstract class Config extends TypedStore<
+  typeof databaseAttributesSchema
+> {
+  // protected abstract init(): Promise<void>;
+  // protected abstract readData(): Promise<ConfigurationData>;
+  // protected abstract writeData(data: ConfigurationData): Promise<void>;
+  abstract purge(): Promise<void>;
 
   async createWorkspace(
     proxy: Omit<WorkspaceParams, "id">,
@@ -83,72 +89,101 @@ export abstract class Config {
   }
 
   async getWorkspaces(): Promise<WorkspaceParams[]> {
-    const store = await this.readData();
-    return store.workspaces;
+    return (await this.get("workspaces")) || [];
   }
 
   async setWorkspaces(workspaces: WorkspaceParams[]): Promise<void> {
-    await this.writeData({ workspaces });
+    await this.set("workspaces", workspaces);
   }
 
-  async purge(): Promise<void> {
-    await this.writeData(defaultConfiguration());
-  }
+  // async purge(): Promise<void> {
+  //   await this.writeData(defaultConfiguration());
+  // }
 }
 
 export class YAMLConfig extends Config {
   public readonly filePath: string;
-  protected _data?: ConfigurationData;
+  private defaultData: Record<string, unknown>;
 
-  constructor(filePath: string) {
-    super();
-    this.filePath = filePath;
+  constructor(config: {
+    filePath: string;
+    defaultData: Record<string, unknown>;
+  }) {
+    super({ schema: databaseAttributesSchema });
+    this.filePath = config.filePath;
+    this.defaultData = config.defaultData;
+  }
+  async init() {
+    if (!existsSync(this.filePath)) {
+      await fs.promises.writeFile(
+        this.filePath,
+        YAML.stringify(this.defaultData),
+      );
+      await this.validateAndSetData(this.defaultData);
+    } else {
+      const data = await fs.promises.readFile(this.filePath, "utf8");
+      await this.validateAndSetData(YAML.parse(data));
+    }
   }
 
+  async persist() {
+    await fs.promises.writeFile(this.filePath, YAML.stringify(this.data));
+  }
+
+  async purge() {
+    await fs.promises.writeFile(
+      this.filePath,
+      YAML.stringify(this.defaultData),
+    );
+    await this.validateAndSetData(this.defaultData);
+  }
   static async connect(filePath: string): Promise<YAMLConfig> {
-    const db = new YAMLConfig(filePath);
+    const db = new YAMLConfig({
+      filePath,
+      defaultData: defaultConfiguration(),
+    });
     await db.init();
     return db;
   }
 
-  async init() {
-    if (!existsSync(this.filePath)) {
-      await this.writeData(defaultConfiguration());
-    } else {
-      const data = await fs.promises.readFile(this.filePath, "utf8");
-      try {
-        this._data = databaseAttributesSchema.parse(YAML.parse(data));
-      } catch (e) {
-        if (e instanceof ZodError) {
-          throw new AppError(
-            ErrorCode.INVALID_CONFIGURATION,
-            "Invalid configuration file",
-            {
-              filePath: this.filePath,
-              parseErrors: e.errors,
-            },
-          );
-        } else {
-          throw e;
-        }
-      }
-    }
-  }
+  // async init() {
+  //   if (!existsSync(this.filePath)) {
+  //     await this.writeData(defaultConfiguration());
+  //   } else {
+  //     const data = await fs.promises.readFile(this.filePath, "utf8");
+  //     try {
+  //       this._data = databaseAttributesSchema.parse(YAML.parse(data));
+  //     } catch (e) {
+  //       if (e instanceof ZodError) {
+  //         throw new AppError(
+  //           ErrorCode.INVALID_CONFIGURATION,
+  //           "Invalid configuration file",
+  //           {
+  //             filePath: this.filePath,
+  //             parseErrors: e.errors,
+  //           },
+  //         );
+  //       } else {
+  //         throw e;
+  //       }
+  //     }
+  //   }
+  // }
 
-  async readData(): Promise<ConfigurationData> {
-    if (!this._data) {
-      await this.init();
-    }
-    return _.cloneDeep(this._data) as ConfigurationData;
-  }
+  // async readData(): Promise<ConfigurationData> {
+  //   if (!this._data) {
+  //     await this.init();
+  //   }
+  //   return _.cloneDeep(this._data) as ConfigurationData;
+  // }
 
-  async writeData(data: ConfigurationData): Promise<void> {
-    await fs.promises.writeFile(this.filePath, YAML.stringify(data));
-    this._data = _.cloneDeep(data);
-  }
+  // async writeData(data: ConfigurationData): Promise<void> {
+  //   await fs.promises.writeFile(this.filePath, YAML.stringify(data));
+  //   this._data = _.cloneDeep(data);
+  // }
 }
 
-function defaultConfiguration(): ConfigurationData {
+function defaultConfiguration(): Record<string, unknown> {
   return {
     version: "1.0.0",
     workspaces: [],

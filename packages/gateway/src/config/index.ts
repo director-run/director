@@ -23,9 +23,9 @@ export abstract class Config extends TypedStore<
   abstract purge(): Promise<void>;
 
   async createWorkspace(
-    proxy: Omit<WorkspaceParams, "id">,
+    workspace: Omit<WorkspaceParams, "id">,
   ): Promise<WorkspaceParams> {
-    const workspaceId = slugifyName(proxy.name);
+    const workspaceId = slugifyName(workspace.name);
     const workspaces = await this.getWorkspaces();
 
     const existingWorkspace = _.find(workspaces, { id: workspaceId });
@@ -38,8 +38,8 @@ export abstract class Config extends TypedStore<
 
     return this.setWorkspace(workspaceId, {
       id: workspaceId,
-      ...proxy,
-      servers: _.map(proxy.servers || [], (s) => ({
+      ...workspace,
+      servers: _.map(workspace.servers || [], (s) => ({
         ...s,
         name: slugifyName(s.name),
       })),
@@ -48,29 +48,29 @@ export abstract class Config extends TypedStore<
 
   async getWorkspace(id: string): Promise<WorkspaceParams> {
     const workspaces = await this.getWorkspaces();
-    const proxy = _.find(workspaces, { id });
-    if (!proxy) {
+    const workspace = _.find(workspaces, { id });
+    if (!workspace) {
       throw new Error("Workspace not found");
     }
-    return proxy;
+    return workspace;
   }
 
   async setWorkspace(
     id: string,
-    proxy: WorkspaceParams,
+    workspace: WorkspaceParams,
   ): Promise<WorkspaceParams> {
-    if (proxy.id !== id) {
+    if (workspace.id !== id) {
       throw new Error("Id mismatch");
     }
     const workspaces = await this.getWorkspaces();
-    const proxyIndex = _.findIndex(workspaces, { id });
-    if (proxyIndex === -1) {
-      workspaces.push(proxy);
+    const workspaceIndex = _.findIndex(workspaces, { id });
+    if (workspaceIndex === -1) {
+      workspaces.push(workspace);
     } else {
-      workspaces[proxyIndex] = proxy;
+      workspaces[workspaceIndex] = workspace;
     }
     await this.set("workspaces", workspaces);
-    return proxy;
+    return workspace;
   }
 
   async unsetWorkspace(id: string): Promise<void> {
@@ -106,10 +106,10 @@ export class YAMLConfig extends Config {
         this.filePath,
         YAML.stringify(this.defaultData),
       );
-      await this.validateAndSetData(this.defaultData);
+      this.validateAndSetData(this.defaultData);
     } else {
       const data = await fs.promises.readFile(this.filePath, "utf8");
-      await this.validateAndSetData(YAML.parse(data));
+      this.validateAndSetData(YAML.parse(data));
     }
   }
 

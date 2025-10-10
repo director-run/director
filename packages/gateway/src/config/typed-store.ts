@@ -4,12 +4,12 @@ import { get, set } from "lodash";
 import YAML from "yaml";
 import { z } from "zod";
 
-export abstract class TypedStore<TSchema extends Record<string, z.ZodType>> {
+export abstract class BaseConfig<TSchema extends Record<string, z.ZodType>> {
   private schema: TSchema;
   protected _data?: Record<string, unknown>;
 
-  constructor(config: { schema: TSchema }) {
-    this.schema = config.schema;
+  constructor(params: { schema: TSchema }) {
+    this.schema = params.schema;
   }
 
   get data() {
@@ -89,13 +89,13 @@ export abstract class TypedStore<TSchema extends Record<string, z.ZodType>> {
 
 export class InMemoryTypedStore<
   TSchema extends Record<string, z.ZodType>,
-> extends TypedStore<TSchema> {
-  constructor(config: {
+> extends BaseConfig<TSchema> {
+  constructor(params: {
     schema: TSchema;
     data?: Record<string, unknown>;
   }) {
-    super({ schema: config.schema });
-    this.validateAndSetData(config.data ?? {});
+    super({ schema: params.schema });
+    this.validateAndSetData(params.data ?? {});
   }
 
   init() {
@@ -109,18 +109,18 @@ export class InMemoryTypedStore<
 
 export class YAMLTypedStore<
   TSchema extends Record<string, z.ZodType>,
-> extends TypedStore<TSchema> {
+> extends BaseConfig<TSchema> {
   private filePath: string;
   private defaultData: Record<string, unknown>;
 
-  constructor(config: {
+  constructor(params: {
     schema: TSchema;
     filePath: string;
     defaultData: Record<string, unknown>;
   }) {
-    super({ schema: config.schema });
-    this.filePath = config.filePath;
-    this.defaultData = config.defaultData;
+    super({ schema: params.schema });
+    this.filePath = params.filePath;
+    this.defaultData = params.defaultData;
   }
 
   async init() {

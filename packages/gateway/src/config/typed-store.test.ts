@@ -23,7 +23,7 @@ const configSchema = {
   version: z.string().default("1.0.0"),
 };
 
-describe("InMemoryTypedStore", () => {
+describe("BaseConfig", () => {
   it("should set and get valid values", async () => {
     const store = new InMemoryTypedStore({ schema: configSchema });
     expect(store.get("server.port")).toBe(3673);
@@ -103,7 +103,7 @@ describe("InMemoryTypedStore", () => {
   });
 });
 
-describe("YAMLTypedStore", () => {
+describe("YAMLBaseConfig", () => {
   beforeAll(async () => {
     if (fs.existsSync("config.test.yaml")) {
       await fs.promises.unlink("config.test.yaml");

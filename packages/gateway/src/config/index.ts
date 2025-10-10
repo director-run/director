@@ -10,7 +10,7 @@ import {
   type WorkspaceParams,
   WorkspaceSchema,
 } from "../workspaces/workspace-schema";
-import { TypedStore } from "./typed-store";
+import { BaseConfig } from "./typed-store";
 
 export const databaseAttributesSchema = {
   version: z.string().optional(),
@@ -90,7 +90,7 @@ export class WorkspacesConfig {
   }
 }
 
-export abstract class Config extends TypedStore<
+export abstract class Config extends BaseConfig<
   typeof databaseAttributesSchema
 > {
   public readonly workspaces: WorkspacesConfig;

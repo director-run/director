@@ -17,14 +17,9 @@ export const databaseAttributesSchema = {
   workspaces: z.array(WorkspaceSchema),
 };
 
-// export type ConfigurationData = z.infer<typeof databaseAttributesSchema>;
-
 export abstract class Config extends TypedStore<
   typeof databaseAttributesSchema
 > {
-  // protected abstract init(): Promise<void>;
-  // protected abstract readData(): Promise<ConfigurationData>;
-  // protected abstract writeData(data: ConfigurationData): Promise<void>;
   abstract purge(): Promise<void>;
 
   async createWorkspace(

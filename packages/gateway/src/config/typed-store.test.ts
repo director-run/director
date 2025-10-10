@@ -69,7 +69,7 @@ describe("InMemoryTypedStore", () => {
     expect(store.data).toMatchObject({});
   });
 
-  it("should not return default", () => {
+  it("should return default value when key is not set", () => {
     const store = new InMemoryTypedStore({ schema: configSchema });
     expect(store.get("server.port")).toBe(3673);
   });

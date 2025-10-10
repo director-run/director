@@ -1,7 +1,8 @@
-import { describe, expect, it } from "vitest";
+import fs from "fs";
+import { beforeAll, describe, expect, it } from "vitest";
 import { z } from "zod";
 import { WorkspaceSchema } from "../workspaces/workspace";
-import { InMemoryTypedStore } from "./typed-store";
+import { InMemoryTypedStore, YAMLTypedStore } from "./typed-store";
 
 const configSchema = {
   "server.port": z.number().min(0).default(3673),
@@ -99,5 +100,31 @@ describe("InMemoryTypedStore", () => {
     expect(
       () => new InMemoryTypedStore({ schema: configSchema, data: invalidData }),
     ).toThrow(/Invalid data for key "server\.port"/);
+  });
+});
+
+describe("YAMLTypedStore", () => {
+  beforeAll(async () => {
+    if (fs.existsSync("test.yaml")) {
+      await fs.promises.unlink("test.yaml");
+    }
+  });
+
+  it("should set and get valid values", async () => {
+    const store = new YAMLTypedStore({
+      schema: configSchema,
+      filePath: "test.yaml",
+      defaultData: {
+        version: "1.0.0",
+        workspaces: [],
+      },
+    });
+    await store.init();
+
+    expect(store.get("server.port")).toBe(3673);
+    await store.set("server.port", 1234);
+    await store.set("registry.url", "https://example.com");
+    expect(store.get("server.port")).toBe(1234);
+    expect(store.get("registry.url")).toBe("https://example.com");
   });
 });

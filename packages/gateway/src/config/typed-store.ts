@@ -1,4 +1,7 @@
+import fs from "fs";
+import { existsSync } from "node:fs";
 import { get, set } from "lodash";
+import YAML from "yaml";
 import { z } from "zod";
 
 export abstract class TypedStore<TSchema extends Record<string, z.ZodType>> {
@@ -101,5 +104,39 @@ export class InMemoryTypedStore<
 
   persist() {
     return Promise.resolve();
+  }
+}
+
+export class YAMLTypedStore<
+  TSchema extends Record<string, z.ZodType>,
+> extends TypedStore<TSchema> {
+  private filePath: string;
+  private defaultData: Record<string, unknown>;
+
+  constructor(config: {
+    schema: TSchema;
+    filePath: string;
+    defaultData: Record<string, unknown>;
+  }) {
+    super({ schema: config.schema });
+    this.filePath = config.filePath;
+    this.defaultData = config.defaultData;
+  }
+
+  async init() {
+    if (!existsSync(this.filePath)) {
+      await fs.promises.writeFile(
+        this.filePath,
+        YAML.stringify(this.defaultData),
+      );
+      await this.validateAndSetData(this.defaultData);
+    } else {
+      const data = await fs.promises.readFile(this.filePath, "utf8");
+      await this.validateAndSetData(YAML.parse(data));
+    }
+  }
+
+  async persist() {
+    await fs.promises.writeFile(this.filePath, YAML.stringify(this.data));
   }
 }

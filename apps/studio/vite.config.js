@@ -12,7 +12,10 @@ export default defineConfig({
     alias: {
       "@director.run/gateway": resolve(__dirname, "../../packages/gateway/src"),
       "@director.run/registry": resolve(__dirname, "../../apps/registry/src"),
-      "@director.run/utilities": resolve(__dirname, "../../packages/utilities/src"),
+      "@director.run/utilities": resolve(
+        __dirname,
+        "../../packages/utilities/src",
+      ),
       "@director.run/design": resolve(__dirname, "../../packages/design/src"),
     },
   },

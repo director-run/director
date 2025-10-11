@@ -170,7 +170,8 @@ export class ProxyServer extends Server {
 
     _.remove(
       this.targets,
-      (t: ProxyTarget) => t.name.toLocaleLowerCase() === targetName.toLocaleLowerCase(),
+      (t: ProxyTarget) =>
+        t.name.toLocaleLowerCase() === targetName.toLocaleLowerCase(),
     );
 
     return existingTarget;

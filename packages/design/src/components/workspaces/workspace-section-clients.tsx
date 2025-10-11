@@ -46,7 +46,7 @@ export function WorkspaceSectionClients({
           onCopy={handleCopy}
         ></ProxyManualDialog>
       </SectionHeader>
-      <div className="p-4 overflow-hidden rounded-xl bg-accent-subtle shadow-[0_0_0_0.5px_rgba(55,50,46,0.15)]">
+      <div className="overflow-hidden rounded-xl bg-accent-subtle p-4 shadow-[0_0_0_0.5px_rgba(55,50,46,0.15)]">
         <LittleLabel>Connect Automatically</LittleLabel>
         {clients.map((client) => (
           <InstallerRow

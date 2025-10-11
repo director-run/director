@@ -10,11 +10,18 @@ import { InMemoryConfigStorage, YamlConfigStorage } from "./config-storage";
 describe("ConfigBase", () => {
   it("should set and get valid values", async () => {
     const configSchema = {
-      "server.port": z.number().min(0).default(3673),
-      "registry.url": z.string().default("https://registry.director.run"),
+      "server.port": z.number().min(0),
+      "registry.url": z.string(),
     };
     const storage = new InMemoryConfigStorage();
-    const configBase = new ConfigBase({ schema: configSchema, storage });
+    const configBase = new ConfigBase({
+      schema: configSchema,
+      storage,
+      defaults: {
+        "server.port": 3673,
+        "registry.url": "https://registry.director.run",
+      },
+    });
     await configBase.init();
     expect(configBase.get("server.port")).toBe(3673);
     await configBase.set("server.port", 1234);
@@ -45,6 +52,20 @@ describe("ConfigBase", () => {
       code: ErrorCode.INVALID_CONFIGURATION,
       props: { key: "registry.apiKey" },
     });
+  });
+
+  it("should not throw an error if a required key is not set in the storage but a default is provided", async () => {
+    const configBase = new ConfigBase({
+      schema: {
+        "registry.apiKey": z.string(),
+      },
+      storage: new InMemoryConfigStorage(),
+      defaults: {
+        "registry.apiKey": "1234567890",
+      },
+    });
+    await configBase.init();
+    expect(configBase.get("registry.apiKey")).toEqual("1234567890");
   });
 
   it("should load existing data from storage", async () => {
@@ -83,14 +104,28 @@ describe("ConfigBase", () => {
     await expect(configBase.set("server.port", -5)).rejects.toThrow();
   });
 
-  it("should not return default values in data when no data is set", async () => {
+  it("should not write default values to storage", async () => {
     const configSchema = {
-      "server.port": z.number().min(0).default(3673),
+      "server.port": z.number().min(0),
+      "registry.url": z.string(),
     };
     const storage = new InMemoryConfigStorage();
-    const configBase = new ConfigBase({ schema: configSchema, storage });
+    const configBase = new ConfigBase({
+      schema: configSchema,
+      storage,
+      defaults: {
+        server: {
+          port: 3673,
+        },
+        registry: {
+          url: "https://registry.director.run",
+        },
+      },
+    });
     await configBase.init();
-    expect(configBase.data).toMatchObject({});
+    expect(storage.getData()).toMatchObject({});
+    await configBase.set("server.port", 1234);
+    expect(storage.getData()).toMatchObject({ server: { port: 1234 } });
   });
 
   it("should return default value when key is not set", async () => {

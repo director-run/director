@@ -25,7 +25,7 @@ export class Gateway {
   public readonly workspaceStore: WorkspaceStore;
   public readonly port: number;
   private server: Server;
-  public readonly db: Config;
+  public readonly config: Config;
 
   private constructor(attribs: {
     workspaceStore: WorkspaceStore;
@@ -36,7 +36,7 @@ export class Gateway {
     this.port = attribs.port;
     this.workspaceStore = attribs.workspaceStore;
     this.server = attribs.server;
-    this.db = attribs.config;
+    this.config = attribs.config;
   }
 
   public static async start(
@@ -44,7 +44,6 @@ export class Gateway {
       port: number;
       studioDistPath?: string;
       config: Config;
-      registryURL: string;
       telemetry?: Telemetry;
       oauth?:
         | {
@@ -70,7 +69,6 @@ export class Gateway {
         : undefined,
     });
     const app = express();
-    const registryURL = attribs.registryURL;
 
     app.use(
       cors({
@@ -125,12 +123,8 @@ export class Gateway {
         },
       }),
     );
-    // TODO: add a router to handle the incoming oauth tokens
-    // onTokenReceived((token) => OauthBroker.registerToken(token))
-    app.use(
-      "/trpc",
-      createTRPCExpressMiddleware({ workspaceStore, registryURL }),
-    );
+
+    app.use("/trpc", createTRPCExpressMiddleware({ workspaceStore }));
     app.all("*", notFoundHandler);
     app.use(errorRequestHandler);
 

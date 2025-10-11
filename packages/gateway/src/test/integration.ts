@@ -40,14 +40,13 @@ export class IntegrationTestHarness {
   }
 
   public get database() {
-    return this.gateway.db;
+    return this.gateway.config;
   }
 
   public static async start() {
     const gateway = await Gateway.start({
       port: IntegrationTestHarness.gatewayPort,
       config: await Config.createMemoryBasedConfig(),
-      registryURL: "http://localhost:3000",
       oauth: {
         storage: "memory",
       },

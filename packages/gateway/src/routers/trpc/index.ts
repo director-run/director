@@ -10,7 +10,6 @@ export function createAppRouter({
   workspaceStore,
 }: {
   workspaceStore: WorkspaceStore;
-  registryURL: string;
 }) {
   return t.router({
     health: t.procedure.query(({ ctx }) => {
@@ -24,13 +23,11 @@ export function createAppRouter({
 
 export function createTRPCExpressMiddleware({
   workspaceStore,
-  registryURL,
 }: {
   workspaceStore: WorkspaceStore;
-  registryURL: string;
 }) {
   return trpcExpress.createExpressMiddleware({
-    router: createAppRouter({ workspaceStore, registryURL }),
+    router: createAppRouter({ workspaceStore }),
     createContext: ({ res }) => {
       const cliVersion = res.getHeader("x-cli-version") ?? null;
 

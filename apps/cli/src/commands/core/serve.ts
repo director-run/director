@@ -38,7 +38,6 @@ export async function startGateway(successCallback?: () => void) {
     {
       port: env.GATEWAY_PORT,
       config: await Config.createFileBasedConfig(env.CONFIG_FILE_PATH),
-      registryURL: env.REGISTRY_API_URL,
       studioDistPath: resolveStudioDistPath(),
       telemetry: new Telemetry({
         writeKey: env.SEGMENT_WRITE_KEY,

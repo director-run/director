@@ -4,30 +4,116 @@ import { get, set } from "lodash";
 import YAML from "yaml";
 import { z } from "zod";
 
-export abstract class BaseConfig<TSchema extends Record<string, z.ZodType>> {
-  private schema: TSchema;
-  protected _data?: Record<string, unknown>;
+export interface Storage {
+  init(): Promise<void>;
+  persist(): Promise<void>;
+  purge(): Promise<void>;
+  getData(): Record<string, unknown>;
+  setData(data: Record<string, unknown>): void;
+}
 
-  constructor(params: { schema: TSchema }) {
+export class MemoryStorage implements Storage {
+  private data: Record<string, unknown>;
+  private defaultData: Record<string, unknown>;
+
+  constructor(params?: { data?: Record<string, unknown> }) {
+    this.defaultData = params?.data ?? {};
+    this.data = { ...this.defaultData };
+  }
+
+  init(): Promise<void> {
+    // No initialization needed for memory storage
+    return Promise.resolve();
+  }
+
+  persist(): Promise<void> {
+    // No persistence needed for memory storage
+    return Promise.resolve();
+  }
+
+  purge(): Promise<void> {
+    this.data = { ...this.defaultData };
+    return Promise.resolve();
+  }
+
+  getData(): Record<string, unknown> {
+    return this.data;
+  }
+
+  setData(data: Record<string, unknown>): void {
+    this.data = data;
+  }
+}
+
+export class YamlStorage implements Storage {
+  public readonly filePath: string;
+  private data: Record<string, unknown> = {};
+  private defaultData: Record<string, unknown>;
+
+  constructor(params: {
+    filePath: string;
+    defaultData: Record<string, unknown>;
+  }) {
+    this.filePath = params.filePath;
+    this.defaultData = params.defaultData;
+  }
+
+  async init(): Promise<void> {
+    if (!existsSync(this.filePath)) {
+      await fs.promises.writeFile(
+        this.filePath,
+        YAML.stringify(this.defaultData),
+      );
+      this.data = { ...this.defaultData };
+    } else {
+      const fileContent = await fs.promises.readFile(this.filePath, "utf8");
+      this.data = YAML.parse(fileContent);
+    }
+  }
+
+  async persist(): Promise<void> {
+    await fs.promises.writeFile(this.filePath, YAML.stringify(this.data));
+  }
+
+  async purge(): Promise<void> {
+    await fs.promises.writeFile(
+      this.filePath,
+      YAML.stringify(this.defaultData),
+    );
+    this.data = { ...this.defaultData };
+  }
+
+  getData(): Record<string, unknown> {
+    return this.data;
+  }
+
+  setData(data: Record<string, unknown>): void {
+    this.data = data;
+  }
+}
+
+export class Config<TSchema extends Record<string, z.ZodType>> {
+  private schema: TSchema;
+  private storage: Storage;
+
+  constructor(params: { schema: TSchema; storage: Storage }) {
     this.schema = params.schema;
+    this.storage = params.storage;
   }
 
   get data() {
-    return this._data;
+    return this.storage.getData();
   }
 
-  abstract init(): Promise<void>;
-  protected abstract persist(): Promise<void>;
-  abstract purge(): Promise<void>;
+  async init(): Promise<void> {
+    await this.storage.init();
+    this.validateAndSetData(this.storage.getData());
+  }
 
   async set<K extends keyof TSchema & string>(
     key: K,
     value: z.infer<TSchema[K]>,
   ): Promise<void> {
-    if (!this._data) {
-      throw new Error("Data not initialized");
-    }
-
     if (!(key in this.schema)) {
       throw new Error(`Key "${key}" is not allowed`);
     }
@@ -36,9 +122,11 @@ export abstract class BaseConfig<TSchema extends Record<string, z.ZodType>> {
     const schema = this.schema[key];
     const parsed = schema.parse(value); // Throws if invalid
 
-    set(this._data, key, parsed);
+    const currentData = this.storage.getData();
+    set(currentData, key, parsed);
+    this.storage.setData(currentData);
 
-    await this.persist();
+    await this.storage.persist();
   }
 
   get<K extends keyof TSchema & string>(
@@ -48,7 +136,7 @@ export abstract class BaseConfig<TSchema extends Record<string, z.ZodType>> {
       throw new Error(`Key "${key}" is not allowed`);
     }
 
-    const value = get(this._data, key);
+    const value = get(this.storage.getData(), key);
 
     // If value exists, return it
     if (value !== undefined) {
@@ -66,7 +154,12 @@ export abstract class BaseConfig<TSchema extends Record<string, z.ZodType>> {
     return undefined;
   }
 
-  protected validateAndSetData(data: Record<string, unknown>) {
+  async purge(): Promise<void> {
+    await this.storage.purge();
+    this.validateAndSetData(this.storage.getData());
+  }
+
+  private validateAndSetData(data: Record<string, unknown>) {
     const validatedData = { ...data };
 
     for (const key in this.schema) {
@@ -84,73 +177,6 @@ export abstract class BaseConfig<TSchema extends Record<string, z.ZodType>> {
       }
     }
 
-    this._data = validatedData;
-  }
-}
-
-export class InMemoryConfig<
-  TSchema extends Record<string, z.ZodType>,
-> extends BaseConfig<TSchema> {
-  constructor(params: {
-    schema: TSchema;
-    data?: Record<string, unknown>;
-  }) {
-    super({ schema: params.schema });
-    this.validateAndSetData(params.data ?? {});
-  }
-
-  init() {
-    return Promise.resolve();
-  }
-
-  persist() {
-    return Promise.resolve();
-  }
-
-  purge() {
-    this._data = {};
-    return Promise.resolve();
-  }
-}
-
-export class YAMLConfig<
-  TSchema extends Record<string, z.ZodType>,
-> extends BaseConfig<TSchema> {
-  public readonly filePath: string;
-  private defaultData: Record<string, unknown>;
-
-  constructor(params: {
-    schema: TSchema;
-    filePath: string;
-    defaultData: Record<string, unknown>;
-  }) {
-    super({ schema: params.schema });
-    this.filePath = params.filePath;
-    this.defaultData = params.defaultData;
-  }
-
-  async init() {
-    if (!existsSync(this.filePath)) {
-      await fs.promises.writeFile(
-        this.filePath,
-        YAML.stringify(this.defaultData),
-      );
-      this.validateAndSetData(this.defaultData);
-    } else {
-      const data = await fs.promises.readFile(this.filePath, "utf8");
-      this.validateAndSetData(YAML.parse(data));
-    }
-  }
-
-  async persist() {
-    await fs.promises.writeFile(this.filePath, YAML.stringify(this.data));
-  }
-
-  async purge() {
-    await fs.promises.writeFile(
-      this.filePath,
-      YAML.stringify(this.defaultData),
-    );
-    await this.validateAndSetData(this.defaultData);
+    this.storage.setData(validatedData);
   }
 }

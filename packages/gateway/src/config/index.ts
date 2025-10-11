@@ -7,7 +7,7 @@ import {
   type WorkspaceParams,
   WorkspaceSchema,
 } from "../workspaces/workspace-schema";
-import { YAMLConfig } from "./base-config";
+import { Config as BaseConfig, YamlStorage } from "./base-config";
 
 export const databaseAttributesSchema = {
   version: z.string().optional(),
@@ -25,6 +25,39 @@ export const databaseAttributesSchema = {
     tokenDirectory: z.string().default("./tokens"),
   }),
 };
+
+export class Config extends BaseConfig<typeof databaseAttributesSchema> {
+  public readonly workspaces: WorkspacesConfig;
+  public readonly filePath: string;
+
+  private constructor(config: {
+    filePath: string;
+    defaultData: Record<string, unknown>;
+  }) {
+    const storage = new YamlStorage({
+      filePath: config.filePath,
+      defaultData: config.defaultData,
+    });
+    super({
+      schema: databaseAttributesSchema,
+      storage,
+    });
+    this.filePath = config.filePath;
+    this.workspaces = new WorkspacesConfig(this);
+  }
+
+  static async create(filePath: string): Promise<Config> {
+    const config = new Config({
+      filePath,
+      defaultData: {
+        version: "1.0.0",
+        workspaces: [],
+      },
+    });
+    await config.init();
+    return config;
+  }
+}
 
 export class WorkspacesConfig {
   private config: Config;
@@ -96,34 +129,6 @@ export class WorkspacesConfig {
 
   async all(): Promise<WorkspaceParams[]> {
     return (await this.config.get("workspaces")) || [];
-  }
-}
-
-export class Config extends YAMLConfig<typeof databaseAttributesSchema> {
-  public readonly workspaces: WorkspacesConfig;
-
-  private constructor(config: {
-    filePath: string;
-    defaultData: Record<string, unknown>;
-  }) {
-    super({
-      schema: databaseAttributesSchema,
-      filePath: config.filePath,
-      defaultData: config.defaultData,
-    });
-    this.workspaces = new WorkspacesConfig(this);
-  }
-
-  static async create(filePath: string): Promise<Config> {
-    const config = new Config({
-      filePath,
-      defaultData: {
-        version: "1.0.0",
-        workspaces: [],
-      },
-    });
-    await config.init();
-    return config;
   }
 }
 

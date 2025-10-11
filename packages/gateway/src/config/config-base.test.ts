@@ -2,7 +2,7 @@ import fs from "fs";
 import { beforeAll, describe, expect, it } from "vitest";
 import { z } from "zod";
 import { WorkspaceSchema } from "../workspaces/workspace";
-import { Config } from "./base-config";
+import { ConfigBase } from "./config-base";
 import { InMemoryConfigStorage, YamlConfigStorage } from "./config-storage";
 
 const configSchema = {
@@ -27,7 +27,7 @@ const configSchema = {
 describe("Config with MemoryStorage", () => {
   it("should set and get valid values", async () => {
     const storage = new InMemoryConfigStorage();
-    const store = new Config({ schema: configSchema, storage });
+    const store = new ConfigBase({ schema: configSchema, storage });
     await store.init();
     expect(store.get("server.port")).toBe(3673);
     await store.set("server.port", 1234);
@@ -38,7 +38,7 @@ describe("Config with MemoryStorage", () => {
 
   it("should return undefined for non-existent keys", async () => {
     const storage = new InMemoryConfigStorage();
-    const store = new Config({ schema: configSchema, storage });
+    const store = new ConfigBase({ schema: configSchema, storage });
     await store.init();
 
     expect(store.get("workspaces")).toBeUndefined();
@@ -55,7 +55,7 @@ describe("Config with MemoryStorage", () => {
       },
     };
     const storage = new InMemoryConfigStorage({ data: seedData });
-    const store = new Config({
+    const store = new ConfigBase({
       schema: configSchema,
       storage,
     });
@@ -68,28 +68,28 @@ describe("Config with MemoryStorage", () => {
 
   it("should throw validation error for invalid values", async () => {
     const storage = new InMemoryConfigStorage();
-    const store = new Config({ schema: configSchema, storage });
+    const store = new ConfigBase({ schema: configSchema, storage });
     await store.init();
     await expect(store.set("server.port", -5)).rejects.toThrow();
   });
 
   it("should not return default values in data when no data is set", async () => {
     const storage = new InMemoryConfigStorage();
-    const store = new Config({ schema: configSchema, storage });
+    const store = new ConfigBase({ schema: configSchema, storage });
     await store.init();
     expect(store.data).toMatchObject({});
   });
 
   it("should return default value when key is not set", async () => {
     const storage = new InMemoryConfigStorage();
-    const store = new Config({ schema: configSchema, storage });
+    const store = new ConfigBase({ schema: configSchema, storage });
     await store.init();
     expect(store.get("server.port")).toBe(3673);
   });
 
   it("should set data", async () => {
     const storage = new InMemoryConfigStorage();
-    const store = new Config({ schema: configSchema, storage });
+    const store = new ConfigBase({ schema: configSchema, storage });
     await store.init();
     await store.set("server.port", 1234);
     expect(store.data).toMatchObject({ server: { port: 1234 } });
@@ -102,7 +102,7 @@ describe("Config with MemoryStorage", () => {
       },
     };
     const storage = new InMemoryConfigStorage({ data: invalidData });
-    const store = new Config({ schema: configSchema, storage });
+    const store = new ConfigBase({ schema: configSchema, storage });
     await expect(store.init()).rejects.toThrow(
       /Invalid data for key "server\.port"/,
     );
@@ -115,7 +115,7 @@ describe("Config with MemoryStorage", () => {
       },
     };
     const storage = new InMemoryConfigStorage({ data: invalidData });
-    const store = new Config({ schema: configSchema, storage });
+    const store = new ConfigBase({ schema: configSchema, storage });
     await expect(store.init()).rejects.toThrow(
       /Invalid data for key "server\.port"/,
     );
@@ -137,7 +137,7 @@ describe("Config with YamlStorage", () => {
         workspaces: [],
       },
     });
-    const store = new Config({
+    const store = new ConfigBase({
       schema: configSchema,
       storage,
     });

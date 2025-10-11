@@ -8,7 +8,7 @@ import {
 import { serveOverSSE, serveOverStreamable } from "@director.run/mcp/transport";
 import { createGatewayClient } from "../client";
 import { Config } from "../config";
-import type { HTTPTransport } from "../config/schema";
+import type { HTTPTransport } from "../config/config-schema";
 import { Gateway } from "../gateway";
 
 const PROXY_TARGET_PORT = 4521;

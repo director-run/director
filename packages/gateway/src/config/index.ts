@@ -7,7 +7,7 @@ import {
   type WorkspaceParams,
   WorkspaceSchema,
 } from "../workspaces/workspace-schema";
-import { Config as BaseConfig } from "./base-config";
+import { ConfigBase } from "./config-base";
 import { YamlConfigStorage } from "./config-storage";
 
 export const databaseAttributesSchema = {
@@ -27,7 +27,7 @@ export const databaseAttributesSchema = {
   }),
 };
 
-export class Config extends BaseConfig<typeof databaseAttributesSchema> {
+export class Config extends ConfigBase<typeof databaseAttributesSchema> {
   public readonly workspaces: WorkspacesConfig;
   public readonly filePath: string;
 
@@ -60,7 +60,7 @@ export class Config extends BaseConfig<typeof databaseAttributesSchema> {
   }
 }
 
-export class WorkspacesConfig {
+class WorkspacesConfig {
   private config: Config;
 
   constructor(config: Config) {

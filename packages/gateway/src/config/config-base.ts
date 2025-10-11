@@ -2,7 +2,7 @@ import { get, set } from "lodash";
 import { z } from "zod";
 import { type ConfigStorage } from "./config-storage";
 
-export class Config<TSchema extends Record<string, z.ZodType>> {
+export class ConfigBase<TSchema extends Record<string, z.ZodType>> {
   private schema: TSchema;
   private storage: ConfigStorage;
 

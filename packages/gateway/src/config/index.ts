@@ -10,26 +10,7 @@ import {
 import { ConfigBase } from "./config-base";
 import { YamlConfigStorage } from "./config-storage";
 
-export const databaseAttributesSchema = {
-  version: z.string().default("1.0.0"),
-  workspaces: z.array(WorkspaceSchema).default([]),
-  "server.port": z.number().min(0).default(3673),
-  "registry.url": z.string().default("https://registry.director.run"),
-  "registry.apiKey": z.string().optional(),
-  "telemetry.writeKey": z.string().default(""),
-  "telemetry.enabled": z.boolean().default(false),
-  oauth: z
-    .object({
-      storage: z.literal("disk"),
-      tokenDirectory: z.string(),
-    })
-    .default({
-      storage: "disk",
-      tokenDirectory: "./tokens",
-    }),
-};
-
-export class Config extends ConfigBase<typeof databaseAttributesSchema> {
+export class Config extends ConfigBase<typeof configSchema> {
   public readonly workspaces: WorkspacesConfig;
   public readonly filePath: string;
 
@@ -42,7 +23,7 @@ export class Config extends ConfigBase<typeof databaseAttributesSchema> {
       defaultData: config.defaultData,
     });
     super({
-      schema: databaseAttributesSchema,
+      schema: configSchema,
       storage,
     });
     this.filePath = config.filePath;
@@ -138,3 +119,22 @@ class WorkspacesConfig {
 function slugifyName(name: string): string {
   return slugify(name, { lower: true, strict: true, trim: true });
 }
+
+const configSchema = {
+  version: z.string().default("1.0.0"),
+  workspaces: z.array(WorkspaceSchema).default([]),
+  "server.port": z.number().min(0).default(3673),
+  "registry.url": z.string().default("https://registry.director.run"),
+  "registry.apiKey": z.string().optional(),
+  "telemetry.writeKey": z.string().default(""),
+  "telemetry.enabled": z.boolean().default(false),
+  oauth: z
+    .object({
+      storage: z.literal("disk"),
+      tokenDirectory: z.string(),
+    })
+    .default({
+      storage: "disk",
+      tokenDirectory: "./tokens",
+    }),
+};

@@ -36,7 +36,7 @@ export async function startGateway(successCallback?: () => void) {
   await Gateway.start(
     {
       port: env.GATEWAY_PORT,
-      config: await Config.connect(env.CONFIG_FILE_PATH),
+      config: await Config.create(env.CONFIG_FILE_PATH),
       registryURL: env.REGISTRY_API_URL,
       studioDistPath: resolveStudioDistPath(),
       allowedOrigins: [env.STUDIO_URL, /^https?:\/\/localhost(:\d+)?$/],

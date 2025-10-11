@@ -102,7 +102,7 @@ export class WorkspacesConfig {
 export class Config extends YAMLConfig<typeof databaseAttributesSchema> {
   public readonly workspaces: WorkspacesConfig;
 
-  constructor(config: {
+  private constructor(config: {
     filePath: string;
     defaultData: Record<string, unknown>;
   }) {
@@ -114,7 +114,7 @@ export class Config extends YAMLConfig<typeof databaseAttributesSchema> {
     this.workspaces = new WorkspacesConfig(this);
   }
 
-  static async connect(filePath: string): Promise<Config> {
+  static async create(filePath: string): Promise<Config> {
     const config = new Config({
       filePath,
       defaultData: {

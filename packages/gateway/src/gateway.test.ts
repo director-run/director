@@ -10,7 +10,7 @@ describe("Gateway", () => {
   beforeAll(async () => {
     gateway = await Gateway.start({
       port: TEST_PORT,
-      config: await Config.connect(path.join(__dirname, "config.test.yaml")),
+      config: await Config.create(path.join(__dirname, "config.test.yaml")),
       registryURL: "http://localhost:3000",
       headers: {
         "x-cli-version": "1.2.3",

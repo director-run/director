@@ -14,7 +14,7 @@ describe("Workspace", () => {
     if (fs.existsSync(dbPath)) {
       await fs.promises.unlink(dbPath);
     }
-    config = await Config.connect(dbPath);
+    config = await Config.create(dbPath);
     await config.purge();
     workspace = await Workspace.fromConfig(
       {
@@ -50,7 +50,7 @@ describe("Workspace", () => {
       expect(workspace.targets).toHaveLength(1); // Only prompt manager remains
       expect(removedTarget.status).toBe("disconnected");
 
-      const db = await Config.connect(dbPath);
+      const db = await Config.create(dbPath);
       const workspaceEntry = await db.workspaces.getWorkspace("test-workspace");
       expect(workspaceEntry.servers).toHaveLength(0);
     });

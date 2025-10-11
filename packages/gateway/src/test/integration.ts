@@ -47,7 +47,7 @@ export class IntegrationTestHarness {
   public static async start() {
     const gateway = await Gateway.start({
       port: IntegrationTestHarness.gatewayPort,
-      config: await Config.connect(path.join(__dirname, "config.test.yaml")),
+      config: await Config.create(path.join(__dirname, "config.test.yaml")),
       registryURL: "http://localhost:3000",
       oauth: {
         storage: "memory",

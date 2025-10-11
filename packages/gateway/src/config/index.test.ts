@@ -11,7 +11,7 @@ describe("Config", () => {
     if (fs.existsSync(dbPath)) {
       await fs.promises.unlink(dbPath);
     }
-    db = await Config.connect(dbPath);
+    db = await Config.create(dbPath);
   });
 
   beforeEach(async () => {
@@ -31,7 +31,7 @@ describe("Config", () => {
         await fs.promises.unlink(newDbPath);
       }
 
-      const newDb = await Config.connect(newDbPath);
+      const newDb = await Config.create(newDbPath);
 
       expect(fs.existsSync(newDbPath)).toBe(true);
       expect(newDb.filePath).toBe(newDbPath);
@@ -42,7 +42,7 @@ describe("Config", () => {
 
     it("should connect to existing database file", async () => {
       // Create a database first
-      const existingDb = await Config.connect(dbPath);
+      const existingDb = await Config.create(dbPath);
       await existingDb.workspaces.create({
         name: "test-proxy",
         description: "Test proxy",
@@ -50,7 +50,7 @@ describe("Config", () => {
       });
 
       // Connect to the same file
-      const connectedDb = await Config.connect(dbPath);
+      const connectedDb = await Config.create(dbPath);
       const proxies = await connectedDb.workspaces.all();
 
       expect(proxies).toHaveLength(1);

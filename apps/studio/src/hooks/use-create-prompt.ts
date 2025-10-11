@@ -20,18 +20,18 @@ export function useCreatePrompt(
   const utils = gatewayClient.useUtils();
 
   const mutation = gatewayClient.store.addPrompt.useMutation({
-    async onSuccess(response, variables, context) {
+    async onSuccess(response, variables, context, meta) {
       await Promise.all([
         utils.store.get.invalidate({ proxyId }),
         utils.store.getAll.invalidate(),
         utils.store.listPrompts?.invalidate?.({ proxyId }),
       ]);
       if (options?.onSuccess) {
-        await options.onSuccess(response, variables, context);
+        await options.onSuccess(response, variables, context, meta);
       }
     },
-    onError(error, variables, context) {
-      options?.onError?.(error, variables, context);
+    onError(error, variables, context, meta) {
+      options?.onError?.(error, variables, context, meta);
     },
   });
 

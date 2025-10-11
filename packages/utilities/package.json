@@ -14,13 +14,16 @@
     "test": "vitest"
   },
   "devDependencies": {
-    "@types/express": "^5.0.0",
     "@types/bun": "latest",
+    "@types/content-type": "^1.1.8",
+    "@types/express": "^5.0.0",
+    "@types/lodash": "^4.17.13",
     "type-fest": "^4.40.0",
     "typescript": "^5.8.3",
     "vitest": "^3.1.1"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "1.17.0",
     "@segment/analytics-node": "^2.3.0",
     "@t3-oss/env-core": "^0.12.0",
     "@trpc/client": "^11.0.2",

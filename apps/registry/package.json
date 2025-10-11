@@ -24,6 +24,7 @@
     "@director.run/utilities": "workspace:*",
     "@faker-js/faker": "^9.7.0",
     "@types/bun": "latest",
+    "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/lodash": "^4.17.16",
     "@types/pg": "^8.11.14",
@@ -33,6 +34,7 @@
   },
   "dependencies": {
     "@inquirer/prompts": "^7.5.2",
+    "@modelcontextprotocol/sdk": "1.17.0",
     "@trpc/client": "^11.0.2",
     "@trpc/server": "^11.0.2",
     "commander": "^13.1.0",

@@ -115,10 +115,10 @@ export class Gateway {
           };
         },
         onAuthorizationError: (factoryId, providerId, error) => {
-          logger.error(
-            `failed to authorize ${factoryId} ${providerId}: ${error.message}`,
+          logger.error({
             error,
-          );
+            message: `failed to authorize ${factoryId} ${providerId}: ${error.message}`,
+          });
           return {
             redirectUrl: `http://localhost:${isDevelopment() ? 3000 : attribs.port}/oauth/${factoryId}/${providerId}/callback?error=${JSON.stringify(error)}`,
           };

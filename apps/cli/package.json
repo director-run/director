@@ -36,9 +36,14 @@
     "@director.run/client-configurator": "workspace:*",
     "@director.run/gateway": "workspace:*",
     "@director.run/mcp": "workspace:*",
+    "@director.run/registry": "workspace:*",
     "@director.run/utilities": "workspace:*",
     "@inquirer/prompts": "^7.5.2",
+    "@modelcontextprotocol/sdk": "1.17.0",
     "@segment/analytics-node": "^2.3.0",
+    "@trpc/server": "^11.0.2",
+    "@types/semver": "^7.5.8",
+    "@types/update-notifier": "^6.0.8",
     "boxen": "^8.0.1",
     "chalk": "^5.4.1",
     "cli-table3": "^0.6.5",
@@ -46,14 +51,11 @@
     "node-machine-id": "^1.1.12",
     "semver": "^7.7.2",
     "superjson": "^2.2.2",
-    "update-notifier": "^7.3.1",
-    "zx": "^8.8.0",
-    "@director.run/registry": "workspace:*",
-    "@modelcontextprotocol/sdk": "1.17.0",
-    "@types/update-notifier": "^6.0.8",
     "type-fest": "^4.40.0",
     "typescript": "^5.8.3",
+    "update-notifier": "^7.3.1",
     "vitest": "^3.1.1",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "zx": "^8.8.0"
   }
 }

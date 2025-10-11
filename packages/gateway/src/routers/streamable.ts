@@ -76,7 +76,8 @@ export const createStreamableRouter = ({
 
         // Clean up transport when closed
         transport.onclose = () => {
-          logger.info(`[${proxy.id}] transport closed`, {
+          logger.info({
+            message: `[${proxy.id}] transport closed`,
             proxyId: proxy.id,
             sessionId: transport.sessionId,
           });
@@ -86,7 +87,8 @@ export const createStreamableRouter = ({
         };
 
         req.socket.on("close", () => {
-          logger.info(`[${proxy.id}] socket closed'`, {
+          logger.info({
+            message: `[${proxy.id}] socket closed'`,
             proxyId: proxy.id,
             sessionId: transport.sessionId,
           });

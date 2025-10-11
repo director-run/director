@@ -18,6 +18,7 @@
     "@director.run/gateway": "workspace:*",
     "@director.run/mcp": "workspace:*",
     "@director.run/registry": "workspace:*",
+    "@director.run/utilities": "workspace:*",
     "@hookform/resolvers": "^5.0.1",
     "@phosphor-icons/react": "^2.1.10",
     "@radix-ui/react-accordion": "^1.2.11",

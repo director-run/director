@@ -89,7 +89,6 @@ export function asyncHandler(fn: RequestHandler): RequestHandler {
 
 export function logRequests() {
   return pinoHttp({
-    logger,
     useLevel: "trace",
     // Ignore TRPC requests
     autoLogging: {

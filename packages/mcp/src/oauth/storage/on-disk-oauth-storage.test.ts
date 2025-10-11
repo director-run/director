@@ -26,7 +26,7 @@ describe("OnDiskOAuthStorage", () => {
 
   afterEach(async () => {
     // Clean up temporary directory
-    await fs.promises.rm(tempDir, { recursive: true, force: true });
+    await fs.promises.rmdir(tempDir, { recursive: true });
   });
 
   it("should save and load client information", async () => {

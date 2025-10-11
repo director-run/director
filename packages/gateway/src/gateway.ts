@@ -161,7 +161,6 @@ export class Gateway {
     await this.workspaceStore.closeAll();
     await new Promise<void>((resolve) => {
       // Close all existing connections
-      this.server.closeAllConnections();
       // Stop accepting new connections
       this.server.close(() => resolve());
     });

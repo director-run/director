@@ -1,8 +1,10 @@
+import fs from "node:fs";
+import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 import { WorkspaceSchema } from "../workspaces/workspace";
 import { ConfigBase } from "./config-base";
-import { InMemoryConfigStorage } from "./config-storage";
+import { InMemoryConfigStorage, YamlConfigStorage } from "./config-storage";
 
 const configSchema = {
   "server.port": z.number().min(0).default(3673),
@@ -132,5 +134,32 @@ describe("ConfigBase", () => {
     await expect(configBase.init()).rejects.toThrow(
       /Invalid data for key "server\.port"/,
     );
+  });
+
+  describe("with file storage", () => {
+    it("should create a new database file if it doesn't exist", async () => {
+      const newDbPath = path.join(__dirname, "./new-db.test.json");
+
+      // Ensure the file doesn't exist
+      if (fs.existsSync(newDbPath)) {
+        await fs.promises.unlink(newDbPath);
+      }
+
+      expect(fs.existsSync(newDbPath)).toBe(false);
+
+      const storage = new YamlConfigStorage({
+        filePath: newDbPath,
+        seedData: {},
+      });
+
+      const configBase = new ConfigBase({ schema: configSchema, storage });
+      await configBase.init();
+
+      expect(fs.existsSync(newDbPath)).toBe(true);
+      expect(storage.filePath).toBe(newDbPath);
+
+      // Clean up
+      await fs.promises.unlink(newDbPath);
+    });
   });
 });

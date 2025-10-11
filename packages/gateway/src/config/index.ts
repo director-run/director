@@ -8,7 +8,11 @@ import {
   WorkspaceSchema,
 } from "../workspaces/workspace-schema";
 import { ConfigBase } from "./config-base";
-import { type ConfigStorage, YamlConfigStorage } from "./config-storage";
+import {
+  type ConfigStorage,
+  InMemoryConfigStorage,
+  YamlConfigStorage,
+} from "./config-storage";
 
 export class Config extends ConfigBase<typeof configSchema> {
   public readonly workspaces: WorkspacesConfig;
@@ -23,17 +27,10 @@ export class Config extends ConfigBase<typeof configSchema> {
     this.workspaces = new WorkspacesConfig(this);
   }
 
-  get filePath(): string {
-    return (this.storage as YamlConfigStorage).filePath;
-  }
-
   static async createFileBasedConfig(filePath: string): Promise<Config> {
     const storage = new YamlConfigStorage({
       filePath: filePath,
-      seedData: {
-        version: "1.0.0",
-        workspaces: [],
-      },
+      seedData: seedData(),
     });
     const config = new Config({
       storage,
@@ -41,6 +38,24 @@ export class Config extends ConfigBase<typeof configSchema> {
     await config.init();
     return config;
   }
+
+  static async createMemoryBasedConfig(): Promise<Config> {
+    const storage = new InMemoryConfigStorage({
+      seedData: seedData(),
+    });
+    const config = new Config({
+      storage,
+    });
+    await config.init();
+    return config;
+  }
+}
+
+function seedData(): Record<string, unknown> {
+  return {
+    version: "1.0.0",
+    workspaces: [],
+  };
 }
 
 class WorkspacesConfig {

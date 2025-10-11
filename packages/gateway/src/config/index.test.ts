@@ -23,23 +23,6 @@ describe("Config", () => {
   });
 
   describe("connect", () => {
-    it("should create a new database file if it doesn't exist", async () => {
-      const newDbPath = path.join(__dirname, "./new-db.test.json");
-
-      // Ensure the file doesn't exist
-      if (fs.existsSync(newDbPath)) {
-        await fs.promises.unlink(newDbPath);
-      }
-
-      const newDb = await Config.createFileBasedConfig(newDbPath);
-
-      expect(fs.existsSync(newDbPath)).toBe(true);
-      expect(newDb.filePath).toBe(newDbPath);
-
-      // Clean up
-      await fs.promises.unlink(newDbPath);
-    });
-
     it("should connect to existing database file", async () => {
       // Create a database first
       const existingDb = await Config.createFileBasedConfig(dbPath);

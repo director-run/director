@@ -128,6 +128,28 @@ describe("ConfigBase", () => {
     expect(storage.getData()).toMatchObject({ server: { port: 1234 } });
   });
 
+  describe("with defaults", () => {
+    it("should throw an error if default is invalid", async () => {
+      const configSchema = {
+        "server.port": z.number().min(0).default(3673),
+      };
+      const storage = new InMemoryConfigStorage();
+      const configBase = new ConfigBase({
+        schema: configSchema,
+        storage,
+        defaults: {
+          server: {
+            port: "default description",
+          },
+        },
+      });
+      await expectToThrowAppError(() => configBase.init(), {
+        code: ErrorCode.INVALID_CONFIGURATION,
+        props: { key: "server.port", value: "default description" },
+      });
+    });
+  });
+
   it("should return default value when key is not set", async () => {
     const configSchema = {
       "server.port": z.number().min(0).default(3673),

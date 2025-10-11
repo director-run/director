@@ -5,9 +5,10 @@ import {
   makeKitchenSinkServer,
 } from "@director.run/mcp/test/fixtures";
 import { serveOverSSE, serveOverStreamable } from "@director.run/mcp/transport";
+import { requiredStringSchema } from "@director.run/utilities/schema";
+import { z } from "zod";
 import { createGatewayClient } from "../client";
 import { Config } from "../config";
-import type { HTTPTransport } from "../config/config-schema";
 import { Gateway } from "../gateway";
 
 const PROXY_TARGET_PORT = 4521;
@@ -129,3 +130,11 @@ export function makeHTTPTargetConfig(params: {
     },
   };
 }
+
+export const httpTransportSchema = z.object({
+  type: z.literal("http"),
+  url: requiredStringSchema.url(),
+  headers: z.record(requiredStringSchema, z.string()).optional(),
+});
+
+export type HTTPTransport = z.infer<typeof httpTransportSchema>;

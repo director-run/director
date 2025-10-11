@@ -7,6 +7,7 @@ import {
 } from "@director.run/mcp/test/fixtures";
 import { serveOverSSE, serveOverStreamable } from "@director.run/mcp/transport";
 import { createGatewayClient } from "../client";
+import { Config } from "../config";
 import type { HTTPTransport } from "../config/schema";
 import { Gateway } from "../gateway";
 
@@ -46,10 +47,7 @@ export class IntegrationTestHarness {
   public static async start() {
     const gateway = await Gateway.start({
       port: IntegrationTestHarness.gatewayPort,
-      configuration: {
-        type: "yaml",
-        filePath: path.join(__dirname, "config.test.yaml"),
-      },
+      config: await Config.connect(path.join(__dirname, "config.test.yaml")),
       registryURL: "http://localhost:3000",
       oauth: {
         storage: "memory",

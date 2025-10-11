@@ -28,23 +28,20 @@ export class Gateway {
   private constructor(attribs: {
     workspaceStore: WorkspaceStore;
     port: number;
-    db: Config;
+    config: Config;
     server: Server;
   }) {
     this.port = attribs.port;
     this.workspaceStore = attribs.workspaceStore;
     this.server = attribs.server;
-    this.db = attribs.db;
+    this.db = attribs.config;
   }
 
   public static async start(
     attribs: {
       port: number;
       studioDistPath?: string;
-      configuration: {
-        type: "yaml";
-        filePath: string;
-      };
+      config: Config;
       registryURL: string;
       allowedOrigins?: (string | RegExp)[];
       telemetry?: {
@@ -66,7 +63,6 @@ export class Gateway {
   ) {
     logger.info(`starting director gateway`);
 
-    const db = await Config.connect(attribs.configuration.filePath);
     const telemetry = attribs.telemetry
       ? new Telemetry({
           writeKey: attribs.telemetry.writeKey,
@@ -76,7 +72,7 @@ export class Gateway {
       : Telemetry.noTelemetry();
 
     const workspaceStore = await WorkspaceStore.create({
-      config: db,
+      config: attribs.config,
       telemetry,
       oauth: attribs.oauth
         ? {
@@ -162,7 +158,7 @@ export class Gateway {
 
     const gateway = new Gateway({
       port: attribs.port,
-      db,
+      config: attribs.config,
       workspaceStore,
       server,
     });

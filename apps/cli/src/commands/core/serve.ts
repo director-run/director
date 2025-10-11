@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
+import { Config } from "@director.run/gateway/config/index";
 import { Gateway } from "@director.run/gateway/gateway";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import {
@@ -35,10 +36,7 @@ export async function startGateway(successCallback?: () => void) {
   await Gateway.start(
     {
       port: env.GATEWAY_PORT,
-      configuration: {
-        type: "yaml",
-        filePath: env.CONFIG_FILE_PATH,
-      },
+      config: await Config.connect(env.CONFIG_FILE_PATH),
       registryURL: env.REGISTRY_API_URL,
       studioDistPath: resolveStudioDistPath(),
       allowedOrigins: [env.STUDIO_URL, /^https?:\/\/localhost(:\d+)?$/],

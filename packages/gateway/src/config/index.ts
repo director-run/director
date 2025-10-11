@@ -19,29 +19,34 @@ export class Config extends ConfigBase<typeof configSchema> {
 
   private constructor(params: {
     storage: ConfigStorage;
+    defaults: Record<string, unknown>;
   }) {
     super({
       schema: configSchema,
       storage: params.storage,
+      defaults: params.defaults,
     });
     this.workspaces = new WorkspacesConfig(this);
   }
 
-  static async createFileBasedConfig(filePath: string): Promise<Config> {
-    const storage = new YamlConfigStorage({
-      filePath: filePath,
-    });
+  static async createFileBasedConfig(params: {
+    filePath: string;
+    defaults: Record<string, unknown>;
+  }): Promise<Config> {
     const config = new Config({
-      storage,
+      storage: new YamlConfigStorage({ filePath: params.filePath }),
+      defaults: params.defaults,
     });
     await config.init();
     return config;
   }
 
-  static async createMemoryBasedConfig(): Promise<Config> {
-    const storage = new InMemoryConfigStorage();
+  static async createMemoryBasedConfig(params: {
+    defaults: Record<string, unknown>;
+  }): Promise<Config> {
     const config = new Config({
-      storage,
+      storage: new InMemoryConfigStorage(),
+      defaults: params.defaults,
     });
     await config.init();
     return config;
@@ -128,11 +133,11 @@ function slugifyName(name: string): string {
 const configSchema = {
   version: z.string().default("1.0.0"),
   workspaces: z.array(WorkspaceSchema).default([]),
-  "server.port": z.number().min(0).default(3673),
-  "registry.url": z.string().default("https://registry.director.run"),
+  "server.port": z.number().min(0),
+  "registry.url": z.string(),
   "registry.apiKey": z.string().optional(),
-  "telemetry.writeKey": z.string().default(""),
-  "telemetry.enabled": z.boolean().default(false),
+  "telemetry.writeKey": z.string(),
+  "telemetry.enabled": z.boolean(),
   oauth: z
     .object({
       storage: z.literal("disk"),

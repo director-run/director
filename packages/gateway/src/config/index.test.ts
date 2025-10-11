@@ -3,6 +3,25 @@ import path from "node:path";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { Config } from "./index";
 
+function makeDefaults() {
+  return {
+    registry: {
+      url: "https://registry.director.run",
+    },
+    server: {
+      port: 3673,
+    },
+    telemetry: {
+      writeKey: "test-write-key",
+      enabled: true,
+    },
+    oauth: {
+      storage: "disk",
+      tokenDirectory: "./tokens",
+    },
+  };
+}
+
 describe("Config", () => {
   let db: Config;
   const dbPath = path.join(__dirname, "./config.test.yaml");
@@ -11,7 +30,10 @@ describe("Config", () => {
     if (fs.existsSync(dbPath)) {
       await fs.promises.unlink(dbPath);
     }
-    db = await Config.createFileBasedConfig(dbPath);
+    db = await Config.createFileBasedConfig({
+      filePath: dbPath,
+      defaults: makeDefaults(),
+    });
   });
 
   beforeEach(async () => {
@@ -25,7 +47,10 @@ describe("Config", () => {
   describe("connect", () => {
     it("should connect to existing database file", async () => {
       // Create a database first
-      const existingDb = await Config.createFileBasedConfig(dbPath);
+      const existingDb = await Config.createFileBasedConfig({
+        filePath: dbPath,
+        defaults: makeDefaults(),
+      });
       await existingDb.workspaces.create({
         name: "test-proxy",
         description: "Test proxy",
@@ -33,7 +58,10 @@ describe("Config", () => {
       });
 
       // Connect to the same file
-      const connectedDb = await Config.createFileBasedConfig(dbPath);
+      const connectedDb = await Config.createFileBasedConfig({
+        filePath: dbPath,
+        defaults: makeDefaults(),
+      });
       const proxies = await connectedDb.workspaces.all();
 
       expect(proxies).toHaveLength(1);

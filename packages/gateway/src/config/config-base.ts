@@ -100,6 +100,6 @@ export class ConfigBase<TSchema extends Record<string, z.ZodType>> {
       }
     }
 
-    this.storage.setData(validatedData);
+    // Don't persist defaults to storage - only validate
   }
 }

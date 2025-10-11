@@ -31,11 +31,11 @@ export class InMemoryConfigStorage implements ConfigStorage {
   }
 
   getData(): Record<string, unknown> {
-    return this.data;
+    return structuredClone(this.data);
   }
 
   setData(data: Record<string, unknown>): void {
-    this.data = data;
+    this.data = structuredClone(data);
   }
 }
 
@@ -66,10 +66,10 @@ export class YamlConfigStorage implements ConfigStorage {
   }
 
   getData(): Record<string, unknown> {
-    return this.data;
+    return structuredClone(this.data);
   }
 
   setData(data: Record<string, unknown>): void {
-    this.data = data;
+    this.data = structuredClone(data);
   }
 }

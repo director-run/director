@@ -18,8 +18,12 @@ describe("ConfigBase", () => {
       schema: configSchema,
       storage,
       defaults: {
-        "server.port": 3673,
-        "registry.url": "https://registry.director.run",
+        server: {
+          port: 3673,
+        },
+        registry: {
+          url: "https://registry.director.run",
+        },
       },
     });
     await configBase.init();

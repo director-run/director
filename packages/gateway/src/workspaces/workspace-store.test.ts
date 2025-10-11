@@ -1,5 +1,3 @@
-import fs from "node:fs";
-import path from "node:path";
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Config } from "../config";
@@ -8,13 +6,9 @@ import { WorkspaceStore } from "./workspace-store";
 
 describe("WorkspaceStore", () => {
   let workspaceStore: WorkspaceStore;
-  const dbPath = path.join(__dirname, "../test/config.test.yaml");
 
   beforeEach(async () => {
-    if (fs.existsSync(dbPath)) {
-      await fs.promises.unlink(dbPath);
-    }
-    const db = await Config.createFileBasedConfig(dbPath);
+    const db = await Config.createMemoryBasedConfig();
     workspaceStore = await WorkspaceStore.create({
       config: db,
       oauth: {

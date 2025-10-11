@@ -1,4 +1,3 @@
-import path from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Config } from "./config";
 import { Gateway } from "./gateway";
@@ -10,9 +9,7 @@ describe("Gateway", () => {
   beforeAll(async () => {
     gateway = await Gateway.start({
       port: TEST_PORT,
-      config: await Config.createFileBasedConfig(
-        path.join(__dirname, "config.test.yaml"),
-      ),
+      config: await Config.createMemoryBasedConfig(),
       registryURL: "http://localhost:3000",
       headers: {
         "x-cli-version": "1.2.3",

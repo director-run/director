@@ -1,5 +1,4 @@
 import type { Server } from "node:http";
-import path from "node:path";
 import {
   makeEchoServer,
   makeFooBarServer,
@@ -47,9 +46,7 @@ export class IntegrationTestHarness {
   public static async start() {
     const gateway = await Gateway.start({
       port: IntegrationTestHarness.gatewayPort,
-      config: await Config.createFileBasedConfig(
-        path.join(__dirname, "config.test.yaml"),
-      ),
+      config: await Config.createMemoryBasedConfig(),
       registryURL: "http://localhost:3000",
       oauth: {
         storage: "memory",

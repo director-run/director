@@ -156,7 +156,6 @@ async function addServerFromRegistry(proxyId: string, entryName: string) {
         source: {
           name: "registry",
           entryId: entry.id,
-          entryData: entry,
         },
       },
     });

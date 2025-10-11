@@ -33,21 +33,27 @@
     "typescript": "^5"
   },
   "devDependencies": {
+    "@director.run/client-configurator": "workspace:*",
     "@director.run/gateway": "workspace:*",
     "@director.run/mcp": "workspace:*",
     "@director.run/utilities": "workspace:*",
     "@inquirer/prompts": "^7.5.2",
-    "@types/update-notifier": "^6.0.8",
+    "@segment/analytics-node": "^2.3.0",
     "boxen": "^8.0.1",
     "chalk": "^5.4.1",
     "cli-table3": "^0.6.5",
     "commander": "^13.1.0",
+    "node-machine-id": "^1.1.12",
     "semver": "^7.7.2",
     "superjson": "^2.2.2",
-    "type-fest": "^4.40.0",
     "update-notifier": "^7.3.1",
-    "@segment/analytics-node": "^2.3.0",
-    "node-machine-id": "^1.1.12",
-    "zx": "^8.8.0"
+    "zx": "^8.8.0",
+    "@director.run/registry": "workspace:*",
+    "@modelcontextprotocol/sdk": "1.17.0",
+    "@types/update-notifier": "^6.0.8",
+    "type-fest": "^4.40.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.1",
+    "zod": "^3.25.76"
   }
 }

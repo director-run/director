@@ -31,19 +31,21 @@
     "typecheck": "tsc --noEmit",
     "build": "bun run clean && tsup",
     "release": "changeset publish",
-    "prepare": "bun run build",
     "dev": "bun --watch bin/cli.ts"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "devDependencies": {
-    "tsup": "^8.5.0"
+    "tree-kill": "^1.2.2",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.1"
   },
   "dependencies": {
     "@director.run/gateway": "workspace:*",
     "@director.run/registry": "workspace:*",
-    "@trpc/client": "^11.4.3",
-    "@trpc/server": "^11.4.3"
+    "@trpc/client": "^11.0.2",
+    "@trpc/server": "^11.0.2"
   }
 }

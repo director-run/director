@@ -3,13 +3,11 @@ import * as trpcExpress from "@trpc/server/adapters/express";
 import { getStatus } from "../../status";
 import { WorkspaceStore } from "../../workspaces/workspace-store";
 import { createInstallerRouter } from "./installer-router";
-import { createRegistryRouter } from "./registry-router";
 import { createProxyStoreRouter } from "./store-router";
 import { createToolsRouter } from "./tools-router";
 
 export function createAppRouter({
   workspaceStore,
-  registryURL,
 }: {
   workspaceStore: WorkspaceStore;
   registryURL: string;
@@ -20,7 +18,6 @@ export function createAppRouter({
     }),
     store: createProxyStoreRouter({ workspaceStore }),
     installer: createInstallerRouter({ workspaceStore }),
-    registry: createRegistryRouter({ registryURL }),
     tools: createToolsRouter({ workspaceStore }),
   });
 }

@@ -7,7 +7,9 @@
     "./*": "./src/*.ts"
   },
   "dependencies": {
-    "@director.run/mcp": "workspace:*"
+    "@director.run/mcp": "workspace:*",
+    "@director.run/utilities": "workspace:*",
+    "zod": "^3.25.76"
   },
   "scripts": {
     "lint": "biome check .",
@@ -17,6 +19,7 @@
     "test": "bun run vitest  --fileParallelism=false"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.7.0",
     "@types/bun": "latest",
     "type-fest": "^4.40.0",
     "typescript": "^5.8.3",

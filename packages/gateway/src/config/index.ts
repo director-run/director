@@ -11,7 +11,7 @@ import { ConfigBase } from "./config-base";
 import { YamlConfigStorage } from "./config-storage";
 
 export const databaseAttributesSchema = {
-  version: z.string().optional(),
+  version: z.string().default("1.0.0"),
   workspaces: z.array(WorkspaceSchema).default([]),
   "server.port": z.number().min(0).default(3673),
   "registry.url": z.string().default("https://registry.director.run"),

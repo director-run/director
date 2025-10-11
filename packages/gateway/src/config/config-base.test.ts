@@ -45,6 +45,18 @@ describe("ConfigBase", () => {
     expect(configBase.get("registry.apiKey")).toBeUndefined();
   });
 
+  it("should throw an error if a required key is not set in the storage", async () => {
+    const configBase = new ConfigBase({
+      schema: {
+        "registry.apiKey": z.string(),
+      },
+      storage: new InMemoryConfigStorage(),
+    });
+    await expect(configBase.init()).rejects.toThrow(
+      /Invalid data for key "registry\.apiKey"/,
+    );
+  });
+
   it("should load existing data from storage", async () => {
     const seedData = {
       server: {

@@ -1,5 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
+import { ErrorCode } from "@director.run/utilities/error";
+import { expectToThrowAppError } from "@director.run/utilities/test";
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 import { ConfigBase } from "./config-base";
@@ -39,9 +41,10 @@ describe("ConfigBase", () => {
       },
       storage: new InMemoryConfigStorage(),
     });
-    await expect(configBase.init()).rejects.toThrow(
-      /Invalid data for key "registry\.apiKey"/,
-    );
+    await expectToThrowAppError(() => configBase.init(), {
+      code: ErrorCode.INVALID_CONFIGURATION,
+      props: { key: "registry.apiKey" },
+    });
   });
 
   it("should load existing data from storage", async () => {
@@ -122,9 +125,10 @@ describe("ConfigBase", () => {
     };
     const storage = new InMemoryConfigStorage({ data: invalidData });
     const configBase = new ConfigBase({ schema: configSchema, storage });
-    await expect(configBase.init()).rejects.toThrow(
-      /Invalid data for key "server\.port"/,
-    );
+    await expectToThrowAppError(() => configBase.init(), {
+      code: ErrorCode.INVALID_CONFIGURATION,
+      props: { key: "server.port", value: -5 },
+    });
   });
 
   it("should throw validation error for wrong type in storage", async () => {
@@ -138,9 +142,10 @@ describe("ConfigBase", () => {
     };
     const storage = new InMemoryConfigStorage({ data: invalidData });
     const configBase = new ConfigBase({ schema: configSchema, storage });
-    await expect(configBase.init()).rejects.toThrow(
-      /Invalid data for key "server\.port"/,
-    );
+    await expectToThrowAppError(() => configBase.init(), {
+      code: ErrorCode.INVALID_CONFIGURATION,
+      props: { key: "server.port", value: "not a number" },
+    });
   });
 
   describe("with file storage", () => {

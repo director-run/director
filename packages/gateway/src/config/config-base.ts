@@ -1,3 +1,4 @@
+import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { get, set } from "lodash";
 import { z } from "zod";
 import { type ConfigStorage } from "./config-storage";
@@ -31,7 +32,11 @@ export class ConfigBase<TSchema extends Record<string, z.ZodType>> {
     value: z.infer<TSchema[K]>,
   ): Promise<void> {
     if (!(key in this.schema)) {
-      throw new Error(`Key "${key}" is not allowed`);
+      throw new AppError(
+        ErrorCode.INVALID_ARGUMENT,
+        `Key "${key}" is not allowed`,
+        { key },
+      );
     }
 
     // Validate against the schema
@@ -49,7 +54,11 @@ export class ConfigBase<TSchema extends Record<string, z.ZodType>> {
     key: K,
   ): z.infer<TSchema[K]> | undefined {
     if (!(key in this.schema)) {
-      throw new Error(`Key "${key}" is not allowed`);
+      throw new AppError(
+        ErrorCode.INVALID_ARGUMENT,
+        `Key "${key}" is not allowed`,
+        { key },
+      );
     }
 
     const value = get({ ...this.defaults, ...this.storage.getData() }, key);
@@ -83,8 +92,10 @@ export class ConfigBase<TSchema extends Record<string, z.ZodType>> {
       try {
         keySchema.parse(value);
       } catch (error) {
-        throw new Error(
+        throw new AppError(
+          ErrorCode.INVALID_CONFIGURATION,
           `Invalid data for key "${key}": ${error instanceof Error ? error.message : String(error)}`,
+          { key, value },
         );
       }
     }

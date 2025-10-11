@@ -10,7 +10,6 @@ async function main() {
     port: env.GATEWAY_PORT,
     config,
     registryURL: env.REGISTRY_API_URL,
-    allowedOrigins: [env.STUDIO_URL, /^https?:\/\/localhost(:\d+)?$/],
   });
 
   await gateway.workspaceStore.purge();

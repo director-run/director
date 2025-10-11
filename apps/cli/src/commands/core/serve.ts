@@ -10,6 +10,7 @@ import {
   printDirectorAscii,
 } from "@director.run/utilities/cli/index";
 import { getLogger } from "@director.run/utilities/logger";
+import { Telemetry } from "@director.run/utilities/telemetry";
 import packageJson from "../../../package.json";
 import { env } from "../../env";
 
@@ -39,17 +40,13 @@ export async function startGateway(successCallback?: () => void) {
       config: await Config.createFileBasedConfig(env.CONFIG_FILE_PATH),
       registryURL: env.REGISTRY_API_URL,
       studioDistPath: resolveStudioDistPath(),
-      allowedOrigins: [env.STUDIO_URL, /^https?:\/\/localhost(:\d+)?$/],
-      telemetry: {
+      telemetry: new Telemetry({
         writeKey: env.SEGMENT_WRITE_KEY,
         enabled: env.SEND_TELEMETRY,
         traits: {
           cliVersion: packageJson.version,
         },
-      },
-      headers: {
-        "X-Cli-Version": packageJson.version,
-      },
+      }),
       oauth: {
         storage: "disk",
         tokenDirectory: env.OAUTH_TOKEN_DIRECTORY,

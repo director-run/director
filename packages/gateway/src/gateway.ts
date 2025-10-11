@@ -19,6 +19,8 @@ import { WorkspaceStore } from "./workspaces/workspace-store";
 
 const logger = getLogger("Gateway");
 
+const ALLOWED_ORIGINS = [/^https?:\/\/localhost(:\d+)?$/];
+
 export class Gateway {
   public readonly workspaceStore: WorkspaceStore;
   public readonly port: number;
@@ -43,13 +45,7 @@ export class Gateway {
       studioDistPath?: string;
       config: Config;
       registryURL: string;
-      allowedOrigins?: (string | RegExp)[];
-      telemetry?: {
-        enabled: boolean;
-        writeKey: string;
-        traits: Record<string, string>;
-      };
-      headers?: Record<string, string>;
+      telemetry?: Telemetry;
       oauth?:
         | {
             storage: "disk";
@@ -63,17 +59,9 @@ export class Gateway {
   ) {
     logger.info(`starting director gateway`);
 
-    const telemetry = attribs.telemetry
-      ? new Telemetry({
-          writeKey: attribs.telemetry.writeKey,
-          enabled: attribs.telemetry.enabled,
-          traits: attribs.telemetry.traits,
-        })
-      : Telemetry.noTelemetry();
-
     const workspaceStore = await WorkspaceStore.create({
       config: attribs.config,
-      telemetry,
+      telemetry: attribs.telemetry,
       oauth: attribs.oauth
         ? {
             ...attribs.oauth,
@@ -84,18 +72,9 @@ export class Gateway {
     const app = express();
     const registryURL = attribs.registryURL;
 
-    if (attribs.headers) {
-      app.use((_req, res, next) => {
-        Object.entries(attribs.headers || {}).forEach(([key, value]) => {
-          res.setHeader(key, value);
-        });
-        next();
-      });
-    }
-
     app.use(
       cors({
-        origin: attribs.allowedOrigins,
+        origin: ALLOWED_ORIGINS,
       }),
     );
     app.use(logRequests());
@@ -114,8 +93,14 @@ export class Gateway {
         }),
       );
     }
-    app.use("/", createSSERouter({ workspaceStore, telemetry }));
-    app.use("/", createStreamableRouter({ workspaceStore, telemetry }));
+    app.use(
+      "/",
+      createSSERouter({ workspaceStore, telemetry: attribs.telemetry }),
+    );
+    app.use(
+      "/",
+      createStreamableRouter({ workspaceStore, telemetry: attribs.telemetry }),
+    );
     app.use(
       "/",
       createOauthCallbackRouter({
@@ -149,7 +134,7 @@ export class Gateway {
     app.all("*", notFoundHandler);
     app.use(errorRequestHandler);
 
-    telemetry.trackEvent("gateway_start");
+    attribs.telemetry?.trackEvent("gateway_start");
 
     const server = app.listen(attribs.port, () => {
       logger.info(`director gateway running on port ${attribs.port}`);

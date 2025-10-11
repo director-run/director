@@ -7,7 +7,8 @@ import {
   type WorkspaceParams,
   WorkspaceSchema,
 } from "../workspaces/workspace-schema";
-import { Config as BaseConfig, YamlStorage } from "./base-config";
+import { Config as BaseConfig } from "./base-config";
+import { YamlConfigStorage } from "./config-storage";
 
 export const databaseAttributesSchema = {
   version: z.string().optional(),
@@ -34,7 +35,7 @@ export class Config extends BaseConfig<typeof databaseAttributesSchema> {
     filePath: string;
     defaultData: Record<string, unknown>;
   }) {
-    const storage = new YamlStorage({
+    const storage = new YamlConfigStorage({
       filePath: config.filePath,
       defaultData: config.defaultData,
     });

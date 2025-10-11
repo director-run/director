@@ -56,13 +56,18 @@
       "name": "@director.run/registry",
       "version": "0.0.1",
       "dependencies": {
+        "@inquirer/prompts": "^7.5.2",
         "commander": "^13.1.0",
+        "cors": "^2.8.5",
         "drizzle-orm": "^0.43.1",
         "express": "^4.21.2",
         "git-url-parse": "^16.1.0",
+        "lodash": "^4.17.21",
         "pg": "^8.15.6",
+        "slugify": "^1.6.6",
       },
       "devDependencies": {
+        "@director.run/gateway": "workspace:*",
         "@director.run/mcp": "workspace:*",
         "@director.run/utilities": "workspace:*",
         "@faker-js/faker": "^9.7.0",

@@ -25,6 +25,7 @@
     "@types/pg": "^8.11.14",
     "@director.run/utilities": "workspace:*",
     "@director.run/mcp": "workspace:*",
+    "@director.run/gateway": "workspace:*",
     "drizzle-kit": "^0.31.1",
     "typescript": "^5.8.3",
     "vitest": "^3.1.1",
@@ -35,6 +36,10 @@
     "commander": "^13.1.0",
     "drizzle-orm": "^0.43.1",
     "git-url-parse": "^16.1.0",
-    "pg": "^8.15.6"
+    "pg": "^8.15.6",
+    "cors": "^2.8.5",
+    "lodash": "^4.17.21",
+    "slugify": "^1.6.6",
+    "@inquirer/prompts": "^7.5.2"
   }
 }

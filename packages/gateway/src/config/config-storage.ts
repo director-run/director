@@ -12,11 +12,11 @@ export interface ConfigStorage {
 
 export class InMemoryConfigStorage implements ConfigStorage {
   private data: Record<string, unknown>;
-  private defaultData: Record<string, unknown>;
+  private seedData: Record<string, unknown>;
 
-  constructor(params?: { data?: Record<string, unknown> }) {
-    this.defaultData = params?.data ?? {};
-    this.data = { ...this.defaultData };
+  constructor(params?: { seedData?: Record<string, unknown> }) {
+    this.seedData = params?.seedData ?? {};
+    this.data = { ...this.seedData };
   }
 
   init(): Promise<void> {
@@ -30,7 +30,7 @@ export class InMemoryConfigStorage implements ConfigStorage {
   }
 
   purge(): Promise<void> {
-    this.data = { ...this.defaultData };
+    this.data = { ...this.seedData };
     return Promise.resolve();
   }
 
@@ -46,23 +46,20 @@ export class InMemoryConfigStorage implements ConfigStorage {
 export class YamlConfigStorage implements ConfigStorage {
   public readonly filePath: string;
   private data: Record<string, unknown> = {};
-  private defaultData: Record<string, unknown>;
+  private seedData: Record<string, unknown>;
 
   constructor(params: {
     filePath: string;
-    defaultData: Record<string, unknown>;
+    seedData: Record<string, unknown>;
   }) {
     this.filePath = params.filePath;
-    this.defaultData = params.defaultData;
+    this.seedData = params.seedData;
   }
 
   async init(): Promise<void> {
     if (!existsSync(this.filePath)) {
-      await fs.promises.writeFile(
-        this.filePath,
-        YAML.stringify(this.defaultData),
-      );
-      this.data = { ...this.defaultData };
+      await fs.promises.writeFile(this.filePath, YAML.stringify(this.seedData));
+      this.data = { ...this.seedData };
     } else {
       const fileContent = await fs.promises.readFile(this.filePath, "utf8");
       this.data = YAML.parse(fileContent);
@@ -74,11 +71,8 @@ export class YamlConfigStorage implements ConfigStorage {
   }
 
   async purge(): Promise<void> {
-    await fs.promises.writeFile(
-      this.filePath,
-      YAML.stringify(this.defaultData),
-    );
-    this.data = { ...this.defaultData };
+    await fs.promises.writeFile(this.filePath, YAML.stringify(this.seedData));
+    this.data = { ...this.seedData };
   }
 
   getData(): Record<string, unknown> {

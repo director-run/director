@@ -20,7 +20,7 @@ export class Config extends ConfigBase<typeof configSchema> {
   }) {
     const storage = new YamlConfigStorage({
       filePath: config.filePath,
-      defaultData: config.defaultData,
+      seedData: config.defaultData,
     });
     super({
       schema: configSchema,
@@ -30,7 +30,7 @@ export class Config extends ConfigBase<typeof configSchema> {
     this.workspaces = new WorkspacesConfig(this);
   }
 
-  static async create(filePath: string): Promise<Config> {
+  static async createFileBasedConfig(filePath: string): Promise<Config> {
     const config = new Config({
       filePath,
       defaultData: {

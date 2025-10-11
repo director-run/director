@@ -22,7 +22,7 @@ describe("ConfigStorage implementations", () => {
       makeStorage: () =>
         new YamlConfigStorage({
           filePath: "config.test.yaml",
-          defaultData: {
+          seedData: {
             version: "1.0.0",
             workspaces: [],
           },

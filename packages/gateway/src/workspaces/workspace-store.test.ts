@@ -14,7 +14,7 @@ describe("WorkspaceStore", () => {
     if (fs.existsSync(dbPath)) {
       await fs.promises.unlink(dbPath);
     }
-    const db = await Config.create(dbPath);
+    const db = await Config.createFileBasedConfig(dbPath);
     workspaceStore = await WorkspaceStore.create({
       config: db,
       oauth: {

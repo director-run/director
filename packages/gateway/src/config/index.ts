@@ -30,7 +30,6 @@ export class Config extends ConfigBase<typeof configSchema> {
   static async createFileBasedConfig(filePath: string): Promise<Config> {
     const storage = new YamlConfigStorage({
       filePath: filePath,
-      seedData: seedData(),
     });
     const config = new Config({
       storage,
@@ -40,22 +39,13 @@ export class Config extends ConfigBase<typeof configSchema> {
   }
 
   static async createMemoryBasedConfig(): Promise<Config> {
-    const storage = new InMemoryConfigStorage({
-      seedData: seedData(),
-    });
+    const storage = new InMemoryConfigStorage();
     const config = new Config({
       storage,
     });
     await config.init();
     return config;
   }
-}
-
-function seedData(): Record<string, unknown> {
-  return {
-    version: "1.0.0",
-    workspaces: [],
-  };
 }
 
 class WorkspacesConfig {

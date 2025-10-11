@@ -69,7 +69,7 @@ describe("ConfigBase", () => {
         url: "https://example.com",
       },
     };
-    const storage = new InMemoryConfigStorage({ seedData: seedData });
+    const storage = new InMemoryConfigStorage({ data: seedData });
     const configBase = new ConfigBase({
       schema: configSchema,
       storage,
@@ -116,7 +116,7 @@ describe("ConfigBase", () => {
         port: -5, // Invalid: port must be >= 0
       },
     };
-    const storage = new InMemoryConfigStorage({ seedData: invalidData });
+    const storage = new InMemoryConfigStorage({ data: invalidData });
     const configBase = new ConfigBase({ schema: configSchema, storage });
     await expect(configBase.init()).rejects.toThrow(
       /Invalid data for key "server\.port"/,
@@ -129,7 +129,7 @@ describe("ConfigBase", () => {
         port: "not a number", // Invalid: port must be a number
       },
     };
-    const storage = new InMemoryConfigStorage({ seedData: invalidData });
+    const storage = new InMemoryConfigStorage({ data: invalidData });
     const configBase = new ConfigBase({ schema: configSchema, storage });
     await expect(configBase.init()).rejects.toThrow(
       /Invalid data for key "server\.port"/,
@@ -149,14 +149,15 @@ describe("ConfigBase", () => {
 
       const storage = new YamlConfigStorage({
         filePath: newDbPath,
-        seedData: {},
       });
 
       const configBase = new ConfigBase({ schema: configSchema, storage });
       await configBase.init();
 
+      expect(fs.existsSync(newDbPath)).toBe(false);
+
+      await configBase.set("server.port", 1234);
       expect(fs.existsSync(newDbPath)).toBe(true);
-      expect(storage.filePath).toBe(newDbPath);
 
       // Clean up
       await fs.promises.unlink(newDbPath);

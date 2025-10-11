@@ -5,10 +5,16 @@ import { type ConfigStorage } from "./config-storage";
 export class ConfigBase<TSchema extends Record<string, z.ZodType>> {
   private schema: TSchema;
   protected storage: ConfigStorage;
+  protected readonly defaults: Record<string, unknown>;
 
-  constructor(params: { schema: TSchema; storage: ConfigStorage }) {
+  constructor(params: {
+    schema: TSchema;
+    storage: ConfigStorage;
+    defaults?: Record<string, unknown>;
+  }) {
     this.schema = params.schema;
     this.storage = params.storage;
+    this.defaults = params.defaults ?? {};
   }
 
   get data() {
@@ -17,7 +23,7 @@ export class ConfigBase<TSchema extends Record<string, z.ZodType>> {
 
   async init(): Promise<void> {
     await this.storage.init();
-    this.validateAndSetData(this.storage.getData());
+    this.validate({ ...this.defaults, ...this.storage.getData() });
   }
 
   async set<K extends keyof TSchema & string>(
@@ -46,7 +52,7 @@ export class ConfigBase<TSchema extends Record<string, z.ZodType>> {
       throw new Error(`Key "${key}" is not allowed`);
     }
 
-    const value = get(this.storage.getData(), key);
+    const value = get({ ...this.defaults, ...this.storage.getData() }, key);
 
     // If value exists, return it
     if (value !== undefined) {
@@ -66,18 +72,16 @@ export class ConfigBase<TSchema extends Record<string, z.ZodType>> {
 
   async purge(): Promise<void> {
     await this.storage.purge();
-    this.validateAndSetData(this.storage.getData());
   }
 
-  private validateAndSetData(data: Record<string, unknown>) {
-    const validatedData = { ...data };
+  private validate(data: Record<string, unknown>) {
+    const validatedData = { ...this.defaults, ...data };
 
     for (const key in this.schema) {
       const value = get(validatedData, key);
       const keySchema = this.schema[key];
       try {
-        const parsed = keySchema.parse(value);
-        set(validatedData, key, parsed);
+        keySchema.parse(value);
       } catch (error) {
         throw new Error(
           `Invalid data for key "${key}": ${error instanceof Error ? error.message : String(error)}`,

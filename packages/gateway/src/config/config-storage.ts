@@ -12,25 +12,21 @@ export interface ConfigStorage {
 
 export class InMemoryConfigStorage implements ConfigStorage {
   private data: Record<string, unknown>;
-  private seedData: Record<string, unknown>;
 
-  constructor(params?: { seedData?: Record<string, unknown> }) {
-    this.seedData = params?.seedData ?? {};
-    this.data = { ...this.seedData };
+  constructor(params?: { data?: Record<string, unknown> }) {
+    this.data = { ...params?.data };
   }
 
   init(): Promise<void> {
-    // No initialization needed for memory storage
     return Promise.resolve();
   }
 
   persist(): Promise<void> {
-    // No persistence needed for memory storage
     return Promise.resolve();
   }
 
   purge(): Promise<void> {
-    this.data = { ...this.seedData };
+    this.data = {};
     return Promise.resolve();
   }
 
@@ -46,21 +42,15 @@ export class InMemoryConfigStorage implements ConfigStorage {
 export class YamlConfigStorage implements ConfigStorage {
   public readonly filePath: string;
   private data: Record<string, unknown> = {};
-  private seedData: Record<string, unknown>;
 
   constructor(params: {
     filePath: string;
-    seedData: Record<string, unknown>;
   }) {
     this.filePath = params.filePath;
-    this.seedData = params.seedData;
   }
 
   async init(): Promise<void> {
-    if (!existsSync(this.filePath)) {
-      await fs.promises.writeFile(this.filePath, YAML.stringify(this.seedData));
-      this.data = { ...this.seedData };
-    } else {
+    if (existsSync(this.filePath)) {
       const fileContent = await fs.promises.readFile(this.filePath, "utf8");
       this.data = YAML.parse(fileContent);
     }
@@ -71,8 +61,8 @@ export class YamlConfigStorage implements ConfigStorage {
   }
 
   async purge(): Promise<void> {
-    await fs.promises.writeFile(this.filePath, YAML.stringify(this.seedData));
-    this.data = { ...this.seedData };
+    this.data = {};
+    await this.persist();
   }
 
   getData(): Record<string, unknown> {

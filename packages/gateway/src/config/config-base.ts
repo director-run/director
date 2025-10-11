@@ -4,7 +4,7 @@ import { type ConfigStorage } from "./config-storage";
 
 export class ConfigBase<TSchema extends Record<string, z.ZodType>> {
   private schema: TSchema;
-  private storage: ConfigStorage;
+  protected storage: ConfigStorage;
 
   constructor(params: { schema: TSchema; storage: ConfigStorage }) {
     this.schema = params.schema;

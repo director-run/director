@@ -8,35 +8,35 @@ import {
   WorkspaceSchema,
 } from "../workspaces/workspace-schema";
 import { ConfigBase } from "./config-base";
-import { YamlConfigStorage } from "./config-storage";
+import { type ConfigStorage, YamlConfigStorage } from "./config-storage";
 
 export class Config extends ConfigBase<typeof configSchema> {
   public readonly workspaces: WorkspacesConfig;
-  public readonly filePath: string;
 
-  private constructor(config: {
-    filePath: string;
-    defaultData: Record<string, unknown>;
+  private constructor(params: {
+    storage: ConfigStorage;
   }) {
-    const storage = new YamlConfigStorage({
-      filePath: config.filePath,
-      seedData: config.defaultData,
-    });
     super({
       schema: configSchema,
-      storage,
+      storage: params.storage,
     });
-    this.filePath = config.filePath;
     this.workspaces = new WorkspacesConfig(this);
   }
 
+  get filePath(): string {
+    return (this.storage as YamlConfigStorage).filePath;
+  }
+
   static async createFileBasedConfig(filePath: string): Promise<Config> {
-    const config = new Config({
-      filePath,
-      defaultData: {
+    const storage = new YamlConfigStorage({
+      filePath: filePath,
+      seedData: {
         version: "1.0.0",
         workspaces: [],
       },
+    });
+    const config = new Config({
+      storage,
     });
     await config.init();
     return config;

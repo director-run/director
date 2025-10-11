@@ -4,7 +4,7 @@ import { gatewayClient } from "../src/client";
 import { env } from "../src/env";
 
 async function main() {
-  const config = await Config.create(env.CONFIG_FILE_PATH);
+  const config = await Config.createFileBasedConfig(env.CONFIG_FILE_PATH);
 
   const gateway = await Gateway.start({
     port: env.GATEWAY_PORT,

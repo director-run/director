@@ -22,7 +22,7 @@ import { toast } from "@director.run/design/components/ui/toast.js";
 import { WorkspaceSectionClients } from "@director.run/design/components/workspaces/workspace-section-clients.tsx";
 import { DesktopIcon, NotebookIcon, ToolboxIcon } from "@phosphor-icons/react";
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router-dom";
 import { GATEWAY_URL } from "../config.ts";
 import { gatewayClient } from "../contexts/backend-context.tsx";
 import { useAuthenticate } from "../hooks/use-authenticate.ts";

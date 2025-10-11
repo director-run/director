@@ -24,19 +24,92 @@ const ALLOWED_ORIGINS = [/^https?:\/\/localhost(:\d+)?$/];
 export class Gateway {
   public readonly workspaceStore: WorkspaceStore;
   public readonly port: number;
-  private server: Server;
+  private server?: Server;
   public readonly config: Config;
+  private app: express.Express;
+  private telemetry?: Telemetry;
+  private studioDistPath?: string;
 
   private constructor(attribs: {
     workspaceStore: WorkspaceStore;
     port: number;
     config: Config;
-    server: Server;
+    telemetry?: Telemetry;
+    studioDistPath?: string;
   }) {
     this.port = attribs.port;
     this.workspaceStore = attribs.workspaceStore;
-    this.server = attribs.server;
     this.config = attribs.config;
+    this.telemetry = attribs.telemetry;
+    this.studioDistPath = attribs.studioDistPath;
+    this.app = express();
+
+    this.app.use(
+      cors({
+        origin: ALLOWED_ORIGINS,
+      }),
+    );
+    this.app.use(logRequests());
+    if (this.studioDistPath) {
+      logger.trace({
+        message: "serving studio assets from",
+        distPath: this.studioDistPath,
+      });
+      this.app.use(
+        "/studio",
+        spaMiddleware({
+          distPath: this.studioDistPath,
+          config: {
+            basePath: "/studio",
+          },
+        }),
+      );
+    }
+    this.app.use(
+      "/",
+      createSSERouter({
+        workspaceStore: this.workspaceStore,
+        telemetry: this.telemetry,
+      }),
+    );
+    this.app.use(
+      "/",
+      createStreamableRouter({
+        workspaceStore: this.workspaceStore,
+        telemetry: this.telemetry,
+      }),
+    );
+    this.app.use(
+      "/",
+      createOauthCallbackRouter({
+        onAuthorizationSuccess: async (factoryId, providerId, code) => {
+          await this.workspaceStore.onAuthorizationSuccess(
+            factoryId,
+            providerId,
+            code,
+          );
+          return {
+            redirectUrl: `http://localhost:${isDevelopment() ? 3000 : this.port}/oauth/${factoryId}/${providerId}/callback`,
+          };
+        },
+        onAuthorizationError: (factoryId, providerId, error) => {
+          logger.error({
+            error,
+            message: `failed to authorize ${factoryId} ${providerId}: ${error.message}`,
+          });
+          return {
+            redirectUrl: `http://localhost:${isDevelopment() ? 3000 : this.port}/oauth/${factoryId}/${providerId}/callback?error=${JSON.stringify(error)}`,
+          };
+        },
+      }),
+    );
+
+    this.app.use(
+      "/trpc",
+      createTRPCExpressMiddleware({ workspaceStore: this.workspaceStore }),
+    );
+    this.app.all("*", notFoundHandler);
+    this.app.use(errorRequestHandler);
   }
 
   public static async start(
@@ -68,79 +141,18 @@ export class Gateway {
           }
         : undefined,
     });
-    const app = express();
-
-    app.use(
-      cors({
-        origin: ALLOWED_ORIGINS,
-      }),
-    );
-    app.use(logRequests());
-    if (attribs.studioDistPath) {
-      logger.trace({
-        message: "serving studio assets from",
-        distPath: attribs.studioDistPath,
-      });
-      app.use(
-        "/studio",
-        spaMiddleware({
-          distPath: attribs.studioDistPath,
-          config: {
-            basePath: "/studio",
-          },
-        }),
-      );
-    }
-    app.use(
-      "/",
-      createSSERouter({ workspaceStore, telemetry: attribs.telemetry }),
-    );
-    app.use(
-      "/",
-      createStreamableRouter({ workspaceStore, telemetry: attribs.telemetry }),
-    );
-    app.use(
-      "/",
-      createOauthCallbackRouter({
-        onAuthorizationSuccess: async (factoryId, providerId, code) => {
-          await workspaceStore.onAuthorizationSuccess(
-            factoryId,
-            providerId,
-            code,
-          );
-          return {
-            redirectUrl: `http://localhost:${isDevelopment() ? 3000 : attribs.port}/oauth/${factoryId}/${providerId}/callback`,
-          };
-        },
-        onAuthorizationError: (factoryId, providerId, error) => {
-          logger.error({
-            error,
-            message: `failed to authorize ${factoryId} ${providerId}: ${error.message}`,
-          });
-          return {
-            redirectUrl: `http://localhost:${isDevelopment() ? 3000 : attribs.port}/oauth/${factoryId}/${providerId}/callback?error=${JSON.stringify(error)}`,
-          };
-        },
-      }),
-    );
-
-    app.use("/trpc", createTRPCExpressMiddleware({ workspaceStore }));
-    app.all("*", notFoundHandler);
-    app.use(errorRequestHandler);
 
     attribs.telemetry?.trackEvent("gateway_start");
-
-    const server = app.listen(attribs.port, () => {
-      logger.info(`director gateway running on port ${attribs.port}`);
-      successCallback?.();
-    });
 
     const gateway = new Gateway({
       port: attribs.port,
       config: attribs.config,
       workspaceStore,
-      server,
+      telemetry: attribs.telemetry,
+      studioDistPath: attribs.studioDistPath,
     });
+
+    await gateway.start(successCallback);
 
     process.on("SIGINT", async () => {
       logger.info("received SIGINT, cleaning up proxy servers...");
@@ -151,12 +163,19 @@ export class Gateway {
     return gateway;
   }
 
+  private async start(successCallback?: () => void) {
+    this.server = this.app.listen(this.port, () => {
+      logger.info(`director gateway running on port ${this.port}`);
+      successCallback?.();
+    });
+  }
+
   async stop() {
     await this.workspaceStore.closeAll();
     await new Promise<void>((resolve) => {
       // Close all existing connections
       // Stop accepting new connections
-      this.server.close(() => resolve());
+      this.server?.close(() => resolve());
     });
   }
 }

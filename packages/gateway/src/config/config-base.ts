@@ -74,16 +74,14 @@ export class ConfigBase<TSchema extends Record<string, z.ZodType>> {
 
     for (const key in this.schema) {
       const value = get(validatedData, key);
-      if (value !== undefined) {
-        const keySchema = this.schema[key];
-        try {
-          const parsed = keySchema.parse(value);
-          set(validatedData, key, parsed);
-        } catch (error) {
-          throw new Error(
-            `Invalid data for key "${key}": ${error instanceof Error ? error.message : String(error)}`,
-          );
-        }
+      const keySchema = this.schema[key];
+      try {
+        const parsed = keySchema.parse(value);
+        set(validatedData, key, parsed);
+      } catch (error) {
+        throw new Error(
+          `Invalid data for key "${key}": ${error instanceof Error ? error.message : String(error)}`,
+        );
       }
     }
 

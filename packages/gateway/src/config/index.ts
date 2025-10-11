@@ -14,17 +14,19 @@ export const databaseAttributesSchema = {
   version: z.string().optional(),
   workspaces: z.array(WorkspaceSchema).default([]),
   "server.port": z.number().min(0).default(3673),
-  "server.allowedOrigins": z
-    .array(z.union([z.string(), z.instanceof(RegExp)]))
-    .default([/^https?:\/\/localhost(:\d+)?$/]),
   "registry.url": z.string().default("https://registry.director.run"),
   "registry.apiKey": z.string().optional(),
   "telemetry.writeKey": z.string().default(""),
   "telemetry.enabled": z.boolean().default(false),
-  oauth: z.object({
-    storage: z.literal("disk").default("disk"),
-    tokenDirectory: z.string().default("./tokens"),
-  }),
+  oauth: z
+    .object({
+      storage: z.literal("disk"),
+      tokenDirectory: z.string(),
+    })
+    .default({
+      storage: "disk",
+      tokenDirectory: "./tokens",
+    }),
 };
 
 export class Config extends ConfigBase<typeof databaseAttributesSchema> {

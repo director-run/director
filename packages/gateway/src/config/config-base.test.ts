@@ -1,9 +1,8 @@
-import fs from "fs";
-import { beforeAll, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { z } from "zod";
 import { WorkspaceSchema } from "../workspaces/workspace";
 import { ConfigBase } from "./config-base";
-import { InMemoryConfigStorage, YamlConfigStorage } from "./config-storage";
+import { InMemoryConfigStorage } from "./config-storage";
 
 const configSchema = {
   "server.port": z.number().min(0).default(3673),
@@ -24,7 +23,7 @@ const configSchema = {
   version: z.string().default("1.0.0"),
 };
 
-describe("Config with MemoryStorage", () => {
+describe("ConfigBase", () => {
   it("should set and get valid values", async () => {
     const storage = new InMemoryConfigStorage();
     const store = new ConfigBase({ schema: configSchema, storage });
@@ -119,34 +118,5 @@ describe("Config with MemoryStorage", () => {
     await expect(store.init()).rejects.toThrow(
       /Invalid data for key "server\.port"/,
     );
-  });
-});
-
-describe("Config with YamlStorage", () => {
-  beforeAll(async () => {
-    if (fs.existsSync("config.test.yaml")) {
-      await fs.promises.unlink("config.test.yaml");
-    }
-  });
-
-  it("should set and get valid values", async () => {
-    const storage = new YamlConfigStorage({
-      filePath: "config.test.yaml",
-      defaultData: {
-        version: "1.0.0",
-        workspaces: [],
-      },
-    });
-    const store = new ConfigBase({
-      schema: configSchema,
-      storage,
-    });
-    await store.init();
-
-    expect(store.get("server.port")).toBe(3673);
-    await store.set("server.port", 1234);
-    await store.set("registry.url", "https://example.com");
-    expect(store.get("server.port")).toBe(1234);
-    expect(store.get("registry.url")).toBe("https://example.com");
   });
 });

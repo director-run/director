@@ -125,7 +125,7 @@ describe("ConfigBase", () => {
     await configBase.init();
     expect(storage.getData()).toMatchObject({});
     await configBase.set("server.port", 1234);
-    expect(storage.getData()).toMatchObject({ server: { port: 1234 } });
+    expect(storage.getData()).toEqual({ server: { port: 1234 } });
   });
 
   describe("with defaults", () => {

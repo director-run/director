@@ -8,7 +8,7 @@ describe("WorkspaceStore", () => {
   let workspaceStore: WorkspaceStore;
 
   beforeEach(async () => {
-    const db = await Config.createMemoryBasedConfig();
+    const db = await Config.makeTestConfig();
     workspaceStore = await WorkspaceStore.create({
       config: db,
       oauth: {

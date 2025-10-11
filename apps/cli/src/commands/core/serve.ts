@@ -37,7 +37,25 @@ export async function startGateway(successCallback?: () => void) {
   await Gateway.start(
     {
       port: env.GATEWAY_PORT,
-      config: await Config.createFileBasedConfig(env.CONFIG_FILE_PATH),
+      config: await Config.createFileBasedConfig({
+        filePath: env.CONFIG_FILE_PATH,
+        defaults: {
+          registry: {
+            url: "https://registry.director.run",
+          },
+          server: {
+            port: 3673,
+          },
+          telemetry: {
+            writeKey: "test-write-key",
+            enabled: true,
+          },
+          oauth: {
+            storage: "disk",
+            tokenDirectory: "./tokens",
+          },
+        },
+      }),
       studioDistPath: resolveStudioDistPath(),
       telemetry: new Telemetry({
         writeKey: env.SEGMENT_WRITE_KEY,

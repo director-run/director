@@ -8,7 +8,7 @@ describe("Workspace", () => {
   let workspace: Workspace;
 
   beforeEach(async () => {
-    config = await Config.createMemoryBasedConfig();
+    config = await Config.makeTestConfig();
     await config.purge();
     workspace = await Workspace.fromConfig(
       {

@@ -2,33 +2,15 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
-import { WorkspaceSchema } from "../workspaces/workspace";
 import { ConfigBase } from "./config-base";
 import { InMemoryConfigStorage, YamlConfigStorage } from "./config-storage";
 
-const configSchema = {
-  "server.port": z.number().min(0).default(3673),
-  "registry.url": z.string().default("https://registry.director.run"),
-  "registry.apiKey": z.string().optional(),
-
-  // "telemetry.writeKey": z.string().default(SEGMENT_PRODUCTION_WRITE_KEY),
-  "telemetry.writeKey": z.string().default(""),
-  "telemetry.enabled": z.boolean().default(false),
-  oauth: z
-    .object({
-      storage: z.literal("disk"),
-      tokenDirectory: z.string(),
-    })
-    .default({
-      storage: "disk",
-      tokenDirectory: "./tokens",
-    }),
-  workspaces: z.array(WorkspaceSchema).default([]),
-  version: z.string().default("1.0.0"),
-};
-
 describe("ConfigBase", () => {
   it("should set and get valid values", async () => {
+    const configSchema = {
+      "server.port": z.number().min(0).default(3673),
+      "registry.url": z.string().default("https://registry.director.run"),
+    };
     const storage = new InMemoryConfigStorage();
     const configBase = new ConfigBase({ schema: configSchema, storage });
     await configBase.init();
@@ -40,6 +22,9 @@ describe("ConfigBase", () => {
   });
 
   it("should return undefined for non-existent keys", async () => {
+    const configSchema = {
+      "registry.apiKey": z.string().optional(),
+    };
     const storage = new InMemoryConfigStorage();
     const configBase = new ConfigBase({ schema: configSchema, storage });
     await configBase.init();
@@ -60,6 +45,10 @@ describe("ConfigBase", () => {
   });
 
   it("should load existing data from storage", async () => {
+    const configSchema = {
+      "server.port": z.number().min(0).default(3673),
+      "registry.url": z.string().default("https://registry.director.run"),
+    };
     const seedData = {
       server: {
         port: 3333,
@@ -82,6 +71,9 @@ describe("ConfigBase", () => {
   });
 
   it("should throw validation error for invalid values", async () => {
+    const configSchema = {
+      "server.port": z.number().min(0).default(3673),
+    };
     const storage = new InMemoryConfigStorage();
     const configBase = new ConfigBase({ schema: configSchema, storage });
     await configBase.init();
@@ -89,6 +81,9 @@ describe("ConfigBase", () => {
   });
 
   it("should not return default values in data when no data is set", async () => {
+    const configSchema = {
+      "server.port": z.number().min(0).default(3673),
+    };
     const storage = new InMemoryConfigStorage();
     const configBase = new ConfigBase({ schema: configSchema, storage });
     await configBase.init();
@@ -96,6 +91,9 @@ describe("ConfigBase", () => {
   });
 
   it("should return default value when key is not set", async () => {
+    const configSchema = {
+      "server.port": z.number().min(0).default(3673),
+    };
     const storage = new InMemoryConfigStorage();
     const configBase = new ConfigBase({ schema: configSchema, storage });
     await configBase.init();
@@ -103,6 +101,9 @@ describe("ConfigBase", () => {
   });
 
   it("should set data", async () => {
+    const configSchema = {
+      "server.port": z.number().min(0).default(3673),
+    };
     const storage = new InMemoryConfigStorage();
     const configBase = new ConfigBase({ schema: configSchema, storage });
     await configBase.init();
@@ -111,6 +112,9 @@ describe("ConfigBase", () => {
   });
 
   it("should throw validation error for invalid data in storage", async () => {
+    const configSchema = {
+      "server.port": z.number().min(0).default(3673),
+    };
     const invalidData = {
       server: {
         port: -5, // Invalid: port must be >= 0
@@ -124,6 +128,9 @@ describe("ConfigBase", () => {
   });
 
   it("should throw validation error for wrong type in storage", async () => {
+    const configSchema = {
+      "server.port": z.number().min(0).default(3673),
+    };
     const invalidData = {
       server: {
         port: "not a number", // Invalid: port must be a number
@@ -138,6 +145,9 @@ describe("ConfigBase", () => {
 
   describe("with file storage", () => {
     it("should create a new database file if it doesn't exist", async () => {
+      const configSchema = {
+        "server.port": z.number().min(0).default(3673),
+      };
       const newDbPath = path.join(__dirname, "./new-db.test.json");
 
       // Ensure the file doesn't exist

@@ -26,21 +26,21 @@ const configSchema = {
 describe("ConfigBase", () => {
   it("should set and get valid values", async () => {
     const storage = new InMemoryConfigStorage();
-    const store = new ConfigBase({ schema: configSchema, storage });
-    await store.init();
-    expect(store.get("server.port")).toBe(3673);
-    await store.set("server.port", 1234);
-    await store.set("registry.url", "https://example.com");
-    expect(store.get("server.port")).toBe(1234);
-    expect(store.get("registry.url")).toBe("https://example.com");
+    const configBase = new ConfigBase({ schema: configSchema, storage });
+    await configBase.init();
+    expect(configBase.get("server.port")).toBe(3673);
+    await configBase.set("server.port", 1234);
+    await configBase.set("registry.url", "https://example.com");
+    expect(configBase.get("server.port")).toBe(1234);
+    expect(configBase.get("registry.url")).toBe("https://example.com");
   });
 
   it("should return undefined for non-existent keys", async () => {
     const storage = new InMemoryConfigStorage();
-    const store = new ConfigBase({ schema: configSchema, storage });
-    await store.init();
+    const configBase = new ConfigBase({ schema: configSchema, storage });
+    await configBase.init();
 
-    expect(store.get("workspaces")).toBeUndefined();
+    expect(configBase.get("workspaces")).toBeUndefined();
   });
 
   it("should load existing data from storage", async () => {
@@ -54,44 +54,44 @@ describe("ConfigBase", () => {
       },
     };
     const storage = new InMemoryConfigStorage({ data: seedData });
-    const store = new ConfigBase({
+    const configBase = new ConfigBase({
       schema: configSchema,
       storage,
     });
-    await store.init();
+    await configBase.init();
 
-    expect(store.get("server.port")).toBe(3333);
-    expect(store.get("registry.url")).toBe("https://example.com");
-    expect(store.data).toMatchObject(seedData);
+    expect(configBase.get("server.port")).toBe(3333);
+    expect(configBase.get("registry.url")).toBe("https://example.com");
+    expect(configBase.data).toMatchObject(seedData);
   });
 
   it("should throw validation error for invalid values", async () => {
     const storage = new InMemoryConfigStorage();
-    const store = new ConfigBase({ schema: configSchema, storage });
-    await store.init();
-    await expect(store.set("server.port", -5)).rejects.toThrow();
+    const configBase = new ConfigBase({ schema: configSchema, storage });
+    await configBase.init();
+    await expect(configBase.set("server.port", -5)).rejects.toThrow();
   });
 
   it("should not return default values in data when no data is set", async () => {
     const storage = new InMemoryConfigStorage();
-    const store = new ConfigBase({ schema: configSchema, storage });
-    await store.init();
-    expect(store.data).toMatchObject({});
+    const configBase = new ConfigBase({ schema: configSchema, storage });
+    await configBase.init();
+    expect(configBase.data).toMatchObject({});
   });
 
   it("should return default value when key is not set", async () => {
     const storage = new InMemoryConfigStorage();
-    const store = new ConfigBase({ schema: configSchema, storage });
-    await store.init();
-    expect(store.get("server.port")).toBe(3673);
+    const configBase = new ConfigBase({ schema: configSchema, storage });
+    await configBase.init();
+    expect(configBase.get("server.port")).toBe(3673);
   });
 
   it("should set data", async () => {
     const storage = new InMemoryConfigStorage();
-    const store = new ConfigBase({ schema: configSchema, storage });
-    await store.init();
-    await store.set("server.port", 1234);
-    expect(store.data).toMatchObject({ server: { port: 1234 } });
+    const configBase = new ConfigBase({ schema: configSchema, storage });
+    await configBase.init();
+    await configBase.set("server.port", 1234);
+    expect(configBase.data).toMatchObject({ server: { port: 1234 } });
   });
 
   it("should throw validation error for invalid data in storage", async () => {
@@ -101,8 +101,8 @@ describe("ConfigBase", () => {
       },
     };
     const storage = new InMemoryConfigStorage({ data: invalidData });
-    const store = new ConfigBase({ schema: configSchema, storage });
-    await expect(store.init()).rejects.toThrow(
+    const configBase = new ConfigBase({ schema: configSchema, storage });
+    await expect(configBase.init()).rejects.toThrow(
       /Invalid data for key "server\.port"/,
     );
   });
@@ -114,8 +114,8 @@ describe("ConfigBase", () => {
       },
     };
     const storage = new InMemoryConfigStorage({ data: invalidData });
-    const store = new ConfigBase({ schema: configSchema, storage });
-    await expect(store.init()).rejects.toThrow(
+    const configBase = new ConfigBase({ schema: configSchema, storage });
+    await expect(configBase.init()).rejects.toThrow(
       /Invalid data for key "server\.port"/,
     );
   });

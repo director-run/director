@@ -29,76 +29,18 @@ export const stdioTransportSchema = z.object({
 
 export type STDIOTransport = z.infer<typeof stdioTransportSchema>;
 
-export const proxyTransport = z.discriminatedUnion("type", [
-  httpTransportSchema,
-  stdioTransportSchema,
-]);
-
-export type ProxyTransport = z.infer<typeof proxyTransport>;
-
-export const entryParameterSchema = z.object({
-  name: requiredStringSchema,
-  description: requiredStringSchema,
-  required: z.boolean(),
-  type: z.enum(["string"]),
-  password: z.boolean().optional(),
-});
-
-export const toolSchema = z.object({
-  name: requiredStringSchema,
-  description: requiredStringSchema,
-  inputSchema: z.object({
-    type: requiredStringSchema,
-    required: z.array(z.string()).optional(),
-    properties: z
-      .record(
-        requiredStringSchema,
-        z.object({
-          type: z.string().optional(),
-          description: z.string().optional(),
-          default: z.unknown().optional(),
-          title: z.string().optional(),
-          anyOf: z.unknown().optional(),
-        }),
-      )
-      .optional(),
-  }),
-});
-
-export const registryEntrySchema = z.object({
-  id: requiredStringSchema,
-  name: requiredStringSchema,
-  title: requiredStringSchema,
-  description: requiredStringSchema,
-  icon: optionalStringSchema,
-  createdAt: z.coerce.date().nullable().default(null),
-  isOfficial: z.boolean().nullable().default(null),
-  isEnriched: z.boolean().nullable().default(null),
-  isConnectable: z.boolean().nullable().default(null),
-  lastConnectionAttemptedAt: z.coerce.date().nullable().default(null),
-  lastConnectionError: optionalStringSchema,
-  homepage: requiredStringSchema,
-  transport: proxyTransport,
-  source_registry: z.any(),
-  categories: z.array(z.string()).nullable().default(null),
-  tools: z.array(toolSchema).nullable().default(null),
-  parameters: z.array(entryParameterSchema),
-  readme: optionalStringSchema,
-  state: z.enum(["draft", "published", "archived"]).optional(),
-});
-
-export type RegistryEntry = z.infer<typeof registryEntrySchema>;
-
-export const ProxyTargetSourceSchema = z.object({
-  name: z.literal("registry"),
-  entryId: requiredStringSchema,
-  entryData: registryEntrySchema,
-});
-
 export const ServerConfigEntrySchema = z.object({
   name: slugStringSchema,
-  transport: proxyTransport,
-  source: ProxyTargetSourceSchema.optional(),
+  transport: z.discriminatedUnion("type", [
+    httpTransportSchema,
+    stdioTransportSchema,
+  ]),
+  source: z
+    .object({
+      name: z.literal("registry"),
+      entryId: requiredStringSchema,
+    })
+    .optional(),
   toolPrefix: z.string().trim().optional(),
   disabledTools: z.array(requiredStringSchema).optional(),
   disabled: z.boolean().optional(),

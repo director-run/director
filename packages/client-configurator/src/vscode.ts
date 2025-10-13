@@ -108,7 +108,7 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
     }
     await this.uninstall(name);
     await sleep(1000);
-    await this.install({ name, sseURL: url });
+    await this.install({ name, sseURL: url, streamableURL: "" });
   }
 
   public async list() {

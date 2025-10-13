@@ -19,6 +19,7 @@ await claudeConfigurator.isInstalled("my-proxy");
 await claudeConfigurator.install({
   name: "my-proxy",
   sseURL: "http://localhost:3673/my-proxy/sse",
+  streamableURL: "http://localhost:3673/my-proxy/streamable",
 });
 await claudeConfigurator.uninstall("my-proxy");
 // Clear the config file. Useful for development

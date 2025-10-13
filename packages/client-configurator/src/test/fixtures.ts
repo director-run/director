@@ -56,10 +56,15 @@ export function createClaudeConfig(entries: ClaudeServerEntry[]): ClaudeConfig {
   };
 }
 
-export function createInstallable(): { sseURL: string; name: string } {
+export function createInstallable(): {
+  sseURL: string;
+  name: string;
+  streamableURL: string;
+} {
   return {
     sseURL: faker.internet.url(),
     name: [faker.hacker.noun(), faker.string.uuid()].join("-"),
+    streamableURL: faker.internet.url(),
   };
 }
 

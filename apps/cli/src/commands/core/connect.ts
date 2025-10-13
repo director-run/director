@@ -37,6 +37,10 @@ export function registerConnectCommand(program: DirectorCommand) {
                 getGatewayBaseUrl(),
                 getSSEPathForProxy(proxy.id),
               ),
+              streamableURL: joinURL(
+                getGatewayBaseUrl(),
+                getStreamablePathForProxy(proxy.id),
+              ),
             });
 
             console.log(result);

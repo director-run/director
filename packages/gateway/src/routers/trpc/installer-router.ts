@@ -7,7 +7,7 @@ import {
 import { t } from "@director.run/utilities/trpc";
 import { joinURL } from "@director.run/utilities/url";
 import { z } from "zod";
-import { getSSEPathForProxy } from "../../helpers";
+import { getSSEPathForProxy, getStreamablePathForProxy } from "../../helpers";
 import type { WorkspaceStore } from "../../workspaces/workspace-store";
 
 export function createInstallerRouter({
@@ -35,6 +35,10 @@ export function createInstallerRouter({
           await installer.install({
             name: proxy.id,
             sseURL: joinURL(input.baseUrl, getSSEPathForProxy(proxy.id)),
+            streamableURL: joinURL(
+              input.baseUrl,
+              getStreamablePathForProxy(proxy.id),
+            ),
           });
         }),
       uninstall: t.procedure

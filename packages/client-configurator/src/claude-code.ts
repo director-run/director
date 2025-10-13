@@ -2,7 +2,7 @@ import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { writeJSONFile } from "@director.run/utilities/json";
 import { os, App } from "@director.run/utilities/os/index";
 import { z } from "zod";
-import { AbstractConfigurator } from "./types";
+import { AbstractConfigurator, type Installable } from "./types";
 
 export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeConfig> {
   public async isClientPresent() {
@@ -57,10 +57,7 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeConfig> {
     await this.updateConfig(newConfig);
   }
 
-  public async install(attributes: {
-    name: string;
-    sseURL: string;
-  }) {
+  public async install(attributes: Installable) {
     await this.initialize();
     if (await this.isInstalled(attributes.name)) {
       throw new AppError(

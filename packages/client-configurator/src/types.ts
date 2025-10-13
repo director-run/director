@@ -92,4 +92,5 @@ export abstract class AbstractConfigurator<T> {
 export type Installable = {
   name: string;
   sseURL: string;
+  streamableURL: string;
 };

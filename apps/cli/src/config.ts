@@ -9,13 +9,22 @@ import {
 import { Telemetry } from "@director.run/utilities/telemetry";
 import packageJson from "../package.json" assert { type: "json" };
 
-export const LOCAL_ENV_FILE_PATH = path.join(process.cwd(), ".env.local");
-
 const SEGMENT_PRODUCTION_WRITE_KEY = "Z8wjEfWMFnlltCpGPPWlvsEQH1aVEUH3";
 
 export function getConfigFilePath(): string {
   return path.join(getDataDir(), "./config.yaml");
 }
+
+// export function getConfigFilePath(): string {
+//   if (isTest()) {
+//     return path.join(__dirname, `../.director/test/config.yaml`);
+//   } else if (isDevelopment()) {
+//     return path.join(getDataDir(), "./config.yaml");
+//   }
+//   else {
+//     return path.join(os.homedir(), `.director`);
+//   }
+// }
 
 export const config = await Config.createFileBasedConfig({
   filePath: getConfigFilePath(),

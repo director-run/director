@@ -59,7 +59,7 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeConfig> {
 
   public async install(attributes: {
     name: string;
-    url: string;
+    sseURL: string;
   }) {
     await this.initialize();
     if (await this.isInstalled(attributes.name)) {
@@ -74,7 +74,7 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeConfig> {
     };
     newConfig.mcpServers[this.createServerConfigKey(attributes.name)] = {
       type: "http",
-      url: attributes.url,
+      url: attributes.sseURL,
     };
     await this.updateConfig(newConfig);
   }

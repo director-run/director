@@ -34,7 +34,7 @@ export function createInstallerRouter({
           const installer = await getConfigurator(input.client);
           await installer.install({
             name: proxy.id,
-            url: joinURL(input.baseUrl, getSSEPathForProxy(proxy.id)),
+            sseURL: joinURL(input.baseUrl, getSSEPathForProxy(proxy.id)),
           });
         }),
       uninstall: t.procedure

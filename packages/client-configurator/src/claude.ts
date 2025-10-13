@@ -60,7 +60,7 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
 
   public async install(attributes: {
     name: string;
-    url: string;
+    sseURL: string;
   }) {
     await this.initialize();
     if (await this.isInstalled(attributes.name)) {
@@ -75,7 +75,7 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
     };
     newConfig.mcpServers[this.createServerConfigKey(attributes.name)] = {
       command: "npx",
-      args: ["-y", "@director.run/cli@latest", "http2stdio", attributes.url],
+      args: ["-y", "@director.run/cli@latest", "http2stdio", attributes.sseURL],
       env: {
         LOG_LEVEL: "silent",
       },

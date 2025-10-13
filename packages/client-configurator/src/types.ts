@@ -78,7 +78,7 @@ export abstract class AbstractConfigurator<T> {
 
   public abstract install(attributes: {
     name: string;
-    url: string;
+    sseURL: string;
   }): Promise<void>;
   public abstract uninstall(name: string): Promise<void>;
   public abstract list(): Promise<Array<{ name: string; url: string }>>;
@@ -94,5 +94,5 @@ export abstract class AbstractConfigurator<T> {
 
 export type Installable = {
   name: string;
-  url: string;
+  sseURL: string;
 };

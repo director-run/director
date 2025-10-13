@@ -23,7 +23,7 @@ export function createVSCodeConfig(entries: Array<Installable>): VSCodeConfig {
     mcp: {
       servers: entries.reduce(
         (acc, entry) => {
-          acc[entry.name] = { url: entry.url };
+          acc[entry.name] = { url: entry.sseURL };
           return acc;
         },
         {} as Record<string, { url: string }>,
@@ -36,7 +36,7 @@ export function createCursorConfig(entries: Array<Installable>): CursorConfig {
   return {
     mcpServers: entries.reduce(
       (acc, entry) => {
-        acc[entry.name] = { url: entry.url };
+        acc[entry.name] = { url: entry.sseURL };
         return acc;
       },
       {} as Record<string, { url: string }>,
@@ -56,9 +56,9 @@ export function createClaudeConfig(entries: ClaudeServerEntry[]): ClaudeConfig {
   };
 }
 
-export function createInstallable(): { url: string; name: string } {
+export function createInstallable(): { sseURL: string; name: string } {
   return {
-    url: faker.internet.url(),
+    sseURL: faker.internet.url(),
     name: [faker.hacker.noun(), faker.string.uuid()].join("-"),
   };
 }

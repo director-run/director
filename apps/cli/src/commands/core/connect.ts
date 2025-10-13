@@ -33,7 +33,10 @@ export function registerConnectCommand(program: DirectorCommand) {
             const installer = await getConfigurator(options.target);
             const result = await installer.install({
               name: proxy.id,
-              url: joinURL(getGatewayBaseUrl(), getSSEPathForProxy(proxy.id)),
+              sseURL: joinURL(
+                getGatewayBaseUrl(),
+                getSSEPathForProxy(proxy.id),
+              ),
             });
 
             console.log(result);

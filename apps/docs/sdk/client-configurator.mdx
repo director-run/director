@@ -18,7 +18,7 @@ await claudeConfigurator.isInstalled("my-proxy");
 // Install an MCP server using a URL. If the client doesn't support HTTP, we use proxies.
 await claudeConfigurator.install({
   name: "my-proxy",
-  url: "http://localhost:3673/my-proxy/sse",
+  sseURL: "http://localhost:3673/my-proxy/sse",
 });
 await claudeConfigurator.uninstall("my-proxy");
 // Clear the config file. Useful for development

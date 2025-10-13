@@ -49,7 +49,7 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     await this.updateConfig(newConfig);
   }
 
-  public async install(attributes: { name: string; url: string }) {
+  public async install(attributes: { name: string; sseURL: string }) {
     await this.initialize();
 
     if (await this.isInstalled(attributes.name)) {
@@ -63,7 +63,7 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
       mcpServers: { ...(this.config?.mcpServers ?? {}) },
     };
     newConfig.mcpServers[this.createServerConfigKey(attributes.name)] = {
-      url: attributes.url,
+      url: attributes.sseURL,
     };
     await this.updateConfig(newConfig);
   }
@@ -94,7 +94,7 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     }
     await this.uninstall(name);
     await sleep(1000);
-    await this.install({ name, url });
+    await this.install({ name, sseURL: url });
   }
 
   public async list() {

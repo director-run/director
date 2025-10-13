@@ -1,44 +1,19 @@
-import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { Config } from "@director.run/gateway/config/index";
 import {
-  createEnv,
   isDevelopment,
   isProduction,
   isTest,
 } from "@director.run/utilities/env";
 import { Telemetry } from "@director.run/utilities/telemetry";
-import { z } from "zod";
 import packageJson from "../package.json" assert { type: "json" };
 
 export const LOCAL_ENV_FILE_PATH = path.join(process.cwd(), ".env.local");
 
 const SEGMENT_PRODUCTION_WRITE_KEY = "Z8wjEfWMFnlltCpGPPWlvsEQH1aVEUH3";
 
-export const env = createEnv({
-  envFilePath: getEnvFilePath(),
-  envVars: {
-    OAUTH_TOKEN_DIRECTORY: z
-      .string()
-      .optional()
-      .default(path.join(getDataDir(), "tokens")),
-  },
-});
-
-export function getEnvFilePath(): string {
-  if (fs.existsSync(LOCAL_ENV_FILE_PATH)) {
-    return LOCAL_ENV_FILE_PATH;
-  } else {
-    return path.join(getDataDir(), "./config.env");
-  }
-}
-
-export function isUsingEnvFile(): boolean {
-  return fs.existsSync(getEnvFilePath());
-}
-
-function getConfigFilePath(): string {
+export function getConfigFilePath(): string {
   return path.join(getDataDir(), "./config.yaml");
 }
 
@@ -58,7 +33,7 @@ export const config = await Config.createFileBasedConfig({
     },
     oauth: {
       storage: "disk",
-      tokenDirectory: `./oauth-tokens`,
+      tokenDirectory: `./director-oauth-tokens`,
     },
   },
 });

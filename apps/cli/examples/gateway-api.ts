@@ -1,10 +1,12 @@
 import { Config } from "@director.run/gateway/config/index";
 import { Gateway } from "@director.run/gateway/gateway";
 import { gatewayClient } from "../src/client";
-import { env } from "../src/env";
 
 async function main() {
-  const config = await Config.createFileBasedConfig(env.CONFIG_FILE_PATH);
+  const config = await Config.createFileBasedConfig({
+    filePath: "/path/to/config.yaml",
+    defaults: {},
+  });
 
   const gateway = await Gateway.start({
     config,

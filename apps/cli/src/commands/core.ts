@@ -14,9 +14,9 @@ import { gatewayClient } from "../client";
 import { getGatewayBaseUrl } from "../env";
 import { registerAddCommand } from "./core/add";
 import { registerAuthCommand } from "./core/authenticate";
+import { registerConfigCommand } from "./core/config";
 import { registerConnectCommand } from "./core/connect";
 import { registerDebugCommands } from "./core/debug";
-import { registerEnvCommand } from "./core/env";
 import { registerGetCommand } from "./core/get";
 import { registerQuickstartCommand } from "./core/quickstart";
 import { registerRemoveCommand } from "./core/remove";
@@ -122,7 +122,7 @@ export function registerCoreCommands(program: DirectorCommand): void {
       await proxyHTTPToStdio(url);
     });
 
-  registerEnvCommand(program);
+  registerConfigCommand(program);
   registerStatusCommand(program);
 
   registerDebugCommands(program);

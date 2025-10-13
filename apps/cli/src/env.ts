@@ -73,12 +73,12 @@ function getDataDir(): string {
   }
 }
 
-export function getGatewayUrl(): string {
+export function getGatewayBaseUrl(): string {
   return `http://localhost:${config.get("server.port")}`;
 }
 
 export function getStudioUrl(): string {
-  return `http://localhost:${config.get("server.port")}/studio`;
+  return `${getGatewayBaseUrl()}/studio`;
 }
 
 export function getTelemetry(): Telemetry {

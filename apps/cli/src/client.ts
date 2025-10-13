@@ -1,8 +1,8 @@
 import { createGatewayClient } from "@director.run/gateway/client";
 import { createRegistryClient } from "@director.run/registry/client";
-import { config, getGatewayUrl } from "./env";
+import { config, getGatewayBaseUrl } from "./env";
 
-export const gatewayClient = createGatewayClient(getGatewayUrl());
+export const gatewayClient = createGatewayClient(getGatewayBaseUrl());
 export const registryClient = createRegistryClient(
   config.get("registry.url") as string,
   {

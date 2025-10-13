@@ -45,14 +45,15 @@ export class IntegrationTestHarness {
   }
 
   public static async start() {
+    const config = await Config.makeTestConfig();
     const gateway = await Gateway.start({
       config: await Config.makeTestConfig(),
-      oauth: {
-        storage: "memory",
-      },
+      baseUrl: `http://localhost:${config.get("server.port")}`,
     });
 
-    const client = createGatewayClient(`http://localhost:${gateway.port}`);
+    const client = createGatewayClient(
+      `http://localhost:${config.get("server.port")}`,
+    );
 
     const echoServerSSEInstance = await serveOverSSE(
       makeEchoServer(),

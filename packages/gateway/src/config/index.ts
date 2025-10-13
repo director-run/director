@@ -182,13 +182,6 @@ const configSchema = {
   "registry.apiKey": z.string().optional(),
   "telemetry.writeKey": z.string(),
   "telemetry.enabled": z.boolean(),
-  oauth: z
-    .object({
-      storage: z.literal("disk"),
-      tokenDirectory: z.string(),
-    })
-    .default({
-      storage: "disk",
-      tokenDirectory: "./tokens",
-    }),
+  "oauth.storage": z.literal("disk").or(z.literal("memory")).default("disk"),
+  "oauth.tokenDirectory": z.string().default("./tokens"),
 };

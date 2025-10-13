@@ -122,14 +122,7 @@ export class Gateway {
       studioDistPath?: string;
       config: Config;
       telemetry?: Telemetry;
-      oauth?:
-        | {
-            storage: "disk";
-            tokenDirectory: string;
-          }
-        | {
-            storage: "memory";
-          };
+      baseUrl: string;
     },
     successCallback?: () => void,
   ) {
@@ -138,12 +131,19 @@ export class Gateway {
     const workspaceStore = await WorkspaceStore.create({
       config: attribs.config,
       telemetry: attribs.telemetry,
-      oauth: attribs.oauth
-        ? {
-            ...attribs.oauth,
-            baseCallbackUrl: `http://localhost:${attribs.config.get("server.port") as number}`,
-          }
-        : undefined,
+      oauth:
+        attribs.config.get("oauth.storage") === "disk"
+          ? {
+              storage: "disk",
+              tokenDirectory: attribs.config.get(
+                "oauth.tokenDirectory",
+              ) as string,
+              baseCallbackUrl: attribs.baseUrl,
+            }
+          : {
+              storage: "memory",
+              baseCallbackUrl: attribs.baseUrl,
+            },
     });
 
     attribs.telemetry?.trackEvent("gateway_start");

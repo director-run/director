@@ -10,8 +10,8 @@ import {
 import { findFirstMatch } from "@director.run/utilities/fs";
 import { getLogger } from "@director.run/utilities/logger";
 import packageJson from "../../../package.json";
-import { getTelemetry } from "../../env";
-import { config, env } from "../../env";
+import { getGatewayBaseUrl, getTelemetry } from "../../env";
+import { config } from "../../env";
 
 export function registerServeCommand(program: DirectorCommand) {
   program
@@ -38,10 +38,7 @@ export async function startGateway(successCallback?: () => void) {
       config,
       studioDistPath: resolveStudioDistPath(),
       telemetry: getTelemetry(),
-      oauth: {
-        storage: "disk",
-        tokenDirectory: env.OAUTH_TOKEN_DIRECTORY,
-      },
+      baseUrl: getGatewayBaseUrl(),
     },
     successCallback,
   );

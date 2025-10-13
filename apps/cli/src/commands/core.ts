@@ -11,7 +11,7 @@ import { makeTable } from "@director.run/utilities/cli/index";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../client";
-import { getGatewayUrl } from "../env";
+import { getGatewayBaseUrl } from "../env";
 import { registerAddCommand } from "./core/add";
 import { registerAuthCommand } from "./core/authenticate";
 import { registerConnectCommand } from "./core/connect";
@@ -47,7 +47,7 @@ export function registerCoreCommands(program: DirectorCommand): void {
             ...proxies.map((proxy) => [
               proxy.id,
               proxy.name,
-              joinURL(getGatewayUrl(), proxy.paths.streamable),
+              joinURL(getGatewayBaseUrl(), proxy.paths.streamable),
             ]),
           );
 

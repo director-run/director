@@ -8,6 +8,7 @@ async function main() {
 
   const gateway = await Gateway.start({
     config,
+    baseUrl: "http://localhost:3673",
   });
 
   await gateway.workspaceStore.purge();

@@ -22,7 +22,7 @@
     "format": "biome format --write .",
     "clean": "rm -rf dist/*",
     "test": "bun run vitest  --fileParallelism=false",
-    "cli": "NODE_ENV=development bun run bin/cli.ts",
+    "cli": "LOG_LEVEL=debug NODE_ENV=development bun run bin/cli.ts",
     "cli:dev": "NODE_ENV=development bun --watch bin/cli.ts",
     "typecheck": "tsc --noEmit",
     "build": "bun run clean && bun build --production --target=node bin/cli.ts --outdir dist && cp -r ../studio/dist dist/studio",

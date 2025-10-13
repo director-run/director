@@ -27,8 +27,8 @@ export class Gateway {
   public readonly config: Config;
   private app: express.Express;
   private telemetry?: Telemetry;
-  private studioDistPath?: string;
-
+  private studioAssetsPath?: string;
+  private baseUrl: string;
   public get port() {
     return this.config.get("server.port") as number;
   }
@@ -37,12 +37,14 @@ export class Gateway {
     workspaceStore: WorkspaceStore;
     config: Config;
     telemetry?: Telemetry;
-    studioDistPath?: string;
+    studioAssetsPath?: string;
+    baseUrl: string;
   }) {
     this.workspaceStore = attribs.workspaceStore;
     this.config = attribs.config;
     this.telemetry = attribs.telemetry;
-    this.studioDistPath = attribs.studioDistPath;
+    this.studioAssetsPath = attribs.studioAssetsPath;
+    this.baseUrl = attribs.baseUrl;
     this.app = express();
 
     this.app.use(
@@ -51,15 +53,15 @@ export class Gateway {
       }),
     );
     this.app.use(logRequests());
-    if (this.studioDistPath) {
+    if (this.studioAssetsPath) {
       logger.debug({
         message: "serving studio assets from",
-        distPath: this.studioDistPath,
+        distPath: this.studioAssetsPath,
       });
       this.app.use(
         "/studio",
         spaMiddleware({
-          distPath: this.studioDistPath,
+          distPath: this.studioAssetsPath,
           config: {
             basePath: "/studio",
           },
@@ -67,7 +69,7 @@ export class Gateway {
       );
     } else {
       logger.warn({
-        message: "studioDistPath not provided, studio will not be available",
+        message: "studioAssetsPath not provided, studio will not be available",
       });
     }
     this.app.use(
@@ -93,9 +95,15 @@ export class Gateway {
             providerId,
             code,
           );
-          if (this.studioDistPath) {
+          if (this.studioAssetsPath) {
+            // Redirect to hosted studio callback page
             return {
-              redirectUrl: `http://localhost:${isDevelopment() ? 3000 : this.port}/oauth/${factoryId}/${providerId}/callback`,
+              redirectUrl: `${this.baseUrl}/studio/oauth/${factoryId}/${providerId}/callback`,
+            };
+          } else if (isDevelopment()) {
+            // redirect to dev studio callback page
+            return {
+              redirectUrl: `http://localhost:3000/oauth/${factoryId}/${providerId}/callback`,
             };
           }
         },
@@ -104,9 +112,15 @@ export class Gateway {
             error,
             message: `failed to authorize ${factoryId} ${providerId}: ${error.message}`,
           });
-          if (this.studioDistPath) {
+          if (this.studioAssetsPath) {
+            // Redirect to hosted studio callback page
             return {
-              redirectUrl: `http://localhost:${isDevelopment() ? 3000 : this.port}/oauth/${factoryId}/${providerId}/callback?error=${JSON.stringify(error)}`,
+              redirectUrl: `${this.baseUrl}/studio/oauth/${factoryId}/${providerId}/callback?error=${JSON.stringify(error)}`,
+            };
+          } else if (isDevelopment()) {
+            // redirect to dev studio callback page
+            return {
+              redirectUrl: `http://localhost:3000/oauth/${factoryId}/${providerId}/callback?error=${JSON.stringify(error)}`,
             };
           }
         },
@@ -117,13 +131,20 @@ export class Gateway {
       "/trpc",
       createTRPCExpressMiddleware({ workspaceStore: this.workspaceStore }),
     );
+    this.app.get("/", (_, res, next) => {
+      if (this.studioAssetsPath) {
+        res.redirect("/studio");
+      } else {
+        return next();
+      }
+    });
     this.app.all("*", notFoundHandler);
     this.app.use(errorRequestHandler);
   }
 
   public static async start(
     attribs: {
-      studioDistPath?: string;
+      studioAssetsPath?: string;
       config: Config;
       telemetry?: Telemetry;
       baseUrl: string;
@@ -156,7 +177,8 @@ export class Gateway {
       config: attribs.config,
       workspaceStore,
       telemetry: attribs.telemetry,
-      studioDistPath: attribs.studioDistPath,
+      studioAssetsPath: attribs.studioAssetsPath,
+      baseUrl: attribs.baseUrl,
     });
 
     await gateway.start(successCallback);

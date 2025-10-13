@@ -36,7 +36,7 @@ export async function startGateway(successCallback?: () => void) {
   await Gateway.start(
     {
       config,
-      studioDistPath: resolveStudioDistPath(),
+      studioAssetsPath: getStudioAssetsPath(),
       telemetry: getTelemetry(),
       baseUrl: getGatewayBaseUrl(),
     },
@@ -44,7 +44,7 @@ export async function startGateway(successCallback?: () => void) {
   );
 }
 
-const resolveStudioDistPath = (): string | undefined => {
+const getStudioAssetsPath = (): string | undefined => {
   const logger = getLogger("resolveStudioDistPath");
 
   const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -59,5 +59,6 @@ const resolveStudioDistPath = (): string | undefined => {
     candidates,
   });
 
-  return findFirstMatch(candidates);
+  const match = findFirstMatch(candidates);
+  return match ? path.dirname(match) : undefined;
 };

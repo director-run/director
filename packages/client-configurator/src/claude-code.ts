@@ -71,7 +71,7 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeConfig> {
     };
     newConfig.mcpServers[this.createServerConfigKey(attributes.name)] = {
       type: "http",
-      url: attributes.sseURL,
+      url: attributes.streamableURL,
     };
     await this.updateConfig(newConfig);
   }

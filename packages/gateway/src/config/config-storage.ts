@@ -54,6 +54,9 @@ export class YamlConfigStorage implements ConfigStorage {
   constructor(params: {
     filePath: string;
   }) {
+    if (!params.filePath) {
+      throw new Error("Config filePath is not defined");
+    }
     this.filePath = params.filePath;
   }
 

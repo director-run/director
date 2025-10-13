@@ -2,7 +2,12 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { Config } from "@director.run/gateway/config/index";
-import { createEnv, isProduction, isTest } from "@director.run/utilities/env";
+import {
+  createEnv,
+  isDevelopment,
+  isProduction,
+  isTest,
+} from "@director.run/utilities/env";
 import { Telemetry } from "@director.run/utilities/telemetry";
 import { z } from "zod";
 import packageJson from "../package.json" assert { type: "json" };
@@ -18,14 +23,6 @@ export const env = createEnv({
       .string()
       .optional()
       .default(path.join(getDataDir(), "tokens")),
-    CONFIG_FILE_PATH: z
-      .string()
-      .optional()
-      .default(path.join(getDataDir(), "config.yaml")),
-    ENABLE_DEBUG_COMMANDS: z
-      .string()
-      .default("false")
-      .transform((s) => s !== "false" && s !== "0"),
   },
 });
 
@@ -41,19 +38,14 @@ export function isUsingEnvFile(): boolean {
   return fs.existsSync(getEnvFilePath());
 }
 
-function getDataDir(): string {
-  if (isProduction()) {
-    return path.join(os.homedir(), `.director`);
-  } else if (isTest()) {
-    return path.join(__dirname, `../.director/test`);
-  } else {
-    return path.join(__dirname, `../.director/development`);
-  }
+function getConfigFilePath(): string {
+  return path.join(getDataDir(), "./config.yaml");
 }
 
 export const config = await Config.createFileBasedConfig({
-  filePath: env.CONFIG_FILE_PATH,
+  filePath: getConfigFilePath(),
   defaults: {
+    debug: isDevelopment(),
     registry: {
       url: "https://registry.director.run",
     },
@@ -71,7 +63,15 @@ export const config = await Config.createFileBasedConfig({
   },
 });
 
-console.log("config", config.toPlainObject());
+function getDataDir(): string {
+  if (isProduction()) {
+    return path.join(os.homedir(), `.director`);
+  } else if (isTest()) {
+    return path.join(__dirname, `../.director/test`);
+  } else {
+    return path.join(__dirname, `../.director/development`);
+  }
+}
 
 export function getGatewayUrl(): string {
   return `http://localhost:${config.get("server.port")}`;

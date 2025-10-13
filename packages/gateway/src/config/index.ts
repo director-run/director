@@ -1,3 +1,4 @@
+import { whiteBold } from "@director.run/utilities/cli/colors";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import _ from "lodash";
 import slugify from "slugify";
@@ -78,6 +79,20 @@ export class Config extends ConfigBase<typeof configSchema> {
       defaults: this.defaults,
       storage: this.storage.toPlainObject(),
     };
+  }
+
+  prettyPrint(): void {
+    console.log("*************************************************");
+    console.log();
+    console.log(whiteBold("STORAGE"));
+    console.log(
+      JSON.stringify(_.omit(this.storage.toPlainObject(), "data"), null, 2),
+    );
+    console.log();
+    console.log(whiteBold("DEFAULTS"));
+    console.log(JSON.stringify(this.defaults, null, 2));
+    console.log();
+    console.log("*************************************************");
   }
 }
 
@@ -161,6 +176,7 @@ function slugifyName(name: string): string {
 const configSchema = {
   version: z.string().default("1.0.0"),
   workspaces: z.array(WorkspaceSchema).default([]),
+  debug: z.boolean().default(false),
   "server.port": z.number().min(0),
   "registry.url": z.string(),
   "registry.apiKey": z.string().optional(),

@@ -11,7 +11,7 @@ import { registerCoreCommands } from "../src/commands/core";
 import { registerMCPCommands } from "../src/commands/mcp";
 import { registerPromptsCommands } from "../src/commands/prompts";
 import { registerRegistryCommands } from "../src/commands/registry";
-import { env } from "../src/env";
+import { config } from "../src/env";
 
 // add this to prevent the program from exiting (useful for working on help text in live reload)
 // process.exit = (code?: number) => {};
@@ -20,14 +20,18 @@ await checkForUpdates();
 
 const program = new DirectorCommand();
 
+if (config.get("debug")) {
+  config.prettyPrint();
+}
+
 program
   .name("director")
-  .showDebugCommands(env.ENABLE_DEBUG_COMMANDS)
+  .showDebugCommands(!!config.get("debug"))
   .description(packageJson.description)
   .version(packageJson.version);
 
 registerCoreCommands(program);
-env.ENABLE_DEBUG_COMMANDS && registerClientCommands(program);
+config.get("debug") && registerClientCommands(program);
 registerRegistryCommands(program);
 registerMCPCommands(program);
 registerPromptsCommands(program);

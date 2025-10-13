@@ -59,6 +59,8 @@ export class MacOSController extends AbstractController {
         case App.VSCODE:
           displayName = "Visual Studio Code";
           break;
+        case App.CLAUDE_CODE:
+          return this.isCommandInPath("claude");
         default:
           throw new AppError(ErrorCode.INVALID_ARGUMENT, `unknown app: ${app}`);
       }
@@ -136,6 +138,8 @@ export class MacOSController extends AbstractController {
           homedir(),
           "Library/Application Support/Code/User/settings.json",
         );
+      case App.CLAUDE_CODE:
+        return path.join(homedir(), ".claude.json");
     }
   }
 }

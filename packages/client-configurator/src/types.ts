@@ -76,10 +76,7 @@ export abstract class AbstractConfigurator<T> {
     return key.startsWith(CONFIG_KEY_PREFIX);
   }
 
-  public abstract install(attributes: {
-    name: string;
-    sseURL: string;
-  }): Promise<void>;
+  public abstract install(attributes: Installable): Promise<void>;
   public abstract uninstall(name: string): Promise<void>;
   public abstract list(): Promise<Array<{ name: string; url: string }>>;
   public abstract openConfig(): Promise<void>;

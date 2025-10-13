@@ -63,12 +63,22 @@ export class YamlConfigStorage implements ConfigStorage {
   async init(): Promise<void> {
     if (existsSync(this.filePath)) {
       const fileContent = await fs.promises.readFile(this.filePath, "utf8");
-      this.data = YAML.parse(fileContent);
+      const parsed = YAML.parse(fileContent);
+      // If the file is empty or contains null/undefined, initialize as empty object
+      this.data =
+        parsed && typeof parsed === "object" && !Array.isArray(parsed)
+          ? parsed
+          : {};
     }
   }
 
   async persist(): Promise<void> {
-    await fs.promises.writeFile(this.filePath, YAML.stringify(this.data));
+    // Use JSON format for .json files, YAML for everything else
+    const isJsonFile = this.filePath.endsWith(".json");
+    const content = isJsonFile
+      ? JSON.stringify(this.data)
+      : YAML.stringify(this.data);
+    await fs.promises.writeFile(this.filePath, content);
   }
 
   async purge(): Promise<void> {

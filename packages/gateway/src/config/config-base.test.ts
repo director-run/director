@@ -210,6 +210,41 @@ describe("ConfigBase", () => {
   });
 
   describe("with file storage", () => {
+    it("should work with a blank file", async () => {
+      const filePath = path.join(__dirname, "./new-db.test.json");
+
+      if (fs.existsSync(filePath)) {
+        await fs.promises.unlink(filePath);
+      }
+
+      expect(fs.existsSync(filePath)).toBe(false);
+      fs.writeFileSync(filePath, "");
+      expect(fs.existsSync(filePath)).toBe(true);
+
+      const configBase = new ConfigBase({
+        schema: {
+          "server.port": z.number().min(0).default(3673),
+          "some.key": z.string(),
+        },
+        storage: new YamlConfigStorage({
+          filePath,
+        }),
+        defaults: {
+          "some.key": "default value",
+        },
+      });
+      await configBase.init();
+      await configBase.set("server.port", 1234);
+
+      expect(fs.readFileSync(filePath, "utf8")).toBe(
+        JSON.stringify({
+          server: {
+            port: 1234,
+          },
+        }),
+      );
+    });
+
     it("should create a new database file if it doesn't exist", async () => {
       const configSchema = {
         "server.port": z.number().min(0).default(3673),

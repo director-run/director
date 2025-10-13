@@ -3,7 +3,9 @@ import os from "node:os";
 import path from "node:path";
 import { Config } from "@director.run/gateway/config/index";
 import { createEnv, isProduction, isTest } from "@director.run/utilities/env";
+import { Telemetry } from "@director.run/utilities/telemetry";
 import { z } from "zod";
+import packageJson from "../package.json" assert { type: "json" };
 
 export const LOCAL_ENV_FILE_PATH = path.join(process.cwd(), ".env.local");
 
@@ -13,11 +15,6 @@ export const env = createEnv({
   envFilePath: getEnvFilePath(),
   envVars: {
     GATEWAY_PORT: z.number({ coerce: true }).optional().default(3673),
-    STUDIO_URL: z.string().optional().default(`http://localhost:3673/studio`),
-    SEGMENT_WRITE_KEY: z
-      .string()
-      .optional()
-      .default(SEGMENT_PRODUCTION_WRITE_KEY),
     REGISTRY_API_URL: z
       .string()
       .optional()
@@ -34,10 +31,6 @@ export const env = createEnv({
     ENABLE_DEBUG_COMMANDS: z
       .string()
       .default("false")
-      .transform((s) => s !== "false" && s !== "0"),
-    SEND_TELEMETRY: z
-      .string()
-      .default("true")
       .transform((s) => s !== "false" && s !== "0"),
   },
 });
@@ -74,12 +67,12 @@ export const config = await Config.createFileBasedConfig({
       port: 3673,
     },
     telemetry: {
-      writeKey: "test-write-key",
+      writeKey: isProduction() ? SEGMENT_PRODUCTION_WRITE_KEY : "",
       enabled: true,
     },
     oauth: {
       storage: "disk",
-      tokenDirectory: "./tokens",
+      tokenDirectory: `./oauth-tokens`,
     },
   },
 });
@@ -90,4 +83,14 @@ export function getGatewayUrl(): string {
 
 export function getStudioUrl(): string {
   return `http://localhost:${config.get("server.port")}/studio`;
+}
+
+export function getTelemetry(): Telemetry {
+  return new Telemetry({
+    writeKey: config.get("telemetry.writeKey") ?? "",
+    enabled: !!config.get("telemetry.enabled"),
+    traits: {
+      cliVersion: packageJson.version,
+    },
+  });
 }

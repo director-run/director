@@ -1,7 +1,6 @@
 import path from "path";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
-import { Config } from "@director.run/gateway/config/index";
 import { Gateway } from "@director.run/gateway/gateway";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import {
@@ -10,9 +9,9 @@ import {
 } from "@director.run/utilities/cli/index";
 import { findFirstMatch } from "@director.run/utilities/fs";
 import { getLogger } from "@director.run/utilities/logger";
-import { Telemetry } from "@director.run/utilities/telemetry";
 import packageJson from "../../../package.json";
-import { env } from "../../env";
+import { getTelemetry } from "../../env";
+import { config, env } from "../../env";
 
 export function registerServeCommand(program: DirectorCommand) {
   program
@@ -37,33 +36,9 @@ export async function startGateway(successCallback?: () => void) {
   await Gateway.start(
     {
       port: env.GATEWAY_PORT,
-      config: await Config.createFileBasedConfig({
-        filePath: env.CONFIG_FILE_PATH,
-        defaults: {
-          registry: {
-            url: "https://registry.director.run",
-          },
-          server: {
-            port: 3673,
-          },
-          telemetry: {
-            writeKey: "test-write-key",
-            enabled: true,
-          },
-          oauth: {
-            storage: "disk",
-            tokenDirectory: "./tokens",
-          },
-        },
-      }),
+      config,
       studioDistPath: resolveStudioDistPath(),
-      telemetry: new Telemetry({
-        writeKey: env.SEGMENT_WRITE_KEY,
-        enabled: env.SEND_TELEMETRY,
-        traits: {
-          cliVersion: packageJson.version,
-        },
-      }),
+      telemetry: getTelemetry(),
       oauth: {
         storage: "disk",
         tokenDirectory: env.OAUTH_TOKEN_DIRECTORY,

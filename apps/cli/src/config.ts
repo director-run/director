@@ -6,6 +6,7 @@ import {
   isProduction,
   isTest,
 } from "@director.run/utilities/env";
+import { findFirstMatch } from "@director.run/utilities/fs";
 import { Telemetry } from "@director.run/utilities/telemetry";
 import packageJson from "../package.json" assert { type: "json" };
 
@@ -17,7 +18,15 @@ export function getConfigFilePath(): string {
   } else if (isDevelopment()) {
     return path.join(__dirname, `../../../director.config.development.yaml`);
   } else {
-    return path.join(os.homedir(), `.director/director.config.yaml`);
+    const defaultConfigPath = path.join(
+      os.homedir(),
+      `.director/director.config.yaml`,
+    );
+    const cwdConfigPath = path.join(process.cwd(), `director.config.yaml`);
+
+    return (
+      findFirstMatch([cwdConfigPath, defaultConfigPath]) ?? defaultConfigPath
+    );
   }
 }
 

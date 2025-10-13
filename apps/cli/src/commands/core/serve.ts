@@ -10,7 +10,11 @@ import {
 import { findFirstMatch } from "@director.run/utilities/fs";
 import { getLogger } from "@director.run/utilities/logger";
 import packageJson from "../../../package.json";
-import { getGatewayBaseUrl, getTelemetry } from "../../config";
+import {
+  getConfigFilePath,
+  getGatewayBaseUrl,
+  getTelemetry,
+} from "../../config";
 import { config } from "../../config";
 
 export function registerServeCommand(program: DirectorCommand) {
@@ -30,7 +34,8 @@ export function registerServeCommand(program: DirectorCommand) {
 }
 
 export async function startGateway(successCallback?: () => void) {
-  console.log(`v${packageJson.version}`);
+  console.log(`version: v${packageJson.version}`);
+  console.log(`config:  ${getConfigFilePath()}`);
   printDirectorAscii();
 
   await Gateway.start(

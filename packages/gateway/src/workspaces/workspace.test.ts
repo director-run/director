@@ -1,15 +1,14 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { Config } from "../config";
+import { makeTestConfig } from "../test/config";
 import { makeFooBarServerStdioConfig } from "../test/fixtures";
 import { Workspace } from "./workspace";
 
-describe("Workspace", () => {
-  let config: Config;
+describe("Workspace", async () => {
+  const config: Config = await makeTestConfig();
   let workspace: Workspace;
 
   beforeEach(async () => {
-    config = await Config.makeTestConfig();
-    await config.purge();
     workspace = await Workspace.fromConfig(
       {
         id: "test-workspace",

@@ -8,8 +8,8 @@ import { serveOverSSE, serveOverStreamable } from "@director.run/mcp/transport";
 import { requiredStringSchema } from "@director.run/utilities/schema";
 import { z } from "zod";
 import { createGatewayClient } from "../client";
-import { Config } from "../config";
 import { Gateway } from "../gateway";
+import { makeTestConfig } from "./config";
 
 const PROXY_TARGET_PORT = 4521;
 
@@ -45,9 +45,9 @@ export class IntegrationTestHarness {
   }
 
   public static async start() {
-    const config = await Config.makeTestConfig();
+    const config = await makeTestConfig();
     const gateway = await Gateway.start({
-      config: await Config.makeTestConfig(),
+      config,
       baseUrl: `http://localhost:${config.get("server.port")}`,
     });
 

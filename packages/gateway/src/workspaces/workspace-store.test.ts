@@ -1,6 +1,6 @@
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { Config } from "../config";
+import { makeTestConfig } from "../test/config";
 import { makeHTTPTargetConfig } from "../test/fixtures";
 import { WorkspaceStore } from "./workspace-store";
 
@@ -8,9 +8,8 @@ describe("WorkspaceStore", () => {
   let workspaceStore: WorkspaceStore;
 
   beforeEach(async () => {
-    const db = await Config.makeTestConfig();
     workspaceStore = await WorkspaceStore.create({
-      config: db,
+      config: await makeTestConfig(),
       oauth: {
         storage: "memory",
         baseCallbackUrl: "http://localhost:3000/callback",

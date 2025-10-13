@@ -158,7 +158,3 @@ export type ClaudeServerEntry = {
   name: string;
   transport: ClaudeMCPServer;
 };
-
-export function isClaudeConfigPresent(): boolean {
-  return os.isFilePresent(os.getConfigFileForApp(App.CLAUDE));
-}

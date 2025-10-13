@@ -4,7 +4,7 @@ import { os, App } from "@director.run/utilities/os/index";
 import { z } from "zod";
 import { AbstractConfigurator, type Installable } from "./types";
 
-export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeConfig> {
+export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeCodeConfig> {
   public async isClientPresent() {
     return await os.isAppInstalled(App.CLAUDE_CODE);
   }
@@ -50,7 +50,7 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeConfig> {
       );
     }
     this.logger.info(`uninstalling ${name}`);
-    const newConfig: ClaudeConfig = {
+    const newConfig: ClaudeCodeConfig = {
       mcpServers: { ...this.config?.mcpServers },
     };
     delete newConfig.mcpServers?.[this.createServerConfigKey(name)];
@@ -66,7 +66,7 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeConfig> {
       );
     }
     this.logger.info(`installing ${attributes.name}`);
-    const newConfig: ClaudeConfig = {
+    const newConfig: ClaudeCodeConfig = {
       mcpServers: { ...this.config?.mcpServers },
     };
     newConfig.mcpServers[this.createServerConfigKey(attributes.name)] = {
@@ -79,7 +79,7 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeConfig> {
   public async reset() {
     await this.initialize();
     this.logger.info("purging claude config");
-    const newConfig: ClaudeConfig = {
+    const newConfig: ClaudeCodeConfig = {
       mcpServers: { ...this.config?.mcpServers },
     };
     newConfig.mcpServers = {};
@@ -112,7 +112,7 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeConfig> {
     return Promise.resolve();
   }
 
-  private async updateConfig(newConfig: ClaudeConfig) {
+  private async updateConfig(newConfig: ClaudeCodeConfig) {
     this.config = newConfig;
     this.logger.info(`writing config to ${this.configPath}`);
     await writeJSONFile(this.configPath, this.config);
@@ -127,24 +127,16 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeConfig> {
   }
 }
 
-export const ClaudeMCPServerSchema = z.object({
+export const ClaudeCodeMCPServerSchema = z.object({
   type: z.literal("http"),
   url: z.string().describe("The URL of the MCP server"),
 });
 
-export const ClaudeConfigSchema = z.object({
+export const ClaudeCodeConfigSchema = z.object({
   mcpServers: z
-    .record(z.string(), ClaudeMCPServerSchema)
+    .record(z.string(), ClaudeCodeMCPServerSchema)
     .describe("Map of MCP server configurations"),
 });
 
-export type ClaudeMCPServer = z.infer<typeof ClaudeMCPServerSchema>;
-export type ClaudeConfig = z.infer<typeof ClaudeConfigSchema>;
-export type ClaudeServerEntry = {
-  name: string;
-  transport: ClaudeMCPServer;
-};
-
-export function isClaudeConfigPresent(): boolean {
-  return os.isFilePresent(os.getConfigFileForApp(App.CLAUDE));
-}
+export type ClaudeCodeMCPServer = z.infer<typeof ClaudeCodeMCPServerSchema>;
+export type ClaudeCodeConfig = z.infer<typeof ClaudeCodeConfigSchema>;

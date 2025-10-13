@@ -1,14 +1,15 @@
 import type { Server } from "node:http";
-import path from "node:path";
 import {
   makeEchoServer,
   makeFooBarServer,
   makeKitchenSinkServer,
 } from "@director.run/mcp/test/fixtures";
 import { serveOverSSE, serveOverStreamable } from "@director.run/mcp/transport";
+import { requiredStringSchema } from "@director.run/utilities/schema";
+import { z } from "zod";
 import { createGatewayClient } from "../client";
-import type { HTTPTransport } from "../config/schema";
 import { Gateway } from "../gateway";
+import { makeTestConfig } from "./config";
 
 const PROXY_TARGET_PORT = 4521;
 
@@ -40,23 +41,19 @@ export class IntegrationTestHarness {
   }
 
   public get database() {
-    return this.gateway.db;
+    return this.gateway.config;
   }
 
   public static async start() {
+    const config = await makeTestConfig();
     const gateway = await Gateway.start({
-      port: IntegrationTestHarness.gatewayPort,
-      configuration: {
-        type: "yaml",
-        filePath: path.join(__dirname, "config.test.yaml"),
-      },
-      registryURL: "http://localhost:3000",
-      oauth: {
-        storage: "memory",
-      },
+      config,
+      baseUrl: `http://localhost:${config.get("server.port")}`,
     });
 
-    const client = createGatewayClient(`http://localhost:${gateway.port}`);
+    const client = createGatewayClient(
+      `http://localhost:${config.get("server.port")}`,
+    );
 
     const echoServerSSEInstance = await serveOverSSE(
       makeEchoServer(),
@@ -133,3 +130,11 @@ export function makeHTTPTargetConfig(params: {
     },
   };
 }
+
+export const httpTransportSchema = z.object({
+  type: z.literal("http"),
+  url: requiredStringSchema.url(),
+  headers: z.record(requiredStringSchema, z.string()).optional(),
+});
+
+export type HTTPTransport = z.infer<typeof httpTransportSchema>;

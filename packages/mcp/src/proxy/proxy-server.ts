@@ -5,7 +5,7 @@ import {
 } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import * as eventsource from "eventsource";
+import EventSource from "eventsource";
 import _ from "lodash";
 import packageJson from "../../package.json";
 import type { AbstractClientParams } from "../client/abstract-client";
@@ -17,7 +17,7 @@ import { setupResourceTemplateHandlers } from "./handlers/resource-templates-han
 import { setupResourceHandlers } from "./handlers/resources-handler";
 import { setupToolHandlers } from "./handlers/tools-handler";
 
-global.EventSource = eventsource.EventSource;
+global.EventSource = EventSource as unknown as typeof global.EventSource;
 
 const logger = getLogger(`ProxyServer`);
 
@@ -170,7 +170,8 @@ export class ProxyServer extends Server {
 
     _.remove(
       this.targets,
-      (t) => t.name.toLocaleLowerCase() === targetName.toLocaleLowerCase(),
+      (t: ProxyTarget) =>
+        t.name.toLocaleLowerCase() === targetName.toLocaleLowerCase(),
     );
 
     return existingTarget;

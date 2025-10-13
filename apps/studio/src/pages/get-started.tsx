@@ -10,7 +10,10 @@ import { useEffect, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { GATEWAY_URL } from "../config.ts";
-import { gatewayClient as trpc } from "../contexts/backend-context.tsx";
+import {
+  registryClient,
+  gatewayClient as trpc,
+} from "../contexts/backend-context.tsx";
 import { useClients } from "../hooks/use-clients.ts";
 import { useInstallServerFromRegistry } from "../hooks/use-install-server-from-registry.ts";
 import { useOnboardingProgress } from "../hooks/use-onboarding-progress.ts";
@@ -57,7 +60,7 @@ export function GetStartedPage() {
 
   const listClientsQuery = useClients(currentProxyId as string);
 
-  const entryQuery = trpc.registry.getEntryByName.useQuery(
+  const entryQuery = registryClient.entries.getEntryByName.useQuery(
     {
       name: selectedRegistryEntryName || "",
     },

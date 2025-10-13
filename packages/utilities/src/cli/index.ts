@@ -17,7 +17,7 @@ export function actionWithErrorHandler<Args extends unknown[]>(
       } else if (error instanceof Error) {
         logger.error({ error, message: `${error.message}` });
       } else {
-        logger.error("Unexpected error:", error);
+        logger.error({ error, message: "Unexpected error" });
       }
     }
   };

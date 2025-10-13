@@ -9,7 +9,7 @@ import { spinnerWrap } from "@director.run/utilities/cli/loader";
 import { input, password } from "@inquirer/prompts";
 import type { inferRouterOutputs } from "@trpc/server";
 import { gatewayClient, registryClient } from "../../client";
-import { env } from "../../env";
+import { getConfigFilePath } from "../../config";
 
 type RegistryEntry = inferRouterOutputs<AppRouter>["entries"]["getEntryByName"];
 
@@ -82,7 +82,7 @@ export function registerAddCommand(program: DirectorCommand) {
             );
             console.log();
             console.log(
-              `${whiteBold("CONFIG_FILE_PATH:")} ${env.CONFIG_FILE_PATH}`,
+              `${whiteBold("CONFIG_FILE_PATH:")} ${getConfigFilePath()}`,
             );
             console.log();
           }
@@ -156,7 +156,6 @@ async function addServerFromRegistry(proxyId: string, entryName: string) {
         source: {
           name: "registry",
           entryId: entry.id,
-          entryData: entry,
         },
       },
     });

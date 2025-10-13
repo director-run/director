@@ -43,13 +43,13 @@ export class InMemoryOAuthStorage extends AbstractOAuthStorage {
   }
 
   getTokens(providerId: string): Promise<OAuthTokens | undefined> {
-    logger.info("getting tokens...", { providerId });
+    logger.info({ message: "getting tokens...", providerId });
     const data = this._data.get(providerId);
     return Promise.resolve(data?.tokens);
   }
 
   saveTokens(providerId: string, tokens: OAuthTokens): Promise<void> {
-    logger.info("saving tokens", { providerId });
+    logger.info({ message: "saving tokens", providerId });
     const data = this._data.get(providerId) || {};
     data.tokens = tokens;
     this._data.set(providerId, data);
@@ -57,7 +57,7 @@ export class InMemoryOAuthStorage extends AbstractOAuthStorage {
   }
 
   deleteTokens(providerId: string): Promise<void> {
-    logger.info("deleting tokens", { providerId });
+    logger.info({ message: "deleting tokens", providerId });
     this._data.delete(providerId);
     return Promise.resolve();
   }

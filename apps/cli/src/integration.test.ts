@@ -1,3 +1,4 @@
+import fs from "fs";
 import { ChildProcess } from "node:child_process";
 import {
   afterAll,
@@ -8,6 +9,7 @@ import {
   test,
 } from "vitest";
 import { gatewayClient } from "./client";
+import { getConfigFilePath } from "./config";
 import { runCLICommand, runCLIServe } from "./test/helpers";
 
 describe("CLI integration tests", () => {
@@ -21,10 +23,11 @@ describe("CLI integration tests", () => {
     }
   }, 60000);
 
-  afterAll(() => {
+  afterAll(async () => {
     if (serveProcess) {
       serveProcess.kill();
     }
+    await fs.promises.unlink(getConfigFilePath());
   });
 
   beforeEach(async () => {
@@ -46,19 +49,27 @@ describe("CLI integration tests", () => {
       await runCLICommand("create", "test");
     });
 
-    test("should be able to add a server from the registry", async () => {
-      await runCLICommand("add", "test", "--entry", "hackernews");
+    test(
+      "should be able to add a server from the registry",
+      { timeout: 10000 },
+      async () => {
+        await runCLICommand("add", "test", "--entry", "hackernews");
 
-      const proxy = await gatewayClient.store.get.query({ proxyId: "test" });
-      expect(proxy.servers).toContainEqual(
-        expect.objectContaining({
-          name: "hackernews",
-          type: "stdio",
-          command: "uvx",
-          args: ["--from", "git+https://github.com/erithwik/mcp-hn", "mcp-hn"],
-        }),
-      );
-    });
+        const proxy = await gatewayClient.store.get.query({ proxyId: "test" });
+        expect(proxy.servers).toContainEqual(
+          expect.objectContaining({
+            name: "hackernews",
+            type: "stdio",
+            command: "uvx",
+            args: [
+              "--from",
+              "git+https://github.com/erithwik/mcp-hn",
+              "mcp-hn",
+            ],
+          }),
+        );
+      },
+    );
 
     test("should be able to add a server using a command", async () => {
       await runCLICommand(

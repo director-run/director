@@ -1,181 +1,187 @@
-import fs from "fs";
-import { existsSync } from "node:fs";
+import { whiteBold } from "@director.run/utilities/cli/colors";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import _ from "lodash";
 import slugify from "slugify";
-import YAML from "yaml";
-import { ZodError } from "zod";
 import { z } from "zod";
 
-import { type WorkspaceParams, WorkspaceSchema } from "../workspaces/workspace";
+import {
+  type WorkspaceParams,
+  WorkspaceSchema,
+} from "../workspaces/workspace-schema";
+import { ConfigBase } from "./config-base";
+import {
+  type ConfigStorage,
+  InMemoryConfigStorage,
+  YamlConfigStorage,
+} from "./config-storage";
 
-export const databaseAttributesSchema = z.object({
-  version: z.string().optional(),
-  playbooks: z.array(WorkspaceSchema),
-});
+export class Config extends ConfigBase<typeof configSchema> {
+  public readonly workspaces: WorkspacesConfig;
 
-export type ConfigurationData = z.infer<typeof databaseAttributesSchema>;
-
-export abstract class Config {
-  public readonly filePath: string;
-  protected _data?: ConfigurationData;
-
-  protected constructor(filePath: string) {
-    this.filePath = filePath;
+  private constructor(params: {
+    storage: ConfigStorage;
+    defaults: Record<string, unknown>;
+  }) {
+    super({
+      schema: configSchema,
+      storage: params.storage,
+      defaults: params.defaults,
+    });
+    this.workspaces = new WorkspacesConfig(this);
   }
 
-  protected abstract init(): Promise<void>;
-  protected abstract readData(): Promise<ConfigurationData>;
-  protected abstract writeData(data: ConfigurationData): Promise<void>;
+  static async createFileBasedConfig(params: {
+    filePath: string;
+    defaults: Record<string, unknown>;
+  }): Promise<Config> {
+    const config = new Config({
+      storage: new YamlConfigStorage({ filePath: params.filePath }),
+      defaults: params.defaults,
+    });
+    await config.init();
+    return config;
+  }
 
-  async addProxy(proxy: Omit<WorkspaceParams, "id">): Promise<WorkspaceParams> {
-    const store = await this.readData();
+  static async createMemoryBasedConfig(params: {
+    defaults: Record<string, unknown>;
+  }): Promise<Config> {
+    const config = new Config({
+      storage: new InMemoryConfigStorage(),
+      defaults: params.defaults,
+    });
+    await config.init();
+    return config;
+  }
 
-    if (_.find(store.playbooks, { name: proxy.name })) {
-      throw new Error("Proxy already exists");
+  static makeTestConfig(): Promise<Config> {
+    return this.createMemoryBasedConfig({
+      defaults: {
+        registry: {
+          url: "https://registry.director.run",
+        },
+        server: {
+          port: 4673,
+        },
+        telemetry: {
+          writeKey: "test-write-key",
+          enabled: false,
+        },
+        oauth: {
+          storage: "disk",
+          tokenDirectory: "./tokens",
+        },
+      },
+    });
+  }
+
+  toPlainObject(): Record<string, unknown> {
+    return {
+      defaults: this.defaults,
+      storage: this.storage.toPlainObject(),
+    };
+  }
+
+  prettyPrint(): void {
+    console.log("*************************************************");
+    console.log();
+    console.log(whiteBold("STORAGE"));
+    console.log(
+      JSON.stringify(_.omit(this.storage.toPlainObject(), "data"), null, 2),
+    );
+    console.log();
+    console.log(whiteBold("DEFAULTS"));
+    console.log(JSON.stringify(this.defaults, null, 2));
+    console.log();
+    console.log("*************************************************");
+  }
+}
+
+class WorkspacesConfig {
+  private config: Config;
+
+  constructor(config: Config) {
+    this.config = config;
+  }
+
+  async create(
+    workspace: Omit<WorkspaceParams, "id">,
+  ): Promise<WorkspaceParams> {
+    const workspaceId = slugifyName(workspace.name);
+    const workspaces = await this.all();
+
+    const existingWorkspace = _.find(workspaces, { id: workspaceId });
+    if (existingWorkspace) {
+      throw new AppError(
+        ErrorCode.DUPLICATE,
+        "Workspace with this name already exists",
+      );
     }
 
-    const newProxy: WorkspaceParams = {
-      id: slugifyName(proxy.name),
-      ...proxy,
-      servers: _.map(proxy.servers || [], (s) => ({
+    return this.update(workspaceId, {
+      id: workspaceId,
+      ...workspace,
+      servers: _.map(workspace.servers || [], (s) => ({
         ...s,
         name: slugifyName(s.name),
       })),
-    };
-
-    store.playbooks.push(newProxy);
-    await this.writeData(store);
-    return newProxy;
+    });
   }
 
   async getWorkspace(id: string): Promise<WorkspaceParams> {
-    const store = await this.readData();
-    const proxy = _.find(store.playbooks, { id });
-    if (!proxy) {
+    const workspaces = await this.all();
+    const workspace = _.find(workspaces, { id });
+    if (!workspace) {
       throw new Error("Workspace not found");
     }
-    return proxy;
+    return workspace;
   }
 
-  async setWorkspace(id: string, proxy: WorkspaceParams): Promise<void> {
-    if (proxy.id !== id) {
+  async update(
+    id: string,
+    workspace: WorkspaceParams,
+  ): Promise<WorkspaceParams> {
+    if (workspace.id !== id) {
       throw new Error("Id mismatch");
     }
-    const store = await this.readData();
-    const proxyIndex = _.findIndex(store.playbooks, { id });
-    if (proxyIndex === -1) {
-      store.playbooks.push(proxy);
+    const workspaces = await this.all();
+    const workspaceIndex = _.findIndex(workspaces, { id });
+    if (workspaceIndex === -1) {
+      workspaces.push(workspace);
     } else {
-      store.playbooks[proxyIndex] = proxy;
+      workspaces[workspaceIndex] = workspace;
     }
-    await this.writeData(store);
+    await this.config.set("workspaces", workspaces);
+    return workspace;
   }
 
-  async unsetWorkspace(id: string): Promise<void> {
-    const store = await this.readData();
-    store.playbooks = _.reject(store.playbooks, { id });
-    await this.writeData(store);
+  async remove(id: string): Promise<void> {
+    const workspaces = await this.all();
+    await this.config.set("workspaces", _.reject(workspaces, { id }));
   }
 
-  async countWorkspaces(): Promise<number> {
-    const store = await this.readData();
-    return store.playbooks.length;
+  async count(): Promise<number> {
+    const workspaces = await this.all();
+    return workspaces.length;
   }
 
-  async getAll(): Promise<WorkspaceParams[]> {
-    const store = await this.readData();
-    return store.playbooks;
+  async all(): Promise<WorkspaceParams[]> {
+    return (await this.config.get("workspaces")) || [];
   }
-
-  async purge(): Promise<void> {
-    await this.writeData(defaultConfiguration());
-  }
-}
-
-//
-// JSONConfiguration
-//
-// class JSONConfiguration extends Config {
-//   static async connect(filePath: string): Promise<JSONConfiguration> {
-//     const db = new JSONConfiguration(filePath);
-//     await db.init();
-//     return db;
-//   }
-
-//   async init() {
-//     if (!existsSync(this.filePath)) {
-//       await this.writeData(defaultConfiguration());
-//     } else {
-//       const store = await readJSONFile(this.filePath);
-//       this._data = databaseAttributesSchema.parse(store);
-//     }
-//   }
-
-//   async readData(): Promise<ConfigurationData> {
-//     if (!this._data) {
-//       await this.init();
-//     }
-//     return this._data as ConfigurationData;
-//   }
-
-//   async writeData(data: ConfigurationData): Promise<void> {
-//     await writeJSONFile(this.filePath, data);
-//     this._data = _.cloneDeep(data);
-//   }
-// }
-
-export class YAMLConfig extends Config {
-  static async connect(filePath: string): Promise<YAMLConfig> {
-    const db = new YAMLConfig(filePath);
-    await db.init();
-    return db;
-  }
-
-  async init() {
-    if (!existsSync(this.filePath)) {
-      await this.writeData(defaultConfiguration());
-    } else {
-      const data = await fs.promises.readFile(this.filePath, "utf8");
-      try {
-        this._data = databaseAttributesSchema.parse(YAML.parse(data));
-      } catch (e) {
-        if (e instanceof ZodError) {
-          throw new AppError(
-            ErrorCode.INVALID_CONFIGURATION,
-            "Invalid configuration file",
-            {
-              filePath: this.filePath,
-              parseErrors: e.errors,
-            },
-          );
-        } else {
-          throw e;
-        }
-      }
-    }
-  }
-
-  async readData(): Promise<ConfigurationData> {
-    if (!this._data) {
-      await this.init();
-    }
-    return _.cloneDeep(this._data) as ConfigurationData;
-  }
-
-  async writeData(data: ConfigurationData): Promise<void> {
-    await fs.promises.writeFile(this.filePath, YAML.stringify(data));
-    this._data = _.cloneDeep(data);
-  }
-}
-
-function defaultConfiguration(): ConfigurationData {
-  return {
-    version: "1.0.0",
-    playbooks: [],
-  };
 }
 
 function slugifyName(name: string): string {
   return slugify(name, { lower: true, strict: true, trim: true });
 }
+
+const configSchema = {
+  version: z.string().default("1.0.0"),
+  workspaces: z.array(WorkspaceSchema).default([]),
+  debug: z.boolean().default(false),
+  "server.port": z.number().min(0),
+  "registry.url": z.string(),
+  "registry.apiKey": z.string().optional(),
+  "telemetry.writeKey": z.string(),
+  "telemetry.enabled": z.boolean(),
+  "oauth.storage": z.literal("disk").or(z.literal("memory")).default("disk"),
+  "oauth.tokenDirectory": z.string().default("./tokens"),
+};

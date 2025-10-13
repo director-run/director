@@ -1,28 +1,29 @@
+import { Config } from "@director.run/gateway/config/index";
 import { Gateway } from "@director.run/gateway/gateway";
 import { gatewayClient } from "../src/client";
-import { env } from "../src/env";
 
 async function main() {
-  const gateway = await Gateway.start({
-    port: env.GATEWAY_PORT,
-    databaseFilePath: env.CONFIG_FILE_PATH,
-    registryURL: env.REGISTRY_API_URL,
-    allowedOrigins: [env.STUDIO_URL, /^https?:\/\/localhost(:\d+)?$/],
+  const config = await Config.createFileBasedConfig({
+    filePath: "/path/to/config.yaml",
+    defaults: {},
   });
 
-  await gateway.proxyStore.purge();
+  const gateway = await Gateway.start({
+    config,
+    baseUrl: "http://localhost:3673",
+  });
 
-  const proxy = await gateway.proxyStore.create({
+  await gateway.workspaceStore.purge();
+
+  const proxy = await gateway.workspaceStore.create({
     name: "test",
     servers: [],
   });
 
   await proxy.addTarget({
+    type: "http",
     name: "notion",
-    transport: {
-      type: "http",
-      url: "https://mcp.notion.com/mcp",
-    },
+    url: "https://mcp.notion.com/mcp",
   });
 
   const proxyDetails = await gatewayClient.store.get.query({

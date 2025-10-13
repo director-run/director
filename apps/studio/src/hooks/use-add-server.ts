@@ -9,10 +9,10 @@ export function useAddServer(options?: AddServerMutationOptions) {
 
   const mutation = gatewayClient.store.addServer.useMutation({
     ...options,
-    async onSuccess(data, variables, context) {
+    async onSuccess(data, variables, context, meta) {
       await utils.store.getAll.invalidate();
       await utils.store.get.invalidate({ proxyId: variables.proxyId });
-      await options?.onSuccess?.(data, variables, context);
+      await options?.onSuccess?.(data, variables, context, meta);
     },
   });
 

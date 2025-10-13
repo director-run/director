@@ -14,13 +14,22 @@
     "test": "vitest --fileParallelism=false"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.7.0",
     "@types/bun": "latest",
+    "@types/eventsource": "^1.1.15",
+    "@types/express": "^5.0.0",
+    "@types/lodash": "^4.17.13",
     "type-fest": "^4.40.0",
     "typescript": "^5.8.3",
     "vitest": "^3.1.1"
   },
   "dependencies": {
+    "@director.run/utilities": "workspace:*",
     "@modelcontextprotocol/sdk": "1.17.0",
-    "zod": "^3.25.76"
+    "eventsource": "^2.0.2",
+    "express": "^4.21.2",
+    "lodash": "^4.17.21",
+    "zod": "^3.25.76",
+    "zod-to-json-schema": "^3.24.2"
   }
 }

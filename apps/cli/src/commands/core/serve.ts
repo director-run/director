@@ -1,4 +1,3 @@
-import fs from "fs";
 import path from "path";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
@@ -8,9 +7,15 @@ import {
   actionWithErrorHandler,
   printDirectorAscii,
 } from "@director.run/utilities/cli/index";
+import { findFirstMatch } from "@director.run/utilities/fs";
 import { getLogger } from "@director.run/utilities/logger";
 import packageJson from "../../../package.json";
-import { env } from "../../env";
+import {
+  getConfigFilePath,
+  getGatewayBaseUrl,
+  getTelemetry,
+} from "../../config";
+import { config } from "../../config";
 
 export function registerServeCommand(program: DirectorCommand) {
   program
@@ -29,75 +34,36 @@ export function registerServeCommand(program: DirectorCommand) {
 }
 
 export async function startGateway(successCallback?: () => void) {
-  console.log(`v${packageJson.version}`);
+  console.log(`version: v${packageJson.version}`);
+  console.log(`config:  ${getConfigFilePath()}`);
   printDirectorAscii();
 
   await Gateway.start(
     {
-      port: env.GATEWAY_PORT,
-      configuration: {
-        type: "yaml",
-        filePath: env.CONFIG_FILE_PATH,
-      },
-      registryURL: env.REGISTRY_API_URL,
-      studioDistPath: resolveStudioDistPath(),
-      allowedOrigins: [env.STUDIO_URL, /^https?:\/\/localhost(:\d+)?$/],
-      telemetry: {
-        writeKey: env.SEGMENT_WRITE_KEY,
-        enabled: env.SEND_TELEMETRY,
-        traits: {
-          cliVersion: packageJson.version,
-        },
-      },
-      headers: {
-        "X-Cli-Version": packageJson.version,
-      },
-      oauth: {
-        storage: "disk",
-        tokenDirectory: env.OAUTH_TOKEN_DIRECTORY,
-      },
+      config,
+      studioAssetsPath: getStudioAssetsPath(),
+      telemetry: getTelemetry(),
+      baseUrl: getGatewayBaseUrl(),
     },
     successCallback,
   );
 }
 
-const resolveStudioDistPath = (): string | undefined => {
+const getStudioAssetsPath = (): string | undefined => {
   const logger = getLogger("resolveStudioDistPath");
 
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = dirname(__filename);
+  const __dirname = dirname(fileURLToPath(import.meta.url));
 
   const candidates = [
-    // Running in development
-    path.join(__dirname, "../../../dist/studio"),
-    // Running from compiled JS
-    path.join(__dirname, "./studio"),
+    path.join(__dirname, "../../../dist/studio/index.html"), // development
+    path.join(__dirname, "./studio/index.html"), // compiled JS
   ];
 
-  logger.trace({ __dirname });
-  logger.trace({
+  logger.debug({
     message: "attempting to resolve studio dist path",
     candidates,
   });
 
-  for (const candidate of candidates) {
-    const indexFile = path.join(candidate, "index.html");
-    try {
-      if (fs.existsSync(indexFile)) {
-        logger.info({
-          message: "found index.html in candidate path",
-          candidate,
-        });
-        return candidate;
-      }
-    } catch {
-      logger.error({
-        message: "could not find index.html in any of the candidate paths",
-      });
-      return undefined;
-    }
-  }
-
-  // Final fallback to a sensible default relative to __dirname
-  return path.join(__dirname, "../../studio");
+  const match = findFirstMatch(candidates);
+  return match ? path.dirname(match) : undefined;
 };

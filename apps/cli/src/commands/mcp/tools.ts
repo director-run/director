@@ -11,7 +11,7 @@ import { input } from "@inquirer/prompts";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { title } from "../../common";
-import { env } from "../../env";
+import { getGatewayBaseUrl } from "../../config";
 
 export function registerToolsCommand(program: DirectorCommand) {
   program
@@ -20,7 +20,7 @@ export function registerToolsCommand(program: DirectorCommand) {
     .action(
       actionWithErrorHandler(async (proxyId: string) => {
         const client = await HTTPClient.createAndConnectToHTTP(
-          joinURL(env.GATEWAY_URL, `${proxyId}/mcp`),
+          joinURL(getGatewayBaseUrl(), `${proxyId}/mcp`),
         );
 
         await printTools(client);
@@ -34,7 +34,7 @@ export function registerToolsCommand(program: DirectorCommand) {
     .action(
       actionWithErrorHandler(async (proxyId: string, toolName: string) => {
         const client = await HTTPClient.createAndConnectToHTTP(
-          joinURL(env.GATEWAY_URL, `${proxyId}/mcp`),
+          joinURL(getGatewayBaseUrl(), `${proxyId}/mcp`),
         );
 
         await printTool(client, toolName);
@@ -56,7 +56,7 @@ export function registerToolsCommand(program: DirectorCommand) {
     .action(
       actionWithErrorHandler(async (proxyId: string, toolName: string) => {
         const client = await HTTPClient.createAndConnectToHTTP(
-          joinURL(env.GATEWAY_URL, `${proxyId}/mcp`),
+          joinURL(getGatewayBaseUrl(), `${proxyId}/mcp`),
         );
         await callTool(client, toolName);
         await client.close();

@@ -17,7 +17,7 @@ export function useInstallServerFromRegistry(
   const registryUtils = registryClient.useUtils();
 
   const addServerMutation = gatewayClient.store.addServer.useMutation({
-    async onSuccess(data, variables, context) {
+    async onSuccess(data, variables, context, meta) {
       if (data.connectionInfo?.status === "unauthorized") {
         const authRes = await gatewayUtils.store.authenticate.fetch({
           proxyId: variables.proxyId,
@@ -35,12 +35,12 @@ export function useInstallServerFromRegistry(
         await gatewayUtils.store.get.invalidate({ proxyId: variables.proxyId });
       }
       if (options && options.onSuccess) {
-        await options.onSuccess(data, variables, context);
+        await options.onSuccess(data, variables, context, meta);
       }
     },
-    onError(error, variables, context) {
+    onError(error, variables, context, meta) {
       if (options && options.onError) {
-        options.onError(error, variables, context);
+        options.onError(error, variables, context, meta);
       }
     },
   });

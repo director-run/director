@@ -1,11 +1,12 @@
 import type { GatewayRouterOutputs } from "@director.run/gateway/client";
+import type { RegistryRouterOutputs } from "@director.run/registry/client";
 
 // Registry
 export type RegistryEntryList =
-  GatewayRouterOutputs["registry"]["getEntries"]["entries"];
+  RegistryRouterOutputs["entries"]["getEntries"]["entries"];
 
 export type RegistryEntryDetail =
-  GatewayRouterOutputs["registry"]["getEntryByName"];
+  RegistryRouterOutputs["entries"]["getEntryByName"];
 
 // Workspace
 export type WorkspaceList = GatewayRouterOutputs["store"]["getAll"];

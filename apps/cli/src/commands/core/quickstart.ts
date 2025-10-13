@@ -6,7 +6,6 @@ import { loader } from "@director.run/utilities/cli/loader";
 import { getLogger } from "@director.run/utilities/logger";
 import { select } from "@inquirer/prompts";
 import cliPackage from "../../../package.json";
-import { env } from "../../env";
 import { startGateway } from "./serve";
 import { openStudio } from "./studio";
 
@@ -20,9 +19,7 @@ export function registerQuickstartCommand(program: DirectorCommand) {
       actionWithErrorHandler(async () => {
         await checkPrerequisites();
         await startGateway(async () => {
-          logger.info(
-            `gateway started, opening ${env.STUDIO_URL} in your browser...`,
-          );
+          logger.info(`gateway started, opening the studio in your browser...`);
           await openStudio();
         });
       }),

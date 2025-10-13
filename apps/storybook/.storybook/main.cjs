@@ -28,6 +28,10 @@ const config = {
             __dirname,
             "../../../packages/design/src",
           ),
+          "@director.run/utilities": resolve(
+            __dirname,
+            "../../../packages/utilities/src",
+          ),
         },
       },
     });

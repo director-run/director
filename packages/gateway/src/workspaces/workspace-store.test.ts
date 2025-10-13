@@ -1,22 +1,15 @@
-import fs from "node:fs";
-import path from "node:path";
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { YAMLConfig } from "../config";
+import { makeTestConfig } from "../test/config";
 import { makeHTTPTargetConfig } from "../test/fixtures";
 import { WorkspaceStore } from "./workspace-store";
 
 describe("WorkspaceStore", () => {
   let workspaceStore: WorkspaceStore;
-  const dbPath = path.join(__dirname, "../test/config.test.yaml");
 
   beforeEach(async () => {
-    if (fs.existsSync(dbPath)) {
-      await fs.promises.unlink(dbPath);
-    }
-    const db = await YAMLConfig.connect(dbPath);
     workspaceStore = await WorkspaceStore.create({
-      config: db,
+      config: await makeTestConfig(),
       oauth: {
         storage: "memory",
         baseCallbackUrl: "http://localhost:3000/callback",

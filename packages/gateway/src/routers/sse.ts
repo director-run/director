@@ -15,7 +15,7 @@ export const createSSERouter = ({
   telemetry,
 }: {
   workspaceStore: WorkspaceStore;
-  telemetry: Telemetry;
+  telemetry?: Telemetry;
 }) => {
   const router = express.Router();
   const transports: Map<string, SSEServerTransport> = new Map();
@@ -37,7 +37,7 @@ export const createSSERouter = ({
         host: req.headers["host"],
       });
 
-      telemetry.trackEvent("connection_started", {
+      telemetry?.trackEvent("connection_started", {
         transport: "sse",
       });
       /**
@@ -93,7 +93,7 @@ export const createSSERouter = ({
         throw new AppError(ErrorCode.NOT_FOUND, "Transport not found");
       }
 
-      telemetry.trackEvent("method_called", {
+      telemetry?.trackEvent("method_called", {
         method: body.method,
         transport: "sse",
       });

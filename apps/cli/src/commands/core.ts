@@ -11,12 +11,12 @@ import { makeTable } from "@director.run/utilities/cli/index";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../client";
-import { env } from "../env";
+import { getGatewayBaseUrl } from "../config";
 import { registerAddCommand } from "./core/add";
 import { registerAuthCommand } from "./core/authenticate";
+import { registerConfigCommand } from "./core/config";
 import { registerConnectCommand } from "./core/connect";
 import { registerDebugCommands } from "./core/debug";
-import { registerEnvCommand } from "./core/env";
 import { registerGetCommand } from "./core/get";
 import { registerQuickstartCommand } from "./core/quickstart";
 import { registerRemoveCommand } from "./core/remove";
@@ -47,7 +47,7 @@ export function registerCoreCommands(program: DirectorCommand): void {
             ...proxies.map((proxy) => [
               proxy.id,
               proxy.name,
-              joinURL(env.GATEWAY_URL, proxy.paths.streamable),
+              joinURL(getGatewayBaseUrl(), proxy.paths.streamable),
             ]),
           );
 
@@ -122,7 +122,7 @@ export function registerCoreCommands(program: DirectorCommand): void {
       await proxyHTTPToStdio(url);
     });
 
-  registerEnvCommand(program);
+  registerConfigCommand(program);
   registerStatusCommand(program);
 
   registerDebugCommands(program);

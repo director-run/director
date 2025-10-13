@@ -13,9 +13,9 @@
     "test": "echo 'no tests'",
     "cli": "NODE_ENV=development bun run bin/cli.ts",
     "typecheck": "tsc --noEmit",
-    "build": "bun build --production --target=node bin/cli.ts --outdir dist",
+    "build": "echo 'no build'",
     "release": "bun publish --access public --omit=peer",
-    "prepare": "bun run build",
+    "prepare": "echo 'no prepare'",
     "dev": "bun --watch bin/cli.ts"
   },
   "peerDependencies": {

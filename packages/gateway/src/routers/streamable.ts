@@ -15,7 +15,7 @@ export const createStreamableRouter = ({
   telemetry,
 }: {
   workspaceStore: WorkspaceStore;
-  telemetry: Telemetry;
+  telemetry?: Telemetry;
 }) => {
   const router = express.Router();
   const transports: Map<string, StreamableHTTPServerTransport> = new Map();
@@ -62,7 +62,7 @@ export const createStreamableRouter = ({
         transport = existingTransport;
       } else if (!sessionId && isInitializeRequest(req.body)) {
         logger.info(`[${proxy.id}] new initialization request`);
-        telemetry.trackEvent("connection_started", {
+        telemetry?.trackEvent("connection_started", {
           transport: "streamable",
         });
         // New initialization request
@@ -76,7 +76,8 @@ export const createStreamableRouter = ({
 
         // Clean up transport when closed
         transport.onclose = () => {
-          logger.info(`[${proxy.id}] transport closed`, {
+          logger.info({
+            message: `[${proxy.id}] transport closed`,
             proxyId: proxy.id,
             sessionId: transport.sessionId,
           });
@@ -86,7 +87,8 @@ export const createStreamableRouter = ({
         };
 
         req.socket.on("close", () => {
-          logger.info(`[${proxy.id}] socket closed'`, {
+          logger.info({
+            message: `[${proxy.id}] socket closed'`,
             proxyId: proxy.id,
             sessionId: transport.sessionId,
           });
@@ -108,7 +110,7 @@ export const createStreamableRouter = ({
         body: req.body,
       });
 
-      telemetry.trackEvent("method_called", {
+      telemetry?.trackEvent("method_called", {
         method: req.body.method,
         transport: "streamable",
       });

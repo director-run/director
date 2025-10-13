@@ -16,7 +16,7 @@ import { makeTable } from "@director.run/utilities/cli/index";
 import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../../client";
 import { subtitle } from "../../common";
-import { env } from "../../env";
+import { getGatewayBaseUrl } from "../../config";
 import { listPrompts } from "../../views/prompts-list";
 import { makeToolTable } from "../mcp/tools";
 
@@ -115,10 +115,10 @@ export function printProxyDetails(proxy: GatewayRouterOutputs["store"]["get"]) {
       name,
       description: description ?? "--",
       streamableURL: joinURL(
-        env.GATEWAY_URL,
+        getGatewayBaseUrl(),
         getStreamablePathForProxy(proxy.id),
       ),
-      sseURL: joinURL(env.GATEWAY_URL, getSSEPathForProxy(proxy.id)),
+      sseURL: joinURL(getGatewayBaseUrl(), getSSEPathForProxy(proxy.id)),
     }),
   );
 

@@ -96,7 +96,7 @@ describe("Proxy Target CRUD operations", () => {
         });
 
         const configEntry = (
-          await harness.database.getWorkspace(proxy.id)
+          await harness.database.workspaces.getWorkspace(proxy.id)
         ).servers.find((server) => server.name === "notion");
 
         expect(configEntry).toEqual(
@@ -125,7 +125,9 @@ describe("Proxy Target CRUD operations", () => {
           `[echo] failed to connect to http://localhost/not_existing_server`,
         );
 
-        expect(await harness.database.getWorkspace(proxy.id)).toEqual(
+        expect(
+          await harness.database.workspaces.getWorkspace(proxy.id),
+        ).toEqual(
           expect.objectContaining({
             name: "Test Proxy",
             servers: [],
@@ -163,7 +165,9 @@ describe("Proxy Target CRUD operations", () => {
           `[echo] command not found: 'not_existing_command'. Please make sure it is installed and available in your $PATH.`,
         );
 
-        expect(await harness.database.getWorkspace(proxy.id)).toEqual(
+        expect(
+          await harness.database.workspaces.getWorkspace(proxy.id),
+        ).toEqual(
           expect.objectContaining({
             name: "Test Proxy",
             servers: [],
@@ -199,7 +203,9 @@ describe("Proxy Target CRUD operations", () => {
           `[echo] failed to run 'ls not_existing_dir'. Please check the logs for more details.`,
         );
 
-        expect(await harness.database.getWorkspace(proxy.id)).toEqual(
+        expect(
+          await harness.database.workspaces.getWorkspace(proxy.id),
+        ).toEqual(
           expect.objectContaining({
             name: "Test Proxy",
             servers: [],
@@ -256,9 +262,9 @@ describe("Proxy Target CRUD operations", () => {
       it("should update the configuration file", async () => {
         const echoConfig = harness.getConfigForTarget("echo");
         expect(
-          (await harness.database.getWorkspace(proxy.id)).servers.find(
-            (server) => server.name === "echo",
-          ),
+          (
+            await harness.database.workspaces.getWorkspace(proxy.id)
+          ).servers.find((server) => server.name === "echo"),
         ).toEqual(
           expect.objectContaining({
             type: "http",
@@ -409,7 +415,7 @@ describe("Proxy Target CRUD operations", () => {
       });
       it("should update the configuration file", async () => {
         const configEntry = (
-          await harness.database.getWorkspace(proxy.id)
+          await harness.database.workspaces.getWorkspace(proxy.id)
         ).servers.find((server) => server.name === "echo");
         expect(configEntry?.toolPrefix).toBe(toolPrefix);
         expect(configEntry?.disabledTools).toMatchObject(disabledTools);
@@ -429,7 +435,7 @@ describe("Proxy Target CRUD operations", () => {
         expect(target.toolPrefix).toBe("");
         expect(target.disabledTools).toMatchObject([]);
         const configEntry = (
-          await harness.database.getWorkspace(proxy.id)
+          await harness.database.workspaces.getWorkspace(proxy.id)
         ).servers.find((server) => server.name === "echo");
         expect(configEntry?.toolPrefix).toBe("");
         expect(configEntry?.disabledTools).toMatchObject([]);
@@ -464,7 +470,7 @@ describe("Proxy Target CRUD operations", () => {
       });
       it("should be stored in the configuration file", async () => {
         const configEntry = (
-          await harness.database.getWorkspace(proxy.id)
+          await harness.database.workspaces.getWorkspace(proxy.id)
         ).servers.find((server) => server.name === "echo");
         expect(configEntry?.disabled).toBe(true);
       });
@@ -491,7 +497,7 @@ describe("Proxy Target CRUD operations", () => {
         });
         it("should be reflected in the configuration file", async () => {
           const configEntry = (
-            await harness.database.getWorkspace(proxy.id)
+            await harness.database.workspaces.getWorkspace(proxy.id)
           ).servers.find((server) => server.name === "echo");
           expect(configEntry?.disabled).toBe(false);
         });

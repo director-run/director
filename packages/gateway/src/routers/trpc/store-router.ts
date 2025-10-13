@@ -5,7 +5,7 @@ import { z } from "zod";
 import {
   type ServerConfigEntry,
   ServerConfigEntrySchema,
-} from "../../config/schema";
+} from "../../config/config-schema";
 import { restartConnectedClients } from "../../helpers";
 import type { WorkspaceTarget } from "../../workspaces/workspace";
 import { WorkspaceStore } from "../../workspaces/workspace-store";

@@ -1,70 +1,45 @@
 import { AbstractClient } from "@director.run/mcp/client/abstract-client";
-import {
-  HTTPClient,
-  type HTTPClientPlainObject,
-  HTTPClientSchema,
-} from "@director.run/mcp/client/http-client";
-import {
-  StdioClient,
-  type StdioClientPlainObject,
-  StdioClientSchema,
-} from "@director.run/mcp/client/stdio-client";
+import { HTTPClient } from "@director.run/mcp/client/http-client";
+import { StdioClient } from "@director.run/mcp/client/stdio-client";
 import type { OAuthProviderFactory } from "@director.run/mcp/oauth/oauth-provider-factory";
 import {
   ProxyServer,
   type ProxyTarget,
 } from "@director.run/mcp/proxy/proxy-server";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
-import {
-  optionalStringSchema,
-  requiredStringSchema,
-} from "@director.run/utilities/schema";
 import { Telemetry } from "@director.run/utilities/telemetry";
-import { z } from "zod";
 import {
   PROMPT_MANAGER_TARGET_NAME,
   type Prompt,
   PromptManager,
-  PromptSchema,
 } from "../capabilities/prompt-manager";
 import { Config } from "../config";
 import { getSSEPathForProxy, getStreamablePathForProxy } from "../helpers";
+import {
+  type WorkspaceHTTPTarget,
+  WorkspaceHTTPTargetSchema,
+  type WorkspaceParams,
+  type WorkspacePlainObject,
+  WorkspaceSchema,
+  type WorkspaceStdioTarget,
+  WorkspaceStdioTargetSchema,
+  type WorkspaceTarget,
+  WorkspaceTargetSchema,
+} from "./workspace-schema";
 
-export const WorkspaceHTTPTargetSchema = HTTPClientSchema.extend({
-  type: z.literal("http"),
-});
-
-export type WorkspaceHTTPTarget = z.infer<typeof WorkspaceHTTPTargetSchema>;
-
-export const WorkspaceStdioTargetSchema = StdioClientSchema.extend({
-  type: z.literal("stdio"),
-});
-
-export type WorkspaceStdioTarget = z.infer<typeof WorkspaceStdioTargetSchema>;
-
-const WorkspaceTargetSchema = z.union([
+// Re-export all types and schemas for backward compatibility
+export type {
+  WorkspaceHTTPTarget,
+  WorkspaceStdioTarget,
+  WorkspaceTarget,
+  WorkspaceParams,
+  WorkspacePlainObject,
+};
+export {
   WorkspaceHTTPTargetSchema,
   WorkspaceStdioTargetSchema,
-]);
-
-export type WorkspaceTarget = z.infer<typeof WorkspaceTargetSchema>;
-
-export const WorkspaceSchema = z.object({
-  id: requiredStringSchema,
-  name: requiredStringSchema,
-  description: optionalStringSchema,
-  prompts: z.array(PromptSchema).optional(),
-  servers: z.array(WorkspaceTargetSchema),
-});
-
-export type WorkspaceParams = z.infer<typeof WorkspaceSchema>;
-
-export type WorkspacePlainObject = Omit<WorkspaceParams, "servers"> & {
-  servers: (HTTPClientPlainObject | StdioClientPlainObject)[];
-  paths: {
-    streamable: string;
-    sse: string;
-  };
+  WorkspaceTargetSchema,
+  WorkspaceSchema,
 };
 
 export class Workspace extends ProxyServer {
@@ -239,7 +214,7 @@ export class Workspace extends ProxyServer {
 
   private async persistToConfig(): Promise<void> {
     if (this._config) {
-      await this._config.setWorkspace(this.id, await this.toConfig());
+      await this._config.workspaces.update(this.id, await this.toConfig());
     }
   }
 

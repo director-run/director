@@ -11,7 +11,7 @@ import { spaMiddleware } from "@director.run/utilities/middleware/spa";
 import { Telemetry } from "@director.run/utilities/telemetry";
 import cors from "cors";
 import express from "express";
-import { Config, YAMLConfig } from "./config";
+import { Config } from "./config";
 import { createSSERouter } from "./routers/sse";
 import { createStreamableRouter } from "./routers/streamable";
 import { createTRPCExpressMiddleware } from "./routers/trpc";
@@ -19,153 +19,169 @@ import { WorkspaceStore } from "./workspaces/workspace-store";
 
 const logger = getLogger("Gateway");
 
+const ALLOWED_ORIGINS = [/^https?:\/\/localhost(:\d+)?$/];
+
 export class Gateway {
   public readonly workspaceStore: WorkspaceStore;
-  public readonly port: number;
-  private server: Server;
-  public readonly db: Config;
+  private server?: Server;
+  public readonly config: Config;
+  private app: express.Express;
+  private telemetry?: Telemetry;
+  private studioAssetsPath?: string;
+  private baseUrl: string;
+  public get port() {
+    return this.config.get("server.port") as number;
+  }
 
   private constructor(attribs: {
     workspaceStore: WorkspaceStore;
-    port: number;
-    db: Config;
-    server: Server;
+    config: Config;
+    telemetry?: Telemetry;
+    studioAssetsPath?: string;
+    baseUrl: string;
   }) {
-    this.port = attribs.port;
     this.workspaceStore = attribs.workspaceStore;
-    this.server = attribs.server;
-    this.db = attribs.db;
-  }
+    this.config = attribs.config;
+    this.telemetry = attribs.telemetry;
+    this.studioAssetsPath = attribs.studioAssetsPath;
+    this.baseUrl = attribs.baseUrl;
+    this.app = express();
 
-  public static async start(
-    attribs: {
-      port: number;
-      studioDistPath?: string;
-      configuration: {
-        type: "yaml";
-        filePath: string;
-      };
-      registryURL: string;
-      allowedOrigins?: (string | RegExp)[];
-      telemetry?: {
-        enabled: boolean;
-        writeKey: string;
-        traits: Record<string, string>;
-      };
-      headers?: Record<string, string>;
-      oauth?:
-        | {
-            storage: "disk";
-            tokenDirectory: string;
-          }
-        | {
-            storage: "memory";
-          };
-    },
-    successCallback?: () => void,
-  ) {
-    logger.info(`starting director gateway`);
-
-    const db = await YAMLConfig.connect(attribs.configuration.filePath);
-    const telemetry = attribs.telemetry
-      ? new Telemetry({
-          writeKey: attribs.telemetry.writeKey,
-          enabled: attribs.telemetry.enabled,
-          traits: attribs.telemetry.traits,
-        })
-      : Telemetry.noTelemetry();
-
-    const workspaceStore = await WorkspaceStore.create({
-      config: db,
-      telemetry,
-      oauth: attribs.oauth
-        ? {
-            ...attribs.oauth,
-            baseCallbackUrl: `http://localhost:${attribs.port}`,
-          }
-        : undefined,
-    });
-    const app = express();
-    const registryURL = attribs.registryURL;
-
-    if (attribs.headers) {
-      app.use((_req, res, next) => {
-        Object.entries(attribs.headers || {}).forEach(([key, value]) => {
-          res.setHeader(key, value);
-        });
-        next();
-      });
-    }
-
-    app.use(
+    this.app.use(
       cors({
-        origin: attribs.allowedOrigins,
+        origin: ALLOWED_ORIGINS,
       }),
     );
-    app.use(logRequests());
-    if (attribs.studioDistPath) {
-      logger.trace({
+    this.app.use(logRequests());
+    if (this.studioAssetsPath) {
+      logger.debug({
         message: "serving studio assets from",
-        distPath: attribs.studioDistPath,
+        distPath: this.studioAssetsPath,
       });
-      app.use(
+      this.app.use(
         "/studio",
         spaMiddleware({
-          distPath: attribs.studioDistPath,
+          distPath: this.studioAssetsPath,
           config: {
             basePath: "/studio",
           },
         }),
       );
+    } else {
+      logger.warn({
+        message: "studioAssetsPath not provided, studio will not be available",
+      });
     }
-    app.use("/", createSSERouter({ workspaceStore, telemetry }));
-    app.use("/", createStreamableRouter({ workspaceStore, telemetry }));
-    app.use(
+    this.app.use(
+      "/",
+      createSSERouter({
+        workspaceStore: this.workspaceStore,
+        telemetry: this.telemetry,
+      }),
+    );
+    this.app.use(
+      "/",
+      createStreamableRouter({
+        workspaceStore: this.workspaceStore,
+        telemetry: this.telemetry,
+      }),
+    );
+    this.app.use(
       "/",
       createOauthCallbackRouter({
         onAuthorizationSuccess: async (factoryId, providerId, code) => {
-          await workspaceStore.onAuthorizationSuccess(
+          await this.workspaceStore.onAuthorizationSuccess(
             factoryId,
             providerId,
             code,
           );
-          return {
-            redirectUrl: `http://localhost:${isDevelopment() ? 3000 : attribs.port}/oauth/${factoryId}/${providerId}/callback`,
-          };
+          if (this.studioAssetsPath) {
+            // Redirect to hosted studio callback page
+            return {
+              redirectUrl: `${this.baseUrl}/studio/oauth/${factoryId}/${providerId}/callback`,
+            };
+          } else if (isDevelopment()) {
+            // redirect to dev studio callback page
+            return {
+              redirectUrl: `http://localhost:3000/oauth/${factoryId}/${providerId}/callback`,
+            };
+          }
         },
         onAuthorizationError: (factoryId, providerId, error) => {
-          logger.error(
-            `failed to authorize ${factoryId} ${providerId}: ${error.message}`,
+          logger.error({
             error,
-          );
-          return {
-            redirectUrl: `http://localhost:${isDevelopment() ? 3000 : attribs.port}/oauth/${factoryId}/${providerId}/callback?error=${JSON.stringify(error)}`,
-          };
+            message: `failed to authorize ${factoryId} ${providerId}: ${error.message}`,
+          });
+          if (this.studioAssetsPath) {
+            // Redirect to hosted studio callback page
+            return {
+              redirectUrl: `${this.baseUrl}/studio/oauth/${factoryId}/${providerId}/callback?error=${JSON.stringify(error)}`,
+            };
+          } else if (isDevelopment()) {
+            // redirect to dev studio callback page
+            return {
+              redirectUrl: `http://localhost:3000/oauth/${factoryId}/${providerId}/callback?error=${JSON.stringify(error)}`,
+            };
+          }
         },
       }),
     );
-    // TODO: add a router to handle the incoming oauth tokens
-    // onTokenReceived((token) => OauthBroker.registerToken(token))
-    app.use(
+
+    this.app.use(
       "/trpc",
-      createTRPCExpressMiddleware({ workspaceStore, registryURL }),
+      createTRPCExpressMiddleware({ workspaceStore: this.workspaceStore }),
     );
-    app.all("*", notFoundHandler);
-    app.use(errorRequestHandler);
-
-    telemetry.trackEvent("gateway_start");
-
-    const server = app.listen(attribs.port, () => {
-      logger.info(`director gateway running on port ${attribs.port}`);
-      successCallback?.();
+    this.app.get("/", (_, res, next) => {
+      if (this.studioAssetsPath) {
+        res.redirect("/studio");
+      } else {
+        return next();
+      }
     });
+    this.app.all("*", notFoundHandler);
+    this.app.use(errorRequestHandler);
+  }
+
+  public static async start(
+    attribs: {
+      studioAssetsPath?: string;
+      config: Config;
+      telemetry?: Telemetry;
+      baseUrl: string;
+    },
+    successCallback?: () => void,
+  ) {
+    logger.info(`starting director gateway`);
+
+    const workspaceStore = await WorkspaceStore.create({
+      config: attribs.config,
+      telemetry: attribs.telemetry,
+      oauth:
+        attribs.config.get("oauth.storage") === "disk"
+          ? {
+              storage: "disk",
+              tokenDirectory: attribs.config.get(
+                "oauth.tokenDirectory",
+              ) as string,
+              baseCallbackUrl: attribs.baseUrl,
+            }
+          : {
+              storage: "memory",
+              baseCallbackUrl: attribs.baseUrl,
+            },
+    });
+
+    attribs.telemetry?.trackEvent("gateway_start");
 
     const gateway = new Gateway({
-      port: attribs.port,
-      db,
+      config: attribs.config,
       workspaceStore,
-      server,
+      telemetry: attribs.telemetry,
+      studioAssetsPath: attribs.studioAssetsPath,
+      baseUrl: attribs.baseUrl,
     });
+
+    await gateway.start(successCallback);
 
     process.on("SIGINT", async () => {
       logger.info("received SIGINT, cleaning up proxy servers...");
@@ -176,13 +192,18 @@ export class Gateway {
     return gateway;
   }
 
+  private async start(successCallback?: () => void) {
+    this.server = this.app.listen(this.port, () => {
+      logger.info(`director gateway running on port ${this.port}`);
+      successCallback?.();
+    });
+  }
+
   async stop() {
     await this.workspaceStore.closeAll();
     await new Promise<void>((resolve) => {
-      // Close all existing connections
-      this.server.closeAllConnections();
-      // Stop accepting new connections
-      this.server.close(() => resolve());
+      this.server?.closeAllConnections();
+      this.server?.close(() => resolve());
     });
   }
 }

@@ -172,7 +172,7 @@ describe("OAuthProvider", () => {
     });
 
     afterEach(async () => {
-      await fs.promises.rmdir(tempDir, { recursive: true });
+      await fs.promises.rm(tempDir, { recursive: true, force: true });
     });
 
     it("should save and load client information", async () => {

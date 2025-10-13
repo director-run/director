@@ -12,7 +12,7 @@ import {
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../../client";
-import { env } from "../../env";
+import { getGatewayUrl } from "../../env";
 
 export function registerConnectCommand(program: DirectorCommand) {
   program
@@ -33,7 +33,7 @@ export function registerConnectCommand(program: DirectorCommand) {
             const installer = await getConfigurator(options.target);
             const result = await installer.install({
               name: proxy.id,
-              url: joinURL(env.GATEWAY_URL, getSSEPathForProxy(proxy.id)),
+              url: joinURL(getGatewayUrl(), getSSEPathForProxy(proxy.id)),
             });
 
             console.log(result);
@@ -49,7 +49,7 @@ export function registerConnectCommand(program: DirectorCommand) {
             console.log("director connect " + proxyId + " --target <target>");
             console.log();
             const proxy = await gatewayClient.store.get.query({ proxyId });
-            const baseUrl = env.GATEWAY_URL;
+            const baseUrl = getGatewayUrl();
             const sseURL = joinURL(baseUrl, getSSEPathForProxy(proxy.id));
             const streamableURL = joinURL(
               baseUrl,

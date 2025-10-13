@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { Config } from "@director.run/gateway/config/index";
 import { createEnv, isProduction, isTest } from "@director.run/utilities/env";
 import { z } from "zod";
 
@@ -12,7 +13,6 @@ export const env = createEnv({
   envFilePath: getEnvFilePath(),
   envVars: {
     GATEWAY_PORT: z.number({ coerce: true }).optional().default(3673),
-    GATEWAY_URL: z.string().optional().default(`http://localhost:3673`),
     STUDIO_URL: z.string().optional().default(`http://localhost:3673/studio`),
     SEGMENT_WRITE_KEY: z
       .string()
@@ -62,4 +62,32 @@ function getDataDir(): string {
   } else {
     return path.join(__dirname, `../.director/development`);
   }
+}
+
+export const config = await Config.createFileBasedConfig({
+  filePath: env.CONFIG_FILE_PATH,
+  defaults: {
+    registry: {
+      url: "https://registry.director.run",
+    },
+    server: {
+      port: 3673,
+    },
+    telemetry: {
+      writeKey: "test-write-key",
+      enabled: true,
+    },
+    oauth: {
+      storage: "disk",
+      tokenDirectory: "./tokens",
+    },
+  },
+});
+
+export function getGatewayUrl(): string {
+  return `http://localhost:${config.get("server.port")}`;
+}
+
+export function getStudioUrl(): string {
+  return `http://localhost:${config.get("server.port")}/studio`;
 }

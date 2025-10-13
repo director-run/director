@@ -51,7 +51,7 @@ export class Gateway {
     );
     this.app.use(logRequests());
     if (this.studioDistPath) {
-      logger.trace({
+      logger.debug({
         message: "serving studio assets from",
         distPath: this.studioDistPath,
       });
@@ -64,6 +64,10 @@ export class Gateway {
           },
         }),
       );
+    } else {
+      logger.warn({
+        message: "studioDistPath not provided, studio will not be available",
+      });
     }
     this.app.use(
       "/",

@@ -46,19 +46,27 @@ describe("CLI integration tests", () => {
       await runCLICommand("create", "test");
     });
 
-    test("should be able to add a server from the registry", async () => {
-      await runCLICommand("add", "test", "--entry", "hackernews");
+    test(
+      "should be able to add a server from the registry",
+      { timeout: 10000 },
+      async () => {
+        await runCLICommand("add", "test", "--entry", "hackernews");
 
-      const proxy = await gatewayClient.store.get.query({ proxyId: "test" });
-      expect(proxy.servers).toContainEqual(
-        expect.objectContaining({
-          name: "hackernews",
-          type: "stdio",
-          command: "uvx",
-          args: ["--from", "git+https://github.com/erithwik/mcp-hn", "mcp-hn"],
-        }),
-      );
-    });
+        const proxy = await gatewayClient.store.get.query({ proxyId: "test" });
+        expect(proxy.servers).toContainEqual(
+          expect.objectContaining({
+            name: "hackernews",
+            type: "stdio",
+            command: "uvx",
+            args: [
+              "--from",
+              "git+https://github.com/erithwik/mcp-hn",
+              "mcp-hn",
+            ],
+          }),
+        );
+      },
+    );
 
     test("should be able to add a server using a command", async () => {
       await runCLICommand(

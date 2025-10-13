@@ -30,7 +30,8 @@
     "changeset": "changeset",
     "version-packages": "changeset version",
     "version-packages-formatted": "changeset version && bun run format",
-    "release-packages": "bun run build && changeset publish"
+    "release-packages": "bun run build && changeset publish",
+    "serve": "LOG_LEVEL=debug bun run cli serve"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

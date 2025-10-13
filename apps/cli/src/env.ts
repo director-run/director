@@ -14,12 +14,6 @@ const SEGMENT_PRODUCTION_WRITE_KEY = "Z8wjEfWMFnlltCpGPPWlvsEQH1aVEUH3";
 export const env = createEnv({
   envFilePath: getEnvFilePath(),
   envVars: {
-    GATEWAY_PORT: z.number({ coerce: true }).optional().default(3673),
-    REGISTRY_API_URL: z
-      .string()
-      .optional()
-      .default(`https://registry.director.run`),
-    REGISTRY_API_KEY: z.string().optional().default(""),
     OAUTH_TOKEN_DIRECTORY: z
       .string()
       .optional()
@@ -64,10 +58,10 @@ export const config = await Config.createFileBasedConfig({
       url: "https://registry.director.run",
     },
     server: {
-      port: 3673,
+      port: parseInt(process.env.GATEWAY_PORT ?? "3673"),
     },
     telemetry: {
-      writeKey: isProduction() ? SEGMENT_PRODUCTION_WRITE_KEY : "",
+      writeKey: isProduction() ? SEGMENT_PRODUCTION_WRITE_KEY : "--",
       enabled: true,
     },
     oauth: {
@@ -87,7 +81,7 @@ export function getStudioUrl(): string {
 
 export function getTelemetry(): Telemetry {
   return new Telemetry({
-    writeKey: config.get("telemetry.writeKey") ?? "",
+    writeKey: config.get("telemetry.writeKey") ?? "--",
     enabled: !!config.get("telemetry.enabled"),
     traits: {
       cliVersion: packageJson.version,

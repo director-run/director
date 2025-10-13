@@ -11,6 +11,7 @@ export function runCLICommand(...command: string[]) {
     env: {
       ...process.env,
       LOG_LEVEL: "debug",
+      GATEWAY_PORT: "3673",
     },
   })`${cmd[0]} ${cmd.slice(1)}`;
 }
@@ -30,6 +31,7 @@ export function runCLIServe({
       env: {
         ...process.env,
         LOG_LEVEL: "debug",
+        GATEWAY_PORT: "3673",
       },
     });
 

@@ -43,7 +43,7 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeCodeConfig> 
 
   public async uninstall(name: string) {
     await this.initialize();
-    if (!this.isInstalled(name)) {
+    if (!(await this.isInstalled(name))) {
       throw new AppError(
         ErrorCode.NOT_FOUND,
         `server '${name}' is not installed`,

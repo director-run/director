@@ -9,7 +9,7 @@ import { spinnerWrap } from "@director.run/utilities/cli/loader";
 import { input, password } from "@inquirer/prompts";
 import type { inferRouterOutputs } from "@trpc/server";
 import { gatewayClient, registryClient } from "../../client";
-import { getConfigFilePath } from "../../env";
+import { getConfigFilePath } from "../../config";
 
 type RegistryEntry = inferRouterOutputs<AppRouter>["entries"]["getEntryByName"];
 

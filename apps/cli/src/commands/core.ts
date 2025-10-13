@@ -11,7 +11,7 @@ import { makeTable } from "@director.run/utilities/cli/index";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../client";
-import { getGatewayBaseUrl } from "../env";
+import { getGatewayBaseUrl } from "../config";
 import { registerAddCommand } from "./core/add";
 import { registerAuthCommand } from "./core/authenticate";
 import { registerConfigCommand } from "./core/config";

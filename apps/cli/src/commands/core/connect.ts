@@ -12,7 +12,7 @@ import {
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../../client";
-import { getGatewayBaseUrl } from "../../env";
+import { getGatewayBaseUrl } from "../../config";
 
 export function registerConnectCommand(program: DirectorCommand) {
   program

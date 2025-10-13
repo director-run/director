@@ -11,7 +11,7 @@ import { input } from "@inquirer/prompts";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { title } from "../../common";
-import { getGatewayBaseUrl } from "../../env";
+import { getGatewayBaseUrl } from "../../config";
 
 export function registerToolsCommand(program: DirectorCommand) {
   program

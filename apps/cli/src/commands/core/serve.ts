@@ -10,8 +10,8 @@ import {
 import { findFirstMatch } from "@director.run/utilities/fs";
 import { getLogger } from "@director.run/utilities/logger";
 import packageJson from "../../../package.json";
-import { getGatewayBaseUrl, getTelemetry } from "../../env";
-import { config } from "../../env";
+import { getGatewayBaseUrl, getTelemetry } from "../../config";
+import { config } from "../../config";
 
 export function registerServeCommand(program: DirectorCommand) {
   program

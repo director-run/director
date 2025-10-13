@@ -22,7 +22,7 @@ export function registerConnectCommand(program: DirectorCommand) {
       makeOption({
         flags: "-t,--target <target>",
         description: "target client",
-        choices: ["claude", "cursor", "vscode"],
+        choices: Object.values(ConfiguratorTarget),
       }),
     )
     .action(
@@ -33,7 +33,14 @@ export function registerConnectCommand(program: DirectorCommand) {
             const installer = await getConfigurator(options.target);
             const result = await installer.install({
               name: proxy.id,
-              url: joinURL(getGatewayBaseUrl(), getSSEPathForProxy(proxy.id)),
+              sseURL: joinURL(
+                getGatewayBaseUrl(),
+                getSSEPathForProxy(proxy.id),
+              ),
+              streamableURL: joinURL(
+                getGatewayBaseUrl(),
+                getStreamablePathForProxy(proxy.id),
+              ),
             });
 
             console.log(result);

@@ -79,7 +79,7 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
       },
     };
     newConfig.mcp.servers[this.createServerConfigKey(entry.name)] = {
-      url: entry.url,
+      url: entry.sseURL,
     };
     await this.updateConfig(newConfig);
   }
@@ -108,7 +108,7 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
     }
     await this.uninstall(name);
     await sleep(1000);
-    await this.install({ name, url });
+    await this.install({ name, sseURL: url, streamableURL: "" });
   }
 
   public async list() {

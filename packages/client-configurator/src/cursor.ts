@@ -4,7 +4,7 @@ import { AppError } from "@director.run/utilities/error";
 import { writeJSONFile } from "@director.run/utilities/json";
 import { os, App } from "@director.run/utilities/os/index";
 import { sleep } from "@director.run/utilities/sleep";
-import { AbstractConfigurator } from "./types";
+import { AbstractConfigurator, type Installable } from "./types";
 
 export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
   public async isClientPresent() {
@@ -49,7 +49,7 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     await this.updateConfig(newConfig);
   }
 
-  public async install(attributes: { name: string; url: string }) {
+  public async install(attributes: Installable) {
     await this.initialize();
 
     if (await this.isInstalled(attributes.name)) {
@@ -63,7 +63,7 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
       mcpServers: { ...(this.config?.mcpServers ?? {}) },
     };
     newConfig.mcpServers[this.createServerConfigKey(attributes.name)] = {
-      url: attributes.url,
+      url: attributes.sseURL,
     };
     await this.updateConfig(newConfig);
   }
@@ -94,7 +94,7 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     }
     await this.uninstall(name);
     await sleep(1000);
-    await this.install({ name, url });
+    await this.install({ name, sseURL: url, streamableURL: "" });
   }
 
   public async list() {

@@ -13,6 +13,7 @@ import {
   type ClaudeMCPServer,
   type ClaudeServerEntry,
 } from "../claude";
+import { type ClaudeCodeConfig } from "../claude-code";
 import { type CursorConfig } from "../cursor";
 import { type Installable } from "../types";
 import { AbstractConfigurator } from "../types";
@@ -23,7 +24,7 @@ export function createVSCodeConfig(entries: Array<Installable>): VSCodeConfig {
     mcp: {
       servers: entries.reduce(
         (acc, entry) => {
-          acc[entry.name] = { url: entry.url };
+          acc[entry.name] = { url: entry.sseURL };
           return acc;
         },
         {} as Record<string, { url: string }>,
@@ -36,7 +37,7 @@ export function createCursorConfig(entries: Array<Installable>): CursorConfig {
   return {
     mcpServers: entries.reduce(
       (acc, entry) => {
-        acc[entry.name] = { url: entry.url };
+        acc[entry.name] = { url: entry.sseURL };
         return acc;
       },
       {} as Record<string, { url: string }>,
@@ -56,10 +57,29 @@ export function createClaudeConfig(entries: ClaudeServerEntry[]): ClaudeConfig {
   };
 }
 
-export function createInstallable(): { url: string; name: string } {
+export function createClaudeCodeConfig(
+  entries: Array<Installable>,
+): ClaudeCodeConfig {
   return {
-    url: faker.internet.url(),
+    mcpServers: entries.reduce(
+      (acc, entry) => {
+        acc[entry.name] = { type: "http", url: entry.streamableURL };
+        return acc;
+      },
+      {} as Record<string, { type: "http"; url: string }>,
+    ),
+  };
+}
+
+export function createInstallable(): {
+  sseURL: string;
+  name: string;
+  streamableURL: string;
+} {
+  return {
+    sseURL: faker.internet.url(),
     name: [faker.hacker.noun(), faker.string.uuid()].join("-"),
+    streamableURL: faker.internet.url(),
   };
 }
 
@@ -84,6 +104,12 @@ export async function createConfigFile(
       await writeJSONFile(
         getConfigPath(target),
         config ?? createClaudeConfig([]),
+      );
+      break;
+    case ConfiguratorTarget.ClaudeCode:
+      await writeJSONFile(
+        getConfigPath(target),
+        config ?? createClaudeCodeConfig([]),
       );
       break;
   }

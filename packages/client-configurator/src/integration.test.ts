@@ -6,6 +6,7 @@ import { expectToThrowAppError } from "@director.run/utilities/test";
 import { afterAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { ConfiguratorTarget } from ".";
 import type { ClaudeConfig } from "./claude";
+import type { ClaudeCodeConfig } from "./claude-code";
 import type { CursorConfig } from "./cursor";
 import {
   createConfigFile,
@@ -21,6 +22,7 @@ import type { VSCodeConfig } from "./vscode";
   ConfiguratorTarget.Claude,
   ConfiguratorTarget.Cursor,
   ConfiguratorTarget.VSCode,
+  ConfiguratorTarget.ClaudeCode,
 ].forEach((target) => {
   describe(`${target} installer`, () => {
     describe("corrupt config", () => {
@@ -108,6 +110,9 @@ import type { VSCodeConfig } from "./vscode";
               break;
             case ConfiguratorTarget.Cursor:
               servers = (configFile as CursorConfig).mcpServers;
+              break;
+            case ConfiguratorTarget.ClaudeCode:
+              servers = (configFile as ClaudeCodeConfig).mcpServers;
               break;
           }
 

@@ -44,6 +44,10 @@ export class LinuxController extends AbstractController {
 
       case App.VSCODE:
         return this.isCommandInPath("code");
+
+      case App.CLAUDE_CODE:
+        return this.isCommandInPath("claude");
+
       default:
         throw new AppError(ErrorCode.INVALID_ARGUMENT, `unknown app: ${app}`);
     }
@@ -89,6 +93,8 @@ export class LinuxController extends AbstractController {
         return "";
       case App.VSCODE:
         return path.join(homedir(), ".config/Code/User/settings.json");
+      case App.CLAUDE_CODE:
+        return path.join(homedir(), ".claude.json");
     }
   }
 }

@@ -1,6 +1,7 @@
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { ClaudeInstaller } from "./claude";
+import { ClaudeCodeInstaller } from "./claude-code";
 import { CursorInstaller } from "./cursor";
 import type { AbstractConfigurator } from "./types";
 import { VSCodeInstaller } from "./vscode";
@@ -11,6 +12,7 @@ export enum ConfiguratorTarget {
   Claude = "claude",
   Cursor = "cursor",
   VSCode = "vscode",
+  ClaudeCode = "claude-code",
 }
 
 export function getConfigurator(
@@ -26,6 +28,8 @@ export function getConfigurator(
       return new CursorInstaller(params);
     case "vscode":
       return new VSCodeInstaller(params);
+    case "claude-code":
+      return new ClaudeCodeInstaller(params);
     default:
       throw new AppError(
         ErrorCode.BAD_REQUEST,
@@ -71,6 +75,7 @@ export async function getProxyInstalledStatus(
     [ConfiguratorTarget.Claude]: false,
     [ConfiguratorTarget.Cursor]: false,
     [ConfiguratorTarget.VSCode]: false,
+    [ConfiguratorTarget.ClaudeCode]: false,
   };
 
   await Promise.all(

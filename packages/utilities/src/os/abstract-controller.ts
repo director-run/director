@@ -2,6 +2,7 @@ export enum App {
   CLAUDE = "Claude",
   CURSOR = "Cursor",
   VSCODE = "Visual Studio Code",
+  CLAUDE_CODE = "Claude Code",
 }
 
 export abstract class AbstractController {

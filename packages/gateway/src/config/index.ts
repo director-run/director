@@ -53,27 +53,6 @@ export class Config extends ConfigBase<typeof configSchema> {
     return config;
   }
 
-  static makeTestConfig(): Promise<Config> {
-    return this.createMemoryBasedConfig({
-      defaults: {
-        registry: {
-          url: "https://registry.director.run",
-        },
-        server: {
-          port: 4673,
-        },
-        telemetry: {
-          writeKey: "test-write-key",
-          enabled: false,
-        },
-        oauth: {
-          storage: "disk",
-          tokenDirectory: "./tokens",
-        },
-      },
-    });
-  }
-
   toPlainObject(): Record<string, unknown> {
     return {
       defaults: this.defaults,

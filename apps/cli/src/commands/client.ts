@@ -97,7 +97,21 @@ export function registerClientCommands(program: DirectorCommand): void {
     .action(
       actionWithErrorHandler(async () => {
         const clients = await allClientStatuses();
-        console.log(clients);
+        const table = makeTable([
+          "name",
+          "installed",
+          "configExists",
+          "configPath",
+        ]);
+        table.push(
+          ...clients.map((client) => [
+            client.name,
+            client.installed,
+            client.configExists,
+            client.configPath,
+          ]),
+        );
+        console.log(table.toString());
       }),
     );
 }

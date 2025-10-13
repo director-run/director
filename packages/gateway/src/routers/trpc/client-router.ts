@@ -10,7 +10,7 @@ import { z } from "zod";
 import { getSSEPathForProxy, getStreamablePathForProxy } from "../../helpers";
 import type { WorkspaceStore } from "../../workspaces/workspace-store";
 
-export function createInstallerRouter({
+export function createClientRouter({
   workspaceStore: proxyStore,
 }: { workspaceStore: WorkspaceStore }) {
   return t.router({

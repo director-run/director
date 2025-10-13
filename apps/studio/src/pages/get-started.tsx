@@ -79,9 +79,9 @@ export function GetStartedPage() {
     },
   });
 
-  const installationMutation = trpc.installer.byProxy.install.useMutation({
+  const installationMutation = trpc.clients.byProxy.install.useMutation({
     onSuccess: () => {
-      utils.installer.byProxy.list.invalidate();
+      utils.clients.byProxy.list.invalidate();
       toast({
         title: "Proxy installed",
         description: `This proxy was successfully installed`,

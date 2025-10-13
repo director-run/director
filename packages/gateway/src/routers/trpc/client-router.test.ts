@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, it } from "vitest";
 import { IntegrationTestHarness } from "../../test/integration";
 
-describe("Installer Router", () => {
+describe("Client Router", () => {
   let harness: IntegrationTestHarness;
 
   beforeAll(async () => {

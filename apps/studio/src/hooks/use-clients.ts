@@ -5,7 +5,7 @@ import type {
 import type { GatewayRouterOutputs } from "@director.run/gateway/client";
 import { gatewayClient } from "../contexts/backend-context";
 
-type InstallerApi = GatewayRouterOutputs["installer"]["allClients"][number];
+type InstallerApi = GatewayRouterOutputs["clients"]["allClients"][number];
 
 const catalog: Array<Omit<Client, "installed" | "present">> = [
   {
@@ -30,8 +30,8 @@ export function useClients(workspaceId: string): {
   isLoading: boolean;
 } {
   const [clients, availableClients] = gatewayClient.useQueries((t) => [
-    t.installer.byProxy.list({ proxyId: workspaceId }),
-    t.installer.allClients(),
+    t.clients.byProxy.list({ proxyId: workspaceId }),
+    t.clients.allClients(),
   ]);
 
   const isLoading = availableClients.isLoading || clients.isLoading;

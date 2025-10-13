@@ -22,7 +22,7 @@ export function registerConnectCommand(program: DirectorCommand) {
       makeOption({
         flags: "-t,--target <target>",
         description: "target client",
-        choices: ["claude", "cursor", "vscode"],
+        choices: Object.values(ConfiguratorTarget),
       }),
     )
     .action(

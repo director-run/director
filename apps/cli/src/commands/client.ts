@@ -120,6 +120,6 @@ export function registerClientCommands(program: DirectorCommand): void {
 const targetOption = makeOption({
   flags: "-t,--target <target>",
   description: "target client",
-  choices: ["claude", "cursor", "vscode"],
+  choices: Object.values(ConfiguratorTarget),
   mandatory: true,
 });

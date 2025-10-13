@@ -1,7 +1,5 @@
-import {
-  type ConfiguratorTarget,
-  getConfigurator,
-} from "@director.run/client-configurator/index";
+import { getConfigurator } from "@director.run/client-configurator/index";
+import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import { proxyHTTPToStdio } from "@director.run/mcp/transport";
 import {
   DirectorCommand,
@@ -95,7 +93,7 @@ export function registerCoreCommands(program: DirectorCommand): void {
       makeOption({
         flags: "-t,--target <target>",
         description: "target client",
-        choices: ["claude", "cursor", "vscode"],
+        choices: Object.values(ConfiguratorTarget),
       }).makeOptionMandatory(),
     )
     .action(

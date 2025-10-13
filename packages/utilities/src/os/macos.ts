@@ -13,6 +13,13 @@ const logger = getLogger("os/macos");
 
 export class MacOSController extends AbstractController {
   async restartApp(app: App): Promise<void> {
+    if (app === App.CLAUDE_CODE) {
+      throw new AppError(
+        ErrorCode.INVALID_ARGUMENT,
+        `restarting ${app} is not supported`,
+      );
+    }
+
     logger.info(`restarting ${app}...`);
     if (!this.isAppRunning(app)) {
       logger.info(`${app} is not running, skipping restart`);

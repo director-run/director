@@ -72,6 +72,13 @@ export class Config extends ConfigBase<typeof configSchema> {
       },
     });
   }
+
+  toPlainObject(): Record<string, unknown> {
+    return {
+      defaults: this.defaults,
+      storage: this.storage.toPlainObject(),
+    };
+  }
 }
 
 class WorkspacesConfig {

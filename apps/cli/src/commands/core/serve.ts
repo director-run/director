@@ -35,7 +35,6 @@ export async function startGateway(successCallback?: () => void) {
 
   await Gateway.start(
     {
-      port: config.get("server.port") as number,
       config,
       studioDistPath: resolveStudioDistPath(),
       telemetry: getTelemetry(),

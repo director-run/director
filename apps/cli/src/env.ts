@@ -58,11 +58,11 @@ export const config = await Config.createFileBasedConfig({
       url: "https://registry.director.run",
     },
     server: {
-      port: parseInt(process.env.GATEWAY_PORT ?? "3673"),
+      port: isTest() ? 3675 : parseInt(process.env.GATEWAY_PORT ?? "3673"),
     },
     telemetry: {
       writeKey: isProduction() ? SEGMENT_PRODUCTION_WRITE_KEY : "--",
-      enabled: true,
+      enabled: isProduction(),
     },
     oauth: {
       storage: "disk",
@@ -70,6 +70,8 @@ export const config = await Config.createFileBasedConfig({
     },
   },
 });
+
+console.log("config", config.toPlainObject());
 
 export function getGatewayUrl(): string {
   return `http://localhost:${config.get("server.port")}`;

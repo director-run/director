@@ -23,21 +23,22 @@ const ALLOWED_ORIGINS = [/^https?:\/\/localhost(:\d+)?$/];
 
 export class Gateway {
   public readonly workspaceStore: WorkspaceStore;
-  public readonly port: number;
   private server?: Server;
   public readonly config: Config;
   private app: express.Express;
   private telemetry?: Telemetry;
   private studioDistPath?: string;
 
+  public get port() {
+    return this.config.get("server.port") as number;
+  }
+
   private constructor(attribs: {
     workspaceStore: WorkspaceStore;
-    port: number;
     config: Config;
     telemetry?: Telemetry;
     studioDistPath?: string;
   }) {
-    this.port = attribs.port;
     this.workspaceStore = attribs.workspaceStore;
     this.config = attribs.config;
     this.telemetry = attribs.telemetry;
@@ -118,7 +119,6 @@ export class Gateway {
 
   public static async start(
     attribs: {
-      port: number;
       studioDistPath?: string;
       config: Config;
       telemetry?: Telemetry;
@@ -141,7 +141,7 @@ export class Gateway {
       oauth: attribs.oauth
         ? {
             ...attribs.oauth,
-            baseCallbackUrl: `http://localhost:${attribs.port}`,
+            baseCallbackUrl: `http://localhost:${attribs.config.get("server.port") as number}`,
           }
         : undefined,
     });
@@ -149,7 +149,6 @@ export class Gateway {
     attribs.telemetry?.trackEvent("gateway_start");
 
     const gateway = new Gateway({
-      port: attribs.port,
       config: attribs.config,
       workspaceStore,
       telemetry: attribs.telemetry,
@@ -177,8 +176,6 @@ export class Gateway {
   async stop() {
     await this.workspaceStore.closeAll();
     await new Promise<void>((resolve) => {
-      // Close all existing connections
-      // Stop accepting new connections
       this.server?.close(() => resolve());
     });
   }

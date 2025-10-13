@@ -8,6 +8,7 @@ export interface ConfigStorage {
   purge(): Promise<void>;
   getData(): Record<string, unknown>;
   setData(data: Record<string, unknown>): void;
+  toPlainObject(): Record<string, unknown>;
 }
 
 export class InMemoryConfigStorage implements ConfigStorage {
@@ -36,6 +37,13 @@ export class InMemoryConfigStorage implements ConfigStorage {
 
   setData(data: Record<string, unknown>): void {
     this.data = structuredClone(data);
+  }
+
+  toPlainObject(): Record<string, unknown> {
+    return {
+      type: "in-memory",
+      data: this.data,
+    };
   }
 }
 
@@ -71,5 +79,13 @@ export class YamlConfigStorage implements ConfigStorage {
 
   setData(data: Record<string, unknown>): void {
     this.data = structuredClone(data);
+  }
+
+  toPlainObject(): Record<string, unknown> {
+    return {
+      type: "yaml",
+      path: this.filePath,
+      data: this.data,
+    };
   }
 }

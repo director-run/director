@@ -46,7 +46,6 @@ export class IntegrationTestHarness {
 
   public static async start() {
     const gateway = await Gateway.start({
-      port: IntegrationTestHarness.gatewayPort,
       config: await Config.makeTestConfig(),
       oauth: {
         storage: "memory",

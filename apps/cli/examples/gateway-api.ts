@@ -7,9 +7,7 @@ async function main() {
   const config = await Config.createFileBasedConfig(env.CONFIG_FILE_PATH);
 
   const gateway = await Gateway.start({
-    port: env.GATEWAY_PORT,
     config,
-    registryURL: env.REGISTRY_API_URL,
   });
 
   await gateway.workspaceStore.purge();

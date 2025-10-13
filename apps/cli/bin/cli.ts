@@ -20,10 +20,6 @@ await checkForUpdates();
 
 const program = new DirectorCommand();
 
-if (config.get("debug")) {
-  config.prettyPrint();
-}
-
 program
   .name("director")
   .showDebugCommands(!!config.get("debug"))

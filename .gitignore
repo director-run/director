@@ -46,7 +46,5 @@ public/swe-worker*
 
 **/bun.lockb
 **/bun.lock
-
-.env
-config.yaml
-config.test.yaml
+director.config.development.yaml
+.secrets/

@@ -1,3 +1,4 @@
+import fs from "fs";
 import { ChildProcess } from "node:child_process";
 import {
   afterAll,
@@ -8,6 +9,7 @@ import {
   test,
 } from "vitest";
 import { gatewayClient } from "./client";
+import { getConfigFilePath } from "./config";
 import { runCLICommand, runCLIServe } from "./test/helpers";
 
 describe("CLI integration tests", () => {
@@ -21,10 +23,11 @@ describe("CLI integration tests", () => {
     }
   }, 60000);
 
-  afterAll(() => {
+  afterAll(async () => {
     if (serveProcess) {
       serveProcess.kill();
     }
+    await fs.promises.unlink(getConfigFilePath());
   });
 
   beforeEach(async () => {

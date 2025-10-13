@@ -93,18 +93,22 @@ export class Gateway {
             providerId,
             code,
           );
-          return {
-            redirectUrl: `http://localhost:${isDevelopment() ? 3000 : this.port}/oauth/${factoryId}/${providerId}/callback`,
-          };
+          if (this.studioDistPath) {
+            return {
+              redirectUrl: `http://localhost:${isDevelopment() ? 3000 : this.port}/oauth/${factoryId}/${providerId}/callback`,
+            };
+          }
         },
         onAuthorizationError: (factoryId, providerId, error) => {
           logger.error({
             error,
             message: `failed to authorize ${factoryId} ${providerId}: ${error.message}`,
           });
-          return {
-            redirectUrl: `http://localhost:${isDevelopment() ? 3000 : this.port}/oauth/${factoryId}/${providerId}/callback?error=${JSON.stringify(error)}`,
-          };
+          if (this.studioDistPath) {
+            return {
+              redirectUrl: `http://localhost:${isDevelopment() ? 3000 : this.port}/oauth/${factoryId}/${providerId}/callback?error=${JSON.stringify(error)}`,
+            };
+          }
         },
       }),
     );

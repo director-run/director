@@ -12,19 +12,30 @@ import packageJson from "../package.json" assert { type: "json" };
 const SEGMENT_PRODUCTION_WRITE_KEY = "Z8wjEfWMFnlltCpGPPWlvsEQH1aVEUH3";
 
 export function getConfigFilePath(): string {
-  return path.join(getDataDir(), "./config.yaml");
+  if (isTest()) {
+    return path.join(__dirname, `../../../director.config.test.yaml`);
+  } else if (isDevelopment()) {
+    return path.join(__dirname, `../../../director.config.development.yaml`);
+  } else {
+    return path.join(os.homedir(), `.director/director.config.yaml`);
+  }
 }
 
-// export function getConfigFilePath(): string {
-//   if (isTest()) {
-//     return path.join(__dirname, `../.director/test/config.yaml`);
-//   } else if (isDevelopment()) {
-//     return path.join(getDataDir(), "./config.yaml");
-//   }
-//   else {
-//     return path.join(os.homedir(), `.director`);
-//   }
-// }
+function getOauthDefaults() {
+  if (isTest()) {
+    return {
+      storage: "memory",
+    };
+  } else {
+    return {
+      storage: "disk",
+      tokenDirectory: path.join(
+        path.dirname(getConfigFilePath()),
+        `.secrets/director-oauth-tokens`,
+      ),
+    };
+  }
+}
 
 export const config = await Config.createFileBasedConfig({
   filePath: getConfigFilePath(),
@@ -40,22 +51,9 @@ export const config = await Config.createFileBasedConfig({
       writeKey: isProduction() ? SEGMENT_PRODUCTION_WRITE_KEY : "--",
       enabled: isProduction(),
     },
-    oauth: {
-      storage: "disk",
-      tokenDirectory: `./director-oauth-tokens`,
-    },
+    oauth: getOauthDefaults(),
   },
 });
-
-function getDataDir(): string {
-  if (isProduction()) {
-    return path.join(os.homedir(), `.director`);
-  } else if (isTest()) {
-    return path.join(__dirname, `../.director/test`);
-  } else {
-    return path.join(__dirname, `../.director/development`);
-  }
-}
 
 export function getGatewayBaseUrl(): string {
   return `http://localhost:${config.get("server.port")}`;

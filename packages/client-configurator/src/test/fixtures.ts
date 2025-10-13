@@ -13,6 +13,7 @@ import {
   type ClaudeMCPServer,
   type ClaudeServerEntry,
 } from "../claude";
+import { type ClaudeCodeConfig } from "../claude-code";
 import { type CursorConfig } from "../cursor";
 import { type Installable } from "../types";
 import { AbstractConfigurator } from "../types";
@@ -56,6 +57,20 @@ export function createClaudeConfig(entries: ClaudeServerEntry[]): ClaudeConfig {
   };
 }
 
+export function createClaudeCodeConfig(
+  entries: Array<Installable>,
+): ClaudeCodeConfig {
+  return {
+    mcpServers: entries.reduce(
+      (acc, entry) => {
+        acc[entry.name] = { type: "http", url: entry.streamableURL };
+        return acc;
+      },
+      {} as Record<string, { type: "http"; url: string }>,
+    ),
+  };
+}
+
 export function createInstallable(): {
   sseURL: string;
   name: string;
@@ -89,6 +104,12 @@ export async function createConfigFile(
       await writeJSONFile(
         getConfigPath(target),
         config ?? createClaudeConfig([]),
+      );
+      break;
+    case ConfiguratorTarget.ClaudeCode:
+      await writeJSONFile(
+        getConfigPath(target),
+        config ?? createClaudeCodeConfig([]),
       );
       break;
   }

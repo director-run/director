@@ -77,7 +77,7 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
       mcpServers: { ...(this.config?.mcpServers ?? {}) },
     };
     newConfig.mcpServers[this.createServerConfigKey(attributes.name)] = {
-      url: attributes.sseURL,
+      url: attributes.streamableURL,
     };
     await this.updateConfig(newConfig);
   }

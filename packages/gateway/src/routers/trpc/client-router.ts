@@ -1,6 +1,6 @@
 import {
   ConfiguratorTarget,
-  allClientStatuses,
+  allInstallers,
   getConfigurator,
   getProxyInstalledStatus,
 } from "@director.run/client-configurator/index";
@@ -14,7 +14,18 @@ export function createClientRouter({
   workspaceStore: proxyStore,
 }: { workspaceStore: WorkspaceStore }) {
   return t.router({
-    allClients: t.procedure.query(() => allClientStatuses()),
+    allClients: t.procedure.query(async () => {
+      const clients = await allInstallers();
+
+      return await Promise.all(
+        clients.map(async (client) => {
+          const status = await client.getStatus();
+          return {
+            ...status,
+          };
+        }),
+      );
+    }),
     byProxy: t.router({
       list: t.procedure
         .input(z.object({ proxyId: z.string() }))

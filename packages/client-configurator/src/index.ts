@@ -64,6 +64,10 @@ export function allTargets() {
   return Object.values(ConfiguratorTarget);
 }
 
+export function allInstallers() {
+  return allTargets().map((target) => getConfigurator(target));
+}
+
 export async function getProxyInstalledStatus(
   proxyId: string,
 ): Promise<Record<ConfiguratorTarget, boolean>> {

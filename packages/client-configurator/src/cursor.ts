@@ -103,12 +103,12 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     await this.initialize();
 
     this.logger.info("listing servers");
-    return Object.entries(this.config?.mcpServers ?? {}).map(
-      ([name, transport]) => ({
+    return Object.entries(this.config?.mcpServers ?? {})
+      .filter(([name]) => this.isManagedConfigKey(name))
+      .map(([name, transport]) => ({
         name,
         url: transport.url,
-      }),
-    );
+      }));
   }
 
   protected async initialize() {

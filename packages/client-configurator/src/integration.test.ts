@@ -3,6 +3,7 @@ import { ErrorCode } from "@director.run/utilities/error";
 import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
 import { isFilePresent } from "@director.run/utilities/os";
 import { expectToThrowAppError } from "@director.run/utilities/test";
+import { faker } from "@faker-js/faker";
 import { afterAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { ConfiguratorTarget } from ".";
 import type { ClaudeConfig } from "./claude";
@@ -58,7 +59,16 @@ import type { VSCodeConfig } from "./vscode";
 
     describe("config present", () => {
       beforeEach(async () => {
-        await createConfigFile({ target });
+        await createConfigFile({
+          target,
+          entries: [
+            {
+              name: "not_managed_by_director",
+              sseURL: faker.internet.url(),
+              streamableURL: faker.internet.url(),
+            },
+          ],
+        });
       });
 
       afterAll(async () => {
@@ -178,6 +188,17 @@ import type { VSCodeConfig } from "./vscode";
       });
 
       describe("reset", () => {
+        // test("should not clear servers that are not managed by director", async () => {
+        //   const installer = createTestInstaller(target);
+        //   await installer.reset();
+        //   expect(await readJSONFile(installer.configPath)).toMatchObject({
+        //     mcpServers: {
+        //       not_managed_by_director: {
+        //         url: faker.internet.url(),
+        //       },
+        //     },
+        //   });
+        // });
         test("should clear all servers", async () => {
           const installer = createTestInstaller(target);
           await installer.install(createInstallable());

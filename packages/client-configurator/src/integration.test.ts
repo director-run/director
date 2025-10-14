@@ -228,8 +228,17 @@ import type { VSCodeConfig } from "./vscode";
         });
         test("should return the list of servers", async () => {
           const installer = createTestInstaller(target);
-          await installer.install(createInstallable());
+          const installable = createInstallable();
+          await installer.install(installable);
+
           expect(await installer.list()).toHaveLength(1);
+          expect(await installer.list()).toMatchObject(
+            expect.arrayContaining([
+              expect.objectContaining({
+                name: `director__${installable.name}`,
+              }),
+            ]),
+          );
         });
         expectToThrowInitializtionErrors(target, (installer) =>
           installer.reset(),

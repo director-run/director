@@ -31,7 +31,7 @@ export type ProxyServerAttributes = {
 export class ProxyServer extends Server {
   private _targets: ProxyTarget[];
   protected _id: string;
-  private _listChangeListener?: (proxyId: string) => void;
+  private _listChangeListener?: (proxyId: string) => void | Promise<void>;
 
   constructor(attributes: ProxyServerAttributes) {
     super(
@@ -188,7 +188,9 @@ export class ProxyServer extends Server {
   }
 
   protected sendListChangedEvents(): void {
-    this._listChangeListener?.(this._id); // notify local listener
+    setTimeout(async () => {
+      await this._listChangeListener?.(this._id); // notify local listener
+    }, 0);
     if (this.transport !== undefined) {
       // notify transport listener
       this.sendPromptListChanged();

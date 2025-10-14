@@ -1,6 +1,6 @@
 import {
   ConfiguratorTarget,
-  getAllClients,
+  getAllClientsAsPlainObject,
   getConfigurator,
 } from "@director.run/client-configurator/index";
 import { t } from "@director.run/utilities/trpc";
@@ -13,7 +13,7 @@ export function createClientRouter({
   workspaceStore,
 }: { workspaceStore: WorkspaceStore }) {
   return t.router({
-    allClients: t.procedure.query(() => getAllClients()),
+    allClients: t.procedure.query(() => getAllClientsAsPlainObject()),
     install: t.procedure
       .input(
         z.object({

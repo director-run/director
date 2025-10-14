@@ -1,4 +1,5 @@
 import { Server } from "node:http";
+import { sleep } from "@director.run/utilities/sleep";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { HTTPClient } from "../client/http-client";
 import { makeEchoServer, makeKitchenSinkServer } from "../test/fixtures";
@@ -50,6 +51,8 @@ describe("ProxyServer", () => {
 
       await proxy.updateTarget("streamable", { toolPrefix: "pref-" });
       await proxy.removeTarget("streamable");
+
+      await sleep(1); // list change event is emitted asynchronously
 
       expect(callCount).toBeGreaterThanOrEqual(3);
 

@@ -12,10 +12,27 @@ export enum ConfiguratorTarget {
   ClaudeCode = "claude-code",
 }
 
+export async function getAllClientsAsPlainObject() {
+  return await Promise.all(
+    (await getAllClients()).map((client) => client.getStatus()),
+  );
+}
+
 export async function getAllClients() {
   return await Promise.all(
-    allTargets().map((target) => getConfigurator(target).getStatus()),
+    Object.values(ConfiguratorTarget).map((target) => getConfigurator(target)),
   );
+}
+
+export async function getClientsByWorkspace(workspaceId: string) {
+  const clients: AbstractConfigurator<unknown>[] = [];
+  for (const client of await getAllClients()) {
+    const installed = await client.list();
+    if (installed.some((installable) => installable.name === workspaceId)) {
+      clients.push(client);
+    }
+  }
+  return clients;
 }
 
 export function getConfigurator(
@@ -43,7 +60,7 @@ export function getConfigurator(
 
 export async function resetAllClients() {
   const installers = await Promise.all(
-    allTargets().map((target) => getConfigurator(target)),
+    Object.values(ConfiguratorTarget).map((target) => getConfigurator(target)),
   );
   for (const installer of installers) {
     console.log("resetting", installer.name);
@@ -59,8 +76,4 @@ export async function resetAllClients() {
       console.log("client not present:", installer.name);
     }
   }
-}
-
-export function allTargets() {
-  return Object.values(ConfiguratorTarget);
 }

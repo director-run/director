@@ -87,6 +87,12 @@ export abstract class AbstractConfigurator<T> {
     return key.startsWith(CONFIG_KEY_PREFIX);
   }
 
+  protected toDisplayName(key: string) {
+    return this.isManagedConfigKey(key)
+      ? key.replace(CONFIG_KEY_PREFIX, "")
+      : key;
+  }
+
   public abstract install(attributes: Installable): Promise<void>;
   public abstract uninstall(name: string): Promise<void>;
   public abstract list(params?: {

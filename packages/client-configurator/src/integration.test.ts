@@ -232,14 +232,22 @@ import type { VSCodeConfig } from "./vscode";
           await installer.install(installable);
 
           expect(await installer.list()).toHaveLength(1);
+        });
+
+        test("should not include the internal name prefix", async () => {
+          const installer = createTestInstaller(target);
+          const installable = createInstallable();
+          await installer.install(installable);
+
           expect(await installer.list()).toMatchObject(
             expect.arrayContaining([
               expect.objectContaining({
-                name: `director__${installable.name}`,
+                name: installable.name,
               }),
             ]),
           );
         });
+
         expectToThrowInitializtionErrors(target, (installer) =>
           installer.reset(),
         );

@@ -121,7 +121,7 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
         params?.includeUnmanaged ? true : this.isManagedConfigKey(name),
       )
       .map(([name, server]) => ({
-        name,
+        name: this.toDisplayName(name),
         url: server.url,
       }));
   }

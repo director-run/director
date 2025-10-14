@@ -108,7 +108,7 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
         params?.includeUnmanaged ? true : this.isManagedConfigKey(name),
       )
       .map(([name, transport]) => ({
-        name,
+        name: this.toDisplayName(name),
         url: transport.url,
       }));
   }

@@ -114,7 +114,7 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
         params?.includeUnmanaged ? true : this.isManagedConfigKey(name),
       )
       .map(([name, transport]) => ({
-        name,
+        name: this.toDisplayName(name),
         url: transport.args[3],
       }));
   }

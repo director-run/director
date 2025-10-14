@@ -66,7 +66,7 @@ export abstract class AbstractConfigurator<T> {
     const workspaces =
       configExists && installed
         ? (await this.list()).map((server) => ({
-            id: server.name.replace(CONFIG_KEY_PREFIX, ""),
+            id: server.name,
           }))
         : [];
 
@@ -87,14 +87,26 @@ export abstract class AbstractConfigurator<T> {
     return key.startsWith(CONFIG_KEY_PREFIX);
   }
 
-  public abstract install(attributes: Installable): Promise<void>;
-  public abstract uninstall(name: string): Promise<void>;
-  public abstract list(): Promise<Array<{ name: string; url: string }>>;
+  protected toDisplayName(key: string) {
+    return this.isManagedConfigKey(key)
+      ? key.replace(CONFIG_KEY_PREFIX, "")
+      : key;
+  }
+
+  public abstract install(
+    attributes: Installable | Array<Installable>,
+  ): Promise<void>;
+  public abstract uninstall(name: string | Array<string>): Promise<void>;
+  public abstract list(params?: {
+    includeUnmanaged?: boolean;
+  }): Promise<Array<{ name: string; url: string }>>;
   public abstract openConfig(): Promise<void>;
   public abstract isInstalled(name: string): Promise<boolean>;
   public abstract restart(): Promise<void>;
   public abstract reload(name: string): Promise<void>;
-  public abstract reset(): Promise<void>;
+  public abstract reset(params?: {
+    includeUnmanaged?: boolean;
+  }): Promise<void>;
   protected abstract createConfig(): Promise<void>;
   public abstract isClientPresent(): Promise<boolean>;
   public abstract isClientConfigPresent(): Promise<boolean>;

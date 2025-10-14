@@ -32,7 +32,13 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     );
   }
 
-  public async uninstall(name: string) {
+  public async uninstall(name: string | Array<string>) {
+    if (Array.isArray(name)) {
+      for (const n of name) {
+        await this.uninstall(n);
+      }
+      return;
+    }
     await this.initialize();
 
     if (!this.isInstalled(name)) {
@@ -50,7 +56,13 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     await this.updateConfig(newConfig);
   }
 
-  public async install(attributes: Installable) {
+  public async install(attributes: Installable | Array<Installable>) {
+    if (Array.isArray(attributes)) {
+      for (const entry of attributes) {
+        await this.install(entry);
+      }
+      return;
+    }
     await this.initialize();
 
     if (await this.isInstalled(attributes.name)) {
@@ -99,16 +111,18 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     await this.install({ name, sseURL: url, streamableURL: "" });
   }
 
-  public async list() {
+  public async list(params?: { includeUnmanaged?: boolean }) {
     await this.initialize();
 
     this.logger.info("listing servers");
-    return Object.entries(this.config?.mcpServers ?? {}).map(
-      ([name, transport]) => ({
-        name,
+    return Object.entries(this.config?.mcpServers ?? {})
+      .filter(([name]) =>
+        params?.includeUnmanaged ? true : this.isManagedConfigKey(name),
+      )
+      .map(([name, transport]) => ({
+        name: this.toDisplayName(name),
         url: transport.url,
-      }),
-    );
+      }));
   }
 
   protected async initialize() {
@@ -126,13 +140,25 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     await os.openFileInCode(this.configPath);
   }
 
-  public async reset() {
+  public async reset(params?: { includeUnmanaged?: boolean }) {
     await this.initialize();
 
     this.logger.info("purging cursor config");
     const newConfig: CursorConfig = {
       mcpServers: {},
     };
+
+    // Preserve unmanaged servers unless explicitly told not to
+    if (!params?.includeUnmanaged) {
+      for (const [name, server] of Object.entries(
+        this.config?.mcpServers ?? {},
+      )) {
+        if (!this.isManagedConfigKey(name)) {
+          newConfig.mcpServers[name] = server;
+        }
+      }
+    }
+
     await this.updateConfig(newConfig);
   }
 

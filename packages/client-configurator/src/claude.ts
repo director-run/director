@@ -42,7 +42,13 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
     );
   }
 
-  public async uninstall(name: string) {
+  public async uninstall(name: string | Array<string>) {
+    if (Array.isArray(name)) {
+      for (const n of name) {
+        await this.uninstall(n);
+      }
+      return;
+    }
     await this.initialize();
     if (!(await this.isInstalled(name))) {
       throw new AppError(
@@ -59,10 +65,17 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
     await this.updateConfig(newConfig);
   }
 
-  public async install(attributes: {
-    name: string;
-    sseURL: string;
-  }) {
+  public async install(
+    attributes:
+      | { name: string; sseURL: string }
+      | Array<{ name: string; sseURL: string }>,
+  ) {
+    if (Array.isArray(attributes)) {
+      for (const entry of attributes) {
+        await this.install(entry);
+      }
+      return;
+    }
     await this.initialize();
     if (await this.isInstalled(attributes.name)) {
       throw new AppError(
@@ -85,23 +98,36 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
     await this.updateConfig(newConfig);
   }
 
-  public async reset() {
+  public async reset(params?: { includeUnmanaged?: boolean }) {
     await this.initialize();
     this.logger.info("purging claude config");
     const newConfig: ClaudeConfig = {
-      mcpServers: { ...this.config?.mcpServers },
+      mcpServers: {},
     };
-    newConfig.mcpServers = {};
+
+    // Preserve unmanaged servers unless explicitly told not to
+    if (!params?.includeUnmanaged) {
+      for (const [name, server] of Object.entries(
+        this.config?.mcpServers ?? {},
+      )) {
+        if (!this.isManagedConfigKey(name)) {
+          newConfig.mcpServers[name] = server;
+        }
+      }
+    }
+
     await this.updateConfig(newConfig);
   }
 
-  public async list() {
+  public async list(params?: { includeUnmanaged?: boolean }) {
     await this.initialize();
     this.logger.info("listing servers");
     return Object.entries(this.config?.mcpServers ?? {})
-      .filter(([name]) => this.isManagedConfigKey(name))
+      .filter(([name]) =>
+        params?.includeUnmanaged ? true : this.isManagedConfigKey(name),
+      )
       .map(([name, transport]) => ({
-        name,
+        name: this.toDisplayName(name),
         url: transport.args[3],
       }));
   }

@@ -46,7 +46,13 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
     );
   }
 
-  public async uninstall(name: string) {
+  public async uninstall(name: string | Array<string>) {
+    if (Array.isArray(name)) {
+      for (const n of name) {
+        await this.uninstall(n);
+      }
+      return;
+    }
     await this.initialize();
     if (!this.isInstalled(name)) {
       throw new AppError(
@@ -65,7 +71,13 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
     await this.updateConfig(newConfig);
   }
 
-  public async install(entry: Installable) {
+  public async install(entry: Installable | Array<Installable>) {
+    if (Array.isArray(entry)) {
+      for (const e of entry) {
+        await this.install(e);
+      }
+      return;
+    }
     await this.initialize();
     if (await this.isInstalled(entry.name)) {
       throw new AppError(
@@ -113,13 +125,15 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
     await this.install({ name, sseURL: url, streamableURL: "" });
   }
 
-  public async list() {
+  public async list(params?: { includeUnmanaged?: boolean }) {
     await this.initialize();
     this.logger.info("listing servers");
     return Object.entries(this.config?.mcp.servers ?? {})
-      .filter(([name]) => this.isManagedConfigKey(name))
+      .filter(([name]) =>
+        params?.includeUnmanaged ? true : this.isManagedConfigKey(name),
+      )
       .map(([name, server]) => ({
-        name,
+        name: this.toDisplayName(name),
         url: server.url,
       }));
   }
@@ -129,7 +143,7 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
     await os.openFileInCode(this.configPath);
   }
 
-  public async reset() {
+  public async reset(params?: { includeUnmanaged?: boolean }) {
     await this.initialize();
     this.logger.info("purging vscode config");
     const newConfig: VSCodeConfig = {
@@ -137,6 +151,18 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
         servers: {},
       },
     };
+
+    // Preserve unmanaged servers unless explicitly told not to
+    if (!params?.includeUnmanaged) {
+      for (const [name, server] of Object.entries(
+        this.config?.mcp?.servers ?? {},
+      )) {
+        if (!this.isManagedConfigKey(name)) {
+          newConfig.mcp.servers[name] = server;
+        }
+      }
+    }
+
     await this.updateConfig(newConfig);
   }
 

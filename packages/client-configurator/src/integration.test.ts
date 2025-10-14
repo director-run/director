@@ -3,6 +3,7 @@ import { ErrorCode } from "@director.run/utilities/error";
 import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
 import { isFilePresent } from "@director.run/utilities/os";
 import { expectToThrowAppError } from "@director.run/utilities/test";
+import { faker } from "@faker-js/faker";
 import { afterAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { ConfiguratorTarget } from ".";
 import type { ClaudeConfig } from "./claude";
@@ -58,7 +59,16 @@ import type { VSCodeConfig } from "./vscode";
 
     describe("config present", () => {
       beforeEach(async () => {
-        await createConfigFile(target);
+        await createConfigFile({
+          target,
+          entries: [
+            {
+              name: "not_managed_by_director",
+              sseURL: faker.internet.url(),
+              streamableURL: faker.internet.url(),
+            },
+          ],
+        });
       });
 
       afterAll(async () => {
@@ -177,11 +187,50 @@ import type { VSCodeConfig } from "./vscode";
         );
       });
 
-      describe("reset", () => {
-        test("should clear all servers", async () => {
+      describe("bulk install/uninstall", () => {
+        test("should install multiple and uninstall multiple", async () => {
+          const a = createInstallable();
+          const b = createInstallable();
+          const c = createInstallable();
           const installer = createTestInstaller(target);
+
+          expect(await installer.list()).toHaveLength(0);
+          await installer.install([a, b, c]);
+          expect(await installer.isInstalled(a.name)).toBe(true);
+          expect(await installer.isInstalled(b.name)).toBe(true);
+          expect(await installer.isInstalled(c.name)).toBe(true);
+
+          expect(await installer.list()).toHaveLength(3);
+
+          await installer.uninstall([a.name, b.name]);
+          expect(await installer.isInstalled(a.name)).toBe(false);
+          expect(await installer.isInstalled(b.name)).toBe(false);
+          expect(await installer.isInstalled(c.name)).toBe(true);
+          expect(await installer.list()).toHaveLength(1);
+        });
+      });
+
+      describe("reset", () => {
+        let installer: AbstractConfigurator<unknown>;
+        beforeEach(async () => {
+          installer = createTestInstaller(target);
           await installer.install(createInstallable());
           await installer.install(createInstallable());
+        });
+
+        test("should not clear servers that are not managed by director", async () => {
+          await installer.reset();
+          expect(await installer.list({ includeUnmanaged: true })).toHaveLength(
+            1,
+          );
+        });
+
+        test("should clear servers that are unmanaged by director if includeUnmanaged is true", async () => {
+          await installer.reset({ includeUnmanaged: true });
+          expect(await installer.list()).toHaveLength(0);
+        });
+
+        test("should clear all servers", async () => {
           await installer.reset();
           expect(await installer.list()).toHaveLength(0);
         });
@@ -192,11 +241,36 @@ import type { VSCodeConfig } from "./vscode";
       });
 
       describe("list", () => {
-        test("should return the list of servers", async () => {
+        test("should return servers that are not managed by director if includeUnmanaged is true", async () => {
           const installer = createTestInstaller(target);
           await installer.install(createInstallable());
           expect(await installer.list()).toHaveLength(1);
+          expect(await installer.list({ includeUnmanaged: true })).toHaveLength(
+            2,
+          );
         });
+        test("should return the list of servers", async () => {
+          const installer = createTestInstaller(target);
+          const installable = createInstallable();
+          await installer.install(installable);
+
+          expect(await installer.list()).toHaveLength(1);
+        });
+
+        test("should not include the internal name prefix", async () => {
+          const installer = createTestInstaller(target);
+          const installable = createInstallable();
+          await installer.install(installable);
+
+          expect(await installer.list()).toMatchObject(
+            expect.arrayContaining([
+              expect.objectContaining({
+                name: installable.name,
+              }),
+            ]),
+          );
+        });
+
         expectToThrowInitializtionErrors(target, (installer) =>
           installer.reset(),
         );

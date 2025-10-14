@@ -8,11 +8,7 @@ import { faker } from "@faker-js/faker";
 import { test, vi } from "vitest";
 import { getConfigurator } from "..";
 import { ConfiguratorTarget } from "..";
-import {
-  type ClaudeConfig,
-  type ClaudeMCPServer,
-  type ClaudeServerEntry,
-} from "../claude";
+import { type ClaudeConfig, type ClaudeMCPServer } from "../claude";
 import { type ClaudeCodeConfig } from "../claude-code";
 import { type CursorConfig } from "../cursor";
 import { type Installable } from "../types";
@@ -45,11 +41,17 @@ export function createCursorConfig(entries: Array<Installable>): CursorConfig {
   };
 }
 
-export function createClaudeConfig(entries: ClaudeServerEntry[]): ClaudeConfig {
+export function createClaudeConfig(entries: Array<Installable>): ClaudeConfig {
   return {
     mcpServers: entries.reduce(
       (acc, entry) => {
-        acc[entry.name] = entry.transport;
+        acc[entry.name] = {
+          command: "npx",
+          args: ["-y", "@director.run/cli@latest", "http2stdio", entry.sseURL],
+          env: {
+            LOG_LEVEL: "silent",
+          },
+        };
         return acc;
       },
       {} as Record<string, ClaudeMCPServer>,
@@ -83,33 +85,35 @@ export function createInstallable(): {
   };
 }
 
-export async function createConfigFile(
-  target: ConfiguratorTarget,
-  config?: unknown,
-) {
+export async function createConfigFile(params: {
+  target: ConfiguratorTarget;
+  config?: unknown;
+  entries?: Array<Installable>;
+}) {
+  const { target, config, entries } = params;
   switch (target) {
     case ConfiguratorTarget.VSCode:
       await writeJSONFile(
         getConfigPath(target),
-        config ?? createVSCodeConfig([]),
+        config ?? createVSCodeConfig(entries ?? []),
       );
       break;
     case ConfiguratorTarget.Cursor:
       await writeJSONFile(
         getConfigPath(target),
-        config ?? createCursorConfig([]),
+        config ?? createCursorConfig(entries ?? []),
       );
       break;
     case ConfiguratorTarget.Claude:
       await writeJSONFile(
         getConfigPath(target),
-        config ?? createClaudeConfig([]),
+        config ?? createClaudeConfig(entries ?? []),
       );
       break;
     case ConfiguratorTarget.ClaudeCode:
       await writeJSONFile(
         getConfigPath(target),
-        config ?? createClaudeCodeConfig([]),
+        config ?? createClaudeCodeConfig(entries ?? []),
       );
       break;
   }

@@ -13,7 +13,10 @@ describe(`vscode config`, () => {
       foo: "bar",
     };
     beforeEach(async () => {
-      await createConfigFile(ConfiguratorTarget.VSCode, incompleteConfig);
+      await createConfigFile({
+        target: ConfiguratorTarget.VSCode,
+        config: incompleteConfig,
+      });
     });
 
     afterAll(async () => {

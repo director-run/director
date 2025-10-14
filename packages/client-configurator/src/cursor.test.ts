@@ -13,7 +13,10 @@ describe(`cursor config`, () => {
       foo: "bar",
     };
     beforeEach(async () => {
-      await createConfigFile(ConfiguratorTarget.Cursor, incompleteConfig);
+      await createConfigFile({
+        target: ConfiguratorTarget.Cursor,
+        config: incompleteConfig,
+      });
     });
 
     afterAll(async () => {

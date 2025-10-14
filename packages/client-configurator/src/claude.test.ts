@@ -13,7 +13,10 @@ describe(`claude config`, () => {
       foo: "bar",
     };
     beforeEach(async () => {
-      await createConfigFile(ConfiguratorTarget.Claude, incompleteConfig);
+      await createConfigFile({
+        target: ConfiguratorTarget.Claude,
+        config: incompleteConfig,
+      });
     });
 
     afterAll(async () => {

@@ -6,7 +6,6 @@ import {
   type ServerConfigEntry,
   ServerConfigEntrySchema,
 } from "../../config/config-schema";
-import { restartConnectedClients } from "../../helpers";
 import type { WorkspaceTarget } from "../../workspaces/workspace";
 import { WorkspaceStore } from "../../workspaces/workspace-store";
 
@@ -103,7 +102,6 @@ export function createProxyStoreRouter({
           oldServerToTargetParams(input.server),
         );
 
-        await restartConnectedClients(proxy);
         return await target.toPlainObject({
           tools: input.queryParams?.includeTools,
           connectionInfo: true,
@@ -129,7 +127,6 @@ export function createProxyStoreRouter({
           input.serverName,
           input.attributes,
         );
-        await restartConnectedClients(proxy);
         return await server.toPlainObject({
           tools: input.queryParams?.includeTools,
           connectionInfo: true,
@@ -208,7 +205,6 @@ export function createProxyStoreRouter({
       .mutation(async ({ input }) => {
         const proxy = await proxyStore.get(input.proxyId);
         const server = await proxy.removeTarget(input.serverName);
-        await restartConnectedClients(proxy);
         return await server.toPlainObject({
           connectionInfo: true,
         });
@@ -224,7 +220,6 @@ export function createProxyStoreRouter({
       .mutation(async ({ input }) => {
         const proxy = await proxyStore.get(input.proxyId);
         const prompt = await proxy.addPrompt(input.prompt);
-        await restartConnectedClients(proxy);
         return prompt;
       }),
 
@@ -238,7 +233,6 @@ export function createProxyStoreRouter({
       .mutation(async ({ input }) => {
         const proxy = await proxyStore.get(input.proxyId);
         const result = await proxy.removePrompt(input.promptName);
-        await restartConnectedClients(proxy);
         return result;
       }),
 
@@ -253,7 +247,6 @@ export function createProxyStoreRouter({
       .mutation(async ({ input }) => {
         const proxy = await proxyStore.get(input.proxyId);
         const prompt = await proxy.updatePrompt(input.promptName, input.prompt);
-        await restartConnectedClients(proxy);
         return prompt;
       }),
 

@@ -134,7 +134,10 @@ export class Workspace extends ProxyServer {
       PROMPT_MANAGER_TARGET_NAME,
     )) as PromptManager;
     const newPrompt = await promptManager.addPromptEntry(prompt);
+
     await this.persistToConfig();
+    await this.sendListChangedEvents();
+
     return newPrompt;
   }
 
@@ -143,7 +146,9 @@ export class Workspace extends ProxyServer {
       PROMPT_MANAGER_TARGET_NAME,
     )) as PromptManager;
     await promptManager.removePromptEntry(promptName);
+
     await this.persistToConfig();
+    await this.sendListChangedEvents();
 
     return true;
   }
@@ -156,7 +161,9 @@ export class Workspace extends ProxyServer {
       PROMPT_MANAGER_TARGET_NAME,
     )) as PromptManager;
     const updatedPrompt = await promptManager.updatePrompt(promptName, prompt);
+
     await this.persistToConfig();
+    await this.sendListChangedEvents();
 
     return updatedPrompt;
   }

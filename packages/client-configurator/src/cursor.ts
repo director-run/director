@@ -3,7 +3,6 @@ import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
 import { writeJSONFile } from "@director.run/utilities/json";
 import { os, App } from "@director.run/utilities/os/index";
-import { sleep } from "@director.run/utilities/sleep";
 import { AbstractConfigurator, type Installable } from "./types";
 
 export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
@@ -91,24 +90,6 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     } else {
       this.logger.warn("skipping restart of cursor in test environment");
     }
-  }
-
-  public async reload(name: string) {
-    await this.initialize();
-
-    this.logger.info(`reloading ${name}`);
-
-    const url = this.config?.mcpServers[this.createServerConfigKey(name)]?.url;
-
-    if (!url) {
-      throw new AppError(
-        ErrorCode.NOT_FOUND,
-        `server '${name}' is not installed`,
-      );
-    }
-    await this.uninstall(name);
-    await sleep(1000);
-    await this.install({ name, sseURL: url, streamableURL: "" });
   }
 
   public async list(params?: { includeUnmanaged?: boolean }) {

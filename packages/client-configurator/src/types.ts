@@ -103,7 +103,6 @@ export abstract class AbstractConfigurator<T> {
   public abstract openConfig(): Promise<void>;
   public abstract isInstalled(name: string): Promise<boolean>;
   public abstract restart(): Promise<void>;
-  public abstract reload(name: string): Promise<void>;
   public abstract reset(params?: {
     includeUnmanaged?: boolean;
   }): Promise<void>;

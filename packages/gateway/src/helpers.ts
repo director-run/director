@@ -22,7 +22,7 @@ export async function restartConnectedClients(proxy: Workspace) {
     const configurator = getConfigurator(target);
     if (await configurator.isInstalled(proxy.id)) {
       logger.info(`${proxy.id} is intalled in ${target}, restarting...`);
-      await configurator.restart();
+      // await configurator.restart();
     }
   }
 }

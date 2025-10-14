@@ -135,11 +135,6 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeCodeConfig> 
     this.logger.error("restarting claude code not supported");
   }
 
-  public async reload(_name: string) {
-    await this.initialize();
-    this.logger.error("reloading claude code not supported");
-  }
-
   private async updateConfig(newConfig: ClaudeCodeConfig) {
     this.config = newConfig;
     this.logger.info(`writing config to ${this.configPath}`);

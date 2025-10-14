@@ -297,15 +297,9 @@ import type { VSCodeConfig } from "./vscode";
         );
       });
 
-      describe("reload", () => {
-        expectToThrowInitializtionErrors(target, (installer) =>
-          installer.reload("any"),
-        );
-      });
-
       describe("restart", () => {
         expectToThrowInitializtionErrors(target, (installer) =>
-          installer.reload("any"),
+          installer.restart(),
         );
       });
     });

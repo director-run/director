@@ -1,5 +1,44 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { IntegrationTestHarness } from "../../test/integration";
+
+vi.mock("@director.run/client-configurator/index", () => ({
+  getAllClients: vi.fn(async () => [
+    {
+      name: "claude",
+      installed: true,
+      configExists: true,
+      configPath: "/mock/path/claude",
+      workspaces: [{ id: "test-workspace-123" }, { id: "test-workspace-456" }],
+    },
+    {
+      name: "claude-code",
+      installed: true,
+      configExists: true,
+      configPath: "/mock/path/claude-code",
+      workspaces: [{ id: "test-workspace-hi" }],
+    },
+    {
+      name: "cursor",
+      installed: false,
+      configExists: false,
+      configPath: "/mock/path/cursor",
+      workspaces: [],
+    },
+  ]),
+  getProxyInstalledStatus: vi.fn(async () => ({
+    claude: true,
+    cursor: false,
+    vscode: false,
+    "claude-code": false,
+  })),
+  getConfigurator: vi.fn(),
+  ConfiguratorTarget: {
+    Claude: "claude",
+    Cursor: "cursor",
+    VSCode: "vscode",
+    ClaudeCode: "claude-code",
+  },
+}));
 
 describe("Client Router", () => {
   let harness: IntegrationTestHarness;
@@ -31,13 +70,19 @@ describe("Client Router", () => {
         expect(typeof client.configPath).toBe("string");
       }
 
-      // Verify that workspace names are correctly derived from underlying installer list()
-      // expect(client).toHaveProperty("workspaces");
-      // expect(Array.isArray(client.workspaces)).toBe(true);
-      // const workspaceIds = client.workspaces.map((w: { id: string }) => w.id);
-      // expect(workspaceIds).toEqual(
-      //   expect.arrayContaining(["test-workspace-123", "test-workspace-456"]),
-      // );
+      const claudeClient = result.find((c) => c.name === "claude");
+      expect(claudeClient).toBeDefined();
+
+      expect(claudeClient?.workspaces?.map((w) => w.id)).toEqual(
+        expect.arrayContaining(["test-workspace-123", "test-workspace-456"]),
+      );
+
+      const claudeCodeClient = result.find((c) => c.name === "claude-code");
+      expect(claudeCodeClient).toBeDefined();
+
+      expect(claudeCodeClient?.workspaces?.map((w) => w.id)).toEqual(
+        expect.arrayContaining(["test-workspace-hi"]),
+      );
     });
   });
   describe("byProxy", () => {

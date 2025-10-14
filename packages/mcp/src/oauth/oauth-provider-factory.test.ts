@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { faker } from "@faker-js/faker";
@@ -157,9 +157,7 @@ describe("OAuthProvider", () => {
     let factory: OAuthProviderFactory;
 
     beforeEach(async () => {
-      tempDir = await fs.promises.mkdtemp(
-        path.join(os.tmpdir(), "oauth-test-"),
-      );
+      tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "oauth-test-"));
       factory = new OAuthProviderFactory({
         storage: "disk",
         tokenDirectory: tempDir,
@@ -172,7 +170,7 @@ describe("OAuthProvider", () => {
     });
 
     afterEach(async () => {
-      await fs.promises.rm(tempDir, { recursive: true, force: true });
+      await fs.rm(tempDir, { recursive: true, force: true });
     });
 
     it("should save and load client information", async () => {
@@ -275,7 +273,7 @@ describe("OAuthProvider", () => {
       expect(loaded1).not.toEqual(loaded2);
 
       // Check that separate files were created with the filePrefix and encoded IDs
-      const files = await fs.promises.readdir(tempDir);
+      const files = await fs.readdir(tempDir);
       expect(files).toHaveLength(2);
       for (const f of files) {
         expect(f.startsWith("test-oauth-")).toBe(true);

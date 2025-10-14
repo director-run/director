@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
@@ -16,7 +16,7 @@ describe("OnDiskOAuthStorage", () => {
 
   beforeEach(async () => {
     // Create a temporary directory for testing
-    tempDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "oauth-test-"));
+    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "oauth-test-"));
 
     storage = new OnDiskOAuthStorage({
       directory: tempDir,
@@ -26,7 +26,7 @@ describe("OnDiskOAuthStorage", () => {
 
   afterEach(async () => {
     // Clean up temporary directory
-    await fs.promises.rm(tempDir, { recursive: true, force: true });
+    await fs.rm(tempDir, { recursive: true, force: true });
   });
 
   it("should save and load client information", async () => {
@@ -114,13 +114,13 @@ describe("OnDiskOAuthStorage", () => {
     await storage.saveCodeVerifier(testProviderId, codeVerifier);
 
     // Check that only one file was created
-    const files = await fs.promises.readdir(tempDir);
+    const files = await fs.readdir(tempDir);
     expect(files).toHaveLength(1);
     expect(files[0]).toBe("test-oauth-test-provider.json");
 
     // Check file permissions (should be 600)
     const filePath = path.join(tempDir, "test-oauth-test-provider.json");
-    const stats = fs.statSync(filePath);
+    const stats = await fs.stat(filePath);
     const mode = stats.mode & 0o777;
     expect(mode).toBe(0o600);
   });
@@ -164,7 +164,7 @@ describe("OnDiskOAuthStorage", () => {
     expect(loaded1).not.toEqual(loaded2);
 
     // Check that two separate files were created
-    const files = await fs.promises.readdir(tempDir);
+    const files = await fs.readdir(tempDir);
     expect(files).toHaveLength(2);
     expect(files).toContain("test-oauth-provider-1.json");
     expect(files).toContain("test-oauth-provider-2.json");
@@ -187,7 +187,7 @@ describe("OnDiskOAuthStorage", () => {
 
     // Make the file permissions insecure (644 - readable by others)
     const filePath = path.join(tempDir, "test-oauth-test-provider.json");
-    fs.chmodSync(filePath, 0o644);
+    await fs.chmod(filePath, 0o644);
 
     // Create a new storage instance to force reading from disk
     const newStorage = new OnDiskOAuthStorage({

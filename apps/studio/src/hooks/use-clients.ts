@@ -14,6 +14,11 @@ const catalog: Array<Omit<Client, "installed" | "present">> = [
     image: new URL("/assets/icons/claude-icon.png", import.meta.url).href,
   },
   {
+    id: "claude-code",
+    label: "Claude Code",
+    image: new URL("/assets/icons/claude-icon.png", import.meta.url).href,
+  },
+  {
     id: "cursor",
     label: "Cursor",
     image: new URL("/assets/icons/cursor-icon.png", import.meta.url).href,

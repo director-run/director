@@ -48,7 +48,13 @@ export async function resetAllClients() {
   for (const installer of installers) {
     console.log("resetting", installer.name);
     if (await installer.isClientPresent()) {
-      await installer.reset();
+      const result = await installer.reset();
+      if (result.requiresRestart) {
+        console.log(`requires restart: ${installer.name}`);
+        await installer.restart();
+      } else {
+        console.log(`no restart needed: ${installer.name}`);
+      }
     } else {
       console.log("client not present:", installer.name);
     }

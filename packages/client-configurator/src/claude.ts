@@ -176,7 +176,6 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
     this.config = newConfig;
     this.logger.info(`writing config to ${this.configPath}`);
     await writeJSONFile(this.configPath, this.config);
-    await this.restart();
   }
 
   public async createConfig() {

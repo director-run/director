@@ -102,7 +102,9 @@ export function registerCoreCommands(program: DirectorCommand): void {
           const proxy = await gatewayClient.store.get.query({ proxyId });
           const installer = await getConfigurator(options.target);
           const result = await installer.uninstall(proxy.id);
-          console.log(result);
+          if (result.requiresRestart) {
+            await installer.restart();
+          }
         },
       ),
     );

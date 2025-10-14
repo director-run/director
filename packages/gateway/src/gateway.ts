@@ -1,4 +1,4 @@
-import { Server } from "http";
+import { Server } from "node:http";
 import { createOauthCallbackRouter } from "@director.run/mcp/oauth/oauth-callback-router";
 import { isDevelopment } from "@director.run/utilities/env";
 import { getLogger } from "@director.run/utilities/logger";
@@ -202,6 +202,7 @@ export class Gateway {
   async stop() {
     await this.workspaceStore.closeAll();
     await new Promise<void>((resolve) => {
+      // @ts-ignore
       this.server?.closeAllConnections();
       this.server?.close(() => resolve());
     });

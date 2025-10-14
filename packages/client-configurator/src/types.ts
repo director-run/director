@@ -59,12 +59,23 @@ export abstract class AbstractConfigurator<T> {
     installed: boolean;
     configExists: boolean;
     configPath: string;
+    workspaces: Array<{ id: string }>;
   }> {
+    const installed = await this.isClientPresent();
+    const configExists = await this.isClientConfigPresent();
+    const workspaces =
+      configExists && installed
+        ? (await this.list()).map((server) => ({
+            id: server.name.replace(CONFIG_KEY_PREFIX, ""),
+          }))
+        : [];
+
     return {
       name: this.name,
-      installed: await this.isClientPresent(),
-      configExists: await this.isClientConfigPresent(),
+      installed,
+      configExists,
       configPath: this.configPath,
+      workspaces,
     };
   }
 

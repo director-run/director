@@ -1,16 +1,18 @@
-import type {
-  Client,
-  ConfiguratorTarget,
-} from "@director.run/design/components/types.ts";
+import type { Client } from "@director.run/design/components/types.ts";
 import type { GatewayRouterOutputs } from "@director.run/gateway/client";
 import { gatewayClient } from "../contexts/backend-context";
 
-type InstallerApi = GatewayRouterOutputs["installer"]["allClients"][number];
+type InstallerApi = GatewayRouterOutputs["clients"]["allClients"][number];
 
 const catalog: Array<Omit<Client, "installed" | "present">> = [
   {
     id: "claude",
     label: "Claude",
+    image: new URL("/assets/icons/claude-icon.png", import.meta.url).href,
+  },
+  {
+    id: "claude-code",
+    label: "Claude Code",
     image: new URL("/assets/icons/claude-icon.png", import.meta.url).href,
   },
   {
@@ -29,12 +31,9 @@ export function useClients(workspaceId: string): {
   data?: Client[];
   isLoading: boolean;
 } {
-  const [clients, availableClients] = gatewayClient.useQueries((t) => [
-    t.installer.byProxy.list({ proxyId: workspaceId }),
-    t.installer.allClients(),
-  ]);
+  const availableClients = gatewayClient.clients.allClients.useQuery();
 
-  const isLoading = availableClients.isLoading || clients.isLoading;
+  const isLoading = availableClients.isLoading;
 
   const mappedInstallers: Client[] | null = isLoading
     ? null
@@ -50,7 +49,7 @@ export function useClients(workspaceId: string): {
             label: meta.label,
             image: meta.image,
             installed: apiClient.installed,
-            present: !!clients?.data?.[apiClient.name as ConfiguratorTarget],
+            present: !!apiClient.workspaces?.some((w) => w.id === workspaceId),
           } as Client;
         })
         .filter((c): c is Client => c !== null) ?? []);

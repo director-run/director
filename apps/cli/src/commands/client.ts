@@ -1,6 +1,6 @@
 import {
   ConfiguratorTarget,
-  allClientStatuses,
+  getAllClients,
   getConfigurator,
   resetAllClients,
 } from "@director.run/client-configurator/index";
@@ -96,7 +96,7 @@ export function registerClientCommands(program: DirectorCommand): void {
     .description("Show a list of the clients")
     .action(
       actionWithErrorHandler(async () => {
-        const clients = await allClientStatuses();
+        const clients = await getAllClients();
         const table = makeTable([
           "name",
           "installed",

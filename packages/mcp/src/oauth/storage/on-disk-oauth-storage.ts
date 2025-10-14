@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import fs from "node:fs/promises";
 import path from "node:path";
 import { ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
@@ -131,7 +131,7 @@ export class OnDiskOAuthStorage extends AbstractOAuthStorage {
       providerId,
       path: filePath,
     });
-    await fs.promises.unlink(filePath);
+    await fs.unlink(filePath);
   }
 
   async getCodeVerifier(providerId: string): Promise<string | undefined> {

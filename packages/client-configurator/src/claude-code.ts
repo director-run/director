@@ -51,6 +51,7 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeCodeConfig> 
     }
     this.logger.info(`uninstalling ${name}`);
     const newConfig: ClaudeCodeConfig = {
+      ...this.config,
       mcpServers: { ...this.config?.mcpServers },
     };
     delete newConfig.mcpServers?.[this.createServerConfigKey(name)];
@@ -67,6 +68,7 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeCodeConfig> 
     }
     this.logger.info(`installing ${attributes.name}`);
     const newConfig: ClaudeCodeConfig = {
+      ...this.config,
       mcpServers: { ...this.config?.mcpServers },
     };
     newConfig.mcpServers[this.createServerConfigKey(attributes.name)] = {

@@ -19,9 +19,9 @@ export function useChangeInstallState(
 ) {
   const utils = gatewayClient.useUtils();
 
-  const installMutation = gatewayClient.installer.byProxy.install.useMutation({
+  const installMutation = gatewayClient.clients.install.useMutation({
     onSuccess: async (_data, variables) => {
-      await utils.installer.byProxy.list.invalidate();
+      await utils.clients.allClients.invalidate();
       if (options?.onSuccess && variables?.client) {
         await options.onSuccess(variables.client as ConfiguratorTarget, true);
       }
@@ -33,23 +33,19 @@ export function useChangeInstallState(
     },
   });
 
-  const uninstallMutation =
-    gatewayClient.installer.byProxy.uninstall.useMutation({
-      onSuccess: async (_data, variables) => {
-        await utils.installer.byProxy.list.invalidate();
-        if (options?.onSuccess && variables?.client) {
-          await options.onSuccess(
-            variables.client as ConfiguratorTarget,
-            false,
-          );
-        }
-      },
-      onError: async (_error, variables) => {
-        if (options?.onError && variables?.client) {
-          await options.onError(variables.client as ConfiguratorTarget, false);
-        }
-      },
-    });
+  const uninstallMutation = gatewayClient.clients.uninstall.useMutation({
+    onSuccess: async (_data, variables) => {
+      await utils.clients.allClients.invalidate();
+      if (options?.onSuccess && variables?.client) {
+        await options.onSuccess(variables.client as ConfiguratorTarget, false);
+      }
+    },
+    onError: async (_error, variables) => {
+      if (options?.onError && variables?.client) {
+        await options.onError(variables.client as ConfiguratorTarget, false);
+      }
+    },
+  });
 
   const changeInstallState = async (
     client: ConfiguratorTarget,

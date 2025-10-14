@@ -55,20 +55,19 @@ describe("Client Router", () => {
     it("should return all client statuses without proxyId", async () => {
       const result = await harness.client.clients.allClients.query();
 
-      expect(result).toBeDefined();
-      expect(Array.isArray(result)).toBe(true);
       expect(result.length).toBeGreaterThan(0);
 
-      for (const client of result) {
-        expect(client).toHaveProperty("name");
-        expect(client).toHaveProperty("installed");
-        expect(client).toHaveProperty("configExists");
-        expect(client).toHaveProperty("configPath");
-        expect(typeof client.name).toBe("string");
-        expect(typeof client.installed).toBe("boolean");
-        expect(typeof client.configExists).toBe("boolean");
-        expect(typeof client.configPath).toBe("string");
-      }
+      result.forEach((client) => {
+        expect(client).toEqual(
+          expect.objectContaining({
+            name: expect.any(String),
+            installed: expect.any(Boolean),
+            configExists: expect.any(Boolean),
+            configPath: expect.any(String),
+            workspaces: expect.any(Array),
+          }),
+        );
+      });
 
       const claudeClient = result.find((c) => c.name === "claude");
       expect(claudeClient).toBeDefined();

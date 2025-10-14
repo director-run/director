@@ -14,9 +14,7 @@ export enum ConfiguratorTarget {
 
 export async function getAllClients() {
   return await Promise.all(
-    allTargets().map(
-      async (target) => await getConfigurator(target).getStatus(),
-    ),
+    allTargets().map((target) => getConfigurator(target).getStatus()),
   );
 }
 

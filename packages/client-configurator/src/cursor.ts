@@ -155,6 +155,14 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
       mcpServers: {},
     });
   }
+
+  public getCapabilities() {
+    return {
+      requiresRestartOnInstallOrUninstall: false,
+      requiresRestartOnUpdate: false,
+      programaticRestartSupported: true,
+    };
+  }
 }
 
 export type CursorConfig = {

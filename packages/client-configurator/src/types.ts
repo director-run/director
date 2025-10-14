@@ -93,6 +93,12 @@ export abstract class AbstractConfigurator<T> {
       : key;
   }
 
+  public abstract getCapabilities(): {
+    requiresRestartOnInstallOrUninstall: boolean;
+    requiresRestartOnUpdate: boolean;
+    programaticRestartSupported: boolean;
+  };
+
   public abstract install(
     attributes: Installable | Array<Installable>,
   ): Promise<void>;

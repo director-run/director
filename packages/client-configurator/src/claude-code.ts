@@ -148,6 +148,14 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeCodeConfig> 
       mcpServers: {},
     });
   }
+
+  public getCapabilities() {
+    return {
+      requiresRestartOnInstallOrUninstall: true,
+      requiresRestartOnUpdate: true,
+      programaticRestartSupported: false,
+    };
+  }
 }
 
 export const ClaudeCodeMCPServerSchema = z.object({

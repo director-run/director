@@ -166,6 +166,14 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
       mcp: { servers: {} },
     });
   }
+
+  public getCapabilities() {
+    return {
+      requiresRestartOnInstallOrUninstall: true,
+      requiresRestartOnUpdate: true,
+      programaticRestartSupported: true,
+    };
+  }
 }
 
 export type VSCodeConfig = {

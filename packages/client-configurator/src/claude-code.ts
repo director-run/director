@@ -88,11 +88,13 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeCodeConfig> 
     await this.updateConfig(newConfig);
   }
 
-  public async list() {
+  public async list(params?: { includeUnmanaged?: boolean }) {
     await this.initialize();
     this.logger.info("listing servers");
     return Object.entries(this.config?.mcpServers ?? {})
-      .filter(([name]) => this.isManagedConfigKey(name))
+      .filter(([name]) =>
+        params?.includeUnmanaged ? true : this.isManagedConfigKey(name),
+      )
       .map(([name, { url }]) => ({
         name,
         url,

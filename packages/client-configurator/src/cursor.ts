@@ -99,12 +99,14 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     await this.install({ name, sseURL: url, streamableURL: "" });
   }
 
-  public async list() {
+  public async list(params?: { includeUnmanaged?: boolean }) {
     await this.initialize();
 
     this.logger.info("listing servers");
     return Object.entries(this.config?.mcpServers ?? {})
-      .filter(([name]) => this.isManagedConfigKey(name))
+      .filter(([name]) =>
+        params?.includeUnmanaged ? true : this.isManagedConfigKey(name),
+      )
       .map(([name, transport]) => ({
         name,
         url: transport.url,

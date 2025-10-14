@@ -213,6 +213,14 @@ import type { VSCodeConfig } from "./vscode";
       });
 
       describe("list", () => {
+        test("should return servers that are not managed by director if includeUnmanaged is true", async () => {
+          const installer = createTestInstaller(target);
+          await installer.install(createInstallable());
+          expect(await installer.list()).toHaveLength(1);
+          expect(await installer.list({ includeUnmanaged: true })).toHaveLength(
+            2,
+          );
+        });
         test("should return the list of servers", async () => {
           const installer = createTestInstaller(target);
           await installer.install(createInstallable());

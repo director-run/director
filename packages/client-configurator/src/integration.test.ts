@@ -188,6 +188,14 @@ import type { VSCodeConfig } from "./vscode";
       });
 
       describe("bulk install/uninstall", () => {
+        test("should return a result with requiresRestart", async () => {
+          const installer = createTestInstaller(target);
+          expect(await installer.install(createInstallable())).toMatchObject({
+            requiresRestart:
+              installer.getCapabilities().requiresRestartOnInstallOrUninstall,
+          });
+        });
+
         test("should install multiple and uninstall multiple", async () => {
           const a = createInstallable();
           const b = createInstallable();

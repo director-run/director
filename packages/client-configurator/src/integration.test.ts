@@ -264,6 +264,20 @@ import type { VSCodeConfig } from "./vscode";
           await installer.install(createInstallable());
         });
 
+        test("should return a result with requiresRestart", async () => {
+          expect(await installer.reset()).toMatchObject({
+            requiresRestart:
+              installer.getCapabilities().requiresRestartOnInstallOrUninstall,
+          });
+        });
+
+        test("should return a result with requiresRestart = false if nothing was reset", async () => {
+          await installer.reset();
+          expect(await installer.reset()).toMatchObject({
+            requiresRestart: false,
+          });
+        });
+
         test("should not overwrite existing config data", async () => {
           const installable = createInstallable();
           const installer = createTestInstaller(target);

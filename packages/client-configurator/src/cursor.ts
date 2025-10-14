@@ -163,6 +163,12 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
       }
     }
 
+    // If nothing changed, do not write or request restart
+    const noChange = JSON.stringify(newConfig) === JSON.stringify(this.config);
+    if (noChange) {
+      return { requiresRestart: false };
+    }
+
     await this.updateConfig(newConfig);
     return {
       requiresRestart:

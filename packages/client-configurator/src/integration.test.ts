@@ -136,6 +136,26 @@ import type { VSCodeConfig } from "./vscode";
         );
       });
 
+      test("should return a result with requiresRestart", async () => {
+        const installer = createTestInstaller(target);
+        const installable = createInstallable();
+
+        expect(await installer.install(installable)).toMatchObject({
+          requiresRestart:
+            installer.getCapabilities().requiresRestartOnInstallOrUninstall,
+        });
+      });
+
+      test("should throw an error if the server is already installed", async () => {
+        const installer = createTestInstaller(target);
+        const installable = createInstallable();
+        await installer.install(installable);
+        await expectToThrowAppError(() => installer.install(installable), {
+          code: ErrorCode.BAD_REQUEST,
+          props: {},
+        });
+      });
+
       test("should not overwrite existing config data", async () => {
         const basicData = await readJSONFile<Record<string, unknown>>(
           getConfigPath(target),
@@ -159,6 +179,19 @@ import type { VSCodeConfig } from "./vscode";
           expect(await installer.list()).toHaveLength(1);
           await installer.uninstall(installable.name);
           expect(await installer.list()).toHaveLength(0);
+        });
+
+        test("should throw an error if the server is not installed", async () => {
+          const installer = createTestInstaller(target);
+          const installable = createInstallable();
+
+          await expectToThrowAppError(
+            () => installer.uninstall(installable.name),
+            {
+              code: ErrorCode.BAD_REQUEST,
+              props: {},
+            },
+          );
         });
 
         test("should not overwrite existing config data", async () => {
@@ -190,7 +223,12 @@ import type { VSCodeConfig } from "./vscode";
       describe("bulk install/uninstall", () => {
         test("should return a result with requiresRestart", async () => {
           const installer = createTestInstaller(target);
-          expect(await installer.install(createInstallable())).toMatchObject({
+          const installable1 = createInstallable();
+          const installable2 = createInstallable();
+
+          expect(
+            await installer.install([installable1, installable2]),
+          ).toMatchObject({
             requiresRestart:
               installer.getCapabilities().requiresRestartOnInstallOrUninstall,
           });

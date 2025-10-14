@@ -15,18 +15,9 @@ export enum ConfiguratorTarget {
   ClaudeCode = "claude-code",
 }
 
-export const configurators = {
-  [ConfiguratorTarget.Claude]: new ClaudeInstaller({}),
-  [ConfiguratorTarget.Cursor]: new CursorInstaller({}),
-  [ConfiguratorTarget.VSCode]: new VSCodeInstaller({}),
-  [ConfiguratorTarget.ClaudeCode]: new ClaudeCodeInstaller({}),
-};
-
 export async function getAllClients() {
   return await Promise.all(
-    Object.values(configurators).map(
-      async (configurator) => await configurator.getStatus(),
-    ),
+    allInstallers().map(async (configurator) => await configurator.getStatus()),
   );
 }
 

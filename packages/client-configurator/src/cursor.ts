@@ -48,9 +48,9 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     }
     await this.initialize();
 
-    if (!this.isInstalled(name)) {
+    if (!(await this.isInstalled(name))) {
       throw new AppError(
-        ErrorCode.NOT_FOUND,
+        ErrorCode.BAD_REQUEST,
         `server '${name}' is not installed`,
       );
     }

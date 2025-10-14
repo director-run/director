@@ -59,7 +59,7 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeCodeConfig> 
     await this.initialize();
     if (!(await this.isInstalled(name))) {
       throw new AppError(
-        ErrorCode.NOT_FOUND,
+        ErrorCode.BAD_REQUEST,
         `server '${name}' is not installed`,
       );
     }

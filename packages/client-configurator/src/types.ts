@@ -66,7 +66,7 @@ export abstract class AbstractConfigurator<T> {
     const workspaces =
       configExists && installed
         ? (await this.list()).map((server) => ({
-            id: server.name.replace(CONFIG_KEY_PREFIX, ""),
+            id: server.name,
           }))
         : [];
 

@@ -21,7 +21,7 @@ export function useChangeInstallState(
 
   const installMutation = gatewayClient.clients.byProxy.install.useMutation({
     onSuccess: async (_data, variables) => {
-      await utils.clients.byProxy.list.invalidate();
+      await utils.clients.allClients.invalidate();
       if (options?.onSuccess && variables?.client) {
         await options.onSuccess(variables.client as ConfiguratorTarget, true);
       }
@@ -36,7 +36,7 @@ export function useChangeInstallState(
   const uninstallMutation = gatewayClient.clients.byProxy.uninstall.useMutation(
     {
       onSuccess: async (_data, variables) => {
-        await utils.clients.byProxy.list.invalidate();
+        await utils.clients.allClients.invalidate();
         if (options?.onSuccess && variables?.client) {
           await options.onSuccess(
             variables.client as ConfiguratorTarget,

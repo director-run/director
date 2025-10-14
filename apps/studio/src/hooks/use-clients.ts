@@ -1,7 +1,4 @@
-import type {
-  Client,
-  ConfiguratorTarget,
-} from "@director.run/design/components/types.ts";
+import type { Client } from "@director.run/design/components/types.ts";
 import type { GatewayRouterOutputs } from "@director.run/gateway/client";
 import { gatewayClient } from "../contexts/backend-context";
 
@@ -34,12 +31,9 @@ export function useClients(workspaceId: string): {
   data?: Client[];
   isLoading: boolean;
 } {
-  const [clients, availableClients] = gatewayClient.useQueries((t) => [
-    t.clients.byProxy.list({ proxyId: workspaceId }),
-    t.clients.allClients(),
-  ]);
+  const availableClients = gatewayClient.clients.allClients.useQuery();
 
-  const isLoading = availableClients.isLoading || clients.isLoading;
+  const isLoading = availableClients.isLoading;
 
   const mappedInstallers: Client[] | null = isLoading
     ? null
@@ -55,7 +49,7 @@ export function useClients(workspaceId: string): {
             label: meta.label,
             image: meta.image,
             installed: apiClient.installed,
-            present: !!clients?.data?.[apiClient.name as ConfiguratorTarget],
+            present: !!apiClient.workspaces?.some((w) => w.id === workspaceId),
           } as Client;
         })
         .filter((c): c is Client => c !== null) ?? []);

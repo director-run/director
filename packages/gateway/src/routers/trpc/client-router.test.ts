@@ -20,8 +20,6 @@ describe("Client Router", () => {
       expect(Array.isArray(result)).toBe(true);
       expect(result.length).toBeGreaterThan(0);
 
-      // expect(result).toEqual(4);
-      // Each client should have the basic status fields
       for (const client of result) {
         expect(client).toHaveProperty("name");
         expect(client).toHaveProperty("installed");
@@ -32,6 +30,14 @@ describe("Client Router", () => {
         expect(typeof client.configExists).toBe("boolean");
         expect(typeof client.configPath).toBe("string");
       }
+
+      // Verify that workspace names are correctly derived from underlying installer list()
+      // expect(client).toHaveProperty("workspaces");
+      // expect(Array.isArray(client.workspaces)).toBe(true);
+      // const workspaceIds = client.workspaces.map((w: { id: string }) => w.id);
+      // expect(workspaceIds).toEqual(
+      //   expect.arrayContaining(["test-workspace-123", "test-workspace-456"]),
+      // );
     });
   });
   describe("byProxy", () => {

@@ -81,7 +81,7 @@ export function GetStartedPage() {
 
   const installationMutation = trpc.clients.byProxy.install.useMutation({
     onSuccess: () => {
-      utils.clients.byProxy.list.invalidate();
+      utils.clients.allClients.invalidate();
       toast({
         title: "Proxy installed",
         description: `This proxy was successfully installed`,

@@ -2,7 +2,6 @@ import {
   ConfiguratorTarget,
   getAllClients,
   getConfigurator,
-  getProxyInstalledStatus,
 } from "@director.run/client-configurator/index";
 import { t } from "@director.run/utilities/trpc";
 import { joinURL } from "@director.run/utilities/url";
@@ -16,11 +15,6 @@ export function createClientRouter({
   return t.router({
     allClients: t.procedure.query(() => getAllClients()),
     byProxy: t.router({
-      list: t.procedure
-        .input(z.object({ proxyId: z.string() }))
-        .query(async ({ input }) => {
-          return await getProxyInstalledStatus(input.proxyId);
-        }),
       install: t.procedure
         .input(
           z.object({

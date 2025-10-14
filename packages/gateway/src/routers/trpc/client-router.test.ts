@@ -85,24 +85,4 @@ describe("Client Router", () => {
       );
     });
   });
-  describe("byProxy", () => {
-    it("should return proxy-specific installation status", async () => {
-      const testProxyId = "test-workspace-456";
-
-      const result = await harness.client.clients.byProxy.list.query({
-        proxyId: testProxyId,
-      });
-
-      expect(result).toBeDefined();
-      expect(typeof result).toBe("object");
-
-      // Result should be a Record of ConfiguratorTarget -> boolean
-      expect(result).toHaveProperty("claude");
-      expect(result).toHaveProperty("cursor");
-      expect(result).toHaveProperty("vscode");
-      expect(typeof result.claude).toBe("boolean");
-      expect(typeof result.cursor).toBe("boolean");
-      expect(typeof result.vscode).toBe("boolean");
-    });
-  });
 });

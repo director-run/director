@@ -202,6 +202,7 @@ export class Gateway {
   async stop() {
     await this.workspaceStore.closeAll();
     await new Promise<void>((resolve) => {
+      // @ts-ignore
       this.server?.closeAllConnections();
       this.server?.close(() => resolve());
     });

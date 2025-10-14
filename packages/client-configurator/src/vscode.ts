@@ -56,6 +56,7 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
     }
     this.logger.info(`uninstalling ${name}`);
     const newConfig: VSCodeConfig = {
+      ...this.config,
       mcp: {
         servers: { ...(this.config?.mcp?.servers ?? {}) },
       },
@@ -74,6 +75,7 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
     }
     this.logger.info(`installing ${entry.name}`);
     const newConfig: VSCodeConfig = {
+      ...this.config,
       mcp: {
         servers: { ...(this.config?.mcp?.servers ?? {}) },
       },

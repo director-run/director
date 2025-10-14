@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import { ErrorCode } from "@director.run/utilities/error";
-import { readJSONFile } from "@director.run/utilities/json";
+import { readJSONFile, writeJSONFile } from "@director.run/utilities/json";
 import { isFilePresent } from "@director.run/utilities/os";
 import { expectToThrowAppError } from "@director.run/utilities/test";
 import { afterAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -126,6 +126,21 @@ import type { VSCodeConfig } from "./vscode";
         );
       });
 
+      test("should not overwrite existing config data", async () => {
+        const basicData = await readJSONFile<Record<string, unknown>>(
+          getConfigPath(target),
+        );
+        await writeJSONFile(getConfigPath(target), {
+          ...basicData,
+          foo: "bar",
+        });
+        const installer = createTestInstaller(target);
+        await installer.install(createInstallable());
+        expect(await readJSONFile(getConfigPath(target))).toMatchObject({
+          foo: "bar",
+        });
+      });
+
       describe("uninstall", () => {
         test("should be able to uninstall a server", async () => {
           const installable = createInstallable();
@@ -134,6 +149,27 @@ import type { VSCodeConfig } from "./vscode";
           expect(await installer.list()).toHaveLength(1);
           await installer.uninstall(installable.name);
           expect(await installer.list()).toHaveLength(0);
+        });
+
+        test("should not overwrite existing config data", async () => {
+          const installable = createInstallable();
+          const installer = createTestInstaller(target);
+
+          const basicData = await readJSONFile<Record<string, unknown>>(
+            getConfigPath(target),
+          );
+
+          await writeJSONFile(getConfigPath(target), {
+            ...basicData,
+            foo: "bar",
+          });
+
+          await installer.install(installable);
+          await installer.uninstall(installable.name);
+
+          expect(await readJSONFile(getConfigPath(target))).toMatchObject({
+            foo: "bar",
+          });
         });
 
         expectToThrowInitializtionErrors(target, (installer) =>

@@ -1,4 +1,4 @@
-import { Server } from "http";
+import { Server } from "node:http";
 import { createOauthCallbackRouter } from "@director.run/mcp/oauth/oauth-callback-router";
 import { isDevelopment } from "@director.run/utilities/env";
 import { getLogger } from "@director.run/utilities/logger";

@@ -10,43 +10,41 @@ import { getSSEPathForProxy, getStreamablePathForProxy } from "../../helpers";
 import type { WorkspaceStore } from "../../workspaces/workspace-store";
 
 export function createClientRouter({
-  workspaceStore: proxyStore,
+  workspaceStore,
 }: { workspaceStore: WorkspaceStore }) {
   return t.router({
     allClients: t.procedure.query(() => getAllClients()),
-    byProxy: t.router({
-      install: t.procedure
-        .input(
-          z.object({
-            client: z.nativeEnum(ConfiguratorTarget),
-            proxyId: z.string(),
-            baseUrl: z.string(),
-          }),
-        )
-        .mutation(async ({ input }) => {
-          const proxy = proxyStore.get(input.proxyId);
-          const installer = await getConfigurator(input.client);
-          await installer.install({
-            name: proxy.id,
-            sseURL: joinURL(input.baseUrl, getSSEPathForProxy(proxy.id)),
-            streamableURL: joinURL(
-              input.baseUrl,
-              getStreamablePathForProxy(proxy.id),
-            ),
-          });
+    install: t.procedure
+      .input(
+        z.object({
+          client: z.nativeEnum(ConfiguratorTarget),
+          proxyId: z.string(),
+          baseUrl: z.string(),
         }),
-      uninstall: t.procedure
-        .input(
-          z.object({
-            client: z.nativeEnum(ConfiguratorTarget),
-            proxyId: z.string(),
-          }),
-        )
-        .mutation(async ({ input }) => {
-          const proxy = proxyStore.get(input.proxyId);
-          const installer = await getConfigurator(input.client);
-          await installer.uninstall(proxy.id);
+      )
+      .mutation(async ({ input }) => {
+        const proxy = workspaceStore.get(input.proxyId);
+        const installer = await getConfigurator(input.client);
+        await installer.install({
+          name: proxy.id,
+          sseURL: joinURL(input.baseUrl, getSSEPathForProxy(proxy.id)),
+          streamableURL: joinURL(
+            input.baseUrl,
+            getStreamablePathForProxy(proxy.id),
+          ),
+        });
+      }),
+    uninstall: t.procedure
+      .input(
+        z.object({
+          client: z.nativeEnum(ConfiguratorTarget),
+          proxyId: z.string(),
         }),
-    }),
+      )
+      .mutation(async ({ input }) => {
+        const proxy = workspaceStore.get(input.proxyId);
+        const installer = await getConfigurator(input.client);
+        await installer.uninstall(proxy.id);
+      }),
   });
 }

@@ -79,7 +79,7 @@ export function GetStartedPage() {
     },
   });
 
-  const installationMutation = trpc.clients.byProxy.install.useMutation({
+  const installationMutation = trpc.clients.install.useMutation({
     onSuccess: () => {
       utils.clients.allClients.invalidate();
       toast({

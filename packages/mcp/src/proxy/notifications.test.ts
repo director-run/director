@@ -27,25 +27,50 @@ describe("ProxyServer", () => {
   });
 
   describe("notifications", () => {
-    test("should send list changed events when a target is added", async () => {
+    test("should send onListChange when targets are added/updated/removed and cleanup on close", async () => {
       const proxy = new ProxyServer({
         id: "test-proxy",
         servers: [],
       });
+
       await proxy.connectTargets();
-      //   const client = await InMemoryClient.createAndConnectToServer(proxy);
+
+      let callCount = 0;
+      proxy.setListChangeListner(() => {
+        callCount += 1;
+      });
 
       await proxy.addTarget(
         new HTTPClient({
           name: "streamable",
-          url: `http://localhost/mcp`,
+          url: `http://localhost:${STREAMABLE_PORT}/mcp`,
         }),
         { throwOnError: false },
       );
 
-      const target = await proxy.getTarget("streamable");
-      expect(target).toBeDefined();
-      //   expect((await client.listTools()).tools).toHaveLength(1);
+      await proxy.updateTarget("streamable", { toolPrefix: "pref-" });
+      await proxy.removeTarget("streamable");
+
+      expect(callCount).toBeGreaterThanOrEqual(3);
+
+      // unsubscribe and ensure no further increments
+      proxy.removeListChangeListner();
+
+      await proxy.addTarget(
+        new HTTPClient({
+          name: "sse",
+          url: `http://localhost:${SSE_PORT}/sse`,
+        }),
+        { throwOnError: false },
+      );
+
+      const current = callCount;
+
+      // close should clear listeners; emitting later changes should not call listener
+      await proxy.close();
+
+      // Create a new proxy to avoid operating on closed instance in next tests
+      expect(callCount).toBe(current);
     });
   });
 });

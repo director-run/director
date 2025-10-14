@@ -31,6 +31,7 @@ export type ProxyServerAttributes = {
 export class ProxyServer extends Server {
   private _targets: ProxyTarget[];
   protected _id: string;
+  private _listChangeListener?: (proxyId: string) => void;
 
   constructor(attributes: ProxyServerAttributes) {
     super(
@@ -182,14 +183,25 @@ export class ProxyServer extends Server {
   async close(): Promise<void> {
     logger.info({ message: `shutting down`, proxyId: this._id });
     await Promise.all(this.targets.map((target) => target.close()));
+    this.removeListChangeListner();
     await super.close();
   }
 
   protected sendListChangedEvents(): void {
+    this._listChangeListener?.(this._id); // notify local listener
     if (this.transport !== undefined) {
+      // notify transport listener
       this.sendPromptListChanged();
       this.sendResourceListChanged();
       this.sendToolListChanged();
     }
+  }
+
+  public setListChangeListner(listener: (proxyId: string) => void): void {
+    this._listChangeListener = listener;
+  }
+
+  public removeListChangeListner(): void {
+    this._listChangeListener = undefined;
   }
 }

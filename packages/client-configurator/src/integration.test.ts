@@ -58,7 +58,7 @@ import type { VSCodeConfig } from "./vscode";
 
     describe("config present", () => {
       beforeEach(async () => {
-        await createConfigFile(target);
+        await createConfigFile({ target });
       });
 
       afterAll(async () => {

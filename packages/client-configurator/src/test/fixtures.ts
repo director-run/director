@@ -83,10 +83,11 @@ export function createInstallable(): {
   };
 }
 
-export async function createConfigFile(
-  target: ConfiguratorTarget,
-  config?: unknown,
-) {
+export async function createConfigFile(params: {
+  target: ConfiguratorTarget;
+  config?: unknown;
+}) {
+  const { target, config } = params;
   switch (target) {
     case ConfiguratorTarget.VSCode:
       await writeJSONFile(

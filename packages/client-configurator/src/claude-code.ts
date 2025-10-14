@@ -41,7 +41,13 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeCodeConfig> 
     );
   }
 
-  public async uninstall(name: string) {
+  public async uninstall(name: string | Array<string>) {
+    if (Array.isArray(name)) {
+      for (const n of name) {
+        await this.uninstall(n);
+      }
+      return;
+    }
     await this.initialize();
     if (!(await this.isInstalled(name))) {
       throw new AppError(
@@ -58,7 +64,13 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeCodeConfig> 
     await this.updateConfig(newConfig);
   }
 
-  public async install(attributes: Installable) {
+  public async install(attributes: Installable | Array<Installable>) {
+    if (Array.isArray(attributes)) {
+      for (const entry of attributes) {
+        await this.install(entry);
+      }
+      return;
+    }
     await this.initialize();
     if (await this.isInstalled(attributes.name)) {
       throw new AppError(

@@ -187,6 +187,29 @@ import type { VSCodeConfig } from "./vscode";
         );
       });
 
+      describe("bulk install/uninstall", () => {
+        test("should install multiple and uninstall multiple", async () => {
+          const a = createInstallable();
+          const b = createInstallable();
+          const c = createInstallable();
+          const installer = createTestInstaller(target);
+
+          expect(await installer.list()).toHaveLength(0);
+          await installer.install([a, b, c]);
+          expect(await installer.isInstalled(a.name)).toBe(true);
+          expect(await installer.isInstalled(b.name)).toBe(true);
+          expect(await installer.isInstalled(c.name)).toBe(true);
+
+          expect(await installer.list()).toHaveLength(3);
+
+          await installer.uninstall([a.name, b.name]);
+          expect(await installer.isInstalled(a.name)).toBe(false);
+          expect(await installer.isInstalled(b.name)).toBe(false);
+          expect(await installer.isInstalled(c.name)).toBe(true);
+          expect(await installer.list()).toHaveLength(1);
+        });
+      });
+
       describe("reset", () => {
         let installer: AbstractConfigurator<unknown>;
         beforeEach(async () => {

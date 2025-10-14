@@ -32,7 +32,13 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     );
   }
 
-  public async uninstall(name: string) {
+  public async uninstall(name: string | Array<string>) {
+    if (Array.isArray(name)) {
+      for (const n of name) {
+        await this.uninstall(n);
+      }
+      return;
+    }
     await this.initialize();
 
     if (!this.isInstalled(name)) {
@@ -50,7 +56,13 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     await this.updateConfig(newConfig);
   }
 
-  public async install(attributes: Installable) {
+  public async install(attributes: Installable | Array<Installable>) {
+    if (Array.isArray(attributes)) {
+      for (const entry of attributes) {
+        await this.install(entry);
+      }
+      return;
+    }
     await this.initialize();
 
     if (await this.isInstalled(attributes.name)) {

@@ -93,8 +93,10 @@ export abstract class AbstractConfigurator<T> {
       : key;
   }
 
-  public abstract install(attributes: Installable): Promise<void>;
-  public abstract uninstall(name: string): Promise<void>;
+  public abstract install(
+    attributes: Installable | Array<Installable>,
+  ): Promise<void>;
+  public abstract uninstall(name: string | Array<string>): Promise<void>;
   public abstract list(params?: {
     includeUnmanaged?: boolean;
   }): Promise<Array<{ name: string; url: string }>>;

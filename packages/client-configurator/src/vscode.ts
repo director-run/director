@@ -46,7 +46,13 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
     );
   }
 
-  public async uninstall(name: string) {
+  public async uninstall(name: string | Array<string>) {
+    if (Array.isArray(name)) {
+      for (const n of name) {
+        await this.uninstall(n);
+      }
+      return;
+    }
     await this.initialize();
     if (!this.isInstalled(name)) {
       throw new AppError(
@@ -65,7 +71,13 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
     await this.updateConfig(newConfig);
   }
 
-  public async install(entry: Installable) {
+  public async install(entry: Installable | Array<Installable>) {
+    if (Array.isArray(entry)) {
+      for (const e of entry) {
+        await this.install(e);
+      }
+      return;
+    }
     await this.initialize();
     if (await this.isInstalled(entry.name)) {
       throw new AppError(

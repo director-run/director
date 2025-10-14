@@ -3,7 +3,11 @@ import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
 import { writeJSONFile } from "@director.run/utilities/json";
 import { os, App } from "@director.run/utilities/os/index";
-import { AbstractConfigurator, type Installable } from "./types";
+import {
+  AbstractConfigurator,
+  type Installable,
+  type InstallerResult,
+} from "./types";
 
 export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
   public async isClientPresent() {
@@ -31,12 +35,16 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     );
   }
 
-  public async uninstall(name: string | Array<string>) {
+  public async uninstall(
+    name: string | Array<string>,
+  ): Promise<InstallerResult> {
     if (Array.isArray(name)) {
+      let requiresRestart = false;
       for (const n of name) {
-        await this.uninstall(n);
+        const result = await this.uninstall(n);
+        requiresRestart = requiresRestart || result.requiresRestart;
       }
-      return;
+      return { requiresRestart };
     }
     await this.initialize();
 
@@ -53,14 +61,22 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     };
     delete newConfig.mcpServers[this.createServerConfigKey(name)];
     await this.updateConfig(newConfig);
+    return {
+      requiresRestart:
+        this.getCapabilities().requiresRestartOnInstallOrUninstall,
+    };
   }
 
-  public async install(attributes: Installable | Array<Installable>) {
+  public async install(
+    attributes: Installable | Array<Installable>,
+  ): Promise<InstallerResult> {
     if (Array.isArray(attributes)) {
+      let requiresRestart = false;
       for (const entry of attributes) {
-        await this.install(entry);
+        const result = await this.install(entry);
+        requiresRestart = requiresRestart || result.requiresRestart;
       }
-      return;
+      return { requiresRestart };
     }
     await this.initialize();
 
@@ -79,6 +95,10 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
       url: attributes.streamableURL,
     };
     await this.updateConfig(newConfig);
+    return {
+      requiresRestart:
+        this.getCapabilities().requiresRestartOnInstallOrUninstall,
+    };
   }
 
   public async restart() {
@@ -121,7 +141,9 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     await os.openFileInCode(this.configPath);
   }
 
-  public async reset(params?: { includeUnmanaged?: boolean }) {
+  public async reset(params?: {
+    includeUnmanaged?: boolean;
+  }): Promise<InstallerResult> {
     await this.initialize();
 
     this.logger.info("purging cursor config");
@@ -142,6 +164,10 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     }
 
     await this.updateConfig(newConfig);
+    return {
+      requiresRestart:
+        this.getCapabilities().requiresRestartOnInstallOrUninstall,
+    };
   }
 
   private async updateConfig(newConfig: CursorConfig) {

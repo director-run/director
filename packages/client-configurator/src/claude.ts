@@ -85,13 +85,24 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
     await this.updateConfig(newConfig);
   }
 
-  public async reset() {
+  public async reset(params?: { includeUnmanaged?: boolean }) {
     await this.initialize();
     this.logger.info("purging claude config");
     const newConfig: ClaudeConfig = {
-      mcpServers: { ...this.config?.mcpServers },
+      mcpServers: {},
     };
-    newConfig.mcpServers = {};
+
+    // Preserve unmanaged servers unless explicitly told not to
+    if (!params?.includeUnmanaged) {
+      for (const [name, server] of Object.entries(
+        this.config?.mcpServers ?? {},
+      )) {
+        if (!this.isManagedConfigKey(name)) {
+          newConfig.mcpServers[name] = server;
+        }
+      }
+    }
+
     await this.updateConfig(newConfig);
   }
 

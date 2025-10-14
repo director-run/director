@@ -128,13 +128,25 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     await os.openFileInCode(this.configPath);
   }
 
-  public async reset() {
+  public async reset(params?: { includeUnmanaged?: boolean }) {
     await this.initialize();
 
     this.logger.info("purging cursor config");
     const newConfig: CursorConfig = {
       mcpServers: {},
     };
+
+    // Preserve unmanaged servers unless explicitly told not to
+    if (!params?.includeUnmanaged) {
+      for (const [name, server] of Object.entries(
+        this.config?.mcpServers ?? {},
+      )) {
+        if (!this.isManagedConfigKey(name)) {
+          newConfig.mcpServers[name] = server;
+        }
+      }
+    }
+
     await this.updateConfig(newConfig);
   }
 

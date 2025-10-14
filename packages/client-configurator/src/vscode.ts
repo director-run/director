@@ -131,7 +131,7 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
     await os.openFileInCode(this.configPath);
   }
 
-  public async reset() {
+  public async reset(params?: { includeUnmanaged?: boolean }) {
     await this.initialize();
     this.logger.info("purging vscode config");
     const newConfig: VSCodeConfig = {
@@ -139,6 +139,18 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
         servers: {},
       },
     };
+
+    // Preserve unmanaged servers unless explicitly told not to
+    if (!params?.includeUnmanaged) {
+      for (const [name, server] of Object.entries(
+        this.config?.mcp?.servers ?? {},
+      )) {
+        if (!this.isManagedConfigKey(name)) {
+          newConfig.mcp.servers[name] = server;
+        }
+      }
+    }
+
     await this.updateConfig(newConfig);
   }
 

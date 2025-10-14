@@ -188,21 +188,26 @@ import type { VSCodeConfig } from "./vscode";
       });
 
       describe("reset", () => {
-        // test("should not clear servers that are not managed by director", async () => {
-        //   const installer = createTestInstaller(target);
-        //   await installer.reset();
-        //   expect(await readJSONFile(installer.configPath)).toMatchObject({
-        //     mcpServers: {
-        //       not_managed_by_director: {
-        //         url: faker.internet.url(),
-        //       },
-        //     },
-        //   });
-        // });
+        let installer: AbstractConfigurator<unknown>;
+        beforeEach(async () => {
+          installer = createTestInstaller(target);
+          await installer.install(createInstallable());
+          await installer.install(createInstallable());
+        });
+
+        test("should not clear servers that are not managed by director", async () => {
+          await installer.reset();
+          expect(await installer.list({ includeUnmanaged: true })).toHaveLength(
+            1,
+          );
+        });
+
+        test("should clear servers that are unmanaged by director if includeUnmanaged is true", async () => {
+          await installer.reset({ includeUnmanaged: true });
+          expect(await installer.list()).toHaveLength(0);
+        });
+
         test("should clear all servers", async () => {
-          const installer = createTestInstaller(target);
-          await installer.install(createInstallable());
-          await installer.install(createInstallable());
           await installer.reset();
           expect(await installer.list()).toHaveLength(0);
         });

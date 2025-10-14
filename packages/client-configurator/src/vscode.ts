@@ -147,6 +147,7 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
     await this.initialize();
     this.logger.info("purging vscode config");
     const newConfig: VSCodeConfig = {
+      ...this.config,
       mcp: {
         servers: {},
       },

@@ -218,6 +218,27 @@ import type { VSCodeConfig } from "./vscode";
           await installer.install(createInstallable());
         });
 
+        test("should not overwrite existing config data", async () => {
+          const installable = createInstallable();
+          const installer = createTestInstaller(target);
+
+          const basicData = await readJSONFile<Record<string, unknown>>(
+            getConfigPath(target),
+          );
+
+          await writeJSONFile(getConfigPath(target), {
+            ...basicData,
+            foo: "bar",
+          });
+
+          await installer.install(installable);
+          await installer.reset();
+
+          expect(await readJSONFile(getConfigPath(target))).toMatchObject({
+            foo: "bar",
+          });
+        });
+
         test("should not clear servers that are not managed by director", async () => {
           await installer.reset();
           expect(await installer.list({ includeUnmanaged: true })).toHaveLength(

@@ -94,6 +94,7 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeCodeConfig> 
     await this.initialize();
     this.logger.info("purging claude config");
     const newConfig: ClaudeCodeConfig = {
+      ...this.config,
       mcpServers: {},
     };
 

@@ -145,6 +145,7 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
 
     this.logger.info("purging cursor config");
     const newConfig: CursorConfig = {
+      ...this.config,
       mcpServers: {},
     };
 

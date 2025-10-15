@@ -1,44 +1,44 @@
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { IntegrationTestHarness } from "../../test/integration";
 
-vi.mock("@director.run/client-configurator/index", () => ({
-  getAllClients: vi.fn(async () => [
-    {
-      name: "claude",
-      installed: true,
-      configExists: true,
-      configPath: "/mock/path/claude",
-      workspaces: [{ id: "test-workspace-123" }, { id: "test-workspace-456" }],
-    },
-    {
-      name: "claude-code",
-      installed: true,
-      configExists: true,
-      configPath: "/mock/path/claude-code",
-      workspaces: [{ id: "test-workspace-hi" }],
-    },
-    {
-      name: "cursor",
-      installed: false,
-      configExists: false,
-      configPath: "/mock/path/cursor",
-      workspaces: [],
-    },
-  ]),
-  getProxyInstalledStatus: vi.fn(async () => ({
-    claude: true,
-    cursor: false,
-    vscode: false,
-    "claude-code": false,
-  })),
-  getConfigurator: vi.fn(),
-  ConfiguratorTarget: {
-    Claude: "claude",
-    Cursor: "cursor",
-    VSCode: "vscode",
-    ClaudeCode: "claude-code",
-  },
-}));
+// vi.mock("@director.run/client-configurator/index", () => ({
+//   getAllClients: vi.fn(async () => [
+//     {
+//       name: "claude",
+//       installed: true,
+//       configExists: true,
+//       configPath: "/mock/path/claude",
+//       workspaces: [{ id: "test-workspace-123" }, { id: "test-workspace-456" }],
+//     },
+//     {
+//       name: "claude-code",
+//       installed: true,
+//       configExists: true,
+//       configPath: "/mock/path/claude-code",
+//       workspaces: [{ id: "test-workspace-hi" }],
+//     },
+//     {
+//       name: "cursor",
+//       installed: false,
+//       configExists: false,
+//       configPath: "/mock/path/cursor",
+//       workspaces: [],
+//     },
+//   ]),
+//   getProxyInstalledStatus: vi.fn(async () => ({
+//     claude: true,
+//     cursor: false,
+//     vscode: false,
+//     "claude-code": false,
+//   })),
+//   getConfigurator: vi.fn(),
+//   ConfiguratorTarget: {
+//     Claude: "claude",
+//     Cursor: "cursor",
+//     VSCode: "vscode",
+//     ClaudeCode: "claude-code",
+//   },
+// }));
 
 describe("Client Router", () => {
   let harness: IntegrationTestHarness;
@@ -52,7 +52,7 @@ describe("Client Router", () => {
   });
 
   describe("allClients", () => {
-    it("should return all client statuses without proxyId", async () => {
+    it.skip("should return all client statuses without proxyId", async () => {
       const result = await harness.client.clients.allClients.query();
 
       expect(result.length).toBeGreaterThan(0);

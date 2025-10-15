@@ -6,7 +6,7 @@ import { isFilePresent } from "@director.run/utilities/os";
 import { expectToThrowAppError } from "@director.run/utilities/test";
 import { faker } from "@faker-js/faker";
 import { test, vi } from "vitest";
-import { getConfigurator } from "..";
+import { getClient } from "..";
 import { ConfiguratorTarget } from "..";
 import { type ClaudeConfig, type ClaudeMCPServer } from "../claude";
 import { type ClaudeCodeConfig } from "../claude-code";
@@ -137,7 +137,7 @@ export function createTestInstaller(
     isClientPresent: true,
   },
 ) {
-  const installer = getConfigurator(target, {
+  const installer = getClient(target, {
     configPath: getConfigPath(target),
   });
   // In CI, the client is not present, so we mock the method to return false

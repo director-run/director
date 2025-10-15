@@ -1,7 +1,7 @@
 import {
   ConfiguratorTarget,
   getAllClientsAsPlainObject,
-  getConfigurator,
+  getClient,
   resetAllClients,
 } from "@director.run/client-configurator/index";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
@@ -23,7 +23,7 @@ export function registerClientCommands(program: DirectorCommand): void {
     .description("get the details of a client")
     .action(
       actionWithErrorHandler(async (clientName: ConfiguratorTarget) => {
-        const installer = await getConfigurator(clientName);
+        const installer = await getClient(clientName);
         const servers = await installer.list();
 
         console.log(
@@ -47,7 +47,7 @@ export function registerClientCommands(program: DirectorCommand): void {
     .description("Restart the MCP client")
     .action(
       actionWithErrorHandler(async (clientName: ConfiguratorTarget) => {
-        const installer = await getConfigurator(clientName);
+        const installer = await getClient(clientName);
         const result = await installer.restart();
         console.log(result);
       }),
@@ -58,7 +58,7 @@ export function registerClientCommands(program: DirectorCommand): void {
     .description("Delete all servers from the client config")
     .action(
       actionWithErrorHandler(async (clientName: ConfiguratorTarget) => {
-        const installer = await getConfigurator(clientName);
+        const installer = await getClient(clientName);
         const result = await installer.reset();
         if (result.requiresRestart) {
           console.log("Requires restart");
@@ -81,7 +81,7 @@ export function registerClientCommands(program: DirectorCommand): void {
     .description("Open claude config file")
     .action(
       actionWithErrorHandler(async (clientName: ConfiguratorTarget) => {
-        const installer = await getConfigurator(clientName);
+        const installer = await getClient(clientName);
         const result = await installer.openConfig();
         console.log(result);
       }),

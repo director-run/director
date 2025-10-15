@@ -1,7 +1,7 @@
 import {
   ConfiguratorTarget,
   getAllClientsAsPlainObject,
-  getConfigurator,
+  getClient,
 } from "@director.run/client-configurator/index";
 import { t } from "@director.run/utilities/trpc";
 import { joinURL } from "@director.run/utilities/url";
@@ -24,7 +24,7 @@ export function createClientRouter({
       )
       .mutation(async ({ input }) => {
         const proxy = workspaceStore.get(input.proxyId);
-        const installer = await getConfigurator(input.client);
+        const installer = await getClient(input.client);
         const result = await installer.install({
           name: proxy.id,
           sseURL: joinURL(input.baseUrl, getSSEPathForProxy(proxy.id)),
@@ -46,7 +46,7 @@ export function createClientRouter({
       )
       .mutation(async ({ input }) => {
         const proxy = workspaceStore.get(input.proxyId);
-        const installer = await getConfigurator(input.client);
+        const installer = await getClient(input.client);
         const result = await installer.uninstall(proxy.id);
         if (result.requiresRestart) {
           await installer.restart();

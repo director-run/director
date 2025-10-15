@@ -20,7 +20,7 @@ export async function getAllClientsAsPlainObject() {
 
 export async function getAllClients() {
   return await Promise.all(
-    Object.values(ConfiguratorTarget).map((target) => getConfigurator(target)),
+    Object.values(ConfiguratorTarget).map((target) => getClient(target)),
   );
 }
 
@@ -38,7 +38,7 @@ export async function getClientsByWorkspace(workspaceId: string) {
   return clients;
 }
 
-export function getConfigurator(
+export function getClient(
   target: ConfiguratorTarget,
   params: {
     configPath?: string;
@@ -63,7 +63,7 @@ export function getConfigurator(
 
 export async function resetAllClients() {
   const installers = await Promise.all(
-    Object.values(ConfiguratorTarget).map((target) => getConfigurator(target)),
+    Object.values(ConfiguratorTarget).map((target) => getClient(target)),
   );
   for (const installer of installers) {
     console.log("resetting", installer.name);

@@ -1,4 +1,4 @@
-import { getConfigurator } from "@director.run/client-configurator/index";
+import { getClient } from "@director.run/client-configurator/index";
 import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import { proxyHTTPToStdio } from "@director.run/mcp/transport";
 import {
@@ -100,7 +100,7 @@ export function registerCoreCommands(program: DirectorCommand): void {
       actionWithErrorHandler(
         async (proxyId: string, options: { target: ConfiguratorTarget }) => {
           const proxy = await gatewayClient.store.get.query({ proxyId });
-          const installer = await getConfigurator(options.target);
+          const installer = await getClient(options.target);
           const result = await installer.uninstall(proxy.id);
           if (result.requiresRestart) {
             await installer.restart();

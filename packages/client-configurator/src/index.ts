@@ -27,6 +27,9 @@ export async function getAllClients() {
 export async function getClientsByWorkspace(workspaceId: string) {
   const clients: AbstractConfigurator<unknown>[] = [];
   for (const client of await getAllClients()) {
+    if (!(await client.isClientPresent())) {
+      continue;
+    }
     const installed = await client.list();
     if (installed.some((installable) => installable.name === workspaceId)) {
       clients.push(client);

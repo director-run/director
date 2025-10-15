@@ -2,7 +2,11 @@ import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { writeJSONFile } from "@director.run/utilities/json";
 import { os, App } from "@director.run/utilities/os/index";
 import { z } from "zod";
-import { AbstractConfigurator, type Installable } from "./types";
+import {
+  AbstractConfigurator,
+  type Installable,
+  type InstallerResult,
+} from "./types";
 
 export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeCodeConfig> {
   public async isClientPresent() {
@@ -41,17 +45,21 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeCodeConfig> 
     );
   }
 
-  public async uninstall(name: string | Array<string>) {
+  public async uninstall(
+    name: string | Array<string>,
+  ): Promise<InstallerResult> {
     if (Array.isArray(name)) {
+      let requiresRestart = false;
       for (const n of name) {
-        await this.uninstall(n);
+        const result = await this.uninstall(n);
+        requiresRestart = requiresRestart || result.requiresRestart;
       }
-      return;
+      return { requiresRestart };
     }
     await this.initialize();
     if (!(await this.isInstalled(name))) {
       throw new AppError(
-        ErrorCode.NOT_FOUND,
+        ErrorCode.BAD_REQUEST,
         `server '${name}' is not installed`,
       );
     }
@@ -62,14 +70,22 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeCodeConfig> 
     };
     delete newConfig.mcpServers?.[this.createServerConfigKey(name)];
     await this.updateConfig(newConfig);
+    return {
+      requiresRestart:
+        this.getCapabilities().requiresRestartOnInstallOrUninstall,
+    };
   }
 
-  public async install(attributes: Installable | Array<Installable>) {
+  public async install(
+    attributes: Installable | Array<Installable>,
+  ): Promise<InstallerResult> {
     if (Array.isArray(attributes)) {
+      let requiresRestart = false;
       for (const entry of attributes) {
-        await this.install(entry);
+        const result = await this.install(entry);
+        requiresRestart = requiresRestart || result.requiresRestart;
       }
-      return;
+      return { requiresRestart };
     }
     await this.initialize();
     if (await this.isInstalled(attributes.name)) {
@@ -88,12 +104,17 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeCodeConfig> 
       url: attributes.streamableURL,
     };
     await this.updateConfig(newConfig);
+    return {
+      requiresRestart:
+        this.getCapabilities().requiresRestartOnInstallOrUninstall,
+    };
   }
 
   public async reset(params?: { includeUnmanaged?: boolean }) {
     await this.initialize();
     this.logger.info("purging claude config");
     const newConfig: ClaudeCodeConfig = {
+      ...this.config,
       mcpServers: {},
     };
 
@@ -108,7 +129,17 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeCodeConfig> 
       }
     }
 
+    // If nothing changed, do not write or request restart
+    const noChange = JSON.stringify(newConfig) === JSON.stringify(this.config);
+    if (noChange) {
+      return { requiresRestart: false };
+    }
+
     await this.updateConfig(newConfig);
+    return {
+      requiresRestart:
+        this.getCapabilities().requiresRestartOnInstallOrUninstall,
+    };
   }
 
   public async list(params?: { includeUnmanaged?: boolean }) {
@@ -134,16 +165,10 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeCodeConfig> 
     this.logger.error("restarting claude code not supported");
   }
 
-  public async reload(_name: string) {
-    await this.initialize();
-    this.logger.error("reloading claude code not supported");
-  }
-
   private async updateConfig(newConfig: ClaudeCodeConfig) {
     this.config = newConfig;
     this.logger.info(`writing config to ${this.configPath}`);
     await writeJSONFile(this.configPath, this.config);
-    await this.restart();
   }
 
   public async createConfig() {
@@ -151,6 +176,14 @@ export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeCodeConfig> 
     await writeJSONFile(this.configPath, {
       mcpServers: {},
     });
+  }
+
+  public getCapabilities() {
+    return {
+      requiresRestartOnInstallOrUninstall: true,
+      requiresRestartOnUpdate: true,
+      programaticRestartSupported: false,
+    };
   }
 }
 

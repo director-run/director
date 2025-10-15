@@ -1,6 +1,6 @@
 import {
   ConfiguratorTarget,
-  getAllClients,
+  getAllClientsAsPlainObject,
   getConfigurator,
 } from "@director.run/client-configurator/index";
 import { t } from "@director.run/utilities/trpc";
@@ -13,7 +13,7 @@ export function createClientRouter({
   workspaceStore,
 }: { workspaceStore: WorkspaceStore }) {
   return t.router({
-    allClients: t.procedure.query(() => getAllClients()),
+    allClients: t.procedure.query(() => getAllClientsAsPlainObject()),
     install: t.procedure
       .input(
         z.object({
@@ -25,7 +25,7 @@ export function createClientRouter({
       .mutation(async ({ input }) => {
         const proxy = workspaceStore.get(input.proxyId);
         const installer = await getConfigurator(input.client);
-        await installer.install({
+        const result = await installer.install({
           name: proxy.id,
           sseURL: joinURL(input.baseUrl, getSSEPathForProxy(proxy.id)),
           streamableURL: joinURL(
@@ -33,6 +33,9 @@ export function createClientRouter({
             getStreamablePathForProxy(proxy.id),
           ),
         });
+        if (result.requiresRestart) {
+          await installer.restart();
+        }
       }),
     uninstall: t.procedure
       .input(
@@ -44,7 +47,10 @@ export function createClientRouter({
       .mutation(async ({ input }) => {
         const proxy = workspaceStore.get(input.proxyId);
         const installer = await getConfigurator(input.client);
-        await installer.uninstall(proxy.id);
+        const result = await installer.uninstall(proxy.id);
+        if (result.requiresRestart) {
+          await installer.restart();
+        }
       }),
   });
 }

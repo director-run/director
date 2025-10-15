@@ -1,17 +1,15 @@
 import {
   ConfiguratorTarget,
-  getAllClients,
+  getAllClientsAsPlainObject,
   getConfigurator,
   resetAllClients,
 } from "@director.run/client-configurator/index";
-import {
-  DirectorCommand,
-  makeOption,
-} from "@director.run/utilities/cli/director-command";
+import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import {
   actionWithErrorHandler,
   makeTable,
 } from "@director.run/utilities/cli/index";
+import { attributeTable } from "@director.run/utilities/cli/index";
 
 export function registerClientCommands(program: DirectorCommand): void {
   const command = new DirectorCommand("client").description(
@@ -21,51 +19,52 @@ export function registerClientCommands(program: DirectorCommand): void {
   program.addCommand(command);
 
   command
-    .debugCommand("ls")
-    .alias("list")
-    .description("List servers in the client config")
-    .addOption(targetOption)
+    .debugCommand("get <clientName>")
+    .description("get the details of a client")
     .action(
-      actionWithErrorHandler(
-        async (options: { target: ConfiguratorTarget }) => {
-          const installer = await getConfigurator(options.target);
-          const servers = await installer.list();
-          const table = makeTable(["name", "url"]);
+      actionWithErrorHandler(async (clientName: ConfiguratorTarget) => {
+        const installer = await getConfigurator(clientName);
+        const servers = await installer.list();
 
-          table.push(
-            ...servers.map((server) => [server.name, server.url || "--"]),
-          );
-          console.log(table.toString());
-        },
-      ),
+        console.log(
+          attributeTable({
+            name: clientName,
+            workspaces: servers.length
+              ? servers.map((w) => w.name).join(", ")
+              : "--",
+            installed: (await installer.isClientPresent()) ? "yes" : "no",
+            configExists: (await installer.isClientConfigPresent())
+              ? "yes"
+              : "no",
+            configPath: installer.configPath,
+          }),
+        );
+      }),
     );
 
   command
-    .debugCommand("restart")
+    .debugCommand("restart <clientName>")
     .description("Restart the MCP client")
-    .addOption(targetOption)
     .action(
-      actionWithErrorHandler(
-        async (options: { target: ConfiguratorTarget }) => {
-          const installer = await getConfigurator(options.target);
-          const result = await installer.restart();
-          console.log(result);
-        },
-      ),
+      actionWithErrorHandler(async (clientName: ConfiguratorTarget) => {
+        const installer = await getConfigurator(clientName);
+        const result = await installer.restart();
+        console.log(result);
+      }),
     );
 
   command
-    .debugCommand("reset")
+    .debugCommand("reset <clientName>")
     .description("Delete all servers from the client config")
-    .addOption(targetOption)
     .action(
-      actionWithErrorHandler(
-        async (options: { target: ConfiguratorTarget }) => {
-          const installer = await getConfigurator(options.target);
-          const result = await installer.reset();
-          console.log(result);
-        },
-      ),
+      actionWithErrorHandler(async (clientName: ConfiguratorTarget) => {
+        const installer = await getConfigurator(clientName);
+        const result = await installer.reset();
+        if (result.requiresRestart) {
+          console.log("Requires restart");
+          await installer.restart();
+        }
+      }),
     );
 
   command
@@ -78,48 +77,33 @@ export function registerClientCommands(program: DirectorCommand): void {
     );
 
   command
-    .debugCommand("config")
+    .debugCommand("config <clientName>")
     .description("Open claude config file")
-    .addOption(targetOption)
     .action(
-      actionWithErrorHandler(
-        async (options: { target: ConfiguratorTarget }) => {
-          const installer = await getConfigurator(options.target);
-          const result = await installer.openConfig();
-          console.log(result);
-        },
-      ),
+      actionWithErrorHandler(async (clientName: ConfiguratorTarget) => {
+        const installer = await getConfigurator(clientName);
+        const result = await installer.openConfig();
+        console.log(result);
+      }),
     );
 
   command
-    .debugCommand("all-clients")
+    .debugCommand("ls")
     .description("Show a list of the clients")
     .action(
       actionWithErrorHandler(async () => {
-        const clients = await getAllClients();
-        const table = makeTable([
-          "name",
-          "installed",
-          "configExists",
-          "configPath",
-        ]);
+        const clients = await getAllClientsAsPlainObject();
+        const table = makeTable(["name", "installed", "workspaces"]);
         table.push(
           ...clients.map((client) => [
             client.name,
             client.installed,
-            client.configExists,
-            client.configPath,
+            client.workspaces.length
+              ? client.workspaces.map((w) => w.id).join(", ")
+              : "--",
           ]),
         );
         console.log(table.toString());
       }),
     );
 }
-
-// If option not provided prompt user for a choice
-const targetOption = makeOption({
-  flags: "-t,--target <target>",
-  description: "target client",
-  choices: Object.values(ConfiguratorTarget),
-  mandatory: true,
-});

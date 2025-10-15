@@ -43,7 +43,9 @@ export function registerConnectCommand(program: DirectorCommand) {
               ),
             });
 
-            console.log(result);
+            if (result.requiresRestart) {
+              await installer.restart();
+            }
           } else {
             console.log();
             console.log(blue("--------------------------------"));

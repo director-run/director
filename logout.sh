@@ -1,1 +1,0 @@
-bun cli logout test notion

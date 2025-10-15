@@ -5,8 +5,11 @@ import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
 import { writeJSONFile } from "@director.run/utilities/json";
 import { os, App } from "@director.run/utilities/os/index";
-import { sleep } from "@director.run/utilities/sleep";
-import { AbstractConfigurator, type Installable } from "./types";
+import {
+  AbstractConfigurator,
+  type Installable,
+  type InstallerResult,
+} from "./types";
 
 export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
   public async isClientPresent() {
@@ -46,17 +49,21 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
     );
   }
 
-  public async uninstall(name: string | Array<string>) {
+  public async uninstall(
+    name: string | Array<string>,
+  ): Promise<InstallerResult> {
     if (Array.isArray(name)) {
+      let requiresRestart = false;
       for (const n of name) {
-        await this.uninstall(n);
+        const result = await this.uninstall(n);
+        requiresRestart = requiresRestart || result.requiresRestart;
       }
-      return;
+      return { requiresRestart };
     }
     await this.initialize();
-    if (!this.isInstalled(name)) {
+    if (!(await this.isInstalled(name))) {
       throw new AppError(
-        ErrorCode.NOT_FOUND,
+        ErrorCode.BAD_REQUEST,
         `server '${name}' is not installed`,
       );
     }
@@ -69,14 +76,22 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
     };
     delete newConfig.mcp.servers[this.createServerConfigKey(name)];
     await this.updateConfig(newConfig);
+    return {
+      requiresRestart:
+        this.getCapabilities().requiresRestartOnInstallOrUninstall,
+    };
   }
 
-  public async install(entry: Installable | Array<Installable>) {
+  public async install(
+    entry: Installable | Array<Installable>,
+  ): Promise<InstallerResult> {
     if (Array.isArray(entry)) {
+      let requiresRestart = false;
       for (const e of entry) {
-        await this.install(e);
+        const result = await this.install(e);
+        requiresRestart = requiresRestart || result.requiresRestart;
       }
-      return;
+      return { requiresRestart };
     }
     await this.initialize();
     if (await this.isInstalled(entry.name)) {
@@ -96,6 +111,10 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
       url: entry.sseURL,
     };
     await this.updateConfig(newConfig);
+    return {
+      requiresRestart:
+        this.getCapabilities().requiresRestartOnInstallOrUninstall,
+    };
   }
 
   public async restart() {
@@ -106,23 +125,6 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
     } else {
       this.logger.warn("skipping restart of vscode in test environment");
     }
-  }
-
-  public async reload(name: string) {
-    await this.initialize();
-    this.logger.info(`reloading ${name}`);
-
-    const url =
-      this.config?.mcp?.servers[this.createServerConfigKey(name)]?.url;
-    if (!url) {
-      throw new AppError(
-        ErrorCode.NOT_FOUND,
-        `server '${name}' is not installed`,
-      );
-    }
-    await this.uninstall(name);
-    await sleep(1000);
-    await this.install({ name, sseURL: url, streamableURL: "" });
   }
 
   public async list(params?: { includeUnmanaged?: boolean }) {
@@ -147,6 +149,7 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
     await this.initialize();
     this.logger.info("purging vscode config");
     const newConfig: VSCodeConfig = {
+      ...this.config,
       mcp: {
         servers: {},
       },
@@ -163,7 +166,17 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
       }
     }
 
+    // If nothing changed, do not write or request restart
+    const noChange = JSON.stringify(newConfig) === JSON.stringify(this.config);
+    if (noChange) {
+      return { requiresRestart: false };
+    }
+
     await this.updateConfig(newConfig);
+    return {
+      requiresRestart:
+        this.getCapabilities().requiresRestartOnInstallOrUninstall,
+    };
   }
 
   private async updateConfig(newConfig: VSCodeConfig) {
@@ -182,6 +195,14 @@ export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
     await writeJSONFile(this.configPath, {
       mcp: { servers: {} },
     });
+  }
+
+  public getCapabilities() {
+    return {
+      requiresRestartOnInstallOrUninstall: true,
+      requiresRestartOnUpdate: true,
+      programaticRestartSupported: true,
+    };
   }
 }
 

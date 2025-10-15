@@ -31,6 +31,7 @@ export type ProxyServerAttributes = {
 export class ProxyServer extends Server {
   private _targets: ProxyTarget[];
   protected _id: string;
+  private _listChangeListener?: (proxyId: string) => void | Promise<void>;
 
   constructor(attributes: ProxyServerAttributes) {
     super(
@@ -115,11 +116,9 @@ export class ProxyServer extends Server {
 
     this.targets.push(target);
 
+    this.sendListChangedEvents();
+
     return target;
-    // TODO: send list changed events. need client to support this first
-    // this.sendToolListChanged();
-    // this.sendPromptListChanged();
-    // this.sendResourceListChanged();
   }
 
   public async updateTarget(
@@ -140,6 +139,8 @@ export class ProxyServer extends Server {
     if (attributes.disabled !== undefined) {
       await target.setDisabled(attributes.disabled);
     }
+
+    this.sendListChangedEvents();
 
     return target;
   }
@@ -174,16 +175,35 @@ export class ProxyServer extends Server {
         t.name.toLocaleLowerCase() === targetName.toLocaleLowerCase(),
     );
 
+    this.sendListChangedEvents();
+
     return existingTarget;
-    // TODO: send list changed events. need client to support this first
-    // this.sendToolListChanged();
-    // this.sendPromptListChanged();
-    // this.sendResourceListChanged();
   }
 
   async close(): Promise<void> {
     logger.info({ message: `shutting down`, proxyId: this._id });
     await Promise.all(this.targets.map((target) => target.close()));
+    this.removeListChangeListner();
     await super.close();
+  }
+
+  protected sendListChangedEvents(): void {
+    setTimeout(async () => {
+      await this._listChangeListener?.(this._id); // notify local listener
+    }, 0);
+    if (this.transport !== undefined) {
+      // notify transport listener
+      this.sendPromptListChanged();
+      this.sendResourceListChanged();
+      this.sendToolListChanged();
+    }
+  }
+
+  public setListChangeListner(listener: (proxyId: string) => void): void {
+    this._listChangeListener = listener;
+  }
+
+  public removeListChangeListner(): void {
+    this._listChangeListener = undefined;
   }
 }

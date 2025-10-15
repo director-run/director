@@ -3,6 +3,10 @@ import { readJSONFile } from "@director.run/utilities/json";
 import { type Logger, getLogger } from "@director.run/utilities/logger";
 const CONFIG_KEY_PREFIX = "director__";
 
+export type InstallerResult = {
+  requiresRestart: boolean;
+};
+
 export abstract class AbstractConfigurator<T> {
   protected config?: T;
   protected isInitialized;
@@ -93,20 +97,27 @@ export abstract class AbstractConfigurator<T> {
       : key;
   }
 
+  public abstract getCapabilities(): {
+    requiresRestartOnInstallOrUninstall: boolean;
+    requiresRestartOnUpdate: boolean;
+    programaticRestartSupported: boolean;
+  };
+
   public abstract install(
     attributes: Installable | Array<Installable>,
-  ): Promise<void>;
-  public abstract uninstall(name: string | Array<string>): Promise<void>;
+  ): Promise<InstallerResult>;
+  public abstract uninstall(
+    name: string | Array<string>,
+  ): Promise<InstallerResult>;
   public abstract list(params?: {
     includeUnmanaged?: boolean;
   }): Promise<Array<{ name: string; url: string }>>;
   public abstract openConfig(): Promise<void>;
   public abstract isInstalled(name: string): Promise<boolean>;
   public abstract restart(): Promise<void>;
-  public abstract reload(name: string): Promise<void>;
   public abstract reset(params?: {
     includeUnmanaged?: boolean;
-  }): Promise<void>;
+  }): Promise<InstallerResult>;
   protected abstract createConfig(): Promise<void>;
   public abstract isClientPresent(): Promise<boolean>;
   public abstract isClientConfigPresent(): Promise<boolean>;

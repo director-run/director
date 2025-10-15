@@ -3,7 +3,7 @@ import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { writeJSONFile } from "@director.run/utilities/json";
 import { os, App } from "@director.run/utilities/os/index";
 import { z } from "zod";
-import { AbstractConfigurator } from "./types";
+import { AbstractConfigurator, type InstallerResult } from "./types";
 
 export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
   public async isClientPresent() {
@@ -42,17 +42,21 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
     );
   }
 
-  public async uninstall(name: string | Array<string>) {
+  public async uninstall(
+    name: string | Array<string>,
+  ): Promise<InstallerResult> {
     if (Array.isArray(name)) {
+      let requiresRestart = false;
       for (const n of name) {
-        await this.uninstall(n);
+        const result = await this.uninstall(n);
+        requiresRestart = requiresRestart || result.requiresRestart;
       }
-      return;
+      return { requiresRestart };
     }
     await this.initialize();
     if (!(await this.isInstalled(name))) {
       throw new AppError(
-        ErrorCode.NOT_FOUND,
+        ErrorCode.BAD_REQUEST,
         `server '${name}' is not installed`,
       );
     }
@@ -63,18 +67,24 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
     };
     delete newConfig.mcpServers?.[this.createServerConfigKey(name)];
     await this.updateConfig(newConfig);
+    return {
+      requiresRestart:
+        this.getCapabilities().requiresRestartOnInstallOrUninstall,
+    };
   }
 
   public async install(
     attributes:
       | { name: string; sseURL: string }
       | Array<{ name: string; sseURL: string }>,
-  ) {
+  ): Promise<InstallerResult> {
     if (Array.isArray(attributes)) {
+      let requiresRestart = false;
       for (const entry of attributes) {
-        await this.install(entry);
+        const result = await this.install(entry);
+        requiresRestart = requiresRestart || result.requiresRestart;
       }
-      return;
+      return { requiresRestart };
     }
     await this.initialize();
     if (await this.isInstalled(attributes.name)) {
@@ -96,12 +106,17 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
       },
     };
     await this.updateConfig(newConfig);
+    return {
+      requiresRestart:
+        this.getCapabilities().requiresRestartOnInstallOrUninstall,
+    };
   }
 
   public async reset(params?: { includeUnmanaged?: boolean }) {
     await this.initialize();
     this.logger.info("purging claude config");
     const newConfig: ClaudeConfig = {
+      ...this.config,
       mcpServers: {},
     };
 
@@ -116,7 +131,17 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
       }
     }
 
+    // If nothing changed, do not write or request restart
+    const noChange = JSON.stringify(newConfig) === JSON.stringify(this.config);
+    if (noChange) {
+      return { requiresRestart: false };
+    }
+
     await this.updateConfig(newConfig);
+    return {
+      requiresRestart:
+        this.getCapabilities().requiresRestartOnInstallOrUninstall,
+    };
   }
 
   public async list(params?: { includeUnmanaged?: boolean }) {
@@ -138,6 +163,7 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
   }
 
   public async restart() {
+    await this.initialize();
     if (!isTest()) {
       this.logger.info("restarting claude");
       await os.restartApp(App.CLAUDE);
@@ -146,18 +172,10 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
     }
   }
 
-  public async reload(name: string) {
-    await this.initialize();
-
-    this.logger.info(`reloading ${name}`);
-    await this.restart();
-  }
-
   private async updateConfig(newConfig: ClaudeConfig) {
     this.config = newConfig;
     this.logger.info(`writing config to ${this.configPath}`);
     await writeJSONFile(this.configPath, this.config);
-    await this.restart();
   }
 
   public async createConfig() {
@@ -165,6 +183,14 @@ export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
     await writeJSONFile(this.configPath, {
       mcpServers: {},
     });
+  }
+
+  public getCapabilities() {
+    return {
+      requiresRestartOnInstallOrUninstall: true,
+      requiresRestartOnUpdate: true,
+      programaticRestartSupported: true,
+    };
   }
 }
 

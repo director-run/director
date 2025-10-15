@@ -1,3 +1,4 @@
+import { getClientsByWorkspace } from "@director.run/client-configurator/index";
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import {
   OAuthProviderFactory,
@@ -166,7 +167,20 @@ export class WorkspaceStore {
     });
 
     this.workspaces.set(workspace.id, workspace);
+    workspace.setListChangeListner(this.onWorkspaceListChange);
 
     return workspace;
   }
+
+  private onWorkspaceListChange = async (proxyId: string) => {
+    logger.debug({ message: `workspace list changed`, proxyId });
+
+    const clients = await getClientsByWorkspace(proxyId);
+    for (const client of clients) {
+      if (client.getCapabilities().requiresRestartOnUpdate) {
+        logger.debug({ message: `restarting ${client.name}` });
+        await client.restart();
+      }
+    }
+  };
 }

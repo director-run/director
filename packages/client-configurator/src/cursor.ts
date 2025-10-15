@@ -3,8 +3,11 @@ import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
 import { writeJSONFile } from "@director.run/utilities/json";
 import { os, App } from "@director.run/utilities/os/index";
-import { sleep } from "@director.run/utilities/sleep";
-import { AbstractConfigurator, type Installable } from "./types";
+import {
+  AbstractConfigurator,
+  type Installable,
+  type InstallerResult,
+} from "./types";
 
 export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
   public async isClientPresent() {
@@ -32,18 +35,22 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     );
   }
 
-  public async uninstall(name: string | Array<string>) {
+  public async uninstall(
+    name: string | Array<string>,
+  ): Promise<InstallerResult> {
     if (Array.isArray(name)) {
+      let requiresRestart = false;
       for (const n of name) {
-        await this.uninstall(n);
+        const result = await this.uninstall(n);
+        requiresRestart = requiresRestart || result.requiresRestart;
       }
-      return;
+      return { requiresRestart };
     }
     await this.initialize();
 
-    if (!this.isInstalled(name)) {
+    if (!(await this.isInstalled(name))) {
       throw new AppError(
-        ErrorCode.NOT_FOUND,
+        ErrorCode.BAD_REQUEST,
         `server '${name}' is not installed`,
       );
     }
@@ -54,14 +61,22 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     };
     delete newConfig.mcpServers[this.createServerConfigKey(name)];
     await this.updateConfig(newConfig);
+    return {
+      requiresRestart:
+        this.getCapabilities().requiresRestartOnInstallOrUninstall,
+    };
   }
 
-  public async install(attributes: Installable | Array<Installable>) {
+  public async install(
+    attributes: Installable | Array<Installable>,
+  ): Promise<InstallerResult> {
     if (Array.isArray(attributes)) {
+      let requiresRestart = false;
       for (const entry of attributes) {
-        await this.install(entry);
+        const result = await this.install(entry);
+        requiresRestart = requiresRestart || result.requiresRestart;
       }
-      return;
+      return { requiresRestart };
     }
     await this.initialize();
 
@@ -77,9 +92,13 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
       mcpServers: { ...(this.config?.mcpServers ?? {}) },
     };
     newConfig.mcpServers[this.createServerConfigKey(attributes.name)] = {
-      url: attributes.sseURL,
+      url: attributes.streamableURL,
     };
     await this.updateConfig(newConfig);
+    return {
+      requiresRestart:
+        this.getCapabilities().requiresRestartOnInstallOrUninstall,
+    };
   }
 
   public async restart() {
@@ -91,24 +110,6 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     } else {
       this.logger.warn("skipping restart of cursor in test environment");
     }
-  }
-
-  public async reload(name: string) {
-    await this.initialize();
-
-    this.logger.info(`reloading ${name}`);
-
-    const url = this.config?.mcpServers[this.createServerConfigKey(name)]?.url;
-
-    if (!url) {
-      throw new AppError(
-        ErrorCode.NOT_FOUND,
-        `server '${name}' is not installed`,
-      );
-    }
-    await this.uninstall(name);
-    await sleep(1000);
-    await this.install({ name, sseURL: url, streamableURL: "" });
   }
 
   public async list(params?: { includeUnmanaged?: boolean }) {
@@ -140,11 +141,14 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     await os.openFileInCode(this.configPath);
   }
 
-  public async reset(params?: { includeUnmanaged?: boolean }) {
+  public async reset(params?: {
+    includeUnmanaged?: boolean;
+  }): Promise<InstallerResult> {
     await this.initialize();
 
     this.logger.info("purging cursor config");
     const newConfig: CursorConfig = {
+      ...this.config,
       mcpServers: {},
     };
 
@@ -159,7 +163,17 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
       }
     }
 
+    // If nothing changed, do not write or request restart
+    const noChange = JSON.stringify(newConfig) === JSON.stringify(this.config);
+    if (noChange) {
+      return { requiresRestart: false };
+    }
+
     await this.updateConfig(newConfig);
+    return {
+      requiresRestart:
+        this.getCapabilities().requiresRestartOnInstallOrUninstall,
+    };
   }
 
   private async updateConfig(newConfig: CursorConfig) {
@@ -172,6 +186,14 @@ export class CursorInstaller extends AbstractConfigurator<CursorConfig> {
     await writeJSONFile(this.configPath, {
       mcpServers: {},
     });
+  }
+
+  public getCapabilities() {
+    return {
+      requiresRestartOnInstallOrUninstall: false,
+      requiresRestartOnUpdate: false,
+      programaticRestartSupported: true,
+    };
   }
 }
 

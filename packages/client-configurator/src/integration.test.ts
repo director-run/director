@@ -136,6 +136,26 @@ import type { VSCodeConfig } from "./vscode";
         );
       });
 
+      test("should return a result with requiresRestart", async () => {
+        const installer = createTestInstaller(target);
+        const installable = createInstallable();
+
+        expect(await installer.install(installable)).toMatchObject({
+          requiresRestart:
+            installer.getCapabilities().requiresRestartOnInstallOrUninstall,
+        });
+      });
+
+      test("should throw an error if the server is already installed", async () => {
+        const installer = createTestInstaller(target);
+        const installable = createInstallable();
+        await installer.install(installable);
+        await expectToThrowAppError(() => installer.install(installable), {
+          code: ErrorCode.BAD_REQUEST,
+          props: {},
+        });
+      });
+
       test("should not overwrite existing config data", async () => {
         const basicData = await readJSONFile<Record<string, unknown>>(
           getConfigPath(target),
@@ -159,6 +179,19 @@ import type { VSCodeConfig } from "./vscode";
           expect(await installer.list()).toHaveLength(1);
           await installer.uninstall(installable.name);
           expect(await installer.list()).toHaveLength(0);
+        });
+
+        test("should throw an error if the server is not installed", async () => {
+          const installer = createTestInstaller(target);
+          const installable = createInstallable();
+
+          await expectToThrowAppError(
+            () => installer.uninstall(installable.name),
+            {
+              code: ErrorCode.BAD_REQUEST,
+              props: {},
+            },
+          );
         });
 
         test("should not overwrite existing config data", async () => {
@@ -188,6 +221,19 @@ import type { VSCodeConfig } from "./vscode";
       });
 
       describe("bulk install/uninstall", () => {
+        test("should return a result with requiresRestart", async () => {
+          const installer = createTestInstaller(target);
+          const installable1 = createInstallable();
+          const installable2 = createInstallable();
+
+          expect(
+            await installer.install([installable1, installable2]),
+          ).toMatchObject({
+            requiresRestart:
+              installer.getCapabilities().requiresRestartOnInstallOrUninstall,
+          });
+        });
+
         test("should install multiple and uninstall multiple", async () => {
           const a = createInstallable();
           const b = createInstallable();
@@ -216,6 +262,41 @@ import type { VSCodeConfig } from "./vscode";
           installer = createTestInstaller(target);
           await installer.install(createInstallable());
           await installer.install(createInstallable());
+        });
+
+        test("should return a result with requiresRestart", async () => {
+          expect(await installer.reset()).toMatchObject({
+            requiresRestart:
+              installer.getCapabilities().requiresRestartOnInstallOrUninstall,
+          });
+        });
+
+        test("should return a result with requiresRestart = false if nothing was reset", async () => {
+          await installer.reset();
+          expect(await installer.reset()).toMatchObject({
+            requiresRestart: false,
+          });
+        });
+
+        test("should not overwrite existing config data", async () => {
+          const installable = createInstallable();
+          const installer = createTestInstaller(target);
+
+          const basicData = await readJSONFile<Record<string, unknown>>(
+            getConfigPath(target),
+          );
+
+          await writeJSONFile(getConfigPath(target), {
+            ...basicData,
+            foo: "bar",
+          });
+
+          await installer.install(installable);
+          await installer.reset();
+
+          expect(await readJSONFile(getConfigPath(target))).toMatchObject({
+            foo: "bar",
+          });
         });
 
         test("should not clear servers that are not managed by director", async () => {
@@ -276,15 +357,9 @@ import type { VSCodeConfig } from "./vscode";
         );
       });
 
-      describe("reload", () => {
-        expectToThrowInitializtionErrors(target, (installer) =>
-          installer.reload("any"),
-        );
-      });
-
       describe("restart", () => {
         expectToThrowInitializtionErrors(target, (installer) =>
-          installer.reload("any"),
+          installer.restart(),
         );
       });
     });

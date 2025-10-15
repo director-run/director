@@ -4,7 +4,6 @@ import {
   getConfigurator,
   resetAllClients,
 } from "@director.run/client-configurator/index";
-import {} from "@director.run/gateway/helpers";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import {
   actionWithErrorHandler,
@@ -55,7 +54,7 @@ export function registerClientCommands(program: DirectorCommand): void {
     );
 
   command
-    .debugCommand("reset")
+    .debugCommand("reset <clientName>")
     .description("Delete all servers from the client config")
     .action(
       actionWithErrorHandler(async (clientName: ConfiguratorTarget) => {

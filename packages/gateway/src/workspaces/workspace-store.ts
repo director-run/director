@@ -172,7 +172,7 @@ export class WorkspaceStore {
     return workspace;
   }
 
-  private async onWorkspaceListChange(proxyId: string) {
+  private onWorkspaceListChange = async (proxyId: string) => {
     logger.debug({ message: `workspace list changed`, proxyId });
 
     const clients = await getClientsByWorkspace(proxyId);
@@ -182,5 +182,5 @@ export class WorkspaceStore {
         await client.restart();
       }
     }
-  }
+  };
 }

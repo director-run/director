@@ -5,7 +5,7 @@ import { isFilePresent } from "@director.run/utilities/os";
 import { expectToThrowAppError } from "@director.run/utilities/test";
 import { faker } from "@faker-js/faker";
 import { afterAll, beforeEach, describe, expect, test, vi } from "vitest";
-import { ConfiguratorTarget } from ".";
+import { ClientNames } from ".";
 import type { ClaudeConfig } from "./claude";
 import type { ClaudeCodeConfig } from "./claude-code";
 import type { CursorConfig } from "./cursor";
@@ -17,13 +17,13 @@ import {
   expectToThrowInitializtionErrors,
   getConfigPath,
 } from "./test/fixtures";
-import type { AbstractConfigurator } from "./types";
+import type { AbstractClient } from "./types";
 import type { VSCodeConfig } from "./vscode";
 [
-  ConfiguratorTarget.Claude,
-  ConfiguratorTarget.Cursor,
-  ConfiguratorTarget.VSCode,
-  ConfiguratorTarget.ClaudeCode,
+  ClientNames.Claude,
+  ClientNames.Cursor,
+  ClientNames.VSCode,
+  ClientNames.ClaudeCode,
 ].forEach((target) => {
   describe(`${target} installer`, () => {
     describe("corrupt config", () => {
@@ -41,7 +41,7 @@ import type { VSCodeConfig } from "./vscode";
     });
 
     describe("config missing", () => {
-      let installer: AbstractConfigurator<unknown>;
+      let installer: AbstractClient<unknown>;
       beforeEach(async () => {
         installer = createTestInstaller(target);
         if (isFilePresent(installer.configPath)) {
@@ -112,16 +112,16 @@ import type { VSCodeConfig } from "./vscode";
           let servers: Record<string, unknown> = {};
 
           switch (target) {
-            case ConfiguratorTarget.VSCode:
+            case ClientNames.VSCode:
               servers = (configFile as VSCodeConfig).mcp.servers;
               break;
-            case ConfiguratorTarget.Claude:
+            case ClientNames.Claude:
               servers = (configFile as ClaudeConfig).mcpServers;
               break;
-            case ConfiguratorTarget.Cursor:
+            case ClientNames.Cursor:
               servers = (configFile as CursorConfig).mcpServers;
               break;
-            case ConfiguratorTarget.ClaudeCode:
+            case ClientNames.ClaudeCode:
               servers = (configFile as ClaudeCodeConfig).mcpServers;
               break;
           }
@@ -257,7 +257,7 @@ import type { VSCodeConfig } from "./vscode";
       });
 
       describe("reset", () => {
-        let installer: AbstractConfigurator<unknown>;
+        let installer: AbstractClient<unknown>;
         beforeEach(async () => {
           installer = createTestInstaller(target);
           await installer.install(createInstallable());

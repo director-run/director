@@ -27,7 +27,7 @@ export interface Client {
 // export type MCPTool = NonNullable<RegistryEntryDetail["tools"]>[number];
 export type MCPTool = GatewayRouterOutputs["tools"]["list"][number];
 
-export enum ConfiguratorTarget {
+export enum ClientNames {
   Claude = "claude",
   Cursor = "cursor",
   VSCode = "vscode",

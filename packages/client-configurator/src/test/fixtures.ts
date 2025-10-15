@@ -7,12 +7,12 @@ import { expectToThrowAppError } from "@director.run/utilities/test";
 import { faker } from "@faker-js/faker";
 import { test, vi } from "vitest";
 import { getClient } from "..";
-import { ConfiguratorTarget } from "..";
+import { ClientNames } from "..";
 import { type ClaudeConfig, type ClaudeMCPServer } from "../claude";
 import { type ClaudeCodeConfig } from "../claude-code";
 import { type CursorConfig } from "../cursor";
 import { type Installable } from "../types";
-import { AbstractConfigurator } from "../types";
+import { AbstractClient } from "../types";
 import { type VSCodeConfig } from "../vscode";
 
 export function createVSCodeConfig(entries: Array<Installable>): VSCodeConfig {
@@ -86,31 +86,31 @@ export function createInstallable(): {
 }
 
 export async function createConfigFile(params: {
-  target: ConfiguratorTarget;
+  target: ClientNames;
   config?: unknown;
   entries?: Array<Installable>;
 }) {
   const { target, config, entries } = params;
   switch (target) {
-    case ConfiguratorTarget.VSCode:
+    case ClientNames.VSCode:
       await writeJSONFile(
         getConfigPath(target),
         config ?? createVSCodeConfig(entries ?? []),
       );
       break;
-    case ConfiguratorTarget.Cursor:
+    case ClientNames.Cursor:
       await writeJSONFile(
         getConfigPath(target),
         config ?? createCursorConfig(entries ?? []),
       );
       break;
-    case ConfiguratorTarget.Claude:
+    case ClientNames.Claude:
       await writeJSONFile(
         getConfigPath(target),
         config ?? createClaudeConfig(entries ?? []),
       );
       break;
-    case ConfiguratorTarget.ClaudeCode:
+    case ClientNames.ClaudeCode:
       await writeJSONFile(
         getConfigPath(target),
         config ?? createClaudeCodeConfig(entries ?? []),
@@ -119,18 +119,18 @@ export async function createConfigFile(params: {
   }
 }
 
-export async function deleteConfigFile(target: ConfiguratorTarget) {
+export async function deleteConfigFile(target: ClientNames) {
   if (isFilePresent(getConfigPath(target))) {
     await fs.unlink(getConfigPath(target));
   }
 }
 
-export function getConfigPath(target: ConfiguratorTarget) {
+export function getConfigPath(target: ClientNames) {
   return path.join(__dirname, `${target}.config.test.json`);
 }
 
 export function createTestInstaller(
-  target: ConfiguratorTarget,
+  target: ClientNames,
   params: {
     isClientPresent: boolean;
   } = {
@@ -149,8 +149,8 @@ export function createTestInstaller(
 }
 
 export function expectToThrowInitializtionErrors(
-  target: ConfiguratorTarget,
-  fn: (installer: AbstractConfigurator<unknown>) => Promise<unknown>,
+  target: ClientNames,
+  fn: (installer: AbstractClient<unknown>) => Promise<unknown>,
 ) {
   test("should throw an AppError if the client is not present", async () => {
     const installer = createTestInstaller(target, {
@@ -161,13 +161,4 @@ export function expectToThrowInitializtionErrors(
       props: { name: installer.name, configPath: installer.configPath },
     });
   });
-
-  // test("should throw an AppError if the config is not present", async () => {
-  //   const installer = createTestInstaller(target);
-  //   vi.spyOn(installer, "isClientConfigPresent").mockResolvedValue(false);
-  //   await expectToThrowAppError(() => fn(installer), {
-  //     code: ErrorCode.FILE_NOT_FOUND,
-  //     props: { name: installer.name, configPath: installer.configPath },
-  //   });
-  // });
 }

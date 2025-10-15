@@ -1,16 +1,10 @@
-import type { ConfiguratorTarget } from "@director.run/client-configurator/index";
+import type { ClientNames } from "@director.run/client-configurator/index";
 import { GATEWAY_URL } from "../config";
 import { gatewayClient } from "../contexts/backend-context";
 
 type ChangeInstallStateOptions = {
-  onSuccess?: (
-    client: ConfiguratorTarget,
-    install: boolean,
-  ) => void | Promise<void>;
-  onError?: (
-    client: ConfiguratorTarget,
-    install: boolean,
-  ) => void | Promise<void>;
+  onSuccess?: (client: ClientNames, install: boolean) => void | Promise<void>;
+  onError?: (client: ClientNames, install: boolean) => void | Promise<void>;
 };
 
 export function useChangeInstallState(
@@ -23,12 +17,12 @@ export function useChangeInstallState(
     onSuccess: async (_data, variables) => {
       await utils.clients.allClients.invalidate();
       if (options?.onSuccess && variables?.client) {
-        await options.onSuccess(variables.client as ConfiguratorTarget, true);
+        await options.onSuccess(variables.client as ClientNames, true);
       }
     },
     onError: async (_error, variables) => {
       if (options?.onError && variables?.client) {
-        await options.onError(variables.client as ConfiguratorTarget, true);
+        await options.onError(variables.client as ClientNames, true);
       }
     },
   });
@@ -37,20 +31,17 @@ export function useChangeInstallState(
     onSuccess: async (_data, variables) => {
       await utils.clients.allClients.invalidate();
       if (options?.onSuccess && variables?.client) {
-        await options.onSuccess(variables.client as ConfiguratorTarget, false);
+        await options.onSuccess(variables.client as ClientNames, false);
       }
     },
     onError: async (_error, variables) => {
       if (options?.onError && variables?.client) {
-        await options.onError(variables.client as ConfiguratorTarget, false);
+        await options.onError(variables.client as ClientNames, false);
       }
     },
   });
 
-  const changeInstallState = async (
-    client: ConfiguratorTarget,
-    install: boolean,
-  ) => {
+  const changeInstallState = async (client: ClientNames, install: boolean) => {
     if (install) {
       await installMutation.mutateAsync({
         proxyId,

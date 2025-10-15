@@ -3,9 +3,9 @@ import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { writeJSONFile } from "@director.run/utilities/json";
 import { os, App } from "@director.run/utilities/os/index";
 import { z } from "zod";
-import { AbstractConfigurator, type InstallerResult } from "./types";
+import { AbstractClient, type InstallerResult } from "./types";
 
-export class ClaudeInstaller extends AbstractConfigurator<ClaudeConfig> {
+export class ClaudeInstaller extends AbstractClient<ClaudeConfig> {
   public async isClientPresent() {
     return await os.isAppInstalled(App.CLAUDE);
   }

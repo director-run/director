@@ -1,5 +1,5 @@
 import {
-  ConfiguratorTarget,
+  ClientNames,
   getAllClientsAsPlainObject,
   getClient,
 } from "@director.run/client-configurator/index";
@@ -17,7 +17,7 @@ export function createClientRouter({
     install: t.procedure
       .input(
         z.object({
-          client: z.nativeEnum(ConfiguratorTarget),
+          client: z.nativeEnum(ClientNames),
           proxyId: z.string(),
           baseUrl: z.string(),
         }),
@@ -40,7 +40,7 @@ export function createClientRouter({
     uninstall: t.procedure
       .input(
         z.object({
-          client: z.nativeEnum(ConfiguratorTarget),
+          client: z.nativeEnum(ClientNames),
           proxyId: z.string(),
         }),
       )

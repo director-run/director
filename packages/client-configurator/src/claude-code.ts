@@ -3,12 +3,12 @@ import { writeJSONFile } from "@director.run/utilities/json";
 import { os, App } from "@director.run/utilities/os/index";
 import { z } from "zod";
 import {
-  AbstractConfigurator,
+  AbstractClient,
   type Installable,
   type InstallerResult,
 } from "./types";
 
-export class ClaudeCodeInstaller extends AbstractConfigurator<ClaudeCodeConfig> {
+export class ClaudeCodeInstaller extends AbstractClient<ClaudeCodeConfig> {
   public async isClientPresent() {
     return await os.isAppInstalled(App.CLAUDE_CODE);
   }

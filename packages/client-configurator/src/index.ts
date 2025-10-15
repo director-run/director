@@ -2,10 +2,10 @@ import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { ClaudeInstaller } from "./claude";
 import { ClaudeCodeInstaller } from "./claude-code";
 import { CursorInstaller } from "./cursor";
-import type { AbstractConfigurator } from "./types";
+import type { AbstractClient } from "./types";
 import { VSCodeInstaller } from "./vscode";
 
-export enum ConfiguratorTarget {
+export enum ClientNames {
   Claude = "claude",
   Cursor = "cursor",
   VSCode = "vscode",
@@ -20,12 +20,12 @@ export async function getAllClientsAsPlainObject() {
 
 export async function getAllClients() {
   return await Promise.all(
-    Object.values(ConfiguratorTarget).map((target) => getClient(target)),
+    Object.values(ClientNames).map((target) => getClient(target)),
   );
 }
 
 export async function getClientsByWorkspace(workspaceId: string) {
-  const clients: AbstractConfigurator<unknown>[] = [];
+  const clients: AbstractClient<unknown>[] = [];
   for (const client of await getAllClients()) {
     if (!(await client.isClientPresent())) {
       continue;
@@ -39,11 +39,11 @@ export async function getClientsByWorkspace(workspaceId: string) {
 }
 
 export function getClient(
-  target: ConfiguratorTarget,
+  target: ClientNames,
   params: {
     configPath?: string;
   } = {},
-): AbstractConfigurator<unknown> {
+): AbstractClient<unknown> {
   switch (target) {
     case "claude":
       return new ClaudeInstaller(params);
@@ -63,7 +63,7 @@ export function getClient(
 
 export async function resetAllClients() {
   const installers = await Promise.all(
-    Object.values(ConfiguratorTarget).map((target) => getClient(target)),
+    Object.values(ClientNames).map((target) => getClient(target)),
   );
   for (const installer of installers) {
     console.log("resetting", installer.name);

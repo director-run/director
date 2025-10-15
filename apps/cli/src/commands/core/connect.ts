@@ -1,5 +1,5 @@
 import {
-  ConfiguratorTarget,
+  ClientNames,
   getClient,
 } from "@director.run/client-configurator/index";
 import {
@@ -24,12 +24,12 @@ export function registerConnectCommand(program: DirectorCommand) {
       makeOption({
         flags: "-t,--target <target>",
         description: "target client",
-        choices: Object.values(ConfiguratorTarget),
+        choices: Object.values(ClientNames),
       }),
     )
     .action(
       actionWithErrorHandler(
-        async (proxyId: string, options: { target: ConfiguratorTarget }) => {
+        async (proxyId: string, options: { target: ClientNames }) => {
           if (options.target) {
             const proxy = await gatewayClient.store.get.query({ proxyId });
             const installer = await getClient(options.target);

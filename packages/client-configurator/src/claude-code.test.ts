@@ -1,6 +1,6 @@
 import { readJSONFile } from "@director.run/utilities/json";
 import { afterAll, beforeEach, describe, expect, test } from "vitest";
-import { ConfiguratorTarget } from ".";
+import { ClientNames } from ".";
 import {
   createConfigFile,
   createTestInstaller,
@@ -14,17 +14,17 @@ describe(`claude-code config`, () => {
     };
     beforeEach(async () => {
       await createConfigFile({
-        target: ConfiguratorTarget.ClaudeCode,
+        target: ClientNames.ClaudeCode,
         config: incompleteConfig,
       });
     });
 
     afterAll(async () => {
-      await deleteConfigFile(ConfiguratorTarget.ClaudeCode);
+      await deleteConfigFile(ClientNames.ClaudeCode);
     });
 
     test("should initialize the config if it is missing the mcpServers", async () => {
-      const installer = createTestInstaller(ConfiguratorTarget.ClaudeCode);
+      const installer = createTestInstaller(ClientNames.ClaudeCode);
       expect(await readJSONFile(installer.configPath)).toEqual({
         foo: "bar",
       });

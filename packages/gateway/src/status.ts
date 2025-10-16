@@ -1,7 +1,6 @@
-import { getAllClientsAsPlainObject } from "@director.run/client-configurator/index";
 import { isCommandInPath } from "@director.run/utilities/os";
 
-export async function getStatus(cliVersion: string | null) {
+export function getStatus(cliVersion: string | null) {
   return {
     platform: process.platform,
     dependencies: [
@@ -14,7 +13,6 @@ export async function getStatus(cliVersion: string | null) {
         installed: isCommandInPath("uvx"),
       },
     ],
-    clients: await getAllClientsAsPlainObject(),
     cliVersion,
   };
 }

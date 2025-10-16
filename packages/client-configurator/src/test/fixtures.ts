@@ -6,13 +6,16 @@ import { isFilePresent } from "@director.run/utilities/os";
 import { expectToThrowAppError } from "@director.run/utilities/test";
 import { faker } from "@faker-js/faker";
 import { test, vi } from "vitest";
-import { getClient } from "..";
-import { type ClaudeConfig, type ClaudeMCPServer } from "../claude";
-import { type ClaudeCodeConfig } from "../claude-code";
-import { type CursorConfig } from "../cursor";
+import {
+  type ClaudeConfig,
+  ClaudeInstaller,
+  type ClaudeMCPServer,
+} from "../claude";
+import { type ClaudeCodeConfig, ClaudeCodeInstaller } from "../claude-code";
+import { type CursorConfig, CursorInstaller } from "../cursor";
 import { type Installable } from "../types";
 import { AbstractClient } from "../types";
-import { type VSCodeConfig } from "../vscode";
+import { type VSCodeConfig, VSCodeInstaller } from "../vscode";
 
 export function createVSCodeConfig(entries: Array<Installable>): VSCodeConfig {
   return {
@@ -136,9 +139,36 @@ export function createTestClient(
     isClientPresent: true,
   },
 ) {
-  const installer = getClient(target, {
-    configPath: getConfigPath(target),
-  });
+  // const installer = getClient(target, {
+  //   configPath: getConfigPath(target),
+  // });
+
+  let installer: AbstractClient<unknown>;
+  switch (target) {
+    case "vscode":
+      installer = new VSCodeInstaller({
+        configPath: getConfigPath(target),
+      });
+      break;
+    case "cursor":
+      installer = new CursorInstaller({
+        configPath: getConfigPath(target),
+      });
+      break;
+    case "claude":
+      installer = new ClaudeInstaller({
+        configPath: getConfigPath(target),
+      });
+      break;
+    case "claude-code":
+      installer = new ClaudeCodeInstaller({
+        configPath: getConfigPath(target),
+      });
+      break;
+    default:
+      throw new Error(`Unknown target: ${target}`);
+  }
+
   // In CI, the client is not present, so we mock the method to return false
   vi.spyOn(installer, "isClientPresent").mockResolvedValue(
     params.isClientPresent,

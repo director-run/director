@@ -5,12 +5,7 @@ import { CursorInstaller } from "./cursor";
 import type { AbstractClient } from "./types";
 import { VSCodeInstaller } from "./vscode";
 
-export const ALL_CLIENT_NAMES = [
-  "claude",
-  "cursor",
-  "vscode",
-  "claude-code",
-] as const;
+const ALL_CLIENT_NAMES = ["claude", "cursor", "vscode", "claude-code"] as const;
 
 export async function getAllClientsAsPlainObject() {
   return await Promise.all(

@@ -161,6 +161,44 @@ export class ConfigBase<TSchema extends Record<string, z.ZodType>> {
     await this.storage.persist();
   }
 
+  find<K extends keyof TSchema & string>(
+    key: K,
+    selector: unknown,
+  ): unknown | undefined {
+    if (!(key in this.schema)) {
+      throw new AppError(
+        ErrorCode.INVALID_ARGUMENT,
+        `Key "${key}" is not allowed`,
+        { key },
+      );
+    }
+
+    const schema = this.schema[key];
+    const arraySchema = this.unwrapArraySchema(schema);
+    if (!arraySchema) {
+      throw new AppError(
+        ErrorCode.INVALID_ARGUMENT,
+        `Key "${key}" is not an array`,
+        { key },
+      );
+    }
+
+    const currentData = this.storage.getData();
+    const currentArray = get({ ...this.defaults, ...currentData }, key) as
+      | unknown[]
+      | undefined;
+    const safeArray = [...(currentArray ?? [])];
+
+    const found = safeArray.find((element) => {
+      if (!isObject(element) || element === null) {
+        return isEqual(element, selector);
+      }
+      return isMatch(element, selector as Record<string, unknown>);
+    });
+
+    return found;
+  }
+
   private unwrapArraySchema(
     inputSchema: z.ZodTypeAny,
   ): z.ZodArray<z.ZodTypeAny> | null {

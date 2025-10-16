@@ -80,6 +80,36 @@ describe("ConfigBase array helpers", () => {
       );
     });
   });
+
+  describe("find", () => {
+    it("finds by value in primitive array", async () => {
+      await config.push("clients.cursor", "ws-1");
+      await config.push("clients.cursor", "ws-2");
+      await config.push("clients.cursor", "ws-3");
+      expect(config.find("clients.cursor", "ws-2")).toBe("ws-2");
+    });
+
+    it("finds by selector in object array", async () => {
+      await config.push("workspaces", { id: "a", name: "A" });
+      await config.push("workspaces", { id: "b", name: "B" });
+      await config.push("workspaces", { id: "c", name: "C" });
+      expect(config.find("workspaces", { id: "b" })).toEqual({
+        id: "b",
+        name: "B",
+      });
+    });
+
+    it("returns undefined when not found", async () => {
+      await config.push("clients.cursor", "ws-1");
+      expect(config.find("clients.cursor", "missing")).toBeUndefined();
+    });
+
+    it("rejects non-array keys", async () => {
+      expect(() => config.find("server.port", { id: "x" } as unknown)).toThrow(
+        /not an array/,
+      );
+    });
+  });
 });
 
 describe("ConfigBase", () => {

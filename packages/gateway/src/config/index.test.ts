@@ -280,6 +280,17 @@ describe("Config", () => {
         await config.remove(clientKey, "test-workspace");
         expect(await config.get(clientKey)).toEqual(["test-workspace2"]);
       });
+      it("should be able to find a client", async () => {
+        await config.push(clientKey, "test-workspace");
+        await config.push(clientKey, "test-workspace2");
+        expect(await config.find(clientKey, "test-workspace")).toBe(
+          "test-workspace",
+        );
+        expect(await config.find(clientKey, "test-workspace2")).toBe(
+          "test-workspace2",
+        );
+        expect(await config.find(clientKey, "test-workspace3")).toBeUndefined();
+      });
     });
   });
 

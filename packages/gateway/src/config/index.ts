@@ -86,24 +86,25 @@ class WorkspacesConfig {
     workspace: Omit<WorkspaceParams, "id">,
   ): Promise<WorkspaceParams> {
     const workspaceId = slugifyName(workspace.name);
-    const workspaces = await this.all();
 
-    const existingWorkspace = _.find(workspaces, { id: workspaceId });
-    if (existingWorkspace) {
+    if (await this.config.find("workspaces", { id: workspaceId })) {
       throw new AppError(
         ErrorCode.DUPLICATE,
         "Workspace with this name already exists",
       );
     }
 
-    return this.update(workspaceId, {
+    const newWorkspace = {
       id: workspaceId,
       ...workspace,
       servers: _.map(workspace.servers || [], (s) => ({
         ...s,
         name: slugifyName(s.name),
       })),
-    });
+    };
+
+    await this.config.push("workspaces", newWorkspace);
+    return newWorkspace;
   }
 
   async getWorkspace(id: string): Promise<WorkspaceParams> {

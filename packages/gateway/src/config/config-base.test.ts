@@ -2,10 +2,85 @@ import fs from "node:fs";
 import path from "node:path";
 import { ErrorCode } from "@director.run/utilities/error";
 import { expectToThrowAppError } from "@director.run/utilities/test";
+import { beforeEach } from "vitest";
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 import { ConfigBase } from "./config-base";
 import { InMemoryConfigStorage, YamlConfigStorage } from "./config-storage";
+
+describe("ConfigBase array helpers", () => {
+  const schema = {
+    version: z.string().default("1.0.0"),
+    "server.port": z.number(),
+    "clients.cursor": z.array(z.string()).default([]),
+    workspaces: z
+      .array(
+        z.object({
+          id: z.string(),
+          name: z.string(),
+        }),
+      )
+      .default([]),
+  } as const;
+
+  let config: ConfigBase<typeof schema>;
+
+  beforeEach(async () => {
+    const storage = new InMemoryConfigStorage();
+    config = new ConfigBase({
+      schema,
+      storage,
+      defaults: { server: { port: 3000 } },
+    });
+    await config.init();
+  });
+
+  describe("push", () => {
+    it("appends to primitive array keys", async () => {
+      await config.push("clients.cursor", "ws-1");
+      await config.push("clients.cursor", "ws-2");
+      expect(config.get("clients.cursor")).toEqual(["ws-1", "ws-2"]);
+    });
+
+    it("rejects non-array keys", async () => {
+      await expect(config.push("server.port", 123)).rejects.toThrow(
+        /not an array/,
+      );
+    });
+
+    it("validates element type against schema", async () => {
+      // number into string[] should throw
+      await expect(config.push("clients.cursor", 123)).rejects.toThrow();
+    });
+  });
+
+  describe("remove", () => {
+    it("removes by value from primitive array", async () => {
+      await config.push("clients.cursor", "ws-1");
+      await config.push("clients.cursor", "ws-2");
+      await config.push("clients.cursor", "ws-3");
+      await config.remove("clients.cursor", "ws-2");
+      expect(config.get("clients.cursor")).toEqual(["ws-1", "ws-3"]);
+    });
+
+    it("removes by selector from object array", async () => {
+      await config.push("workspaces", { id: "a", name: "A" });
+      await config.push("workspaces", { id: "b", name: "B" });
+      await config.push("workspaces", { id: "c", name: "C" });
+      await config.remove("workspaces", { id: "b" });
+      expect(config.get("workspaces")).toEqual([
+        { id: "a", name: "A" },
+        { id: "c", name: "C" },
+      ]);
+    });
+
+    it("rejects non-array keys", async () => {
+      await expect(config.remove("server.port", { id: "x" })).rejects.toThrow(
+        /not an array/,
+      );
+    });
+  });
+});
 
 describe("ConfigBase", () => {
   it("should set and get valid values", async () => {

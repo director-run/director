@@ -122,20 +122,14 @@ class WorkspacesConfig {
     if (workspace.id !== id) {
       throw new Error("Id mismatch");
     }
-    const workspaces = await this.all();
-    const workspaceIndex = _.findIndex(workspaces, { id });
-    if (workspaceIndex === -1) {
-      workspaces.push(workspace);
-    } else {
-      workspaces[workspaceIndex] = workspace;
-    }
-    await this.config.set("workspaces", workspaces);
+    // Remove existing workspace with the same id (if any), then append the new one
+    await this.config.remove("workspaces", { id });
+    await this.config.push("workspaces", workspace);
     return workspace;
   }
 
   async remove(id: string): Promise<void> {
-    const workspaces = await this.all();
-    await this.config.set("workspaces", _.reject(workspaces, { id }));
+    await this.config.remove("workspaces", { id });
   }
 
   async count(): Promise<number> {
@@ -163,4 +157,9 @@ const configSchema = {
   "telemetry.enabled": z.boolean(),
   "oauth.storage": z.literal("disk").or(z.literal("memory")).default("disk"),
   "oauth.tokenDirectory": z.string().default("./tokens"),
+  // clients
+  "clients.claude": z.array(z.string()).default([]),
+  "clients.claude-code": z.array(z.string()).default([]),
+  "clients.cursor": z.array(z.string()).default([]),
+  "clients.vscode": z.array(z.string()).default([]),
 };

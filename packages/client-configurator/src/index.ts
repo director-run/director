@@ -18,7 +18,7 @@ export async function getAllClientsAsPlainObject() {
   );
 }
 
-export async function getAllClients() {
+async function getAllClients() {
   return await Promise.all(ALL_CLIENT_NAMES.map((target) => getClient(target)));
 }
 

@@ -1,5 +1,3 @@
-import { ClientNames } from "@director.run/client-configurator/index";
-// import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import { GetStartedCompleteDialog } from "@director.run/design/components/get-started/get-started-complete-dialog.tsx";
 import { GetStartedInstallServerDialog } from "@director.run/design/components/get-started/get-started-install-server-dialog.tsx";
 import type { FormValues as ProxyFormValues } from "@director.run/design/components/get-started/get-started-proxy-form.tsx";
@@ -19,8 +17,6 @@ import { useInstallServerFromRegistry } from "../hooks/use-install-server-from-r
 import { useOnboardingProgress } from "../hooks/use-onboarding-progress.ts";
 import { useRegistryEntries } from "../hooks/use-registry-entries.ts";
 import { useWorkspaces } from "../hooks/use-workspaces.ts";
-
-export type ClientId = "claude" | "cursor" | "vscode";
 
 export function GetStartedPage() {
   const navigate = useNavigate();
@@ -134,8 +130,8 @@ export function GetStartedPage() {
       return;
     }
     installationMutation.mutate({
-      proxyId: currentProxy.id,
-      client: client as ClientNames,
+      workspaceId: currentProxy.id,
+      clientId: client,
       baseUrl: GATEWAY_URL,
     });
   };

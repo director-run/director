@@ -1,6 +1,6 @@
 import { cn } from "../../helpers/cn";
 import { useCopyToClipboard } from "../../hooks/use-copy-to-clipboard";
-import { type Client, type ClientNames } from "../types";
+import { type Client } from "../types";
 import type { WorkspaceDetail } from "../types";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
 import { Switch } from "../ui/switch";
@@ -14,7 +14,7 @@ export interface WorkspaceSectionClientsProps {
   workspace: WorkspaceDetail;
   gatewayBaseUrl: string;
   clients: Client[];
-  onChangeInstall: (client: ClientNames, install: boolean) => void;
+  onChangeInstall: (clientName: string, install: boolean) => void;
   isLoading: boolean;
 }
 
@@ -82,7 +82,7 @@ function InstallerRow({
   isLoading,
 }: {
   client: Client;
-  onChangeInstall: (client: ClientNames, install: boolean) => void;
+  onChangeInstall: (clientName: string, install: boolean) => void;
   isLoading: boolean;
 }) {
   return (
@@ -109,7 +109,7 @@ function InstallerRow({
         id={client.id}
         checked={!!client.present}
         onCheckedChange={(checked) => {
-          onChangeInstall(client.id as ClientNames, checked);
+          onChangeInstall(client.id, checked);
         }}
         disabled={isLoading || !client.installed}
       />

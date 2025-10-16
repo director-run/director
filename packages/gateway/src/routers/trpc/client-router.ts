@@ -1,5 +1,4 @@
 import {
-  ClientNames,
   getAllClientsAsPlainObject,
   getClient,
 } from "@director.run/client-configurator/index";
@@ -17,14 +16,14 @@ export function createClientRouter({
     install: t.procedure
       .input(
         z.object({
-          client: z.nativeEnum(ClientNames),
-          proxyId: z.string(),
+          clientId: z.string(),
+          workspaceId: z.string(),
           baseUrl: z.string(),
         }),
       )
       .mutation(async ({ input }) => {
-        const proxy = workspaceStore.get(input.proxyId);
-        const installer = await getClient(input.client);
+        const proxy = workspaceStore.get(input.workspaceId);
+        const installer = await getClient(input.clientId);
         const result = await installer.install({
           name: proxy.id,
           sseURL: joinURL(input.baseUrl, getSSEPathForProxy(proxy.id)),
@@ -40,13 +39,13 @@ export function createClientRouter({
     uninstall: t.procedure
       .input(
         z.object({
-          client: z.nativeEnum(ClientNames),
-          proxyId: z.string(),
+          clientId: z.string(),
+          workspaceId: z.string(),
         }),
       )
       .mutation(async ({ input }) => {
-        const proxy = workspaceStore.get(input.proxyId);
-        const installer = await getClient(input.client);
+        const proxy = workspaceStore.get(input.workspaceId);
+        const installer = await getClient(input.clientId);
         const result = await installer.uninstall(proxy.id);
         if (result.requiresRestart) {
           await installer.restart();

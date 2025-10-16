@@ -1,5 +1,8 @@
 import { getClient } from "@director.run/client-configurator/index";
-import { ClientNames } from "@director.run/client-configurator/index";
+import {
+  ALL_CLIENT_NAMES,
+  type ClientName,
+} from "@director.run/client-configurator/index";
 import { proxyHTTPToStdio } from "@director.run/mcp/transport";
 import {
   DirectorCommand,
@@ -93,12 +96,12 @@ export function registerCoreCommands(program: DirectorCommand): void {
       makeOption({
         flags: "-t,--target <target>",
         description: "target client",
-        choices: Object.values(ClientNames),
+        choices: ALL_CLIENT_NAMES as unknown as string[],
       }).makeOptionMandatory(),
     )
     .action(
       actionWithErrorHandler(
-        async (proxyId: string, options: { target: ClientNames }) => {
+        async (proxyId: string, options: { target: ClientName }) => {
           const proxy = await gatewayClient.store.get.query({ proxyId });
           const installer = await getClient(options.target);
           const result = await installer.uninstall(proxy.id);

@@ -5,12 +5,13 @@ import { CursorInstaller } from "./cursor";
 import type { AbstractClient } from "./types";
 import { VSCodeInstaller } from "./vscode";
 
-export enum ClientNames {
-  Claude = "claude",
-  Cursor = "cursor",
-  VSCode = "vscode",
-  ClaudeCode = "claude-code",
-}
+export const ALL_CLIENT_NAMES = [
+  "claude",
+  "cursor",
+  "vscode",
+  "claude-code",
+] as const;
+export type ClientName = (typeof ALL_CLIENT_NAMES)[number];
 
 export async function getAllClientsAsPlainObject() {
   return await Promise.all(
@@ -19,9 +20,7 @@ export async function getAllClientsAsPlainObject() {
 }
 
 export async function getAllClients() {
-  return await Promise.all(
-    Object.values(ClientNames).map((target) => getClient(target)),
-  );
+  return await Promise.all(ALL_CLIENT_NAMES.map((target) => getClient(target)));
 }
 
 export async function getClientsByWorkspace(workspaceId: string) {
@@ -39,7 +38,7 @@ export async function getClientsByWorkspace(workspaceId: string) {
 }
 
 export function getClient(
-  target: ClientNames,
+  target: string,
   params: {
     configPath?: string;
   } = {},
@@ -63,7 +62,7 @@ export function getClient(
 
 export async function resetAllClients() {
   const installers = await Promise.all(
-    Object.values(ClientNames).map((target) => getClient(target)),
+    ALL_CLIENT_NAMES.map((target) => getClient(target)),
   );
   for (const installer of installers) {
     console.log("resetting", installer.name);

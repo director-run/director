@@ -1,6 +1,5 @@
 import {
   ALL_CLIENT_NAMES,
-  type ClientName,
   getClient,
 } from "@director.run/client-configurator/index";
 import {
@@ -30,7 +29,7 @@ export function registerConnectCommand(program: DirectorCommand) {
     )
     .action(
       actionWithErrorHandler(
-        async (proxyId: string, options: { target: ClientName }) => {
+        async (proxyId: string, options: { target: string }) => {
           if (options.target) {
             const proxy = await gatewayClient.store.get.query({ proxyId });
             const installer = await getClient(options.target);

@@ -1,6 +1,5 @@
 import { readJSONFile } from "@director.run/utilities/json";
 import { afterAll, beforeEach, describe, expect, test } from "vitest";
-import { type ClientName } from ".";
 import {
   createConfigFile,
   createTestClient,
@@ -14,7 +13,7 @@ describe(`cursor config`, () => {
     };
     beforeEach(async () => {
       await createConfigFile({
-        target: "cursor" satisfies ClientName,
+        target: "cursor",
         config: incompleteConfig,
       });
     });

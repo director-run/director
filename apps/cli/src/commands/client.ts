@@ -1,5 +1,4 @@
 import {
-  type ClientName,
   getAllClientsAsPlainObject,
   getClient,
   resetAllClients,
@@ -22,7 +21,7 @@ export function registerClientCommands(program: DirectorCommand): void {
     .debugCommand("get <clientName>")
     .description("get the details of a client")
     .action(
-      actionWithErrorHandler(async (clientName: ClientName) => {
+      actionWithErrorHandler(async (clientName: string) => {
         const installer = await getClient(clientName);
         const servers = await installer.list();
 
@@ -46,7 +45,7 @@ export function registerClientCommands(program: DirectorCommand): void {
     .debugCommand("restart <clientName>")
     .description("Restart the MCP client")
     .action(
-      actionWithErrorHandler(async (clientName: ClientName) => {
+      actionWithErrorHandler(async (clientName: string) => {
         const installer = await getClient(clientName);
         const result = await installer.restart();
         console.log(result);
@@ -57,7 +56,7 @@ export function registerClientCommands(program: DirectorCommand): void {
     .debugCommand("reset <clientName>")
     .description("Delete all servers from the client config")
     .action(
-      actionWithErrorHandler(async (clientName: ClientName) => {
+      actionWithErrorHandler(async (clientName: string) => {
         const installer = await getClient(clientName);
         const result = await installer.reset();
         if (result.requiresRestart) {
@@ -80,7 +79,7 @@ export function registerClientCommands(program: DirectorCommand): void {
     .debugCommand("config <clientName>")
     .description("Open claude config file")
     .action(
-      actionWithErrorHandler(async (clientName: ClientName) => {
+      actionWithErrorHandler(async (clientName: string) => {
         const installer = await getClient(clientName);
         const result = await installer.openConfig();
         console.log(result);

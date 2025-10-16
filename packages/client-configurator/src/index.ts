@@ -11,7 +11,6 @@ export const ALL_CLIENT_NAMES = [
   "vscode",
   "claude-code",
 ] as const;
-export type ClientName = (typeof ALL_CLIENT_NAMES)[number];
 
 export async function getAllClientsAsPlainObject() {
   return await Promise.all(

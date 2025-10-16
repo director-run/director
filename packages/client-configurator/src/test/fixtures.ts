@@ -7,7 +7,6 @@ import { expectToThrowAppError } from "@director.run/utilities/test";
 import { faker } from "@faker-js/faker";
 import { test, vi } from "vitest";
 import { getClient } from "..";
-import { type ClientName } from "..";
 import { type ClaudeConfig, type ClaudeMCPServer } from "../claude";
 import { type ClaudeCodeConfig } from "../claude-code";
 import { type CursorConfig } from "../cursor";
@@ -86,7 +85,7 @@ export function createInstallable(): {
 }
 
 export async function createConfigFile(params: {
-  target: ClientName;
+  target: string;
   config?: unknown;
   entries?: Array<Installable>;
 }) {
@@ -119,18 +118,18 @@ export async function createConfigFile(params: {
   }
 }
 
-export async function deleteConfigFile(target: ClientName) {
+export async function deleteConfigFile(target: string) {
   if (isFilePresent(getConfigPath(target))) {
     await fs.unlink(getConfigPath(target));
   }
 }
 
-export function getConfigPath(target: ClientName) {
+export function getConfigPath(target: string) {
   return path.join(__dirname, `${target}.config.test.json`);
 }
 
 export function createTestClient(
-  target: ClientName,
+  target: string,
   params: {
     isClientPresent: boolean;
   } = {
@@ -149,7 +148,7 @@ export function createTestClient(
 }
 
 export function expectToThrowInitializtionErrors(
-  target: ClientName,
+  target: string,
   fn: (installer: AbstractClient<unknown>) => Promise<unknown>,
 ) {
   test("should throw an AppError if the client is not present", async () => {

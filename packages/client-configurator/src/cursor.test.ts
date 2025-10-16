@@ -3,7 +3,7 @@ import { afterAll, beforeEach, describe, expect, test } from "vitest";
 import { ClientNames } from ".";
 import {
   createConfigFile,
-  createTestInstaller,
+  createTestClient,
   deleteConfigFile,
 } from "./test/fixtures";
 
@@ -24,7 +24,7 @@ describe(`cursor config`, () => {
     });
 
     test("should initialize the config if it is missing the mcp.servers", async () => {
-      const installer = createTestInstaller(ClientNames.Cursor);
+      const installer = createTestClient(ClientNames.Cursor);
       expect(await readJSONFile(installer.configPath)).toEqual({
         foo: "bar",
       });

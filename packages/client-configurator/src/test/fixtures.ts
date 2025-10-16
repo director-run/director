@@ -129,7 +129,7 @@ export function getConfigPath(target: ClientNames) {
   return path.join(__dirname, `${target}.config.test.json`);
 }
 
-export function createTestInstaller(
+export function createTestClient(
   target: ClientNames,
   params: {
     isClientPresent: boolean;
@@ -153,7 +153,7 @@ export function expectToThrowInitializtionErrors(
   fn: (installer: AbstractClient<unknown>) => Promise<unknown>,
 ) {
   test("should throw an AppError if the client is not present", async () => {
-    const installer = createTestInstaller(target, {
+    const installer = createTestClient(target, {
       isClientPresent: false,
     });
     await expectToThrowAppError(() => fn(installer), {

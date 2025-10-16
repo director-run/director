@@ -12,7 +12,7 @@ import type { CursorConfig } from "./cursor";
 import {
   createConfigFile,
   createInstallable,
-  createTestInstaller,
+  createTestClient,
   deleteConfigFile,
   expectToThrowInitializtionErrors,
   getConfigPath,
@@ -32,7 +32,7 @@ import type { VSCodeConfig } from "./vscode";
         const configPath = getConfigPath(target);
         expect(isFilePresent(configPath)).toBe(false);
         await fs.promises.writeFile(configPath, "{'invalid': 'json'");
-        const installer = createTestInstaller(target);
+        const installer = createTestClient(target);
         await expectToThrowAppError(() => installer.isInstalled("any"), {
           code: ErrorCode.JSON_PARSE_ERROR,
           props: { path: configPath },
@@ -43,7 +43,7 @@ import type { VSCodeConfig } from "./vscode";
     describe("config missing", () => {
       let installer: AbstractClient<unknown>;
       beforeEach(async () => {
-        installer = createTestInstaller(target);
+        installer = createTestClient(target);
         if (isFilePresent(installer.configPath)) {
           await fs.promises.unlink(installer.configPath);
         }
@@ -78,7 +78,7 @@ import type { VSCodeConfig } from "./vscode";
       describe("isInstalled", () => {
         test("should correctly check if a server is installed", async () => {
           const entry = createInstallable();
-          const installer = createTestInstaller(target);
+          const installer = createTestClient(target);
           expect(await installer.isInstalled(entry.name)).toBe(false);
           await installer.install(entry);
           expect(await installer.isInstalled(entry.name)).toBe(true);
@@ -87,21 +87,21 @@ import type { VSCodeConfig } from "./vscode";
         });
 
         test("should return false if the client is not present", async () => {
-          const installer = createTestInstaller(target, {
+          const installer = createTestClient(target, {
             isClientPresent: false,
           });
           expect(await installer.isInstalled("any")).toBe(false);
         });
 
         test("should return false if the client config is not present", async () => {
-          const installer = createTestInstaller(target);
+          const installer = createTestClient(target);
           vi.spyOn(installer, "isClientConfigPresent").mockResolvedValue(false);
           expect(await installer.isInstalled("any")).toBe(false);
         });
       });
 
       describe("install", () => {
-        const installer = createTestInstaller(target);
+        const installer = createTestClient(target);
         test("should be able to install a server", async () => {
           const installable = createInstallable();
           expect(await installer.isInstalled(installable.name)).toBe(false);
@@ -137,7 +137,7 @@ import type { VSCodeConfig } from "./vscode";
       });
 
       test("should return a result with requiresRestart", async () => {
-        const installer = createTestInstaller(target);
+        const installer = createTestClient(target);
         const installable = createInstallable();
 
         expect(await installer.install(installable)).toMatchObject({
@@ -147,7 +147,7 @@ import type { VSCodeConfig } from "./vscode";
       });
 
       test("should throw an error if the server is already installed", async () => {
-        const installer = createTestInstaller(target);
+        const installer = createTestClient(target);
         const installable = createInstallable();
         await installer.install(installable);
         await expectToThrowAppError(() => installer.install(installable), {
@@ -164,7 +164,7 @@ import type { VSCodeConfig } from "./vscode";
           ...basicData,
           foo: "bar",
         });
-        const installer = createTestInstaller(target);
+        const installer = createTestClient(target);
         await installer.install(createInstallable());
         expect(await readJSONFile(getConfigPath(target))).toMatchObject({
           foo: "bar",
@@ -174,7 +174,7 @@ import type { VSCodeConfig } from "./vscode";
       describe("uninstall", () => {
         test("should be able to uninstall a server", async () => {
           const installable = createInstallable();
-          const installer = createTestInstaller(target);
+          const installer = createTestClient(target);
           await installer.install(installable);
           expect(await installer.list()).toHaveLength(1);
           await installer.uninstall(installable.name);
@@ -182,7 +182,7 @@ import type { VSCodeConfig } from "./vscode";
         });
 
         test("should throw an error if the server is not installed", async () => {
-          const installer = createTestInstaller(target);
+          const installer = createTestClient(target);
           const installable = createInstallable();
 
           await expectToThrowAppError(
@@ -196,7 +196,7 @@ import type { VSCodeConfig } from "./vscode";
 
         test("should not overwrite existing config data", async () => {
           const installable = createInstallable();
-          const installer = createTestInstaller(target);
+          const installer = createTestClient(target);
 
           const basicData = await readJSONFile<Record<string, unknown>>(
             getConfigPath(target),
@@ -222,7 +222,7 @@ import type { VSCodeConfig } from "./vscode";
 
       describe("bulk install/uninstall", () => {
         test("should return a result with requiresRestart", async () => {
-          const installer = createTestInstaller(target);
+          const installer = createTestClient(target);
           const installable1 = createInstallable();
           const installable2 = createInstallable();
 
@@ -238,7 +238,7 @@ import type { VSCodeConfig } from "./vscode";
           const a = createInstallable();
           const b = createInstallable();
           const c = createInstallable();
-          const installer = createTestInstaller(target);
+          const installer = createTestClient(target);
 
           expect(await installer.list()).toHaveLength(0);
           await installer.install([a, b, c]);
@@ -259,7 +259,7 @@ import type { VSCodeConfig } from "./vscode";
       describe("reset", () => {
         let installer: AbstractClient<unknown>;
         beforeEach(async () => {
-          installer = createTestInstaller(target);
+          installer = createTestClient(target);
           await installer.install(createInstallable());
           await installer.install(createInstallable());
         });
@@ -280,7 +280,7 @@ import type { VSCodeConfig } from "./vscode";
 
         test("should not overwrite existing config data", async () => {
           const installable = createInstallable();
-          const installer = createTestInstaller(target);
+          const installer = createTestClient(target);
 
           const basicData = await readJSONFile<Record<string, unknown>>(
             getConfigPath(target),
@@ -323,7 +323,7 @@ import type { VSCodeConfig } from "./vscode";
 
       describe("list", () => {
         test("should return servers that are not managed by director if includeUnmanaged is true", async () => {
-          const installer = createTestInstaller(target);
+          const installer = createTestClient(target);
           await installer.install(createInstallable());
           expect(await installer.list()).toHaveLength(1);
           expect(await installer.list({ includeUnmanaged: true })).toHaveLength(
@@ -331,7 +331,7 @@ import type { VSCodeConfig } from "./vscode";
           );
         });
         test("should return the list of servers", async () => {
-          const installer = createTestInstaller(target);
+          const installer = createTestClient(target);
           const installable = createInstallable();
           await installer.install(installable);
 
@@ -339,7 +339,7 @@ import type { VSCodeConfig } from "./vscode";
         });
 
         test("should not include the internal name prefix", async () => {
-          const installer = createTestInstaller(target);
+          const installer = createTestClient(target);
           const installable = createInstallable();
           await installer.install(installable);
 

@@ -3,7 +3,7 @@ import { afterAll, beforeEach, describe, expect, test } from "vitest";
 import { ClientNames } from ".";
 import {
   createConfigFile,
-  createTestInstaller,
+  createTestClient,
   deleteConfigFile,
 } from "./test/fixtures";
 
@@ -24,7 +24,7 @@ describe(`claude-code config`, () => {
     });
 
     test("should initialize the config if it is missing the mcpServers", async () => {
-      const installer = createTestInstaller(ClientNames.ClaudeCode);
+      const installer = createTestClient(ClientNames.ClaudeCode);
       expect(await readJSONFile(installer.configPath)).toEqual({
         foo: "bar",
       });

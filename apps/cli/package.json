@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "@director.run/gateway": "workspace:*",
+    "@director.run/client-configurator": "workspace:*",
     "@director.run/mcp": "workspace:*",
     "@director.run/registry": "workspace:*",
     "@director.run/utilities": "workspace:*",

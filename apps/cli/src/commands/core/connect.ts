@@ -1,8 +1,4 @@
 import {
-  ALL_CLIENT_NAMES,
-  getClient,
-} from "@director.run/client-configurator/index";
-import {
   getSSEPathForProxy,
   getStreamablePathForProxy,
 } from "@director.run/gateway/helpers";
@@ -24,7 +20,6 @@ export function registerConnectCommand(program: DirectorCommand) {
       makeOption({
         flags: "-t,--target <target>",
         description: "target client",
-        choices: ALL_CLIENT_NAMES as unknown as string[],
       }),
     )
     .action(
@@ -32,22 +27,11 @@ export function registerConnectCommand(program: DirectorCommand) {
         async (proxyId: string, options: { target: string }) => {
           if (options.target) {
             const proxy = await gatewayClient.store.get.query({ proxyId });
-            const installer = await getClient(options.target);
-            const result = await installer.install({
-              name: proxy.id,
-              sseURL: joinURL(
-                getGatewayBaseUrl(),
-                getSSEPathForProxy(proxy.id),
-              ),
-              streamableURL: joinURL(
-                getGatewayBaseUrl(),
-                getStreamablePathForProxy(proxy.id),
-              ),
+            await gatewayClient.clients.install.mutate({
+              clientId: options.target,
+              workspaceId: proxy.id,
+              baseUrl: getGatewayBaseUrl(),
             });
-
-            if (result.requiresRestart) {
-              await installer.restart();
-            }
           } else {
             console.log();
             console.log(blue("--------------------------------"));

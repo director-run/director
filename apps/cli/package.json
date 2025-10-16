@@ -33,7 +33,6 @@
     "typescript": "^5"
   },
   "devDependencies": {
-    "@director.run/client-configurator": "workspace:*",
     "@director.run/gateway": "workspace:*",
     "@director.run/mcp": "workspace:*",
     "@director.run/registry": "workspace:*",

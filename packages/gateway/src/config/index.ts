@@ -162,4 +162,4 @@ const configSchema = {
   "clients.claude-code": z.array(z.string()).default([]),
   "clients.cursor": z.array(z.string()).default([]),
   "clients.vscode": z.array(z.string()).default([]),
-};
+} as const satisfies Record<string, z.ZodType>;

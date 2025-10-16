@@ -1,8 +1,8 @@
-import { ClientStore } from "@director.run/client-configurator/client-store";
 import { FakeClient } from "@director.run/client-configurator/test/fake-client";
 import type { AbstractClient } from "@director.run/client-configurator/types";
 import { joinURL } from "@director.run/utilities/url";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { ClientStore } from "../..//client-store";
 import { getSSEPathForProxy, getStreamablePathForProxy } from "../../helpers";
 import { makeTestConfig } from "../../test/config";
 import { WorkspaceStore } from "../../workspaces/workspace-store";

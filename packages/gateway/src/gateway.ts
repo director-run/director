@@ -1,5 +1,4 @@
 import { Server } from "node:http";
-import { ClientStore } from "@director.run/client-configurator/client-store";
 import { createOauthCallbackRouter } from "@director.run/mcp/oauth/oauth-callback-router";
 import { isDevelopment } from "@director.run/utilities/env";
 import { getLogger } from "@director.run/utilities/logger";
@@ -12,6 +11,7 @@ import { spaMiddleware } from "@director.run/utilities/middleware/spa";
 import { Telemetry } from "@director.run/utilities/telemetry";
 import cors from "cors";
 import express from "express";
+import { ClientStore } from "./client-store";
 import { Config } from "./config";
 import { createSSERouter } from "./routers/sse";
 import { createStreamableRouter } from "./routers/streamable";

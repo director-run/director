@@ -1,7 +1,7 @@
-import { ClientStore } from "@director.run/client-configurator/client-store";
 import { t } from "@director.run/utilities/trpc";
 import { joinURL } from "@director.run/utilities/url";
 import { z } from "zod";
+import { ClientStore } from "../../client-store";
 import { getSSEPathForProxy, getStreamablePathForProxy } from "../../helpers";
 import type { WorkspaceStore } from "../../workspaces/workspace-store";
 

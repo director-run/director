@@ -1,6 +1,6 @@
-import type { ClientStore } from "@director.run/client-configurator/client-store";
 import { t } from "@director.run/utilities/trpc";
 import * as trpcExpress from "@trpc/server/adapters/express";
+import type { ClientStore } from "../../client-store";
 import { getStatus } from "../../status";
 import { WorkspaceStore } from "../../workspaces/workspace-store";
 import { createClientRouter } from "./client-router";

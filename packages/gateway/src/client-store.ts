@@ -1,9 +1,9 @@
+import { ClaudeInstaller } from "@director.run/client-configurator/claude";
+import { ClaudeCodeInstaller } from "@director.run/client-configurator/claude-code";
+import { CursorInstaller } from "@director.run/client-configurator/cursor";
+import type { AbstractClient } from "@director.run/client-configurator/types";
+import { VSCodeInstaller } from "@director.run/client-configurator/vscode";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
-import { ClaudeInstaller } from "./claude";
-import { ClaudeCodeInstaller } from "./claude-code";
-import { CursorInstaller } from "./cursor";
-import type { AbstractClient } from "./types";
-import { VSCodeInstaller } from "./vscode";
 
 export class ClientStore {
   public async getClientsByWorkspace(workspaceId: string) {

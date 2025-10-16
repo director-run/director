@@ -1,4 +1,4 @@
-import { ClientStore } from "@director.run/client-configurator/client-store";
+import { ClientStore } from "@director.run/gateway/client-store";
 import { getStatus } from "@director.run/gateway/status";
 import { green, red, whiteBold } from "@director.run/utilities/cli/colors";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";

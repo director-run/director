@@ -1,6 +1,7 @@
 import {
   getAllClientsAsPlainObject,
   getClient,
+  resetAllClients,
 } from "@director.run/client-configurator/index";
 import { t } from "@director.run/utilities/trpc";
 import { joinURL } from "@director.run/utilities/url";
@@ -51,5 +52,8 @@ export function createClientRouter({
           await installer.restart();
         }
       }),
+    resetAll: t.procedure.mutation(async () => {
+      await resetAllClients();
+    }),
   });
 }

@@ -1,3 +1,4 @@
+import { ClientStore } from "@director.run/client-configurator/client-store";
 import { getStatus } from "@director.run/gateway/status";
 import { green, red, whiteBold } from "@director.run/utilities/cli/colors";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
@@ -30,6 +31,7 @@ async function checkPrerequisites() {
   const spinner = loader();
   spinner.start("checking prerequisites...");
   const status = await getStatus(cliPackage.version);
+  const clientStore = new ClientStore();
   spinner.stop();
 
   const lines = [];
@@ -70,18 +72,20 @@ async function checkPrerequisites() {
   );
   lines.push("");
 
-  for (const client of status.clients) {
+  for (const client of clientStore.all()) {
     lines.push(
       dependecyStatus({
         name: client.name,
-        installed: client.installed,
+        installed: await client.isClientPresent(),
       }),
     );
   }
 
-  const countInstalledClients = status.clients.filter(
-    (client) => client.installed,
-  ).length;
+  const countInstalledClients = (
+    await Promise.all(
+      clientStore.all().map(async (client) => await client.isClientPresent()),
+    )
+  ).filter((installed) => installed).length;
 
   if (countInstalledClients === 0) {
     problems.push(

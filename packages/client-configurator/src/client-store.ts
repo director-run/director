@@ -6,32 +6,19 @@ import type { AbstractClient } from "./types";
 import { VSCodeInstaller } from "./vscode";
 
 export class ClientStore {
-  //   constructor(config: Config) {
-  //     this.config = config;
-  //   }
-
-  //    function getClient(
-  //     target: ClientNames,
-  //     params: {
-  //       configPath?: string;
-  //     } = {},
-  //   ): AbstractClient<unknown> {
-  //     switch (target) {
-  //       case "claude":
-  //         return new ClaudeInstaller(params);
-  //       case "cursor":
-  //         return new CursorInstaller(params);
-  //       case "vscode":
-  //         return new VSCodeInstaller(params);
-  //       case "claude-code":
-  //         return new ClaudeCodeInstaller(params);
-  //       default:
-  //         throw new AppError(
-  //           ErrorCode.BAD_REQUEST,
-  //           `Client ${target} is not supported`,
-  //         );
-  //     }
-  //   }}
+  public async getClientsByWorkspace(workspaceId: string) {
+    const clients: AbstractClient<unknown>[] = [];
+    for (const client of this.all()) {
+      if (!(await client.isClientPresent())) {
+        continue;
+      }
+      const installed = await client.list();
+      if (installed.some((installable) => installable.name === workspaceId)) {
+        clients.push(client);
+      }
+    }
+    return clients;
+  }
 
   public get(name: string): AbstractClient<unknown> {
     const clients = this.all();

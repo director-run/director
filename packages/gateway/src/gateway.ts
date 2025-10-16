@@ -1,4 +1,5 @@
 import { Server } from "node:http";
+import { ClientStore } from "@director.run/client-configurator/client-store";
 import { createOauthCallbackRouter } from "@director.run/mcp/oauth/oauth-callback-router";
 import { isDevelopment } from "@director.run/utilities/env";
 import { getLogger } from "@director.run/utilities/logger";
@@ -29,6 +30,8 @@ export class Gateway {
   private telemetry?: Telemetry;
   private studioAssetsPath?: string;
   private baseUrl: string;
+  public readonly clientStore: ClientStore;
+
   public get port() {
     return this.config.get("server.port") as number;
   }
@@ -39,12 +42,15 @@ export class Gateway {
     telemetry?: Telemetry;
     studioAssetsPath?: string;
     baseUrl: string;
+    clientStore: ClientStore;
   }) {
     this.workspaceStore = attribs.workspaceStore;
     this.config = attribs.config;
     this.telemetry = attribs.telemetry;
     this.studioAssetsPath = attribs.studioAssetsPath;
     this.baseUrl = attribs.baseUrl;
+    this.clientStore = attribs.clientStore;
+
     this.app = express();
 
     this.app.use(
@@ -129,7 +135,10 @@ export class Gateway {
 
     this.app.use(
       "/trpc",
-      createTRPCExpressMiddleware({ workspaceStore: this.workspaceStore }),
+      createTRPCExpressMiddleware({
+        workspaceStore: this.workspaceStore,
+        clientStore: this.clientStore,
+      }),
     );
     this.app.get("/", (_, res, next) => {
       if (this.studioAssetsPath) {
@@ -152,7 +161,7 @@ export class Gateway {
     successCallback?: () => void,
   ) {
     logger.info(`starting director gateway`);
-
+    const clientStore = new ClientStore();
     const workspaceStore = await WorkspaceStore.create({
       config: attribs.config,
       telemetry: attribs.telemetry,
@@ -169,6 +178,17 @@ export class Gateway {
               storage: "memory",
               baseCallbackUrl: attribs.baseUrl,
             },
+      onWorkspaceListChange: async (proxyId: string) => {
+        logger.debug({ message: `workspace list changed`, proxyId });
+
+        const clients = await clientStore.getClientsByWorkspace(proxyId);
+        for (const client of clients) {
+          if (client.getCapabilities().requiresRestartOnUpdate) {
+            logger.debug({ message: `restarting ${client.name}` });
+            await client.restart();
+          }
+        }
+      },
     });
 
     attribs.telemetry?.trackEvent("gateway_start");
@@ -179,6 +199,7 @@ export class Gateway {
       telemetry: attribs.telemetry,
       studioAssetsPath: attribs.studioAssetsPath,
       baseUrl: attribs.baseUrl,
+      clientStore,
     });
 
     await gateway.start(successCallback);

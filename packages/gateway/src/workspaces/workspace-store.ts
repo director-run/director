@@ -1,4 +1,3 @@
-import { getClientsByWorkspace } from "@director.run/client-configurator/index";
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import {
   OAuthProviderFactory,
@@ -21,31 +20,37 @@ export class WorkspaceStore {
   private config: Config;
   private telemetry: Telemetry;
   private _oauth?: OAuthProviderFactoryParams;
+  private _onWorkspaceListChange?: (proxyId: string) => Promise<void>;
 
   private constructor(params: {
     config: Config;
     telemetry?: Telemetry;
     oauth?: OAuthProviderFactoryParams;
+    onWorkspaceListChange?: (proxyId: string) => Promise<void>;
   }) {
     this.config = params.config;
     this.telemetry = params.telemetry || Telemetry.noTelemetry();
     this._oauth = params.oauth;
+    this._onWorkspaceListChange = params.onWorkspaceListChange;
   }
 
   public static async create({
     config,
     telemetry,
     oauth,
+    onWorkspaceListChange,
   }: {
     config: Config;
     telemetry?: Telemetry;
     oauth?: OAuthProviderFactoryParams;
+    onWorkspaceListChange?: (proxyId: string) => Promise<void>;
   }): Promise<WorkspaceStore> {
     logger.debug("initializing WorkspaceStore");
     const store = new WorkspaceStore({
       config,
       telemetry,
       oauth,
+      onWorkspaceListChange,
     });
     await store.initialize();
     logger.debug("initialization complete");
@@ -167,20 +172,11 @@ export class WorkspaceStore {
     });
 
     this.workspaces.set(workspace.id, workspace);
-    workspace.setListChangeListner(this.onWorkspaceListChange);
+
+    if (this._onWorkspaceListChange) {
+      workspace.setListChangeListner(this._onWorkspaceListChange);
+    }
 
     return workspace;
   }
-
-  private onWorkspaceListChange = async (proxyId: string) => {
-    logger.debug({ message: `workspace list changed`, proxyId });
-
-    const clients = await getClientsByWorkspace(proxyId);
-    for (const client of clients) {
-      if (client.getCapabilities().requiresRestartOnUpdate) {
-        logger.debug({ message: `restarting ${client.name}` });
-        await client.restart();
-      }
-    }
-  };
 }

@@ -126,8 +126,7 @@ export class FakeClient extends AbstractClient<Record<string, InMemoryEntry>> {
   }
 
   public reset(): Promise<InstallerResult> {
-    const hadEntries = this.store.size > 0;
     this.store.clear();
-    return Promise.resolve({ requiresRestart: false && hadEntries });
+    return Promise.resolve({ requiresRestart: false });
   }
 }

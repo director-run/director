@@ -4,6 +4,7 @@ import { getLogger } from "@director.run/utilities/logger";
 import { errorRequestHandler } from "@director.run/utilities/middleware/index";
 import { notFoundHandler } from "@director.run/utilities/middleware/index";
 import { logRequests } from "@director.run/utilities/middleware/index";
+import { logTRPCRequest } from "@director.run/utilities/trpc";
 import cors from "cors";
 import express, { type Express } from "express";
 import { type Store, createStore } from "./db/store";
@@ -40,6 +41,7 @@ export class Registry {
 
     app.use(cors());
     app.use(logRequests());
+    app.use(logTRPCRequest);
     app.use("/public", express.static(path.join(__dirname, "../", "public")));
     app.use(express.json());
     app.use("/trpc", createTRPCExpressMiddleware({ store }));

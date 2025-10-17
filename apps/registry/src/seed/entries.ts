@@ -17,6 +17,20 @@ import { type EntryCreateParams } from "../db/schema";
 // Please test it with bin/test-entry.ts before merging to main
 export const entries: EntryCreateParams[] = [
   {
+    name: "sentry",
+    title: "Sentry",
+    description:
+      "Enable secure connectivity between Sentry issues and debugging data, and LLM clients.",
+    isOfficial: true,
+    icon: "https://registry.director.run/sentry.svg",
+    homepage: "https://github.com/getsentry/sentry-mcp/",
+    transport: {
+      type: "http",
+      url: "https://mcp.sentry.dev/mcp",
+    },
+    parameters: [],
+  },
+  {
     name: "github",
     title: "GitHub",
     description:

@@ -3,7 +3,6 @@ import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
 import { writeJSONFile } from "@director.run/utilities/json";
 import { os, App } from "@director.run/utilities/os/index";
-import { sleep } from "@director.run/utilities/sleep";
 import {
   AbstractClient,
   type Installable,
@@ -181,7 +180,7 @@ export class CursorInstaller extends AbstractClient<CursorConfig> {
     this.logger.info(`writing config to ${this.configPath}`);
     await writeJSONFile(this.configPath, newConfig);
     // wait a second for changes in cursor to take effect
-    await sleep(1000);
+    // await sleep(1000);
     this.config = newConfig;
   }
   public async createConfig() {

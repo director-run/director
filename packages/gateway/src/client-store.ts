@@ -96,9 +96,11 @@ export class ClientStore {
     ];
   }
 
-  public async resetAll({
-    restartIfNeeded = true,
-  }: { restartIfNeeded?: boolean }): Promise<void> {
+  public async resetAll(
+    { restartIfNeeded }: { restartIfNeeded: boolean } = {
+      restartIfNeeded: true,
+    },
+  ): Promise<void> {
     for (const client of this.all()) {
       const result = await client.reset();
       if (result.requiresRestart && restartIfNeeded) {

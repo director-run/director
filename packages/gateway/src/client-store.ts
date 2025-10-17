@@ -74,4 +74,14 @@ export class ClientStore {
       }
     }
   }
+
+  public async handleWorkspaceRemove(workspaceId: string) {
+    const clients = await this.getClientsByWorkspace(workspaceId);
+    for (const client of clients) {
+      const result = await client.uninstall(workspaceId);
+      if (result.requiresRestart) {
+        await client.restart();
+      }
+    }
+  }
 }

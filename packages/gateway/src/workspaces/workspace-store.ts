@@ -21,17 +21,20 @@ export class WorkspaceStore {
   private telemetry: Telemetry;
   private _oauth?: OAuthProviderFactoryParams;
   private _onWorkspaceListChange?: (workspaceId: string) => Promise<void>;
+  private _onWorkspaceRemove?: (workspaceId: string) => Promise<void>;
 
   private constructor(params: {
     config: Config;
     telemetry?: Telemetry;
     oauth?: OAuthProviderFactoryParams;
     onWorkspaceListChange?: (workspaceId: string) => Promise<void>;
+    onWorkspaceRemove?: (workspaceId: string) => Promise<void>;
   }) {
     this.config = params.config;
     this.telemetry = params.telemetry || Telemetry.noTelemetry();
     this._oauth = params.oauth;
     this._onWorkspaceListChange = params.onWorkspaceListChange;
+    this._onWorkspaceRemove = params.onWorkspaceRemove;
   }
 
   public static async create({
@@ -39,11 +42,13 @@ export class WorkspaceStore {
     telemetry,
     oauth,
     onWorkspaceListChange,
+    onWorkspaceRemove,
   }: {
     config: Config;
     telemetry?: Telemetry;
     oauth?: OAuthProviderFactoryParams;
     onWorkspaceListChange?: (proxyId: string) => Promise<void>;
+    onWorkspaceRemove?: (workspaceId: string) => Promise<void>;
   }): Promise<WorkspaceStore> {
     logger.debug("initializing WorkspaceStore");
     const store = new WorkspaceStore({
@@ -51,6 +56,7 @@ export class WorkspaceStore {
       telemetry,
       oauth,
       onWorkspaceListChange,
+      onWorkspaceRemove,
     });
     await store.initialize();
     logger.debug("initialization complete");
@@ -95,6 +101,8 @@ export class WorkspaceStore {
     await proxy.close();
     await this.config.workspaces.remove(proxyId);
     this.workspaces.delete(proxyId);
+
+    await this._onWorkspaceRemove?.(proxyId);
     logger.info(`successfully deleted proxy server configuration: ${proxyId}`);
   }
 

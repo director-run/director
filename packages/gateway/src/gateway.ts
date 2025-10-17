@@ -183,6 +183,9 @@ export class Gateway {
       onWorkspaceListChange: async (workspaceId: string) => {
         await clientStore.handleWorkspaceListChange(workspaceId);
       },
+      onWorkspaceRemove: async (workspaceId: string) => {
+        await clientStore.handleWorkspaceRemove(workspaceId);
+      },
     });
 
     attribs.telemetry?.trackEvent("gateway_start");

@@ -1,8 +1,7 @@
 import { t } from "@director.run/utilities/trpc";
-import { joinURL } from "@director.run/utilities/url";
 import { z } from "zod";
 import { ClientStore } from "../../client-store";
-import { getSSEPathForProxy, getStreamablePathForProxy } from "../../helpers";
+import {} from "../../helpers";
 import type { WorkspaceStore } from "../../workspaces/workspace-store";
 
 export function createClientRouter({
@@ -20,19 +19,11 @@ export function createClientRouter({
         }),
       )
       .mutation(async ({ input }) => {
-        const proxy = workspaceStore.get(input.workspaceId);
-        const installer = clientStore.get(input.clientId);
-        const result = await installer.install({
-          name: proxy.id,
-          sseURL: joinURL(input.baseUrl, getSSEPathForProxy(proxy.id)),
-          streamableURL: joinURL(
-            input.baseUrl,
-            getStreamablePathForProxy(proxy.id),
-          ),
+        await clientStore.install({
+          clientId: input.clientId,
+          workspace: workspaceStore.get(input.workspaceId),
+          baseUrl: input.baseUrl,
         });
-        if (result.requiresRestart) {
-          await installer.restart();
-        }
       }),
     uninstall: t.procedure
       .input(
@@ -42,12 +33,8 @@ export function createClientRouter({
         }),
       )
       .mutation(async ({ input }) => {
-        const proxy = workspaceStore.get(input.workspaceId);
-        const installer = clientStore.get(input.clientId);
-        const result = await installer.uninstall(proxy.id);
-        if (result.requiresRestart) {
-          await installer.restart();
-        }
+        const workspace = workspaceStore.get(input.workspaceId);
+        await clientStore.uninstall(input.clientId, workspace.id);
       }),
     resetAll: t.procedure.mutation(async () => {
       await clientStore.resetAll();

@@ -5,7 +5,10 @@ import type { AbstractClient } from "@director.run/client-configurator/types";
 import { VSCodeInstaller } from "@director.run/client-configurator/vscode";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
+import { joinURL } from "@director.run/utilities/url";
 import type { Config } from "./config";
+import { getSSEPathForProxy, getStreamablePathForProxy } from "./helpers";
+import type { Workspace } from "./workspaces/workspace";
 
 const logger = getLogger("ClientStore");
 
@@ -58,6 +61,36 @@ export class ClientStore {
       if (result.requiresRestart) {
         await client.restart();
       }
+    }
+  }
+
+  public async install({
+    clientId,
+    workspace,
+    baseUrl,
+  }: {
+    clientId: string;
+    workspace: Workspace;
+    baseUrl: string;
+  }): Promise<void> {
+    const client = this.get(clientId);
+
+    const result = await client.install({
+      name: workspace.id,
+      sseURL: joinURL(baseUrl, getSSEPathForProxy(workspace.id)),
+      streamableURL: joinURL(baseUrl, getStreamablePathForProxy(workspace.id)),
+    });
+
+    if (result.requiresRestart) {
+      await client.restart();
+    }
+  }
+
+  public async uninstall(clientId: string, workspaceId: string): Promise<void> {
+    const client = this.get(clientId);
+    const result = await client.uninstall(workspaceId);
+    if (result.requiresRestart) {
+      await client.restart();
     }
   }
 

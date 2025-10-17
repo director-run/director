@@ -17,6 +17,33 @@ import { type EntryCreateParams } from "../db/schema";
 // Please test it with bin/test-entry.ts before merging to main
 export const entries: EntryCreateParams[] = [
   {
+    name: "postgres",
+    title: "Postgres",
+    description:
+      "A Postgres MCP server with index tuning, explain plans, health checks, and safe sql execution.",
+    isOfficial: false,
+    icon: "https://registry.director.run/postgres.svg",
+    homepage: "https://github.com/crystaldba/postgres-mcp",
+    transport: {
+      type: "stdio",
+      command: "uvx",
+      args: ["run", "postgres-mcp", "--access-mode=unrestricted"],
+      env: {
+        DATABASE_URI: "<database-uri>",
+      },
+    },
+    parameters: [
+      {
+        name: "database-uri",
+        description:
+          "Postgres database connection URI [see here](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING-URIS)",
+        type: "string",
+        password: true,
+        required: true,
+      },
+    ],
+  },
+  {
     name: "sentry",
     title: "Sentry",
     description:

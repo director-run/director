@@ -19,6 +19,7 @@ import type {
   RegistryEntry,
   STDIOTransport,
 } from "../../schemas";
+import { entries } from "../../seed/entries";
 import { makeTestEntries, makeTestEntry } from "../../test/fixtures/entries";
 
 describe("Entries Router", () => {
@@ -60,9 +61,9 @@ describe("Entries Router", () => {
         await authenticatedClient.entries.populate.mutate({});
         const stats = await authenticatedClient.entries.stats.query({});
 
-        expect(stats).toHaveProperty("total", 14);
+        expect(stats).toHaveProperty("total", entries.length);
         expect(stats).toHaveProperty("draft", 0);
-        expect(stats).toHaveProperty("published", 14);
+        expect(stats).toHaveProperty("published", entries.length);
       });
     });
 

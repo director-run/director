@@ -23,6 +23,18 @@ export class EntryStore {
     return entry[0];
   }
 
+  public async getIconsAndDescriptionsForEntries(names: string[]) {
+    const entries = await this.db.db
+      .select({
+        name: entriesTable.name,
+        icon: entriesTable.icon,
+        description: entriesTable.description,
+      })
+      .from(entriesTable)
+      .where(inArray(entriesTable.name, names));
+    return entries;
+  }
+
   public async deleteAllEntries(): Promise<void> {
     await this.db.db.delete(entriesTable);
   }

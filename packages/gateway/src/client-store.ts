@@ -102,6 +102,9 @@ export class ClientStore {
     },
   ): Promise<void> {
     for (const client of this.all()) {
+      if (!(await client.isClientPresent())) {
+        continue;
+      }
       const result = await client.reset();
       if (result.requiresRestart && restartIfNeeded) {
         await client.restart();
@@ -154,6 +157,9 @@ export class ClientStore {
   public async handleWorkspaceListChange(workspaceId: string) {
     const clients = await this.getClientsByWorkspace(workspaceId);
     for (const client of clients) {
+      if (!(await client.isClientPresent())) {
+        continue;
+      }
       if (client.getCapabilities().requiresRestartOnUpdate) {
         logger.debug({ message: `restarting ${client.name}` });
         await client.restart();
@@ -164,6 +170,9 @@ export class ClientStore {
   public async handleWorkspaceRemove(workspaceId: string) {
     const clients = await this.getClientsByWorkspace(workspaceId);
     for (const client of clients) {
+      if (!(await client.isClientPresent())) {
+        continue;
+      }
       const result = await client.uninstall(workspaceId);
       if (result.requiresRestart) {
         await client.restart();

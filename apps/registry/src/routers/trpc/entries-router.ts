@@ -107,6 +107,12 @@ export function createEntriesRouter({ store }: { store: Store }) {
       .input(z.object({ name: z.string() }))
       .query(({ input }) => store.entries.getEntryByName(input.name)),
 
+    getIconsAndDescriptionsForEntries: t.procedure
+      .input(z.object({ names: z.array(z.string()) }))
+      .query(({ input }) =>
+        store.entries.getIconsAndDescriptionsForEntries(input.names),
+      ),
+
     getTransportForEntry: t.procedure
       .input(
         z.object({

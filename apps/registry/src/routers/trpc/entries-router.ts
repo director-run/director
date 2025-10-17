@@ -107,6 +107,12 @@ export function createEntriesRouter({ store }: { store: Store }) {
       .input(z.object({ name: z.string() }))
       .query(({ input }) => store.entries.getEntryByName(input.name)),
 
+    getIconsAndDescriptionsForEntries: t.procedure
+      .input(z.object({ names: z.array(z.string()) }))
+      .query(({ input }) =>
+        store.entries.getIconsAndDescriptionsForEntries(input.names),
+      ),
+
     getTransportForEntry: t.procedure
       .input(
         z.object({
@@ -144,11 +150,12 @@ export function createEntriesRouter({ store }: { store: Store }) {
         });
       }),
 
-    populate: protectedProcedure
-      .input(z.object({}))
-      .mutation(() =>
-        store.entries.addEntries(entries, { state: "published" }),
-      ),
+    populate: protectedProcedure.input(z.object({})).mutation(() =>
+      store.entries.addEntries(entries, {
+        state: "published",
+        ignoreDuplicates: true,
+      }),
+    ),
 
     enrich: protectedProcedure.input(z.object({})).mutation(async () => {
       await enrichEntries(store);

@@ -132,6 +132,97 @@ describe("queries", () => {
     });
   });
 
+  describe("getIconsAndDescriptionsForEntries", () => {
+    afterEach(async () => {
+      await store.entries.deleteAllEntries();
+    });
+
+    it("should return icons and descriptions for existing entries", async () => {
+      const entries = [
+        makeTestEntry({
+          name: "test-server-1",
+          description: "Test server 1",
+          icon: "test-icon-1.svg",
+        }),
+        makeTestEntry({
+          name: "test-server-2",
+          description: "Test server 2",
+          icon: "test-icon-2.svg",
+        }),
+        makeTestEntry({
+          name: "test-server-3",
+          description: "Test server 3",
+          icon: "test-icon-3.svg",
+        }),
+      ];
+      await store.entries.addEntries(entries, { ignoreDuplicates: false });
+
+      const result = await store.entries.getIconsAndDescriptionsForEntries([
+        "test-server-1",
+        "test-server-2",
+        "test-server-3",
+      ]);
+
+      expect(result).toHaveLength(3);
+      expect(result).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            name: "test-server-1",
+            description: "Test server 1",
+            icon: "test-icon-1.svg",
+          }),
+          expect.objectContaining({
+            name: "test-server-2",
+            description: "Test server 2",
+            icon: "test-icon-2.svg",
+          }),
+          expect.objectContaining({
+            name: "test-server-3",
+            description: "Test server 3",
+            icon: "test-icon-3.svg",
+          }),
+        ]),
+      );
+    });
+
+    it("should return only existing entries when some names don't exist", async () => {
+      const entries = [
+        makeTestEntry({
+          name: "existing-server",
+          description: "Existing server",
+          icon: "existing-icon.svg",
+        }),
+      ];
+      await store.entries.addEntries(entries, { ignoreDuplicates: false });
+
+      const result = await store.entries.getIconsAndDescriptionsForEntries([
+        "existing-server",
+        "non-existent-server",
+      ]);
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toEqual({
+        name: "existing-server",
+        description: "Existing server",
+        icon: "existing-icon.svg",
+      });
+    });
+
+    it("should return empty array when no entries exist", async () => {
+      const result = await store.entries.getIconsAndDescriptionsForEntries([
+        "non-existent-server-1",
+        "non-existent-server-2",
+      ]);
+
+      expect(result).toHaveLength(0);
+    });
+
+    it("should return empty array when empty names array is provided", async () => {
+      const result = await store.entries.getIconsAndDescriptionsForEntries([]);
+      expect(result).toHaveLength(0);
+    });
+  });
+
   describe("paginateEntries", () => {
     afterEach(async () => {
       await store.entries.deleteAllEntries();

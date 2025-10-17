@@ -4,8 +4,18 @@ import { CursorInstaller } from "@director.run/client-configurator/cursor";
 import type { AbstractClient } from "@director.run/client-configurator/types";
 import { VSCodeInstaller } from "@director.run/client-configurator/vscode";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
+import { getLogger } from "@director.run/utilities/logger";
+import type { Config } from "./config";
+
+const logger = getLogger("ClientStore");
 
 export class ClientStore {
+  private _config: Config;
+
+  public constructor(params: { config: Config }) {
+    this._config = params.config;
+  }
+
   public async getClientsByWorkspace(workspaceId: string) {
     const clients: AbstractClient<unknown>[] = [];
     for (const client of this.all()) {
@@ -53,5 +63,20 @@ export class ClientStore {
 
   public async toPlainObject() {
     return await Promise.all(this.all().map((client) => client.getStatus()));
+  }
+
+  public async handleWorkspaceChange(workspaceId: string) {
+    logger.debug({
+      message: `workspace changed`,
+      workspaceId,
+    });
+
+    const clients = await this.getClientsByWorkspace(workspaceId);
+    for (const client of clients) {
+      if (client.getCapabilities().requiresRestartOnUpdate) {
+        logger.debug({ message: `restarting ${client.name}` });
+        await client.restart();
+      }
+    }
   }
 }

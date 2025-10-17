@@ -3,6 +3,7 @@ import type { AbstractClient } from "@director.run/client-configurator/types";
 import { joinURL } from "@director.run/utilities/url";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { ClientStore } from "../..//client-store";
+import type { Config } from "../../config";
 import { getSSEPathForProxy, getStreamablePathForProxy } from "../../helpers";
 import { makeTestConfig } from "../../test/config";
 import { WorkspaceStore } from "../../workspaces/workspace-store";
@@ -11,8 +12,8 @@ import { createAppRouter } from "./index";
 class TestClientStore extends ClientStore {
   private clients: AbstractClient<unknown>[];
 
-  constructor(clients: AbstractClient<unknown>[]) {
-    super();
+  constructor(config: Config, clients: AbstractClient<unknown>[]) {
+    super({ config });
     this.clients = clients;
   }
 
@@ -44,9 +45,8 @@ describe("Client Router", () => {
     });
   });
 
-  beforeEach(() => {
-    // fresh fake clients for each test
-    clientStore = new TestClientStore([
+  beforeEach(async () => {
+    clientStore = new TestClientStore(await makeTestConfig(), [
       new FakeClient({ name: "claude", installables: [] }),
       new FakeClient({ name: "cursor", installables: [] }),
       new FakeClient({ name: "vscode", installables: [] }),

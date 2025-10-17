@@ -1,5 +1,3 @@
-import { getConfigurator } from "@director.run/client-configurator/index";
-import { ConfiguratorTarget } from "@director.run/client-configurator/index";
 import { proxyHTTPToStdio } from "@director.run/mcp/transport";
 import {
   DirectorCommand,
@@ -93,18 +91,16 @@ export function registerCoreCommands(program: DirectorCommand): void {
       makeOption({
         flags: "-t,--target <target>",
         description: "target client",
-        choices: Object.values(ConfiguratorTarget),
       }).makeOptionMandatory(),
     )
     .action(
       actionWithErrorHandler(
-        async (proxyId: string, options: { target: ConfiguratorTarget }) => {
+        async (proxyId: string, options: { target: string }) => {
           const proxy = await gatewayClient.store.get.query({ proxyId });
-          const installer = await getConfigurator(options.target);
-          const result = await installer.uninstall(proxy.id);
-          if (result.requiresRestart) {
-            await installer.restart();
-          }
+          await gatewayClient.clients.uninstall.mutate({
+            clientId: options.target,
+            workspaceId: proxy.id,
+          });
         },
       ),
     );

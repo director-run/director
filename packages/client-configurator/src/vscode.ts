@@ -6,12 +6,12 @@ import { AppError } from "@director.run/utilities/error";
 import { writeJSONFile } from "@director.run/utilities/json";
 import { os, App } from "@director.run/utilities/os/index";
 import {
-  AbstractConfigurator,
+  AbstractClient,
   type Installable,
   type InstallerResult,
 } from "./types";
 
-export class VSCodeInstaller extends AbstractConfigurator<VSCodeConfig> {
+export class VSCodeInstaller extends AbstractClient<VSCodeConfig> {
   public async isClientPresent() {
     return await os.isAppInstalled(App.VSCODE);
   }

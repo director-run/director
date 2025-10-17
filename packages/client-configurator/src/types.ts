@@ -7,7 +7,7 @@ export type InstallerResult = {
   requiresRestart: boolean;
 };
 
-export abstract class AbstractConfigurator<T> {
+export abstract class AbstractClient<T> {
   protected config?: T;
   protected isInitialized;
   protected logger: Logger;

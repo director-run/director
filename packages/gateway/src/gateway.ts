@@ -11,6 +11,7 @@ import { spaMiddleware } from "@director.run/utilities/middleware/spa";
 import { Telemetry } from "@director.run/utilities/telemetry";
 import cors from "cors";
 import express from "express";
+import { ClientStore } from "./client-store";
 import { Config } from "./config";
 import { createSSERouter } from "./routers/sse";
 import { createStreamableRouter } from "./routers/streamable";
@@ -29,6 +30,8 @@ export class Gateway {
   private telemetry?: Telemetry;
   private studioAssetsPath?: string;
   private baseUrl: string;
+  public readonly clientStore: ClientStore;
+
   public get port() {
     return this.config.get("server.port") as number;
   }
@@ -39,12 +42,15 @@ export class Gateway {
     telemetry?: Telemetry;
     studioAssetsPath?: string;
     baseUrl: string;
+    clientStore: ClientStore;
   }) {
     this.workspaceStore = attribs.workspaceStore;
     this.config = attribs.config;
     this.telemetry = attribs.telemetry;
     this.studioAssetsPath = attribs.studioAssetsPath;
     this.baseUrl = attribs.baseUrl;
+    this.clientStore = attribs.clientStore;
+
     this.app = express();
 
     this.app.use(
@@ -129,7 +135,10 @@ export class Gateway {
 
     this.app.use(
       "/trpc",
-      createTRPCExpressMiddleware({ workspaceStore: this.workspaceStore }),
+      createTRPCExpressMiddleware({
+        workspaceStore: this.workspaceStore,
+        clientStore: this.clientStore,
+      }),
     );
     this.app.get("/", (_, res, next) => {
       if (this.studioAssetsPath) {
@@ -152,7 +161,9 @@ export class Gateway {
     successCallback?: () => void,
   ) {
     logger.info(`starting director gateway`);
-
+    const clientStore = new ClientStore({
+      config: attribs.config,
+    });
     const workspaceStore = await WorkspaceStore.create({
       config: attribs.config,
       telemetry: attribs.telemetry,
@@ -169,6 +180,12 @@ export class Gateway {
               storage: "memory",
               baseCallbackUrl: attribs.baseUrl,
             },
+      onWorkspaceListChange: async (workspaceId: string) => {
+        await clientStore.handleWorkspaceListChange(workspaceId);
+      },
+      onWorkspaceRemove: async (workspaceId: string) => {
+        await clientStore.handleWorkspaceRemove(workspaceId);
+      },
     });
 
     attribs.telemetry?.trackEvent("gateway_start");
@@ -179,6 +196,7 @@ export class Gateway {
       telemetry: attribs.telemetry,
       studioAssetsPath: attribs.studioAssetsPath,
       baseUrl: attribs.baseUrl,
+      clientStore,
     });
 
     await gateway.start(successCallback);
@@ -195,6 +213,10 @@ export class Gateway {
   private async start(successCallback?: () => void) {
     this.server = this.app.listen(this.port, () => {
       logger.info(`director gateway running on port ${this.port}`);
+      this.clientStore.enforceClientConfigs({
+        workspaceStore: this.workspaceStore,
+        baseUrl: this.baseUrl,
+      });
       successCallback?.();
     });
   }

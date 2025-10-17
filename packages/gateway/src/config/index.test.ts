@@ -253,6 +253,47 @@ describe("Config", () => {
     });
   });
 
+  const clientKeys = [
+    "clients.claude",
+    "clients.claude-code",
+    "clients.cursor",
+    "clients.vscode",
+  ] as const;
+  clientKeys.forEach((clientKey) => {
+    describe(`clients.${clientKey}`, () => {
+      it("should return the list of clients", async () => {
+        expect(await config.get(clientKey)).toEqual([]);
+      });
+      it("should be able to add a client", async () => {
+        await config.push(clientKey, "test-workspace");
+        expect(await config.get(clientKey)).toEqual(["test-workspace"]);
+      });
+      it("should be push to the list of clients", async () => {
+        await config.push(clientKey, "test-workspace");
+        await config.push(clientKey, "test-workspace2");
+        await config.set(clientKey, []);
+        expect(await config.get(clientKey)).toEqual([]);
+      });
+      it("should be able to remove a client", async () => {
+        await config.push(clientKey, "test-workspace");
+        await config.push(clientKey, "test-workspace2");
+        await config.remove(clientKey, "test-workspace");
+        expect(await config.get(clientKey)).toEqual(["test-workspace2"]);
+      });
+      it("should be able to find a client", async () => {
+        await config.push(clientKey, "test-workspace");
+        await config.push(clientKey, "test-workspace2");
+        expect(await config.find(clientKey, "test-workspace")).toBe(
+          "test-workspace",
+        );
+        expect(await config.find(clientKey, "test-workspace2")).toBe(
+          "test-workspace2",
+        );
+        expect(await config.find(clientKey, "test-workspace3")).toBeUndefined();
+      });
+    });
+  });
+
   describe("purge", () => {
     it("should clear all data from database", async () => {
       // Add some data first

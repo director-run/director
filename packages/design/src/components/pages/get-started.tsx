@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useZodForm } from "../../hooks/use-zod-form";

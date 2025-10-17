@@ -1,15 +1,10 @@
-import {
-  ConfiguratorTarget,
-  getAllClientsAsPlainObject,
-  getConfigurator,
-  resetAllClients,
-} from "@director.run/client-configurator/index";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import {
   actionWithErrorHandler,
   makeTable,
 } from "@director.run/utilities/cli/index";
 import { attributeTable } from "@director.run/utilities/cli/index";
+import { gatewayClient } from "../client";
 
 export function registerClientCommands(program: DirectorCommand): void {
   const command = new DirectorCommand("client").description(
@@ -22,57 +17,55 @@ export function registerClientCommands(program: DirectorCommand): void {
     .debugCommand("get <clientName>")
     .description("get the details of a client")
     .action(
-      actionWithErrorHandler(async (clientName: ConfiguratorTarget) => {
-        const installer = await getConfigurator(clientName);
-        const servers = await installer.list();
-
+      actionWithErrorHandler(async (clientName: string) => {
+        const clients = await gatewayClient.clients.allClients.query();
+        const client = clients.find((c) => c.name === clientName);
+        if (!client) {
+          console.log(`client '${clientName}' not found`);
+          return;
+        }
         console.log(
           attributeTable({
-            name: clientName,
-            workspaces: servers.length
-              ? servers.map((w) => w.name).join(", ")
-              : "--",
-            installed: (await installer.isClientPresent()) ? "yes" : "no",
-            configExists: (await installer.isClientConfigPresent())
-              ? "yes"
-              : "no",
-            configPath: installer.configPath,
+            name: client.name,
+            installed: client.installed,
+            configExists: client.configExists,
+            configPath: client.configPath,
+            workspaces: client.workspaces.map((w) => w.id),
           }),
         );
       }),
     );
 
-  command
-    .debugCommand("restart <clientName>")
-    .description("Restart the MCP client")
-    .action(
-      actionWithErrorHandler(async (clientName: ConfiguratorTarget) => {
-        const installer = await getConfigurator(clientName);
-        const result = await installer.restart();
-        console.log(result);
-      }),
-    );
+  // command
+  //   .debugCommand("restart <clientName>")
+  //   .description("Restart the MCP client")
+  //   .action(
+  //     actionWithErrorHandler(async (_clientName: string) => {
+  //       // No-op: restart is handled by the gateway when needed during install/uninstall
+  //       console.log("restart handled automatically during install/uninstall");
+  //       await Promise.resolve();
+  //     }),
+  //   );
 
-  command
-    .debugCommand("reset <clientName>")
-    .description("Delete all servers from the client config")
-    .action(
-      actionWithErrorHandler(async (clientName: ConfiguratorTarget) => {
-        const installer = await getConfigurator(clientName);
-        const result = await installer.reset();
-        if (result.requiresRestart) {
-          console.log("Requires restart");
-          await installer.restart();
-        }
-      }),
-    );
+  // command
+  //   .debugCommand("reset <clientName>")
+  //   .description("Delete all servers from the client config")
+  //   .action(
+  //     actionWithErrorHandler(async (_clientName: string) => {
+  //       // Not supported via router; use reset-all or connect/disconnect per proxy
+  //       console.log(
+  //         "Reset per-client is not supported via router. Use reset-all instead.",
+  //       );
+  //       await Promise.resolve();
+  //     }),
+  //   );
 
   command
     .debugCommand("reset-all")
     .description("Delete all servers from all clients")
     .action(
       actionWithErrorHandler(async () => {
-        await resetAllClients();
+        await gatewayClient.clients.resetAll.mutate();
       }),
     );
 
@@ -80,10 +73,11 @@ export function registerClientCommands(program: DirectorCommand): void {
     .debugCommand("config <clientName>")
     .description("Open claude config file")
     .action(
-      actionWithErrorHandler(async (clientName: ConfiguratorTarget) => {
-        const installer = await getConfigurator(clientName);
-        const result = await installer.openConfig();
-        console.log(result);
+      actionWithErrorHandler(async (_clientName: string) => {
+        console.log(
+          "Opening client config is not supported via router from CLI.",
+        );
+        await Promise.resolve();
       }),
     );
 
@@ -92,7 +86,7 @@ export function registerClientCommands(program: DirectorCommand): void {
     .description("Show a list of the clients")
     .action(
       actionWithErrorHandler(async () => {
-        const clients = await getAllClientsAsPlainObject();
+        const clients = await gatewayClient.clients.allClients.query();
         const table = makeTable(["name", "installed", "workspaces"]);
         table.push(
           ...clients.map((client) => [

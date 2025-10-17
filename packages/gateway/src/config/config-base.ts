@@ -1,5 +1,5 @@
 import { AppError, ErrorCode } from "@director.run/utilities/error";
-import { get, set } from "lodash";
+import { get, isEqual, isMatch, isObject, set } from "lodash";
 import { z } from "zod";
 import { type ConfigStorage } from "./config-storage";
 
@@ -81,6 +81,164 @@ export class ConfigBase<TSchema extends Record<string, z.ZodType>> {
 
   async purge(): Promise<void> {
     await this.storage.purge();
+  }
+
+  async push<K extends keyof TSchema & string>(
+    key: K,
+    item: unknown,
+  ): Promise<void> {
+    if (!(key in this.schema)) {
+      throw new AppError(
+        ErrorCode.INVALID_ARGUMENT,
+        `Key "${key}" is not allowed`,
+        { key },
+      );
+    }
+
+    const schema = this.schema[key];
+    const arraySchema = this.unwrapArraySchema(schema);
+    if (!arraySchema) {
+      throw new AppError(
+        ErrorCode.INVALID_ARGUMENT,
+        `Key "${key}" is not an array`,
+        { key },
+      );
+    }
+
+    // Validate element against the array's element schema
+    const parsedItem = arraySchema.element.parse(item);
+
+    const currentData = this.storage.getData();
+    const currentArray = get({ ...this.defaults, ...currentData }, key) as
+      | unknown[]
+      | undefined;
+    const nextArray = [...(currentArray ?? []), parsedItem];
+
+    set(currentData, key, nextArray);
+    this.storage.setData(currentData);
+    await this.storage.persist();
+  }
+
+  async remove<K extends keyof TSchema & string>(
+    key: K,
+    selector: unknown,
+  ): Promise<void> {
+    if (!(key in this.schema)) {
+      throw new AppError(
+        ErrorCode.INVALID_ARGUMENT,
+        `Key "${key}" is not allowed`,
+        { key },
+      );
+    }
+
+    const schema = this.schema[key];
+    const arraySchema = this.unwrapArraySchema(schema);
+    if (!arraySchema) {
+      throw new AppError(
+        ErrorCode.INVALID_ARGUMENT,
+        `Key "${key}" is not an array`,
+        { key },
+      );
+    }
+
+    const currentData = this.storage.getData();
+    const currentArray = get({ ...this.defaults, ...currentData }, key) as
+      | unknown[]
+      | undefined;
+    const safeArray = [...(currentArray ?? [])];
+
+    const filtered = safeArray.filter((element) => {
+      // For primitive arrays, remove by deep equality
+      if (!isObject(element) || element === null) {
+        return !isEqual(element, selector);
+      }
+      // For object arrays, remove by lodash isMatch
+      return !isMatch(element, selector as Record<string, unknown>);
+    });
+
+    set(currentData, key, filtered);
+    this.storage.setData(currentData);
+    await this.storage.persist();
+  }
+
+  find<K extends keyof TSchema & string>(
+    key: K,
+    selector: unknown,
+  ): unknown | undefined {
+    if (!(key in this.schema)) {
+      throw new AppError(
+        ErrorCode.INVALID_ARGUMENT,
+        `Key "${key}" is not allowed`,
+        { key },
+      );
+    }
+
+    const schema = this.schema[key];
+    const arraySchema = this.unwrapArraySchema(schema);
+    if (!arraySchema) {
+      throw new AppError(
+        ErrorCode.INVALID_ARGUMENT,
+        `Key "${key}" is not an array`,
+        { key },
+      );
+    }
+
+    const currentData = this.storage.getData();
+    const currentArray = get({ ...this.defaults, ...currentData }, key) as
+      | unknown[]
+      | undefined;
+    const safeArray = [...(currentArray ?? [])];
+
+    const found = safeArray.find((element) => {
+      if (!isObject(element) || element === null) {
+        return isEqual(element, selector);
+      }
+      return isMatch(element, selector as Record<string, unknown>);
+    });
+
+    return found;
+  }
+
+  private unwrapArraySchema(
+    inputSchema: z.ZodTypeAny,
+  ): z.ZodArray<z.ZodTypeAny> | null {
+    // Unwrap defaults, optionals, nullables, effects to get to the underlying array schema
+    // Handle chains like ZodDefault<ZodOptional<ZodArray<...>>>
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      if (inputSchema instanceof z.ZodArray) {
+        return inputSchema;
+      }
+      if (inputSchema instanceof z.ZodDefault) {
+        const def = (
+          inputSchema as unknown as {
+            _def: { innerType: z.ZodTypeAny };
+          }
+        )._def;
+        inputSchema = def.innerType;
+        continue;
+      }
+      if (
+        inputSchema instanceof z.ZodOptional ||
+        inputSchema instanceof z.ZodNullable
+      ) {
+        const def = (
+          inputSchema as unknown as {
+            _def: { innerType: z.ZodTypeAny };
+          }
+        )._def;
+        inputSchema = def.innerType;
+        continue;
+      }
+      if (inputSchema instanceof z.ZodEffects) {
+        const def = (
+          inputSchema as unknown as { _def: { schema: z.ZodTypeAny } }
+        )._def;
+        inputSchema = def.schema;
+        continue;
+      }
+      return null;
+    }
   }
 
   private validate(data: Record<string, unknown>) {

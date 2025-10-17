@@ -1,4 +1,3 @@
-import { resetAllClients } from "@director.run/client-configurator/index";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { gatewayClient } from "../../client";
@@ -12,7 +11,7 @@ export function registerDebugCommands(program: DirectorCommand) {
         console.log("resetting service");
         await gatewayClient.store.purge.mutate();
         console.log("resetting clients");
-        await resetAllClients();
+        await gatewayClient.clients.resetAll.mutate();
       }),
     );
 }

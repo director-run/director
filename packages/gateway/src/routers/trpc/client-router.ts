@@ -1,56 +1,42 @@
-import {
-  ConfiguratorTarget,
-  getAllClientsAsPlainObject,
-  getConfigurator,
-} from "@director.run/client-configurator/index";
 import { t } from "@director.run/utilities/trpc";
-import { joinURL } from "@director.run/utilities/url";
 import { z } from "zod";
-import { getSSEPathForProxy, getStreamablePathForProxy } from "../../helpers";
+import { type ClientId, ClientStore } from "../../client-store";
 import type { WorkspaceStore } from "../../workspaces/workspace-store";
 
 export function createClientRouter({
   workspaceStore,
-}: { workspaceStore: WorkspaceStore }) {
+  clientStore,
+}: { workspaceStore: WorkspaceStore; clientStore: ClientStore }) {
   return t.router({
-    allClients: t.procedure.query(() => getAllClientsAsPlainObject()),
+    allClients: t.procedure.query(() => clientStore.toPlainObject()),
     install: t.procedure
       .input(
         z.object({
-          client: z.nativeEnum(ConfiguratorTarget),
-          proxyId: z.string(),
+          clientId: z.string(),
+          workspaceId: z.string(),
           baseUrl: z.string(),
         }),
       )
       .mutation(async ({ input }) => {
-        const proxy = workspaceStore.get(input.proxyId);
-        const installer = await getConfigurator(input.client);
-        const result = await installer.install({
-          name: proxy.id,
-          sseURL: joinURL(input.baseUrl, getSSEPathForProxy(proxy.id)),
-          streamableURL: joinURL(
-            input.baseUrl,
-            getStreamablePathForProxy(proxy.id),
-          ),
+        await clientStore.install({
+          clientId: input.clientId as ClientId,
+          workspace: workspaceStore.get(input.workspaceId),
+          baseUrl: input.baseUrl,
         });
-        if (result.requiresRestart) {
-          await installer.restart();
-        }
       }),
     uninstall: t.procedure
       .input(
         z.object({
-          client: z.nativeEnum(ConfiguratorTarget),
-          proxyId: z.string(),
+          clientId: z.string(),
+          workspaceId: z.string(),
         }),
       )
       .mutation(async ({ input }) => {
-        const proxy = workspaceStore.get(input.proxyId);
-        const installer = await getConfigurator(input.client);
-        const result = await installer.uninstall(proxy.id);
-        if (result.requiresRestart) {
-          await installer.restart();
-        }
+        const workspace = workspaceStore.get(input.workspaceId);
+        await clientStore.uninstall(input.clientId as ClientId, workspace.id);
       }),
+    resetAll: t.procedure.mutation(async () => {
+      await clientStore.resetAll();
+    }),
   });
 }

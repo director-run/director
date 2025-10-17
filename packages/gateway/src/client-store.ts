@@ -12,6 +12,8 @@ import type { Workspace } from "./workspaces/workspace";
 
 const logger = getLogger("ClientStore");
 
+export type ClientId = "claude" | "claude-code" | "cursor" | "vscode";
+
 export class ClientStore {
   private _config: Config;
 
@@ -69,7 +71,7 @@ export class ClientStore {
     workspace,
     baseUrl,
   }: {
-    clientId: string;
+    clientId: ClientId;
     workspace: Workspace;
     baseUrl: string;
   }): Promise<void> {
@@ -81,14 +83,22 @@ export class ClientStore {
       streamableURL: joinURL(baseUrl, getStreamablePathForProxy(workspace.id)),
     });
 
+    await this._config.push(`clients.${clientId}`, workspace.id);
+
     if (result.requiresRestart) {
       await client.restart();
     }
   }
 
-  public async uninstall(clientId: string, workspaceId: string): Promise<void> {
+  public async uninstall(
+    clientId: ClientId,
+    workspaceId: string,
+  ): Promise<void> {
     const client = this.get(clientId);
     const result = await client.uninstall(workspaceId);
+
+    await this._config.remove(`clients.${clientId}`, workspaceId);
+
     if (result.requiresRestart) {
       await client.restart();
     }

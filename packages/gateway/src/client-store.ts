@@ -9,6 +9,7 @@ import { joinURL } from "@director.run/utilities/url";
 import type { Config } from "./config";
 import { getSSEPathForProxy, getStreamablePathForProxy } from "./helpers";
 import type { Workspace } from "./workspaces/workspace";
+import type { WorkspaceStore } from "./workspaces/workspace-store";
 
 const logger = getLogger("ClientStore");
 
@@ -19,6 +20,39 @@ export class ClientStore {
 
   public constructor(params: { config: Config }) {
     this._config = params.config;
+  }
+
+  public async enforceClientConfigs({
+    workspaceStore,
+    baseUrl,
+  }: {
+    workspaceStore: WorkspaceStore;
+    baseUrl: string;
+  }) {
+    logger.debug({ message: "Enforcing client configs" });
+    for (const client of this.all()) {
+      logger.debug({ message: `Resetting ${client.name}` });
+      await client.reset();
+      const workspaceIds =
+        this._config.get(`clients.${client.name as ClientId}`) ?? [];
+      for (const workspaceId of workspaceIds) {
+        logger.debug({
+          message: `Installing ${workspaceId} on ${client.name}`,
+        });
+        const workspace = workspaceStore.get(workspaceId);
+        const result = await client.install({
+          name: workspace.id,
+          sseURL: joinURL(baseUrl, getSSEPathForProxy(workspace.id)),
+          streamableURL: joinURL(
+            baseUrl,
+            getStreamablePathForProxy(workspace.id),
+          ),
+        });
+        if (result.requiresRestart) {
+          await client.restart();
+        }
+      }
+    }
   }
 
   public async getClientsByWorkspace(workspaceId: string) {

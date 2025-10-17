@@ -213,6 +213,10 @@ export class Gateway {
   private async start(successCallback?: () => void) {
     this.server = this.app.listen(this.port, () => {
       logger.info(`director gateway running on port ${this.port}`);
+      this.clientStore.enforceClientConfigs({
+        workspaceStore: this.workspaceStore,
+        baseUrl: this.baseUrl,
+      });
       successCallback?.();
     });
   }

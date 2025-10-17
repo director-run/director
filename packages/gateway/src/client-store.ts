@@ -5,6 +5,7 @@ import type { AbstractClient } from "@director.run/client-configurator/types";
 import { VSCodeInstaller } from "@director.run/client-configurator/vscode";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
+import { sleep } from "@director.run/utilities/sleep";
 import { joinURL } from "@director.run/utilities/url";
 import type { Config } from "./config";
 import { getSSEPathForProxy, getStreamablePathForProxy } from "./helpers";
@@ -30,9 +31,13 @@ export class ClientStore {
     baseUrl: string;
   }) {
     logger.debug({ message: "Enforcing client configs" });
+
+    await this.resetAll({ restartIfNeeded: false });
+    logger.debug({ message: "Waiting for 1 second" });
+    await sleep(1000);
+
+    logger.debug({ message: "Adding back" });
     for (const client of this.all()) {
-      logger.debug({ message: `Resetting ${client.name}` });
-      await client.reset();
       const workspaceIds =
         this._config.get(`clients.${client.name as ClientId}`) ?? [];
       for (const workspaceId of workspaceIds) {
@@ -91,10 +96,12 @@ export class ClientStore {
     ];
   }
 
-  public async resetAll(): Promise<void> {
+  public async resetAll({
+    restartIfNeeded = true,
+  }: { restartIfNeeded?: boolean }): Promise<void> {
     for (const client of this.all()) {
       const result = await client.reset();
-      if (result.requiresRestart) {
+      if (result.requiresRestart && restartIfNeeded) {
         await client.restart();
       }
     }

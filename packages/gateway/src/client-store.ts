@@ -65,12 +65,7 @@ export class ClientStore {
     return await Promise.all(this.all().map((client) => client.getStatus()));
   }
 
-  public async handleWorkspaceChange(workspaceId: string) {
-    logger.debug({
-      message: `workspace changed`,
-      workspaceId,
-    });
-
+  public async handleWorkspaceListChange(workspaceId: string) {
     const clients = await this.getClientsByWorkspace(workspaceId);
     for (const client of clients) {
       if (client.getCapabilities().requiresRestartOnUpdate) {

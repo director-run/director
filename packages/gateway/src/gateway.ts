@@ -181,7 +181,7 @@ export class Gateway {
               baseCallbackUrl: attribs.baseUrl,
             },
       onWorkspaceListChange: async (workspaceId: string) => {
-        await clientStore.handleWorkspaceChange(workspaceId);
+        await clientStore.handleWorkspaceListChange(workspaceId);
       },
     });
 

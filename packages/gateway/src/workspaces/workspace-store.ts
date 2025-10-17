@@ -20,13 +20,13 @@ export class WorkspaceStore {
   private config: Config;
   private telemetry: Telemetry;
   private _oauth?: OAuthProviderFactoryParams;
-  private _onWorkspaceListChange?: (proxyId: string) => Promise<void>;
+  private _onWorkspaceListChange?: (workspaceId: string) => Promise<void>;
 
   private constructor(params: {
     config: Config;
     telemetry?: Telemetry;
     oauth?: OAuthProviderFactoryParams;
-    onWorkspaceListChange?: (proxyId: string) => Promise<void>;
+    onWorkspaceListChange?: (workspaceId: string) => Promise<void>;
   }) {
     this.config = params.config;
     this.telemetry = params.telemetry || Telemetry.noTelemetry();

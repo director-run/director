@@ -7,6 +7,7 @@ import { loader } from "@director.run/utilities/cli/loader";
 import { getLogger } from "@director.run/utilities/logger";
 import { select } from "@inquirer/prompts";
 import cliPackage from "../../../package.json";
+import { config } from "../../config";
 import { startGateway } from "./serve";
 import { openStudio } from "./studio";
 
@@ -31,7 +32,7 @@ async function checkPrerequisites() {
   const spinner = loader();
   spinner.start("checking prerequisites...");
   const status = await getStatus(cliPackage.version);
-  const clientStore = new ClientStore();
+  const clientStore = new ClientStore({ config });
   spinner.stop();
 
   const lines = [];

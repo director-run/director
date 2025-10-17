@@ -283,6 +283,7 @@ function createClientForTarget(params: {
           toolPrefix: target.toolPrefix,
           disabledTools: target.disabledTools,
           disabled: target.disabled,
+          headers: target.headers,
         },
         { oAuthHandler },
       );

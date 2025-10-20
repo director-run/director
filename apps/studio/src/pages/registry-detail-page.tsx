@@ -85,7 +85,7 @@ export function RegistryDetailPage() {
     return <RegistryEntrySkeleton />;
   }
 
-  const workspaces = storeQuery.data ?? [];
+  const playbooks = storeQuery.data ?? [];
 
   return (
     <LayoutView>
@@ -112,7 +112,7 @@ export function RegistryDetailPage() {
           >
             <RegistryInstallForm
               registryEntry={registryEntry}
-              playbooks={workspaces}
+              playbooks={playbooks}
               onSubmit={handleInstall}
               isSubmitting={isPending}
             />
@@ -129,7 +129,7 @@ export function RegistryDetailPage() {
             <SplitViewSide>
               <RegistryDetailSidebar
                 entry={registryEntry}
-                playbooks={workspaces}
+                playbooks={playbooks}
                 onClickInstall={handleInstall}
                 isInstalling={isPending}
               />

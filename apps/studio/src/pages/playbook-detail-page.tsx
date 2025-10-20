@@ -35,13 +35,13 @@ import { useListTools } from "../hooks/use-list-tools.ts";
 import { usePlaybook } from "../hooks/use-playbook.ts";
 import { useUpdateTools } from "../hooks/use-update-tools.ts";
 
-export const WorkspaceDetailPage = () => {
+export const PlaybookDetailPage = () => {
   const { playbookId } = useParams();
   const navigate = useNavigate();
   const utils = gatewayClient.useUtils();
 
   if (!playbookId) {
-    throw new Error("Workspace ID is required");
+    throw new Error("Playbook ID is required");
   }
 
   const { playbook, isPlaybookLoading, playbookError } =
@@ -148,7 +148,7 @@ export const WorkspaceDetailPage = () => {
           },
         ]}
       >
-        <WorkspaceEditMenu playbook={playbook} />
+        <PlaybookEditMenu playbook={playbook} />
       </LayoutBreadcrumbHeader>
 
       <LayoutViewContent>
@@ -245,7 +245,7 @@ export const WorkspaceDetailPage = () => {
   );
 };
 
-function WorkspaceEditMenu({ playbook }: { playbook: PlaybookDetail }) {
+function PlaybookEditMenu({ playbook }: { playbook: PlaybookDetail }) {
   const navigate = useNavigate();
 
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -304,8 +304,8 @@ function WorkspaceEditMenu({ playbook }: { playbook: PlaybookDetail }) {
         onOpenChange={setSettingsOpen}
       />
       <ConfirmDialog
-        title="Delete workspace?"
-        description="Are you sure you want to delete this workspace? This action cannot be undone."
+        title="Delete playbook?"
+        description="Are you sure you want to delete this playbook? This action cannot be undone."
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
         onConfirm={handleDeleteProxy}

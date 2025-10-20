@@ -31,7 +31,7 @@ export function PlaybookTargetDetailPage() {
   const navigate = useNavigate();
 
   if (!playbookId || !targetId) {
-    throw new Error("Workspace ID and target ID are required");
+    throw new Error("Playbook ID and target ID are required");
   }
 
   const {

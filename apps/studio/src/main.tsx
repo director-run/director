@@ -12,8 +12,8 @@ import { GlobalErrorBoundary } from "./helpers/global-error-boundry";
 import { usePlaybooks } from "./hooks/use-playbooks";
 import { GetStartedPage } from "./pages/get-started";
 import { OAuthCallbackPage } from "./pages/oauth-callback-page";
-import { WorkspaceCreatePage } from "./pages/playbook-create-page";
-import { WorkspaceDetailPage } from "./pages/playbook-detail-page";
+import { PlaybookCreatePage } from "./pages/playbook-create-page";
+import { PlaybookDetailPage } from "./pages/playbook-detail-page";
 import { PlaybookTargetDetailPage } from "./pages/playbook-target-detail-page";
 import { RegistryDetailPage } from "./pages/registry-detail-page";
 import { RegistryListPage } from "./pages/registry-list-page";
@@ -45,12 +45,12 @@ export const App = () => {
           element={<RegistryDetailPage />}
         />
         {/* <Route path="/settings" element={<SettingsPage />} /> */}
-        <Route path="/:playbookId" element={<WorkspaceDetailPage />} />
+        <Route path="/:playbookId" element={<PlaybookDetailPage />} />
         <Route
           path="/:playbookId/:targetId"
           element={<PlaybookTargetDetailPage />}
         />
-        <Route path="/new" element={<WorkspaceCreatePage />} />
+        <Route path="/new" element={<PlaybookCreatePage />} />
       </Route>
       <Route path="/get-started" element={<GetStartedPage />} />
       <Route path="*" element={<DefaultRoute />} />

@@ -46,8 +46,8 @@ export const RootLayout = () => {
           ],
         },
         {
-          id: "workspaces",
-          label: "Workspaces",
+          id: "playbooks",
+          label: "Playbooks",
           isLoading: showLoading,
           items:
             playbooks?.map((playbook) => ({
@@ -61,8 +61,8 @@ export const RootLayout = () => {
           id: "actions",
           items: [
             {
-              id: "new-workspace",
-              label: "New Workspace",
+              id: "new-playbook",
+              label: "New Playbook",
               icon: <PlusIcon />,
               isActive: location.pathname === "/new",
               onClick: () => navigate(`/new`),

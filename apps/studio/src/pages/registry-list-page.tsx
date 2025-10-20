@@ -92,7 +92,7 @@ export const RegistryListPage: React.FC = () => {
           onSubmit={async (data: PlaybookTargetFormData) => {
             if (!data.playbookId) {
               toast({
-                title: "No workspace selected",
+                title: "No playbook selected",
                 description: "Please select a proxy before adding a server.",
               });
               return;

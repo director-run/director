@@ -6,14 +6,14 @@ import { toast } from "@director.run/design/components/ui/toast.tsx";
 import { useNavigate } from "react-router-dom";
 import { useCreatePlaybook } from "../hooks/use-create-playbook";
 
-export function WorkspaceCreatePage() {
+export function PlaybookCreatePage() {
   const navigate = useNavigate();
 
   const { createProxy, isPending } = useCreatePlaybook({
     onSuccess: (response) => {
       toast({
-        title: "Workspace created",
-        description: "This workpace was successfully created.",
+        title: "Playbook created",
+        description: "This playbook was successfully created.",
       });
       navigate(`/${response.id}`);
     },
@@ -28,7 +28,7 @@ export function WorkspaceCreatePage() {
       <LayoutBreadcrumbHeader
         breadcrumbs={[
           {
-            title: "New Workspace",
+            title: "New Playbooks",
           },
         ]}
       />

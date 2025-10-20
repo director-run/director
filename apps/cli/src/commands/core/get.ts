@@ -35,19 +35,19 @@ export function registerGetCommand(program: DirectorCommand) {
             });
             printTargetDetails(playbookId, target);
           } else {
-            const proxy = await gatewayClient.store.get.query({
+            const playbook = await gatewayClient.store.get.query({
               proxyId: playbookId,
               queryParams: {
                 includeInMemoryTargets: true,
               },
             });
 
-            if (!proxy) {
-              console.error(`proxy ${playbookId} not found`);
+            if (!playbook) {
+              console.error(`playbook ${playbookId} not found`);
               return;
             }
 
-            printPlaybookDetails(proxy);
+            printPlaybookDetails(playbook);
           }
         },
       ),
@@ -110,7 +110,7 @@ export function printPlaybookDetails(
 ) {
   const { id, name, description, prompts } = playbook;
   console.log();
-  console.log(whiteBold(`PROXIES > ${blue(name)}`));
+  console.log(whiteBold(`PLAYBOOKS > ${blue(name)}`));
   console.log();
 
   console.log(

@@ -30,7 +30,7 @@ export function registerClientCommands(program: DirectorCommand): void {
             installed: client.installed,
             configExists: client.configExists,
             configPath: client.configPath,
-            workspaces: client.workspaces.map((w) => w.id),
+            playbooks: client.workspaces.map((w) => w.id),
           }),
         );
       }),
@@ -63,7 +63,7 @@ export function registerClientCommands(program: DirectorCommand): void {
     .action(
       actionWithErrorHandler(async () => {
         const clients = await gatewayClient.clients.allClients.query();
-        const table = makeTable(["name", "installed", "workspaces"]);
+        const table = makeTable(["name", "installed", "playbooks"]);
         table.push(
           ...clients.map((client) => [
             client.name,

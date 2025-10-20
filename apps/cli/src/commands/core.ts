@@ -35,7 +35,7 @@ export function registerCoreCommands(program: DirectorCommand): void {
         const playbooks = await gatewayClient.store.getAll.query();
 
         if (playbooks.length === 0) {
-          console.log("no proxies configured yet.");
+          console.log("no playbooks configured yet.");
         } else {
           const table = makeTable(["id", "name", "path"]);
 

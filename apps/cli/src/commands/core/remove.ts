@@ -6,7 +6,7 @@ import { gatewayClient } from "../../client";
 export function registerRemoveCommand(program: DirectorCommand) {
   return program
     .command("remove <playbookId> <serverName>")
-    .description("Remove a server from a proxy")
+    .description("Remove a server from a playbook")
     .action(
       actionWithErrorHandler(async (playbookId: string, serverName: string) => {
         await spinnerWrap(() =>

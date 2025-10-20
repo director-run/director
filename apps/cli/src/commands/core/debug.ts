@@ -5,7 +5,9 @@ import { gatewayClient } from "../../client";
 export function registerDebugCommands(program: DirectorCommand) {
   program
     .debugCommand("reset")
-    .description("Delete proxies, clear the config file, and reset all clients")
+    .description(
+      "Delete playbooks, clear the config file, and reset all clients",
+    )
     .action(
       actionWithErrorHandler(async () => {
         console.log("resetting service");

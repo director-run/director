@@ -7,7 +7,7 @@ bun cli reset
 
 echo
 echo "----------------------------------------"
-echo "- Creating a new proxy and installing the fetch server"
+echo "- Creating a new playbook and installing the fetch server"
 echo "----------------------------------------"
 echo 
 
@@ -22,7 +22,7 @@ bun cli update test custom-fetch -a disabled=true
 # 
 # Oauth
 # 
-# Step 1: Add an oauth target to the proxy
+# Step 1: Add an oauth target to the playbook
 bun cli add test --name notion --url https://mcp.notion.com/mcp
 bun cli update test notion -a toolPrefix="n___" 
 
@@ -36,10 +36,10 @@ bun cli update test notion -a toolPrefix="n___"
 
 # TODO
 # TODO: get the list of tools for a server
-# bun cli tools list <proxy-id> <server-name>
+# bun cli tools list <playbook-id> <server-name>
 
 # TODO: call a tool on a server
-# bun cli tools <proxy-id> <server-name> <tool-name> <tool-args>
+# bun cli tools <playbook-id> <server-name> <tool-name> <tool-args>
 
 # TODO: update the filtering
 
@@ -50,11 +50,11 @@ echo "----------------------------------------"
 echo
 
 echo
-echo "PROXIES:"
+echo "PLAYBOOKS:"
 echo 
 bun cli ls
 
 echo
-echo "PROXY DETAILS:"
+echo "PLAYBOOK DETAILS:"
 echo
 bun cli get test

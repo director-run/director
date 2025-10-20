@@ -15,9 +15,9 @@ export function registerPromptsCommands(program: DirectorCommand): void {
     .alias("list")
     .description("List all prompts for a playbook")
     .action(
-      actionWithErrorHandler(async (proxyId: string) => {
+      actionWithErrorHandler(async (playbookId: string) => {
         const prompts = await gatewayClient.store.listPrompts.query({
-          proxyId,
+          proxyId: playbookId,
         });
 
         listPrompts(prompts);

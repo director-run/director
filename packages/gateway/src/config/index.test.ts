@@ -127,7 +127,7 @@ describe("Config", () => {
         await config.playbooks.remove(workspaceAttribs2.id);
         await expect(
           config.playbooks.getPlaybook(workspaceAttribs2.id),
-        ).rejects.toThrow("Workspace not found");
+        ).rejects.toThrow("Playbook not found");
       });
     });
     describe("count", () => {
@@ -216,7 +216,7 @@ describe("Config", () => {
       await config.playbooks.create(proxyData);
 
       await expect(config.playbooks.create(proxyData)).rejects.toThrow(
-        "Workspace with this name already exists",
+        "Playbook with this name already exists",
       );
     });
   });

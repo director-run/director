@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "biome check .",
     "format": "biome format --write .",
-    "clean": "rm -rf  .turbo ",
+    "clean": "rm -rf .turbo dist/*",
     "typecheck": "tsc --noEmit",
     "test": "vitest --fileParallelism=false"
   },

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "clean": "rm -rf  .turbo ",
+    "clean": "rm -rf .turbo dist/*",
     "format": "bun run format:fix-classnames && bun run format:fix-imports && bun run format:fix-all",
     "format:fix-all": "biome format --write ./src",
     "format:fix-imports": "biome check --formatter-enabled=false --linter-enabled=false --organize-imports-enabled=true --write ./src",

@@ -5,10 +5,10 @@ import type { Store } from "../../db/store";
 import { enrichEntries } from "../../enrichment/enrich";
 import {
   type EntryParameter,
-  type ProxyTransport,
   type RegistryEntry,
+  type Transport,
+  TransportSchema,
   optionalStringSchema,
-  proxyTransport,
   requiredStringSchema,
   toolSchema,
 } from "../../schemas";
@@ -25,7 +25,7 @@ const parameterToZodSchema = (parameter: EntryParameter) => {
 export function substituteParameters(
   entry: Pick<RegistryEntry, "transport" | "parameters">,
   parameters: Record<string, string>,
-): ProxyTransport {
+): Transport {
   if (entry.transport.type === "stdio") {
     const env: Record<string, string> = {
       ...entry.transport.env,
@@ -137,7 +137,7 @@ export function createEntriesRouter({ store }: { store: Store }) {
           lastConnectionAttemptedAt: z.date().optional(),
           lastConnectionError: z.string().optional(),
           tools: z.array(toolSchema).optional(),
-          transport: proxyTransport.optional(),
+          transport: TransportSchema.optional(),
         }),
       )
       .mutation(async ({ input }) => {

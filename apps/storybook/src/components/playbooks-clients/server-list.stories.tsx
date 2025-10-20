@@ -11,7 +11,7 @@ import { mockPlaybook } from "@director.run/design/test/fixtures/playbook/playbo
 import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../../helpers/decorators";
 
-const WorkspaceDetailComponent = ({
+const PlaybookDetailComponent = ({
   playbook,
 }: {
   playbook: PlaybookDetail;
@@ -28,12 +28,12 @@ const WorkspaceDetailComponent = ({
 
 const meta = {
   title: "components/playbooks-clients/server-list",
-  component: WorkspaceDetailComponent,
+  component: PlaybookDetailComponent,
   parameters: {
     layout: "fullscreen",
   },
   decorators: [withLayoutView],
-} satisfies Meta<typeof WorkspaceDetailComponent>;
+} satisfies Meta<typeof PlaybookDetailComponent>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

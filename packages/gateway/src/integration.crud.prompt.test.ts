@@ -45,7 +45,7 @@ describe("Prompt Capabilities", () => {
       expect(config.prompts).toEqual([prompt]);
     });
 
-    it("should add multiple prompts to a proxy", async () => {
+    it("should add multiple prompts to a playbook", async () => {
       const prompt2 = makePrompt();
 
       await harness.client.store.addPrompt.mutate({
@@ -61,7 +61,7 @@ describe("Prompt Capabilities", () => {
       expect(prompts).toEqual([prompt, prompt2]);
     });
 
-    it("should throw error when proxy doesn't exist", async () => {
+    it("should throw error when playbook doesn't exist", async () => {
       await expect(
         harness.client.store.addPrompt.mutate({
           playbookId: "non-existent",
@@ -112,7 +112,7 @@ describe("Prompt Capabilities", () => {
       expect(prompts).toEqual([prompt1, prompt2]);
     });
 
-    it("should throw error when proxy doesn't exist", async () => {
+    it("should throw error when playbook doesn't exist", async () => {
       await expect(
         harness.client.store.listPrompts.query({
           playbookId: "non-existent",
@@ -206,7 +206,7 @@ describe("Prompt Capabilities", () => {
       ).rejects.toThrow();
     });
 
-    it("should throw error when proxy doesn't exist", async () => {
+    it("should throw error when playbook doesn't exist", async () => {
       await expect(
         harness.client.store.removePrompt.mutate({
           playbookId: "non-existent",
@@ -349,7 +349,7 @@ describe("Prompt Capabilities", () => {
       ).rejects.toThrow();
     });
 
-    it("should throw error when proxy doesn't exist", async () => {
+    it("should throw error when playbook doesn't exist", async () => {
       await expect(
         harness.client.store.updatePrompt.mutate({
           playbookId: "non-existent",

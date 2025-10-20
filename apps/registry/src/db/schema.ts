@@ -8,7 +8,7 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
-import type { EntryParameter, ProxyTransport, Tool } from "../schemas";
+import type { EntryParameter, Tool, Transport } from "../schemas";
 
 export type EntryState = "draft" | "published" | "archived";
 
@@ -42,7 +42,7 @@ export const entriesTable = pgTable("entries", {
   // **
   // ** Transport
   // **
-  transport: jsonb("transport").notNull().$type<ProxyTransport>(),
+  transport: jsonb("transport").notNull().$type<Transport>(),
 
   // **
   // ** Metadata

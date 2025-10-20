@@ -16,11 +16,11 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    playbookId: "proxy-123",
+    playbookId: "playbook-123",
     gatewayBaseUrl: "https://gateway.example.com",
     onCopy: (text: string) => console.log("Copied:", text),
   },
-  render: ({ playbookId: proxyId, gatewayBaseUrl, onCopy }) => {
+  render: ({ playbookId: playbookId, gatewayBaseUrl, onCopy }) => {
     const [open, setOpen] = useState(true);
 
     return (
@@ -33,7 +33,7 @@ export const Default: Story = {
         <PlaybookManualDialog
           open={open}
           onOpenChange={setOpen}
-          playbookId={proxyId}
+          playbookId={playbookId}
           gatewayBaseUrl={gatewayBaseUrl}
           onCopy={onCopy}
         />

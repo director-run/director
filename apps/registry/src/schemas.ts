@@ -22,12 +22,12 @@ export const stdioTransportSchema = z.object({
 
 export type STDIOTransport = z.infer<typeof stdioTransportSchema>;
 
-export const proxyTransport = z.discriminatedUnion("type", [
+export const TransportSchema = z.discriminatedUnion("type", [
   httpTransportSchema,
   stdioTransportSchema,
 ]);
 
-export type ProxyTransport = z.infer<typeof proxyTransport>;
+export type Transport = z.infer<typeof TransportSchema>;
 
 // Entry parameter schema
 export const entryParameterSchema = z.object({
@@ -78,7 +78,7 @@ export const registryEntrySchema = z.object({
   lastConnectionAttemptedAt: z.coerce.date().nullable().default(null),
   lastConnectionError: optionalStringSchema,
   homepage: requiredStringSchema,
-  transport: proxyTransport,
+  transport: TransportSchema,
   source_registry: z.any(),
   categories: z.array(z.string()).nullable().default(null),
   tools: z.array(toolSchema).nullable().default(null),

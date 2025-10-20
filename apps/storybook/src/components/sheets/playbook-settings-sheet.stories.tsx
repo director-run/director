@@ -24,10 +24,10 @@ export const Default: Story = {
   render: () => {
     const [open, setOpen] = useState(true);
 
-    const proxy = mockPlaybook();
+    const playbook = mockPlaybook();
 
     const handleSubmit = (data: PlaybookFormData) => {
-      console.log("Updated proxy settings:", JSON.stringify(data, null, 2));
+      console.log("Updated playbook settings:", JSON.stringify(data, null, 2));
       return Promise.resolve();
     };
 
@@ -41,7 +41,7 @@ export const Default: Story = {
         <PlaybookSettingsSheet
           open={open}
           onOpenChange={setOpen}
-          playbook={proxy}
+          playbook={playbook}
           onSubmit={handleSubmit}
         />
       </div>

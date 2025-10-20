@@ -27,7 +27,7 @@ async function main() {
   });
 
   const playbookDetails = await gatewayClient.store.get.query({
-    proxyId: playbook.id,
+    playbookId: playbook.id,
   });
   console.log("--------------------------------");
   console.log("playbookDetails");

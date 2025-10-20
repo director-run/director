@@ -2,7 +2,7 @@ import { getLogger } from "@director.run/utilities/logger";
 import type { inferRouterOutputs } from "@trpc/server";
 import type { RegistryClient } from "../client";
 import { type AppRouter } from "../routers/trpc";
-import { type ProxyTransport } from "../schemas";
+import { type Transport } from "../schemas";
 
 type Entry =
   inferRouterOutputs<AppRouter>["entries"]["getEntries"]["entries"][number];
@@ -26,7 +26,7 @@ export async function enrichEntryTransports(registryClient: RegistryClient) {
   }
 }
 
-function extractTransportForEntry(_entry: Entry): Promise<ProxyTransport> {
+function extractTransportForEntry(_entry: Entry): Promise<Transport> {
   return Promise.resolve({
     type: "http",
     url: "http://some-extracted-transport-url.com",

@@ -52,7 +52,7 @@ describe("MCP Playbook", () => {
     beforeEach(async () => {
       await harness.purge();
       playbook = await harness.client.store.create.mutate({
-        name: "Test Proxy",
+        name: "Test Playbook",
         servers: [
           harness.getConfigForTarget("echo"),
           harness.getConfigForTarget("kitchenSink"),

@@ -47,14 +47,14 @@ export function registerConnectCommand(program: DirectorCommand) {
               "director connect " + playbookId + " --target <target>",
             );
             console.log();
-            const proxy = await gatewayClient.store.get.query({
+            const playbook = await gatewayClient.store.get.query({
               playbookId: playbookId,
             });
             const baseUrl = getGatewayBaseUrl();
-            const sseURL = joinURL(baseUrl, getSSEPathForPlaybook(proxy.id));
+            const sseURL = joinURL(baseUrl, getSSEPathForPlaybook(playbook.id));
             const streamableURL = joinURL(
               baseUrl,
-              getStreamablePathForPlaybook(proxy.id),
+              getStreamablePathForPlaybook(playbook.id),
             );
 
             const stdioCommand = {

@@ -77,9 +77,9 @@ describe("Client Router", () => {
     }
   });
 
-  it("install installs workspace on selected client and restarts if required", async () => {
+  it("install installs playbook on selected client and restarts if required", async () => {
     const caller = app.createCaller({ cliVersion: null });
-    const proxy = await playbookStore.create({ name: "Test Playbook" });
+    const playbook = await playbookStore.create({ name: "Test Playbook" });
 
     // Spy restart on one client and make install return requiresRestart
     const target = clientStore.get("claude");
@@ -90,21 +90,24 @@ describe("Client Router", () => {
 
     await caller.clients.install({
       clientId: "claude",
-      playbookId: proxy.id,
+      playbookId: playbook.id,
       baseUrl: BASE_URL,
     });
 
     expect(installSpy).toHaveBeenCalledWith({
-      name: proxy.id,
-      sseURL: joinURL(BASE_URL, getSSEPathForPlaybook(proxy.id)),
-      streamableURL: joinURL(BASE_URL, getStreamablePathForPlaybook(proxy.id)),
+      name: playbook.id,
+      sseURL: joinURL(BASE_URL, getSSEPathForPlaybook(playbook.id)),
+      streamableURL: joinURL(
+        BASE_URL,
+        getStreamablePathForPlaybook(playbook.id),
+      ),
     });
     expect(restartSpy).toHaveBeenCalledTimes(1);
   });
 
-  it("uninstall removes workspace from selected client and restarts if required", async () => {
+  it("uninstall removes playbook from selected client and restarts if required", async () => {
     const caller = app.createCaller({ cliVersion: null });
-    const proxy = await playbookStore.create({ name: "Another Playbook" });
+    const playbook = await playbookStore.create({ name: "Another Playbook" });
 
     const target = clientStore.get("cursor");
     const restartSpy = vi.spyOn(target, "restart").mockResolvedValue();
@@ -114,10 +117,10 @@ describe("Client Router", () => {
 
     await caller.clients.uninstall({
       clientId: "cursor",
-      playbookId: proxy.id,
+      playbookId: playbook.id,
     });
 
-    expect(uninstallSpy).toHaveBeenCalledWith(proxy.id);
+    expect(uninstallSpy).toHaveBeenCalledWith(playbook.id);
     expect(restartSpy).toHaveBeenCalledTimes(1);
   });
 

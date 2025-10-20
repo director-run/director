@@ -32,7 +32,7 @@ export const RegistryListPage: React.FC = () => {
     onSuccess: (_data, variables) => {
       toast({
         title: "Server added",
-        description: "The server has been added to the proxy",
+        description: "The server has been added to the playbook",
       });
       setAddSheetOpen(false);
       navigate(`/${variables.playbookId}`);
@@ -93,7 +93,7 @@ export const RegistryListPage: React.FC = () => {
             if (!data.playbookId) {
               toast({
                 title: "No playbook selected",
-                description: "Please select a proxy before adding a server.",
+                description: "Please select a playbook before adding a server.",
               });
               return;
             }

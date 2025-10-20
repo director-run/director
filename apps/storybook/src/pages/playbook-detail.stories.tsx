@@ -25,7 +25,7 @@ import { DesktopIcon, NotebookIcon, ToolboxIcon } from "@phosphor-icons/react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../helpers/decorators";
 
-const WorkspaceDetailComponent = ({
+const PlaybookDetailComponent = ({
   playbook,
   tools,
   clients,
@@ -88,12 +88,12 @@ const WorkspaceDetailComponent = ({
 
 const meta = {
   title: "pages/playbooks/detail",
-  component: WorkspaceDetailComponent,
+  component: PlaybookDetailComponent,
   parameters: {
     layout: "fullscreen",
   },
   decorators: [withLayoutView],
-} satisfies Meta<typeof WorkspaceDetailComponent>;
+} satisfies Meta<typeof PlaybookDetailComponent>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

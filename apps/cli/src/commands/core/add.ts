@@ -15,8 +15,8 @@ type RegistryEntry = inferRouterOutputs<AppRouter>["entries"]["getEntryByName"];
 
 export function registerAddCommand(program: DirectorCommand) {
   return program
-    .command("add <proxyId>")
-    .description("Add a server to a proxy.")
+    .command("add <playbookId>")
+    .description("Add a server to a playbook.")
     .addOption(
       makeOption({
         flags: "-e,--entry <entryName>",
@@ -46,7 +46,7 @@ export function registerAddCommand(program: DirectorCommand) {
     .action(
       actionWithErrorHandler(
         async (
-          proxyId: string,
+          playbookId: string,
           options: {
             entry: string;
             url: string;
@@ -55,27 +55,27 @@ export function registerAddCommand(program: DirectorCommand) {
           },
         ) => {
           if (options.entry) {
-            console.log(`adding ${options.entry} to ${proxyId}`);
-            await addServerFromRegistry(proxyId, options.entry);
+            console.log(`adding ${options.entry} to ${playbookId}`);
+            await addServerFromRegistry(playbookId, options.entry);
           } else if (options.url) {
             if (!options.name) {
               throw new Error(
                 "No server name provided. use --name to specify the name of the server",
               );
             }
-            console.log(`adding ${options.url} to ${proxyId}`);
-            await addServerFromUrl(proxyId, options.url, options.name);
+            console.log(`adding ${options.url} to ${playbookId}`);
+            await addServerFromUrl(playbookId, options.url, options.name);
           } else if (options.command) {
             if (!options.name) {
               throw new Error(
                 "No server name provided. use --name to specify the name of the server",
               );
             }
-            console.log(`adding ${options.command} to ${proxyId}`);
+            console.log(`adding ${options.command} to ${playbookId}`);
 
             const [command, ...args] = options.command.split(" ");
 
-            await addServerFromStdio(proxyId, command, args, options.name);
+            await addServerFromStdio(playbookId, command, args, options.name);
           } else {
             console.warn(
               "No entry name or url provided. You must speciy --entry or --url and --name, alternatively update the config file directly and restart the gateway:",
@@ -92,14 +92,14 @@ export function registerAddCommand(program: DirectorCommand) {
 }
 
 async function addServerFromStdio(
-  proxyId: string,
+  playbookId: string,
   command: string,
   args: string[],
   name: string,
 ) {
   await spinnerWrap(async () => {
     await gatewayClient.store.addServer.mutate({
-      proxyId,
+      proxyId: playbookId,
       server: {
         name,
         transport: {
@@ -111,14 +111,14 @@ async function addServerFromStdio(
     });
   })
     .start("installing server...")
-    .succeed(`Stdio server ${command} added to ${proxyId}`)
+    .succeed(`Stdio server ${command} added to ${playbookId}`)
     .run();
 }
 
-async function addServerFromUrl(proxyId: string, url: string, name: string) {
+async function addServerFromUrl(playbookId: string, url: string, name: string) {
   await spinnerWrap(async () => {
     await gatewayClient.store.addServer.mutate({
-      proxyId,
+      proxyId: playbookId,
       server: {
         name,
         transport: {
@@ -129,11 +129,11 @@ async function addServerFromUrl(proxyId: string, url: string, name: string) {
     });
   })
     .start("installing server...")
-    .succeed(`HTTP server ${url} added to ${proxyId}`)
+    .succeed(`HTTP server ${url} added to ${playbookId}`)
     .run();
 }
 
-async function addServerFromRegistry(proxyId: string, entryName: string) {
+async function addServerFromRegistry(playbookId: string, entryName: string) {
   const entry = await spinnerWrap(() =>
     registryClient.entries.getEntryByName.query({
       name: entryName,
@@ -149,7 +149,7 @@ async function addServerFromRegistry(proxyId: string, entryName: string) {
       parameters,
     });
     await gatewayClient.store.addServer.mutate({
-      proxyId,
+      proxyId: playbookId,
       server: {
         name: entryName,
         transport,
@@ -161,7 +161,7 @@ async function addServerFromRegistry(proxyId: string, entryName: string) {
     });
   })
     .start("installing server...")
-    .succeed(`Registry entry ${entryName} added to ${proxyId}`)
+    .succeed(`Registry entry ${entryName} added to ${playbookId}`)
     .run();
 }
 

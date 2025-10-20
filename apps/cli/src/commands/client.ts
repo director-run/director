@@ -36,30 +36,6 @@ export function registerClientCommands(program: DirectorCommand): void {
       }),
     );
 
-  // command
-  //   .debugCommand("restart <clientName>")
-  //   .description("Restart the MCP client")
-  //   .action(
-  //     actionWithErrorHandler(async (_clientName: string) => {
-  //       // No-op: restart is handled by the gateway when needed during install/uninstall
-  //       console.log("restart handled automatically during install/uninstall");
-  //       await Promise.resolve();
-  //     }),
-  //   );
-
-  // command
-  //   .debugCommand("reset <clientName>")
-  //   .description("Delete all servers from the client config")
-  //   .action(
-  //     actionWithErrorHandler(async (_clientName: string) => {
-  //       // Not supported via router; use reset-all or connect/disconnect per proxy
-  //       console.log(
-  //         "Reset per-client is not supported via router. Use reset-all instead.",
-  //       );
-  //       await Promise.resolve();
-  //     }),
-  //   );
-
   command
     .debugCommand("reset-all")
     .description("Delete all servers from all clients")

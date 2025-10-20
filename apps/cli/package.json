@@ -12,7 +12,7 @@
     "type": "git",
     "url": "https://github.com/director-run/director"
   },
-  "description": "The easiest way to manage and deploy MCP servers",
+  "description": "Playbooks for AI agents",
   "homepage": "https://director.run",
   "publishConfig": {
     "access": "public"

@@ -32,18 +32,18 @@ export function registerCoreCommands(program: DirectorCommand): void {
     .description("List playbooks")
     .action(
       actionWithErrorHandler(async () => {
-        const proxies = await gatewayClient.store.getAll.query();
+        const playbooks = await gatewayClient.store.getAll.query();
 
-        if (proxies.length === 0) {
+        if (playbooks.length === 0) {
           console.log("no proxies configured yet.");
         } else {
           const table = makeTable(["id", "name", "path"]);
 
           table.push(
-            ...proxies.map((proxy) => [
-              proxy.id,
-              proxy.name,
-              joinURL(getGatewayBaseUrl(), proxy.paths.streamable),
+            ...playbooks.map((playbook) => [
+              playbook.id,
+              playbook.name,
+              joinURL(getGatewayBaseUrl(), playbook.paths.streamable),
             ]),
           );
 
@@ -60,12 +60,12 @@ export function registerCoreCommands(program: DirectorCommand): void {
     .description("Create a new playbook")
     .action(
       actionWithErrorHandler(async (name: string) => {
-        const proxy = await gatewayClient.store.create.mutate({
+        const playbook = await gatewayClient.store.create.mutate({
           name,
           servers: [],
         });
 
-        console.log(`proxy ${proxy.id} created`);
+        console.log(`playbook ${playbook.id} created`);
       }),
     );
 
@@ -73,20 +73,20 @@ export function registerCoreCommands(program: DirectorCommand): void {
     .command("destroy <playbookId>")
     .description("Delete a playbook")
     .action(
-      actionWithErrorHandler(async (proxyId: string) => {
+      actionWithErrorHandler(async (playbookId: string) => {
         await gatewayClient.store.delete.mutate({
-          proxyId,
+          proxyId: playbookId,
         });
 
-        console.log(`playbook ${proxyId} deleted`);
+        console.log(`playbook ${playbookId} deleted`);
       }),
     );
 
   registerConnectCommand(program);
 
   program
-    .command("disconnect <proxyId>")
-    .description("Disconnect a proxy from an MCP client")
+    .command("disconnect <playbookId>")
+    .description("Disconnect a playbook from an MCP client")
     .addOption(
       makeOption({
         flags: "-t,--target <target>",
@@ -95,11 +95,13 @@ export function registerCoreCommands(program: DirectorCommand): void {
     )
     .action(
       actionWithErrorHandler(
-        async (proxyId: string, options: { target: string }) => {
-          const proxy = await gatewayClient.store.get.query({ proxyId });
+        async (playbookId: string, options: { target: string }) => {
+          const playbook = await gatewayClient.store.get.query({
+            proxyId: playbookId,
+          });
           await gatewayClient.clients.uninstall.mutate({
             clientId: options.target,
-            playbookId: proxy.id,
+            playbookId: playbook.id,
           });
         },
       ),

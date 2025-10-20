@@ -3,7 +3,7 @@ import { makeTable } from "@director.run/utilities/cli/index";
 
 export function listPrompts(prompts?: Prompt[]) {
   if (!prompts || prompts.length === 0) {
-    console.log("No prompts configured for this proxy.");
+    console.log("No prompts configured for this playbook.");
   } else {
     const table = makeTable(["name", "title", "description"]);
     table.push(

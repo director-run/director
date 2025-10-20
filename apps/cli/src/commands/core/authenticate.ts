@@ -5,12 +5,12 @@ import { gatewayClient } from "../../client";
 
 export function registerAuthCommand(program: DirectorCommand) {
   program
-    .command("auth <proxyId> <server>")
+    .command("auth <playbookId> <server>")
     .description("Authenticate a server")
     .action(
-      actionWithErrorHandler(async (proxyId: string, serverName: string) => {
+      actionWithErrorHandler(async (playbookId: string, serverName: string) => {
         const res = await gatewayClient.store.authenticate.query({
-          proxyId,
+          proxyId: playbookId,
           serverName,
         });
         if (res.result === "REDIRECT") {
@@ -20,11 +20,14 @@ export function registerAuthCommand(program: DirectorCommand) {
     );
 
   program
-    .command("logout <proxyId> <serverName>")
+    .command("logout <playbookId> <serverName>")
     .description("Logout a server")
     .action(
-      actionWithErrorHandler(async (proxyId: string, serverName: string) => {
-        await gatewayClient.store.logout.mutate({ proxyId, serverName });
+      actionWithErrorHandler(async (playbookId: string, serverName: string) => {
+        await gatewayClient.store.logout.mutate({
+          proxyId: playbookId,
+          serverName,
+        });
       }),
     );
 }

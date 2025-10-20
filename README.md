@@ -96,101 +96,39 @@ clients:
 
 ## Architechture
 
+Director is a piece of infrastructure that sits between your agents and MCP servers. It is completetly transparent for clients, requiring no additional tokens. It's designed to be an always on server at the core. 
+
 <img src="https://github.com/director-run/director/blob/main/apps/docs/images/director-highlevel-overview.webp" width="100%" alt="director demo">
-
-
-This workspace is:
-
-- **Portable**: Works with any MCP client
-- **Shareable**: One file contains everything
-- **Auditable**: Every tool call is logged
-- **Safe**: Dangerous operations filtered out
 
 # Usage
 
 ## Installation
 ```bash
-# Option 1: Install director & it's dependencies (node, npm & uvx) using the installation script
+# Install the director CLI + dependencies (node, npm & uvx) via the 1-liner:
 $ curl -LsSf https://director.run/install.sh | sh
 
-# Option 2: If you already have node installed, you can use npm
+# Alternatively, install through npm:
 $ npm install -g @director.run/cli
 
 # Start director & open the UI
 $ director quickstart
 ```
 
+## Running the Studio (Management UI)
+
+The simplest way to interact with director is via the admin interfaxce, you can run it using the following command:
+
+```bash
+# Open studio in your browser
+$ director studio
+```
+
 ## CLI Reference
-## Configuration
-## SDK
 
-There are two ways to install director:
-
-## The Configuration File
-
-Director uses a flat configuration file to manage all of it's state. Which makes it trivial to make large edits to your context as well as sharing.
-
-Director will use the `director.yaml` file in the current directory if it is present. Otherwise, it will default to `~/.director/director.yaml`.
-
-```yaml
-# Configuration file reference
-workspaces:
-  name: code_review
-  description: Automates code reviews
-  servers:
-    filesystem:
-      type: stdio
-      command: npx
-      args: [ "@modelcontextprotocol/server-filesystem", "./src" ]
-      
-    github:
-      type: http
-      url: https://api.githubcopilot.com/mcp/
-      tools:
-        include: [ create_issue, search_code ] 
-
-  prompts:
-    - name: code_review
-      content: "Review this code for security vulnerabilities and performance issues"
-    
-    - name: write_tests
-      content: "Write comprehensive unit tests including edge cases"
-```
-
-## Observability & Debugging
-
-### JSON Logging
-Every MCP operation is logged as JSON:
-
-```json
-{
-  "timestamp": "2024-01-20T10:30:00Z",
-  "workspace": "production",
-  "server": "github",
-  "method": "tools/call",
-  "tool": "create_issue",
-  "duration_ms": 230,
-  "status": "success"
-}
-```
-
-The log level can be configured via the `LOG_LEVEL` environment variable
-
-### Debugging
-
-Director alsos provides a few utilities to help you debug MCP servers:
+You can also 
 
 ```bash
-director mcp list-tools <workspace_name>                      
-director mcp get-tool <workspace_name> <toolName>             
-director mcp call-tool <workspace_name> <toolName> 
-
-```
-
-### CLI Reference
-
-```bash
-Manage context for your AI agent
+Playbooks for your AI agent
 
 USAGE
   director <command> [subcommand] [flags]
@@ -239,6 +177,42 @@ EXAMPLES
   $ director connect my-proxy --target claude # Connect my-proxy to claude
 
 ```
+
+## Configuration File Reference
+
+## SDK
+
+## The Configuration File
+
+Director uses a flat configuration file to manage all of it's state. Which makes it trivial to make large edits to your context as well as sharing.
+
+Director will use the `director.yaml` file in the current directory if it is present. Otherwise, it will default to `~/.director/director.yaml`.
+
+```yaml
+# Configuration file reference
+workspaces:
+  name: code_review
+  description: Automates code reviews
+  servers:
+    filesystem:
+      type: stdio
+      command: npx
+      args: [ "@modelcontextprotocol/server-filesystem", "./src" ]
+      
+    github:
+      type: http
+      url: https://api.githubcopilot.com/mcp/
+      tools:
+        include: [ create_issue, search_code ] 
+
+  prompts:
+    - name: code_review
+      content: "Review this code for security vulnerabilities and performance issues"
+    
+    - name: write_tests
+      content: "Write comprehensive unit tests including edge cases"
+```
+
 
 ### TypeScript SDK
 
@@ -484,3 +458,33 @@ director start --sandbox docker
 Director meets you where you are. You can interact with it via YAML, CLI or the web based management UI.
 
 <img src="https://github.com/director-run/director/blob/main/apps/docs/images/demo.gif" width="100%" alt="animated hello">
+
+
+## Observability & Debugging
+
+### JSON Logging
+Every MCP operation is logged as JSON:
+
+```json
+{
+  "timestamp": "2024-01-20T10:30:00Z",
+  "workspace": "production",
+  "server": "github",
+  "method": "tools/call",
+  "tool": "create_issue",
+  "duration_ms": 230,
+  "status": "success"
+}
+```
+
+The log level can be configured via the `LOG_LEVEL` environment variable
+
+### Debugging
+
+Director alsos provides a few utilities to help you debug MCP servers:
+
+```bash
+director mcp list-tools <workspace_name>                      
+director mcp get-tool <workspace_name> <toolName>             
+director mcp call-tool <workspace_name> <toolName> 
+

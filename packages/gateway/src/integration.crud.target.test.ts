@@ -2,8 +2,8 @@ import {} from "@director.run/mcp/test/fixtures";
 import {} from "@director.run/mcp/transport";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { GatewayRouterOutputs } from "./client";
+import { type PlaybookHTTPTarget } from "./playbooks/playbook";
 import { IntegrationTestHarness } from "./test/integration";
-import { type WorkspaceHTTPTarget } from "./workspaces/workspace";
 
 describe("Proxy Target CRUD operations", () => {
   let harness: IntegrationTestHarness;
@@ -35,7 +35,7 @@ describe("Proxy Target CRUD operations", () => {
       expect(retrievedTarget.name).toBe("echo");
       expect(retrievedTarget.connectionInfo?.status).toBe("connected");
       expect(retrievedTarget.type).toBe("http");
-      expect((retrievedTarget as WorkspaceHTTPTarget).url).toEqual(
+      expect((retrievedTarget as PlaybookHTTPTarget).url).toEqual(
         harness.getConfigForTarget("echo").transport.url,
       );
     });
@@ -77,10 +77,10 @@ describe("Proxy Target CRUD operations", () => {
 
         expect(target.connectionInfo?.status).toBe("unauthorized");
 
-        expect((target as WorkspaceHTTPTarget).url).toEqual(
+        expect((target as PlaybookHTTPTarget).url).toEqual(
           `https://mcp.notion.com/mcp`,
         );
-        expect((target as WorkspaceHTTPTarget).type).toEqual(`http`);
+        expect((target as PlaybookHTTPTarget).type).toEqual(`http`);
       });
 
       it("should update the configuration file", async () => {
@@ -96,7 +96,7 @@ describe("Proxy Target CRUD operations", () => {
         });
 
         const configEntry = (
-          await harness.database.workspaces.getWorkspace(proxy.id)
+          await harness.database.playbooks.getPlaybook(proxy.id)
         ).servers.find((server) => server.name === "notion");
 
         expect(configEntry).toEqual(
@@ -126,7 +126,7 @@ describe("Proxy Target CRUD operations", () => {
         );
 
         expect(
-          await harness.database.workspaces.getWorkspace(proxy.id),
+          await harness.database.playbooks.getPlaybook(proxy.id),
         ).toEqual(
           expect.objectContaining({
             name: "Test Proxy",
@@ -166,7 +166,7 @@ describe("Proxy Target CRUD operations", () => {
         );
 
         expect(
-          await harness.database.workspaces.getWorkspace(proxy.id),
+          await harness.database.playbooks.getPlaybook(proxy.id),
         ).toEqual(
           expect.objectContaining({
             name: "Test Proxy",
@@ -204,7 +204,7 @@ describe("Proxy Target CRUD operations", () => {
         );
 
         expect(
-          await harness.database.workspaces.getWorkspace(proxy.id),
+          await harness.database.playbooks.getPlaybook(proxy.id),
         ).toEqual(
           expect.objectContaining({
             name: "Test Proxy",
@@ -253,17 +253,17 @@ describe("Proxy Target CRUD operations", () => {
 
       it("should succeed", () => {
         expect(addServerResponse.connectionInfo?.status).toBe("connected");
-        expect((addServerResponse as WorkspaceHTTPTarget).url).toEqual(
+        expect((addServerResponse as PlaybookHTTPTarget).url).toEqual(
           harness.getConfigForTarget("echo").transport.url,
         );
-        expect((addServerResponse as WorkspaceHTTPTarget).type).toEqual("http");
+        expect((addServerResponse as PlaybookHTTPTarget).type).toEqual("http");
       });
 
       it("should update the configuration file", async () => {
         const echoConfig = harness.getConfigForTarget("echo");
         expect(
           (
-            await harness.database.workspaces.getWorkspace(proxy.id)
+            await harness.database.playbooks.getPlaybook(proxy.id)
           ).servers.find((server) => server.name === "echo"),
         ).toEqual(
           expect.objectContaining({
@@ -415,7 +415,7 @@ describe("Proxy Target CRUD operations", () => {
       });
       it("should update the configuration file", async () => {
         const configEntry = (
-          await harness.database.workspaces.getWorkspace(proxy.id)
+          await harness.database.playbooks.getPlaybook(proxy.id)
         ).servers.find((server) => server.name === "echo");
         expect(configEntry?.toolPrefix).toBe(toolPrefix);
         expect(configEntry?.disabledTools).toMatchObject(disabledTools);
@@ -435,7 +435,7 @@ describe("Proxy Target CRUD operations", () => {
         expect(target.toolPrefix).toBe("");
         expect(target.disabledTools).toMatchObject([]);
         const configEntry = (
-          await harness.database.workspaces.getWorkspace(proxy.id)
+          await harness.database.playbooks.getPlaybook(proxy.id)
         ).servers.find((server) => server.name === "echo");
         expect(configEntry?.toolPrefix).toBe("");
         expect(configEntry?.disabledTools).toMatchObject([]);
@@ -470,7 +470,7 @@ describe("Proxy Target CRUD operations", () => {
       });
       it("should be stored in the configuration file", async () => {
         const configEntry = (
-          await harness.database.workspaces.getWorkspace(proxy.id)
+          await harness.database.playbooks.getPlaybook(proxy.id)
         ).servers.find((server) => server.name === "echo");
         expect(configEntry?.disabled).toBe(true);
       });
@@ -497,7 +497,7 @@ describe("Proxy Target CRUD operations", () => {
         });
         it("should be reflected in the configuration file", async () => {
           const configEntry = (
-            await harness.database.workspaces.getWorkspace(proxy.id)
+            await harness.database.playbooks.getPlaybook(proxy.id)
           ).servers.find((server) => server.name === "echo");
           expect(configEntry?.disabled).toBe(false);
         });

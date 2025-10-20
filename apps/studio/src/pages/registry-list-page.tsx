@@ -1,8 +1,8 @@
 import { LayoutBreadcrumbHeader } from "@director.run/design/components/layout/layout-breadcrumb-header.tsx";
 import { LayoutView } from "@director.run/design/components/layout/layout.tsx";
 import { LayoutViewContent } from "@director.run/design/components/layout/layout.tsx";
-import { WorkspaceTargetAddSheet } from "@director.run/design/components/mcp-servers/mcp-add-sheet.tsx";
-import type { WorkspaceTargetFormData } from "@director.run/design/components/mcp-servers/mcp-add-sheet.tsx";
+import { PlaybookTargetAddSheet } from "@director.run/design/components/mcp-servers/mcp-add-sheet.tsx";
+import type { PlaybookTargetFormData } from "@director.run/design/components/mcp-servers/mcp-add-sheet.tsx";
 import { RegistryItemList } from "@director.run/design/components/pages/registry-item-list.tsx";
 import { RegistryLibrarySkeleton } from "@director.run/design/components/registry/registry-library-skeleton.tsx";
 import { EmptyState } from "@director.run/design/components/ui/empty-state.tsx";
@@ -12,8 +12,8 @@ import { toast } from "@director.run/design/components/ui/toast.js";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAddServer } from "../hooks/use-add-server";
+import { usePlaybooks } from "../hooks/use-playbooks";
 import { useRegistryEntries } from "../hooks/use-registry-entries";
-import { useWorkspaces } from "../hooks/use-workspaces";
 
 export const RegistryListPage: React.FC = () => {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ export const RegistryListPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [addSheetOpen, setAddSheetOpen] = useState(false);
 
-  const { data: workspaces } = useWorkspaces();
+  const { data: playbooks } = usePlaybooks();
   const { data, isLoading, error } = useRegistryEntries({
     pageIndex,
     pageSize: 20,
@@ -85,12 +85,12 @@ export const RegistryListPage: React.FC = () => {
           onEntryClick={(entryName) => navigate(`/library/mcp/${entryName}`)}
         />
 
-        <WorkspaceTargetAddSheet
+        <PlaybookTargetAddSheet
           open={addSheetOpen}
           onOpenChange={setAddSheetOpen}
-          workspaces={workspaces}
-          onSubmit={async (data: WorkspaceTargetFormData) => {
-            if (!data.workspaceId) {
+          workspaces={playbooks}
+          onSubmit={async (data: PlaybookTargetFormData) => {
+            if (!data.playbookId) {
               toast({
                 title: "No workspace selected",
                 description: "Please select a proxy before adding a server.",
@@ -99,7 +99,7 @@ export const RegistryListPage: React.FC = () => {
             }
 
             await addServer({
-              proxyId: data.workspaceId,
+              proxyId: data.playbookId,
               server: {
                 name: data.server.name,
                 transport: data.server,

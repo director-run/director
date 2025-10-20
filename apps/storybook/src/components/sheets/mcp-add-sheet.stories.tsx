@@ -1,29 +1,29 @@
-import { WorkspaceTargetAddSheet } from "@director.run/design/components/mcp-servers/mcp-add-sheet.tsx";
-import type { WorkspaceTargetFormData } from "@director.run/design/components/mcp-servers/mcp-add-sheet.tsx";
+import { PlaybookTargetAddSheet } from "@director.run/design/components/mcp-servers/mcp-add-sheet.tsx";
+import type { PlaybookTargetFormData } from "@director.run/design/components/mcp-servers/mcp-add-sheet.tsx";
 import { Button } from "@director.run/design/components/ui/button.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
 const meta = {
   title: "components/sheets/mcp-add-sheet",
-  component: WorkspaceTargetAddSheet,
+  component: PlaybookTargetAddSheet,
   parameters: {
     layout: "fullscreen",
   },
-} satisfies Meta<typeof WorkspaceTargetAddSheet>;
+} satisfies Meta<typeof PlaybookTargetAddSheet>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    onSubmit: (_data: WorkspaceTargetFormData) => Promise.resolve(),
+    onSubmit: (_data: PlaybookTargetFormData) => Promise.resolve(),
     workspaces: [
-      { id: "proxy-1", name: "Local Proxy" },
-      { id: "proxy-2", name: "Remote Proxy" },
+      { id: "playbook-1", name: "Local Playbook" },
+      { id: "playbook-2", name: "Remote Playbook" },
     ],
   },
-  render: ({ workspaces: proxies }) => {
+  render: ({ workspaces: playbooks }) => {
     const [open, setOpen] = useState(true);
 
     return (
@@ -33,11 +33,11 @@ export const Default: Story = {
             {open ? "Close Sheet" : "Open Sheet"}
           </Button>
         </div>
-        <WorkspaceTargetAddSheet
+        <PlaybookTargetAddSheet
           open={open}
           onOpenChange={setOpen}
-          workspaces={proxies}
-          onSubmit={(data: WorkspaceTargetFormData) => {
+          workspaces={playbooks}
+          onSubmit={(data: PlaybookTargetFormData) => {
             console.log("Data:", JSON.stringify(data, null, 2));
           }}
           isSubmitting={false}

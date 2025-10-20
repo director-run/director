@@ -4,7 +4,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useOnboardingProgress } from "../hooks/use-onboarding-progress.ts";
 
 export function OAuthCallbackPage() {
-  const { workspaceId, targetId } = useParams();
+  const { playbookId, targetId } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { inProgress } = useOnboardingProgress();
@@ -19,10 +19,10 @@ export function OAuthCallbackPage() {
       navigate(`/get-started`);
       return;
     }
-    if (workspaceId && targetId) {
-      navigate(`/${workspaceId}`);
+    if (playbookId && targetId) {
+      navigate(`/${playbookId}`);
     }
-  }, [error, inProgress, workspaceId, targetId, navigate]);
+  }, [error, inProgress, playbookId, targetId, navigate]);
 
   if (error) {
     return (

@@ -37,7 +37,7 @@ export class IntegrationTestHarness {
   }
 
   public async purge() {
-    await this.gateway.workspaceStore.purge();
+    await this.gateway.playbookStore.purge();
   }
 
   public get database() {
@@ -78,7 +78,7 @@ export class IntegrationTestHarness {
   }
 
   public async stop() {
-    await this.gateway.workspaceStore.purge();
+    await this.gateway.playbookStore.purge();
     await this.gateway.stop();
     await this.echoServerSSEInstance?.close();
     await this.kitchenSinkServerInstance?.close();

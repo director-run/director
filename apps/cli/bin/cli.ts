@@ -33,9 +33,9 @@ registerMCPCommands(program);
 registerPromptsCommands(program);
 
 program.addExamples(`
-  $ director create my-proxy # Create a new proxy
-  $ director add my-proxy --entry fetch # Add a server to a proxy
-  $ director connect my-proxy --target claude # Connect my-proxy to claude
+  $ director create my-playbook # Create a new playbook
+  $ director add my-playbook --entry fetch # Add a server to a playbook
+  $ director connect my-playbook --target claude-code # Connect my-playbook to claude-code
 `);
 
 program.parse();

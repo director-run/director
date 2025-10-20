@@ -5,9 +5,9 @@ import slugify from "slugify";
 import { z } from "zod";
 
 import {
-  type WorkspaceParams,
-  WorkspaceSchema,
-} from "../workspaces/workspace-schema";
+  type PlaybookParams,
+  PlaybookSchema,
+} from "../playbooks/playbook-schema";
 import { ConfigBase } from "./config-base";
 import {
   type ConfigStorage,
@@ -16,7 +16,7 @@ import {
 } from "./config-storage";
 
 export class Config extends ConfigBase<typeof configSchema> {
-  public readonly workspaces: WorkspacesConfig;
+  public readonly playbooks: PlaybooksConfig;
 
   private constructor(params: {
     storage: ConfigStorage;
@@ -27,7 +27,7 @@ export class Config extends ConfigBase<typeof configSchema> {
       storage: params.storage,
       defaults: params.defaults,
     });
-    this.workspaces = new WorkspacesConfig(this);
+    this.playbooks = new PlaybooksConfig(this);
   }
 
   static async createFileBasedConfig(params: {
@@ -75,7 +75,7 @@ export class Config extends ConfigBase<typeof configSchema> {
   }
 }
 
-class WorkspacesConfig {
+class PlaybooksConfig {
   private config: Config;
 
   constructor(config: Config) {
@@ -83,63 +83,63 @@ class WorkspacesConfig {
   }
 
   async create(
-    workspace: Omit<WorkspaceParams, "id">,
-  ): Promise<WorkspaceParams> {
-    const workspaceId = slugifyName(workspace.name);
+    playbook: Omit<PlaybookParams, "id">,
+  ): Promise<PlaybookParams> {
+    const playbookId = slugifyName(playbook.name);
 
-    if (await this.config.find("workspaces", { id: workspaceId })) {
+    if (await this.config.find("playbooks", { id: playbookId })) {
       throw new AppError(
         ErrorCode.DUPLICATE,
-        "Workspace with this name already exists",
+        "Playbook with this name already exists",
       );
     }
 
-    const newWorkspace = {
-      id: workspaceId,
-      ...workspace,
-      servers: _.map(workspace.servers || [], (s) => ({
+    const newPlaybook = {
+      id: playbookId,
+      ...playbook,
+      servers: _.map(playbook.servers || [], (s) => ({
         ...s,
         name: slugifyName(s.name),
       })),
     };
 
-    await this.config.push("workspaces", newWorkspace);
-    return newWorkspace;
+    await this.config.push("playbooks", newPlaybook);
+    return newPlaybook;
   }
 
-  async getWorkspace(id: string): Promise<WorkspaceParams> {
-    const workspaces = await this.all();
-    const workspace = _.find(workspaces, { id });
-    if (!workspace) {
-      throw new Error("Workspace not found");
+  async getPlaybook(id: string): Promise<PlaybookParams> {
+    const playbooks = await this.all();
+    const playbook = _.find(playbooks, { id });
+    if (!playbook) {
+      throw new Error("Playbook not found");
     }
-    return workspace;
+    return playbook;
   }
 
   async update(
     id: string,
-    workspace: WorkspaceParams,
-  ): Promise<WorkspaceParams> {
-    if (workspace.id !== id) {
+    playbook: PlaybookParams,
+  ): Promise<PlaybookParams> {
+    if (playbook.id !== id) {
       throw new Error("Id mismatch");
     }
-    // Remove existing workspace with the same id (if any), then append the new one
-    await this.config.remove("workspaces", { id });
-    await this.config.push("workspaces", workspace);
-    return workspace;
+    // Remove existing playbook with the same id (if any), then append the new one
+    await this.config.remove("playbooks", { id });
+    await this.config.push("playbooks", playbook);
+    return playbook;
   }
 
   async remove(id: string): Promise<void> {
-    await this.config.remove("workspaces", { id });
+    await this.config.remove("playbooks", { id });
   }
 
   async count(): Promise<number> {
-    const workspaces = await this.all();
-    return workspaces.length;
+    const playbooks = await this.all();
+    return playbooks.length;
   }
 
-  async all(): Promise<WorkspaceParams[]> {
-    return (await this.config.get("workspaces")) || [];
+  async all(): Promise<PlaybookParams[]> {
+    return (await this.config.get("playbooks")) || [];
   }
 }
 
@@ -149,7 +149,7 @@ function slugifyName(name: string): string {
 
 const configSchema = {
   version: z.string().default("1.0.0"),
-  workspaces: z.array(WorkspaceSchema).default([]),
+  playbooks: z.array(PlaybookSchema).default([]),
   debug: z.boolean().default(false),
   "server.port": z.number().min(0),
   "registry.url": z.string(),

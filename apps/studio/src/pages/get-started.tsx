@@ -1,6 +1,6 @@
 import { GetStartedCompleteDialog } from "@director.run/design/components/get-started/get-started-complete-dialog.tsx";
 import { GetStartedInstallServerDialog } from "@director.run/design/components/get-started/get-started-install-server-dialog.tsx";
-import type { FormValues as ProxyFormValues } from "@director.run/design/components/get-started/get-started-proxy-form.tsx";
+import type { FormValues as ProxyFormValues } from "@director.run/design/components/get-started/get-started-playbook-form.tsx";
 import { GetStartedPageView } from "@director.run/design/components/pages/get-started.tsx";
 import { FullScreenLoader } from "@director.run/design/components/pages/global/loader.tsx";
 import { toast } from "@director.run/design/components/ui/toast.tsx";
@@ -15,8 +15,8 @@ import {
 import { useClients } from "../hooks/use-clients.ts";
 import { useInstallServerFromRegistry } from "../hooks/use-install-server-from-registry.ts";
 import { useOnboardingProgress } from "../hooks/use-onboarding-progress.ts";
+import { usePlaybooks } from "../hooks/use-playbooks.ts";
 import { useRegistryEntries } from "../hooks/use-registry-entries.ts";
-import { useWorkspaces } from "../hooks/use-workspaces.ts";
 
 export function GetStartedPage() {
   const navigate = useNavigate();
@@ -47,7 +47,7 @@ export function GetStartedPage() {
 
   const utils = trpc.useUtils();
 
-  const proxyListQuery = useWorkspaces();
+  const proxyListQuery = usePlaybooks();
   const registryEntriesQuery = useRegistryEntries({
     pageIndex: 0,
     pageSize: 20,
@@ -130,7 +130,7 @@ export function GetStartedPage() {
       return;
     }
     installationMutation.mutate({
-      workspaceId: currentProxy.id,
+      playbookId: currentProxy.id,
       clientId: client,
       baseUrl: GATEWAY_URL,
     });

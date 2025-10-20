@@ -7,7 +7,7 @@ type ChangeInstallStateOptions = {
 };
 
 export function useChangeInstallState(
-  workspaceId: string,
+  playbookId: string,
   options?: ChangeInstallStateOptions,
 ) {
   const utils = gatewayClient.useUtils();
@@ -43,13 +43,13 @@ export function useChangeInstallState(
   const changeInstallState = async (clientId: string, install: boolean) => {
     if (install) {
       await installMutation.mutateAsync({
-        workspaceId,
+        playbookId,
         clientId,
         baseUrl: GATEWAY_URL,
       });
     } else {
       await uninstallMutation.mutateAsync({
-        workspaceId,
+        playbookId,
         clientId,
       });
     }

@@ -6,15 +6,15 @@ import { Telemetry } from "@director.run/utilities/telemetry";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 import express from "express";
-import type { WorkspaceStore } from "../workspaces/workspace-store";
+import type { PlaybookStore } from "../playbooks/playbook-store";
 
 const logger = getLogger("mcp/streamable");
 
 export const createStreamableRouter = ({
-  workspaceStore: proxyStore,
+  playbookStore: proxyStore,
   telemetry,
 }: {
-  workspaceStore: WorkspaceStore;
+  playbookStore: PlaybookStore;
   telemetry?: Telemetry;
 }) => {
   const router = express.Router();

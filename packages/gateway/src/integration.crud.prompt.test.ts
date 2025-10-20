@@ -41,7 +41,7 @@ describe("Prompt Capabilities", () => {
     });
 
     it("should update the config file when a prompt is added", async () => {
-      const config = await harness.database.workspaces.getWorkspace(proxy.id);
+      const config = await harness.database.playbooks.getPlaybook(proxy.id);
       expect(config.prompts).toEqual([prompt]);
     });
 
@@ -153,7 +153,7 @@ describe("Prompt Capabilities", () => {
     });
 
     it("should update the config file when a prompt is removed", async () => {
-      const config = await harness.database.workspaces.getWorkspace(proxy.id);
+      const config = await harness.database.playbooks.getPlaybook(proxy.id);
       expect(config.prompts).toEqual([]);
     });
 
@@ -318,7 +318,7 @@ describe("Prompt Capabilities", () => {
           body: "Updated body",
         },
       });
-      const config = await harness.database.workspaces.getWorkspace(proxy.id);
+      const config = await harness.database.playbooks.getPlaybook(proxy.id);
       expect(config.prompts).toEqual([
         {
           name: originalPrompt.name,

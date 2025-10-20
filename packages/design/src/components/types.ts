@@ -11,7 +11,7 @@ export type RegistryEntryDetail =
 // Workspace
 export type WorkspaceList = GatewayRouterOutputs["store"]["getAll"];
 export type WorkspaceDetail = GatewayRouterOutputs["store"]["get"];
-export type WorkspaceTarget =
+export type PlaybookTarget =
   GatewayRouterOutputs["store"]["get"]["servers"][number];
 
 // Client

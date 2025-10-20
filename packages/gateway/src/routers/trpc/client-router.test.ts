@@ -5,8 +5,8 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { ClientStore } from "../..//client-store";
 import type { Config } from "../../config";
 import { getSSEPathForProxy, getStreamablePathForProxy } from "../../helpers";
+import { PlaybookStore } from "../../playbooks/playbook-store";
 import { makeTestConfig } from "../../test/config";
-import { WorkspaceStore } from "../../workspaces/workspace-store";
 import { createAppRouter } from "./index";
 
 class TestClientStore extends ClientStore {
@@ -31,7 +31,7 @@ class TestClientStore extends ClientStore {
 }
 
 describe("Client Router", () => {
-  let workspaceStore: WorkspaceStore;
+  let playbookStore: PlaybookStore;
   let clientStore: TestClientStore;
   let app: ReturnType<typeof createAppRouter>;
 
@@ -39,7 +39,7 @@ describe("Client Router", () => {
 
   beforeAll(async () => {
     const config = await makeTestConfig();
-    workspaceStore = await WorkspaceStore.create({
+    playbookStore = await PlaybookStore.create({
       config,
       oauth: { storage: "memory", baseCallbackUrl: BASE_URL },
     });
@@ -53,7 +53,7 @@ describe("Client Router", () => {
       new FakeClient({ name: "claude-code", installables: [] }),
     ]);
 
-    app = createAppRouter({ workspaceStore, clientStore });
+    app = createAppRouter({ playbookStore, clientStore });
   });
 
   it("allClients returns statuses for all clients", async () => {
@@ -76,7 +76,7 @@ describe("Client Router", () => {
 
   it("install installs workspace on selected client and restarts if required", async () => {
     const caller = app.createCaller({ cliVersion: null });
-    const proxy = await workspaceStore.create({ name: "Test Proxy" });
+    const proxy = await playbookStore.create({ name: "Test Proxy" });
 
     // Spy restart on one client and make install return requiresRestart
     const target = clientStore.get("claude");
@@ -87,7 +87,7 @@ describe("Client Router", () => {
 
     await caller.clients.install({
       clientId: "claude",
-      workspaceId: proxy.id,
+      playbookId: proxy.id,
       baseUrl: BASE_URL,
     });
 
@@ -101,7 +101,7 @@ describe("Client Router", () => {
 
   it("uninstall removes workspace from selected client and restarts if required", async () => {
     const caller = app.createCaller({ cliVersion: null });
-    const proxy = await workspaceStore.create({ name: "Another Proxy" });
+    const proxy = await playbookStore.create({ name: "Another Proxy" });
 
     const target = clientStore.get("cursor");
     const restartSpy = vi.spyOn(target, "restart").mockResolvedValue();
@@ -111,7 +111,7 @@ describe("Client Router", () => {
 
     await caller.clients.uninstall({
       clientId: "cursor",
-      workspaceId: proxy.id,
+      playbookId: proxy.id,
     });
 
     expect(uninstallSpy).toHaveBeenCalledWith(proxy.id);

@@ -29,7 +29,7 @@ export function registerConnectCommand(program: DirectorCommand) {
             const proxy = await gatewayClient.store.get.query({ proxyId });
             await gatewayClient.clients.install.mutate({
               clientId: options.target,
-              workspaceId: proxy.id,
+              playbookId: proxy.id,
               baseUrl: getGatewayBaseUrl(),
             });
           } else {

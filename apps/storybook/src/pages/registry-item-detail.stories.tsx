@@ -11,27 +11,27 @@ import { mockRegistryEntry } from "@director.run/design/test/fixtures/registry/e
 import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../helpers/decorators";
 
-const mockProxies: WorkspaceList = [
+const mockPlaybooks: WorkspaceList = [
   {
-    id: "dev-proxy",
-    name: "Development Proxy",
-    description: "Main development proxy",
+    id: "dev-playbook",
+    name: "Development Playbook",
+    description: "Main development playbook",
     prompts: undefined,
     servers: [],
     paths: {
-      streamable: "/ws/dev-proxy",
-      sse: "/ws/dev-proxy",
+      streamable: "/ws/dev-playbook",
+      sse: "/ws/dev-playbook",
     },
   },
   {
-    id: "staging-proxy",
-    name: "Staging Proxy",
-    description: "Staging environment proxy",
+    id: "staging-playbook",
+    name: "Staging Playbook",
+    description: "Staging environment playbook",
     prompts: undefined,
     servers: [],
     paths: {
-      streamable: "/ws/staging-proxy",
-      sse: "/ws/staging-proxy",
+      streamable: "/ws/staging-playbook",
+      sse: "/ws/staging-playbook",
     },
   },
 ];
@@ -88,8 +88,8 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     entry: mockRegistryEntry,
-    proxies: mockProxies.map((p) =>
-      p.id === "dev-proxy"
+    proxies: mockPlaybooks.map((p) =>
+      p.id === "dev-playbook"
         ? {
             ...p,
             servers: [

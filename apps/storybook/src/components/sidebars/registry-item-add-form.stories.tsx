@@ -11,38 +11,38 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { withLayoutView } from "../../helpers/decorators";
 
-const mockProxies: WorkspaceList = [
+const mockPlaybooks: WorkspaceList = [
   {
-    id: "dev-proxy",
-    name: "Development Proxy",
-    description: "Main development proxy",
+    id: "dev-playbook",
+    name: "Development Playbook",
+    description: "Main development playbook",
     prompts: undefined,
     servers: [],
     paths: {
-      streamable: "/ws/dev-proxy",
-      sse: "/ws/dev-proxy",
+      streamable: "/ws/dev-playbook",
+      sse: "/ws/dev-playbook",
     },
   },
   {
-    id: "staging-proxy",
-    name: "Staging Proxy",
-    description: "Staging environment proxy",
+    id: "staging-playbook",
+    name: "Staging Playbook",
+    description: "Staging environment playbook",
     prompts: undefined,
     servers: [],
     paths: {
-      streamable: "/ws/staging-proxy",
-      sse: "/ws/staging-proxy",
+      streamable: "/ws/staging-playbook",
+      sse: "/ws/staging-playbook",
     },
   },
   {
-    id: "production-proxy",
-    name: "Production Proxy",
-    description: "Production environment proxy",
+    id: "production-playbook",
+    name: "Production Playbook",
+    description: "Production environment playbook",
     prompts: undefined,
     servers: [],
     paths: {
-      streamable: "/ws/production-proxy",
-      sse: "/ws/production-proxy",
+      streamable: "/ws/production-playbook",
+      sse: "/ws/production-playbook",
     },
   },
 ];
@@ -186,16 +186,16 @@ const BaseStory = ({
   );
 };
 
-// 1. With proxies, not installed anywhere
+// 1. With playbooks, not installed anywhere
 export const NotInstalled: Story = {
   args: {
     entry: mockRegistryEntry,
     onClickInstall: async () => {},
   },
-  render: () => <BaseStory proxies={mockProxies} />,
+  render: () => <BaseStory proxies={mockPlaybooks} />,
 };
 
-// 2. With proxies, installed on some
+// 2. With playbooks, installed on some
 export const PartiallyInstalled: Story = {
   args: {
     entry: mockRegistryEntry,
@@ -203,8 +203,8 @@ export const PartiallyInstalled: Story = {
   },
   render: () => (
     <BaseStory
-      proxies={mockProxies.map((p) =>
-        p.id === "dev-proxy"
+      proxies={mockPlaybooks.map((p) =>
+        p.id === "dev-playbook"
           ? {
               ...p,
               servers: [
@@ -223,7 +223,7 @@ export const PartiallyInstalled: Story = {
   ),
 };
 
-// 3. With proxies, installed on all
+// 3. With playbooks, installed on all
 export const FullyInstalled: Story = {
   args: {
     entry: mockRegistryEntry,
@@ -231,7 +231,7 @@ export const FullyInstalled: Story = {
   },
   render: () => (
     <BaseStory
-      proxies={mockProxies.map((p) => ({
+      proxies={mockPlaybooks.map((p) => ({
         ...p,
         servers: [
           {
@@ -247,7 +247,7 @@ export const FullyInstalled: Story = {
   ),
 };
 
-// 4. No proxies provided (undefined) - should show form without proxy dropdown
+// 4. No playbooks provided (undefined) - should show form without playbook dropdown
 export const UndefinedProxies: Story = {
   args: {
     entry: mockRegistryEntry,
@@ -256,7 +256,7 @@ export const UndefinedProxies: Story = {
   render: () => <BaseStory proxies={undefined} onClickCancel={() => {}} />,
 };
 
-// 5. Empty proxies array - should show "already installed" message
+// 5. Empty playbooks array - should show "already installed" message
 export const EmptyProxies: Story = {
   args: {
     entry: mockRegistryEntry,
@@ -273,8 +273,8 @@ export const Installing: Story = {
   },
   render: () => (
     <BaseStory
-      proxies={mockProxies.map((p) =>
-        p.id === "dev-proxy"
+      proxies={mockPlaybooks.map((p) =>
+        p.id === "dev-playbook"
           ? {
               ...p,
               servers: [
@@ -306,7 +306,7 @@ export const NoParameters: Story = {
         ...mockRegistryEntry,
         parameters: [],
       }}
-      proxies={mockProxies}
+      proxies={mockPlaybooks}
     />
   ),
 };
@@ -343,8 +343,8 @@ export const ComplexParameters: Story = {
           },
         ],
       }}
-      proxies={mockProxies.map((p) =>
-        p.id === "dev-proxy"
+      proxies={mockPlaybooks.map((p) =>
+        p.id === "dev-playbook"
           ? {
               ...p,
               servers: [

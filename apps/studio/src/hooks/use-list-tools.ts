@@ -1,8 +1,8 @@
 import { gatewayClient } from "../contexts/backend-context";
 
-export function useListTools(workspaceId: string, serverName?: string) {
+export function useListTools(playbookId: string, serverName?: string) {
   const { data, isLoading, error } = gatewayClient.tools.list.useQuery(
-    { workspaceId: workspaceId, serverName: serverName },
+    { playbookId: playbookId, serverName: serverName },
     {
       throwOnError: false,
       retry: false,

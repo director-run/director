@@ -11,8 +11,8 @@ import { GetStartedMcpServerList } from "../get-started/get-started-mcp-server-l
 import {
   GetStartedProxyForm,
   type FormValues as ProxyFormValues,
-} from "../get-started/get-started-proxy-form";
-import { proxySchema } from "../get-started/get-started-proxy-form";
+} from "../get-started/get-started-playbook-form";
+import { proxySchema } from "../get-started/get-started-playbook-form";
 import type { RegistryEntryList } from "../types";
 import type { Client } from "../types.ts";
 import { Container } from "../ui/container";

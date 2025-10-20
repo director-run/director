@@ -6,15 +6,15 @@ import { asyncHandler } from "@director.run/utilities/middleware/index";
 import { Telemetry } from "@director.run/utilities/telemetry";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import express from "express";
-import type { WorkspaceStore } from "../workspaces/workspace-store";
+import type { PlaybookStore } from "../playbooks/playbook-store";
 
 const logger = getLogger("mcp/sse");
 
 export const createSSERouter = ({
-  workspaceStore,
+  playbookStore,
   telemetry,
 }: {
-  workspaceStore: WorkspaceStore;
+  playbookStore: PlaybookStore;
   telemetry?: Telemetry;
 }) => {
   const router = express.Router();
@@ -24,7 +24,7 @@ export const createSSERouter = ({
     "/:proxy_id/sse",
     asyncHandler(async (req, res) => {
       const proxyId = req.params.proxy_id;
-      const proxy = workspaceStore.get(proxyId);
+      const proxy = playbookStore.get(proxyId);
       const transport = new SSEServerTransport(`/${proxy.id}/message`, res);
 
       transports.set(transport.sessionId, transport);
@@ -64,7 +64,7 @@ export const createSSERouter = ({
     "/:proxy_id/message",
     asyncHandler(async (req, res) => {
       const proxyId = req.params.proxy_id;
-      const proxy = workspaceStore.get(proxyId);
+      const proxy = playbookStore.get(proxyId);
       const sessionId = req.query.sessionId?.toString();
 
       if (!sessionId) {

@@ -29,7 +29,7 @@ export function registerCoreCommands(program: DirectorCommand): void {
   program
     .command("ls")
     .alias("list")
-    .description("List proxies")
+    .description("List playbooks")
     .action(
       actionWithErrorHandler(async () => {
         const proxies = await gatewayClient.store.getAll.query();
@@ -57,7 +57,7 @@ export function registerCoreCommands(program: DirectorCommand): void {
 
   program
     .command("create <name>")
-    .description("Create a new proxy")
+    .description("Create a new playbook")
     .action(
       actionWithErrorHandler(async (name: string) => {
         const proxy = await gatewayClient.store.create.mutate({
@@ -70,15 +70,15 @@ export function registerCoreCommands(program: DirectorCommand): void {
     );
 
   program
-    .command("destroy <proxyId>")
-    .description("Delete a proxy")
+    .command("destroy <playbookId>")
+    .description("Delete a playbook")
     .action(
       actionWithErrorHandler(async (proxyId: string) => {
         await gatewayClient.store.delete.mutate({
           proxyId,
         });
 
-        console.log(`proxy ${proxyId} deleted`);
+        console.log(`playbook ${proxyId} deleted`);
       }),
     );
 
@@ -99,7 +99,7 @@ export function registerCoreCommands(program: DirectorCommand): void {
           const proxy = await gatewayClient.store.get.query({ proxyId });
           await gatewayClient.clients.uninstall.mutate({
             clientId: options.target,
-            workspaceId: proxy.id,
+            playbookId: proxy.id,
           });
         },
       ),

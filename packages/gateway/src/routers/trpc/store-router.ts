@@ -6,8 +6,8 @@ import {
   type ServerConfigEntry,
   ServerConfigEntrySchema,
 } from "../../config/config-schema";
-import type { WorkspaceTarget } from "../../workspaces/workspace";
-import { WorkspaceStore } from "../../workspaces/workspace-store";
+import type { PlaybookTarget } from "../../playbooks/playbook";
+import { PlaybookStore } from "../../playbooks/playbook-store";
 
 const ProxyCreateSchema = z.object({
   name: z.string(),
@@ -32,8 +32,8 @@ const PromptSchema = z.object({
 });
 
 export function createProxyStoreRouter({
-  workspaceStore: proxyStore,
-}: { workspaceStore: WorkspaceStore }) {
+  playbookStore: proxyStore,
+}: { playbookStore: PlaybookStore }) {
   return t.router({
     getAll: t.procedure.query(async () => {
       return await Promise.all(
@@ -70,8 +70,8 @@ export function createProxyStoreRouter({
         }),
       )
       .mutation(async ({ input }) => {
-        const workspace = await proxyStore.get(input.proxyId);
-        const updated = await workspace.update({
+        const playbook = await proxyStore.get(input.proxyId);
+        const updated = await playbook.update({
           name: input.attributes.name,
           description: input.attributes.description ?? undefined,
         });
@@ -265,7 +265,7 @@ export function createProxyStoreRouter({
 
 const oldServerToTargetParams = (
   server: ServerConfigEntry,
-): WorkspaceTarget => {
+): PlaybookTarget => {
   if (server.transport.type === "http") {
     return {
       type: server.transport.type,

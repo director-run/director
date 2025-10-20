@@ -9,8 +9,8 @@ import { sleep } from "@director.run/utilities/sleep";
 import { joinURL } from "@director.run/utilities/url";
 import type { Config } from "./config";
 import { getSSEPathForProxy, getStreamablePathForProxy } from "./helpers";
-import type { Workspace } from "./workspaces/workspace";
-import type { WorkspaceStore } from "./workspaces/workspace-store";
+import type { Playbook } from "./playbooks/playbook";
+import type { PlaybookStore } from "./playbooks/playbook-store";
 
 const logger = getLogger("ClientStore");
 
@@ -24,10 +24,10 @@ export class ClientStore {
   }
 
   public async enforceClientConfigs({
-    workspaceStore,
+    playbookStore,
     baseUrl,
   }: {
-    workspaceStore: WorkspaceStore;
+    playbookStore: PlaybookStore;
     baseUrl: string;
   }) {
     logger.debug({ message: "Enforcing client configs" });
@@ -38,19 +38,19 @@ export class ClientStore {
 
     logger.debug({ message: "Adding back" });
     for (const client of this.all()) {
-      const workspaceIds =
+      const playbookIds =
         this._config.get(`clients.${client.name as ClientId}`) ?? [];
-      for (const workspaceId of workspaceIds) {
+      for (const playbookId of playbookIds) {
         logger.debug({
-          message: `Installing ${workspaceId} on ${client.name}`,
+          message: `Installing ${playbookId} on ${client.name}`,
         });
-        const workspace = workspaceStore.get(workspaceId);
+        const playbook = playbookStore.get(playbookId);
         const result = await client.install({
-          name: workspace.id,
-          sseURL: joinURL(baseUrl, getSSEPathForProxy(workspace.id)),
+          name: playbook.id,
+          sseURL: joinURL(baseUrl, getSSEPathForProxy(playbook.id)),
           streamableURL: joinURL(
             baseUrl,
-            getStreamablePathForProxy(workspace.id),
+            getStreamablePathForProxy(playbook.id),
           ),
         });
         if (result.requiresRestart) {
@@ -60,14 +60,14 @@ export class ClientStore {
     }
   }
 
-  public async getClientsByWorkspace(workspaceId: string) {
+  public async getClientsByPlaybook(playbookId: string) {
     const clients: AbstractClient<unknown>[] = [];
     for (const client of this.all()) {
       if (!(await client.isClientPresent())) {
         continue;
       }
       const installed = await client.list();
-      if (installed.some((installable) => installable.name === workspaceId)) {
+      if (installed.some((installable) => installable.name === playbookId)) {
         clients.push(client);
       }
     }
@@ -114,22 +114,22 @@ export class ClientStore {
 
   public async install({
     clientId,
-    workspace,
+    playbook,
     baseUrl,
   }: {
     clientId: ClientId;
-    workspace: Workspace;
+    playbook: Playbook;
     baseUrl: string;
   }): Promise<void> {
     const client = this.get(clientId);
 
     const result = await client.install({
-      name: workspace.id,
-      sseURL: joinURL(baseUrl, getSSEPathForProxy(workspace.id)),
-      streamableURL: joinURL(baseUrl, getStreamablePathForProxy(workspace.id)),
+      name: playbook.id,
+      sseURL: joinURL(baseUrl, getSSEPathForProxy(playbook.id)),
+      streamableURL: joinURL(baseUrl, getStreamablePathForProxy(playbook.id)),
     });
 
-    await this._config.push(`clients.${clientId}`, workspace.id);
+    await this._config.push(`clients.${clientId}`, playbook.id);
 
     if (result.requiresRestart) {
       await client.restart();
@@ -138,12 +138,12 @@ export class ClientStore {
 
   public async uninstall(
     clientId: ClientId,
-    workspaceId: string,
+    playbookId: string,
   ): Promise<void> {
     const client = this.get(clientId);
-    const result = await client.uninstall(workspaceId);
+    const result = await client.uninstall(playbookId);
 
-    await this._config.remove(`clients.${clientId}`, workspaceId);
+    await this._config.remove(`clients.${clientId}`, playbookId);
 
     if (result.requiresRestart) {
       await client.restart();
@@ -154,8 +154,8 @@ export class ClientStore {
     return await Promise.all(this.all().map((client) => client.getStatus()));
   }
 
-  public async handleWorkspaceListChange(workspaceId: string) {
-    const clients = await this.getClientsByWorkspace(workspaceId);
+  public async handlePlaybookListChange(playbookId: string) {
+    const clients = await this.getClientsByPlaybook(playbookId);
     for (const client of clients) {
       if (!(await client.isClientPresent())) {
         continue;
@@ -167,13 +167,13 @@ export class ClientStore {
     }
   }
 
-  public async handleWorkspaceRemove(workspaceId: string) {
-    const clients = await this.getClientsByWorkspace(workspaceId);
+  public async handlePlaybookRemove(playbookId: string) {
+    const clients = await this.getClientsByPlaybook(playbookId);
     for (const client of clients) {
       if (!(await client.isClientPresent())) {
         continue;
       }
-      const result = await client.uninstall(workspaceId);
+      const result = await client.uninstall(playbookId);
       if (result.requiresRestart) {
         await client.restart();
       }

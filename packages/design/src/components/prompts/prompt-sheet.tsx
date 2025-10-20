@@ -119,7 +119,7 @@ export function PromptSheet({
               <SheetDescription className="text-sm">
                 {prompt
                   ? "Update this reusable instruction block."
-                  : "Create a reusable instruction block for your workspace."}
+                  : "Create a reusable instruction block for your playbook."}
               </SheetDescription>
             </SheetHeader>
 

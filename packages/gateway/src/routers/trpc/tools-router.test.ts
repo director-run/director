@@ -5,7 +5,7 @@ import { IntegrationTestHarness } from "../../test/integration";
 
 describe("Tools Router", () => {
   let harness: IntegrationTestHarness;
-  let workspace: GatewayRouterOutputs["store"]["create"];
+  let playbook: GatewayRouterOutputs["store"]["create"];
 
   beforeAll(async () => {
     harness = await IntegrationTestHarness.start();
@@ -17,7 +17,7 @@ describe("Tools Router", () => {
 
   beforeEach(async () => {
     await harness.purge();
-    workspace = await harness.client.store.create.mutate({
+    playbook = await harness.client.store.create.mutate({
       name: "Test Workspace",
       servers: [
         harness.getConfigForTarget("echo"),
@@ -29,7 +29,7 @@ describe("Tools Router", () => {
   describe("listTools", () => {
     it("should list tools", async () => {
       const toolsResult = await harness.client.tools.list.query({
-        workspaceId: workspace.id,
+        playbookId: playbook.id,
       });
       expect(toolsResult.map((t) => t.name)).toEqual([
         "add",
@@ -42,7 +42,7 @@ describe("Tools Router", () => {
 
     it("should return only return tools for the given server name", async () => {
       const toolsResult = await harness.client.tools.list.query({
-        workspaceId: workspace.id,
+        playbookId: playbook.id,
         serverName: "echo",
       });
       expect(toolsResult.map((t) => t.name)).toEqual(["echo"]);
@@ -52,7 +52,7 @@ describe("Tools Router", () => {
   describe("updateBatch", () => {
     it("should update tools", async () => {
       await harness.client.tools.updateBatch.mutate({
-        workspaceId: workspace.id,
+        playbookId: playbook.id,
         tools: [
           {
             serverName: "echo",
@@ -63,7 +63,7 @@ describe("Tools Router", () => {
       });
 
       const toolsResult = await harness.client.tools.list.query({
-        workspaceId: workspace.id,
+        playbookId: playbook.id,
       });
 
       expect(toolsResult.map((t) => t.name)).toEqual([
@@ -81,7 +81,7 @@ describe("Tools Router", () => {
   describe("callTool", () => {
     it("should call a tool", async () => {
       const result = (await harness.client.tools.callTool.mutate({
-        workspaceId: workspace.id,
+        playbookId: playbook.id,
         serverName: "echo",
         toolName: "echo",
         arguments: {

@@ -3,7 +3,7 @@ import { GetStartedInstallServerDialog } from "@director.run/design/components/g
 import { GetStartedPageView } from "@director.run/design/components/pages/get-started.tsx";
 import { mockRegistryEntryList } from "@director.run/design/test/fixtures/registry/entry-list.ts";
 import { mockRegistryEntry } from "@director.run/design/test/fixtures/registry/entry.ts";
-import { mockClients } from "@director.run/design/test/fixtures/workspace/clients.ts";
+import { mockClients } from "@director.run/design/test/fixtures/playbook/clients.ts";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
@@ -46,8 +46,8 @@ function StatefulPage(args: React.ComponentProps<typeof GetStartedPageView>) {
   );
 }
 
-// step 1a: new proxy
-export const Step1a_NewProxy: Story = {
+// step 1a: new playbook
+export const Step1a_NewPlaybook: Story = {
   args: {
     currentWorkspace: null,
     registryEntries: [],
@@ -57,8 +57,8 @@ export const Step1a_NewProxy: Story = {
   },
 };
 
-// step 1b: new proxy loading
-export const Step1b_NewProxyLoading: Story = {
+// step 1b: new playbook loading
+export const Step1b_NewPlaybookLoading: Story = {
   args: {
     currentWorkspace: null,
     registryEntries: [],
@@ -68,10 +68,10 @@ export const Step1b_NewProxyLoading: Story = {
   },
 };
 
-// step 2a: registry entry list (proxy created, no servers yet)
+// step 2a: registry entry list (playbook created, no servers yet)
 export const Step2a_RegistryEntryList: Story = {
   args: {
-    currentWorkspace: { id: "proxy-1", servers: [] },
+    currentWorkspace: { id: "playbook-1", servers: [] },
     registryEntries: mockRegistryEntryList,
     clientStatuses: mockClients,
     isAddingWorkspaceToClient: false,
@@ -82,7 +82,7 @@ export const Step2a_RegistryEntryList: Story = {
 // step 2b: registry entry detail (dialog open)
 export const Step2b_RegistryEntryDetail: Story = {
   args: {
-    currentWorkspace: { id: "proxy-1", servers: [] },
+    currentWorkspace: { id: "playbook-1", servers: [] },
     registryEntries: mockRegistryEntryList,
     clientStatuses: mockClients,
     isAddingWorkspaceToClient: false,
@@ -106,10 +106,10 @@ export const Step2b_RegistryEntryDetail: Story = {
   },
 };
 
-// step 3: client installers (proxy with a server)
+// step 3: client installers (playbook with a server)
 export const Step3_ClientInstallers: Story = {
   args: {
-    currentWorkspace: { id: "proxy-1", servers: [{ name: "github-mcp" }] },
+    currentWorkspace: { id: "playbook-1", servers: [{ name: "github-mcp" }] },
     registryEntries: mockRegistryEntryList,
     clientStatuses: mockClients,
     isAddingWorkspaceToClient: false,
@@ -120,7 +120,7 @@ export const Step3_ClientInstallers: Story = {
 // step 3b: client install loading
 export const Step3b_ClientInstallLoading: Story = {
   args: {
-    currentWorkspace: { id: "proxy-1", servers: [{ name: "github-mcp" }] },
+    currentWorkspace: { id: "playbook-1", servers: [{ name: "github-mcp" }] },
     registryEntries: mockRegistryEntryList,
     clientStatuses: mockClients,
     isAddingWorkspaceToClient: true,

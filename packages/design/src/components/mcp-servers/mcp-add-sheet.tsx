@@ -35,22 +35,22 @@ interface Proxy {
   name: string;
 }
 
-interface WorkspaceTargetAddSheetProps extends ComponentProps<typeof Sheet> {
+interface PlaybookTargetAddSheetProps extends ComponentProps<typeof Sheet> {
   workspaces?: Proxy[];
-  onSubmit: (data: WorkspaceTargetFormData) => Promise<void> | void;
+  onSubmit: (data: PlaybookTargetFormData) => Promise<void> | void;
   isSubmitting?: boolean;
 }
 
-export function WorkspaceTargetAddSheet({
+export function PlaybookTargetAddSheet({
   open,
   onOpenChange,
   workspaces,
   onSubmit,
   isSubmitting = false,
   ...props
-}: WorkspaceTargetAddSheetProps) {
+}: PlaybookTargetAddSheetProps) {
   const defaultValues = {
-    workspaceId: workspaces?.[0]?.id ?? undefined,
+    playbookId: workspaces?.[0]?.id ?? undefined,
     server: {
       name: "",
       type: "stdio" as const,
@@ -87,7 +87,7 @@ export function WorkspaceTargetAddSheet({
 
           <SectionSeparator />
 
-          <WorkspaceTargetForm
+          <PlaybookTargetForm
             defaultValues={defaultValues}
             proxies={workspaces}
             onSubmit={onSubmit}
@@ -99,19 +99,19 @@ export function WorkspaceTargetAddSheet({
   );
 }
 
-interface WorkspaceTargetFormProps {
-  defaultValues: WorkspaceTargetFormData;
+interface PlaybookTargetFormProps {
+  defaultValues: PlaybookTargetFormData;
   proxies?: Proxy[];
-  onSubmit: (data: WorkspaceTargetFormData) => Promise<void> | void;
+  onSubmit: (data: PlaybookTargetFormData) => Promise<void> | void;
   isSubmitting?: boolean;
 }
 
-function WorkspaceTargetForm({
+function PlaybookTargetForm({
   defaultValues,
   proxies,
   onSubmit,
   isSubmitting = false,
-}: WorkspaceTargetFormProps) {
+}: PlaybookTargetFormProps) {
   return (
     <FormWithSchema
       schema={formSchema}
@@ -123,7 +123,7 @@ function WorkspaceTargetForm({
       onSubmit={(data) => {
         if (data.server.type === "stdio") {
           onSubmit({
-            workspaceId: data.workspaceId,
+            playbookId: data.playbookId,
             server: {
               ...data.server,
               command: data.server.command.split(" ")[0],
@@ -141,7 +141,7 @@ function WorkspaceTargetForm({
           });
         } else if (data.server.type === "http") {
           onSubmit({
-            workspaceId: data.workspaceId,
+            playbookId: data.playbookId,
             server: {
               ...data.server,
               headers: data._headers.reduce(
@@ -182,7 +182,7 @@ function McpAddFormFields({
   return (
     <>
       {proxies && (
-        <SelectNativeField name="workspaceId" label="Proxy">
+        <SelectNativeField name="playbookId" label="Proxy">
           {proxies.map((proxy) => (
             <option key={proxy.id} value={proxy.id}>
               {proxy.name}
@@ -340,7 +340,7 @@ const WorkspaceHTTPTargetAttributesSchema = z.object({
 });
 
 const formSchema = z.object({
-  workspaceId: z.string().optional(),
+  playbookId: z.string().optional(),
   server: z.discriminatedUnion("type", [
     WorkspaceStdioTargetAttributesSchema,
     WorkspaceHTTPTargetAttributesSchema,
@@ -359,7 +359,7 @@ const formSchema = z.object({
   ),
 });
 
-export type WorkspaceTargetFormData = Omit<
+export type PlaybookTargetFormData = Omit<
   z.infer<typeof formSchema>,
   "_env" | "_headers"
 >;

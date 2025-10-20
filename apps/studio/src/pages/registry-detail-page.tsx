@@ -23,8 +23,8 @@ import { toast } from "@director.run/design/components/ui/toast.tsx";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useInstallServerFromRegistry } from "../hooks/use-install-server-from-registry";
+import { usePlaybooks } from "../hooks/use-playbooks";
 import { useRegistryEntry } from "../hooks/use-registry-entry";
-import { useWorkspaces } from "../hooks/use-workspaces";
 
 export function RegistryDetailPage() {
   const navigate = useNavigate();
@@ -33,7 +33,7 @@ export function RegistryDetailPage() {
   const [installFormOpen, setInstallFormOpen] = useState(false);
 
   const entryQuery = useRegistryEntry({ entryName });
-  const storeQuery = useWorkspaces();
+  const storeQuery = usePlaybooks();
 
   const { install, isPending } = useInstallServerFromRegistry({
     onError: (error) => {

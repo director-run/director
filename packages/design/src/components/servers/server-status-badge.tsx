@@ -1,13 +1,13 @@
 import { CheckCircleIcon, WarningCircleIcon } from "@phosphor-icons/react";
-import type { WorkspaceTarget } from "../types.ts";
+import type { PlaybookTarget } from "../types.ts";
 import { Badge, BadgeIcon, BadgeLabel } from "../ui/badge.tsx";
 
 export function ServerStatusBadge({
   server,
   onClickAuthorize,
 }: {
-  server: WorkspaceTarget;
-  onClickAuthorize?: (server: WorkspaceTarget) => void;
+  server: PlaybookTarget;
+  onClickAuthorize?: (server: PlaybookTarget) => void;
 }) {
   switch (server.connectionInfo?.status) {
     case "connected":

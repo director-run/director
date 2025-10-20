@@ -1,4 +1,4 @@
-import type { WorkspaceTarget } from "../types.ts";
+import type { PlaybookTarget } from "../types.ts";
 import { BadgeGroup } from "../ui/badge.tsx";
 import { Button } from "../ui/button.tsx";
 import {
@@ -16,10 +16,10 @@ export function WorkspaceServerList({
   onClickAddServer,
   onClickAuthorize,
 }: {
-  servers: WorkspaceTarget[];
-  onClickServer?: (server: WorkspaceTarget) => void;
+  servers: PlaybookTarget[];
+  onClickServer?: (server: PlaybookTarget) => void;
   onClickAddServer?: () => void;
-  onClickAuthorize?: (server: WorkspaceTarget) => void;
+  onClickAuthorize?: (server: PlaybookTarget) => void;
 }) {
   return (
     <Section>
@@ -59,9 +59,9 @@ function WorkspaceServerListItem({
   onClick,
   onClickAuthorize,
 }: {
-  server: WorkspaceTarget;
+  server: PlaybookTarget;
   onClick?: () => void;
-  onClickAuthorize?: (server: WorkspaceTarget) => void;
+  onClickAuthorize?: (server: PlaybookTarget) => void;
 }) {
   return (
     <List.ListItem onClick={onClick}>
@@ -81,7 +81,7 @@ function WorkspaceServerListItem({
 
 function WorkspaceServerListItemDescription({
   server,
-}: { server: WorkspaceTarget }) {
+}: { server: PlaybookTarget }) {
   if (server.type === "http") {
     return <List.ListItemDescription>{server.url}</List.ListItemDescription>;
   } else if (server.type === "stdio") {

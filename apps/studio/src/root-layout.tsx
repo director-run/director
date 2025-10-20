@@ -15,11 +15,11 @@ import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { useOnboardingProgress } from "./hooks/use-onboarding-progress";
-import { useWorkspaces } from "./hooks/use-workspaces";
+import { usePlaybooks } from "./hooks/use-playbooks";
 
 export const RootLayout = () => {
   const navigate = useNavigate();
-  const { data: workspaces, isLoading, error } = useWorkspaces();
+  const { data: playbooks, isLoading, error } = usePlaybooks();
   const showLoading = isLoading || error?.message === "Failed to fetch";
   const location = useLocation();
   const { setInProgress } = useOnboardingProgress();
@@ -50,11 +50,11 @@ export const RootLayout = () => {
           label: "Workspaces",
           isLoading: showLoading,
           items:
-            workspaces?.map((workspace) => ({
-              id: workspace.id,
-              label: workspace.name,
-              isActive: location.pathname === `/${workspace.id}`,
-              onClick: () => navigate(`/${workspace.id}`),
+            playbooks?.map((playbook) => ({
+              id: playbook.id,
+              label: playbook.name,
+              isActive: location.pathname === `/${playbook.id}`,
+              onClick: () => navigate(`/${playbook.id}`),
             })) || [],
         },
         {

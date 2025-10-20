@@ -14,7 +14,10 @@ import {
   PromptManager,
 } from "../capabilities/prompt-manager";
 import { Config } from "../config";
-import { getSSEPathForProxy, getStreamablePathForProxy } from "../helpers";
+import {
+  getSSEPathForPlaybook,
+  getStreamablePathForPlaybook,
+} from "../helpers";
 import {
   type PlaybookHTTPTarget,
   PlaybookHTTPTargetSchema,
@@ -261,8 +264,8 @@ export class Playbook extends ProxyServer {
           ),
       ),
       paths: {
-        streamable: getStreamablePathForProxy(this.id),
-        sse: getSSEPathForProxy(this.id),
+        streamable: getStreamablePathForPlaybook(this.id),
+        sse: getSSEPathForPlaybook(this.id),
       },
     };
   }

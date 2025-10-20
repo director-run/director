@@ -232,7 +232,7 @@ describe("CLI integration tests", () => {
   });
 
   describe("playbook lifecycle", () => {
-    test("should be able to list proxies", async () => {
+    test("should be able to list playbooks", async () => {
       await runCLICommand("create", "test1");
       await runCLICommand("create", "test2");
 

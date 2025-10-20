@@ -1,7 +1,7 @@
-export function getStreamablePathForProxy(playbookId: string) {
+export function getStreamablePathForPlaybook(playbookId: string) {
   return `/${playbookId}/mcp`;
 }
 
-export function getSSEPathForProxy(playbookId: string) {
+export function getSSEPathForPlaybook(playbookId: string) {
   return `/${playbookId}/sse`;
 }

@@ -1,6 +1,6 @@
 import type { GatewayRouterOutputs } from "@director.run/gateway/client";
-import { getSSEPathForProxy } from "@director.run/gateway/helpers";
-import { getStreamablePathForProxy } from "@director.run/gateway/helpers";
+import { getSSEPathForPlaybook } from "@director.run/gateway/helpers";
+import { getStreamablePathForPlaybook } from "@director.run/gateway/helpers";
 import {
   blue,
   green,
@@ -120,9 +120,9 @@ export function printPlaybookDetails(
       description: description ?? "--",
       streamableURL: joinURL(
         getGatewayBaseUrl(),
-        getStreamablePathForProxy(playbook.id),
+        getStreamablePathForPlaybook(playbook.id),
       ),
-      sseURL: joinURL(getGatewayBaseUrl(), getSSEPathForProxy(playbook.id)),
+      sseURL: joinURL(getGatewayBaseUrl(), getSSEPathForPlaybook(playbook.id)),
     }),
   );
 

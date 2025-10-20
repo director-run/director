@@ -4,7 +4,10 @@ import { joinURL } from "@director.run/utilities/url";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { ClientStore } from "../..//client-store";
 import type { Config } from "../../config";
-import { getSSEPathForProxy, getStreamablePathForProxy } from "../../helpers";
+import {
+  getSSEPathForPlaybook,
+  getStreamablePathForPlaybook,
+} from "../../helpers";
 import { PlaybookStore } from "../../playbooks/playbook-store";
 import { makeTestConfig } from "../../test/config";
 import { createAppRouter } from "./index";
@@ -93,8 +96,8 @@ describe("Client Router", () => {
 
     expect(installSpy).toHaveBeenCalledWith({
       name: proxy.id,
-      sseURL: joinURL(BASE_URL, getSSEPathForProxy(proxy.id)),
-      streamableURL: joinURL(BASE_URL, getStreamablePathForProxy(proxy.id)),
+      sseURL: joinURL(BASE_URL, getSSEPathForPlaybook(proxy.id)),
+      streamableURL: joinURL(BASE_URL, getStreamablePathForPlaybook(proxy.id)),
     });
     expect(restartSpy).toHaveBeenCalledTimes(1);
   });

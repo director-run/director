@@ -1,6 +1,6 @@
 import {
-  getSSEPathForProxy,
-  getStreamablePathForProxy,
+  getSSEPathForPlaybook,
+  getStreamablePathForPlaybook,
 } from "@director.run/gateway/helpers";
 import { blue, whiteBold } from "@director.run/utilities/cli/colors";
 import {
@@ -51,10 +51,10 @@ export function registerConnectCommand(program: DirectorCommand) {
               proxyId: playbookId,
             });
             const baseUrl = getGatewayBaseUrl();
-            const sseURL = joinURL(baseUrl, getSSEPathForProxy(proxy.id));
+            const sseURL = joinURL(baseUrl, getSSEPathForPlaybook(proxy.id));
             const streamableURL = joinURL(
               baseUrl,
-              getStreamablePathForProxy(proxy.id),
+              getStreamablePathForPlaybook(proxy.id),
             );
 
             const stdioCommand = {

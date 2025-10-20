@@ -8,7 +8,7 @@ import { getLogger } from "@director.run/utilities/logger";
 import { sleep } from "@director.run/utilities/sleep";
 import { joinURL } from "@director.run/utilities/url";
 import type { Config } from "./config";
-import { getSSEPathForProxy, getStreamablePathForProxy } from "./helpers";
+import { getSSEPathForPlaybook, getStreamablePathForPlaybook } from "./helpers";
 import type { Playbook } from "./playbooks/playbook";
 import type { PlaybookStore } from "./playbooks/playbook-store";
 
@@ -47,10 +47,10 @@ export class ClientStore {
         const playbook = playbookStore.get(playbookId);
         const result = await client.install({
           name: playbook.id,
-          sseURL: joinURL(baseUrl, getSSEPathForProxy(playbook.id)),
+          sseURL: joinURL(baseUrl, getSSEPathForPlaybook(playbook.id)),
           streamableURL: joinURL(
             baseUrl,
-            getStreamablePathForProxy(playbook.id),
+            getStreamablePathForPlaybook(playbook.id),
           ),
         });
         if (result.requiresRestart) {
@@ -125,8 +125,11 @@ export class ClientStore {
 
     const result = await client.install({
       name: playbook.id,
-      sseURL: joinURL(baseUrl, getSSEPathForProxy(playbook.id)),
-      streamableURL: joinURL(baseUrl, getStreamablePathForProxy(playbook.id)),
+      sseURL: joinURL(baseUrl, getSSEPathForPlaybook(playbook.id)),
+      streamableURL: joinURL(
+        baseUrl,
+        getStreamablePathForPlaybook(playbook.id),
+      ),
     });
 
     await this._config.push(`clients.${clientId}`, playbook.id);

@@ -16,7 +16,7 @@
 
 # Overview
 
-Director is an MCP gateway that allows you to author, host and share **playbooks** with AI Agents. Playbooks are set of tools, prompts and configuration, that enable a specific task (similar to [Claude Skills](https://www.anthropic.com/news/skills)) and can be used by any agent through a single, unified MCP endpoint.
+Director helps you to author, host and share **playbooks** with AI Agents. Playbooks are set of tools, prompts and configuration, that enable a specific task (similar to [Claude Skills](https://www.anthropic.com/news/skills)) and can be used by any agent through a single, unified MCP endpoint.
 
 Playbooks are portable, declarative YAML files that can easily be shared (or committed to version control). Director is local-first; installation and client integration takes 30 seconds. In addition, Director provides all the MCP management functionality that you'd expect: tool filtering, logging, strong isolation, and unified OAuth.
 
@@ -52,7 +52,7 @@ $ director quickstart
 
 A playbook is a set of tools, prompts and configuration, used to provide specific capabilities to your agent. Under the hood, playbooks are built on top of MCP - they provide tools & prompts to your agent. 
 
-The easiest way to author a playbook is via the UI (`director studio`). But you can also use the CLI or write the config manually (see below). You can have many playbooks, typically one per task or per environment. Connecting them is one click in the UI / one CLI command / one line in the config (connections will be enforced on startup). 
+The easiest way to author a playbook is via the UI (`director studio`). But you can also use the CLI or write the config manually (see below). You can have many playbooks, typically one per task or per environment. Connecting them is one click in the UI (or one CLI command / config entry), connections will be enforced on startup. 
 
 ```yaml
 #
@@ -98,7 +98,7 @@ clients:
 
 ## Architechture
 
-Director is a piece of infrastructure that sits between your agents and MCP servers. It is completetly transparent for clients, requiring no additional tokens. It's designed to be an always on server at the core. 
+At the highest level, Director is a service that sits between your agents and MCP servers. It's transparent to clients, requiring no additional tokens. It models playbooks, which can be thought of as standalone, portable skills that enhance your AI agent with new capabilities.
 
 <img src="https://github.com/director-run/director/blob/main/apps/docs/images/director-highlevel-overview.webp" width="100%" alt="director demo">
 

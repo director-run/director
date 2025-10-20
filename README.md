@@ -18,7 +18,7 @@
 
 Director is an MCP gateway that allows you to author, host and share **playbooks** with AI Agents. Playbooks are set of tools, prompts and configuration, that enable a specific task (similar to [Claude Skills](https://www.anthropic.com/news/skills)) and can be used by any agent through a single, unified MCP endpoint.
 
-Playbooks are portable - they're flat, declarative YAML files that can shared or committed to version control easily. Director is local-first; installation and client integration takes 30 seconds. In addition, Director provides all the MCP management functionality that you'd expect: tool filtering, logging, strong isolation, and unified OAuth.
+Playbooks are portable, declarative YAML files that can easily be shared (or committed to version control). Director is local-first; installation and client integration takes 30 seconds. In addition, Director provides all the MCP management functionality that you'd expect: tool filtering, logging, strong isolation, and unified OAuth.
 
 <br />
 <img src="https://github.com/director-run/director/blob/main/apps/docs/images/demo.gif" width="100%" alt="director demo">
@@ -50,7 +50,9 @@ $ director quickstart
 
 ## Playbooks
 
-A playbook is a set of tools, prompts and configuration, that enable a specific task. You can maintain as many playbooks as you like, and connect them to you client in one click through the UI, or by editing the config file directly. 
+A playbook is a set of tools, prompts and configuration, used to provide specific capabilities to your agent. Under the hood, playbooks are built on top of MCP - they provide tools & prompts to your agent. 
+
+The easiest way to author a playbook is via the UI (`director studio`). But you can also use the CLI or write the config manually (see below). You can have many playbooks, typically one per task or per environment. Connecting them is one click in the UI / one CLI command / one line in the config (connections will be enforced on startup). 
 
 ```yaml
 #

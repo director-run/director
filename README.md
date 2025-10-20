@@ -1,5 +1,5 @@
 <h1 align="center">Director</h1>
-<p align="center">Context infrastructure for AI agents</p>
+<p align="center">Playbooks for AI agents</p>
 
 <p align="center"><code>curl -LsSf https://director.run/install.sh | sh</code></p>
 
@@ -16,12 +16,26 @@
 
 # Overview
 
-Director is a **context engine** that packages MCP servers, prompts, and configuration into **workspaces** — portable contexts accessible through a single endpoint.
+Director is an MCP gateway that allows you to author, host and share **playbooks** with AI Agents. Playbooks are set of tools, prompts and configuration, that enable a specific task (similar to [Claude Skills](https://www.anthropic.com/news/skills)) and can be used by any agent through a single, unified MCP endpoint.
 
-Instead of configuring MCP servers individually for each agent, Director lets you define context workspaces once and use them everywhere. Share complete AI contexts between Claude, Cursor, VSCode or any MCP enabled client. Distribute workspaces to your team. Switch between development and production contexts instantly. Run untrusted servers in isolation. All without cloud dependencies, API keys or accounts.
+Playbooks are portable - they're flat, declarative YAML files that can shared or committed to version control easily. Director is local-first; installation and client integration takes 30 seconds. In addition, Director provides all the MCP management functionality that you'd expect: tool filtering, logging, strong isolation, and unified OAuth.
 
 <br />
 <img src="https://github.com/director-run/director/blob/main/apps/docs/images/context-engine.svg" />
+
+
+## Key Features
+
+- 📚 **Playbooks** - Maintain sets of tools, prompts and config for different tasks or environments.
+- 🚀 **1-Click Integration** - Switch playbooks with a single click. Currently supports Claude Code, Claude Desktop, Cursor, VSCode
+- 🔗 **Shareable** - Playbooks are flat files which can be shared or committed to version control easily.
+- 🏠 **Local-First** - Director is local-first, designed to easily run on your own machine or infrastructure.
+- 🔑 **Unified OAuth** - Connect to OAuth MCPs centrally, and use them across all of your agents.
+- 🎯 **Tool Filtering** - Select only the MCP tools that are required for the specific task, preserving context.  
+- 📋 **Declarative** - Like terraform for AI agents, Director will enforce playbook to client mapping on startup.
+- 🔧 **Flexibility** - You can configure director through the UI, by editing the config file, through the CLI or even using the Typescript SDK.  
+- 📊 **Observability** - Centralised JSON logging, that allows you to understand exactly what your agent is doing.
+- 🔌 **MCP Compliant** - Just works with any MCP server or client. Up to date with the latest MCP spec.
 
 # Quickstart
 
@@ -33,46 +47,15 @@ $ curl -LsSf https://director.run/install.sh | sh
 $ director quickstart
 ```
 
-# The Context Management Problem
-
-MCP standardizes how AI agents access context. However, the ecosystem is still nascent and using it remains complicated.
-
-Every agent needs it's own configuration. You can't share context between Claude Code and Cursor. You definitely can't share with teammates. And running untrusted MCP servers means executing arbitrary code on your machine.
-
-Director fixes this by treating **context as infrastructure** - something you define once and deploy everywhere.
-
-## Why This Matters
-
-| Problem | Current State | With Director |
-|---------|--------------|---------------|
-| **Agent Portability** | Each agent has proprietary config format | One workspace works with all MCP clients |
-| **Context Switching** | Manual JSON editing to change tool sets | `director use production` switches instantly |
-| **Team Collaboration** | "Send me your MCP config" "Which one?" "The working one" | `director export > context.yaml` - complete, working context |
-| **Token Efficiency** | 50+ tools loaded, 5 actually needed | `include: [create_pr, review_code]` - load only what's relevant |
-| **Security** | `npm install sketchy-mcp-server && pray` | `sandbox: docker` - full isolation |
-| **Debugging** | Black box with no visibility | Structured JSON logs for every operation |
-
-## Key Features
-
-- 📚 **Workspaces** - Isolated contexts for different tasks or environments  
-- 🚀 **Universal Portability** - One workspace, all agents, any teammate  
-- 🏠 **Local-First** - Runs on your machine, not ours  
-- 🔐 **Sandboxing** - Docker/VM isolation for untrusted servers  
-- 🎯 **Smart Filtering** - Reduce token usage and improve accuracy  
-- 👤 **Unified OAuth** - Authenticate once, use everywhere  
-- 📊 **Observability** - Structured logs for debugging and compliance  
-- 🔧 **Multiple Interfaces** - CLI, YAML, Studio UI, or TypeScript SDK  
-- 🔌 **MCP Native** - Works with all clients and servers
-
 # Core Concepts
 
-## Workspaces Are Context
+## Playbooks
 
 A workspace isn't configuration — it's a complete context for your AI. Tools, prompts, environment, and security boundaries packaged together:
 
 ```yaml
 # Define a Workspace
-workspaces:
+playbooks:
   production_support:
     description: Investigate and resolve production issues
     servers:
@@ -105,6 +88,9 @@ director connect production_support --target claude_code  # Auto-configures Clau
 director connect production_support --target cursor  # Same workspace in Cursor
 director export production_support > team-fix.yaml   # Share with team
 ```
+
+## Architechture
+
 
 This workspace is:
 
@@ -448,3 +434,32 @@ bun run test
 # License
 
 AGPL v3 - See [LICENSE](./LICENSE) for details.
+
+
+
+----------------
+----------------
+----------------
+
+
+Instead of configuring MCP servers individually for each agent, Director lets you define context workspaces once and use them everywhere. Share complete AI contexts between Claude, Cursor, VSCode or any MCP enabled client. Distribute workspaces to your team. Switch between development and production contexts instantly. Run untrusted servers in isolation. All without cloud dependencies, API keys or accounts.
+
+
+# The Context Management Problem
+
+MCP standardizes how AI agents access context. However, the ecosystem is still nascent and using it remains complicated.
+
+Every agent needs it's own configuration. You can't share context between Claude Code and Cursor. You definitely can't share with teammates. And running untrusted MCP servers means executing arbitrary code on your machine.
+
+Director fixes this by treating **context as infrastructure** - something you define once and deploy everywhere.
+
+## Why This Matters
+
+| Problem | Current State | With Director |
+|---------|--------------|---------------|
+| **Agent Portability** | Each agent has proprietary config format | One workspace works with all MCP clients |
+| **Context Switching** | Manual JSON editing to change tool sets | `director use production` switches instantly |
+| **Team Collaboration** | "Send me your MCP config" "Which one?" "The working one" | `director export > context.yaml` - complete, working context |
+| **Token Efficiency** | 50+ tools loaded, 5 actually needed | `include: [create_pr, review_code]` - load only what's relevant |
+| **Security** | `npm install sketchy-mcp-server && pray` | `sandbox: docker` - full isolation |
+| **Debugging** | Black box with no visibility | Structured JSON logs for every operation |

@@ -21,18 +21,18 @@ export const createSSERouter = ({
   const transports: Map<string, SSEServerTransport> = new Map();
 
   router.get(
-    "/:proxy_id/sse",
+    "/:playbook_id/sse",
     asyncHandler(async (req, res) => {
-      const proxyId = req.params.proxy_id;
-      const proxy = playbookStore.get(proxyId);
-      const transport = new SSEServerTransport(`/${proxy.id}/message`, res);
+      const playbookId = req.params.playbook_id;
+      const playbook = playbookStore.get(playbookId);
+      const transport = new SSEServerTransport(`/${playbook.id}/message`, res);
 
       transports.set(transport.sessionId, transport);
 
       logger.info({
         message: "SSE connection started",
         sessionId: transport.sessionId,
-        proxyId: proxy.id,
+        playbookId: playbook.id,
         userAgent: req.headers["user-agent"],
         host: req.headers["host"],
       });
@@ -51,20 +51,20 @@ export const createSSERouter = ({
         logger.info({
           message: "SSE connection closed",
           sessionId: transport.sessionId,
-          proxyId: proxy.id,
+          playbookId: playbook.id,
         });
         transports.delete(transport.sessionId);
       });
 
-      await proxy.connect(transport);
+      await playbook.connect(transport);
     }),
   );
 
   router.post(
-    "/:proxy_id/message",
+    "/:playbook_id/message",
     asyncHandler(async (req, res) => {
-      const proxyId = req.params.proxy_id;
-      const proxy = playbookStore.get(proxyId);
+      const playbookId = req.params.playbook_id;
+      const playbook = playbookStore.get(playbookId);
       const sessionId = req.query.sessionId?.toString();
 
       if (!sessionId) {
@@ -75,7 +75,7 @@ export const createSSERouter = ({
 
       logger.info({
         message: "Message received",
-        proxyId: proxy.id,
+        playbookId: playbook.id,
         sessionId,
         method: body.method,
         params: body.params,
@@ -88,7 +88,7 @@ export const createSSERouter = ({
         logger.warn({
           message: "Transport not found",
           sessionId,
-          proxyId: proxy.id,
+          playbookId: playbook.id,
         });
         throw new AppError(ErrorCode.NOT_FOUND, "Transport not found");
       }

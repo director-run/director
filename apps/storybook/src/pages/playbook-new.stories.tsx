@@ -16,7 +16,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const mockSubmit = async (values: PlaybookFormData) => {
-  console.log("Submitting proxy:", values);
+  console.log("Submitting playbook:", values);
   await new Promise((resolve) => setTimeout(resolve, 1000));
 };
 

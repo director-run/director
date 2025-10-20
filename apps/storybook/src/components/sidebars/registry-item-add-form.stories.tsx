@@ -55,7 +55,7 @@ const DebugPanel = ({
   installResults: Array<{
     timestamp: string;
     params: {
-      proxyId?: string;
+      playbookId?: string;
       entryId: string;
       parameters?: Record<string, string>;
     };
@@ -118,13 +118,13 @@ type Story = StoryObj<typeof meta>;
 // Base story with debug panel
 const BaseStory = ({
   entry = mockRegistryEntry,
-  proxies,
+  playbooks,
   isInstalling = false,
   showDebug = true,
   onClickCancel,
 }: {
   entry?: typeof mockRegistryEntry;
-  proxies?: PlaybookList;
+  playbooks?: PlaybookList;
   isInstalling?: boolean;
   showDebug?: boolean;
   onClickCancel?: () => void;
@@ -133,7 +133,7 @@ const BaseStory = ({
     Array<{
       timestamp: string;
       params: {
-        proxyId?: string;
+        playbookId?: string;
         entryId: string;
         parameters?: Record<string, string>;
       };
@@ -143,7 +143,7 @@ const BaseStory = ({
   >([]);
 
   const handleClickInstall = async (params: {
-    proxyId?: string;
+    playbookId?: string;
     entryId: string;
     parameters?: Record<string, string>;
   }) => {
@@ -174,7 +174,7 @@ const BaseStory = ({
           <SplitViewSide>
             <RegistryDetailSidebar
               entry={entry}
-              playbooks={proxies}
+              playbooks={playbooks}
               onClickInstall={handleClickInstall}
               isInstalling={isInstalling}
               onClickCancel={onClickCancel}
@@ -192,7 +192,7 @@ export const NotInstalled: Story = {
     entry: mockRegistryEntry,
     onClickInstall: async () => {},
   },
-  render: () => <BaseStory proxies={mockPlaybooks} />,
+  render: () => <BaseStory playbooks={mockPlaybooks} />,
 };
 
 // 2. With playbooks, installed on some
@@ -203,7 +203,7 @@ export const PartiallyInstalled: Story = {
   },
   render: () => (
     <BaseStory
-      proxies={mockPlaybooks.map((p) =>
+      playbooks={mockPlaybooks.map((p) =>
         p.id === "dev-playbook"
           ? {
               ...p,
@@ -231,7 +231,7 @@ export const FullyInstalled: Story = {
   },
   render: () => (
     <BaseStory
-      proxies={mockPlaybooks.map((p) => ({
+      playbooks={mockPlaybooks.map((p) => ({
         ...p,
         servers: [
           {
@@ -253,7 +253,7 @@ export const UndefinedProxies: Story = {
     entry: mockRegistryEntry,
     onClickInstall: async () => {},
   },
-  render: () => <BaseStory proxies={undefined} onClickCancel={() => {}} />,
+  render: () => <BaseStory playbooks={undefined} onClickCancel={() => {}} />,
 };
 
 // 5. Empty playbooks array - should show "already installed" message
@@ -262,7 +262,7 @@ export const EmptyProxies: Story = {
     entry: mockRegistryEntry,
     onClickInstall: async () => {},
   },
-  render: () => <BaseStory proxies={[]} />,
+  render: () => <BaseStory playbooks={[]} />,
 };
 
 // 6. Installing state
@@ -273,7 +273,7 @@ export const Installing: Story = {
   },
   render: () => (
     <BaseStory
-      proxies={mockPlaybooks.map((p) =>
+      playbooks={mockPlaybooks.map((p) =>
         p.id === "dev-playbook"
           ? {
               ...p,
@@ -306,7 +306,7 @@ export const NoParameters: Story = {
         ...mockRegistryEntry,
         parameters: [],
       }}
-      proxies={mockPlaybooks}
+      playbooks={mockPlaybooks}
     />
   ),
 };
@@ -343,7 +343,7 @@ export const ComplexParameters: Story = {
           },
         ],
       }}
-      proxies={mockPlaybooks.map((p) =>
+      playbooks={mockPlaybooks.map((p) =>
         p.id === "dev-playbook"
           ? {
               ...p,

@@ -33,19 +33,19 @@ export function RegistryInstallForm({
       array.findIndex((p) => p.name === parameter.name) === index,
   );
 
-  // Calculate which proxies already have this entry installed
+  // Calculate which playbooks already have this entry installed
   const entryInstalledOn = (playbooks ?? [])
     .filter((playbook) =>
       playbook.servers.some((it) => it.name === registryEntry.name),
     )
     .map((p) => p.id);
 
-  // Filter out proxies where the entry is already installed
+  // Filter out playbooks where the entry is already installed
   const availablePlaybooks = playbooks?.filter(
     (playbook) => !entryInstalledOn.includes(playbook.id),
   );
 
-  // Show empty state if all proxies have the entry installed
+  // Show empty state if all playbooks have the entry installed
   if (
     playbooks &&
     playbooks.length > 0 &&

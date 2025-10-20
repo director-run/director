@@ -253,42 +253,42 @@ function PlaybookEditMenu({ playbook }: { playbook: PlaybookDetail }) {
 
   const utils = gatewayClient.useUtils();
 
-  const updateProxyMutation = gatewayClient.store.update.useMutation({
+  const updatePlaybookMutation = gatewayClient.store.update.useMutation({
     onSuccess: async () => {
       await utils.store.getAll.invalidate();
       await utils.store.get.invalidate({ playbookId: playbook.id });
       toast({
-        title: "Proxy updated",
-        description: "This proxy was successfully updated.",
+        title: "Playbook updated",
+        description: "This playbook was successfully updated.",
       });
       setSettingsOpen(false);
     },
   });
 
-  const deleteProxyMutation = gatewayClient.store.delete.useMutation({
+  const deletePlaybookMutation = gatewayClient.store.delete.useMutation({
     onSuccess: async () => {
       await utils.store.getAll.invalidate();
       toast({
-        title: "Proxy deleted",
-        description: "This proxy was successfully deleted.",
+        title: "Playbook deleted",
+        description: "This playbook was successfully deleted.",
       });
       setDeleteOpen(false);
       navigate("/");
     },
   });
 
-  const handleUpdateProxy = async (values: {
+  const handleUpdatePlaybook = async (values: {
     name: string;
     description?: string;
   }) => {
-    await updateProxyMutation.mutateAsync({
+    await updatePlaybookMutation.mutateAsync({
       playbookId: playbook.id,
       attributes: values,
     });
   };
 
-  const handleDeleteProxy = async () => {
-    await deleteProxyMutation.mutateAsync({ playbookId: playbook.id });
+  const handleDeletePlaybook = async () => {
+    await deletePlaybookMutation.mutateAsync({ playbookId: playbook.id });
   };
 
   return (
@@ -299,7 +299,7 @@ function PlaybookEditMenu({ playbook }: { playbook: PlaybookDetail }) {
       />
       <PlaybookSettingsSheet
         playbook={playbook}
-        onSubmit={handleUpdateProxy}
+        onSubmit={handleUpdatePlaybook}
         open={settingsOpen}
         onOpenChange={setSettingsOpen}
       />
@@ -308,7 +308,7 @@ function PlaybookEditMenu({ playbook }: { playbook: PlaybookDetail }) {
         description="Are you sure you want to delete this playbook? This action cannot be undone."
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
-        onConfirm={handleDeleteProxy}
+        onConfirm={handleDeletePlaybook}
       />
     </>
   );

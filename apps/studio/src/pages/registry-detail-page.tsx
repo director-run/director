@@ -44,8 +44,8 @@ export function RegistryDetailPage() {
     },
     onSuccess: (_data, variables) => {
       toast({
-        title: "Proxy installed",
-        description: "This proxy was successfully installed.",
+        title: "Playbook installed",
+        description: "This playbook was successfully installed.",
       });
       navigate(`/${variables.playbookId}`);
     },
@@ -55,16 +55,16 @@ export function RegistryDetailPage() {
   const registryEntry = entryQuery.data;
 
   const handleInstall = async (values: {
-    proxyId?: string;
+    playbookId?: string;
     parameters?: Record<string, string>;
   }) => {
     if (!registryEntry) {
       return;
     }
 
-    if (values.proxyId && entryName) {
+    if (values.playbookId && entryName) {
       await install({
-        playbookId: values.proxyId,
+        playbookId: values.playbookId,
         entryName,
         parameters: values.parameters ?? {},
       });
@@ -102,7 +102,7 @@ export function RegistryDetailPage() {
       >
         <Popover open={installFormOpen} onOpenChange={setInstallFormOpen}>
           <PopoverTrigger asChild>
-            <Button className="ml-auto lg:hidden">Add to proxy</Button>
+            <Button className="ml-auto lg:hidden">Add to playbook</Button>
           </PopoverTrigger>
           <PopoverContent
             side="bottom"

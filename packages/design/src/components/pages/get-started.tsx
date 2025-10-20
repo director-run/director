@@ -21,7 +21,6 @@ import { Section } from "../ui/section";
 type StepStatus = "not-started" | "in-progress" | "completed";
 
 export interface GetStartedPageViewProps {
-  // Step 1: Create workspace
   isCreatePlaybookLoading: boolean;
   onCreatePlaybook: SubmitHandler<PlaybookFormValues>;
   currentPlaybook: { id: string; servers?: unknown[] } | null;

@@ -95,7 +95,7 @@ export const Step2b_RegistryEntryDetail: Story = {
         <StatefulPage {...args} />
         <GetStartedInstallServerDialog
           registryEntry={mockRegistryEntry}
-          proxies={[]}
+          playbooks={[]}
           onClickInstall={async () => {}}
           isInstalling={false}
           open={open}
@@ -135,7 +135,7 @@ export const Step4_CompleteDialog: Story = {
     <GetStartedCompleteDialog
       open
       onClickLibrary={() => {}}
-      onClickWorkspace={() => {}}
+      onClickPlaybook={() => {}}
     />
   ),
 };

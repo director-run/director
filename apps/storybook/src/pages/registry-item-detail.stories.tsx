@@ -64,7 +64,7 @@ const RegistryItemDetailComponent = ({
       <SplitViewSide>
         <RegistryDetailSidebar
           entry={entry}
-          proxies={proxies}
+          playbooks={proxies}
           onClickInstall={onClickInstall}
           isInstalling={isInstalling}
         />

@@ -40,12 +40,12 @@ export function PlaybookForm({
       onSubmit={onSubmit}
     >
       <div className="flex w-full flex-col gap-y-6">
-        <InputField label="Name" name="name" placeholder="My workspace" />
+        <InputField label="Name" name="name" placeholder="My playbook" />
         <TextareaField
           label="Description"
           name="description"
           helperLabel="Optional"
-          placeholder="A description of the workspace"
+          placeholder="A description of the playbook"
         />
       </div>
 
@@ -54,17 +54,17 @@ export function PlaybookForm({
   );
 }
 
-interface WorkspaceFormButtonProps {
+interface PlaybookFormButtonProps {
   isSubmitting?: boolean;
   children?: ReactNode;
   className?: string;
 }
 
-export function WorkspaceFormButton({
+export function PlaybookFormButton({
   isSubmitting = false,
   children,
   className = "self-start",
-}: WorkspaceFormButtonProps) {
+}: PlaybookFormButtonProps) {
   return (
     <Button
       size="lg"

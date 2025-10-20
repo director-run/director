@@ -1,12 +1,12 @@
 import { LayoutBreadcrumbHeader } from "@director.run/design/components/layout/layout-breadcrumb-header.tsx";
 import { LayoutViewContent } from "@director.run/design/components/layout/layout.tsx";
 import { FullScreenError } from "@director.run/design/components/pages/global/error.tsx";
-import { WorkspaceSectionClients } from "@director.run/design/components/playbooks-clients/playbook-section-clients.tsx";
+import { PlaybookSectionClients } from "@director.run/design/components/playbooks-clients/playbook-section-clients.tsx";
 import { PlaybookActionsDropdown } from "@director.run/design/components/playbooks/playbook-actions-dropdown.tsx";
 import { PlaybookSettingsSheet } from "@director.run/design/components/playbooks/playbook-settings-sheet.tsx";
 import { PlaybookSkeleton } from "@director.run/design/components/playbooks/playbook-skeleton.tsx";
 import { PromptList } from "@director.run/design/components/prompts/prompt-list.tsx";
-import { WorkspaceServerList } from "@director.run/design/components/servers/server-list.tsx";
+import { PlaybookServerList } from "@director.run/design/components/servers/server-list.tsx";
 import { SplitViewMain } from "@director.run/design/components/split-view.tsx";
 import { SplitViewSide } from "@director.run/design/components/split-view.tsx";
 import { SplitView } from "@director.run/design/components/split-view.tsx";
@@ -169,7 +169,7 @@ export const WorkspaceDetailPage = () => {
                     label="Servers"
                     icon={<DesktopIcon />}
                     content={
-                      <WorkspaceServerList
+                      <PlaybookServerList
                         servers={playbook.servers}
                         onClickServer={(server) =>
                           navigate(`/${playbookId}/${server.name}`)
@@ -230,7 +230,7 @@ export const WorkspaceDetailPage = () => {
               </Section>
             </SplitViewMain>
             <SplitViewSide>
-              <WorkspaceSectionClients
+              <PlaybookSectionClients
                 playbook={playbook}
                 gatewayBaseUrl={GATEWAY_URL}
                 clients={clients ?? []}

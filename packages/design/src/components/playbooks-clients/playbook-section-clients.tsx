@@ -10,7 +10,7 @@ import {
   PlaybookManualDialog,
 } from "./playbook-manual-connection-dialog";
 
-export interface WorkspaceSectionClientsProps {
+export interface PlaybookSectionClientsProps {
   playbook: PlaybookDetail;
   gatewayBaseUrl: string;
   clients: Client[];
@@ -18,13 +18,13 @@ export interface WorkspaceSectionClientsProps {
   isLoading: boolean;
 }
 
-export function WorkspaceSectionClients({
+export function PlaybookSectionClients({
   playbook,
   gatewayBaseUrl,
   clients,
   onChangeInstall,
   isLoading,
-}: WorkspaceSectionClientsProps) {
+}: PlaybookSectionClientsProps) {
   const [_, copy] = useCopyToClipboard();
 
   const handleCopy = async (text: string) => {

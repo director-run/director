@@ -54,7 +54,7 @@ export function RegistryInstallForm({
     return (
       <EmptyState>
         <EmptyStateDescription>
-          This MCP has already been installed on all your proxies.
+          This MCP has already been installed on all your playbooks.
         </EmptyStateDescription>
       </EmptyState>
     );

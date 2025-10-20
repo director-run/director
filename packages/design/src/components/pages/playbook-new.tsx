@@ -1,5 +1,5 @@
-import { PlaybookForm, WorkspaceFormButton } from "../playbooks/playbook-form";
-import type { PlaybookFormData as PlaybookFormData } from "../playbooks/playbook-form";
+import { PlaybookForm, PlaybookFormButton } from "../playbooks/playbook-form";
+import type { PlaybookFormData } from "../playbooks/playbook-form";
 import { Container } from "../ui/container";
 import {
   Section,
@@ -19,10 +19,8 @@ export function PlaybookCreate({ onSubmit, isSubmitting }: PlaybookNewProps) {
     <Container size="sm">
       <Section className="gap-y-8">
         <SectionHeader>
-          <SectionTitle>New workspace</SectionTitle>
-          <SectionDescription>
-            Create a new workspace to start using MCP.
-          </SectionDescription>
+          <SectionTitle>New playbook</SectionTitle>
+          <SectionDescription>Create a new playbook.</SectionDescription>
         </SectionHeader>
         <SectionSeparator />
         <PlaybookForm
@@ -30,9 +28,9 @@ export function PlaybookCreate({ onSubmit, isSubmitting }: PlaybookNewProps) {
             await onSubmit(values);
           }}
         >
-          <WorkspaceFormButton isSubmitting={isSubmitting}>
-            Create workspace
-          </WorkspaceFormButton>
+          <PlaybookFormButton isSubmitting={isSubmitting}>
+            Create playbook
+          </PlaybookFormButton>
         </PlaybookForm>
       </Section>
     </Container>

@@ -5,7 +5,7 @@ import { Section, SectionHeader, SectionTitle } from "./ui/section";
 
 interface RegistryDetailSidebarProps {
   entry: Pick<RegistryEntryDetail, "name" | "id" | "parameters">;
-  proxies?: PlaybookList;
+  playbooks?: PlaybookList;
   onClickInstall: (params: {
     playbookId?: string;
     entryId: string;
@@ -17,12 +17,12 @@ interface RegistryDetailSidebarProps {
 
 export function RegistryDetailSidebar({
   entry,
-  proxies,
+  playbooks,
   onClickInstall,
   onClickCancel,
   isInstalling = false,
 }: RegistryDetailSidebarProps) {
-  const entryInstalledOn = (proxies ?? [])
+  const entryInstalledOn = (playbooks ?? [])
     .filter((playbook) => playbook.servers.some((it) => it.name === entry.name))
     .map((p) => p.id);
   return (
@@ -55,7 +55,7 @@ export function RegistryDetailSidebar({
 
         <RegistryInstallForm
           registryEntry={entry}
-          playbooks={proxies}
+          playbooks={playbooks}
           onSubmit={onClickInstall}
           isSubmitting={isInstalling}
           onClickCancel={onClickCancel}

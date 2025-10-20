@@ -1,4 +1,4 @@
-import { WorkspaceServerList } from "@director.run/design/components/servers/server-list.js";
+import { PlaybookServerList } from "@director.run/design/components/servers/server-list.js";
 import type {
   Client,
   MCPTool,
@@ -19,7 +19,7 @@ const WorkspaceDetailComponent = ({
   tools: MCPTool[];
 }) => (
   <Container size="lg">
-    <WorkspaceServerList
+    <PlaybookServerList
       servers={playbook.servers}
       onClickServer={(server) => console.log(server)}
     />

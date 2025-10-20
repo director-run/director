@@ -174,7 +174,7 @@ const BaseStory = ({
           <SplitViewSide>
             <RegistryDetailSidebar
               entry={entry}
-              proxies={proxies}
+              playbooks={proxies}
               onClickInstall={handleClickInstall}
               isInstalling={isInstalling}
               onClickCancel={onClickCancel}

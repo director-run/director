@@ -18,12 +18,12 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     onSubmit: (_data: PlaybookTargetFormData) => Promise.resolve(),
-    workspaces: [
+    playbooks: [
       { id: "playbook-1", name: "Local Playbook" },
       { id: "playbook-2", name: "Remote Playbook" },
     ],
   },
-  render: ({ workspaces: playbooks }) => {
+  render: ({ playbooks: playbooks }) => {
     const [open, setOpen] = useState(true);
 
     return (
@@ -36,7 +36,7 @@ export const Default: Story = {
         <PlaybookTargetAddSheet
           open={open}
           onOpenChange={setOpen}
-          workspaces={playbooks}
+          playbooks={playbooks}
           onSubmit={(data: PlaybookTargetFormData) => {
             console.log("Data:", JSON.stringify(data, null, 2));
           }}
@@ -51,6 +51,6 @@ export const NotInstalled: Story = {
   ...Default,
   args: {
     ...Default.args,
-    workspaces: undefined,
+    playbooks: undefined,
   },
 };

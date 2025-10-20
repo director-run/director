@@ -10,7 +10,7 @@ import * as List from "../ui/list.tsx";
 import { Section, SectionHeader, SectionTitle } from "../ui/section.tsx";
 import { ServerStatusBadge } from "./server-status-badge.tsx";
 
-export function WorkspaceServerList({
+export function PlaybookServerList({
   servers,
   onClickServer,
   onClickAddServer,
@@ -41,7 +41,7 @@ export function WorkspaceServerList({
       ) : (
         <List.List>
           {servers.map((server) => (
-            <WorkspaceServerListItem
+            <PlaybookServerListItem
               key={`li-${server.name}`}
               server={server}
               onClick={onClickServer && (() => onClickServer(server))}
@@ -54,7 +54,7 @@ export function WorkspaceServerList({
   );
 }
 
-function WorkspaceServerListItem({
+function PlaybookServerListItem({
   server,
   onClick,
   onClickAuthorize,
@@ -67,7 +67,7 @@ function WorkspaceServerListItem({
     <List.ListItem onClick={onClick}>
       <List.ListItemDetails>
         <List.ListItemTitle>{server.name}</List.ListItemTitle>
-        <WorkspaceServerListItemDescription server={server} />
+        <PlaybookServerListItemDescription server={server} />
       </List.ListItemDetails>
       <BadgeGroup>
         <ServerStatusBadge
@@ -79,7 +79,7 @@ function WorkspaceServerListItem({
   );
 }
 
-function WorkspaceServerListItemDescription({
+function PlaybookServerListItemDescription({
   server,
 }: { server: PlaybookTarget }) {
   if (server.type === "http") {

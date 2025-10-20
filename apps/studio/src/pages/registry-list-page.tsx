@@ -88,7 +88,7 @@ export const RegistryListPage: React.FC = () => {
         <PlaybookTargetAddSheet
           open={addSheetOpen}
           onOpenChange={setAddSheetOpen}
-          workspaces={playbooks}
+          playbooks={playbooks}
           onSubmit={async (data: PlaybookTargetFormData) => {
             if (!data.playbookId) {
               toast({

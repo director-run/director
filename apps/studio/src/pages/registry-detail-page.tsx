@@ -129,7 +129,7 @@ export function RegistryDetailPage() {
             <SplitViewSide>
               <RegistryDetailSidebar
                 entry={registryEntry}
-                proxies={workspaces}
+                playbooks={workspaces}
                 onClickInstall={handleInstall}
                 isInstalling={isPending}
               />

@@ -1,6 +1,6 @@
-import { WorkspaceSectionClients } from "@director.run/design/components/playbooks-clients/playbook-section-clients.tsx";
+import { PlaybookSectionClients } from "@director.run/design/components/playbooks-clients/playbook-section-clients.tsx";
 import { PromptList } from "@director.run/design/components/prompts/prompt-list.tsx";
-import { WorkspaceServerList } from "@director.run/design/components/servers/server-list.tsx";
+import { PlaybookServerList } from "@director.run/design/components/servers/server-list.tsx";
 import {
   SplitView,
   SplitViewMain,
@@ -49,7 +49,7 @@ const WorkspaceDetailComponent = ({
               label="Servers"
               icon={<DesktopIcon />}
               content={
-                <WorkspaceServerList
+                <PlaybookServerList
                   servers={playbook.servers}
                   onClickServer={() => console.log("library click")}
                   onClickAddServer={() => console.log("server click")}
@@ -74,7 +74,7 @@ const WorkspaceDetailComponent = ({
         </Section>
       </SplitViewMain>
       <SplitViewSide>
-        <WorkspaceSectionClients
+        <PlaybookSectionClients
           playbook={playbook}
           gatewayBaseUrl={"https://some.url.com"}
           clients={clients ?? []}

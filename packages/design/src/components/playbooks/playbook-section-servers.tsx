@@ -3,17 +3,17 @@ import type { PlaybookDetail } from "../types";
 import { Button } from "../ui/button";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
 
-export interface WorkspaceSectionServersProps {
+export interface PlaybookSectionServersProps {
   playbook: PlaybookDetail;
   onLibraryClick?: () => void;
   onServerClick?: (serverId: string) => void;
 }
 
-export function WorkspaceSectionServers({
+export function PlaybookSectionServers({
   playbook,
   onLibraryClick,
   onServerClick,
-}: WorkspaceSectionServersProps) {
+}: PlaybookSectionServersProps) {
   return (
     <Section>
       <SectionHeader className="flex flex-row items-center justify-between">

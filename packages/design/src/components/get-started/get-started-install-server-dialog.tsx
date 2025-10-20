@@ -14,7 +14,7 @@ import { Section, SectionHeader, SectionTitle } from "../ui/section";
 
 type GetStartedInstallServerDialogProps = {
   registryEntry?: RegistryEntryDetail | null;
-  proxies?: PlaybookList;
+  playbooks?: PlaybookList;
   onClickInstall: (params: {
     playbookId?: string;
     entryId: string;
@@ -27,7 +27,7 @@ type GetStartedInstallServerDialogProps = {
 
 function GetStartedInstallServerDialogPresentation({
   registryEntry,
-  proxies,
+  playbooks,
   onClickInstall,
   isInstalling,
   open,
@@ -56,7 +56,7 @@ function GetStartedInstallServerDialogPresentation({
                   {mcp && (
                     <RegistryInstallForm
                       registryEntry={mcp}
-                      playbooks={proxies}
+                      playbooks={playbooks}
                       onSubmit={onClickInstall}
                       isSubmitting={isInstalling}
                       onClickCancel={() => onOpenChange(false)}
@@ -74,7 +74,7 @@ function GetStartedInstallServerDialogPresentation({
             {mcp && (
               <RegistryInstallForm
                 registryEntry={mcp}
-                playbooks={proxies}
+                playbooks={playbooks}
                 onSubmit={onClickInstall}
                 isSubmitting={isInstalling}
                 onClickCancel={() => onOpenChange(false)}
@@ -90,7 +90,7 @@ function GetStartedInstallServerDialogPresentation({
 // Main dialog component - presentational only
 export function GetStartedInstallServerDialog({
   registryEntry,
-  proxies,
+  playbooks,
   onClickInstall,
   isInstalling,
   open,
@@ -99,7 +99,7 @@ export function GetStartedInstallServerDialog({
   return (
     <GetStartedInstallServerDialogPresentation
       registryEntry={registryEntry}
-      proxies={proxies}
+      playbooks={playbooks}
       onClickInstall={onClickInstall}
       isInstalling={isInstalling}
       open={open}

@@ -179,7 +179,7 @@ export function GetStartedPage() {
       {selectedRegistryEntryName && (
         <GetStartedInstallServerDialog
           registryEntry={entryQuery.data}
-          proxies={proxyListQuery.data}
+          playbooks={proxyListQuery.data}
           onClickInstall={handleMcpFormSubmit}
           isInstalling={isInstalling}
           open={isInstallDialogOpen}
@@ -190,7 +190,7 @@ export function GetStartedPage() {
       <GetStartedCompleteDialog
         open={isCompleted}
         onClickLibrary={() => navigate("/library")}
-        onClickWorkspace={() => navigate("/")}
+        onClickPlaybook={() => navigate("/")}
       />
     </>
   );

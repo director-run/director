@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "biome check .",
     "format": "biome format --write .",
-    "clean": "rm -rf .turbo dist/*",
+    "clean": "rm -rf  .turbo ",
     "test": "bun run vitest  --fileParallelism=false",
     "typecheck": "tsc --noEmit"
   },

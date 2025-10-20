@@ -1,9 +1,9 @@
-import type { WorkspaceDetail } from "../../../components/types.ts";
+import type { PlaybookDetail } from "../../../components/types.ts";
 
-export const mockWorkspace: () => WorkspaceDetail = () => ({
+export const mockPlaybook: () => PlaybookDetail = () => ({
   id: "test",
   name: "test",
-  description: "A proxy for getting started",
+  description: "A playbook for getting started",
   prompts: [
     {
       name: "Test prompt",

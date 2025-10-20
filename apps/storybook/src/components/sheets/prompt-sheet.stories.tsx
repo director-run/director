@@ -1,14 +1,14 @@
 import { PromptSheet } from "@director.run/design/components/prompts/prompt-sheet.tsx";
 import { Button } from "@director.run/design/components/ui/button.tsx";
 import { Container } from "@director.run/design/components/ui/container.tsx";
-import { mockWorkspace } from "@director.run/design/test/fixtures/playbook/playbook.ts";
+import { mockPlaybook } from "@director.run/design/test/fixtures/playbook/playbook.ts";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { withLayoutView } from "../../helpers/decorators";
 
 const Component = () => {
   const [open, setOpen] = useState(true);
-  const prompt = mockWorkspace().prompts?.[0] ?? null;
+  const prompt = mockPlaybook().prompts?.[0] ?? null;
   return (
     <Container size="lg">
       <div className="flex gap-2">

@@ -1,11 +1,11 @@
 import { PromptList } from "@director.run/design/components/prompts/prompt-list.tsx";
-import type { WorkspaceDetail } from "@director.run/design/components/types.ts";
+import type { PlaybookDetail } from "@director.run/design/components/types.ts";
 import { Container } from "@director.run/design/components/ui/container.tsx";
-import { mockWorkspace } from "@director.run/design/test/fixtures/playbook/playbook.ts";
+import { mockPlaybook } from "@director.run/design/test/fixtures/playbook/playbook.ts";
 import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../../helpers/decorators";
 
-const Component = ({ playbook }: { playbook: WorkspaceDetail }) => (
+const Component = ({ playbook }: { playbook: PlaybookDetail }) => (
   <Container size="lg">
     <PromptList
       prompts={playbook.prompts ?? []}
@@ -29,6 +29,6 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    playbook: mockWorkspace(),
+    playbook: mockPlaybook(),
   },
 };

@@ -30,13 +30,13 @@ import {
   SheetTitle,
 } from "../ui/sheet";
 
-interface Proxy {
+interface Playbook {
   id: string;
   name: string;
 }
 
 interface PlaybookTargetAddSheetProps extends ComponentProps<typeof Sheet> {
-  workspaces?: Proxy[];
+  workspaces?: Playbook[];
   onSubmit: (data: PlaybookTargetFormData) => Promise<void> | void;
   isSubmitting?: boolean;
 }
@@ -101,7 +101,7 @@ export function PlaybookTargetAddSheet({
 
 interface PlaybookTargetFormProps {
   defaultValues: PlaybookTargetFormData;
-  proxies?: Proxy[];
+  proxies?: Playbook[];
   onSubmit: (data: PlaybookTargetFormData) => Promise<void> | void;
   isSubmitting?: boolean;
 }
@@ -164,7 +164,7 @@ function PlaybookTargetForm({
 }
 
 interface McpAddFormFieldsProps {
-  proxies?: Proxy[];
+  proxies?: Playbook[];
   isSubmitting?: boolean;
 }
 
@@ -182,10 +182,10 @@ function McpAddFormFields({
   return (
     <>
       {proxies && (
-        <SelectNativeField name="playbookId" label="Proxy">
-          {proxies.map((proxy) => (
-            <option key={proxy.id} value={proxy.id}>
-              {proxy.name}
+        <SelectNativeField name="playbookId" label="Playbook">
+          {proxies.map((playbook) => (
+            <option key={playbook.id} value={playbook.id}>
+              {playbook.name}
             </option>
           ))}
         </SelectNativeField>

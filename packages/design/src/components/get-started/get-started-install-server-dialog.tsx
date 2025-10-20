@@ -2,7 +2,7 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { RegistryItem } from "../registry-item";
 import { RegistryInstallForm } from "../registry/registry-install-form";
 import { SplitView, SplitViewMain, SplitViewSide } from "../split-view";
-import type { RegistryEntryDetail, WorkspaceList } from "../types";
+import type { PlaybookList, RegistryEntryDetail } from "../types";
 import { Container } from "../ui/container";
 import {
   Dialog,
@@ -14,9 +14,9 @@ import { Section, SectionHeader, SectionTitle } from "../ui/section";
 
 type GetStartedInstallServerDialogProps = {
   registryEntry?: RegistryEntryDetail | null;
-  proxies?: WorkspaceList;
+  proxies?: PlaybookList;
   onClickInstall: (params: {
-    proxyId?: string;
+    playbookId?: string;
     entryId: string;
     parameters?: Record<string, string>;
   }) => Promise<void>;
@@ -50,13 +50,13 @@ function GetStartedInstallServerDialogPresentation({
                 <Section>
                   <SectionHeader>
                     <SectionTitle variant="h3" asChild>
-                      <h3>Add to proxy</h3>
+                      <h3>Add to playbook</h3>
                     </SectionTitle>
                   </SectionHeader>
                   {mcp && (
                     <RegistryInstallForm
                       registryEntry={mcp}
-                      proxies={proxies}
+                      playbooks={proxies}
                       onSubmit={onClickInstall}
                       isSubmitting={isInstalling}
                       onClickCancel={() => onOpenChange(false)}
@@ -74,7 +74,7 @@ function GetStartedInstallServerDialogPresentation({
             {mcp && (
               <RegistryInstallForm
                 registryEntry={mcp}
-                proxies={proxies}
+                playbooks={proxies}
                 onSubmit={onClickInstall}
                 isSubmitting={isInstalling}
                 onClickCancel={() => onOpenChange(false)}

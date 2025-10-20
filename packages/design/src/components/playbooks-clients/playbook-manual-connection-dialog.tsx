@@ -62,20 +62,20 @@ export function ManualInput({ id, gatewayBaseUrl, onCopy }: ManualInputProps) {
   );
 }
 
-interface ProxyManualDialogProps extends ComponentProps<typeof Dialog> {
-  proxyId: string;
+interface PlaybookManualDialogProps extends ComponentProps<typeof Dialog> {
+  playbookId: string;
   gatewayBaseUrl: string;
   children?: ReactNode;
   onCopy: (text: string) => void;
 }
 
-export function ProxyManualDialog({
-  proxyId,
+export function PlaybookManualDialog({
+  playbookId,
   gatewayBaseUrl,
   children,
   onCopy,
   ...props
-}: ProxyManualDialogProps) {
+}: PlaybookManualDialogProps) {
   return (
     <Dialog {...props}>
       {children && <DialogTrigger asChild>{children}</DialogTrigger>}
@@ -91,7 +91,7 @@ export function ProxyManualDialog({
 
         <div className="border-t-[0.5px] p-5">
           <ManualInput
-            id={proxyId}
+            id={playbookId}
             gatewayBaseUrl={gatewayBaseUrl}
             onCopy={onCopy}
           />

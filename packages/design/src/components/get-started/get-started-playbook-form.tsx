@@ -7,7 +7,7 @@ import { HiddenField } from "../ui/form/hidden-field";
 import { InputField } from "../ui/form/input-field";
 import { Loader } from "../ui/loader";
 
-const proxySchema = z.object({
+const playbookSchema = z.object({
   name: z.string().trim().min(1, "Required"),
   description: z
     .string()
@@ -17,21 +17,21 @@ const proxySchema = z.object({
 });
 
 // Form values type
-export type FormValues = z.infer<typeof proxySchema>;
+export type FormValues = z.infer<typeof playbookSchema>;
 
 // Presentational component props
-interface GetStartedProxyFormProps {
-  form: ReturnType<typeof useZodForm<typeof proxySchema>>;
+interface GetStartedPlaybookFormProps {
+  form: ReturnType<typeof useZodForm<typeof playbookSchema>>;
   isPending: boolean;
   onSubmit: (values: FormValues) => void;
 }
 
 // Presentational component
-export function GetStartedProxyForm({
+export function GetStartedPlaybookForm({
   form,
   isPending,
   onSubmit,
-}: GetStartedProxyFormProps) {
+}: GetStartedPlaybookFormProps) {
   return (
     <Form
       className="gap-y-4"
@@ -40,7 +40,7 @@ export function GetStartedProxyForm({
         await onSubmit(values);
       }}
     >
-      <InputField label="Name" name="name" placeholder="My Proxy" />
+      <InputField label="Name" name="name" placeholder="My Playbook" />
       <HiddenField name="description" />
 
       <Button
@@ -49,10 +49,10 @@ export function GetStartedProxyForm({
         type="submit"
         disabled={isPending}
       >
-        {isPending ? <Loader className="text-fg-subtle" /> : "Create proxy"}
+        {isPending ? <Loader className="text-fg-subtle" /> : "Create playbook"}
       </Button>
     </Form>
   );
 }
 
-export { proxySchema };
+export { playbookSchema };

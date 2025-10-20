@@ -2,19 +2,19 @@ import { WorkspaceServerList } from "@director.run/design/components/servers/ser
 import type {
   Client,
   MCPTool,
-  WorkspaceDetail,
+  PlaybookDetail,
 } from "@director.run/design/components/types.ts";
 import { Container } from "@director.run/design/components/ui/container.tsx";
 import { mockTools } from "@director.run/design/test/fixtures/mcp/tools.js";
-import { mockWorkspace } from "@director.run/design/test/fixtures/playbook/playbook.ts";
 import { mockClients } from "@director.run/design/test/fixtures/playbook/clients.ts";
+import { mockPlaybook } from "@director.run/design/test/fixtures/playbook/playbook.ts";
 import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../../helpers/decorators";
 
 const WorkspaceDetailComponent = ({
   playbook,
 }: {
-  playbook: WorkspaceDetail;
+  playbook: PlaybookDetail;
   clients: Client[];
   tools: MCPTool[];
 }) => (
@@ -40,7 +40,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    playbook: mockWorkspace(),
+    playbook: mockPlaybook(),
     clients: mockClients,
     tools: mockTools(),
   },

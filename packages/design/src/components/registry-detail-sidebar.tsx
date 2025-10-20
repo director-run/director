@@ -1,13 +1,13 @@
 import { RegistryInstallForm } from "./registry/registry-install-form";
-import type { RegistryEntryDetail, WorkspaceList } from "./types";
+import type { PlaybookList, RegistryEntryDetail } from "./types";
 import { Badge, BadgeGroup, BadgeLabel } from "./ui/badge";
 import { Section, SectionHeader, SectionTitle } from "./ui/section";
 
 interface RegistryDetailSidebarProps {
   entry: Pick<RegistryEntryDetail, "name" | "id" | "parameters">;
-  proxies?: WorkspaceList;
+  proxies?: PlaybookList;
   onClickInstall: (params: {
-    proxyId?: string;
+    playbookId?: string;
     entryId: string;
     parameters?: Record<string, string>;
   }) => Promise<void> | void;
@@ -23,7 +23,7 @@ export function RegistryDetailSidebar({
   isInstalling = false,
 }: RegistryDetailSidebarProps) {
   const entryInstalledOn = (proxies ?? [])
-    .filter((proxy) => proxy.servers.some((it) => it.name === entry.name))
+    .filter((playbook) => playbook.servers.some((it) => it.name === entry.name))
     .map((p) => p.id);
   return (
     <>
@@ -35,10 +35,10 @@ export function RegistryDetailSidebar({
             </SectionTitle>
           </SectionHeader>
           <BadgeGroup>
-            {entryInstalledOn.map((proxyId) => {
+            {entryInstalledOn.map((playbookId) => {
               return (
-                <Badge key={proxyId} className="cursor-pointer">
-                  <BadgeLabel>{proxyId}</BadgeLabel>
+                <Badge key={playbookId} className="cursor-pointer">
+                  <BadgeLabel>{playbookId}</BadgeLabel>
                 </Badge>
               );
             })}
@@ -49,13 +49,13 @@ export function RegistryDetailSidebar({
       <Section>
         <SectionHeader>
           <SectionTitle variant="h3" asChild>
-            <h3>Add to proxy</h3>
+            <h3>Add to playbook</h3>
           </SectionTitle>
         </SectionHeader>
 
         <RegistryInstallForm
           registryEntry={entry}
-          proxies={proxies}
+          playbooks={proxies}
           onSubmit={onClickInstall}
           isSubmitting={isInstalling}
           onClickCancel={onClickCancel}

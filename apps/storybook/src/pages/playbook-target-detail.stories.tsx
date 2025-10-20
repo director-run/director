@@ -7,7 +7,7 @@ import type {
   PlaybookTarget,
   RegistryEntryDetail,
 } from "@director.run/design/components/types.js";
-import type { WorkspaceDetail } from "@director.run/design/components/types.js";
+import type { PlaybookDetail } from "@director.run/design/components/types.js";
 import { Container } from "@director.run/design/components/ui/container.tsx";
 import { Markdown } from "@director.run/design/components/ui/markdown.tsx";
 import { Section } from "@director.run/design/components/ui/section.tsx";
@@ -16,9 +16,9 @@ import { SectionTitle } from "@director.run/design/components/ui/section.tsx";
 import { SectionDescription } from "@director.run/design/components/ui/section.tsx";
 import { Tab, Tabs } from "@director.run/design/components/ui/tabs.tsx";
 import { mockTools } from "@director.run/design/test/fixtures/mcp/tools.ts";
-import { mockWorkspace } from "@director.run/design/test/fixtures/playbook/playbook.ts";
-import { mockRegistryEntry } from "@director.run/design/test/fixtures/registry/entry.ts";
 import { mockPlaybookTarget } from "@director.run/design/test/fixtures/playbook/playbook-target.ts";
+import { mockPlaybook } from "@director.run/design/test/fixtures/playbook/playbook.ts";
+import { mockRegistryEntry } from "@director.run/design/test/fixtures/registry/entry.ts";
 import {
   BookOpenTextIcon,
   HardDriveIcon,
@@ -29,7 +29,7 @@ import { withLayoutView } from "../helpers/decorators";
 
 type PlaybookTargetDetailContentProps = {
   workspaceTarget: PlaybookTarget;
-  playbook: WorkspaceDetail;
+  playbook: PlaybookDetail;
   registryEntry?: RegistryEntryDetail;
   navigate: (path: string) => void;
   playbookId: string;
@@ -120,7 +120,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     workspaceTarget: mockPlaybookTarget,
-    playbook: mockWorkspace(),
+    playbook: mockPlaybook(),
     registryEntry: mockRegistryEntry,
     tools: mockTools(),
     toolsLoading: false,
@@ -154,7 +154,7 @@ export const LongStrings: Story = {
   args: {
     ...Default.args,
     playbook: {
-      ...mockWorkspace(),
+      ...mockPlaybook(),
       id: "very-long-proxy-name-that-should-wrap",
       name: "Very Long Proxy Name That Should Wrap Nicely in the UI",
     },

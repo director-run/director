@@ -5,13 +5,13 @@ import {
   SplitViewMain,
   SplitViewSide,
 } from "@director.run/design/components/split-view.tsx";
-import type { WorkspaceList } from "@director.run/design/components/types.ts";
+import type { PlaybookList } from "@director.run/design/components/types.ts";
 import { Container } from "@director.run/design/components/ui/container.tsx";
 import { mockRegistryEntry } from "@director.run/design/test/fixtures/registry/entry.ts";
 import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../helpers/decorators";
 
-const mockPlaybooks: WorkspaceList = [
+const mockPlaybooks: PlaybookList = [
   {
     id: "dev-playbook",
     name: "Development Playbook",
@@ -44,7 +44,7 @@ const RegistryItemDetailComponent = ({
   onProxyServerClick: _onProxyServerClick,
 }: {
   entry: typeof mockRegistryEntry;
-  proxies?: WorkspaceList;
+  proxies?: PlaybookList;
   onClickInstall: (params: {
     proxyId?: string;
     entryId: string;

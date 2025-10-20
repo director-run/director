@@ -4,7 +4,7 @@ import { LayoutView } from "@director.run/design/components/layout/layout.tsx";
 import { McpLogo } from "@director.run/design/components/mcp-logo.tsx";
 import { PlaybookTargetPropertyList } from "@director.run/design/components/mcp-servers/playbook-target-property-list.tsx";
 import { FullScreenError } from "@director.run/design/components/pages/global/error.tsx";
-import { ProxySkeleton } from "@director.run/design/components/playbooks/playbook-skeleton.tsx";
+import { PlaybookSkeleton } from "@director.run/design/components/playbooks/playbook-skeleton.tsx";
 import { RegistryEntryReadme } from "@director.run/design/components/registry/registry-entry-readme.tsx";
 import { ToolList } from "@director.run/design/components/tools/tool-list.js";
 import { Container } from "@director.run/design/components/ui/container.tsx";
@@ -46,7 +46,7 @@ export function PlaybookTargetDetailPage() {
   const registryEntry = registryEntryQuery.data;
 
   if (isPlaybookTargetLoading) {
-    return <ProxySkeleton />;
+    return <PlaybookSkeleton />;
   }
 
   if (playbookTargetError || !playbookTarget || !playbook) {

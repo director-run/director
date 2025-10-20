@@ -1,9 +1,9 @@
 import { GetStartedCompleteDialog } from "@director.run/design/components/get-started/get-started-complete-dialog.tsx";
 import { GetStartedInstallServerDialog } from "@director.run/design/components/get-started/get-started-install-server-dialog.tsx";
 import { GetStartedPageView } from "@director.run/design/components/pages/get-started.tsx";
+import { mockClients } from "@director.run/design/test/fixtures/playbook/clients.ts";
 import { mockRegistryEntryList } from "@director.run/design/test/fixtures/registry/entry-list.ts";
 import { mockRegistryEntry } from "@director.run/design/test/fixtures/registry/entry.ts";
-import { mockClients } from "@director.run/design/test/fixtures/playbook/clients.ts";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
@@ -14,17 +14,17 @@ const meta = {
   //   decorators: [withLayoutView],
   render: (args) => <StatefulPage {...args} />,
   args: {
-    currentWorkspace: null,
+    currentPlaybook: null,
     registryEntries: [],
     clientStatuses: [],
-    isAddingWorkspaceToClient: false,
-    isCreateWorkspaceLoading: false,
+    isAddingPlaybookToClient: false,
+    isCreatePlaybookLoading: false,
     searchQuery: "",
     onSearchQueryChange: () => {},
     onClickRegistryEntry: () => {},
-    onAddWorkspaceToClient: () => {},
+    onAddPlaybookToClient: () => {},
     // Accept any since storybook args typing requires this prop
-    onCreateWorkspace: async () => {},
+    onCreatePlaybook: async () => {},
   },
 } satisfies Meta<typeof GetStartedPageView>;
 
@@ -40,8 +40,8 @@ function StatefulPage(args: React.ComponentProps<typeof GetStartedPageView>) {
       searchQuery={searchQuery}
       onSearchQueryChange={setSearchQuery}
       onClickRegistryEntry={() => {}}
-      onAddWorkspaceToClient={() => {}}
-      onCreateWorkspace={async () => {}}
+      onAddPlaybookToClient={() => {}}
+      onCreatePlaybook={async () => {}}
     />
   );
 }
@@ -49,44 +49,44 @@ function StatefulPage(args: React.ComponentProps<typeof GetStartedPageView>) {
 // step 1a: new playbook
 export const Step1a_NewPlaybook: Story = {
   args: {
-    currentWorkspace: null,
+    currentPlaybook: null,
     registryEntries: [],
     clientStatuses: mockClients,
-    isAddingWorkspaceToClient: false,
-    isCreateWorkspaceLoading: false,
+    isAddingPlaybookToClient: false,
+    isCreatePlaybookLoading: false,
   },
 };
 
 // step 1b: new playbook loading
 export const Step1b_NewPlaybookLoading: Story = {
   args: {
-    currentWorkspace: null,
+    currentPlaybook: null,
     registryEntries: [],
     clientStatuses: mockClients,
-    isAddingWorkspaceToClient: false,
-    isCreateWorkspaceLoading: true,
+    isAddingPlaybookToClient: false,
+    isCreatePlaybookLoading: true,
   },
 };
 
 // step 2a: registry entry list (playbook created, no servers yet)
 export const Step2a_RegistryEntryList: Story = {
   args: {
-    currentWorkspace: { id: "playbook-1", servers: [] },
+    currentPlaybook: { id: "playbook-1", servers: [] },
     registryEntries: mockRegistryEntryList,
     clientStatuses: mockClients,
-    isAddingWorkspaceToClient: false,
-    isCreateWorkspaceLoading: false,
+    isAddingPlaybookToClient: false,
+    isCreatePlaybookLoading: false,
   },
 };
 
 // step 2b: registry entry detail (dialog open)
 export const Step2b_RegistryEntryDetail: Story = {
   args: {
-    currentWorkspace: { id: "playbook-1", servers: [] },
+    currentPlaybook: { id: "playbook-1", servers: [] },
     registryEntries: mockRegistryEntryList,
     clientStatuses: mockClients,
-    isAddingWorkspaceToClient: false,
-    isCreateWorkspaceLoading: false,
+    isAddingPlaybookToClient: false,
+    isCreatePlaybookLoading: false,
   },
   render: (args) => {
     const [open, setOpen] = useState(true);
@@ -109,22 +109,22 @@ export const Step2b_RegistryEntryDetail: Story = {
 // step 3: client installers (playbook with a server)
 export const Step3_ClientInstallers: Story = {
   args: {
-    currentWorkspace: { id: "playbook-1", servers: [{ name: "github-mcp" }] },
+    currentPlaybook: { id: "playbook-1", servers: [{ name: "github-mcp" }] },
     registryEntries: mockRegistryEntryList,
     clientStatuses: mockClients,
-    isAddingWorkspaceToClient: false,
-    isCreateWorkspaceLoading: false,
+    isAddingPlaybookToClient: false,
+    isCreatePlaybookLoading: false,
   },
 };
 
 // step 3b: client install loading
 export const Step3b_ClientInstallLoading: Story = {
   args: {
-    currentWorkspace: { id: "playbook-1", servers: [{ name: "github-mcp" }] },
+    currentPlaybook: { id: "playbook-1", servers: [{ name: "github-mcp" }] },
     registryEntries: mockRegistryEntryList,
     clientStatuses: mockClients,
-    isAddingWorkspaceToClient: true,
-    isCreateWorkspaceLoading: false,
+    isAddingPlaybookToClient: true,
+    isCreatePlaybookLoading: false,
   },
 };
 

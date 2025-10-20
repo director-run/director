@@ -1,10 +1,10 @@
 import { MCPLinkCard, MCPLinkCardList } from "../mcp-servers/mcp-link-card";
-import type { WorkspaceDetail } from "../types";
+import type { PlaybookDetail } from "../types";
 import { Button } from "../ui/button";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
 
 export interface WorkspaceSectionServersProps {
-  playbook: WorkspaceDetail;
+  playbook: PlaybookDetail;
   onLibraryClick?: () => void;
   onServerClick?: (serverId: string) => void;
 }

@@ -6,7 +6,7 @@ import { InputField } from "../ui/form/input-field";
 import { TextareaField } from "../ui/form/textarea-field";
 import { Loader } from "../ui/loader";
 
-const proxySchema = z.object({
+const playbookSchema = z.object({
   name: z.string().trim().min(1, "Required"),
   description: z
     .string()
@@ -15,19 +15,19 @@ const proxySchema = z.object({
     .transform((val) => (val === "" ? undefined : val)),
 });
 
-export type ProxyFormData = z.infer<typeof proxySchema>;
+export type PlaybookFormData = z.infer<typeof playbookSchema>;
 
-interface ProxyFormProps {
+interface PlaybookFormProps {
   children: ReactNode;
-  defaultValues?: Partial<ProxyFormData>;
-  onSubmit: (values: ProxyFormData) => Promise<void>;
+  defaultValues?: Partial<PlaybookFormData>;
+  onSubmit: (values: PlaybookFormData) => Promise<void>;
 }
 
-export function ProxyForm({
+export function PlaybookForm({
   children,
   onSubmit,
   defaultValues,
-}: ProxyFormProps) {
+}: PlaybookFormProps) {
   const formDefaultValues = {
     name: defaultValues?.name ?? "",
     description: defaultValues?.description ?? "",
@@ -35,7 +35,7 @@ export function ProxyForm({
 
   return (
     <FormWithSchema
-      schema={proxySchema}
+      schema={playbookSchema}
       defaultValues={formDefaultValues}
       onSubmit={onSubmit}
     >

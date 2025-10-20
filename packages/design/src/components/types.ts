@@ -9,8 +9,8 @@ export type RegistryEntryDetail =
   RegistryRouterOutputs["entries"]["getEntryByName"];
 
 // Workspace
-export type WorkspaceList = GatewayRouterOutputs["store"]["getAll"];
-export type WorkspaceDetail = GatewayRouterOutputs["store"]["get"];
+export type PlaybookList = GatewayRouterOutputs["store"]["getAll"];
+export type PlaybookDetail = GatewayRouterOutputs["store"]["get"];
 export type PlaybookTarget =
   GatewayRouterOutputs["store"]["get"]["servers"][number];
 
@@ -20,7 +20,7 @@ export interface Client {
   label: string;
   image: string;
   installed?: boolean; // whether the client app is available on the system
-  present?: boolean; // whether the proxy is currently installed in that client
+  present?: boolean; // whether the playbook is currently installed in that client
 }
 
 // MCP

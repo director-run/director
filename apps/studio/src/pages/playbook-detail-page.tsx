@@ -2,16 +2,16 @@ import { LayoutBreadcrumbHeader } from "@director.run/design/components/layout/l
 import { LayoutViewContent } from "@director.run/design/components/layout/layout.tsx";
 import { FullScreenError } from "@director.run/design/components/pages/global/error.tsx";
 import { WorkspaceSectionClients } from "@director.run/design/components/playbooks-clients/playbook-section-clients.tsx";
-import { ProxyActionsDropdown } from "@director.run/design/components/playbooks/playbook-actions-dropdown.tsx";
-import { ProxySettingsSheet } from "@director.run/design/components/playbooks/playbook-settings-sheet.tsx";
-import { ProxySkeleton } from "@director.run/design/components/playbooks/playbook-skeleton.tsx";
+import { PlaybookActionsDropdown } from "@director.run/design/components/playbooks/playbook-actions-dropdown.tsx";
+import { PlaybookSettingsSheet } from "@director.run/design/components/playbooks/playbook-settings-sheet.tsx";
+import { PlaybookSkeleton } from "@director.run/design/components/playbooks/playbook-skeleton.tsx";
 import { PromptList } from "@director.run/design/components/prompts/prompt-list.tsx";
 import { WorkspaceServerList } from "@director.run/design/components/servers/server-list.tsx";
 import { SplitViewMain } from "@director.run/design/components/split-view.tsx";
 import { SplitViewSide } from "@director.run/design/components/split-view.tsx";
 import { SplitView } from "@director.run/design/components/split-view.tsx";
 import { ToolList } from "@director.run/design/components/tools/tool-list.tsx";
-import type { WorkspaceDetail } from "@director.run/design/components/types.ts";
+import type { PlaybookDetail } from "@director.run/design/components/types.ts";
 import { ConfirmDialog } from "@director.run/design/components/ui/confirm-dialog.tsx";
 import { Container } from "@director.run/design/components/ui/container.tsx";
 import { Section } from "@director.run/design/components/ui/section.tsx";
@@ -47,8 +47,7 @@ export const WorkspaceDetailPage = () => {
   const { playbook, isPlaybookLoading, playbookError } =
     usePlaybook(playbookId);
   const { tools, isToolsLoading } = useListTools(playbookId);
-  const { data: clients, isLoading: isClientsLoading } =
-    useClients(playbookId);
+  const { data: clients, isLoading: isClientsLoading } = useClients(playbookId);
   const { updateTools, isPending: isUpdatingTools } = useUpdateTools(
     playbookId,
     {
@@ -96,20 +95,17 @@ export const WorkspaceDetailPage = () => {
       },
     },
   );
-  const { editPrompt, isPending: isEditingPrompt } = useEditPrompt(
-    playbookId,
-    {
-      onSuccess: async () => {
-        await utils.store.get.invalidate({
-          proxyId: playbookId,
-        });
-        toast({
-          title: "Prompt updated",
-          description: "Your prompt was updated.",
-        });
-      },
+  const { editPrompt, isPending: isEditingPrompt } = useEditPrompt(playbookId, {
+    onSuccess: async () => {
+      await utils.store.get.invalidate({
+        proxyId: playbookId,
+      });
+      toast({
+        title: "Prompt updated",
+        description: "Your prompt was updated.",
+      });
     },
-  );
+  });
 
   const { deletePrompt, isPending: isDeletingPrompt } = useDeletePrompt(
     playbookId,
@@ -129,7 +125,7 @@ export const WorkspaceDetailPage = () => {
   const { authenticate } = useAuthenticate();
 
   if (isPlaybookLoading) {
-    return <ProxySkeleton />;
+    return <PlaybookSkeleton />;
   }
 
   if (playbookError || !playbook) {
@@ -249,7 +245,7 @@ export const WorkspaceDetailPage = () => {
   );
 };
 
-function WorkspaceEditMenu({ playbook }: { playbook: WorkspaceDetail }) {
+function WorkspaceEditMenu({ playbook }: { playbook: PlaybookDetail }) {
   const navigate = useNavigate();
 
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -297,12 +293,12 @@ function WorkspaceEditMenu({ playbook }: { playbook: WorkspaceDetail }) {
 
   return (
     <>
-      <ProxyActionsDropdown
+      <PlaybookActionsDropdown
         onSettingsClick={() => setSettingsOpen(true)}
         onDeleteClick={() => setDeleteOpen(true)}
       />
-      <ProxySettingsSheet
-        proxy={playbook}
+      <PlaybookSettingsSheet
+        playbook={playbook}
         onSubmit={handleUpdateProxy}
         open={settingsOpen}
         onOpenChange={setSettingsOpen}

@@ -10,7 +10,7 @@ import { ToolList } from "@director.run/design/components/tools/tool-list.tsx";
 import type {
   Client,
   MCPTool,
-  WorkspaceDetail,
+  PlaybookDetail,
 } from "@director.run/design/components/types.ts";
 import { Container } from "@director.run/design/components/ui/container.tsx";
 import { Section } from "@director.run/design/components/ui/section.tsx";
@@ -19,8 +19,8 @@ import { SectionTitle } from "@director.run/design/components/ui/section.tsx";
 import { SectionDescription } from "@director.run/design/components/ui/section.tsx";
 import { Tab, Tabs } from "@director.run/design/components/ui/tabs.tsx";
 import { mockTools } from "@director.run/design/test/fixtures/mcp/tools.js";
-import { mockWorkspace } from "@director.run/design/test/fixtures/playbook/playbook.ts";
 import { mockClients } from "@director.run/design/test/fixtures/playbook/clients.ts";
+import { mockPlaybook } from "@director.run/design/test/fixtures/playbook/playbook.ts";
 import { DesktopIcon, NotebookIcon, ToolboxIcon } from "@phosphor-icons/react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../helpers/decorators";
@@ -30,7 +30,7 @@ const WorkspaceDetailComponent = ({
   tools,
   clients,
 }: {
-  playbook: WorkspaceDetail;
+  playbook: PlaybookDetail;
   clients: Client[];
   tools: MCPTool[];
 }) => (
@@ -100,7 +100,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    playbook: mockWorkspace(),
+    playbook: mockPlaybook(),
     clients: mockClients,
     tools: mockTools(),
   },

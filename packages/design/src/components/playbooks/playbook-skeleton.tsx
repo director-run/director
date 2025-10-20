@@ -13,14 +13,14 @@ import {
   SectionTitle,
 } from "../ui/section";
 
-export function ProxySkeleton({ children }: { children?: ReactNode }) {
+export function PlaybookSkeleton({ children }: { children?: ReactNode }) {
   return (
     <LayoutView className="pointer-events-none relative select-none">
       {children}
       <LayoutBreadcrumbHeader
         breadcrumbs={[
           {
-            title: "Loading proxy…",
+            title: "Loading playbook…",
           },
         ]}
         loading={true}
@@ -40,10 +40,10 @@ export function ProxySkeleton({ children }: { children?: ReactNode }) {
           <Section>
             <SectionHeader className="opacity-50">
               <SectionTitle>
-                <ScrambleText text="Loading proxy name" />
+                <ScrambleText text="Loading playbook name" />
               </SectionTitle>
               <SectionDescription>
-                <ScrambleText text="Loading proxy description" />
+                <ScrambleText text="Loading playbook description" />
               </SectionDescription>
             </SectionHeader>
           </Section>

@@ -112,7 +112,7 @@ export function RegistryDetailPage() {
           >
             <RegistryInstallForm
               registryEntry={registryEntry}
-              proxies={workspaces}
+              playbooks={workspaces}
               onSubmit={handleInstall}
               isSubmitting={isPending}
             />

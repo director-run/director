@@ -1,5 +1,5 @@
 import type { PlaybookTarget } from "@director.run/design/components/types.js";
-import type { WorkspaceDetail } from "@director.run/design/components/types.js";
+import type { PlaybookDetail } from "@director.run/design/components/types.js";
 import { Button } from "@director.run/design/components/ui/button.js";
 import { ConfirmDialog } from "@director.run/design/components/ui/confirm-dialog.js";
 import {
@@ -24,7 +24,7 @@ import { useLogout } from "../hooks/use-logout";
 
 interface PlaybookTargetDetailDropDownMenuProps {
   playbookTarget: PlaybookTarget;
-  playbook: WorkspaceDetail;
+  playbook: PlaybookDetail;
 }
 
 export function PlaybookTargetDetailDropDownMenu({

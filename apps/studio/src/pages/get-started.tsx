@@ -164,16 +164,16 @@ export function GetStartedPage() {
   return (
     <>
       <GetStartedPageView
-        currentWorkspace={currentProxy}
+        currentPlaybook={currentProxy}
         registryEntries={registryEntriesQuery.data?.entries ?? []}
         clientStatuses={listClientsQuery.data ?? []}
-        isAddingWorkspaceToClient={installationMutation.isPending}
-        isCreateWorkspaceLoading={createProxyMutation.isPending}
-        onCreateWorkspace={handleProxySubmit}
+        isAddingPlaybookToClient={installationMutation.isPending}
+        isCreatePlaybookLoading={createProxyMutation.isPending}
+        onCreatePlaybook={handleProxySubmit}
         searchQuery={searchQuery}
         onSearchQueryChange={setSearchQuery}
         onClickRegistryEntry={handleMcpSelect}
-        onAddWorkspaceToClient={handleClientInstall}
+        onAddPlaybookToClient={handleClientInstall}
       />
 
       {selectedRegistryEntryName && (

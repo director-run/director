@@ -1,5 +1,5 @@
-import { ProxyForm, WorkspaceFormButton } from "../playbooks/playbook-form";
-import type { ProxyFormData } from "../playbooks/playbook-form";
+import { PlaybookForm, WorkspaceFormButton } from "../playbooks/playbook-form";
+import type { PlaybookFormData as PlaybookFormData } from "../playbooks/playbook-form";
 import { Container } from "../ui/container";
 import {
   Section,
@@ -9,12 +9,12 @@ import {
   SectionTitle,
 } from "../ui/section";
 
-interface ProxyNewProps {
-  onSubmit: (values: ProxyFormData) => Promise<void> | void;
+interface PlaybookNewProps {
+  onSubmit: (values: PlaybookFormData) => Promise<void> | void;
   isSubmitting: boolean;
 }
 
-export function WorkspaceCreate({ onSubmit, isSubmitting }: ProxyNewProps) {
+export function PlaybookCreate({ onSubmit, isSubmitting }: PlaybookNewProps) {
   return (
     <Container size="sm">
       <Section className="gap-y-8">
@@ -25,7 +25,7 @@ export function WorkspaceCreate({ onSubmit, isSubmitting }: ProxyNewProps) {
           </SectionDescription>
         </SectionHeader>
         <SectionSeparator />
-        <ProxyForm
+        <PlaybookForm
           onSubmit={async (values) => {
             await onSubmit(values);
           }}
@@ -33,7 +33,7 @@ export function WorkspaceCreate({ onSubmit, isSubmitting }: ProxyNewProps) {
           <WorkspaceFormButton isSubmitting={isSubmitting}>
             Create workspace
           </WorkspaceFormButton>
-        </ProxyForm>
+        </PlaybookForm>
       </Section>
     </Container>
   );

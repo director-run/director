@@ -4,14 +4,14 @@ import {
   SplitViewMain,
   SplitViewSide,
 } from "@director.run/design/components/split-view.tsx";
-import type { WorkspaceList } from "@director.run/design/components/types.ts";
+import type { PlaybookList } from "@director.run/design/components/types.ts";
 import { Container } from "@director.run/design/components/ui/container.tsx";
 import { mockRegistryEntry } from "@director.run/design/test/fixtures/registry/entry.ts";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { withLayoutView } from "../../helpers/decorators";
 
-const mockPlaybooks: WorkspaceList = [
+const mockPlaybooks: PlaybookList = [
   {
     id: "dev-playbook",
     name: "Development Playbook",
@@ -124,7 +124,7 @@ const BaseStory = ({
   onClickCancel,
 }: {
   entry?: typeof mockRegistryEntry;
-  proxies?: WorkspaceList;
+  proxies?: PlaybookList;
   isInstalling?: boolean;
   showDebug?: boolean;
   onClickCancel?: () => void;

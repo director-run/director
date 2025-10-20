@@ -1,32 +1,32 @@
-import type { ProxyFormData } from "@director.run/design/components/playbooks/playbook-form.tsx";
-import { ProxySettingsSheet } from "@director.run/design/components/playbooks/playbook-settings-sheet.tsx";
+import type { PlaybookFormData } from "@director.run/design/components/playbooks/playbook-form.tsx";
+import { PlaybookSettingsSheet } from "@director.run/design/components/playbooks/playbook-settings-sheet.tsx";
 import { Button } from "@director.run/design/components/ui/button.tsx";
-import { mockWorkspace } from "@director.run/design/test/fixtures/playbook/playbook.ts";
+import { mockPlaybook } from "@director.run/design/test/fixtures/playbook/playbook.ts";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
 const meta = {
   title: "components/sheets/playbook-settings-sheet",
-  component: ProxySettingsSheet,
+  component: PlaybookSettingsSheet,
   parameters: {
     layout: "fullscreen",
   },
-} satisfies Meta<typeof ProxySettingsSheet>;
+} satisfies Meta<typeof PlaybookSettingsSheet>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    proxy: mockWorkspace(),
-    onSubmit: (_data: ProxyFormData) => Promise.resolve(),
+    playbook: mockPlaybook(),
+    onSubmit: (_data: PlaybookFormData) => Promise.resolve(),
   },
   render: () => {
     const [open, setOpen] = useState(true);
 
-    const proxy = mockWorkspace();
+    const proxy = mockPlaybook();
 
-    const handleSubmit = (data: ProxyFormData) => {
+    const handleSubmit = (data: PlaybookFormData) => {
       console.log("Updated proxy settings:", JSON.stringify(data, null, 2));
       return Promise.resolve();
     };
@@ -38,10 +38,10 @@ export const Default: Story = {
             {open ? "Close Sheet" : "Open Sheet"}
           </Button>
         </div>
-        <ProxySettingsSheet
+        <PlaybookSettingsSheet
           open={open}
           onOpenChange={setOpen}
-          proxy={proxy}
+          playbook={proxy}
           onSubmit={handleSubmit}
         />
       </div>

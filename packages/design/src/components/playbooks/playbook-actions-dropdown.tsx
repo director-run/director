@@ -13,15 +13,15 @@ import {
 } from "../ui/dropdown-menu";
 import { MenuItemIcon, MenuItemLabel } from "../ui/menu";
 
-interface ProxyActionsDropdownProps {
+interface PlaybookActionsDropdownProps {
   onSettingsClick: () => void;
   onDeleteClick: () => void;
 }
 
-export function ProxyActionsDropdown({
+export function PlaybookActionsDropdown({
   onSettingsClick,
   onDeleteClick,
-}: ProxyActionsDropdownProps) {
+}: PlaybookActionsDropdownProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

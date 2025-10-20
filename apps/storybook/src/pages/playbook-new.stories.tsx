@@ -1,21 +1,21 @@
-import { WorkspaceCreate } from "@director.run/design/components/pages/playbook-new.tsx";
-import type { ProxyFormData } from "@director.run/design/components/playbooks/playbook-form.tsx";
+import { PlaybookCreate } from "@director.run/design/components/pages/playbook-new.tsx";
+import type { PlaybookFormData } from "@director.run/design/components/playbooks/playbook-form.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../helpers/decorators";
 
 const meta = {
   title: "pages/playbooks/new",
-  component: WorkspaceCreate,
+  component: PlaybookCreate,
   parameters: {
     layout: "fullscreen",
   },
   decorators: [withLayoutView],
-} satisfies Meta<typeof WorkspaceCreate>;
+} satisfies Meta<typeof PlaybookCreate>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const mockSubmit = async (values: ProxyFormData) => {
+const mockSubmit = async (values: PlaybookFormData) => {
   console.log("Submitting proxy:", values);
   await new Promise((resolve) => setTimeout(resolve, 1000));
 };

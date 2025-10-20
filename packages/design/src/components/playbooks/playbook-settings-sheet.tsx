@@ -1,4 +1,4 @@
-import type { WorkspaceDetail } from "../types";
+import type { PlaybookDetail } from "../types";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import {
@@ -10,22 +10,22 @@ import {
   SheetHeader,
   SheetTitle,
 } from "../ui/sheet";
-import { ProxyForm } from "./playbook-form";
-import type { ProxyFormData } from "./playbook-form";
+import { PlaybookForm } from "./playbook-form";
+import type { PlaybookFormData } from "./playbook-form";
 
-interface ProxySettingsSheetProps {
-  proxy: WorkspaceDetail;
-  onSubmit: (values: ProxyFormData) => Promise<void>;
+interface PlaybookSettingsSheetProps {
+  playbook: PlaybookDetail;
+  onSubmit: (values: PlaybookFormData) => Promise<void>;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
 
-export function ProxySettingsSheet({
-  proxy,
+export function PlaybookSettingsSheet({
+  playbook,
   onSubmit,
   open,
   onOpenChange,
-}: ProxySettingsSheetProps) {
+}: PlaybookSettingsSheetProps) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
@@ -34,21 +34,21 @@ export function ProxySettingsSheet({
           <SheetHeader>
             <SheetTitle>Settings</SheetTitle>
             <SheetDescription>
-              Update the name and description of the proxy.
+              Update the name and description of the playbook.
             </SheetDescription>
           </SheetHeader>
 
           <Separator />
 
-          <ProxyForm
+          <PlaybookForm
             defaultValues={{
-              name: proxy.name,
-              description: proxy.description ?? undefined,
+              name: playbook.name,
+              description: playbook.description ?? undefined,
             }}
             onSubmit={onSubmit}
           >
             <Button>Save changes</Button>
-          </ProxyForm>
+          </PlaybookForm>
         </SheetBody>
       </SheetContent>
     </Sheet>

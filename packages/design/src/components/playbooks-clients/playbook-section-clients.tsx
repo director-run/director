@@ -1,17 +1,17 @@
 import { cn } from "../../helpers/cn";
 import { useCopyToClipboard } from "../../hooks/use-copy-to-clipboard";
 import { type Client } from "../types";
-import type { WorkspaceDetail } from "../types";
+import type { PlaybookDetail } from "../types";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
 import { Switch } from "../ui/switch";
 import { toast } from "../ui/toast";
 import {
   ManualInput,
-  ProxyManualDialog,
+  PlaybookManualDialog,
 } from "./playbook-manual-connection-dialog";
 
 export interface WorkspaceSectionClientsProps {
-  playbook: WorkspaceDetail;
+  playbook: PlaybookDetail;
   gatewayBaseUrl: string;
   clients: Client[];
   onChangeInstall: (clientName: string, install: boolean) => void;
@@ -40,11 +40,11 @@ export function WorkspaceSectionClients({
         <SectionTitle variant="h3" asChild>
           <h3>Client connections</h3>
         </SectionTitle>
-        <ProxyManualDialog
-          proxyId={playbook.id}
+        <PlaybookManualDialog
+          playbookId={playbook.id}
           gatewayBaseUrl={gatewayBaseUrl}
           onCopy={handleCopy}
-        ></ProxyManualDialog>
+        ></PlaybookManualDialog>
       </SectionHeader>
       <div className="overflow-hidden rounded-xl bg-accent-subtle p-4 shadow-[0_0_0_0.5px_rgba(55,50,46,0.15)]">
         <LittleLabel>Connect Automatically</LittleLabel>

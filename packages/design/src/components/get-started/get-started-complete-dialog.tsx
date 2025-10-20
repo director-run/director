@@ -51,7 +51,7 @@ export function GetStartedCompleteDialog(props: GetStartedCompleteDialogProps) {
             onClick={onClickWorkspace}
           >
             <HardDriveIcon weight="fill" />
-            <span>Continue to your proxy</span>
+            <span>Continue to your playbook</span>
           </NextStepsLink>
         </div>
       </AlertDialogContent>

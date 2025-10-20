@@ -10,7 +10,7 @@ import {
 import { GetStartedMcpServerList } from "../get-started/get-started-mcp-server-list";
 import {
   GetStartedPlaybookForm,
-  type FormValues as PlaybookFormValues,
+  type PlaybookCreateFormValues as PlaybookFormValues,
 } from "../get-started/get-started-playbook-form";
 import { playbookSchema } from "../get-started/get-started-playbook-form";
 import type { RegistryEntryList } from "../types";

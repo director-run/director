@@ -9,7 +9,7 @@ import { useCreatePlaybook } from "../hooks/use-create-playbook";
 export function PlaybookCreatePage() {
   const navigate = useNavigate();
 
-  const { createProxy, isPending } = useCreatePlaybook({
+  const { createPlaybook, isPending } = useCreatePlaybook({
     onSuccess: (response) => {
       toast({
         title: "Playbook created",
@@ -20,7 +20,7 @@ export function PlaybookCreatePage() {
   });
 
   const handleSubmit = async (values: PlaybookFormData) => {
-    await createProxy({ ...values, servers: [] });
+    await createPlaybook({ ...values, servers: [] });
   };
 
   return (

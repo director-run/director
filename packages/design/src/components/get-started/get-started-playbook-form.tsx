@@ -17,13 +17,13 @@ const playbookSchema = z.object({
 });
 
 // Form values type
-export type FormValues = z.infer<typeof playbookSchema>;
+export type PlaybookCreateFormValues = z.infer<typeof playbookSchema>;
 
 // Presentational component props
 interface GetStartedPlaybookFormProps {
   form: ReturnType<typeof useZodForm<typeof playbookSchema>>;
   isPending: boolean;
-  onSubmit: (values: FormValues) => void;
+  onSubmit: (values: PlaybookCreateFormValues) => void;
 }
 
 // Presentational component

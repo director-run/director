@@ -1,151 +1,303 @@
 <h1 align="center">Director</h1>
-<p align="center">The easiest way to use MCP.</p>
+<p align="center">Playbooks for AI agents</p>
 
 <p align="center"><code>curl -LsSf https://director.run/install.sh | sh</code></p>
 
 ---
 
-[Director](https://director.run) is open source MCP middleware that acts as a proxy between models/agents and MCP servers. Supporting all MCP transports natively, it aggregates tools, prompts, and resources server-side while providing a unified client-side integration point. This abstraction eliminates MCP server management overhead, enabling developers to focus on prompt engineering and domain logic rather than infrastructure complexity. If you'd like to learn more about director, please read the [documentation](https://docs.director.run)
+<div align="center">
 
-> **Note:** This project is under active development and is not yet stable & may contain bugs. Please see our [contributing](https://docs.director.run/project/contributing) if you'd like to help.
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![ci](https://github.com/director-run/director/workflows/CI/badge.svg)](https://github.com/director-run/director/actions/workflows/ci.yml)
+[![Release](https://github.com/director-run/director/workflows/Release/badge.svg)](https://github.com/director-run/director/actions/workflows/release.yml)
+[![npm](https://img.shields.io/npm/v/@director.run/cli.svg)](https://www.npmjs.com/package/@director.run/cli)
 
-## Prerequisites
+</div>
 
-- Tested on MacOS (Sequoia 15.5) and Ubuntu (24.04.2 LTS)
-- [Node.js](https://nodejs.org/en/download) (tested on v23.7.0) 
-- [UV](https://docs.astral.sh/uv/getting-started/installation/) for many Stdio servers
-- [Claude](https://claude.ai/download), [Cursor](https://www.cursor.com/downloads) or [VSCode](https://code.visualstudio.com/download) installed. (if you'd like director to configure them automatically).
+# Overview
 
+Director helps you provide **playbooks** to your AI Agents. Playbooks are set of tools, prompts and configuration, that enable a specific task (like [Claude Skills](https://www.anthropic.com/news/skills)) and can be used by any agent through a single, unified MCP endpoint.
 
-## Quickstart
+Playbooks are portable, declarative YAML files that can easily be shared (or committed to version control). Director is local-first - installation and client integration takes 30 seconds. In addition, Director provides all of the MCP management functionality that you'd expect: tool filtering, logging, strong isolation, and unified OAuth.
 
-The fastest way to try out director is by running the quickstart directly using npx. This will start the director gateway and open the UI.
+<br />
+<img src="https://github.com/director-run/director/blob/main/apps/docs/images/demo.gif" width="100%" alt="director demo">
 
-```bash
-curl -LsSf https://director.run/install.sh | sh
-director quickstart
-```
+## Key Features
 
-#### Installing Manually
+- 📚 **Playbooks** - Maintain sets of tools, prompts and config for different tasks or environments.
+- 🚀 **1-Click Integration** - Switch playbooks with a single click. Currently supports Claude Code, Claude Desktop, Cursor, VSCode
+- 🔗 **Shareable** - Playbooks are flat files which can be shared or committed to version control easily.
+- 🏠 **Local-First** - Director is local-first, designed to easily run on your own machine or infrastructure.
+- 🔑 **Unified OAuth** - Connect to OAuth MCPs centrally, and use them across all of your agents.
+- 🎯 **Tool Filtering** - Select only the MCP tools that are required for the specific task, preserving context.  
+- 📋 **Declarative** - Like terraform for AI agents, Director will enforce playbook to client mapping on startup.
+- 🔧 **Flexibility** - You can configure director through the UI, by editing the config file, through the CLI or even using the Typescript SDK.  
+- 📊 **Observability** - Centralised JSON logging, that allows you to understand exactly what your agent is doing.
+- 🔌 **MCP Compliant** - Just works with any MCP server or client. Up to date with the latest MCP spec.
 
-If you'd like to install director manually, you can do so via `npm` once you've installed the Prerequisites.
-
-```bash
-npm install -g @director.run/cli
-director serve # start the gateway
-director studio # open the studio in your browser
-```
-
-#### Docker (Experimental)
-
-If you'd like to run director (and all the MCP servers) inside a docker container, you can use the following command. Please note that this functionality is experimental
+# Quickstart
 
 ```bash
-# Start the gateway container, listening on port 8080
-# Mount the data directory to persist the gateway's state (config files, etc)
-docker run \
-        -d -p 8080:8080 \
-        -v ./data:/root/.director \
-        --name director \
-        barnaby/director:latest
+# Install Director
+$ curl -LsSf https://director.run/install.sh | sh
 
-# Tail the logs
-docker logs -f director
-
-# Interact with the gateway using the CLI, on the host machine
-npm install -g @director.run/cli
-GATEWAY_URL=http://localhost:8080 director create my-proxy
-GATEWAY_URL=http://localhost:8080 director add my-proxy --entry fetch
+# Start the onboarding flow
+$ director quickstart
 ```
 
-## CLI Examples
+# Core Concepts
 
+## Playbooks
 
+A playbook is a set of tools, prompts and configuration, used to provide specific capabilities to your agent. Under the hood, playbooks are built on top of the MCP tools & prompts primitives. 
 
-## Start the gateway
+The easiest way to author a playbook is via the UI (`director studio`). But you can also use the CLI or write the config manually (see below). You can have many playbooks, typically one per task or per environment. Connecting them is one click in the UI (or one CLI command / config entry), connections are enforced on startup. 
+
+```yaml
+#
+# Client <> Playbook mappings (enforced on startup)
+#
+clients:
+  claude-code: [ production-support ]
+  cursor: [ production-support ]
+
+#
+# Playbooks
+#
+playbooks:
+  - id: production-support
+    name: Production Support
+    description: Investigate and resolve production issues
+    #
+    # MCP Servers / Tools
+    #
+    servers:
+      # Get alerts
+      - name: sentry
+        type: http
+        url: https://mcp.sentry.dev/mcp
+      
+      # Read the logs
+      - name: cloudwatch
+        type: stdio
+        command: uvx
+        args: ["awslabs.cloudwatch-mcp-server@latest"]
+        env:
+          AWS_PROFILE: "[The AWS Profile Name to use for AWS access]",
+        include: [search_logs, get_metrics] # No write access
+
+      # Write back to the repository
+      - name: github
+        type: http
+        url: https://api.githubcopilot.com/mcp/
+        tools:
+          include: [ create_pr, search_code ] 
+    #
+    # Prompts
+    # 
+    prompts:
+      - name: investigate
+        content: |
+          Check recent alerts, correlate with deployment times,
+          search logs for errors, identify root cause
+```
+
+## Architechture
+
+At a high level, Director is a service that sits between your agents and MCP servers. It's transparent to clients, requiring no additional tokens. It models playbooks, which can be thought of as standalone, portable skills that enhance your AI agent with new capabilities.
+
+<img src="https://github.com/director-run/director/blob/main/apps/docs/images/director-highlevel-overview.webp" width="100%" alt="director demo">
+
+# Usage
+
+## Installation
+```bash
+# Install the director CLI + dependencies (node, npm & uvx) via the 1-liner:
+$ curl -LsSf https://director.run/install.sh | sh
+
+# Alternatively, install through npm:
+$ npm install -g @director.run/cli
+
+# Start director & open the UI
+$ director quickstart
+```
+
+## The Studio (Web UI)
+
+The simplest way to interact with director is via the admin interface:
 
 ```bash
-$ director serve
-
-         _ _               _
-        | (_)             | |
-      __| |_ _ __ ___  ___| |_ ___  _ __
-     / _' | | '__/ _ \/ __| __/ _ \| '__|
-    | (_| | | | |  __/ (__| || (_) | |
-     \__,_|_|_|  \___|\___|\__\___/|_|
-
-
-[18:16:21] INFO (Gateway): starting director gateway
-[18:16:21] INFO (Gateway): director gateway running on port 3673
+# Open studio in your browser
+$ director studio
 ```
 
-## Create a proxy
+## CLI Reference
+
 ```bash
-$ director create my-first-proxy 
-proxy my-first-proxy created
+Playbooks for your AI agent
+
+USAGE
+  director <command> [subcommand] [flags]
+
+CORE COMMANDS
+   quickstart                                    Start the gateway and open the studio in your browser
+   serve                                         Start the web service
+   studio                                        Open the UI in your browser
+   ls                                            List proxies
+   get <workspaceId> [serverName]                Show proxy details
+   auth <proxyId> <server>                       Authenticate a server
+   create <name>                                 Create a new proxy
+   destroy <proxyId>                             Delete a proxy
+   connect <proxyId> [options]                   Connect a proxy to a MCP client
+   disconnect <proxyId> [options]                Disconnect a proxy from an MCP client
+   add <proxyId> [options]                       Add a server to a proxy.
+   remove <proxyId> <serverName>                 Remove a server from a proxy
+   update <proxyId> [serverName] [options]       Update proxy attributes
+   http2stdio <url>                              Proxy an HTTP connection (sse or streamable) to a stdio stream
+   env [options]                                 Print environment variables
+   status                                        Get the status of the director
+
+REGISTRY
+   registry ls                                   List all available servers in the registry
+   registry get <entryName>                      Get detailed information about a registry item
+   registry readme <entryName>                   Print the readme for a registry item
+
+MCP
+   mcp list-tools <proxyId>                      List tools on a proxy
+   mcp get-tool <proxyId> <toolName>             Get the details of a tool
+   mcp call-tool <proxyId> <toolName> [options]  Call a tool on a proxy
+
+PROMPTS
+   prompts ls <proxyId>                          List all prompts for a proxy
+   prompts add <proxyId>                         Add a new prompt to a proxy
+   prompts edit <proxyId> <promptName>           Edit an existing prompt
+   prompts remove <proxyId> <promptName>         Remove a prompt from a proxy
+   prompts get <proxyId> <promptName>            Show the details of a specific prompt
+
+FLAGS
+   -V, --version                                 output the version number
+
+EXAMPLES
+  $ director create my-proxy # Create a new proxy
+  $ director add my-proxy --entry fetch # Add a server to a proxy
+  $ director connect my-proxy --target claude # Connect my-proxy to claude
+
 ```
 
-## Add a server to the proxy
+## Configuration File Reference
+
+```yaml
+#
+# Server config
+#
+server:
+  port: 1234
+
+#
+# Client Connections
+# 
+clients:
+  claude-code: [ code_review ] # connect claude code to the code_review playbook
+
+#
+# Playbooks
+# 
+playbooks:
+  - name: code_review
+    description: Automates code reviews
+    servers:
+      - name: filesystem
+        type: stdio
+        command: npx
+        args: [ "@modelcontextprotocol/server-filesystem", "./src" ]
+      
+      - name: github
+        type: http
+        url: https://api.githubcopilot.com/mcp/
+        tools:
+          # include only these tools
+          include: [ create_issue, search_code ] 
+
+    # invoke with slash commands
+    prompts:
+      - name: code_review
+        content: "Review this code for security vulnerabilities and performance issues"
+      
+      - name: write_tests
+        content: "Write comprehensive unit tests including edge cases"
+```
+
+### TypeScript SDK
+
+Programmatic control for advanced use cases:
+
+```typescript
+import { Director } from '@director.run/sdk';
+
+const director = new Director();
+
+// Create workspace programmatically
+const workspace = await director.workspaces.create({
+  name: 'ci-environment',
+  servers: [{
+    name: 'github',
+    command: 'mcp-server-github',
+    env: { GITHUB_TOKEN: process.env.GITHUB_TOKEN }
+  }]
+});
+
+// Execute tools
+const result = await workspace.callTool('github.create_issue', {
+  title: 'Automated issue from CI',
+  body: 'This issue was created by Director'
+});
+```
+
+# Repository Structure
+
+### External Apps
+
+- [`apps/cli`](./apps/cli/README.md) - The command-line interface, the primary way to interact with Director. Available on [npm](https://www.npmjs.com/package/@director.run/cli).
+- [`apps/sdk`](./apps/sdk/README.md) - The Typescript SDK, available on [npm](https://www.npmjs.com/package/@director.run/sdk).
+- [`apps/docker`](./apps/docker/README.md) - The Director docker image, which allows you to run Director (and all MCP servers) securly inside a container. Available on [Docker Hub](https://hub.docker.com/r/barnaby/director).
+- [`apps/docs`](./apps/docs/README.md) - Project documentation hosted at [https://docs.director.run](https://docs.director.run)
+- [`apps/registry`](./apps/registry/README.md) - Backend for the registry hosted at [https://registry.director.run](https://registry.director.run)
+- [`apps/sandbox`](./apps/sandbox/README.md) - A tool for running Director (and all MCP servers) securely inside a VM. Apple Silicon only.
+- [`apps/studio`](./apps/studio/README.md) - Director frontend application
+
+### Internal Packages
+
+- [`packages/client-configurator`](./packages/client-configurator/README.md) - Library for managing MCP client configuration files
+- [`packages/gateway`](./packages/gateway/README.md) - Core gateway and proxy logic
+- [`packages/mcp`](./packages/mcp/README.md) - Extensions to MCP SDK that add middleware functionality
+- [`packages/utilities`](./packages/utilities/README.md) - Shared utilities used across all packages and apps
+- [`packages/design`](./packages/design/README.md) - Design system: reusable UI components, hooks, and styles for all Director apps
+
+*This is a monorepo managed by [Turborepo](https://turbo.build/).*
+
+# Community
+
+If you're using director, have any ideas, or just want to chat about MCP, we'd love to chat:
+- 💬 Join our [Discord](https://discord.gg/kWZGvWks)
+- 📧 Send us an [Email](mailto:hello@director.run)
+- 🐛 Report a [Bug](https://github.com/director-run/director/issues)
+- 🐦 Follow us on [X / Twitter](https://x.com/barnabymalet) 
+
+# Contributing
+
+We welcome contributions! See [CONTRIBUTING.mdx](./apps/docs/project/contributing.mdx) for guidelines.
+
+## Setting up Development Environment
+
 ```bash
-$ director add my-first-proxy --entry hackernews
-adding hackernews to my-first-proxy
-✔ Entry fetched.
-✔ Registry entry hackernews added to my-first-proxy
+# Fork and clone
+git clone https://github.com/director_run/director
+cd director
+./scripts/setup-development.sh
+bun run test
 ```
 
-## Connect the proxy to a client
-```bash
-# connect the proxy to Claude automatically
-$ director connect my-first-proxy -t claude 
-[18:19:06] INFO (client-configurator/claude): reading config from /Users/barnaby/Library/Application Support/Claude/claude_desktop_config.json
-[18:19:06] INFO (client-configurator/claude): installing my-first-proxy
-[18:19:06] INFO (client-configurator/claude): writing config to /Users/barnaby/Library/Application Support/Claude/claude_desktop_config.json
-[18:19:06] INFO (client-configurator/claude): restarting claude
-[18:19:06] INFO (restartApp): restarting Claude...
-[18:19:08] INFO (restartApp): Claude has been restarted
-undefined
+# License
 
-# print the manual connection details
-$ director connect my-first-proxy 
-
---------------------------------
-Connection Details for 'my-first-proxy'
---------------------------------
-
-Note: if you'd like to connect to a client automatically, run:
-director connect my-first-proxy --target <target>
-
-HTTP Streamable: http://localhost:3673/my-first-proxy/mcp
-HTTP SSE: http://localhost:3673/my-first-proxy/sse
-Stdio: {
-  "command": "npx",
-  "args": [
-    "-y",
-    "@director.run/cli",
-    "http2stdio",
-    "http://localhost:3673/my-first-proxy/mcp"
-  ],
-  "env": {
-    "LOG_LEVEL": "silent"
-  }
-}
-```
-
-## Get the details of a proxy
-```bash
-# list all the proxies
-$ director ls
-┌────────────────┬────────────────┬──────────────────────────────────────────┐
-│ id             │ name           │ path                                     │
-│ my-first-proxy │ my-first-proxy │ http://localhost:3673/my-first-proxy/mcp │
-└────────────────┴────────────────┴──────────────────────────────────────────┘
-
-# get the details of a single proxy
-$ director get my-first-proxy 
-id=my-first-proxy
-name=my-first-proxy
-┌───────┬───────────┬──────────────────────┐
-│ name  │ transport │ url/command          │
-│ fetch │ stdio     │ uvx mcp-server-fetch │
-└───────┴───────────┴──────────────────────┘
-```
+AGPL v3 - See [LICENSE](./LICENSE) for details.

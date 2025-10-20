@@ -32,7 +32,9 @@ export function useInstallServerFromRegistry(
 
       await gatewayUtils.store.getAll.invalidate();
       if (variables?.playbookId) {
-        await gatewayUtils.store.get.invalidate({ playbookId: variables.playbookId });
+        await gatewayUtils.store.get.invalidate({
+          playbookId: variables.playbookId,
+        });
       }
       if (options && options.onSuccess) {
         await options.onSuccess(data, variables, context, meta);

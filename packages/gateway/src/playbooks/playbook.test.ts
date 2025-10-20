@@ -28,8 +28,7 @@ describe("Playbook", async () => {
 
       expect(playbook.targets).toHaveLength(2); // 1 server + 1 prompt manager
 
-      const playbookEntry =
-        await config.playbooks.getPlaybook("test-playbook");
+      const playbookEntry = await config.playbooks.getPlaybook("test-playbook");
       expect(playbookEntry.servers).toHaveLength(1);
       expect(playbookEntry.servers[0].name).toBe("foo");
     });
@@ -43,8 +42,7 @@ describe("Playbook", async () => {
       expect(playbook.targets).toHaveLength(1); // Only prompt manager remains
       expect(removedTarget.status).toBe("disconnected");
 
-      const playbookEntry =
-        await config.playbooks.getPlaybook("test-playbook");
+      const playbookEntry = await config.playbooks.getPlaybook("test-playbook");
       expect(playbookEntry.servers).toHaveLength(0);
     });
   });
@@ -52,8 +50,7 @@ describe("Playbook", async () => {
   describe("update", () => {
     it("should persist target changes to the config", async () => {
       await playbook.addTarget(makeFooBarServerStdioConfig());
-      const playbookEntry =
-        await config.playbooks.getPlaybook("test-playbook");
+      const playbookEntry = await config.playbooks.getPlaybook("test-playbook");
 
       expect(playbookEntry.servers).toHaveLength(1);
       expect(playbookEntry.servers[0].name).toBe("foo");
@@ -68,8 +65,7 @@ describe("Playbook", async () => {
       expect(playbook.name).toBe("test-playbook-updated");
       expect(playbook.description).toBe("test-playbook-updated");
 
-      const playbookEntry =
-        await config.playbooks.getPlaybook("test-playbook");
+      const playbookEntry = await config.playbooks.getPlaybook("test-playbook");
 
       expect(playbookEntry.name).toBe("test-playbook-updated");
       expect(playbookEntry.description).toBe("test-playbook-updated");

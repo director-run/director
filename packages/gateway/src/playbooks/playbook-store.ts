@@ -7,11 +7,7 @@ import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { Telemetry } from "@director.run/utilities/telemetry";
 import type { Config } from "../config";
-import {
-  Playbook,
-  type PlaybookParams,
-  type PlaybookTarget,
-} from "./playbook";
+import { Playbook, type PlaybookParams, type PlaybookTarget } from "./playbook";
 
 const logger = getLogger("PlaybookStore");
 
@@ -164,7 +160,10 @@ export class PlaybookStore {
       servers: servers ?? [],
       id: configEntry.id,
     });
-    logger.info({ message: `Created new playbook`, playbookId: configEntry.id });
+    logger.info({
+      message: `Created new playbook`,
+      playbookId: configEntry.id,
+    });
     return playbook;
   }
 

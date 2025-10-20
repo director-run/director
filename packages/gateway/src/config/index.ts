@@ -82,9 +82,7 @@ class PlaybooksConfig {
     this.config = config;
   }
 
-  async create(
-    playbook: Omit<PlaybookParams, "id">,
-  ): Promise<PlaybookParams> {
+  async create(playbook: Omit<PlaybookParams, "id">): Promise<PlaybookParams> {
     const playbookId = slugifyName(playbook.name);
 
     if (await this.config.find("playbooks", { id: playbookId })) {
@@ -116,10 +114,7 @@ class PlaybooksConfig {
     return playbook;
   }
 
-  async update(
-    id: string,
-    playbook: PlaybookParams,
-  ): Promise<PlaybookParams> {
+  async update(id: string, playbook: PlaybookParams): Promise<PlaybookParams> {
     if (playbook.id !== id) {
       throw new Error("Id mismatch");
     }

@@ -99,7 +99,7 @@ async function addServerFromStdio(
 ) {
   await spinnerWrap(async () => {
     await gatewayClient.store.addServer.mutate({
-      proxyId: playbookId,
+      playbookId: playbookId,
       server: {
         name,
         transport: {
@@ -118,7 +118,7 @@ async function addServerFromStdio(
 async function addServerFromUrl(playbookId: string, url: string, name: string) {
   await spinnerWrap(async () => {
     await gatewayClient.store.addServer.mutate({
-      proxyId: playbookId,
+      playbookId: playbookId,
       server: {
         name,
         transport: {
@@ -149,7 +149,7 @@ async function addServerFromRegistry(playbookId: string, entryName: string) {
       parameters,
     });
     await gatewayClient.store.addServer.mutate({
-      proxyId: playbookId,
+      playbookId: playbookId,
       server: {
         name: entryName,
         transport,

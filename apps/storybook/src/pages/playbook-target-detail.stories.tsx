@@ -28,7 +28,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../helpers/decorators";
 
 type PlaybookTargetDetailContentProps = {
-  workspaceTarget: PlaybookTarget;
+  playbookTarget: PlaybookTarget;
   playbook: PlaybookDetail;
   registryEntry?: RegistryEntryDetail;
   navigate: (path: string) => void;
@@ -38,7 +38,7 @@ type PlaybookTargetDetailContentProps = {
 };
 
 function PlaybookTargetDetailContent({
-  workspaceTarget,
+  playbookTarget,
   playbook,
   registryEntry,
   navigate,
@@ -51,7 +51,7 @@ function PlaybookTargetDetailContent({
       <Section className="gap-y-8">
         <McpLogo src={registryEntry?.icon} className="size-9" />
         <SectionHeader>
-          <SectionTitle>{workspaceTarget.name}</SectionTitle>
+          <SectionTitle>{playbookTarget.name}</SectionTitle>
           <SectionDescription>
             Installed on{" "}
             <button
@@ -96,7 +96,7 @@ function PlaybookTargetDetailContent({
                   <h3>Transport Configuration</h3>
                 </SectionTitle>
               </SectionHeader>
-              <PlaybookTargetPropertyList target={workspaceTarget} />
+              <PlaybookTargetPropertyList target={playbookTarget} />
             </Section>
           }
         />
@@ -119,20 +119,20 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    workspaceTarget: mockPlaybookTarget,
+    playbookTarget: mockPlaybookTarget,
     playbook: mockPlaybook(),
     registryEntry: mockRegistryEntry,
     tools: mockTools(),
     toolsLoading: false,
     navigate: () => console.log("navigate"),
-    playbookId: "workspace-id",
+    playbookId: "playbook-id",
   },
 };
 
 export const WithHttpTransport: Story = {
   args: {
     ...Default.args,
-    workspaceTarget: {
+    playbookTarget: {
       ...mockPlaybookTarget,
       type: "http",
       url: "https://api.github.com/mcp",
@@ -155,8 +155,8 @@ export const LongStrings: Story = {
     ...Default.args,
     playbook: {
       ...mockPlaybook(),
-      id: "very-long-proxy-name-that-should-wrap",
-      name: "Very Long Proxy Name That Should Wrap Nicely in the UI",
+      id: "very-long-playbook-name-that-should-wrap",
+      name: "Very Long Playbook Name That Should Wrap Nicely in the UI",
     },
   },
 };

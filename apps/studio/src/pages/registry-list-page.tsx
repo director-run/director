@@ -35,7 +35,7 @@ export const RegistryListPage: React.FC = () => {
         description: "The server has been added to the proxy",
       });
       setAddSheetOpen(false);
-      navigate(`/${variables.proxyId}`);
+      navigate(`/${variables.playbookId}`);
     },
     onError: () => {
       toast({
@@ -99,7 +99,7 @@ export const RegistryListPage: React.FC = () => {
             }
 
             await addServer({
-              proxyId: data.playbookId,
+              playbookId: data.playbookId,
               server: {
                 name: data.server.name,
                 transport: data.server,

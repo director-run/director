@@ -10,7 +10,7 @@ export function registerAuthCommand(program: DirectorCommand) {
     .action(
       actionWithErrorHandler(async (playbookId: string, serverName: string) => {
         const res = await gatewayClient.store.authenticate.query({
-          proxyId: playbookId,
+          playbookId: playbookId,
           serverName,
         });
         if (res.result === "REDIRECT") {
@@ -25,7 +25,7 @@ export function registerAuthCommand(program: DirectorCommand) {
     .action(
       actionWithErrorHandler(async (playbookId: string, serverName: string) => {
         await gatewayClient.store.logout.mutate({
-          proxyId: playbookId,
+          playbookId: playbookId,
           serverName,
         });
       }),

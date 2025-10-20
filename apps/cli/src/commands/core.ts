@@ -75,7 +75,7 @@ export function registerCoreCommands(program: DirectorCommand): void {
     .action(
       actionWithErrorHandler(async (playbookId: string) => {
         await gatewayClient.store.delete.mutate({
-          proxyId: playbookId,
+          playbookId: playbookId,
         });
 
         console.log(`playbook ${playbookId} deleted`);
@@ -97,7 +97,7 @@ export function registerCoreCommands(program: DirectorCommand): void {
       actionWithErrorHandler(
         async (playbookId: string, options: { target: string }) => {
           const playbook = await gatewayClient.store.get.query({
-            proxyId: playbookId,
+            playbookId: playbookId,
           });
           await gatewayClient.clients.uninstall.mutate({
             clientId: options.target,

@@ -3,7 +3,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { GatewayRouterOutputs } from "./client";
 import { IntegrationTestHarness } from "./test/integration";
 
-describe("Proxy CRUD operations", () => {
+describe("Playbook CRUD operations", () => {
   let harness: IntegrationTestHarness;
 
   beforeAll(async () => {
@@ -19,19 +19,19 @@ describe("Proxy CRUD operations", () => {
       await harness.purge();
     });
 
-    it("should get all proxies", async () => {
+    it("should get all playbooks", async () => {
       expect(await harness.client.store.getAll.query()).toHaveLength(0);
       await harness.client.store.create.mutate({
-        name: "Test proxy",
+        name: "Test playbook",
       });
       await harness.client.store.create.mutate({
-        name: "Test proxy 2",
+        name: "Test playbook 2",
       });
-      const proxies = await harness.client.store.getAll.query();
-      expect(proxies).toHaveLength(2);
+      const playbooks = await harness.client.store.getAll.query();
+      expect(playbooks).toHaveLength(2);
 
-      expect(proxies[0].id).toBe("test-proxy");
-      expect(proxies[1].id).toBe("test-proxy-2");
+      expect(playbooks[0].id).toBe("test-playbook");
+      expect(playbooks[1].id).toBe("test-playbook-2");
     });
   });
 
@@ -39,38 +39,38 @@ describe("Proxy CRUD operations", () => {
     beforeAll(async () => {
       await harness.purge();
       await harness.client.store.create.mutate({
-        name: "Test proxy",
+        name: "Test playbook",
         description: "Test description",
       });
     });
 
-    it("should add the proxy to the gateway", async () => {
+    it("should add the playbook to the gateway", async () => {
       expect(await harness.client.store.getAll.query()).toHaveLength(1);
-      const proxy = await harness.client.store.get.query({
-        proxyId: "test-proxy",
+      const playbook = await harness.client.store.get.query({
+        playbookId: "test-playbook",
       });
-      expect(proxy).toBeDefined();
-      expect(proxy?.id).toBe("test-proxy");
-      expect(proxy?.name).toBe("Test proxy");
-      expect(proxy?.description).toBe("Test description");
+      expect(playbook).toBeDefined();
+      expect(playbook?.id).toBe("test-playbook");
+      expect(playbook?.name).toBe("Test playbook");
+      expect(playbook?.description).toBe("Test description");
     });
 
     it("update the configuration file", async () => {
       expect(await harness.database.playbooks.count()).toBe(1);
       const configEntry =
-        await harness.database.playbooks.getPlaybook("test-proxy");
+        await harness.database.playbooks.getPlaybook("test-playbook");
       expect(configEntry).toBeDefined();
-      expect(configEntry?.name).toBe("Test proxy");
+      expect(configEntry?.name).toBe("Test playbook");
       expect(configEntry?.description).toBe("Test description");
     });
   });
 
   describe("update", () => {
-    let proxy: GatewayRouterOutputs["store"]["create"];
+    let playbook: GatewayRouterOutputs["store"]["create"];
     beforeEach(async () => {
       await harness.purge();
-      proxy = await harness.client.store.create.mutate({
-        name: "Test proxy",
+      playbook = await harness.client.store.create.mutate({
+        name: "Test playbook",
         description: "Old description",
       });
     });
@@ -79,30 +79,30 @@ describe("Proxy CRUD operations", () => {
       it("should update the description", async () => {
         const newDescription = "Updated description";
         const updatedResponse = await harness.client.store.update.mutate({
-          proxyId: proxy.id,
+          playbookId: playbook.id,
           attributes: {
             description: newDescription,
           },
         });
         expect(updatedResponse.description).toBe(newDescription);
-        const updatedProxy = await harness.client.store.get.query({
-          proxyId: "test-proxy",
+        const updatedPlaybook = await harness.client.store.get.query({
+          playbookId: "test-playbook",
         });
-        expect(updatedProxy?.description).toBe(newDescription);
+        expect(updatedPlaybook?.description).toBe(newDescription);
       });
       it("should allow the description to be set to empty string", async () => {
         await harness.client.store.update.mutate({
-          proxyId: proxy.id,
+          playbookId: playbook.id,
           attributes: {
             description: "",
           },
         });
-        const updatedProxy = await harness.client.store.get.query({
-          proxyId: "test-proxy",
+        const updatedPlaybook = await harness.client.store.get.query({
+          playbookId: "test-playbook",
         });
-        expect(updatedProxy?.description).toBe("");
+        expect(updatedPlaybook?.description).toBe("");
         const configEntry =
-          await harness.database.playbooks.getPlaybook("test-proxy");
+          await harness.database.playbooks.getPlaybook("test-playbook");
         expect(configEntry?.description).toBe("");
       });
     });
@@ -111,32 +111,32 @@ describe("Proxy CRUD operations", () => {
       it("should update the name", async () => {
         const newName = "Updated name";
         const updatedResponse = await harness.client.store.update.mutate({
-          proxyId: proxy.id,
+          playbookId: playbook.id,
           attributes: {
             name: newName,
           },
         });
         expect(updatedResponse.name).toBe(newName);
-        const updatedProxy = await harness.client.store.get.query({
-          proxyId: "test-proxy",
+        const updatedPlaybook = await harness.client.store.get.query({
+          playbookId: "test-playbook",
         });
-        expect(updatedProxy?.name).toBe(newName);
+        expect(updatedPlaybook?.name).toBe(newName);
       });
       it("should not allow the name to be set to empty string", async () => {
         await expect(
           harness.client.store.update.mutate({
-            proxyId: proxy.id,
+            playbookId: playbook.id,
             attributes: { name: "" },
           }),
         ).rejects.toThrowError(TRPCClientError);
 
-        const updatedProxy = await harness.client.store.get.query({
-          proxyId: "test-proxy",
+        const updatedPlaybook = await harness.client.store.get.query({
+          playbookId: "test-playbook",
         });
-        expect(updatedProxy?.name).toBe(proxy.name);
+        expect(updatedPlaybook?.name).toBe(playbook.name);
         const configEntry =
-          await harness.database.playbooks.getPlaybook("test-proxy");
-        expect(configEntry?.name).toBe(proxy.name);
+          await harness.database.playbooks.getPlaybook("test-playbook");
+        expect(configEntry?.name).toBe(playbook.name);
       });
     });
 
@@ -145,14 +145,14 @@ describe("Proxy CRUD operations", () => {
       const newName = "Updated name";
 
       await harness.client.store.update.mutate({
-        proxyId: proxy.id,
+        playbookId: playbook.id,
         attributes: {
           description: newDescription,
           name: newName,
         },
       });
       const configEntry =
-        await harness.database.playbooks.getPlaybook("test-proxy");
+        await harness.database.playbooks.getPlaybook("test-playbook");
       expect(configEntry?.description).toBe(newDescription);
       expect(configEntry?.name).toBe(newName);
     });
@@ -162,22 +162,22 @@ describe("Proxy CRUD operations", () => {
     beforeEach(async () => {
       await harness.purge();
       await harness.client.store.create.mutate({
-        name: "Test proxy",
+        name: "Test playbook",
       });
       await harness.client.store.delete.mutate({
-        proxyId: "test-proxy",
+        playbookId: "test-playbook",
       });
     });
 
-    it("should delete the proxy from the gateway", async () => {
+    it("should delete the playbook from the gateway", async () => {
       await expect(
-        harness.client.store.get.query({ proxyId: "test-proxy" }),
+        harness.client.store.get.query({ playbookId: "test-playbook" }),
       ).rejects.toThrowError(TRPCClientError);
 
       expect(await harness.client.store.getAll.query()).toHaveLength(0);
     });
 
-    it("should delete the proxy from the configuration file", async () => {
+    it("should delete the playbook from the configuration file", async () => {
       expect(await harness.database.playbooks.count()).toBe(0);
     });
   });

@@ -4,7 +4,7 @@ import type { ClientStore } from "../../client-store";
 import { PlaybookStore } from "../../playbooks/playbook-store";
 import { getStatus } from "../../status";
 import { createClientRouter } from "./client-router";
-import { createProxyStoreRouter } from "./store-router";
+import { createPlaybookStoreRouter } from "./store-router";
 import { createToolsRouter } from "./tools-router";
 
 export function createAppRouter({
@@ -18,7 +18,7 @@ export function createAppRouter({
     health: t.procedure.query(({ ctx }) => {
       return getStatus(ctx.cliVersion);
     }),
-    store: createProxyStoreRouter({ playbookStore }),
+    store: createPlaybookStoreRouter({ playbookStore }),
     clients: createClientRouter({ playbookStore, clientStore }),
     tools: createToolsRouter({ playbookStore }),
   });

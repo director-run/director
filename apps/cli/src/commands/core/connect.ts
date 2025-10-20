@@ -27,7 +27,7 @@ export function registerConnectCommand(program: DirectorCommand) {
         async (playbookId: string, options: { target: string }) => {
           if (options.target) {
             const playbook = await gatewayClient.store.get.query({
-              proxyId: playbookId,
+              playbookId: playbookId,
             });
             await gatewayClient.clients.install.mutate({
               clientId: options.target,
@@ -48,7 +48,7 @@ export function registerConnectCommand(program: DirectorCommand) {
             );
             console.log();
             const proxy = await gatewayClient.store.get.query({
-              proxyId: playbookId,
+              playbookId: playbookId,
             });
             const baseUrl = getGatewayBaseUrl();
             const sseURL = joinURL(baseUrl, getSSEPathForPlaybook(proxy.id));

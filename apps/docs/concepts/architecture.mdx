@@ -14,14 +14,14 @@ Director centralizes MCP configuration and abstracts server management through C
 
 # Gateway
 
-The `Gateway` implements a proxy pattern aggregating MCP servers and serving them to clients via standard protocol transports. Additional components:
+The `Gateway` implements a playbook pattern aggregating MCP servers and serving them to clients via standard protocol transports. Additional components:
 - `ClientConfigurator`: Automates adding and removing client connections (Claude, Cursor, VSCode) to the `Gateway` without manual JSON configuration
-- `Controller`: Exposes HTTP API ([TRPC](https://trpc.io/)) for dynamic `ProxyServer` management
+- `Controller`: Exposes HTTP API ([TRPC](https://trpc.io/)) for dynamic `Playbook` management
 
 # Gateway Management
 
-The `Gateway` runs as standalone infrastructure (currently locally is the best supported). Director's client/server architecture for management (distinct from MCP client/server connections) enables `ProxyServer` lifecycle management, target configuration, and service health monitoring via the `Controller` layer.
+The `Gateway` runs as standalone infrastructure (currently locally is the best supported). Director's client/server architecture for management (distinct from MCP client/server connections) enables `Playbook` lifecycle management, target configuration, and service health monitoring via the `Controller` layer.
 
 Management interfaces:
 - [CLI](../sdk/cli): Primary `Gateway` runtime and management tool (npm installable)
-- [Studio](../concepts/studio): Web interface for visual `Gateway` and `ProxyServers` management, ideal for complex deployments
+- [Studio](../concepts/studio): Web interface for visual `Gateway` and `Playbooks` management, ideal for complex deployments

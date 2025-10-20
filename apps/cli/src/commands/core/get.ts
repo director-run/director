@@ -29,14 +29,14 @@ export function registerGetCommand(program: DirectorCommand) {
         async (playbookId: string, serverName?: string) => {
           if (serverName) {
             const target = await gatewayClient.store.getServer.query({
-              proxyId: playbookId,
+              playbookId: playbookId,
               serverName,
               queryParams: { includeTools: true },
             });
             printTargetDetails(playbookId, target);
           } else {
             const playbook = await gatewayClient.store.get.query({
-              proxyId: playbookId,
+              playbookId: playbookId,
               queryParams: {
                 includeInMemoryTargets: true,
               },

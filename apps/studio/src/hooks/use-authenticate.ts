@@ -2,7 +2,7 @@ import { useState } from "react";
 import { gatewayClient } from "../contexts/backend-context";
 
 type AuthenticateParams = {
-  proxyId: string;
+  playbookId: string;
   serverName: string;
 };
 
@@ -16,7 +16,7 @@ export function useAuthenticate() {
   const utils = gatewayClient.useUtils();
 
   const authenticate = async ({
-    proxyId,
+    playbookId,
     serverName,
   }: AuthenticateParams): Promise<boolean> => {
     setIsLoading(true);
@@ -24,7 +24,7 @@ export function useAuthenticate() {
     try {
       const result: AuthenticateResponse = await utils.store.authenticate.fetch(
         {
-          proxyId,
+          playbookId,
           serverName,
         },
       );

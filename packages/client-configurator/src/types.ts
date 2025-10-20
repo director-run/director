@@ -63,11 +63,11 @@ export abstract class AbstractClient<T> {
     installed: boolean;
     configExists: boolean;
     configPath: string;
-    workspaces: Array<{ id: string }>;
+    playbooks: Array<{ id: string }>;
   }> {
     const installed = await this.isClientPresent();
     const configExists = await this.isClientConfigPresent();
-    const workspaces =
+    const playbooks =
       configExists && installed
         ? (await this.list()).map((server) => ({
             id: server.name,
@@ -79,7 +79,7 @@ export abstract class AbstractClient<T> {
       installed,
       configExists,
       configPath: this.configPath,
-      workspaces,
+      playbooks,
     };
   }
 

@@ -42,7 +42,7 @@ export function PlaybookTargetDetailDropDownMenu({
     onSuccess: async () => {
       navigate(`/${playbook.id}`);
 
-      await utils.store.get.invalidate({ proxyId: playbook.id });
+      await utils.store.get.invalidate({ playbookId: playbook.id });
       await utils.store.getAll.invalidate();
 
       toast({
@@ -54,7 +54,7 @@ export function PlaybookTargetDetailDropDownMenu({
 
   const handleDeleteServer = async () => {
     await deleteServerMutation.mutateAsync({
-      proxyId: playbook.id,
+      playbookId: playbook.id,
       serverName: playbookTarget.name,
     });
   };
@@ -63,7 +63,7 @@ export function PlaybookTargetDetailDropDownMenu({
   const { authenticate } = useAuthenticate();
 
   const handleLogoutServer = async () => {
-    await logout({ proxyId: playbook.id, serverName: playbookTarget.name });
+    await logout({ playbookId: playbook.id, serverName: playbookTarget.name });
     setLogoutOpen(false);
     toast({
       title: "Logged out",
@@ -103,7 +103,7 @@ export function PlaybookTargetDetailDropDownMenu({
                   <MenuItemLabel
                     onClick={async () => {
                       await authenticate({
-                        proxyId: playbook.id,
+                        playbookId: playbook.id,
                         serverName: playbookTarget.name,
                       });
                     }}

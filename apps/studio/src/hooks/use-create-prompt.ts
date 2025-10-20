@@ -14,7 +14,7 @@ type CreatePromptOptions = Parameters<
 >[0];
 
 export function useCreatePrompt(
-  proxyId: string,
+  playbookId: string,
   options?: CreatePromptOptions,
 ) {
   const utils = gatewayClient.useUtils();
@@ -22,9 +22,9 @@ export function useCreatePrompt(
   const mutation = gatewayClient.store.addPrompt.useMutation({
     async onSuccess(response, variables, context, meta) {
       await Promise.all([
-        utils.store.get.invalidate({ proxyId }),
+        utils.store.get.invalidate({ playbookId }),
         utils.store.getAll.invalidate(),
-        utils.store.listPrompts?.invalidate?.({ proxyId }),
+        utils.store.listPrompts?.invalidate?.({ playbookId }),
       ]);
       if (options?.onSuccess) {
         await options.onSuccess(response, variables, context, meta);
@@ -42,7 +42,7 @@ export function useCreatePrompt(
   }) => {
     const name = slugify(values.title);
     await mutation.mutateAsync({
-      proxyId,
+      playbookId,
       prompt: {
         name,
         title: values.title,

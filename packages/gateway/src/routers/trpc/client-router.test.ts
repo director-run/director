@@ -71,7 +71,7 @@ describe("Client Router", () => {
           installed: true,
           configExists: true,
           configPath: expect.any(String),
-          workspaces: expect.any(Array),
+          playbooks: expect.any(Array),
         }),
       );
     }
@@ -79,7 +79,7 @@ describe("Client Router", () => {
 
   it("install installs workspace on selected client and restarts if required", async () => {
     const caller = app.createCaller({ cliVersion: null });
-    const proxy = await playbookStore.create({ name: "Test Proxy" });
+    const proxy = await playbookStore.create({ name: "Test Playbook" });
 
     // Spy restart on one client and make install return requiresRestart
     const target = clientStore.get("claude");
@@ -104,7 +104,7 @@ describe("Client Router", () => {
 
   it("uninstall removes workspace from selected client and restarts if required", async () => {
     const caller = app.createCaller({ cliVersion: null });
-    const proxy = await playbookStore.create({ name: "Another Proxy" });
+    const proxy = await playbookStore.create({ name: "Another Playbook" });
 
     const target = clientStore.get("cursor");
     const restartSpy = vi.spyOn(target, "restart").mockResolvedValue();

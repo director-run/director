@@ -4,15 +4,15 @@ type EditPromptOptions = Parameters<
   typeof gatewayClient.store.updatePrompt.useMutation
 >[0];
 
-export function useEditPrompt(proxyId: string, options?: EditPromptOptions) {
+export function useEditPrompt(playbookId: string, options?: EditPromptOptions) {
   const utils = gatewayClient.useUtils();
 
   const mutation = gatewayClient.store.updatePrompt.useMutation({
     async onSuccess(response, variables, context, meta) {
       await Promise.all([
-        utils.store.get.invalidate({ proxyId }),
+        utils.store.get.invalidate({ playbookId }),
         utils.store.getAll.invalidate(),
-        utils.store.listPrompts?.invalidate?.({ proxyId }),
+        utils.store.listPrompts?.invalidate?.({ playbookId }),
       ]);
       if (options?.onSuccess) {
         await options.onSuccess(response, variables, context, meta);
@@ -28,7 +28,7 @@ export function useEditPrompt(proxyId: string, options?: EditPromptOptions) {
     values: { title?: string; description?: string; body?: string },
   ) => {
     await mutation.mutateAsync({
-      proxyId,
+      playbookId,
       promptName,
       prompt: {
         title: values.title,

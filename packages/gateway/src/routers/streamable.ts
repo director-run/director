@@ -11,7 +11,7 @@ import type { PlaybookStore } from "../playbooks/playbook-store";
 const logger = getLogger("mcp/streamable");
 
 export const createStreamableRouter = ({
-  playbookStore: proxyStore,
+  playbookStore,
   telemetry,
 }: {
   playbookStore: PlaybookStore;
@@ -45,10 +45,10 @@ export const createStreamableRouter = ({
 
   router.use(express.json());
   router.post(
-    "/:proxy_id/mcp",
+    "/:playbook_id/mcp",
     asyncHandler(async (req, res) => {
-      const proxyId = req.params.proxy_id;
-      const proxy = await proxyStore.get(proxyId);
+      const playbookId = req.params.playbook_id;
+      const playbook = await playbookStore.get(playbookId);
 
       const sessionId = req.headers["mcp-session-id"] as string | undefined;
       let transport: StreamableHTTPServerTransport;
@@ -61,7 +61,7 @@ export const createStreamableRouter = ({
         }
         transport = existingTransport;
       } else if (!sessionId && isInitializeRequest(req.body)) {
-        logger.info(`[${proxy.id}] new initialization request`);
+        logger.info(`[${playbook.id}] new initialization request`);
         telemetry?.trackEvent("connection_started", {
           transport: "streamable",
         });
@@ -77,8 +77,8 @@ export const createStreamableRouter = ({
         // Clean up transport when closed
         transport.onclose = () => {
           logger.info({
-            message: `[${proxy.id}] transport closed`,
-            proxyId: proxy.id,
+            message: `[${playbook.id}] transport closed`,
+            playbookId: playbook.id,
             sessionId: transport.sessionId,
           });
           if (transport.sessionId) {
@@ -88,13 +88,13 @@ export const createStreamableRouter = ({
 
         req.socket.on("close", () => {
           logger.info({
-            message: `[${proxy.id}] socket closed'`,
-            proxyId: proxy.id,
+            message: `[${playbook.id}] socket closed'`,
+            playbookId: playbook.id,
             sessionId: transport.sessionId,
           });
         });
-        // Connect to the proxy server
-        await proxy.connect(transport);
+        // Connect to the playbook server
+        await playbook.connect(transport);
       } else {
         throw new AppError(
           ErrorCode.BAD_REQUEST,
@@ -103,8 +103,8 @@ export const createStreamableRouter = ({
       }
 
       logger.info({
-        message: `[${proxy.id}] '${req.body.method}' called`,
-        proxyId: proxy.id,
+        message: `[${playbook.id}] '${req.body.method}' called`,
+        playbookId: playbook.id,
         sessionId: transport.sessionId,
         method: req.body.method,
         body: req.body,
@@ -123,8 +123,8 @@ export const createStreamableRouter = ({
   // Reusable handler for GET and DELETE requests
   const handleSessionRequest = asyncHandler(
     async (req: express.Request, res: express.Response) => {
-      const proxyId = req.params.proxy_id;
-      const proxy = proxyStore.get(proxyId);
+      const playbookId = req.params.playbook_id;
+      const playbook = playbookStore.get(playbookId);
       const sessionId = req.headers["mcp-session-id"] as string | undefined;
 
       if (!sessionId || !transports.has(sessionId)) {
@@ -142,7 +142,7 @@ export const createStreamableRouter = ({
 
       logger.info({
         message: `MCP handleSessionRequest`,
-        proxyId: proxy.id,
+        playbookId: playbook.id,
         sessionId: transport.sessionId,
         body: req.body,
       });
@@ -152,10 +152,10 @@ export const createStreamableRouter = ({
   );
 
   // Handle GET requests for server-to-client notifications
-  router.get("/:proxy_id/mcp", handleSessionRequest);
+  router.get("/:playbook_id/mcp", handleSessionRequest);
 
   // Handle DELETE requests for session termination
-  router.delete("/:proxy_id/mcp", handleSessionRequest);
+  router.delete("/:playbook_id/mcp", handleSessionRequest);
 
   return router;
 };

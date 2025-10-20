@@ -11,7 +11,7 @@ export function registerRemoveCommand(program: DirectorCommand) {
       actionWithErrorHandler(async (playbookId: string, serverName: string) => {
         await spinnerWrap(() =>
           gatewayClient.store.removeServer.mutate({
-            proxyId: playbookId,
+            playbookId: playbookId,
             serverName,
           }),
         )

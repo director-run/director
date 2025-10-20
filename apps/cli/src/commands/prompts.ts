@@ -17,7 +17,7 @@ export function registerPromptsCommands(program: DirectorCommand): void {
     .action(
       actionWithErrorHandler(async (playbookId: string) => {
         const prompts = await gatewayClient.store.listPrompts.query({
-          proxyId: playbookId,
+          playbookId: playbookId,
         });
 
         listPrompts(prompts);
@@ -64,7 +64,7 @@ export function registerPromptsCommands(program: DirectorCommand): void {
         });
 
         const prompt = await gatewayClient.store.addPrompt.mutate({
-          proxyId: playbookId,
+          playbookId: playbookId,
           prompt: {
             name: name.trim(),
             title: title.trim(),
@@ -84,7 +84,7 @@ export function registerPromptsCommands(program: DirectorCommand): void {
       actionWithErrorHandler(async (playbookId: string, promptName: string) => {
         // First, get the current prompt to show existing values
         const prompts = await gatewayClient.store.listPrompts.query({
-          proxyId: playbookId,
+          playbookId: playbookId,
         });
 
         const existingPrompt = prompts.find((p) => p.name === promptName);
@@ -120,7 +120,7 @@ export function registerPromptsCommands(program: DirectorCommand): void {
         });
 
         const updatedPrompt = await gatewayClient.store.updatePrompt.mutate({
-          proxyId: playbookId,
+          playbookId: playbookId,
           promptName,
           prompt: {
             title: title.trim(),
@@ -140,7 +140,7 @@ export function registerPromptsCommands(program: DirectorCommand): void {
       actionWithErrorHandler(async (playbookId: string, promptName: string) => {
         // First, verify the prompt exists
         const prompts = await gatewayClient.store.listPrompts.query({
-          proxyId: playbookId,
+          playbookId: playbookId,
         });
 
         const existingPrompt = prompts.find((p) => p.name === promptName);
@@ -159,7 +159,7 @@ export function registerPromptsCommands(program: DirectorCommand): void {
         }
 
         await gatewayClient.store.removePrompt.mutate({
-          proxyId: playbookId,
+          playbookId: playbookId,
           promptName,
         });
 
@@ -173,7 +173,7 @@ export function registerPromptsCommands(program: DirectorCommand): void {
     .action(
       actionWithErrorHandler(async (playbookId: string, promptName: string) => {
         const prompts = await gatewayClient.store.listPrompts.query({
-          proxyId: playbookId,
+          playbookId: playbookId,
         });
 
         const prompt = prompts.find((p) => p.name === promptName);

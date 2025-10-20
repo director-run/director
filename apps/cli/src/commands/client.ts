@@ -30,7 +30,7 @@ export function registerClientCommands(program: DirectorCommand): void {
             installed: client.installed,
             configExists: client.configExists,
             configPath: client.configPath,
-            playbooks: client.workspaces.map((w) => w.id),
+            playbooks: client.playbooks.map((w) => w.id),
           }),
         );
       }),
@@ -68,8 +68,8 @@ export function registerClientCommands(program: DirectorCommand): void {
           ...clients.map((client) => [
             client.name,
             client.installed,
-            client.workspaces.length
-              ? client.workspaces.map((w) => w.id).join(", ")
+            client.playbooks.length
+              ? client.playbooks.map((w) => w.id).join(", ")
               : "--",
           ]),
         );

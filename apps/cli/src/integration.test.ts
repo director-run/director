@@ -56,7 +56,7 @@ describe("CLI integration tests", () => {
         await runCLICommand("add", "test", "--entry", "hackernews");
 
         const playbook = await gatewayClient.store.get.query({
-          proxyId: "test",
+          playbookId: "test",
         });
         expect(playbook.servers).toContainEqual(
           expect.objectContaining({
@@ -84,7 +84,7 @@ describe("CLI integration tests", () => {
       );
 
       const playbook = await gatewayClient.store.get.query({
-        proxyId: "test",
+        playbookId: "test",
       });
       expect(playbook.servers).toContainEqual(
         expect.objectContaining({
@@ -107,7 +107,7 @@ describe("CLI integration tests", () => {
       );
 
       const playbook = await gatewayClient.store.get.query({
-        proxyId: "test",
+        playbookId: "test",
       });
       expect(playbook.servers).toContainEqual(
         expect.objectContaining({
@@ -160,7 +160,7 @@ describe("CLI integration tests", () => {
       );
 
       const playbook = await gatewayClient.store.get.query({
-        proxyId: "test",
+        playbookId: "test",
       });
       const hackernewsTarget = playbook.servers.find(
         (t) => t.name === "hackernews",
@@ -194,7 +194,7 @@ describe("CLI integration tests", () => {
       );
 
       const playbook = await gatewayClient.store.get.query({
-        proxyId: "test",
+        playbookId: "test",
       });
       const customFetchTarget = playbook.servers.find(
         (t) => t.name === "custom-fetch",
@@ -213,7 +213,7 @@ describe("CLI integration tests", () => {
       );
 
       const playbook = await gatewayClient.store.get.query({
-        proxyId: "test",
+        playbookId: "test",
       });
       expect(playbook.description).toBe("Test playbook for integration tests");
     });
@@ -251,7 +251,7 @@ describe("CLI integration tests", () => {
       await runCLICommand("add", "test", "--entry", "hackernews");
 
       const playbook = await gatewayClient.store.get.query({
-        proxyId: "test",
+        playbookId: "test",
       });
       expect(playbook.id).toBe("test");
       expect(playbook.name).toBe("test");
@@ -288,7 +288,7 @@ describe("CLI integration tests", () => {
       await runCLICommand("remove", "test", "hackernews");
 
       const playbook = await gatewayClient.store.get.query({
-        proxyId: "test",
+        playbookId: "test",
       });
       expect(playbook.servers).toHaveLength(1);
       expect(playbook.servers[0].name).toBe("custom-fetch");
@@ -298,7 +298,7 @@ describe("CLI integration tests", () => {
       await runCLICommand("add", "test", "--entry", "hackernews");
 
       const server = await gatewayClient.store.getServer.query({
-        proxyId: "test",
+        playbookId: "test",
         serverName: "hackernews",
       });
 

@@ -151,7 +151,7 @@ export function GetStartedPage() {
     }
 
     await install({
-      proxyId: values.proxyId,
+      playbookId: values.proxyId,
       entryName: selectedRegistryEntryName,
       parameters: values.parameters ?? {},
     });

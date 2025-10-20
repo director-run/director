@@ -89,7 +89,7 @@ export const PlaybookDetailPage = () => {
     {
       onSuccess: async () => {
         await utils.store.get.invalidate({
-          proxyId: playbookId,
+          playbookId: playbookId,
         });
         toast({ title: "Prompt saved", description: "Your prompt was saved." });
       },
@@ -98,7 +98,7 @@ export const PlaybookDetailPage = () => {
   const { editPrompt, isPending: isEditingPrompt } = useEditPrompt(playbookId, {
     onSuccess: async () => {
       await utils.store.get.invalidate({
-        proxyId: playbookId,
+        playbookId: playbookId,
       });
       toast({
         title: "Prompt updated",
@@ -112,7 +112,7 @@ export const PlaybookDetailPage = () => {
     {
       onSuccess: async () => {
         await utils.store.get.invalidate({
-          proxyId: playbookId,
+          playbookId: playbookId,
         });
         toast({
           title: "Prompt deleted",
@@ -178,7 +178,7 @@ export const PlaybookDetailPage = () => {
                         onClickAuthorize={async (server) => {
                           try {
                             await authenticate({
-                              proxyId: playbookId,
+                              playbookId: playbookId,
                               serverName: server.name,
                             });
                           } catch (error) {
@@ -256,7 +256,7 @@ function PlaybookEditMenu({ playbook }: { playbook: PlaybookDetail }) {
   const updateProxyMutation = gatewayClient.store.update.useMutation({
     onSuccess: async () => {
       await utils.store.getAll.invalidate();
-      await utils.store.get.invalidate({ proxyId: playbook.id });
+      await utils.store.get.invalidate({ playbookId: playbook.id });
       toast({
         title: "Proxy updated",
         description: "This proxy was successfully updated.",
@@ -282,13 +282,13 @@ function PlaybookEditMenu({ playbook }: { playbook: PlaybookDetail }) {
     description?: string;
   }) => {
     await updateProxyMutation.mutateAsync({
-      proxyId: playbook.id,
+      playbookId: playbook.id,
       attributes: values,
     });
   };
 
   const handleDeleteProxy = async () => {
-    await deleteProxyMutation.mutateAsync({ proxyId: playbook.id });
+    await deleteProxyMutation.mutateAsync({ playbookId: playbook.id });
   };
 
   return (

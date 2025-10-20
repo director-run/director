@@ -1,7 +1,7 @@
 import { gatewayClient, registryClient } from "../contexts/backend-context";
 
 type InstallFromRegistryInput = {
-  proxyId: string;
+  playbookId: string;
   entryName: string;
   parameters?: Record<string, string>;
 };
@@ -20,7 +20,7 @@ export function useInstallServerFromRegistry(
     async onSuccess(data, variables, context, meta) {
       if (data.connectionInfo?.status === "unauthorized") {
         const authRes = await gatewayUtils.store.authenticate.fetch({
-          proxyId: variables.proxyId,
+          playbookId: variables.playbookId,
           serverName: data.name,
         });
 
@@ -31,8 +31,8 @@ export function useInstallServerFromRegistry(
       }
 
       await gatewayUtils.store.getAll.invalidate();
-      if (variables?.proxyId) {
-        await gatewayUtils.store.get.invalidate({ proxyId: variables.proxyId });
+      if (variables?.playbookId) {
+        await gatewayUtils.store.get.invalidate({ playbookId: variables.playbookId });
       }
       if (options && options.onSuccess) {
         await options.onSuccess(data, variables, context, meta);
@@ -52,7 +52,7 @@ export function useInstallServerFromRegistry(
     });
 
     const addServerInput = {
-      proxyId: input.proxyId,
+      playbookId: input.playbookId,
       server: {
         name: input.entryName,
         transport,

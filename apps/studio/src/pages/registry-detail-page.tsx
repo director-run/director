@@ -47,7 +47,7 @@ export function RegistryDetailPage() {
         title: "Proxy installed",
         description: "This proxy was successfully installed.",
       });
-      navigate(`/${variables.proxyId}`);
+      navigate(`/${variables.playbookId}`);
     },
   });
 
@@ -64,7 +64,7 @@ export function RegistryDetailPage() {
 
     if (values.proxyId && entryName) {
       await install({
-        proxyId: values.proxyId,
+        playbookId: values.proxyId,
         entryName,
         parameters: values.parameters ?? {},
       });

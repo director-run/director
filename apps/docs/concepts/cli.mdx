@@ -26,14 +26,14 @@ CORE COMMANDS
    quickstart                                    Start the gateway and open the studio in your browser
    serve                                         Start the web service
    studio                                        Open the UI in your browser
-   ls                                            List proxies
-   get <proxyId>                                 Show proxy details
-   create <name>                                 Create a new proxy
-   destroy <proxyId>                             Delete a proxy
-   connect <proxyId> [options]                   Connect a proxy to a MCP client
-   disconnect <proxyId> [options]                Disconnect a proxy from an MCP client
-   add <proxyId> [options]                       Add a server to a proxy.
-   remove <proxyId> <serverName>                 Remove a server from a proxy
+   ls                                            List playbooks
+   get <playbookId>                              Show playbook details
+   create <name>                                 Create a new playbook
+   destroy <playbookId>                          Delete a playbook
+   connect <playbookId> [options]                Connect a playbook to a MCP client
+   disconnect <playbookId> [options]             Disconnect a playbook from an MCP client
+   add <playbookId> [options]                   Add a server to a playbook.
+   remove <playbookId> <serverName>              Remove a server from a playbook
    http2stdio <url>                              Proxy an HTTP connection (sse or streamable) to a stdio stream
    env [options]                                 Print environment variables
 
@@ -67,26 +67,26 @@ $ director serve
 [18:16:21] INFO (Gateway): director gateway running on port 3673
 ```
 
-## Create a proxy
+## Create a playbook
 ```bash
-$ director create my-first-proxy 
-proxy my-first-proxy created
+$ director create my-first-playbook 
+playbook my-first-playbook created
 ```
 
-## Add a server to the proxy
+## Add a server to the playbook
 ```bash
-$ director add my-first-proxy --entry fetch
-adding fetch to my-first-proxy
+$ director add my-first-playbook --entry fetch
+adding fetch to my-first-playbook
 ✔ Entry fetched.
-✔ Registry entry fetch added to my-first-proxy
+✔ Registry entry fetch added to my-first-playbook
 ```
 
-## Connect the proxy to a client
+## Connect the playbook to a client
 ```bash
-# connect the proxy to Claude automatically
-$ director connect my-first-proxy -t claude 
+# connect the playbook to Claude automatically
+$ director connect my-first-playbook -t claude 
 [18:19:06] INFO (client-configurator/claude): reading config from /Users/barnaby/Library/Application Support/Claude/claude_desktop_config.json
-[18:19:06] INFO (client-configurator/claude): installing my-first-proxy
+[18:19:06] INFO (client-configurator/claude): installing my-first-playbook
 [18:19:06] INFO (client-configurator/claude): writing config to /Users/barnaby/Library/Application Support/Claude/claude_desktop_config.json
 [18:19:06] INFO (client-configurator/claude): restarting claude
 [18:19:06] INFO (restartApp): restarting Claude...
@@ -94,24 +94,24 @@ $ director connect my-first-proxy -t claude
 undefined
 
 # print the manual connection details
-$ director connect my-first-proxy 
+$ director connect my-first-playbook 
 
 --------------------------------
-Connection Details for 'my-first-proxy'
+Connection Details for 'my-first-playbook'
 --------------------------------
 
 Note: if you'd like to connect to a client automatically, run:
-director connect my-first-proxy --target <target>
+director connect my-first-playbook --target <target>
 
-HTTP Streamable: http://localhost:3673/my-first-proxy/mcp
-HTTP SSE: http://localhost:3673/my-first-proxy/sse
+HTTP Streamable: http://localhost:3673/my-first-playbook/mcp
+HTTP SSE: http://localhost:3673/my-first-playbook/sse
 Stdio: {
   "command": "npx",
   "args": [
     "-y",
     "@director.run/cli",
     "http2stdio",
-    "http://localhost:3673/my-first-proxy/mcp"
+    "http://localhost:3673/my-first-playbook/mcp"
   ],
   "env": {
     "LOG_LEVEL": "silent"
@@ -119,17 +119,17 @@ Stdio: {
 }
 ```
 
-## Get the details of a proxy
+## Get the details of a playbook
 ```bash
-# list all the proxies
+# list all the playbooks
 $ director ls
-┌────────────────┬────────────────┬──────────────────────────────────────────┐
-│ id             │ name           │ path                                     │
-│ my-first-proxy │ my-first-proxy │ http://localhost:3673/my-first-proxy/mcp │
-└────────────────┴────────────────┴──────────────────────────────────────────┘
+┌──────────────────┬──────────────────┬────────────────────────────────────────────┐
+│ id               │ name             │ path                                       │
+│ my-first-playbook │ my-first-playbook │ http://localhost:3673/my-first-playbook/mcp │
+└──────────────────┴──────────────────┴────────────────────────────────────────────┘
 
-# get the details of a single proxy
-$ director get my-first-proxy 
+# get the details of a single playbook
+$ director get my-first-playbook 
 id=my-first-proxy
 name=my-first-proxy
 ┌───────┬───────────┬──────────────────────┐

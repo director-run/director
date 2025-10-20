@@ -49,7 +49,7 @@ export function useClients(playbookId: string): {
             label: meta.label,
             image: meta.image,
             installed: apiClient.installed,
-            present: !!apiClient.workspaces?.some((w) => w.id === playbookId),
+            present: !!apiClient.playbooks?.some((w) => w.id === playbookId),
           } as Client;
         })
         .filter((c): c is Client => c !== null) ?? []);

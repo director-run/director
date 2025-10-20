@@ -42,7 +42,7 @@ export function registerUpdateCommand(program: DirectorCommand) {
               attributes,
             );
             const updatedPlaybook = await gatewayClient.store.update.mutate({
-              proxyId: playbookId,
+              playbookId: playbookId,
               attributes,
             });
             printPlaybookDetails(updatedPlaybook);
@@ -53,7 +53,7 @@ export function registerUpdateCommand(program: DirectorCommand) {
             );
             const updatedServer = await gatewayClient.store.updateServer.mutate(
               {
-                proxyId: playbookId,
+                playbookId: playbookId,
                 serverName,
                 attributes,
               },

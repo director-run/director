@@ -1,6 +1,6 @@
 import {
-  getSSEPathForProxy,
-  getStreamablePathForProxy,
+  getSSEPathForPlaybook,
+  getStreamablePathForPlaybook,
 } from "@director.run/gateway/helpers";
 import { blue, whiteBold } from "@director.run/utilities/cli/colors";
 import {
@@ -14,8 +14,8 @@ import { getGatewayBaseUrl } from "../../config";
 
 export function registerConnectCommand(program: DirectorCommand) {
   program
-    .command("connect <proxyId>")
-    .description("Connect a proxy to a MCP client")
+    .command("connect <playbookId>")
+    .description("Connect a playbook to a MCP client")
     .addOption(
       makeOption({
         flags: "-t,--target <target>",
@@ -24,31 +24,37 @@ export function registerConnectCommand(program: DirectorCommand) {
     )
     .action(
       actionWithErrorHandler(
-        async (proxyId: string, options: { target: string }) => {
+        async (playbookId: string, options: { target: string }) => {
           if (options.target) {
-            const proxy = await gatewayClient.store.get.query({ proxyId });
+            const playbook = await gatewayClient.store.get.query({
+              playbookId: playbookId,
+            });
             await gatewayClient.clients.install.mutate({
               clientId: options.target,
-              workspaceId: proxy.id,
+              playbookId: playbook.id,
               baseUrl: getGatewayBaseUrl(),
             });
           } else {
             console.log();
             console.log(blue("--------------------------------"));
-            console.log(blue(`Connection Details for '${proxyId}'`));
+            console.log(blue(`Connection Details for '${playbookId}'`));
             console.log(blue("--------------------------------"));
             console.log();
             console.log(
               "Note: if you'd like to connect to a client automatically, run:",
             );
-            console.log("director connect " + proxyId + " --target <target>");
+            console.log(
+              "director connect " + playbookId + " --target <target>",
+            );
             console.log();
-            const proxy = await gatewayClient.store.get.query({ proxyId });
+            const playbook = await gatewayClient.store.get.query({
+              playbookId: playbookId,
+            });
             const baseUrl = getGatewayBaseUrl();
-            const sseURL = joinURL(baseUrl, getSSEPathForProxy(proxy.id));
+            const sseURL = joinURL(baseUrl, getSSEPathForPlaybook(playbook.id));
             const streamableURL = joinURL(
               baseUrl,
-              getStreamablePathForProxy(proxy.id),
+              getStreamablePathForPlaybook(playbook.id),
             );
 
             const stdioCommand = {

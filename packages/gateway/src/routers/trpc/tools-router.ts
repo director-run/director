@@ -2,7 +2,7 @@ import { t } from "@director.run/utilities/trpc";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import _ from "lodash";
 import { z } from "zod";
-import { WorkspaceStore } from "../../workspaces/workspace-store";
+import { PlaybookStore } from "../../playbooks/playbook-store";
 
 type EnhancedTool = Tool & {
   serverName?: string;
@@ -10,21 +10,21 @@ type EnhancedTool = Tool & {
 };
 
 export function createToolsRouter({
-  workspaceStore,
-}: { workspaceStore: WorkspaceStore }) {
+  playbookStore,
+}: { playbookStore: PlaybookStore }) {
   return t.router({
     callTool: t.procedure
       .input(
         z.object({
-          workspaceId: z.string(),
+          playbookId: z.string(),
           serverName: z.string(),
           toolName: z.string(),
           arguments: z.any(),
         }),
       )
       .mutation(async ({ input }) => {
-        const workspace = await workspaceStore.get(input.workspaceId);
-        const target = await workspace.getTarget(input.serverName);
+        const playbook = await playbookStore.get(input.playbookId);
+        const target = await playbook.getTarget(input.serverName);
         return await target.originalCallTool({
           name: input.toolName,
           arguments: input.arguments,
@@ -33,14 +33,14 @@ export function createToolsRouter({
     list: t.procedure
       .input(
         z.object({
-          workspaceId: z.string(),
+          playbookId: z.string(),
           serverName: z.string().optional(),
         }),
       )
       .query(async ({ input }) => {
-        const workspace = await workspaceStore.get(input.workspaceId);
+        const playbook = await playbookStore.get(input.playbookId);
         const ret: EnhancedTool[] = [];
-        for (const target of workspace.targets) {
+        for (const target of playbook.targets) {
           if (input.serverName && input.serverName !== target.name) {
             continue;
           }
@@ -59,7 +59,7 @@ export function createToolsRouter({
     updateBatch: t.procedure
       .input(
         z.object({
-          workspaceId: z.string(),
+          playbookId: z.string(),
           tools: z.array(
             z.object({
               serverName: z.string(),
@@ -70,10 +70,10 @@ export function createToolsRouter({
         }),
       )
       .mutation(async ({ input }) => {
-        const workspace = await workspaceStore.get(input.workspaceId);
+        const playbook = await playbookStore.get(input.playbookId);
         const groupedTools = _.groupBy(input.tools, "serverName");
         for (const serverName in groupedTools) {
-          await workspace.updateTarget(serverName, {
+          await playbook.updateTarget(serverName, {
             disabledTools: groupedTools[serverName]
               .filter((tool) => tool.disabled)
               .map((tool) => tool.name),

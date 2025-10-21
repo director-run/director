@@ -1,5 +1,5 @@
 import { createGatewayClient } from "@director.run/gateway/client";
-import { getStreamablePathForProxy } from "@director.run/gateway/helpers";
+import { getStreamablePathForPlaybook } from "@director.run/gateway/helpers";
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { blue, yellow } from "@director.run/utilities/cli/colors";
 import { makeTable } from "@director.run/utilities/cli/index";
@@ -66,11 +66,11 @@ export async function runInteractiveTestForEntry({
 
   logger.info("reseting gateway...");
   await gatewayClient.store.purge.mutate();
-  const proxy = await gatewayClient.store.create.mutate({
-    name: "test-proxy",
+  const playbook = await gatewayClient.store.create.mutate({
+    name: "test-playbook",
   });
   await gatewayClient.store.addServer.mutate({
-    proxyId: proxy.id,
+    playbookId: playbook.id,
     server: {
       name: entry.name,
       transport: resolvedTransport,
@@ -78,7 +78,7 @@ export async function runInteractiveTestForEntry({
   });
   logger.info("creating mcp client & listing tools...");
   const mcpClient = await HTTPClient.createAndConnectToHTTP(
-    joinURL(gatewayUrl, getStreamablePathForProxy(proxy.id)),
+    joinURL(gatewayUrl, getStreamablePathForPlaybook(playbook.id)),
   );
 
   const tools = await mcpClient.listTools();

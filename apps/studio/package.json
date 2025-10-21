@@ -7,7 +7,7 @@
     "build": "bun run clean && BASE_PATH=/studio vite build",
     "preview": "vite preview",
     "serve": "bun run server/index.ts",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf .turbo dist/*",
     "start": "bun run build && BASE_PATH=/studio bun run serve",
     "typecheck": "tsc --noEmit",
     "lint": "biome check ./src && biome check ./server",

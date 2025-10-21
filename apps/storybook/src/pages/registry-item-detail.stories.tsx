@@ -5,48 +5,48 @@ import {
   SplitViewMain,
   SplitViewSide,
 } from "@director.run/design/components/split-view.tsx";
-import type { WorkspaceList } from "@director.run/design/components/types.ts";
+import type { PlaybookList } from "@director.run/design/components/types.ts";
 import { Container } from "@director.run/design/components/ui/container.tsx";
 import { mockRegistryEntry } from "@director.run/design/test/fixtures/registry/entry.ts";
 import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../helpers/decorators";
 
-const mockProxies: WorkspaceList = [
+const mockPlaybooks: PlaybookList = [
   {
-    id: "dev-proxy",
-    name: "Development Proxy",
-    description: "Main development proxy",
+    id: "dev-playbook",
+    name: "Development Playbook",
+    description: "Main development playbook",
     prompts: undefined,
     servers: [],
     paths: {
-      streamable: "/ws/dev-proxy",
-      sse: "/ws/dev-proxy",
+      streamable: "/ws/dev-playbook",
+      sse: "/ws/dev-playbook",
     },
   },
   {
-    id: "staging-proxy",
-    name: "Staging Proxy",
-    description: "Staging environment proxy",
+    id: "staging-playbook",
+    name: "Staging Playbook",
+    description: "Staging environment playbook",
     prompts: undefined,
     servers: [],
     paths: {
-      streamable: "/ws/staging-proxy",
-      sse: "/ws/staging-proxy",
+      streamable: "/ws/staging-playbook",
+      sse: "/ws/staging-playbook",
     },
   },
 ];
 
 const RegistryItemDetailComponent = ({
   entry,
-  proxies,
+  playbooks,
   onClickInstall,
   isInstalling,
-  onProxyServerClick: _onProxyServerClick,
+  onPlaybookServerClick: _onPlaybookServerClick,
 }: {
   entry: typeof mockRegistryEntry;
-  proxies?: WorkspaceList;
+  playbooks?: PlaybookList;
   onClickInstall: (params: {
-    proxyId?: string;
+    playbookId?: string;
     entryId: string;
     parameters?: Record<string, string>;
   }) => Promise<void>;
@@ -54,7 +54,7 @@ const RegistryItemDetailComponent = ({
   onToolClick?: (
     tool: NonNullable<typeof mockRegistryEntry.tools>[number],
   ) => void;
-  onProxyServerClick?: (proxyId: string, serverName: string) => void;
+  onPlaybookServerClick?: (playbookId: string, serverName: string) => void;
 }) => (
   <Container size="xl">
     <SplitView>
@@ -64,7 +64,7 @@ const RegistryItemDetailComponent = ({
       <SplitViewSide>
         <RegistryDetailSidebar
           entry={entry}
-          proxies={proxies}
+          playbooks={playbooks}
           onClickInstall={onClickInstall}
           isInstalling={isInstalling}
         />
@@ -88,8 +88,8 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     entry: mockRegistryEntry,
-    proxies: mockProxies.map((p) =>
-      p.id === "dev-proxy"
+    playbooks: mockPlaybooks.map((p) =>
+      p.id === "dev-playbook"
         ? {
             ...p,
             servers: [

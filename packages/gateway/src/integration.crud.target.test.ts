@@ -2,10 +2,10 @@ import {} from "@director.run/mcp/test/fixtures";
 import {} from "@director.run/mcp/transport";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { GatewayRouterOutputs } from "./client";
+import { type PlaybookHTTPTarget } from "./playbooks/playbook";
 import { IntegrationTestHarness } from "./test/integration";
-import { type WorkspaceHTTPTarget } from "./workspaces/workspace";
 
-describe("Proxy Target CRUD operations", () => {
+describe("Playbook Target CRUD operations", () => {
   let harness: IntegrationTestHarness;
 
   beforeAll(async () => {
@@ -17,17 +17,17 @@ describe("Proxy Target CRUD operations", () => {
   });
 
   describe("read", () => {
-    let proxy: GatewayRouterOutputs["store"]["create"];
+    let playbook: GatewayRouterOutputs["store"]["create"];
     beforeAll(async () => {
       await harness.purge();
-      proxy = await harness.client.store.create.mutate({
-        name: "Test Proxy",
+      playbook = await harness.client.store.create.mutate({
+        name: "Test Playbook",
         servers: [harness.getConfigForTarget("echo")],
       });
     });
     it("should be able to retrieve a target", async () => {
       const retrievedTarget = await harness.client.store.getServer.query({
-        proxyId: proxy.id,
+        playbookId: playbook.id,
         serverName: "echo",
       });
 
@@ -35,14 +35,14 @@ describe("Proxy Target CRUD operations", () => {
       expect(retrievedTarget.name).toBe("echo");
       expect(retrievedTarget.connectionInfo?.status).toBe("connected");
       expect(retrievedTarget.type).toBe("http");
-      expect((retrievedTarget as WorkspaceHTTPTarget).url).toEqual(
+      expect((retrievedTarget as PlaybookHTTPTarget).url).toEqual(
         harness.getConfigForTarget("echo").transport.url,
       );
     });
 
     it("should return tools if includeTools is true", async () => {
       const retrievedTarget = await harness.client.store.getServer.query({
-        proxyId: proxy.id,
+        playbookId: playbook.id,
         serverName: "echo",
         queryParams: { includeTools: true },
       });
@@ -53,11 +53,11 @@ describe("Proxy Target CRUD operations", () => {
   });
 
   describe("create", () => {
-    let proxy: GatewayRouterOutputs["store"]["create"];
+    let playbook: GatewayRouterOutputs["store"]["create"];
     beforeEach(async () => {
       await harness.purge();
-      proxy = await harness.client.store.create.mutate({
-        name: "Test Proxy",
+      playbook = await harness.client.store.create.mutate({
+        name: "Test Playbook",
         servers: [],
       });
     });
@@ -65,7 +65,7 @@ describe("Proxy Target CRUD operations", () => {
     describe("unauthorized target", () => {
       it("should succeed and return target", async () => {
         const target = await harness.client.store.addServer.mutate({
-          proxyId: proxy.id,
+          playbookId: playbook.id,
           server: {
             name: "notion",
             transport: {
@@ -77,15 +77,15 @@ describe("Proxy Target CRUD operations", () => {
 
         expect(target.connectionInfo?.status).toBe("unauthorized");
 
-        expect((target as WorkspaceHTTPTarget).url).toEqual(
+        expect((target as PlaybookHTTPTarget).url).toEqual(
           `https://mcp.notion.com/mcp`,
         );
-        expect((target as WorkspaceHTTPTarget).type).toEqual(`http`);
+        expect((target as PlaybookHTTPTarget).type).toEqual(`http`);
       });
 
       it("should update the configuration file", async () => {
         await harness.client.store.addServer.mutate({
-          proxyId: proxy.id,
+          playbookId: playbook.id,
           server: {
             name: "notion",
             transport: {
@@ -96,7 +96,7 @@ describe("Proxy Target CRUD operations", () => {
         });
 
         const configEntry = (
-          await harness.database.workspaces.getWorkspace(proxy.id)
+          await harness.database.playbooks.getPlaybook(playbook.id)
         ).servers.find((server) => server.name === "notion");
 
         expect(configEntry).toEqual(
@@ -112,7 +112,7 @@ describe("Proxy Target CRUD operations", () => {
       it("should fail", async () => {
         await expect(
           harness.client.store.addServer.mutate({
-            proxyId: proxy.id,
+            playbookId: playbook.id,
             server: {
               name: "echo",
               transport: {
@@ -126,21 +126,21 @@ describe("Proxy Target CRUD operations", () => {
         );
 
         expect(
-          await harness.database.workspaces.getWorkspace(proxy.id),
+          await harness.database.playbooks.getPlaybook(playbook.id),
         ).toEqual(
           expect.objectContaining({
-            name: "Test Proxy",
+            name: "Test Playbook",
             servers: [],
           }),
         );
 
         expect(
           await harness.client.store.get.query({
-            proxyId: proxy.id,
+            playbookId: playbook.id,
           }),
         ).toEqual(
           expect.objectContaining({
-            name: "Test Proxy",
+            name: "Test Playbook",
             servers: [],
           }),
         );
@@ -151,7 +151,7 @@ describe("Proxy Target CRUD operations", () => {
       it("should fail if the command is not found", async () => {
         await expect(
           harness.client.store.addServer.mutate({
-            proxyId: proxy.id,
+            playbookId: playbook.id,
             server: {
               name: "echo",
               transport: {
@@ -166,21 +166,21 @@ describe("Proxy Target CRUD operations", () => {
         );
 
         expect(
-          await harness.database.workspaces.getWorkspace(proxy.id),
+          await harness.database.playbooks.getPlaybook(playbook.id),
         ).toEqual(
           expect.objectContaining({
-            name: "Test Proxy",
+            name: "Test Playbook",
             servers: [],
           }),
         );
 
         expect(
           await harness.client.store.get.query({
-            proxyId: proxy.id,
+            playbookId: playbook.id,
           }),
         ).toEqual(
           expect.objectContaining({
-            name: "Test Proxy",
+            name: "Test Playbook",
             servers: [],
           }),
         );
@@ -189,7 +189,7 @@ describe("Proxy Target CRUD operations", () => {
       it("should fail if the command fails", async () => {
         await expect(
           harness.client.store.addServer.mutate({
-            proxyId: proxy.id,
+            playbookId: playbook.id,
             server: {
               name: "echo",
               transport: {
@@ -204,21 +204,21 @@ describe("Proxy Target CRUD operations", () => {
         );
 
         expect(
-          await harness.database.workspaces.getWorkspace(proxy.id),
+          await harness.database.playbooks.getPlaybook(playbook.id),
         ).toEqual(
           expect.objectContaining({
-            name: "Test Proxy",
+            name: "Test Playbook",
             servers: [],
           }),
         );
 
         expect(
           await harness.client.store.get.query({
-            proxyId: proxy.id,
+            playbookId: playbook.id,
           }),
         ).toEqual(
           expect.objectContaining({
-            name: "Test Proxy",
+            name: "Test Playbook",
             servers: [],
           }),
         );
@@ -227,7 +227,7 @@ describe("Proxy Target CRUD operations", () => {
 
     it("should return tools if includeTools is true", async () => {
       const retrievedTarget = await harness.client.store.addServer.mutate({
-        proxyId: proxy.id,
+        playbookId: playbook.id,
         server: {
           ...harness.getConfigForTarget("echo"),
         },
@@ -242,7 +242,7 @@ describe("Proxy Target CRUD operations", () => {
       let addServerResponse: GatewayRouterOutputs["store"]["addServer"];
       beforeEach(async () => {
         addServerResponse = await harness.client.store.addServer.mutate({
-          proxyId: proxy.id,
+          playbookId: playbook.id,
           server: {
             ...harness.getConfigForTarget("echo"),
             toolPrefix: "echo",
@@ -253,17 +253,17 @@ describe("Proxy Target CRUD operations", () => {
 
       it("should succeed", () => {
         expect(addServerResponse.connectionInfo?.status).toBe("connected");
-        expect((addServerResponse as WorkspaceHTTPTarget).url).toEqual(
+        expect((addServerResponse as PlaybookHTTPTarget).url).toEqual(
           harness.getConfigForTarget("echo").transport.url,
         );
-        expect((addServerResponse as WorkspaceHTTPTarget).type).toEqual("http");
+        expect((addServerResponse as PlaybookHTTPTarget).type).toEqual("http");
       });
 
       it("should update the configuration file", async () => {
         const echoConfig = harness.getConfigForTarget("echo");
         expect(
           (
-            await harness.database.workspaces.getWorkspace(proxy.id)
+            await harness.database.playbooks.getPlaybook(playbook.id)
           ).servers.find((server) => server.name === "echo"),
         ).toEqual(
           expect.objectContaining({
@@ -276,12 +276,12 @@ describe("Proxy Target CRUD operations", () => {
         );
       });
 
-      it("should be reflected in the proxy", async () => {
-        const proxyResponse = await harness.client.store.get.query({
-          proxyId: proxy.id,
+      it("should be reflected in the playbook", async () => {
+        const playbookResponse = await harness.client.store.get.query({
+          playbookId: playbook.id,
         });
         const echoConfig = harness.getConfigForTarget("echo");
-        expect(proxyResponse.servers[0]).toEqual(
+        expect(playbookResponse.servers[0]).toEqual(
           expect.objectContaining({
             url: echoConfig.transport.url,
             type: echoConfig.transport.type,
@@ -304,7 +304,7 @@ describe("Proxy Target CRUD operations", () => {
 
       it("should be queryable", async () => {
         const target = await harness.client.store.getServer.query({
-          proxyId: proxy.id,
+          playbookId: playbook.id,
           serverName: "echo",
         });
         expect(target).toEqual(addServerResponse);
@@ -313,7 +313,7 @@ describe("Proxy Target CRUD operations", () => {
       it("should fail if server already exists", async () => {
         await expect(
           harness.client.store.addServer.mutate({
-            proxyId: proxy.id,
+            playbookId: playbook.id,
             server: {
               ...harness.getConfigForTarget("echo"),
               toolPrefix: "echo",
@@ -326,36 +326,36 @@ describe("Proxy Target CRUD operations", () => {
   });
 
   describe("delete", () => {
-    let proxy: GatewayRouterOutputs["store"]["create"];
+    let playbook: GatewayRouterOutputs["store"]["create"];
 
     beforeAll(async () => {
       await harness.purge();
-      proxy = await harness.client.store.create.mutate({
-        name: "Test Proxy",
+      playbook = await harness.client.store.create.mutate({
+        name: "Test Playbook",
         servers: [harness.getConfigForTarget("echo")],
       });
     });
 
     it("should delete a server", async () => {
       const deletedTarget = await harness.client.store.removeServer.mutate({
-        proxyId: proxy.id,
+        playbookId: playbook.id,
         serverName: "echo",
       });
 
       expect(deletedTarget.connectionInfo?.status).toBe("disconnected");
       expect(deletedTarget.name).toBe("echo");
 
-      const proxyResponse = await harness.client.store.get.query({
-        proxyId: proxy.id,
+      const playbookResponse = await harness.client.store.get.query({
+        playbookId: playbook.id,
       });
 
-      expect(proxyResponse.servers).toEqual([]);
+      expect(playbookResponse.servers).toEqual([]);
     });
 
     it("should fail if server does not exist", async () => {
       await expect(
         harness.client.store.removeServer.mutate({
-          proxyId: proxy.id,
+          playbookId: playbook.id,
           serverName: "not_existing_server",
         }),
       ).rejects.toThrow();
@@ -364,21 +364,21 @@ describe("Proxy Target CRUD operations", () => {
 
   describe("update", () => {
     describe("target attributes", () => {
-      let proxy: GatewayRouterOutputs["store"]["create"];
+      let playbook: GatewayRouterOutputs["store"]["create"];
       let updatedResponse: GatewayRouterOutputs["store"]["updateServer"];
       const toolPrefix = "prefix__";
       const disabledTools = ["ping", "add"];
       beforeEach(async () => {
         await harness.purge();
-        proxy = await harness.client.store.create.mutate({
-          name: "Test Proxy",
+        playbook = await harness.client.store.create.mutate({
+          name: "Test Playbook",
           servers: [
             harness.getConfigForTarget("echo"),
             harness.getConfigForTarget("kitchenSink"),
           ],
         });
         updatedResponse = await harness.client.store.updateServer.mutate({
-          proxyId: proxy.id,
+          playbookId: playbook.id,
           serverName: "echo",
           attributes: {
             toolPrefix: toolPrefix,
@@ -393,7 +393,7 @@ describe("Proxy Target CRUD operations", () => {
       });
       it("should return tools if includeTools is true", async () => {
         const retrievedTarget = await harness.client.store.updateServer.mutate({
-          proxyId: proxy.id,
+          playbookId: playbook.id,
           serverName: "echo",
           attributes: {
             toolPrefix: "",
@@ -407,7 +407,7 @@ describe("Proxy Target CRUD operations", () => {
       });
       it("should update the target", async () => {
         const target = await harness.client.store.getServer.query({
-          proxyId: proxy.id,
+          playbookId: playbook.id,
           serverName: "echo",
         });
         expect(target.toolPrefix).toBe(toolPrefix);
@@ -415,27 +415,27 @@ describe("Proxy Target CRUD operations", () => {
       });
       it("should update the configuration file", async () => {
         const configEntry = (
-          await harness.database.workspaces.getWorkspace(proxy.id)
+          await harness.database.playbooks.getPlaybook(playbook.id)
         ).servers.find((server) => server.name === "echo");
         expect(configEntry?.toolPrefix).toBe(toolPrefix);
         expect(configEntry?.disabledTools).toMatchObject(disabledTools);
       });
       it("should be able to unset attributes", async () => {
         updatedResponse = await harness.client.store.updateServer.mutate({
-          proxyId: proxy.id,
+          playbookId: playbook.id,
           serverName: "echo",
           attributes: { toolPrefix: "", disabledTools: [] },
         });
         expect(updatedResponse.toolPrefix).toBe("");
         expect(updatedResponse.disabledTools).toMatchObject([]);
         const target = await harness.client.store.getServer.query({
-          proxyId: proxy.id,
+          playbookId: playbook.id,
           serverName: "echo",
         });
         expect(target.toolPrefix).toBe("");
         expect(target.disabledTools).toMatchObject([]);
         const configEntry = (
-          await harness.database.workspaces.getWorkspace(proxy.id)
+          await harness.database.playbooks.getPlaybook(playbook.id)
         ).servers.find((server) => server.name === "echo");
         expect(configEntry?.toolPrefix).toBe("");
         expect(configEntry?.disabledTools).toMatchObject([]);
@@ -443,11 +443,11 @@ describe("Proxy Target CRUD operations", () => {
     });
 
     describe("disabling targets", () => {
-      let proxy: GatewayRouterOutputs["store"]["create"];
+      let playbook: GatewayRouterOutputs["store"]["create"];
       beforeEach(async () => {
         await harness.purge();
-        proxy = await harness.client.store.create.mutate({
-          name: "Test Proxy",
+        playbook = await harness.client.store.create.mutate({
+          name: "Test Playbook",
           servers: [
             { ...harness.getConfigForTarget("echo"), disabled: true },
             harness.getConfigForTarget("kitchenSink"),
@@ -456,13 +456,13 @@ describe("Proxy Target CRUD operations", () => {
       });
       it("should return the disabled target correctly", async () => {
         const disabledTarget = await harness.client.store.getServer.query({
-          proxyId: proxy.id,
+          playbookId: playbook.id,
           serverName: "echo",
         });
         expect(disabledTarget.disabled).toBe(true);
         expect(disabledTarget.connectionInfo?.status).toBe("disconnected");
         const enabledTarget = await harness.client.store.getServer.query({
-          proxyId: proxy.id,
+          playbookId: playbook.id,
           serverName: "kitchen-sink",
         });
         expect(enabledTarget.disabled).toBeFalsy();
@@ -470,7 +470,7 @@ describe("Proxy Target CRUD operations", () => {
       });
       it("should be stored in the configuration file", async () => {
         const configEntry = (
-          await harness.database.workspaces.getWorkspace(proxy.id)
+          await harness.database.playbooks.getPlaybook(playbook.id)
         ).servers.find((server) => server.name === "echo");
         expect(configEntry?.disabled).toBe(true);
       });
@@ -478,7 +478,7 @@ describe("Proxy Target CRUD operations", () => {
         let updatedResponse: GatewayRouterOutputs["store"]["updateServer"];
         beforeEach(async () => {
           updatedResponse = await harness.client.store.updateServer.mutate({
-            proxyId: proxy.id,
+            playbookId: playbook.id,
             serverName: "echo",
             attributes: { disabled: false },
           });
@@ -487,9 +487,9 @@ describe("Proxy Target CRUD operations", () => {
           expect(updatedResponse.disabled).toBe(false);
           expect(updatedResponse.connectionInfo?.status).toBe("connected");
         });
-        it("should be reflected in the proxy", async () => {
+        it("should be reflected in the playbook", async () => {
           const target = await harness.client.store.getServer.query({
-            proxyId: proxy.id,
+            playbookId: playbook.id,
             serverName: "echo",
           });
           expect(target.disabled).toBe(false);
@@ -497,7 +497,7 @@ describe("Proxy Target CRUD operations", () => {
         });
         it("should be reflected in the configuration file", async () => {
           const configEntry = (
-            await harness.database.workspaces.getWorkspace(proxy.id)
+            await harness.database.playbooks.getPlaybook(playbook.id)
           ).servers.find((server) => server.name === "echo");
           expect(configEntry?.disabled).toBe(false);
         });

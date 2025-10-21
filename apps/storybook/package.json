@@ -6,7 +6,7 @@
     "dev": "storybook dev -p 6006",
     "build": "storybook build -o dist/",
     "typecheck": "tsc --noEmit",
-    "clean": "rm -rf dist storybook-static",
+    "clean": "rm -rf .turbo dist/*",
     "format": "bun run format:fix-classnames && bun run format:fix-imports && bun run format:fix-all",
     "format:fix-all": "biome format --write ./src",
     "format:fix-imports": "biome check --formatter-enabled=false --linter-enabled=false --organize-imports-enabled=true --write ./src",

@@ -9,10 +9,10 @@ import {
 } from "../get-started/get-started-list";
 import { GetStartedMcpServerList } from "../get-started/get-started-mcp-server-list";
 import {
-  GetStartedProxyForm,
-  type FormValues as ProxyFormValues,
-} from "../get-started/get-started-proxy-form";
-import { proxySchema } from "../get-started/get-started-proxy-form";
+  GetStartedPlaybookForm,
+  type PlaybookCreateFormValues as PlaybookFormValues,
+} from "../get-started/get-started-playbook-form";
+import { playbookSchema } from "../get-started/get-started-playbook-form";
 import type { RegistryEntryList } from "../types";
 import type { Client } from "../types.ts";
 import { Container } from "../ui/container";
@@ -21,10 +21,9 @@ import { Section } from "../ui/section";
 type StepStatus = "not-started" | "in-progress" | "completed";
 
 export interface GetStartedPageViewProps {
-  // Step 1: Create workspace
-  isCreateWorkspaceLoading: boolean;
-  onCreateWorkspace: SubmitHandler<ProxyFormValues>;
-  currentWorkspace: { id: string; servers?: unknown[] } | null;
+  isCreatePlaybookLoading: boolean;
+  onCreatePlaybook: SubmitHandler<PlaybookFormValues>;
+  currentPlaybook: { id: string; servers?: unknown[] } | null;
 
   // Registry
   registryEntries: RegistryEntryList;
@@ -35,46 +34,46 @@ export interface GetStartedPageViewProps {
   }) => void;
 
   // Actions
-  onAddWorkspaceToClient: (clientId: string) => void;
+  onAddPlaybookToClient: (clientId: string) => void;
   clientStatuses: Client[];
-  isAddingWorkspaceToClient: boolean;
+  isAddingPlaybookToClient: boolean;
 }
 
 export function GetStartedPageView(props: GetStartedPageViewProps) {
   const {
-    currentWorkspace: currentProxy,
+    currentPlaybook,
     registryEntries,
     clientStatuses,
-    isAddingWorkspaceToClient: isInstallingClient,
-    isCreateWorkspaceLoading: createProxyIsPending,
-    onCreateWorkspace: onCreateProxy,
+    isAddingPlaybookToClient,
+    isCreatePlaybookLoading,
+    onCreatePlaybook,
     searchQuery,
     onSearchQueryChange,
-    onClickRegistryEntry: onMcpSelect,
-    onAddWorkspaceToClient: onInstallClient,
+    onClickRegistryEntry,
+    onAddPlaybookToClient,
   } = props;
 
   const [selectedClient, setSelectedClient] = useState<string | undefined>();
-  const proxyForm = useZodForm({
-    schema: proxySchema,
-    defaultValues: { name: "", description: "A proxy for getting started" },
+  const playbookForm = useZodForm({
+    schema: playbookSchema,
+    defaultValues: { name: "", description: "A playbook for getting started" },
   });
 
-  const hasProxy = !!currentProxy;
-  const hasServers = (currentProxy?.servers?.length ?? 0) > 0;
+  const hasPlaybook = !!currentPlaybook;
+  const hasServers = (currentPlaybook?.servers?.length ?? 0) > 0;
 
   const steps = useMemo(() => {
-    const create: StepStatus = hasProxy ? "completed" : "in-progress";
-    const add: StepStatus = hasProxy
+    const create: StepStatus = hasPlaybook ? "completed" : "in-progress";
+    const add: StepStatus = hasPlaybook
       ? hasServers
         ? "completed"
         : "in-progress"
       : "not-started";
     // With simplified props, we consider connect step "in-progress" until user triggers install
     const connect: StepStatus =
-      hasProxy && hasServers ? "in-progress" : "not-started";
+      hasPlaybook && hasServers ? "in-progress" : "not-started";
     return { create, add, connect };
-  }, [hasProxy, hasServers]);
+  }, [hasPlaybook, hasServers]);
 
   return (
     <Container size="sm" className="py-12 lg:py-16">
@@ -87,15 +86,15 @@ export function GetStartedPageView(props: GetStartedPageViewProps) {
         <GetStartedList>
           <GetStartedListItem
             status={steps.create}
-            title="Create an MCP Proxy Server"
+            title="Create a Playbook"
             disabled={steps.create === "completed"}
             open={steps.create === "in-progress"}
           >
             <div className="py-4 pr-4 pl-11.5">
-              <GetStartedProxyForm
-                form={proxyForm}
-                isPending={createProxyIsPending}
-                onSubmit={onCreateProxy}
+              <GetStartedPlaybookForm
+                form={playbookForm}
+                isPending={isCreatePlaybookLoading}
+                onSubmit={onCreatePlaybook}
               />
             </div>
           </GetStartedListItem>
@@ -110,7 +109,7 @@ export function GetStartedPageView(props: GetStartedPageViewProps) {
               searchQuery={searchQuery}
               onSearchQueryChange={onSearchQueryChange}
               registryEntries={registryEntries}
-              onMcpSelect={onMcpSelect}
+              onMcpSelect={onClickRegistryEntry}
             />
           </GetStartedListItem>
 
@@ -125,8 +124,8 @@ export function GetStartedPageView(props: GetStartedPageViewProps) {
               onClientSelect={setSelectedClient}
               clients={clientStatuses}
               isLoading={false}
-              isInstalling={isInstallingClient}
-              onInstall={onInstallClient}
+              isInstalling={isAddingPlaybookToClient}
+              onInstall={onAddPlaybookToClient}
             />
           </GetStartedListItem>
         </GetStartedList>

@@ -48,7 +48,7 @@ export function RegistryItemList({
           <SectionTitle>Discover MCP servers</SectionTitle>
           <SectionDescription>
             Find MCP servers for your favourite tools and install them directly
-            to your Director proxies.
+            to your Director playbooks.
           </SectionDescription>
         </SectionHeader>
 

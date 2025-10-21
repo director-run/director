@@ -19,7 +19,7 @@
     "format:fix-imports": "biome check --formatter-enabled=false --linter-enabled=false --organize-imports-enabled=true --write .",
     "test": "turbo run test --concurrency=1 -- --watch=false",
     "typecheck": "turbo run typecheck",
-    "clean": "turbo run clean && rm -rf .turbo node_modules",
+    "clean": "turbo run clean",
     "cli": "NODE_ENV=development bun run ./apps/cli/bin/cli.ts",
     "studio": "turbo run dev --filter=@director.run/studio",
     "storybook": "turbo run dev --filter=@director.run/storybook",

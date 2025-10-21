@@ -13,26 +13,26 @@ async function main() {
     baseUrl: "http://localhost:3673",
   });
 
-  await gateway.workspaceStore.purge();
+  await gateway.playbookStore.purge();
 
-  const proxy = await gateway.workspaceStore.create({
+  const playbook = await gateway.playbookStore.create({
     name: "test",
     servers: [],
   });
 
-  await proxy.addTarget({
+  await playbook.addTarget({
     type: "http",
     name: "notion",
     url: "https://mcp.notion.com/mcp",
   });
 
-  const proxyDetails = await gatewayClient.store.get.query({
-    proxyId: proxy.id,
+  const playbookDetails = await gatewayClient.store.get.query({
+    playbookId: playbook.id,
   });
   console.log("--------------------------------");
-  console.log("proxyDetails");
+  console.log("playbookDetails");
   console.log("--------------------------------");
-  console.log(proxyDetails);
+  console.log(playbookDetails);
 }
 
 await main();

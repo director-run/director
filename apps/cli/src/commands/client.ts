@@ -30,35 +30,11 @@ export function registerClientCommands(program: DirectorCommand): void {
             installed: client.installed,
             configExists: client.configExists,
             configPath: client.configPath,
-            workspaces: client.workspaces.map((w) => w.id),
+            playbooks: client.playbooks.map((w) => w.id),
           }),
         );
       }),
     );
-
-  // command
-  //   .debugCommand("restart <clientName>")
-  //   .description("Restart the MCP client")
-  //   .action(
-  //     actionWithErrorHandler(async (_clientName: string) => {
-  //       // No-op: restart is handled by the gateway when needed during install/uninstall
-  //       console.log("restart handled automatically during install/uninstall");
-  //       await Promise.resolve();
-  //     }),
-  //   );
-
-  // command
-  //   .debugCommand("reset <clientName>")
-  //   .description("Delete all servers from the client config")
-  //   .action(
-  //     actionWithErrorHandler(async (_clientName: string) => {
-  //       // Not supported via router; use reset-all or connect/disconnect per proxy
-  //       console.log(
-  //         "Reset per-client is not supported via router. Use reset-all instead.",
-  //       );
-  //       await Promise.resolve();
-  //     }),
-  //   );
 
   command
     .debugCommand("reset-all")
@@ -87,13 +63,13 @@ export function registerClientCommands(program: DirectorCommand): void {
     .action(
       actionWithErrorHandler(async () => {
         const clients = await gatewayClient.clients.allClients.query();
-        const table = makeTable(["name", "installed", "workspaces"]);
+        const table = makeTable(["name", "installed", "playbooks"]);
         table.push(
           ...clients.map((client) => [
             client.name,
             client.installed,
-            client.workspaces.length
-              ? client.workspaces.map((w) => w.id).join(", ")
+            client.playbooks.length
+              ? client.playbooks.map((w) => w.id).join(", ")
               : "--",
           ]),
         );

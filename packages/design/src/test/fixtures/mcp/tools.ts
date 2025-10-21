@@ -1562,7 +1562,7 @@ export const mockTools = (): MCPTool[] => [
     name: "notion-duplicate-page",
     title: "Duplicate Notion page",
     description:
-      "Duplicate a Notion page. The page must be within the current workspace, and you must have permission to access it. The duplication completes asynchronously, so do not rely on the new page identified by the returned ID or URL to be populated immediately. Let the user know that the duplication is in progress and that they can check back later using the 'fetch' tool or by clicking the returned URL and viewing it in the Notion app.",
+      "Duplicate a Notion page. The page must be within the current playbook, and you must have permission to access it. The duplication completes asynchronously, so do not rely on the new page identified by the returned ID or URL to be populated immediately. Let the user know that the duplication is in progress and that they can check back later using the 'fetch' tool or by clicking the returned URL and viewing it in the Notion app.",
     inputSchema: {
       type: "object",
       properties: {
@@ -1643,7 +1643,7 @@ export const mockTools = (): MCPTool[] => [
     name: "notion-get-teams",
     title: "Get workspace teams",
     description:
-      'Retrieves a list of teams (teamspaces) in the current workspace. Shows which teams exist, user membership status, IDs, names, and roles.\nTeams are returned split by membership status and limited to a maximum of 10 results.\n<examples>\n1. List all teams (up to the limit of each type): {}\n2. Search for teams by name: {"query": "engineering"}\n3. Find a specific team: {"query": "Product Design"}\n</examples>',
+      'Retrieves a list of teams (teamspaces) in the current playbook. Shows which teams exist, user membership status, IDs, names, and roles.\nTeams are returned split by membership status and limited to a maximum of 10 results.\n<examples>\n1. List all teams (up to the limit of each type): {}\n2. Search for teams by name: {"query": "engineering"}\n3. Find a specific team: {"query": "Product Design"}\n</examples>',
     inputSchema: {
       type: "object",
       properties: {
@@ -1764,13 +1764,13 @@ export const mockTools = (): MCPTool[] => [
             },
             {
               type: "object",
-              properties: { type: { type: "string", enum: ["workspace"] } },
+              properties: { type: { type: "string", enum: ["playbook"] } },
               required: ["type"],
               additionalProperties: false,
             },
           ],
           description:
-            "The new parent under which the pages will be moved. This can be a page, the workspace, a database, or a specific data source under a database when there are multiple. Moving pages to the workspace level adds them as private pages and should rarely be used.",
+            "The new parent under which the pages will be moved. This can be a page, the playbook, a database, or a specific data source under a database when there are multiple. Moving pages to the workspace level adds them as private pages and should rarely be used.",
         },
       },
       required: ["page_or_database_ids", "new_parent"],

@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
-import type { WorkspaceDetail } from "../types";
+import type { PlaybookDetail } from "../types";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -35,7 +35,7 @@ const PromptSchema = z.object({
 });
 
 type PromptFormData = z.infer<typeof PromptSchema>;
-type Prompt = NonNullable<WorkspaceDetail["prompts"]>[number];
+type Prompt = NonNullable<PlaybookDetail["prompts"]>[number];
 
 export interface PromptSheetProps {
   open: boolean;
@@ -119,7 +119,7 @@ export function PromptSheet({
               <SheetDescription className="text-sm">
                 {prompt
                   ? "Update this reusable instruction block."
-                  : "Create a reusable instruction block for your workspace."}
+                  : "Create a reusable instruction block for your playbook."}
               </SheetDescription>
             </SheetHeader>
 

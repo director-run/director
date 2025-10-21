@@ -15,12 +15,12 @@ import { getGatewayBaseUrl } from "../../config";
 
 export function registerToolsCommand(program: DirectorCommand) {
   program
-    .command("list-tools <proxyId>")
-    .description("List tools on a proxy")
+    .command("list-tools <playbookId>")
+    .description("List tools on a playbook")
     .action(
-      actionWithErrorHandler(async (proxyId: string) => {
+      actionWithErrorHandler(async (playbookId: string) => {
         const client = await HTTPClient.createAndConnectToHTTP(
-          joinURL(getGatewayBaseUrl(), `${proxyId}/mcp`),
+          joinURL(getGatewayBaseUrl(), `${playbookId}/mcp`),
         );
 
         await printTools(client);
@@ -29,12 +29,12 @@ export function registerToolsCommand(program: DirectorCommand) {
     );
 
   program
-    .command("get-tool <proxyId> <toolName>")
+    .command("get-tool <playbookId> <toolName>")
     .description("Get the details of a tool")
     .action(
-      actionWithErrorHandler(async (proxyId: string, toolName: string) => {
+      actionWithErrorHandler(async (playbookId: string, toolName: string) => {
         const client = await HTTPClient.createAndConnectToHTTP(
-          joinURL(getGatewayBaseUrl(), `${proxyId}/mcp`),
+          joinURL(getGatewayBaseUrl(), `${playbookId}/mcp`),
         );
 
         await printTool(client, toolName);
@@ -43,7 +43,7 @@ export function registerToolsCommand(program: DirectorCommand) {
     );
 
   program
-    .command("call-tool <proxyId> <toolName>")
+    .command("call-tool <playbookId> <toolName>")
     .addOption(
       makeOption({
         flags: "-a,--argument <key=value>",
@@ -52,11 +52,11 @@ export function registerToolsCommand(program: DirectorCommand) {
         variadic: true,
       }),
     )
-    .description("Call a tool on a proxy")
+    .description("Call a tool on a playbook")
     .action(
-      actionWithErrorHandler(async (proxyId: string, toolName: string) => {
+      actionWithErrorHandler(async (playbookId: string, toolName: string) => {
         const client = await HTTPClient.createAndConnectToHTTP(
-          joinURL(getGatewayBaseUrl(), `${proxyId}/mcp`),
+          joinURL(getGatewayBaseUrl(), `${playbookId}/mcp`),
         );
         await callTool(client, toolName);
         await client.close();

@@ -25,10 +25,10 @@ export const Default: Story = {
   },
 };
 
-export const WorkspaceNotFound: Story = {
+export const PlaybookNotFound: Story = {
   args: {
-    title: "Workspace Not Found",
-    subtitle: "The workspace you are looking for does not exist.",
+    title: "Playbook Not Found",
+    subtitle: "The playbook you are looking for does not exist.",
     fullScreen: false,
     icon: "dead-smiley",
   },

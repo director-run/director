@@ -1,4 +1,4 @@
-import type { WorkspaceTarget } from "../types.ts";
+import type { PlaybookTarget } from "../types.ts";
 import { BadgeGroup } from "../ui/badge.tsx";
 import { Button } from "../ui/button.tsx";
 import {
@@ -10,16 +10,16 @@ import * as List from "../ui/list.tsx";
 import { Section, SectionHeader, SectionTitle } from "../ui/section.tsx";
 import { ServerStatusBadge } from "./server-status-badge.tsx";
 
-export function WorkspaceServerList({
+export function PlaybookServerList({
   servers,
   onClickServer,
   onClickAddServer,
   onClickAuthorize,
 }: {
-  servers: WorkspaceTarget[];
-  onClickServer?: (server: WorkspaceTarget) => void;
+  servers: PlaybookTarget[];
+  onClickServer?: (server: PlaybookTarget) => void;
   onClickAddServer?: () => void;
-  onClickAuthorize?: (server: WorkspaceTarget) => void;
+  onClickAuthorize?: (server: PlaybookTarget) => void;
 }) {
   return (
     <Section>
@@ -41,7 +41,7 @@ export function WorkspaceServerList({
       ) : (
         <List.List>
           {servers.map((server) => (
-            <WorkspaceServerListItem
+            <PlaybookServerListItem
               key={`li-${server.name}`}
               server={server}
               onClick={onClickServer && (() => onClickServer(server))}
@@ -54,20 +54,20 @@ export function WorkspaceServerList({
   );
 }
 
-function WorkspaceServerListItem({
+function PlaybookServerListItem({
   server,
   onClick,
   onClickAuthorize,
 }: {
-  server: WorkspaceTarget;
+  server: PlaybookTarget;
   onClick?: () => void;
-  onClickAuthorize?: (server: WorkspaceTarget) => void;
+  onClickAuthorize?: (server: PlaybookTarget) => void;
 }) {
   return (
     <List.ListItem onClick={onClick}>
       <List.ListItemDetails>
         <List.ListItemTitle>{server.name}</List.ListItemTitle>
-        <WorkspaceServerListItemDescription server={server} />
+        <PlaybookServerListItemDescription server={server} />
       </List.ListItemDetails>
       <BadgeGroup>
         <ServerStatusBadge
@@ -79,9 +79,9 @@ function WorkspaceServerListItem({
   );
 }
 
-function WorkspaceServerListItemDescription({
+function PlaybookServerListItemDescription({
   server,
-}: { server: WorkspaceTarget }) {
+}: { server: PlaybookTarget }) {
   if (server.type === "http") {
     return <List.ListItemDescription>{server.url}</List.ListItemDescription>;
   } else if (server.type === "stdio") {

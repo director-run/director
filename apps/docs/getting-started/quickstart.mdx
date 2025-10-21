@@ -40,9 +40,9 @@ If you'd like to set up director without going through the UI, you can do so via
 ```bash
 npm install -g @director.run/cli
 director serve # start the gateway
-director create my-first-proxy # create a proxy
-director add fetch --target=my-first-proxy # add the fetch server to the proxy
-director connect my-first-proxy --target=claude # connect the proxy to Claude
-director connect my-first-proxy --target=cursor # connect the proxy to Cursor
-director connect my-first-proxy # print the manual connection details
+director create my-first-playbook # create a playbook
+director add fetch --target=my-first-playbook # add the fetch server to the playbook
+director connect my-first-playbook --target=claude # connect the playbook to Claude
+director connect my-first-playbook --target=cursor # connect the playbook to Cursor
+director connect my-first-playbook # print the manual connection details
 ```

@@ -1,6 +1,6 @@
 import type { ComponentProps } from "react";
 import { useState } from "react";
-import type { WorkspaceDetail } from "../types";
+import type { PlaybookDetail } from "../types";
 import { Button } from "../ui/button";
 import {
   EmptyState,
@@ -11,7 +11,7 @@ import * as List from "../ui/list";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
 import { PromptSheet } from "./prompt-sheet";
 
-type Prompt = NonNullable<WorkspaceDetail["prompts"]>[number];
+type Prompt = NonNullable<PlaybookDetail["prompts"]>[number];
 
 export interface PromptListProps extends ComponentProps<typeof Section> {
   prompts?: Prompt[];

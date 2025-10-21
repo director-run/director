@@ -5,12 +5,12 @@ import {
 } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { gatewayClient } from "../../client";
-import { printProxyDetails, printTargetDetails } from "./get";
+import { printPlaybookDetails, printTargetDetails } from "./get";
 
 export function registerUpdateCommand(program: DirectorCommand) {
   return program
-    .command("update <proxyId> [serverName]")
-    .description("Update proxy attributes")
+    .command("update <playbookId> [serverName]")
+    .description("Update playbook attributes")
     .addOption(
       makeOption({
         flags: "-a,--attribute <key=value>",
@@ -22,7 +22,7 @@ export function registerUpdateCommand(program: DirectorCommand) {
     .action(
       actionWithErrorHandler(
         async (
-          proxyId: string,
+          playbookId: string,
           serverName: string,
           options: {
             attribute?: string[];
@@ -36,31 +36,33 @@ export function registerUpdateCommand(program: DirectorCommand) {
 
           const attributes = parseKeyValueAttributes(options.attribute);
 
-          if (proxyId && !serverName) {
+          if (playbookId && !serverName) {
             console.log(
-              `updating proxy '${proxyId}' with attributes`,
+              `updating playbook '${playbookId}' with attributes`,
               attributes,
             );
-            const updatedProxy = await gatewayClient.store.update.mutate({
-              proxyId,
+            const updatedPlaybook = await gatewayClient.store.update.mutate({
+              playbookId: playbookId,
               attributes,
             });
-            printProxyDetails(updatedProxy);
-          } else if (proxyId && serverName) {
+            printPlaybookDetails(updatedPlaybook);
+          } else if (playbookId && serverName) {
             console.log(
-              `updating proxy target '${proxyId} > ${serverName}' with attributes`,
+              `updating playbook server '${playbookId} > ${serverName}' with attributes`,
               attributes,
             );
             const updatedServer = await gatewayClient.store.updateServer.mutate(
               {
-                proxyId,
+                playbookId: playbookId,
                 serverName,
                 attributes,
               },
             );
-            printTargetDetails(proxyId, updatedServer);
+            printTargetDetails(playbookId, updatedServer);
           } else {
-            throw new Error("<proxyId> or <proxyId> <serverName> is required");
+            throw new Error(
+              "<playbookId> or <playbookId> <serverName> is required",
+            );
           }
         },
       ),

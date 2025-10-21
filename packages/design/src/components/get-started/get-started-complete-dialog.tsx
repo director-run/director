@@ -17,11 +17,11 @@ import { Label } from "../ui/label";
 
 type GetStartedCompleteDialogProps = ComponentProps<typeof AlertDialog> & {
   onClickLibrary: () => void;
-  onClickWorkspace: () => void;
+  onClickPlaybook: () => void;
 };
 
 export function GetStartedCompleteDialog(props: GetStartedCompleteDialogProps) {
-  const { onClickLibrary, onClickWorkspace, ...alertDialogProps } = props;
+  const { onClickLibrary, onClickPlaybook, ...alertDialogProps } = props;
   return (
     <AlertDialog {...alertDialogProps}>
       <AlertDialogContent>
@@ -48,10 +48,10 @@ export function GetStartedCompleteDialog(props: GetStartedCompleteDialogProps) {
           <NextStepsLink
             className="bg-fg text-surface hover:bg-fg-subtle"
             href="/"
-            onClick={onClickWorkspace}
+            onClick={onClickPlaybook}
           >
             <HardDriveIcon weight="fill" />
-            <span>Continue to your proxy</span>
+            <span>Continue to your playbook</span>
           </NextStepsLink>
         </div>
       </AlertDialogContent>

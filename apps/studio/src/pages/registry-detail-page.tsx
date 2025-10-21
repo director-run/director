@@ -23,8 +23,8 @@ import { toast } from "@director.run/design/components/ui/toast.tsx";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useInstallServerFromRegistry } from "../hooks/use-install-server-from-registry";
+import { usePlaybooks } from "../hooks/use-playbooks";
 import { useRegistryEntry } from "../hooks/use-registry-entry";
-import { useWorkspaces } from "../hooks/use-workspaces";
 
 export function RegistryDetailPage() {
   const navigate = useNavigate();
@@ -33,7 +33,7 @@ export function RegistryDetailPage() {
   const [installFormOpen, setInstallFormOpen] = useState(false);
 
   const entryQuery = useRegistryEntry({ entryName });
-  const storeQuery = useWorkspaces();
+  const storeQuery = usePlaybooks();
 
   const { install, isPending } = useInstallServerFromRegistry({
     onError: (error) => {
@@ -44,10 +44,10 @@ export function RegistryDetailPage() {
     },
     onSuccess: (_data, variables) => {
       toast({
-        title: "Proxy installed",
-        description: "This proxy was successfully installed.",
+        title: "Playbook installed",
+        description: "This playbook was successfully installed.",
       });
-      navigate(`/${variables.proxyId}`);
+      navigate(`/${variables.playbookId}`);
     },
   });
 
@@ -55,16 +55,16 @@ export function RegistryDetailPage() {
   const registryEntry = entryQuery.data;
 
   const handleInstall = async (values: {
-    proxyId?: string;
+    playbookId?: string;
     parameters?: Record<string, string>;
   }) => {
     if (!registryEntry) {
       return;
     }
 
-    if (values.proxyId && entryName) {
+    if (values.playbookId && entryName) {
       await install({
-        proxyId: values.proxyId,
+        playbookId: values.playbookId,
         entryName,
         parameters: values.parameters ?? {},
       });
@@ -85,7 +85,7 @@ export function RegistryDetailPage() {
     return <RegistryEntrySkeleton />;
   }
 
-  const workspaces = storeQuery.data ?? [];
+  const playbooks = storeQuery.data ?? [];
 
   return (
     <LayoutView>
@@ -102,7 +102,7 @@ export function RegistryDetailPage() {
       >
         <Popover open={installFormOpen} onOpenChange={setInstallFormOpen}>
           <PopoverTrigger asChild>
-            <Button className="ml-auto lg:hidden">Add to proxy</Button>
+            <Button className="ml-auto lg:hidden">Add to playbook</Button>
           </PopoverTrigger>
           <PopoverContent
             side="bottom"
@@ -112,7 +112,7 @@ export function RegistryDetailPage() {
           >
             <RegistryInstallForm
               registryEntry={registryEntry}
-              proxies={workspaces}
+              playbooks={playbooks}
               onSubmit={handleInstall}
               isSubmitting={isPending}
             />
@@ -129,7 +129,7 @@ export function RegistryDetailPage() {
             <SplitViewSide>
               <RegistryDetailSidebar
                 entry={registryEntry}
-                proxies={workspaces}
+                playbooks={playbooks}
                 onClickInstall={handleInstall}
                 isInstalling={isPending}
               />

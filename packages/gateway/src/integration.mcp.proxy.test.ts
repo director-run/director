@@ -26,19 +26,19 @@ enum Transport {
   STREAMABLE = "streamable",
 }
 
-function getProxyUrl(transport: Transport, proxyId: string) {
-  return `http://localhost:${IntegrationTestHarness.gatewayPort}/${proxyId}/${transport === Transport.SSE ? "sse" : "mcp"}`;
+function getPlaybookUrl(transport: Transport, playbookId: string) {
+  return `http://localhost:${IntegrationTestHarness.gatewayPort}/${playbookId}/${transport === Transport.SSE ? "sse" : "mcp"}`;
 }
 
-async function createProxyClient(transport: Transport, proxyId: string) {
+async function createPlaybookClient(transport: Transport, playbookId: string) {
   return await HTTPClient.createAndConnectToHTTP(
-    getProxyUrl(transport, proxyId),
+    getPlaybookUrl(transport, playbookId),
   );
 }
 
-describe("MCP Proxy", () => {
+describe("MCP Playbook", () => {
   let harness: IntegrationTestHarness;
-  let proxy: GatewayRouterOutputs["store"]["create"];
+  let playbook: GatewayRouterOutputs["store"]["create"];
 
   beforeAll(async () => {
     harness = await IntegrationTestHarness.start();
@@ -51,8 +51,8 @@ describe("MCP Proxy", () => {
   [Transport.SSE, Transport.STREAMABLE].forEach((transport) => {
     beforeEach(async () => {
       await harness.purge();
-      proxy = await harness.client.store.create.mutate({
-        name: "Test Proxy",
+      playbook = await harness.client.store.create.mutate({
+        name: "Test Playbook",
         servers: [
           harness.getConfigForTarget("echo"),
           harness.getConfigForTarget("kitchenSink"),
@@ -61,25 +61,27 @@ describe("MCP Proxy", () => {
     });
 
     describe(`${transport} transport`, () => {
-      let proxyClient: HTTPClient;
+      let playbookClient: HTTPClient;
 
       beforeEach(async () => {
-        proxyClient = await createProxyClient(transport, proxy.id);
+        playbookClient = await createPlaybookClient(transport, playbook.id);
       });
 
       afterEach(async () => {
-        await proxyClient.close();
+        await playbookClient.close();
       });
 
-      it("should return 404 when proxy not found", async () => {
-        const res = await fetch(getProxyUrl(transport, "not_existing_proxy"));
+      it("should return 404 when playbook not found", async () => {
+        const res = await fetch(
+          getPlaybookUrl(transport, "not_existing_playbook"),
+        );
         expect(res.status).toEqual(404);
         expect(res.ok).toBeFalsy();
       });
 
       describe("tools", () => {
         it("should be able to list tools", async () => {
-          await expectListToolsToReturnToolNames(proxyClient, [
+          await expectListToolsToReturnToolNames(playbookClient, [
             "echo",
             "ping",
             "add",
@@ -90,7 +92,7 @@ describe("MCP Proxy", () => {
 
         it("should be able to call a tool", async () => {
           await expectToolCallToHaveResult({
-            client: proxyClient,
+            client: playbookClient,
             toolName: "ping",
             arguments: {},
             expectedResult: { message: "pong" },
@@ -100,7 +102,7 @@ describe("MCP Proxy", () => {
         describe("tool prefixing", () => {
           beforeEach(async () => {
             await harness.client.store.updateServer.mutate({
-              proxyId: proxy.id,
+              playbookId: playbook.id,
               serverName: "echo",
               attributes: {
                 toolPrefix: "prefix__",
@@ -109,7 +111,7 @@ describe("MCP Proxy", () => {
           });
 
           it("should return prefixed tools in list tools", async () => {
-            await expectListToolsToReturnToolNames(proxyClient, [
+            await expectListToolsToReturnToolNames(playbookClient, [
               "prefix__echo",
               "ping",
               "add",
@@ -120,7 +122,7 @@ describe("MCP Proxy", () => {
 
           it("should be able to call a tool with a prefix", async () => {
             await expectToolCallToHaveResult({
-              client: proxyClient,
+              client: playbookClient,
               toolName: "prefix__echo",
               arguments: { message: "Hello" },
               expectedResult: { message: "Hello" },
@@ -129,7 +131,7 @@ describe("MCP Proxy", () => {
 
           it("should fail to call the tool without the prefix", async () => {
             await expectUnknownToolError({
-              client: proxyClient,
+              client: playbookClient,
               toolName: "echo",
               arguments: { message: "Hello" },
             });
@@ -137,14 +139,14 @@ describe("MCP Proxy", () => {
 
           it("should be able to remove the prefix", async () => {
             await harness.client.store.updateServer.mutate({
-              proxyId: proxy.id,
+              playbookId: playbook.id,
               serverName: "echo",
               attributes: {
                 toolPrefix: "",
               },
             });
 
-            await expectListToolsToReturnToolNames(proxyClient, [
+            await expectListToolsToReturnToolNames(playbookClient, [
               "echo",
               "ping",
               "add",
@@ -157,7 +159,7 @@ describe("MCP Proxy", () => {
         describe("tool disabling", () => {
           beforeEach(async () => {
             await harness.client.store.updateServer.mutate({
-              proxyId: proxy.id,
+              playbookId: playbook.id,
               serverName: "kitchen-sink",
               attributes: {
                 disabledTools: ["ping", "add"],
@@ -166,7 +168,7 @@ describe("MCP Proxy", () => {
           });
 
           it("should not return disabled tools in list tools", async () => {
-            await expectListToolsToReturnToolNames(proxyClient, [
+            await expectListToolsToReturnToolNames(playbookClient, [
               "echo",
               "subtract",
               "multiply",
@@ -175,7 +177,7 @@ describe("MCP Proxy", () => {
 
           it("should fail to call a disabled tool", async () => {
             await expectUnknownToolError({
-              client: proxyClient,
+              client: playbookClient,
               toolName: "ping",
               arguments: {},
             });
@@ -183,14 +185,14 @@ describe("MCP Proxy", () => {
 
           it("should be able to re-enable a tool", async () => {
             await harness.client.store.updateServer.mutate({
-              proxyId: proxy.id,
+              playbookId: playbook.id,
               serverName: "kitchen-sink",
               attributes: {
                 disabledTools: [],
               },
             });
 
-            await expectListToolsToReturnToolNames(proxyClient, [
+            await expectListToolsToReturnToolNames(playbookClient, [
               "echo",
               "ping",
               "add",
@@ -202,13 +204,13 @@ describe("MCP Proxy", () => {
       });
 
       describe("addServer", () => {
-        it("should be able to add a server to a proxy", async () => {
+        it("should be able to add a server to a playbook", async () => {
           await harness.client.store.addServer.mutate({
-            proxyId: proxy.id,
+            playbookId: playbook.id,
             server: harness.getConfigForTarget("foobar"),
           });
 
-          await expectListToolsToReturnToolNames(proxyClient, [
+          await expectListToolsToReturnToolNames(playbookClient, [
             "echo",
             "ping",
             "add",
@@ -218,7 +220,7 @@ describe("MCP Proxy", () => {
           ]);
 
           await expectToolCallToHaveResult({
-            client: proxyClient,
+            client: playbookClient,
             toolName: "foo",
             arguments: {
               message: "bar",
@@ -229,15 +231,15 @@ describe("MCP Proxy", () => {
       });
 
       describe("removeServer", () => {
-        it("should be able to remove a server from a proxy", async () => {
+        it("should be able to remove a server from a playbook", async () => {
           await harness.client.store.removeServer.mutate({
-            proxyId: proxy.id,
+            playbookId: playbook.id,
             serverName: harness.getConfigForTarget("kitchenSink").name,
           });
 
-          await expectListToolsToReturnToolNames(proxyClient, ["echo"]);
+          await expectListToolsToReturnToolNames(playbookClient, ["echo"]);
           await expectUnknownToolError({
-            client: proxyClient,
+            client: playbookClient,
             toolName: "ping",
             arguments: {},
           });
@@ -247,19 +249,19 @@ describe("MCP Proxy", () => {
       describe("disabling targets", () => {
         beforeEach(async () => {
           await harness.client.store.updateServer.mutate({
-            proxyId: proxy.id,
+            playbookId: playbook.id,
             serverName: "kitchen-sink",
             attributes: { disabled: true },
           });
         });
 
         it("should not return tools in list tools on a disabled target", async () => {
-          await expectListToolsToReturnToolNames(proxyClient, ["echo"]);
+          await expectListToolsToReturnToolNames(playbookClient, ["echo"]);
         });
 
         it("should fail to call tools on a disabled target", async () => {
           await expectUnknownToolError({
-            client: proxyClient,
+            client: playbookClient,
             toolName: "ping",
             arguments: {},
           });
@@ -271,14 +273,14 @@ describe("MCP Proxy", () => {
 
         beforeEach(async () => {
           await harness.client.store.addPrompt.mutate({
-            proxyId: proxy.id,
+            playbookId: playbook.id,
             prompt,
           });
         });
 
         it("should return the prompt", async () => {
           await expectGetPromptToReturn({
-            client: proxyClient,
+            client: playbookClient,
             promptName: prompt.name,
             expectedBody: prompt.body,
           });
@@ -286,7 +288,7 @@ describe("MCP Proxy", () => {
 
         it("should be able to list prompts", async () => {
           await expectListPromptsToReturn({
-            client: proxyClient,
+            client: playbookClient,
             expectedPrompts: [
               {
                 name: prompt.name,
@@ -299,7 +301,7 @@ describe("MCP Proxy", () => {
 
         it("should be able to update a prompt", async () => {
           await harness.client.store.updatePrompt.mutate({
-            proxyId: proxy.id,
+            playbookId: playbook.id,
             promptName: prompt.name,
             prompt: {
               title: "Updated Title",
@@ -309,13 +311,13 @@ describe("MCP Proxy", () => {
           });
 
           await expectGetPromptToReturn({
-            client: proxyClient,
+            client: playbookClient,
             promptName: prompt.name,
             expectedBody: "Updated body",
           });
 
           await expectListPromptsToReturn({
-            client: proxyClient,
+            client: playbookClient,
             expectedPrompts: [
               {
                 name: prompt.name,
@@ -328,11 +330,11 @@ describe("MCP Proxy", () => {
 
         it("should be able to remove a prompt", async () => {
           await harness.client.store.removePrompt.mutate({
-            proxyId: proxy.id,
+            playbookId: playbook.id,
             promptName: prompt.name,
           });
           await expectListPromptsToReturn({
-            client: proxyClient,
+            client: playbookClient,
             expectedPrompts: [],
           });
         });

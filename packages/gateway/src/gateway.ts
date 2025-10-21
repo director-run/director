@@ -13,17 +13,17 @@ import cors from "cors";
 import express from "express";
 import { ClientStore } from "./client-store";
 import { Config } from "./config";
+import { PlaybookStore } from "./playbooks/playbook-store";
 import { createSSERouter } from "./routers/sse";
 import { createStreamableRouter } from "./routers/streamable";
 import { createTRPCExpressMiddleware } from "./routers/trpc";
-import { WorkspaceStore } from "./workspaces/workspace-store";
 
 const logger = getLogger("Gateway");
 
 const ALLOWED_ORIGINS = [/^https?:\/\/localhost(:\d+)?$/];
 
 export class Gateway {
-  public readonly workspaceStore: WorkspaceStore;
+  public readonly playbookStore: PlaybookStore;
   private server?: Server;
   public readonly config: Config;
   private app: express.Express;
@@ -37,14 +37,14 @@ export class Gateway {
   }
 
   private constructor(attribs: {
-    workspaceStore: WorkspaceStore;
+    playbookStore: PlaybookStore;
     config: Config;
     telemetry?: Telemetry;
     studioAssetsPath?: string;
     baseUrl: string;
     clientStore: ClientStore;
   }) {
-    this.workspaceStore = attribs.workspaceStore;
+    this.playbookStore = attribs.playbookStore;
     this.config = attribs.config;
     this.telemetry = attribs.telemetry;
     this.studioAssetsPath = attribs.studioAssetsPath;
@@ -81,14 +81,14 @@ export class Gateway {
     this.app.use(
       "/",
       createSSERouter({
-        workspaceStore: this.workspaceStore,
+        playbookStore: this.playbookStore,
         telemetry: this.telemetry,
       }),
     );
     this.app.use(
       "/",
       createStreamableRouter({
-        workspaceStore: this.workspaceStore,
+        playbookStore: this.playbookStore,
         telemetry: this.telemetry,
       }),
     );
@@ -96,7 +96,7 @@ export class Gateway {
       "/",
       createOauthCallbackRouter({
         onAuthorizationSuccess: async (factoryId, providerId, code) => {
-          await this.workspaceStore.onAuthorizationSuccess(
+          await this.playbookStore.onAuthorizationSuccess(
             factoryId,
             providerId,
             code,
@@ -136,7 +136,7 @@ export class Gateway {
     this.app.use(
       "/trpc",
       createTRPCExpressMiddleware({
-        workspaceStore: this.workspaceStore,
+        playbookStore: this.playbookStore,
         clientStore: this.clientStore,
       }),
     );
@@ -164,7 +164,7 @@ export class Gateway {
     const clientStore = new ClientStore({
       config: attribs.config,
     });
-    const workspaceStore = await WorkspaceStore.create({
+    const playbookStore = await PlaybookStore.create({
       config: attribs.config,
       telemetry: attribs.telemetry,
       oauth:
@@ -180,11 +180,11 @@ export class Gateway {
               storage: "memory",
               baseCallbackUrl: attribs.baseUrl,
             },
-      onWorkspaceListChange: async (workspaceId: string) => {
-        await clientStore.handleWorkspaceListChange(workspaceId);
+      onPlaybookListChange: async (playbookId: string) => {
+        await clientStore.handlePlaybookListChange(playbookId);
       },
-      onWorkspaceRemove: async (workspaceId: string) => {
-        await clientStore.handleWorkspaceRemove(workspaceId);
+      onPlaybookRemove: async (playbookId: string) => {
+        await clientStore.handlePlaybookRemove(playbookId);
       },
     });
 
@@ -192,7 +192,7 @@ export class Gateway {
 
     const gateway = new Gateway({
       config: attribs.config,
-      workspaceStore,
+      playbookStore,
       telemetry: attribs.telemetry,
       studioAssetsPath: attribs.studioAssetsPath,
       baseUrl: attribs.baseUrl,
@@ -202,7 +202,7 @@ export class Gateway {
     await gateway.start(successCallback);
 
     process.on("SIGINT", async () => {
-      logger.info("received SIGINT, cleaning up proxy servers...");
+      logger.info("received SIGINT, cleaning up playbooks...");
       await gateway.stop();
       process.exit(0);
     });
@@ -214,7 +214,7 @@ export class Gateway {
     this.server = this.app.listen(this.port, () => {
       logger.info(`director gateway running on port ${this.port}`);
       this.clientStore.enforceClientConfigs({
-        workspaceStore: this.workspaceStore,
+        playbookStore: this.playbookStore,
         baseUrl: this.baseUrl,
       });
       successCallback?.();
@@ -222,7 +222,7 @@ export class Gateway {
   }
 
   async stop() {
-    await this.workspaceStore.closeAll();
+    await this.playbookStore.closeAll();
     await new Promise<void>((resolve) => {
       // TODO: fix this -> for some reason type check in CI fails here
       // @ts-ignore

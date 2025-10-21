@@ -1,6 +1,6 @@
 import type { GatewayRouterOutputs } from "@director.run/gateway/client";
-import { getSSEPathForProxy } from "@director.run/gateway/helpers";
-import { getStreamablePathForProxy } from "@director.run/gateway/helpers";
+import { getSSEPathForPlaybook } from "@director.run/gateway/helpers";
+import { getStreamablePathForPlaybook } from "@director.run/gateway/helpers";
 import {
   blue,
   green,
@@ -22,38 +22,40 @@ import { makeToolTable } from "../mcp/tools";
 
 export function registerGetCommand(program: DirectorCommand) {
   program
-    .command("get <proxyId> [serverName]")
-    .description("Show proxy details")
+    .command("get <playbookId> [serverName]")
+    .description("Show playbook details")
     .action(
-      actionWithErrorHandler(async (proxyId: string, serverName?: string) => {
-        if (serverName) {
-          const target = await gatewayClient.store.getServer.query({
-            proxyId,
-            serverName,
-            queryParams: { includeTools: true },
-          });
-          printTargetDetails(proxyId, target);
-        } else {
-          const proxy = await gatewayClient.store.get.query({
-            proxyId,
-            queryParams: {
-              includeInMemoryTargets: true,
-            },
-          });
+      actionWithErrorHandler(
+        async (playbookId: string, serverName?: string) => {
+          if (serverName) {
+            const target = await gatewayClient.store.getServer.query({
+              playbookId: playbookId,
+              serverName,
+              queryParams: { includeTools: true },
+            });
+            printTargetDetails(playbookId, target);
+          } else {
+            const playbook = await gatewayClient.store.get.query({
+              playbookId: playbookId,
+              queryParams: {
+                includeInMemoryTargets: true,
+              },
+            });
 
-          if (!proxy) {
-            console.error(`proxy ${proxyId} not found`);
-            return;
+            if (!playbook) {
+              console.error(`playbook ${playbookId} not found`);
+              return;
+            }
+
+            printPlaybookDetails(playbook);
           }
-
-          printProxyDetails(proxy);
-        }
-      }),
+        },
+      ),
     );
 }
 
 export function printTargetDetails(
-  proxyId: string,
+  playbookId: string,
   target: GatewayRouterOutputs["store"]["getServer"],
 ) {
   const {
@@ -68,7 +70,7 @@ export function printTargetDetails(
   } = target;
 
   console.log();
-  console.log(whiteBold(`WORKSPACES > ${proxyId} > ${blue(name)}`));
+  console.log(whiteBold(`PLAYBOOKS > ${playbookId} > ${blue(name)}`));
   console.log();
 
   let transport = {};
@@ -103,10 +105,12 @@ export function printTargetDetails(
   }
 }
 
-export function printProxyDetails(proxy: GatewayRouterOutputs["store"]["get"]) {
-  const { id, name, description, prompts } = proxy;
+export function printPlaybookDetails(
+  playbook: GatewayRouterOutputs["store"]["get"],
+) {
+  const { id, name, description, prompts } = playbook;
   console.log();
-  console.log(whiteBold(`PROXIES > ${blue(name)}`));
+  console.log(whiteBold(`PLAYBOOKS > ${blue(name)}`));
   console.log();
 
   console.log(
@@ -116,9 +120,9 @@ export function printProxyDetails(proxy: GatewayRouterOutputs["store"]["get"]) {
       description: description ?? "--",
       streamableURL: joinURL(
         getGatewayBaseUrl(),
-        getStreamablePathForProxy(proxy.id),
+        getStreamablePathForPlaybook(playbook.id),
       ),
-      sseURL: joinURL(getGatewayBaseUrl(), getSSEPathForProxy(proxy.id)),
+      sseURL: joinURL(getGatewayBaseUrl(), getSSEPathForPlaybook(playbook.id)),
     }),
   );
 
@@ -134,7 +138,7 @@ export function printProxyDetails(proxy: GatewayRouterOutputs["store"]["get"]) {
     "lastErrorMessage",
   ]);
   table.push(
-    ...proxy.servers.map((target) => [
+    ...playbook.servers.map((target) => [
       target.name,
       target.type,
       targetStatus(target.connectionInfo?.status ?? "--"),

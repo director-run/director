@@ -144,16 +144,16 @@ CORE COMMANDS
    quickstart                                    Start the gateway and open the studio in your browser
    serve                                         Start the web service
    studio                                        Open the UI in your browser
-   ls                                            List proxies
-   get <workspaceId> [serverName]                Show proxy details
-   auth <proxyId> <server>                       Authenticate a server
-   create <name>                                 Create a new proxy
-   destroy <proxyId>                             Delete a proxy
-   connect <proxyId> [options]                   Connect a proxy to a MCP client
-   disconnect <proxyId> [options]                Disconnect a proxy from an MCP client
-   add <proxyId> [options]                       Add a server to a proxy.
-   remove <proxyId> <serverName>                 Remove a server from a proxy
-   update <proxyId> [serverName] [options]       Update proxy attributes
+   ls                                            List playbooks
+   get <playbookId> [serverName]                 Show playbook details
+   auth <playbookId> <server>                    Authenticate a server
+   create <name>                                 Create a new playbook
+   destroy <playbookId>                          Delete a playbook
+   connect <playbookId> [options]                Connect a playbook to a MCP client
+   disconnect <playbookId> [options]             Disconnect a playbook from an MCP client
+   add <playbookId> [options]                    Add a server to a playbook.
+   remove <playbookId> <serverName>              Remove a server from a playbook
+   update <playbookId> [serverName] [options]    Update playbook attributes
    http2stdio <url>                              Proxy an HTTP connection (sse or streamable) to a stdio stream
    env [options]                                 Print environment variables
    status                                        Get the status of the director
@@ -164,24 +164,24 @@ REGISTRY
    registry readme <entryName>                   Print the readme for a registry item
 
 MCP
-   mcp list-tools <proxyId>                      List tools on a proxy
-   mcp get-tool <proxyId> <toolName>             Get the details of a tool
-   mcp call-tool <proxyId> <toolName> [options]  Call a tool on a proxy
+   mcp list-tools <playbookId>                   List tools on a playbook
+   mcp get-tool <playbookId> <toolName>          Get the details of a tool
+   mcp call-tool <playbookId> <toolName> [options]  Call a tool on a playbook
 
 PROMPTS
-   prompts ls <proxyId>                          List all prompts for a proxy
-   prompts add <proxyId>                         Add a new prompt to a proxy
-   prompts edit <proxyId> <promptName>           Edit an existing prompt
-   prompts remove <proxyId> <promptName>         Remove a prompt from a proxy
-   prompts get <proxyId> <promptName>            Show the details of a specific prompt
+   prompts ls <playbookId>                       List all prompts for a playbook
+   prompts add <playbookId>                      Add a new prompt to a playbook
+   prompts edit <playbookId> <promptName>        Edit an existing prompt
+   prompts remove <playbookId> <promptName>      Remove a prompt from a playbook
+   prompts get <playbookId> <promptName>         Show the details of a specific prompt
 
 FLAGS
    -V, --version                                 output the version number
 
 EXAMPLES
-  $ director create my-proxy # Create a new proxy
-  $ director add my-proxy --entry fetch # Add a server to a proxy
-  $ director connect my-proxy --target claude # Connect my-proxy to claude
+  $ director create my-playbook # Create a new playbook
+  $ director add my-playbook --entry fetch # Add a server to a playbook
+  $ director connect my-playbook --target claude # Connect my-playbook to claude
 
 ```
 
@@ -237,8 +237,8 @@ import { Director } from '@director.run/sdk';
 
 const director = new Director();
 
-// Create workspace programmatically
-const workspace = await director.workspaces.create({
+// Create playbook programmatically
+const playbook = await director.playbooks.create({
   name: 'ci-environment',
   servers: [{
     name: 'github',
@@ -248,7 +248,7 @@ const workspace = await director.workspaces.create({
 });
 
 // Execute tools
-const result = await workspace.callTool('github.create_issue', {
+const result = await playbook.callTool('github.create_issue', {
   title: 'Automated issue from CI',
   body: 'This issue was created by Director'
 });
@@ -269,7 +269,7 @@ const result = await workspace.callTool('github.create_issue', {
 ### Internal Packages
 
 - [`packages/client-configurator`](./packages/client-configurator/README.md) - Library for managing MCP client configuration files
-- [`packages/gateway`](./packages/gateway/README.md) - Core gateway and proxy logic
+- [`packages/gateway`](./packages/gateway/README.md) - Core gateway and playbook logic
 - [`packages/mcp`](./packages/mcp/README.md) - Extensions to MCP SDK that add middleware functionality
 - [`packages/utilities`](./packages/utilities/README.md) - Shared utilities used across all packages and apps
 - [`packages/design`](./packages/design/README.md) - Design system: reusable UI components, hooks, and styles for all Director apps

@@ -1,15 +1,15 @@
 import { faker } from "@faker-js/faker";
 import type { Prompt } from "../capabilities/prompt-manager";
 import {
-  type WorkspaceHTTPTarget,
-  type WorkspaceStdioTarget,
-} from "../workspaces/workspace";
+  type PlaybookHTTPTarget,
+  type PlaybookStdioTarget,
+} from "../playbooks/playbook";
 
 export const makeHTTPTargetConfig = (params: {
   name: string;
   url: string;
   headers?: Record<string, string>;
-}): WorkspaceHTTPTarget => ({
+}): PlaybookHTTPTarget => ({
   name: params.name,
   type: "http",
   url: params.url,
@@ -20,7 +20,7 @@ export const makeStdioTargetConfig = (params: {
   name: string;
   command: string;
   args: string[];
-}): WorkspaceStdioTarget => ({
+}): PlaybookStdioTarget => ({
   name: params.name,
   type: "stdio",
   command: params.command,

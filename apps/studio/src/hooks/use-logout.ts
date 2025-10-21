@@ -2,7 +2,7 @@ import { useState } from "react";
 import { gatewayClient } from "../contexts/backend-context";
 
 type LogoutParams = {
-  proxyId: string;
+  playbookId: string;
   serverName: string;
 };
 
@@ -14,15 +14,15 @@ export function useLogout() {
   const mutation = gatewayClient.store.logout.useMutation();
 
   const logout = async ({
-    proxyId,
+    playbookId,
     serverName,
   }: LogoutParams): Promise<void> => {
     setIsLoading(true);
     setError(null);
     try {
-      await mutation.mutateAsync({ proxyId, serverName });
+      await mutation.mutateAsync({ playbookId, serverName });
       // Invalidate relevant queries so UI refreshes auth state
-      await utils.store.get.invalidate({ proxyId });
+      await utils.store.get.invalidate({ playbookId });
       await utils.store.getAll.invalidate();
     } catch (e) {
       const err = e instanceof Error ? e : new Error("Logout failed");

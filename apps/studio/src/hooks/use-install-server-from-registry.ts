@@ -1,7 +1,8 @@
+import { useState } from "react";
 import { gatewayClient, registryClient } from "../contexts/backend-context";
 
 type InstallFromRegistryInput = {
-  proxyId: string;
+  playbookId: string;
   entryName: string;
   parameters?: Record<string, string>;
 };
@@ -15,12 +16,13 @@ export function useInstallServerFromRegistry(
 ) {
   const gatewayUtils = gatewayClient.useUtils();
   const registryUtils = registryClient.useUtils();
+  const [isTransportLoading, setIsTransportLoading] = useState(false);
 
   const addServerMutation = gatewayClient.store.addServer.useMutation({
     async onSuccess(data, variables, context, meta) {
       if (data.connectionInfo?.status === "unauthorized") {
         const authRes = await gatewayUtils.store.authenticate.fetch({
-          proxyId: variables.proxyId,
+          playbookId: variables.playbookId,
           serverName: data.name,
         });
 
@@ -31,8 +33,10 @@ export function useInstallServerFromRegistry(
       }
 
       await gatewayUtils.store.getAll.invalidate();
-      if (variables?.proxyId) {
-        await gatewayUtils.store.get.invalidate({ proxyId: variables.proxyId });
+      if (variables?.playbookId) {
+        await gatewayUtils.store.get.invalidate({
+          playbookId: variables.playbookId,
+        });
       }
       if (options && options.onSuccess) {
         await options.onSuccess(data, variables, context, meta);
@@ -46,24 +50,27 @@ export function useInstallServerFromRegistry(
   });
 
   const install = async (input: InstallFromRegistryInput) => {
-    const transport = await registryUtils.entries.getTransportForEntry.fetch({
-      entryName: input.entryName,
-      parameters: input.parameters ?? {},
-    });
+    try {
+      setIsTransportLoading(true);
+      const transport = await registryUtils.entries.getTransportForEntry.fetch({
+        entryName: input.entryName,
+        parameters: input.parameters ?? {},
+      });
 
-    const addServerInput = {
-      proxyId: input.proxyId,
-      server: {
-        name: input.entryName,
-        transport,
-      },
-    };
-
-    return await addServerMutation.mutateAsync(addServerInput);
+      return await addServerMutation.mutateAsync({
+        playbookId: input.playbookId,
+        server: {
+          name: input.entryName,
+          transport,
+        },
+      });
+    } finally {
+      setIsTransportLoading(false);
+    }
   };
 
   return {
     install,
-    isPending: addServerMutation.isPending,
+    isPending: addServerMutation.isPending || isTransportLoading,
   };
 }

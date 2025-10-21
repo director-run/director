@@ -5,7 +5,7 @@ type DeletePromptOptions = Parameters<
 >[0];
 
 export function useDeletePrompt(
-  proxyId: string,
+  playbookId: string,
   options?: DeletePromptOptions,
 ) {
   const utils = gatewayClient.useUtils();
@@ -13,9 +13,9 @@ export function useDeletePrompt(
   const mutation = gatewayClient.store.removePrompt.useMutation({
     async onSuccess(response, variables, context, meta) {
       await Promise.all([
-        utils.store.get.invalidate({ proxyId }),
+        utils.store.get.invalidate({ playbookId }),
         utils.store.getAll.invalidate(),
-        utils.store.listPrompts?.invalidate?.({ proxyId }),
+        utils.store.listPrompts?.invalidate?.({ playbookId }),
       ]);
       if (options?.onSuccess) {
         await options.onSuccess(response, variables, context, meta);
@@ -28,7 +28,7 @@ export function useDeletePrompt(
 
   const deletePrompt = async (promptName: string) => {
     await mutation.mutateAsync({
-      proxyId,
+      playbookId,
       promptName,
     });
   };

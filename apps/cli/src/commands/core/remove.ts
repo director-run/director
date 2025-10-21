@@ -5,18 +5,18 @@ import { gatewayClient } from "../../client";
 
 export function registerRemoveCommand(program: DirectorCommand) {
   return program
-    .command("remove <proxyId> <serverName>")
-    .description("Remove a server from a proxy")
+    .command("remove <playbookId> <serverName>")
+    .description("Remove a server from a playbook")
     .action(
-      actionWithErrorHandler(async (proxyId: string, serverName: string) => {
+      actionWithErrorHandler(async (playbookId: string, serverName: string) => {
         await spinnerWrap(() =>
           gatewayClient.store.removeServer.mutate({
-            proxyId,
+            playbookId: playbookId,
             serverName,
           }),
         )
           .start("removing server...")
-          .succeed(`Server ${serverName} removed from ${proxyId}`)
+          .succeed(`Server ${serverName} removed from ${playbookId}`)
           .run();
       }),
     );

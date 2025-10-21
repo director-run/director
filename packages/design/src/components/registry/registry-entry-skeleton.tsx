@@ -32,7 +32,7 @@ export function RegistryEntrySkeleton({ children }: { children?: ReactNode }) {
         loading={true}
       >
         <Button disabled className="ml-auto">
-          Add to proxy
+          Add to playbook
         </Button>
       </LayoutBreadcrumbHeader>
 

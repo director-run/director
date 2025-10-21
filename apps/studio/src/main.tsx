@@ -9,14 +9,14 @@ import { AuthProvider } from "./contexts/auth-context";
 import { useAuth } from "./contexts/auth-context";
 import { BackendProvider } from "./contexts/backend-context";
 import { GlobalErrorBoundary } from "./helpers/global-error-boundry";
-import { useWorkspaces } from "./hooks/use-workspaces";
+import { usePlaybooks } from "./hooks/use-playbooks";
 import { GetStartedPage } from "./pages/get-started";
 import { OAuthCallbackPage } from "./pages/oauth-callback-page";
+import { PlaybookCreatePage } from "./pages/playbook-create-page";
+import { PlaybookDetailPage } from "./pages/playbook-detail-page";
+import { PlaybookTargetDetailPage } from "./pages/playbook-target-detail-page";
 import { RegistryDetailPage } from "./pages/registry-detail-page";
 import { RegistryListPage } from "./pages/registry-list-page";
-import { WorkspaceCreatePage } from "./pages/workspace-create-page";
-import { WorkspaceDetailPage } from "./pages/workspace-detail-page";
-import { WorkspaceTargetDetailPage } from "./pages/workspace-target-detail-page";
 import { RootLayout } from "./root-layout";
 
 import "./fonts.css";
@@ -35,7 +35,7 @@ export const App = () => {
       {/* <Route path="/login" element={<LoginPage />} /> */}
       {/* <Route element={<ProtectedRoute />}> */}
       <Route
-        path="/oauth/:workspaceId/:targetId/callback"
+        path="/oauth/:playbookId/:targetId/callback"
         element={<OAuthCallbackPage />}
       />
       <Route element={<RootLayout />}>
@@ -45,12 +45,12 @@ export const App = () => {
           element={<RegistryDetailPage />}
         />
         {/* <Route path="/settings" element={<SettingsPage />} /> */}
-        <Route path="/:workspaceId" element={<WorkspaceDetailPage />} />
+        <Route path="/:playbookId" element={<PlaybookDetailPage />} />
         <Route
-          path="/:workspaceId/:targetId"
-          element={<WorkspaceTargetDetailPage />}
+          path="/:playbookId/:targetId"
+          element={<PlaybookTargetDetailPage />}
         />
-        <Route path="/new" element={<WorkspaceCreatePage />} />
+        <Route path="/new" element={<PlaybookCreatePage />} />
       </Route>
       <Route path="/get-started" element={<GetStartedPage />} />
       <Route path="*" element={<DefaultRoute />} />
@@ -78,14 +78,14 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 );
 
 function DefaultRoute() {
-  const { data: workspaces, isLoading: isWorkspacesLoading } = useWorkspaces();
+  const { data: playbooks, isLoading: isPlaybooksLoading } = usePlaybooks();
 
-  if (isWorkspacesLoading) {
-    return <div>Initializing Workspaces...</div>;
+  if (isPlaybooksLoading) {
+    return <div>Initializing Playbooks...</div>;
   }
 
-  if (workspaces?.length && workspaces.length > 0) {
-    return <Navigate to={`/${workspaces[0].id}`} replace />;
+  if (playbooks?.length && playbooks.length > 0) {
+    return <Navigate to={`/${playbooks[0].id}`} replace />;
   } else {
     return <Navigate to={"/get-started"} replace />;
   }

@@ -7,24 +7,24 @@ icon: gear
 
 The main way to manage your director instance is via the [CLI](../sdk/cli) or [Studio UI](https://studio.director.run). These tools are functionally equivalent, and ultimately, they both use the same configuration files:
 
-- `~/.director/config.json` - This is the main configuration file that contains the list of proxies, their targets and their configuration.
+- `~/.director/config.json` - This is the main configuration file that contains the list of playbooks, their targets and their configuration.
 - `~/.director/config.env` - This file is not created by default, but can be used to override the service level configuration (which can also be ser via environment variables directly).
 
 *Note: If you'd like to manually edit the configuration files, you'll need to make sure you restart the service for the changes to take effect.*
  
 ## config.json
 
-Your configuration file is a JSON file that defines proxy connections (it’s location is `~/.director/config.json`). Here's how to structure it:
+Your configuration file is a JSON file that defines playbook connections (it's location is `~/.director/config.json`). Here's how to structure it:
 
 ```json
 {
-  // The list of available proxy servers
-  "proxies": [
+  // The list of available playbooks
+  "playbooks": [
     {
-      "id": "unique-proxy-name",
-      "name": "Display Name for Proxy",
-      "description": "What this proxy does (optional)",
-      // The list of servers that this proxy aggregates
+      "id": "unique-playbook-name",
+      "name": "Display Name for Playbook",
+      "description": "What this playbook does (optional)",
+      // The list of servers that this playbook aggregates
       "servers": [
         {
           "name": "stdio-server",
@@ -59,7 +59,7 @@ Your configuration file is a JSON file that defines proxy connections (it’s lo
 
 Each server in the `servers` array supports the following fields:
 
-- **name** (required): A unique identifier for the server within this proxy
+- **name** (required): A unique identifier for the server within this playbook
 - **transport** (required): The transport configuration (either `stdio` or `http`)
 - **add_prefix** (optional, default: `false`): When enabled, all tool names from this server will be prefixed with the server name followed by double underscores (`__`)
 

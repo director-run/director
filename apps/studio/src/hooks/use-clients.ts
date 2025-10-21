@@ -27,7 +27,7 @@ const catalog: Array<Omit<Client, "installed" | "present">> = [
   },
 ];
 
-export function useClients(workspaceId: string): {
+export function useClients(playbookId: string): {
   data?: Client[];
   isLoading: boolean;
 } {
@@ -49,7 +49,7 @@ export function useClients(workspaceId: string): {
             label: meta.label,
             image: meta.image,
             installed: apiClient.installed,
-            present: !!apiClient.workspaces?.some((w) => w.id === workspaceId),
+            present: !!apiClient.playbooks?.some((w) => w.id === playbookId),
           } as Client;
         })
         .filter((c): c is Client => c !== null) ?? []);

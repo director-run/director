@@ -2,9 +2,9 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { GatewayRouterOutputs } from "../../client";
 import { IntegrationTestHarness } from "../../test/integration";
 
-describe("Installer Router", () => {
+describe("Playbook Router", () => {
   let harness: IntegrationTestHarness;
-  let proxy: GatewayRouterOutputs["store"]["create"];
+  let playbook: GatewayRouterOutputs["store"]["create"];
 
   beforeAll(async () => {
     harness = await IntegrationTestHarness.start();
@@ -16,8 +16,8 @@ describe("Installer Router", () => {
 
   beforeEach(async () => {
     await harness.purge();
-    proxy = await harness.client.store.create.mutate({
-      name: "Test Proxy",
+    playbook = await harness.client.store.create.mutate({
+      name: "Test Playbook",
       servers: [harness.getConfigForTarget("echo")],
     });
   });
@@ -25,7 +25,7 @@ describe("Installer Router", () => {
   describe("get", () => {
     it("should not return in memory targets by default", async () => {
       const ret = await harness.client.store.get.query({
-        proxyId: proxy.id,
+        playbookId: playbook.id,
       });
       expect(ret.servers).toHaveLength(1); // Only echo server, prompt manager is filtered out
       expect(ret.servers).not.toContainEqual(

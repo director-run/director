@@ -14,7 +14,7 @@
   "scripts": {
     "lint": "biome check .",
     "format": "biome format --write .",
-    "clean": "rm -rf node_modules .turbo dist/*",
+    "clean": "rm -rf .turbo dist/*",
     "typecheck": "tsc --noEmit",
     "test": "bun run vitest  --fileParallelism=false"
   },

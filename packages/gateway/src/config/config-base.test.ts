@@ -13,7 +13,7 @@ describe("ConfigBase array helpers", () => {
     version: z.string().default("1.0.0"),
     "server.port": z.number(),
     "clients.cursor": z.array(z.string()).default([]),
-    workspaces: z
+    playbooks: z
       .array(
         z.object({
           id: z.string(),
@@ -64,11 +64,11 @@ describe("ConfigBase array helpers", () => {
     });
 
     it("removes by selector from object array", async () => {
-      await config.push("workspaces", { id: "a", name: "A" });
-      await config.push("workspaces", { id: "b", name: "B" });
-      await config.push("workspaces", { id: "c", name: "C" });
-      await config.remove("workspaces", { id: "b" });
-      expect(config.get("workspaces")).toEqual([
+      await config.push("playbooks", { id: "a", name: "A" });
+      await config.push("playbooks", { id: "b", name: "B" });
+      await config.push("playbooks", { id: "c", name: "C" });
+      await config.remove("playbooks", { id: "b" });
+      expect(config.get("playbooks")).toEqual([
         { id: "a", name: "A" },
         { id: "c", name: "C" },
       ]);
@@ -90,10 +90,10 @@ describe("ConfigBase array helpers", () => {
     });
 
     it("finds by selector in object array", async () => {
-      await config.push("workspaces", { id: "a", name: "A" });
-      await config.push("workspaces", { id: "b", name: "B" });
-      await config.push("workspaces", { id: "c", name: "C" });
-      expect(config.find("workspaces", { id: "b" })).toEqual({
+      await config.push("playbooks", { id: "a", name: "A" });
+      await config.push("playbooks", { id: "b", name: "B" });
+      await config.push("playbooks", { id: "c", name: "C" });
+      expect(config.find("playbooks", { id: "b" })).toEqual({
         id: "b",
         name: "B",
       });

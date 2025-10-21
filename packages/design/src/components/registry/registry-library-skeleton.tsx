@@ -23,7 +23,7 @@ export function RegistryLibrarySkeleton({
       <LayoutBreadcrumbHeader
         breadcrumbs={[
           {
-            title: "Loading proxy…",
+            title: "Loading playbook",
           },
         ]}
         loading={true}
@@ -45,7 +45,7 @@ export function RegistryLibrarySkeleton({
               <SectionTitle>Discover MCP servers</SectionTitle>
               <SectionDescription>
                 Find MCP servers for your favourite tools and install them
-                directly to your Director proxies.
+                directly to your Director playbooks.
               </SectionDescription>
             </SectionHeader>
 

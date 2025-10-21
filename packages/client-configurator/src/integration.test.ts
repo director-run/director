@@ -361,7 +361,7 @@ import type { VSCodeConfig } from "./vscode";
   });
 });
 
-describe("getProxyInstalledStatus", () => {
+describe("getPlaybookInstalledStatus", () => {
   test.skip("should work", () => {
     // TODO: implement this
   });

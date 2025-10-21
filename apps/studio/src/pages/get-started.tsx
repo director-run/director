@@ -1,6 +1,6 @@
 import { GetStartedCompleteDialog } from "@director.run/design/components/get-started/get-started-complete-dialog.tsx";
 import { GetStartedInstallServerDialog } from "@director.run/design/components/get-started/get-started-install-server-dialog.tsx";
-import type { FormValues as ProxyFormValues } from "@director.run/design/components/get-started/get-started-proxy-form.tsx";
+import type { PlaybookCreateFormValues } from "@director.run/design/components/get-started/get-started-playbook-form.tsx";
 import { GetStartedPageView } from "@director.run/design/components/pages/get-started.tsx";
 import { FullScreenLoader } from "@director.run/design/components/pages/global/loader.tsx";
 import { toast } from "@director.run/design/components/ui/toast.tsx";
@@ -15,14 +15,16 @@ import {
 import { useClients } from "../hooks/use-clients.ts";
 import { useInstallServerFromRegistry } from "../hooks/use-install-server-from-registry.ts";
 import { useOnboardingProgress } from "../hooks/use-onboarding-progress.ts";
+import { usePlaybooks } from "../hooks/use-playbooks.ts";
 import { useRegistryEntries } from "../hooks/use-registry-entries.ts";
-import { useWorkspaces } from "../hooks/use-workspaces.ts";
 
 export function GetStartedPage() {
   const navigate = useNavigate();
-  // Search and proxy state
+  // Search and playbook state
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentProxyId, setCurrentProxyId] = useState<string | null>(null);
+  const [currentPlaybookId, setCurrentPlaybookId] = useState<string | null>(
+    null,
+  );
 
   // Installer state
   const [selectedRegistryEntryName, setSelectedRegistryEntryName] = useState<
@@ -47,14 +49,14 @@ export function GetStartedPage() {
 
   const utils = trpc.useUtils();
 
-  const proxyListQuery = useWorkspaces();
+  const playbookListQuery = usePlaybooks();
   const registryEntriesQuery = useRegistryEntries({
     pageIndex: 0,
     pageSize: 20,
     searchQuery,
   });
 
-  const listClientsQuery = useClients(currentProxyId as string);
+  const listClientsQuery = useClients(currentPlaybookId as string);
 
   const entryQuery = registryClient.entries.getEntryByName.useQuery(
     {
@@ -65,12 +67,12 @@ export function GetStartedPage() {
     },
   );
 
-  const createProxyMutation = trpc.store.create.useMutation({
+  const createPlaybookMutation = trpc.store.create.useMutation({
     onSuccess: async () => {
       await utils.store.getAll.refetch();
       toast({
-        title: "Proxy created",
-        description: "This proxy was successfully created.",
+        title: "Playbook created",
+        description: "This playbook was successfully created.",
       });
     },
   });
@@ -79,8 +81,8 @@ export function GetStartedPage() {
     onSuccess: () => {
       utils.clients.allClients.invalidate();
       toast({
-        title: "Proxy installed",
-        description: `This proxy was successfully installed`,
+        title: "Playbook installed",
+        description: `This playbook was successfully installed`,
       });
       setIsCompleted(true);
     },
@@ -102,35 +104,38 @@ export function GetStartedPage() {
     onSuccess: (_data) => {
       utils.store.getAll.invalidate();
       toast({
-        title: "Proxy installed",
-        description: "This proxy was successfully installed.",
+        title: "Playbook installed",
+        description: "This playbook was successfully installed.",
       });
       setIsInstallDialogOpen(false);
     },
   });
 
   useEffect(() => {
-    if (proxyListQuery.data && proxyListQuery.data.length === 1) {
-      setCurrentProxyId(proxyListQuery.data[0].id);
+    if (playbookListQuery.data && playbookListQuery.data.length === 1) {
+      setCurrentPlaybookId(playbookListQuery.data[0].id);
     }
-  }, [proxyListQuery.data]);
+  }, [playbookListQuery.data]);
 
   // Derived state
-  const hasData = proxyListQuery.data && registryEntriesQuery.data;
-  const hasProxy = proxyListQuery.data && proxyListQuery.data.length > 0;
-  const currentProxy = hasProxy ? proxyListQuery.data[0] : null;
+  const hasData = playbookListQuery.data && registryEntriesQuery.data;
+  const hasPlaybook =
+    playbookListQuery.data && playbookListQuery.data.length > 0;
+  const currentPlaybook = hasPlaybook ? playbookListQuery.data[0] : null;
 
   // Event handlers
-  const handleProxySubmit: SubmitHandler<ProxyFormValues> = async (values) => {
-    await createProxyMutation.mutateAsync({ ...values, servers: [] });
+  const handlePlaybookSubmit: SubmitHandler<PlaybookCreateFormValues> = async (
+    values,
+  ) => {
+    await createPlaybookMutation.mutateAsync({ ...values, servers: [] });
   };
 
   const handleClientInstall = (client: string) => {
-    if (!currentProxy?.id) {
+    if (!currentPlaybook?.id) {
       return;
     }
     installationMutation.mutate({
-      workspaceId: currentProxy.id,
+      playbookId: currentPlaybook.id,
       clientId: client,
       baseUrl: GATEWAY_URL,
     });
@@ -142,16 +147,16 @@ export function GetStartedPage() {
   };
 
   const handleMcpFormSubmit = async (values: {
-    proxyId?: string;
+    playbookId?: string;
     entryId: string;
     parameters?: Record<string, string>;
   }) => {
-    if (!selectedRegistryEntryName || !values.proxyId) {
+    if (!selectedRegistryEntryName || !values.playbookId) {
       return;
     }
 
     await install({
-      proxyId: values.proxyId,
+      playbookId: values.playbookId,
       entryName: selectedRegistryEntryName,
       parameters: values.parameters ?? {},
     });
@@ -164,22 +169,22 @@ export function GetStartedPage() {
   return (
     <>
       <GetStartedPageView
-        currentWorkspace={currentProxy}
+        currentPlaybook={currentPlaybook}
         registryEntries={registryEntriesQuery.data?.entries ?? []}
         clientStatuses={listClientsQuery.data ?? []}
-        isAddingWorkspaceToClient={installationMutation.isPending}
-        isCreateWorkspaceLoading={createProxyMutation.isPending}
-        onCreateWorkspace={handleProxySubmit}
+        isAddingPlaybookToClient={installationMutation.isPending}
+        isCreatePlaybookLoading={createPlaybookMutation.isPending}
+        onCreatePlaybook={handlePlaybookSubmit}
         searchQuery={searchQuery}
         onSearchQueryChange={setSearchQuery}
         onClickRegistryEntry={handleMcpSelect}
-        onAddWorkspaceToClient={handleClientInstall}
+        onAddPlaybookToClient={handleClientInstall}
       />
 
       {selectedRegistryEntryName && (
         <GetStartedInstallServerDialog
           registryEntry={entryQuery.data}
-          proxies={proxyListQuery.data}
+          playbooks={playbookListQuery.data}
           onClickInstall={handleMcpFormSubmit}
           isInstalling={isInstalling}
           open={isInstallDialogOpen}
@@ -190,7 +195,7 @@ export function GetStartedPage() {
       <GetStartedCompleteDialog
         open={isCompleted}
         onClickLibrary={() => navigate("/library")}
-        onClickWorkspace={() => navigate("/")}
+        onClickPlaybook={() => navigate("/")}
       />
     </>
   );

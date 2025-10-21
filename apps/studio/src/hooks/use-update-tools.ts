@@ -6,14 +6,14 @@ type UpdateToolsOptions = {
 };
 
 export function useUpdateTools(
-  workspaceId: string,
+  playbookId: string,
   options?: UpdateToolsOptions,
 ) {
   const utils = gatewayClient.useUtils();
 
   const mutation = gatewayClient.tools.updateBatch.useMutation({
     onSuccess: async () => {
-      await utils.tools.list.invalidate({ workspaceId });
+      await utils.tools.list.invalidate({ playbookId });
       if (options?.onSuccess) {
         await options.onSuccess();
       }
@@ -29,7 +29,7 @@ export function useUpdateTools(
     tools: { name: string; disabled: boolean; serverName: string }[],
   ) => {
     await mutation.mutateAsync({
-      workspaceId,
+      playbookId,
       tools,
     });
   };

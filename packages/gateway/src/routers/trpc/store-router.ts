@@ -6,17 +6,17 @@ import {
   type ServerConfigEntry,
   ServerConfigEntrySchema,
 } from "../../config/config-schema";
-import type { WorkspaceTarget } from "../../workspaces/workspace";
-import { WorkspaceStore } from "../../workspaces/workspace-store";
+import type { PlaybookTarget } from "../../playbooks/playbook";
+import { PlaybookStore } from "../../playbooks/playbook-store";
 
-const ProxyCreateSchema = z.object({
+const PlaybookCreateSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
   servers: z.array(ServerConfigEntrySchema).optional(),
   addToolPrefix: z.boolean().optional(),
 });
 
-const ProxyUpdateSchema = ProxyCreateSchema.omit({
+const PlaybookUpdateSchema = PlaybookCreateSchema.omit({
   servers: true,
 }).partial();
 
@@ -31,62 +31,66 @@ const PromptSchema = z.object({
   body: z.string(),
 });
 
-export function createProxyStoreRouter({
-  workspaceStore: proxyStore,
-}: { workspaceStore: WorkspaceStore }) {
+export function createPlaybookStoreRouter({
+  playbookStore,
+}: { playbookStore: PlaybookStore }) {
   return t.router({
     getAll: t.procedure.query(async () => {
       return await Promise.all(
-        await proxyStore.getAll().map((proxy) => proxy.toPlainObject()),
+        await playbookStore
+          .getAll()
+          .map((playbook) => playbook.toPlainObject()),
       );
     }),
 
     get: t.procedure
       .input(
         z.object({
-          proxyId: z.string(),
+          playbookId: z.string(),
           queryParams: z.object({}).optional(),
         }),
       )
       .query(async ({ input }) => {
-        const proxy = await proxyStore.get(input.proxyId);
-        return await proxy.toPlainObject();
+        const playbook = await playbookStore.get(input.playbookId);
+        return await playbook.toPlainObject();
       }),
 
-    create: t.procedure.input(ProxyCreateSchema).mutation(async ({ input }) => {
-      return (
-        await proxyStore.create({
-          name: input.name,
-          description: input.description ?? undefined,
-          servers: input.servers?.map(oldServerToTargetParams),
-        })
-      ).toPlainObject();
-    }),
+    create: t.procedure
+      .input(PlaybookCreateSchema)
+      .mutation(async ({ input }) => {
+        return (
+          await playbookStore.create({
+            name: input.name,
+            description: input.description ?? undefined,
+            servers: input.servers?.map(oldServerToTargetParams),
+          })
+        ).toPlainObject();
+      }),
     update: t.procedure
       .input(
         z.object({
-          proxyId: z.string(),
-          attributes: ProxyUpdateSchema,
+          playbookId: z.string(),
+          attributes: PlaybookUpdateSchema,
         }),
       )
       .mutation(async ({ input }) => {
-        const workspace = await proxyStore.get(input.proxyId);
-        const updated = await workspace.update({
+        const playbook = await playbookStore.get(input.playbookId);
+        const updated = await playbook.update({
           name: input.attributes.name,
           description: input.attributes.description ?? undefined,
         });
         return await updated.toPlainObject();
       }),
     delete: t.procedure
-      .input(z.object({ proxyId: z.string() }))
+      .input(z.object({ playbookId: z.string() }))
       .mutation(async ({ input }) => {
-        await proxyStore.delete(input.proxyId);
+        await playbookStore.delete(input.playbookId);
         return { success: true };
       }),
     addServer: t.procedure
       .input(
         z.object({
-          proxyId: z.string(),
+          playbookId: z.string(),
           server: ServerConfigEntrySchema,
           queryParams: z
             .object({
@@ -96,9 +100,9 @@ export function createProxyStoreRouter({
         }),
       )
       .mutation(async ({ input }) => {
-        const proxy = await proxyStore.get(input.proxyId);
+        const playbook = await playbookStore.get(input.playbookId);
 
-        const target = await proxy.addTarget(
+        const target = await playbook.addTarget(
           oldServerToTargetParams(input.server),
         );
 
@@ -111,7 +115,7 @@ export function createProxyStoreRouter({
     updateServer: t.procedure
       .input(
         z.object({
-          proxyId: z.string(),
+          playbookId: z.string(),
           serverName: z.string(),
           attributes: TargetUpdateSchema,
           queryParams: z
@@ -122,8 +126,8 @@ export function createProxyStoreRouter({
         }),
       )
       .mutation(async ({ input }) => {
-        const proxy = await proxyStore.get(input.proxyId);
-        const server = await proxy.updateTarget(
+        const playbook = await playbookStore.get(input.playbookId);
+        const server = await playbook.updateTarget(
           input.serverName,
           input.attributes,
         );
@@ -136,7 +140,7 @@ export function createProxyStoreRouter({
     getServer: t.procedure
       .input(
         z.object({
-          proxyId: z.string(),
+          playbookId: z.string(),
           serverName: z.string(),
           queryParams: z
             .object({
@@ -146,8 +150,8 @@ export function createProxyStoreRouter({
         }),
       )
       .query(async ({ input }) => {
-        const proxy = await proxyStore.get(input.proxyId);
-        const target = await proxy.getTarget(input.serverName);
+        const playbook = await playbookStore.get(input.playbookId);
+        const target = await playbook.getTarget(input.serverName);
 
         return await target.toPlainObject({
           tools: input.queryParams?.includeTools,
@@ -156,10 +160,10 @@ export function createProxyStoreRouter({
       }),
 
     authenticate: t.procedure
-      .input(z.object({ proxyId: z.string(), serverName: z.string() }))
+      .input(z.object({ playbookId: z.string(), serverName: z.string() }))
       .query(async ({ input }) => {
-        const proxy = await proxyStore.get(input.proxyId);
-        const target = await proxy.getTarget(input.serverName);
+        const playbook = await playbookStore.get(input.playbookId);
+        const target = await playbook.getTarget(input.serverName);
 
         if (target instanceof HTTPClient) {
           if (target.status === "connected") {
@@ -179,10 +183,10 @@ export function createProxyStoreRouter({
       }),
 
     logout: t.procedure
-      .input(z.object({ proxyId: z.string(), serverName: z.string() }))
+      .input(z.object({ playbookId: z.string(), serverName: z.string() }))
       .mutation(async ({ input }) => {
-        const proxy = await proxyStore.get(input.proxyId);
-        const target = await proxy.getTarget(input.serverName);
+        const playbook = await playbookStore.get(input.playbookId);
+        const target = await playbook.getTarget(input.serverName);
         if (target instanceof HTTPClient) {
           await target.logout();
         } else {
@@ -193,18 +197,18 @@ export function createProxyStoreRouter({
         }
       }),
 
-    purge: t.procedure.mutation(() => proxyStore.purge()),
+    purge: t.procedure.mutation(() => playbookStore.purge()),
 
     removeServer: t.procedure
       .input(
         z.object({
-          proxyId: z.string(),
+          playbookId: z.string(),
           serverName: z.string(),
         }),
       )
       .mutation(async ({ input }) => {
-        const proxy = await proxyStore.get(input.proxyId);
-        const server = await proxy.removeTarget(input.serverName);
+        const playbook = await playbookStore.get(input.playbookId);
+        const server = await playbook.removeTarget(input.serverName);
         return await server.toPlainObject({
           connectionInfo: true,
         });
@@ -213,59 +217,60 @@ export function createProxyStoreRouter({
     addPrompt: t.procedure
       .input(
         z.object({
-          proxyId: z.string(),
+          playbookId: z.string(),
           prompt: PromptSchema,
         }),
       )
       .mutation(async ({ input }) => {
-        const proxy = await proxyStore.get(input.proxyId);
-        const prompt = await proxy.addPrompt(input.prompt);
+        const playbook = await playbookStore.get(input.playbookId);
+        const prompt = await playbook.addPrompt(input.prompt);
         return prompt;
       }),
 
     removePrompt: t.procedure
       .input(
         z.object({
-          proxyId: z.string(),
+          playbookId: z.string(),
           promptName: z.string(),
         }),
       )
       .mutation(async ({ input }) => {
-        const proxy = await proxyStore.get(input.proxyId);
-        const result = await proxy.removePrompt(input.promptName);
+        const playbook = await playbookStore.get(input.playbookId);
+        const result = await playbook.removePrompt(input.promptName);
         return result;
       }),
 
     updatePrompt: t.procedure
       .input(
         z.object({
-          proxyId: z.string(),
+          playbookId: z.string(),
           promptName: z.string(),
           prompt: PromptSchema.partial(),
         }),
       )
       .mutation(async ({ input }) => {
-        const proxy = await proxyStore.get(input.proxyId);
-        const prompt = await proxy.updatePrompt(input.promptName, input.prompt);
+        const playbook = await playbookStore.get(input.playbookId);
+        const prompt = await playbook.updatePrompt(
+          input.promptName,
+          input.prompt,
+        );
         return prompt;
       }),
 
     listPrompts: t.procedure
       .input(
         z.object({
-          proxyId: z.string(),
+          playbookId: z.string(),
         }),
       )
       .query(async ({ input }) => {
-        const proxy = await proxyStore.get(input.proxyId);
-        return await proxy.listPrompts();
+        const playbook = await playbookStore.get(input.playbookId);
+        return await playbook.listPrompts();
       }),
   });
 }
 
-const oldServerToTargetParams = (
-  server: ServerConfigEntry,
-): WorkspaceTarget => {
+const oldServerToTargetParams = (server: ServerConfigEntry): PlaybookTarget => {
   if (server.transport.type === "http") {
     return {
       type: server.transport.type,

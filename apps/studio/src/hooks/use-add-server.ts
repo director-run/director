@@ -11,7 +11,7 @@ export function useAddServer(options?: AddServerMutationOptions) {
     ...options,
     async onSuccess(data, variables, context, meta) {
       await utils.store.getAll.invalidate();
-      await utils.store.get.invalidate({ proxyId: variables.proxyId });
+      await utils.store.get.invalidate({ playbookId: variables.playbookId });
       await options?.onSuccess?.(data, variables, context, meta);
     },
   });

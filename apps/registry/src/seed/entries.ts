@@ -26,7 +26,7 @@ export const entries: EntryCreateParams[] = [
     homepage: "https://github.com/crystaldba/postgres-mcp",
     transport: {
       type: "stdio",
-      command: "uvx",
+      command: "uv",
       args: ["run", "postgres-mcp", "--access-mode=unrestricted"],
       env: {
         DATABASE_URI: "<database-uri>",

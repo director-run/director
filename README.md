@@ -1,5 +1,5 @@
 <h1 align="center">Director</h1>
-<p align="center">Playbooks for AI agents</p>
+<p align="center">MCP Playbooks for AI agents</p>
 
 <p align="center"><code>curl -LsSf https://director.run/install.sh | sh</code></p>
 

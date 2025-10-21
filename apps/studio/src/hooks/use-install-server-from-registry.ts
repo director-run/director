@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { gatewayClient, registryClient } from "../contexts/backend-context";
 
 type InstallFromRegistryInput = {
@@ -15,6 +16,7 @@ export function useInstallServerFromRegistry(
 ) {
   const gatewayUtils = gatewayClient.useUtils();
   const registryUtils = registryClient.useUtils();
+  const [isTransportLoading, setIsTransportLoading] = useState(false);
 
   const addServerMutation = gatewayClient.store.addServer.useMutation({
     async onSuccess(data, variables, context, meta) {
@@ -48,24 +50,27 @@ export function useInstallServerFromRegistry(
   });
 
   const install = async (input: InstallFromRegistryInput) => {
-    const transport = await registryUtils.entries.getTransportForEntry.fetch({
-      entryName: input.entryName,
-      parameters: input.parameters ?? {},
-    });
+    try {
+      setIsTransportLoading(true);
+      const transport = await registryUtils.entries.getTransportForEntry.fetch({
+        entryName: input.entryName,
+        parameters: input.parameters ?? {},
+      });
 
-    const addServerInput = {
-      playbookId: input.playbookId,
-      server: {
-        name: input.entryName,
-        transport,
-      },
-    };
-
-    return await addServerMutation.mutateAsync(addServerInput);
+      return await addServerMutation.mutateAsync({
+        playbookId: input.playbookId,
+        server: {
+          name: input.entryName,
+          transport,
+        },
+      });
+    } finally {
+      setIsTransportLoading(false);
+    }
   };
 
   return {
     install,
-    isPending: addServerMutation.isPending,
+    isPending: addServerMutation.isPending || isTransportLoading,
   };
 }

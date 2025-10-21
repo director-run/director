@@ -248,7 +248,7 @@ export const FullyInstalled: Story = {
 };
 
 // 4. No playbooks provided (undefined) - should show form without playbook dropdown
-export const UndefinedProxies: Story = {
+export const UndefinedPlaybooks: Story = {
   args: {
     entry: mockRegistryEntry,
     onClickInstall: async () => {},
@@ -257,7 +257,7 @@ export const UndefinedProxies: Story = {
 };
 
 // 5. Empty playbooks array - should show "already installed" message
-export const EmptyProxies: Story = {
+export const EmptyPlaybooks: Story = {
   args: {
     entry: mockRegistryEntry,
     onClickInstall: async () => {},

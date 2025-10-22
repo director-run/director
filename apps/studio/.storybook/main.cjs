@@ -8,7 +8,7 @@ const config = {
     name: "@storybook/react-vite",
     options: {},
   },
-  staticDirs: ["../public"],
+  staticDirs: ["../src/assets"],
   typescript: {
     reactDocgen: "react-docgen-typescript",
   },

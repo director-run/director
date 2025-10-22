@@ -4,14 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "bun run clean && BASE_PATH=/studio vite build",
+    "build": "bun run clean && BASE_PATH=/studio vite build && bun run storybook:build",
     "preview": "vite preview",
     "serve": "bun run server/index.ts",
     "clean": "rm -rf .turbo dist/*",
     "start": "bun run build && BASE_PATH=/studio bun run serve",
     "typecheck": "tsc --noEmit",
     "lint": "biome check ./src && biome check ./server",
-    "format": "biome format --write ./src && biome format --write ./server"
+    "format": "biome format --write ./src && biome format --write ./server",
+    "storybook:dev": "storybook dev -p 6006",
+    "storybook:build": "storybook build -o dist-storybook/"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.14",
@@ -21,7 +23,13 @@
     "@types/react-dom": "^19.1.5",
     "@vitejs/plugin-react": "^5.0.2",
     "typescript": "^5.8.3",
-    "vite": "^7.1.5"
+    "vite": "^7.1.5",
+    "@chromatic-com/storybook": "^4.1.1",
+    "@storybook/addon-docs": "^9.1.5",
+    "@storybook/addon-onboarding": "^9.1.5",
+    "@storybook/react": "^9.1.5",
+    "@storybook/react-vite": "^9.1.5",
+    "storybook": "^9.1.5"
   },
   "dependencies": {
     "@director.run/client-configurator": "workspace:*",

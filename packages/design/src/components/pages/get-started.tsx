@@ -98,7 +98,7 @@ export function GetStartedPageView(props: GetStartedPageViewProps) {
       <Section className="gap-y-8">
         <GetStartedHeader
           title="Get started"
-          description="Let's get you set up with Director."
+          description="Let's get you set up with Director"
         />
 
         <GetStartedList>
@@ -119,7 +119,7 @@ export function GetStartedPageView(props: GetStartedPageViewProps) {
 
           <GetStartedListItem
             status={steps.add}
-            title="2. Add your first MCP server"
+            title="2. Add an MCP server"
             open={steps.add === "in-progress"}
             disabled={steps.add !== "in-progress"}
           >
@@ -156,7 +156,7 @@ export function GetStartedPageView(props: GetStartedPageViewProps) {
           </GetStartedListItem>
           <GetStartedListItem
             status={steps.connect}
-            title="4. Connect your first client"
+            title="4. Connect your client"
             open={steps.connect === "in-progress"}
             disabled={steps.connect !== "in-progress"}
           >

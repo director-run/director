@@ -1,3 +1,4 @@
+import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { Config } from "@director.run/gateway/config/index";
@@ -8,6 +9,7 @@ import {
 } from "@director.run/utilities/env";
 import { findFirstMatch } from "@director.run/utilities/fs";
 import { Telemetry } from "@director.run/utilities/telemetry";
+
 import packageJson from "../package.json" assert { type: "json" };
 
 const SEGMENT_PRODUCTION_WRITE_KEY = "Z8wjEfWMFnlltCpGPPWlvsEQH1aVEUH3";
@@ -45,6 +47,10 @@ function getOauthDefaults() {
     };
   }
 }
+
+const configDir = path.dirname(getConfigFilePath());
+
+await fs.mkdir(configDir, { recursive: true });
 
 export const config = await Config.createFileBasedConfig({
   filePath: getConfigFilePath(),

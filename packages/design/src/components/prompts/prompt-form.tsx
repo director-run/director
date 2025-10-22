@@ -42,7 +42,7 @@ export function PromptForm({
   useEffect(() => {
     if (prompt) {
       form.reset({
-        title: prompt.title ?? prompt.name,
+        title: prompt.title ?? "",
         description: prompt.description ?? "",
         body: prompt.body ?? "",
       });

@@ -93,7 +93,7 @@ export function GetStartedPageView(props: GetStartedPageViewProps) {
       <Section className="gap-y-8">
         <GetStartedHeader
           title="Get started"
-          description="Let's get you started with MCP using Director."
+          description="Let's get you set up with Director."
         />
 
         <GetStartedList>

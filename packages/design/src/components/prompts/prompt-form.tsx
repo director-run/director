@@ -23,6 +23,7 @@ export interface PromptFormProps {
   onSubmit: (data: PromptFormData) => Promise<void> | void;
   isSubmitting?: boolean;
   onDelete?: () => Promise<void> | void;
+  secondaryButton?: React.ReactNode;
 }
 
 export function PromptForm({
@@ -30,6 +31,7 @@ export function PromptForm({
   onSubmit,
   isSubmitting = false,
   onDelete,
+  secondaryButton,
 }: PromptFormProps) {
   const form = useForm<PromptFormData>({
     resolver: zodResolver(PromptSchema),
@@ -77,6 +79,7 @@ export function PromptForm({
           >
             {isSubmitting ? "Saving…" : "Save"}
           </Button>
+          {secondaryButton}
           {prompt && onDelete && (
             <Button type="button" variant="secondary" onClick={onDelete}>
               <TrashIcon />

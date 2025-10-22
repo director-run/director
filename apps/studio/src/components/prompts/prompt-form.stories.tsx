@@ -1,4 +1,5 @@
 import { PromptForm } from "@director.run/design/components/prompts/prompt-form.tsx";
+import { Button } from "@director.run/design/components/ui/button.tsx";
 import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
@@ -82,4 +83,42 @@ export const ValidationPartial: Story = {
       <PromptForm {...args} />
     </div>
   ),
+};
+
+// With secondary button
+export const WithSecondaryButton: Story = {
+  args: {
+    prompt: null,
+    secondaryButton: (
+      <Button
+        type="button"
+        variant="secondary"
+        onClick={() => console.log("Preview clicked")}
+      >
+        Preview
+      </Button>
+    ),
+  },
+};
+
+// Editing with secondary button and delete
+export const EditingWithSecondaryAndDelete: Story = {
+  args: {
+    prompt: {
+      name: "Code Review Assistant",
+      title: "Code Review Assistant",
+      description: "A helpful assistant for reviewing code changes",
+      body: "Please review the following code changes and provide feedback on:\n\n1. Code quality and best practices\n2. Potential bugs or issues\n3. Performance considerations\n4. Security implications\n\nBe constructive and specific in your feedback.",
+    },
+    onDelete: () => console.log("onDelete"),
+    secondaryButton: (
+      <Button
+        type="button"
+        variant="secondary"
+        onClick={() => console.log("Test clicked")}
+      >
+        Test Prompt
+      </Button>
+    ),
+  },
 };

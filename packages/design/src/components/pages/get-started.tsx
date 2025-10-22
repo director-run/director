@@ -13,6 +13,7 @@ import {
   type PlaybookCreateFormValues as PlaybookFormValues,
 } from "../get-started/get-started-playbook-form";
 import { playbookSchema } from "../get-started/get-started-playbook-form";
+import { PromptForm, type PromptFormData } from "../prompts/prompt-form";
 import type { RegistryEntryList } from "../types";
 import type { Client } from "../types.ts";
 import { Button } from "../ui/button";
@@ -41,6 +42,8 @@ export interface GetStartedPageViewProps {
   // Prompt step
   isPromptCompleted: boolean;
   onSkipPrompt: () => void;
+  onPromptFormSubmit: (data: PromptFormData) => Promise<void> | void;
+  isPromptSubmitting: boolean;
 }
 
 export function GetStartedPageView(props: GetStartedPageViewProps) {
@@ -57,6 +60,8 @@ export function GetStartedPageView(props: GetStartedPageViewProps) {
     onAddPlaybookToClient,
     isPromptCompleted,
     onSkipPrompt,
+    onPromptFormSubmit,
+    isPromptSubmitting,
   } = props;
 
   const [selectedClient, setSelectedClient] = useState<string | undefined>();
@@ -131,11 +136,22 @@ export function GetStartedPageView(props: GetStartedPageViewProps) {
             open={steps.prompt === "in-progress"}
             disabled={steps.prompt !== "in-progress"}
           >
-            <div className="flex items-center justify-between py-4 pr-4 pl-11.5">
-              <p className="text-[13px] text-fg-subtle">Dummy prompt content</p>
-              <Button size="sm" variant="ghost" onClick={onSkipPrompt}>
-                Skip for now
-              </Button>
+            <div className="py-4 pr-4 pl-4">
+              <PromptForm
+                onSubmit={onPromptFormSubmit}
+                isSubmitting={isPromptSubmitting}
+                secondaryButton={
+                  <Button
+                    variant="secondary"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onSkipPrompt();
+                    }}
+                  >
+                    Skip
+                  </Button>
+                }
+              />
             </div>
           </GetStartedListItem>
           <GetStartedListItem

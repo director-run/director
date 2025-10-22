@@ -25,6 +25,8 @@ const meta = {
     onAddPlaybookToClient: () => {},
     isPromptCompleted: false,
     onSkipPrompt: () => {},
+    onPromptFormSubmit: async () => {},
+    isPromptSubmitting: false,
     // Accept any since storybook args typing requires this prop
     onCreatePlaybook: async () => {},
   },
@@ -56,6 +58,8 @@ export const Step1a_NewPlaybook: Story = {
     clientStatuses: mockClients,
     isAddingPlaybookToClient: false,
     isCreatePlaybookLoading: false,
+    onPromptFormSubmit: async () => {},
+    isPromptSubmitting: false,
   },
 };
 
@@ -67,6 +71,8 @@ export const Step1b_NewPlaybookLoading: Story = {
     clientStatuses: mockClients,
     isAddingPlaybookToClient: false,
     isCreatePlaybookLoading: true,
+    onPromptFormSubmit: async () => {},
+    isPromptSubmitting: false,
   },
 };
 
@@ -79,6 +85,8 @@ export const Step2a_RegistryEntryList: Story = {
     isAddingPlaybookToClient: false,
     isCreatePlaybookLoading: false,
     isPromptCompleted: false,
+    onPromptFormSubmit: async () => {},
+    isPromptSubmitting: false,
   },
 };
 
@@ -90,6 +98,8 @@ export const Step2b_RegistryEntryDetail: Story = {
     clientStatuses: mockClients,
     isAddingPlaybookToClient: false,
     isCreatePlaybookLoading: false,
+    onPromptFormSubmit: async () => {},
+    isPromptSubmitting: false,
   },
   render: (args) => {
     const [open, setOpen] = useState(true);
@@ -118,6 +128,8 @@ export const Step3_PromptStep: Story = {
     isAddingPlaybookToClient: false,
     isCreatePlaybookLoading: false,
     isPromptCompleted: false,
+    onPromptFormSubmit: async () => {},
+    isPromptSubmitting: false,
   },
 };
 
@@ -130,6 +142,8 @@ export const Step4_ClientInstallers: Story = {
     isAddingPlaybookToClient: false,
     isCreatePlaybookLoading: false,
     isPromptCompleted: true,
+    onPromptFormSubmit: async () => {},
+    isPromptSubmitting: false,
   },
 };
 
@@ -142,6 +156,8 @@ export const Step4b_ClientInstallLoading: Story = {
     isAddingPlaybookToClient: true,
     isCreatePlaybookLoading: false,
     isPromptCompleted: true,
+    onPromptFormSubmit: async () => {},
+    isPromptSubmitting: false,
   },
 };
 

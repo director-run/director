@@ -26,6 +26,9 @@ export function GetStartedPage() {
     null,
   );
 
+  // Prompt step state
+  const [isPromptCompleted, setIsPromptCompleted] = useState(false);
+
   // Installer state
   const [selectedRegistryEntryName, setSelectedRegistryEntryName] = useState<
     string | null
@@ -179,6 +182,8 @@ export function GetStartedPage() {
         onSearchQueryChange={setSearchQuery}
         onClickRegistryEntry={handleMcpSelect}
         onAddPlaybookToClient={handleClientInstall}
+        isPromptCompleted={isPromptCompleted}
+        onSkipPrompt={() => setIsPromptCompleted(true)}
       />
 
       {selectedRegistryEntryName && (

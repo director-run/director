@@ -23,6 +23,8 @@ const meta = {
     onSearchQueryChange: () => {},
     onClickRegistryEntry: () => {},
     onAddPlaybookToClient: () => {},
+    isPromptCompleted: false,
+    onSkipPrompt: () => {},
     // Accept any since storybook args typing requires this prop
     onCreatePlaybook: async () => {},
   },
@@ -76,6 +78,7 @@ export const Step2a_RegistryEntryList: Story = {
     clientStatuses: mockClients,
     isAddingPlaybookToClient: false,
     isCreatePlaybookLoading: false,
+    isPromptCompleted: false,
   },
 };
 
@@ -106,30 +109,44 @@ export const Step2b_RegistryEntryDetail: Story = {
   },
 };
 
-// step 3: client installers (playbook with a server)
-export const Step3_ClientInstallers: Story = {
+// step 3: prompt step (playbook with a server, prompt not completed)
+export const Step3_PromptStep: Story = {
   args: {
     currentPlaybook: { id: "playbook-1", servers: [{ name: "github-mcp" }] },
     registryEntries: mockRegistryEntryList,
     clientStatuses: mockClients,
     isAddingPlaybookToClient: false,
     isCreatePlaybookLoading: false,
+    isPromptCompleted: false,
   },
 };
 
-// step 3b: client install loading
-export const Step3b_ClientInstallLoading: Story = {
+// step 4: client installers (playbook with a server, prompt completed)
+export const Step4_ClientInstallers: Story = {
+  args: {
+    currentPlaybook: { id: "playbook-1", servers: [{ name: "github-mcp" }] },
+    registryEntries: mockRegistryEntryList,
+    clientStatuses: mockClients,
+    isAddingPlaybookToClient: false,
+    isCreatePlaybookLoading: false,
+    isPromptCompleted: true,
+  },
+};
+
+// step 4b: client install loading
+export const Step4b_ClientInstallLoading: Story = {
   args: {
     currentPlaybook: { id: "playbook-1", servers: [{ name: "github-mcp" }] },
     registryEntries: mockRegistryEntryList,
     clientStatuses: mockClients,
     isAddingPlaybookToClient: true,
     isCreatePlaybookLoading: false,
+    isPromptCompleted: true,
   },
 };
 
-// step 4: final dialog
-export const Step4_CompleteDialog: Story = {
+// step 5: final dialog
+export const Step5_CompleteDialog: Story = {
   args: {},
   render: () => (
     <GetStartedCompleteDialog

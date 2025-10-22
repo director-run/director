@@ -15,6 +15,7 @@ import {
 import { playbookSchema } from "../get-started/get-started-playbook-form";
 import type { RegistryEntryList } from "../types";
 import type { Client } from "../types.ts";
+import { Button } from "../ui/button";
 import { Container } from "../ui/container";
 import { Section } from "../ui/section";
 
@@ -37,6 +38,9 @@ export interface GetStartedPageViewProps {
   onAddPlaybookToClient: (clientId: string) => void;
   clientStatuses: Client[];
   isAddingPlaybookToClient: boolean;
+  // Prompt step
+  isPromptCompleted: boolean;
+  onSkipPrompt: () => void;
 }
 
 export function GetStartedPageView(props: GetStartedPageViewProps) {
@@ -51,6 +55,8 @@ export function GetStartedPageView(props: GetStartedPageViewProps) {
     onSearchQueryChange,
     onClickRegistryEntry,
     onAddPlaybookToClient,
+    isPromptCompleted,
+    onSkipPrompt,
   } = props;
 
   const [selectedClient, setSelectedClient] = useState<string | undefined>();
@@ -69,11 +75,18 @@ export function GetStartedPageView(props: GetStartedPageViewProps) {
         ? "completed"
         : "in-progress"
       : "not-started";
-    // With simplified props, we consider connect step "in-progress" until user triggers install
+    const prompt: StepStatus =
+      hasPlaybook && hasServers
+        ? isPromptCompleted
+          ? "completed"
+          : "in-progress"
+        : "not-started";
     const connect: StepStatus =
-      hasPlaybook && hasServers ? "in-progress" : "not-started";
-    return { create, add, connect };
-  }, [hasPlaybook, hasServers]);
+      hasPlaybook && hasServers && isPromptCompleted
+        ? "in-progress"
+        : "not-started";
+    return { create, add, prompt, connect };
+  }, [hasPlaybook, hasServers, isPromptCompleted]);
 
   return (
     <Container size="sm" className="py-12 lg:py-16">
@@ -86,7 +99,7 @@ export function GetStartedPageView(props: GetStartedPageViewProps) {
         <GetStartedList>
           <GetStartedListItem
             status={steps.create}
-            title="Create a Playbook"
+            title="1. Create a Playbook"
             disabled={steps.create === "completed"}
             open={steps.create === "in-progress"}
           >
@@ -101,7 +114,7 @@ export function GetStartedPageView(props: GetStartedPageViewProps) {
 
           <GetStartedListItem
             status={steps.add}
-            title="Add your first MCP server"
+            title="2. Add your first MCP server"
             open={steps.add === "in-progress"}
             disabled={steps.add !== "in-progress"}
           >
@@ -112,10 +125,22 @@ export function GetStartedPageView(props: GetStartedPageViewProps) {
               onMcpSelect={onClickRegistryEntry}
             />
           </GetStartedListItem>
-
+          <GetStartedListItem
+            status={steps.prompt}
+            title="3. Add a Prompt"
+            open={steps.prompt === "in-progress"}
+            disabled={steps.prompt !== "in-progress"}
+          >
+            <div className="flex items-center justify-between py-4 pr-4 pl-11.5">
+              <p className="text-[13px] text-fg-subtle">Dummy prompt content</p>
+              <Button size="sm" variant="ghost" onClick={onSkipPrompt}>
+                Skip for now
+              </Button>
+            </div>
+          </GetStartedListItem>
           <GetStartedListItem
             status={steps.connect}
-            title="Connect your first client"
+            title="4. Connect your first client"
             open={steps.connect === "in-progress"}
             disabled={steps.connect !== "in-progress"}
           >

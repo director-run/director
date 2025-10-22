@@ -67,7 +67,7 @@ export class VSCodeInstaller extends AbstractClient<VSCodeConfig> {
         `server '${name}' is not installed`,
       );
     }
-    this.logger.info(`uninstalling ${name}`);
+    this.logger.debug(`uninstalling ${name}`);
     const newConfig: VSCodeConfig = {
       ...this.config,
       mcp: {
@@ -100,7 +100,7 @@ export class VSCodeInstaller extends AbstractClient<VSCodeConfig> {
         `server '${entry.name}' is already installed`,
       );
     }
-    this.logger.info(`installing ${entry.name}`);
+    this.logger.debug(`installing ${entry.name}`);
     const newConfig: VSCodeConfig = {
       ...this.config,
       mcp: {
@@ -120,7 +120,7 @@ export class VSCodeInstaller extends AbstractClient<VSCodeConfig> {
   public async restart() {
     await this.initialize();
     if (!isTest()) {
-      this.logger.info("restarting vscode");
+      this.logger.debug("restarting vscode");
       await os.restartApp(App.VSCODE);
     } else {
       this.logger.warn("skipping restart of vscode in test environment");
@@ -129,7 +129,7 @@ export class VSCodeInstaller extends AbstractClient<VSCodeConfig> {
 
   public async list(params?: { includeUnmanaged?: boolean }) {
     await this.initialize();
-    this.logger.info("listing servers");
+    this.logger.debug("listing servers");
     return Object.entries(this.config?.mcp.servers ?? {})
       .filter(([name]) =>
         params?.includeUnmanaged ? true : this.isManagedConfigKey(name),
@@ -141,13 +141,13 @@ export class VSCodeInstaller extends AbstractClient<VSCodeConfig> {
   }
 
   public async openConfig() {
-    this.logger.info("opening vscode config");
+    this.logger.debug("opening vscode config");
     await os.openFileInCode(this.configPath);
   }
 
   public async reset(params?: { includeUnmanaged?: boolean }) {
     await this.initialize();
-    this.logger.info("purging vscode config");
+    this.logger.debug("purging vscode config");
     const newConfig: VSCodeConfig = {
       ...this.config,
       mcp: {
@@ -180,7 +180,7 @@ export class VSCodeInstaller extends AbstractClient<VSCodeConfig> {
   }
 
   private async updateConfig(newConfig: VSCodeConfig) {
-    this.logger.info(`writing config to ${this.configPath}`);
+    this.logger.debug(`writing config to ${this.configPath}`);
 
     // Ensure the directory exists
     const configDir = path.dirname(this.configPath);
@@ -191,7 +191,7 @@ export class VSCodeInstaller extends AbstractClient<VSCodeConfig> {
   }
 
   public async createConfig() {
-    this.logger.info(`initializing vscode config`);
+    this.logger.debug(`initializing vscode config`);
     await writeJSONFile(this.configPath, {
       mcp: { servers: {} },
     });

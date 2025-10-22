@@ -26,7 +26,7 @@ export abstract class AbstractClient<T> {
       return;
     }
 
-    this.logger.info(`initializing`);
+    this.logger.debug(`initializing`);
     if (!(await this.isClientPresent())) {
       throw new AppError(
         ErrorCode.COMMAND_NOT_FOUND,

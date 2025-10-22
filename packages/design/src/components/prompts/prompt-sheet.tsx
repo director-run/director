@@ -1,10 +1,5 @@
 "use client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { TrashIcon } from "@phosphor-icons/react";
-import { useEffect } from "react";
 import { useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-import { z } from "zod";
 import type { PlaybookDetail } from "../types";
 import {
   Breadcrumb,
@@ -13,10 +8,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "../ui/breadcrumb";
-import { Button } from "../ui/button";
 import { ConfirmDialog } from "../ui/confirm-dialog";
-import { InputField } from "../ui/form/input-field";
-import { TextareaField } from "../ui/form/textarea-field";
 import { SectionSeparator } from "../ui/section";
 import {
   Sheet,
@@ -27,14 +19,8 @@ import {
   SheetHeader,
   SheetTitle,
 } from "../ui/sheet";
+import { PromptForm, type PromptFormData } from "./prompt-form";
 
-const PromptSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  description: z.string().optional(),
-  body: z.string().min(1, "Body is required"),
-});
-
-type PromptFormData = z.infer<typeof PromptSchema>;
 type Prompt = NonNullable<PlaybookDetail["prompts"]>[number];
 
 export interface PromptSheetProps {
@@ -56,42 +42,13 @@ export function PromptSheet({
 }: PromptSheetProps) {
   const [deleteOpen, setDeleteOpen] = useState(false);
 
-  const form = useForm<PromptFormData>({
-    resolver: zodResolver(PromptSchema),
-    defaultValues: { title: "", description: "", body: "" },
-    mode: "onChange",
-  });
-
   const handleOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen) {
-      if (prompt) {
-        form.reset({
-          title: prompt.title ?? prompt.name,
-          description: prompt.description ?? "",
-          body: prompt.body ?? "",
-        });
-      } else {
-        form.reset({ title: "", description: "", body: "" });
-      }
-    }
     onOpenChange(nextOpen);
   };
 
-  useEffect(() => {
-    if (prompt) {
-      form.reset({
-        title: prompt.title ?? prompt.name,
-        description: prompt.description ?? "",
-        body: prompt.body ?? "",
-      });
-    } else {
-      form.reset({ title: "", description: "", body: "" });
-    }
-  }, [prompt, form]);
-
-  const handleSubmit = form.handleSubmit(async (values) => {
-    await onSubmit(values);
-  });
+  const handleDelete = () => {
+    setDeleteOpen(true);
+  };
 
   return (
     <>
@@ -125,47 +82,12 @@ export function PromptSheet({
 
             <SectionSeparator />
 
-            <FormProvider {...form}>
-              <form className="flex flex-col gap-y-3" onSubmit={handleSubmit}>
-                <InputField
-                  name="title"
-                  label="Title"
-                  placeholder="Enter title…"
-                />
-                <InputField
-                  name="description"
-                  label="Description"
-                  placeholder="Optional short description…"
-                />
-                <TextareaField
-                  name="body"
-                  label="Body"
-                  placeholder="Write the prompt body…"
-                  rows={8}
-                />
-
-                <div className="flex flex-row gap-x-2">
-                  <Button
-                    type="submit"
-                    className="grow"
-                    disabled={!form.formState.isValid || isSubmitting}
-                  >
-                    {isSubmitting ? "Saving…" : "Save"}
-                  </Button>
-                  {prompt && onClickDelete && (
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={() => {
-                        setDeleteOpen(true);
-                      }}
-                    >
-                      <TrashIcon />
-                    </Button>
-                  )}
-                </div>
-              </form>
-            </FormProvider>
+            <PromptForm
+              prompt={prompt}
+              onSubmit={onSubmit}
+              isSubmitting={isSubmitting}
+              onDelete={onClickDelete ? handleDelete : undefined}
+            />
           </SheetBody>
         </SheetContent>
       </Sheet>

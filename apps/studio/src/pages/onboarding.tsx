@@ -13,6 +13,7 @@ import {
   gatewayClient as trpc,
 } from "../contexts/backend-context.tsx";
 import { useClients } from "../hooks/use-clients.ts";
+import { useCreatePrompt } from "../hooks/use-create-prompt.ts";
 import { useInstallServerFromRegistry } from "../hooks/use-install-server-from-registry.ts";
 import { useOnboardingProgress } from "../hooks/use-onboarding-progress.ts";
 import { usePlaybooks } from "../hooks/use-playbooks.ts";
@@ -97,6 +98,26 @@ export function GetStartedPage() {
     },
   });
 
+  // Prompt creation
+  const { createPrompt, isPending: isPromptSubmitting } = useCreatePrompt(
+    currentPlaybookId || "",
+    {
+      onSuccess: () => {
+        toast({
+          title: "Prompt created",
+          description: "Your prompt was successfully added to the playbook.",
+        });
+        setIsPromptCompleted(true);
+      },
+      onError: (error) => {
+        toast({
+          title: "Error",
+          description: error.message,
+        });
+      },
+    },
+  );
+
   const { install, isPending: isInstalling } = useInstallServerFromRegistry({
     onError: (error) => {
       toast({
@@ -165,6 +186,18 @@ export function GetStartedPage() {
     });
   };
 
+  const handlePromptFormSubmit = async (values: {
+    title: string;
+    description?: string;
+    body: string;
+  }) => {
+    if (!currentPlaybookId) {
+      return;
+    }
+
+    await createPrompt(values);
+  };
+
   if (!hasData) {
     return <FullScreenLoader />;
   }
@@ -184,6 +217,8 @@ export function GetStartedPage() {
         onAddPlaybookToClient={handleClientInstall}
         isPromptCompleted={isPromptCompleted}
         onSkipPrompt={() => setIsPromptCompleted(true)}
+        onPromptFormSubmit={handlePromptFormSubmit}
+        isPromptSubmitting={isPromptSubmitting}
       />
 
       {selectedRegistryEntryName && (

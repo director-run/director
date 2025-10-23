@@ -47,6 +47,20 @@ export function ToolList({
     );
   }, [tools, isEditing]);
 
+  // Check if all tools are enabled (not disabled)
+  const allToolsEnabled =
+    draftTools.length > 0 && draftTools.every((tool) => !tool.disabled);
+
+  // Handle global toggle
+  const handleGlobalToggle = (enabled: boolean) => {
+    setDraftTools(
+      draftTools.map((tool) => ({
+        ...tool,
+        disabled: !enabled,
+      })),
+    );
+  };
+
   if (toolsLoading) {
     return <LoadingToolList />;
   }
@@ -81,7 +95,7 @@ export function ToolList({
             </Button>
           )}
           {isEditing && (
-            <>
+            <div className="flex items-center gap-3">
               <Button
                 size="sm"
                 disabled={isSaving}
@@ -106,7 +120,14 @@ export function ToolList({
               >
                 <XIcon weight="bold" />
               </Button>
-            </>
+              <div className="flex items-center gap-2">
+                <Switch
+                  id="global-toggle"
+                  checked={allToolsEnabled}
+                  onCheckedChange={handleGlobalToggle}
+                />
+              </div>
+            </div>
           )}
         </SectionHeader>
 

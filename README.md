@@ -21,7 +21,10 @@ Director allows you to provide <ins>**playbooks**</ins> to AI Agents. A playbook
 Playbooks are portable, declarative YAML files that can easily be shared (or committed to version control). Director is local-first - installation and client integration takes 30 seconds. In addition, Director provides all of the MCP management functionality that you'd expect: tool filtering, logging, strong isolation, and unified OAuth.
 
 <br />
-<img src="https://github.com/director-run/director/blob/main/apps/docs/images/demo.gif" width="100%" alt="director demo">
+
+
+https://github.com/user-attachments/assets/1896bc0e-7f80-491d-b9ac-8ebb1a328bf7
+
 
 ## Key Features
 

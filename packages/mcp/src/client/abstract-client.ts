@@ -5,6 +5,8 @@ import type {
   CallToolRequest,
   CallToolResultSchema,
   CompatibilityCallToolResultSchema,
+  GetPromptRequest,
+  ListPromptsRequest,
   ListToolsRequest,
 } from "@modelcontextprotocol/sdk/types.js";
 import { ErrorCode, McpError } from "@modelcontextprotocol/sdk/types.js";
@@ -33,16 +35,24 @@ export const ToolsConfigSchema = z.object({
   prefix: z.string().optional(),
 });
 
+export const PromptsConfigSchema = z.object({
+  include: z.array(z.string()).optional(),
+  exclude: z.array(z.string()).optional(),
+});
+
 export const AbsractClientSchema = z.object({
   name: requiredStringSchema,
   source: SourceDataSchema.optional(),
   tools: ToolsConfigSchema.optional(),
+  promptsConfig: PromptsConfigSchema.optional(),
   disabled: z.boolean().optional(),
 });
 
 export type AbstractClientParams = z.infer<typeof AbsractClientSchema>;
 
 export type ToolsConfig = z.infer<typeof ToolsConfigSchema>;
+
+export type PromptsConfig = z.infer<typeof PromptsConfigSchema>;
 
 export abstract class AbstractClient<
   Params extends AbstractClientParams,
@@ -53,10 +63,11 @@ export abstract class AbstractClient<
   public lastErrorMessage?: string;
   public readonly source?: SourceData;
   public tools?: ToolsConfig;
+  public promptsConfig?: PromptsConfig;
   protected _disabled: boolean = false;
 
   constructor(params: Params) {
-    const { name, source, tools, disabled } = params;
+    const { name, source, tools, promptsConfig, disabled } = params;
     super(
       {
         name,
@@ -73,6 +84,7 @@ export abstract class AbstractClient<
     this.name = name;
     this.source = source;
     this.tools = tools;
+    this.promptsConfig = promptsConfig;
     this._disabled = disabled ?? false;
   }
 
@@ -111,6 +123,35 @@ export abstract class AbstractClient<
               : tool.name,
           };
         }),
+    };
+  }
+
+  public async listPrompts(
+    params?: ListPromptsRequest["params"],
+    options?: RequestOptions,
+  ) {
+    const result = await super.listPrompts(params, options);
+    return {
+      ...result,
+      prompts: result.prompts.filter((prompt) => {
+        // Apply include filter if specified
+        if (
+          this.promptsConfig?.include &&
+          this.promptsConfig.include.length > 0
+        ) {
+          if (!this.promptsConfig.include.includes(prompt.name)) {
+            return false;
+          }
+        }
+        // Apply exclude filter
+        if (
+          this.promptsConfig?.exclude &&
+          this.promptsConfig.exclude.includes(prompt.name)
+        ) {
+          return false;
+        }
+        return true;
+      }),
     };
   }
 
@@ -199,6 +240,36 @@ export abstract class AbstractClient<
     );
   }
 
+  public async getPrompt(
+    params: GetPromptRequest["params"],
+    options?: RequestOptions,
+  ) {
+    const promptName = params.name;
+
+    // Check if prompt is explicitly excluded
+    if (
+      this.promptsConfig?.exclude &&
+      this.promptsConfig.exclude.includes(promptName)
+    ) {
+      throw new McpError(
+        ErrorCode.InternalError,
+        `Prompt "${promptName}" is disabled`,
+      );
+    }
+
+    // Check if prompt is in include list (if include list is specified)
+    if (this.promptsConfig?.include && this.promptsConfig.include.length > 0) {
+      if (!this.promptsConfig.include.includes(promptName)) {
+        throw new McpError(
+          ErrorCode.InternalError,
+          `Prompt "${promptName}" is disabled`,
+        );
+      }
+    }
+
+    return await super.getPrompt(params, options);
+  }
+
   public async originalCallTool(
     params: CallToolRequest["params"],
     resultSchema?:
@@ -207,6 +278,32 @@ export abstract class AbstractClient<
     options?: RequestOptions,
   ) {
     return await super.callTool(params, resultSchema, options);
+  }
+
+  public async originalListPrompts(
+    params?: ListPromptsRequest["params"],
+    options?: RequestOptions,
+  ) {
+    try {
+      return await super.listPrompts(params, options);
+    } catch (error) {
+      if (
+        error instanceof McpError &&
+        error.code === ErrorCode.MethodNotFound
+      ) {
+        // No prompts available
+        return { prompts: [] };
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  public async originalGetPrompt(
+    params: GetPromptRequest["params"],
+    options?: RequestOptions,
+  ) {
+    return await super.getPrompt(params, options);
   }
 
   public async close(): Promise<void> {

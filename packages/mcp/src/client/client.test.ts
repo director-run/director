@@ -30,6 +30,56 @@ export function makeTestServer() {
     .handle(async ({ message }) => {
       return await { message };
     });
+
+  server
+    .prompt("greeting")
+    .description("A greeting prompt")
+    .arguments([{ name: "name", description: "Name to greet", required: true }])
+    .handle(({ name }) => {
+      return {
+        messages: [
+          {
+            role: "user",
+            content: { type: "text", text: `Hello, ${name}!` },
+          },
+        ],
+      };
+    });
+
+  server
+    .prompt("farewell")
+    .description("A farewell prompt")
+    .arguments([
+      { name: "name", description: "Name to bid farewell", required: true },
+    ])
+    .handle(({ name }) => {
+      return {
+        messages: [
+          {
+            role: "user",
+            content: { type: "text", text: `Goodbye, ${name}!` },
+          },
+        ],
+      };
+    });
+
+  server
+    .prompt("welcome")
+    .description("A welcome prompt")
+    .arguments([
+      { name: "name", description: "Name to welcome", required: true },
+    ])
+    .handle(({ name }) => {
+      return {
+        messages: [
+          {
+            role: "user",
+            content: { type: "text", text: `Welcome, ${name}!` },
+          },
+        ],
+      };
+    });
+
   return server;
 }
 
@@ -286,6 +336,108 @@ describe("client integration tests", () => {
         expect(result.tools.map((t) => t.name).sort()).toEqual([
           "prefix__echo",
           "prefix__foo",
+        ]);
+      });
+    });
+  });
+
+  describe("excluded prompts", () => {
+    beforeEach(() => {
+      client.promptsConfig = { exclude: ["greeting", "farewell"] };
+    });
+
+    afterEach(() => {
+      client.promptsConfig = undefined;
+    });
+
+    describe("getPrompt", () => {
+      test("should not get disabled prompts", async () => {
+        await expect(
+          client.getPrompt({
+            name: "greeting",
+            arguments: { name: "World" },
+          }),
+        ).rejects.toThrow(McpError);
+      });
+
+      test("should get enabled prompts", async () => {
+        const result = await client.getPrompt({
+          name: "welcome",
+          arguments: { name: "World" },
+        });
+        expect(result.messages?.[0].content.text).toContain("Welcome, World!");
+      });
+    });
+
+    describe("originalListPrompts", () => {
+      test("should return all prompts", async () => {
+        const result = await client.originalListPrompts();
+        expect(result.prompts.map((p) => p.name)).toEqual([
+          "greeting",
+          "farewell",
+          "welcome",
+        ]);
+      });
+    });
+
+    describe("listPrompts", () => {
+      test("should not return excluded prompts", async () => {
+        const result = await client.listPrompts();
+        expect(result.prompts.map((p) => p.name)).toEqual(["welcome"]);
+      });
+
+      test("should return all prompts when prompts config is undefined", async () => {
+        client.promptsConfig = undefined;
+        const result = await client.listPrompts();
+        expect(result.prompts.map((p) => p.name)).toEqual([
+          "greeting",
+          "farewell",
+          "welcome",
+        ]);
+      });
+    });
+  });
+
+  describe("included prompts", () => {
+    beforeEach(() => {
+      client.promptsConfig = { include: ["greeting", "farewell"] };
+    });
+
+    afterEach(() => {
+      client.promptsConfig = undefined;
+    });
+
+    describe("getPrompt", () => {
+      test("should get included prompts", async () => {
+        const result1 = await client.getPrompt({
+          name: "greeting",
+          arguments: { name: "World" },
+        });
+        expect(result1.messages?.[0].content.text).toContain("Hello, World!");
+
+        const result2 = await client.getPrompt({
+          name: "farewell",
+          arguments: { name: "World" },
+        });
+        expect(result2.messages?.[0].content.text).toContain("Goodbye, World!");
+      });
+
+      test("should not get non-included prompts", async () => {
+        await expect(
+          client.getPrompt({
+            name: "welcome",
+            arguments: { name: "World" },
+          }),
+        ).rejects.toThrow(McpError);
+      });
+    });
+
+    describe("listPrompts", () => {
+      test("should only return included prompts", async () => {
+        const result = await client.listPrompts();
+        expect(result.prompts.map((p) => p.name).sort()).toEqual([
+          "farewell",
+          "greeting",
         ]);
       });
     });

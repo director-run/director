@@ -26,16 +26,16 @@ export type PromptManagerParams = z.infer<typeof PromptManagerSchema>;
 export class PromptManager extends InMemoryClient {
   private _prompts: Prompt[];
 
-  constructor(params: PromptManagerParams) {
+  constructor(prompts: Prompt[] = []) {
     super(
       {
         name: PROMPT_MANAGER_TARGET_NAME,
       },
       {
-        server: makePromptServer(_.cloneDeep(params?.prompts || [])),
+        server: makePromptServer(_.cloneDeep(prompts)),
       },
     );
-    this._prompts = _.cloneDeep(params?.prompts || []);
+    this._prompts = _.cloneDeep(prompts);
   }
 
   get prompts() {

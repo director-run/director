@@ -69,9 +69,7 @@ export class Playbook extends ProxyServer {
             oAuthHandler: params?.oAuthHandler,
           }),
         ),
-        new PromptManager({
-          prompts: attributes.prompts,
-        }),
+        new PromptManager(attributes.prompts),
       ],
     });
 

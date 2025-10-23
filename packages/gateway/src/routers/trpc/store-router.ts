@@ -102,9 +102,12 @@ export function createPlaybookStoreRouter({
       .mutation(async ({ input }) => {
         const playbook = await playbookStore.get(input.playbookId);
 
-        const target = await playbook.addTarget(
-          oldServerToTargetParams(input.server),
-        );
+        const target = await playbook.addTarget({
+          ...oldServerToTargetParams(input.server),
+          prompts: {
+            include: [], // Disable prompts by default
+          },
+        });
 
         return await target.toPlainObject({
           tools: input.queryParams?.includeTools,

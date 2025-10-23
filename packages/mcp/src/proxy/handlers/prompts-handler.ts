@@ -30,7 +30,6 @@ export function setupPromptHandlers(server: ProxyServer) {
       try {
         const result = await connectedClient.listPrompts(request.params);
 
-        console.log("---", connectedClient.name, result);
         if (result.prompts) {
           const promptsWithSource = result.prompts.map((prompt) => {
             promptToTarget.set(prompt.name, connectedClient);

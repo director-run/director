@@ -58,15 +58,8 @@ export function printTargetDetails(
   playbookId: string,
   target: GatewayRouterOutputs["store"]["getServer"],
 ) {
-  const {
-    name,
-    type,
-    connectionInfo,
-    source,
-    tools,
-    disabled,
-    toolsList,
-  } = target;
+  const { name, type, connectionInfo, source, tools, disabled, toolsList } =
+    target;
 
   console.log();
   console.log(whiteBold(`PLAYBOOKS > ${playbookId} > ${blue(name)}`));

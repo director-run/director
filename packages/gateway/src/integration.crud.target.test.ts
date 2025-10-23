@@ -416,7 +416,10 @@ describe("Playbook Target CRUD operations", () => {
           serverName: "echo",
           attributes: { tools: { prefix: "", exclude: [] } },
         });
-        expect(updatedResponse.tools).toMatchObject({ prefix: "", exclude: [] });
+        expect(updatedResponse.tools).toMatchObject({
+          prefix: "",
+          exclude: [],
+        });
         const target = await harness.client.store.getServer.query({
           playbookId: playbook.id,
           serverName: "echo",

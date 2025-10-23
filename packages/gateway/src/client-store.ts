@@ -44,17 +44,27 @@ export class ClientStore {
         logger.debug({
           message: `Installing ${playbookId} on ${client.name}`,
         });
-        const playbook = playbookStore.get(playbookId);
-        const result = await client.install({
-          name: playbook.id,
-          sseURL: joinURL(baseUrl, getSSEPathForPlaybook(playbook.id)),
-          streamableURL: joinURL(
-            baseUrl,
-            getStreamablePathForPlaybook(playbook.id),
-          ),
-        });
-        if (result.requiresRestart) {
-          await client.restart();
+        try {
+          const playbook = playbookStore.get(playbookId);
+          const result = await client.install({
+            name: playbook.id,
+            sseURL: joinURL(baseUrl, getSSEPathForPlaybook(playbook.id)),
+            streamableURL: joinURL(
+              baseUrl,
+              getStreamablePathForPlaybook(playbook.id),
+            ),
+          });
+          if (result.requiresRestart) {
+            await client.restart();
+          }
+        } catch (error) {
+          if (error instanceof AppError && error.code === ErrorCode.NOT_FOUND) {
+            logger.warn({
+              message: `Playbook '${playbookId}' not found, skipping installation on ${client.name}`,
+            });
+            continue;
+          }
+          throw error;
         }
       }
     }

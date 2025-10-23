@@ -23,7 +23,10 @@ Playbooks are portable, declarative YAML files that can easily be shared (or com
 <br />
 
 
-https://github.com/user-attachments/assets/1896bc0e-7f80-491d-b9ac-8ebb1a328bf7
+
+https://github.com/user-attachments/assets/cafc0902-a854-4ee8-ac89-b7535f10c93d
+
+
 
 
 ## Key Features

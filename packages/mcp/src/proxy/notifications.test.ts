@@ -49,7 +49,7 @@ describe("ProxyServer", () => {
         { throwOnError: false },
       );
 
-      await proxy.updateTarget("streamable", { toolPrefix: "pref-" });
+      await proxy.updateTarget("streamable", { tools: { prefix: "pref-" } });
       await proxy.removeTarget("streamable");
 
       await sleep(1); // list change event is emitted asynchronously

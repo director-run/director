@@ -252,7 +252,7 @@ describe("ProxyServer", () => {
             new HTTPClient({
               name: "kitchen-sink",
               url: `http://localhost:${SSE_PORT}/sse`,
-              disabledTools: ["add", "subtract"],
+              tools: { exclude: ["add", "subtract"] },
             }),
           ],
         });
@@ -275,7 +275,7 @@ describe("ProxyServer", () => {
 
       test("should be able to re-enable disabled tools", async () => {
         await proxy.updateTarget("kitchen-sink", {
-          disabledTools: [],
+          tools: { exclude: [] },
         });
         await expectListToolsToReturnToolNames(client, [
           "echo",
@@ -306,12 +306,12 @@ describe("ProxyServer", () => {
             new HTTPClient({
               name: "echo",
               url: `http://localhost:${STREAMABLE_PORT}/mcp`,
-              toolPrefix: "a__",
+              tools: { prefix: "a__" },
             }),
             new HTTPClient({
               name: "kitchen-sink",
               url: `http://localhost:${SSE_PORT}/sse`,
-              toolPrefix: "b__",
+              tools: { prefix: "b__" },
             }),
           ],
         });
@@ -327,7 +327,7 @@ describe("ProxyServer", () => {
 
       test("should be able to remove the prefix", async () => {
         await proxy.updateTarget("echo", {
-          toolPrefix: "",
+          tools: { prefix: "" },
         });
         await expectListToolsToReturnToolNames(client, [
           "echo",

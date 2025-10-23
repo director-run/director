@@ -13,9 +13,7 @@ describe("PromptManager", () => {
   let promptManager: PromptManager;
 
   beforeEach(() => {
-    promptManager = new PromptManager({
-      prompts: [],
-    });
+    promptManager = new PromptManager([]);
   });
 
   describe("listPrompts", () => {

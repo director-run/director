@@ -68,7 +68,7 @@ export class InMemoryClient extends AbstractClient<InMemoryClientParams> {
   }): Promise<
     InMemoryClientParams & {
       type: "mem";
-      tools?: Tool[];
+      toolsList?: Tool[];
       connectionInfo?: {
         status: ClientStatus;
         lastConnectedAt?: Date;
@@ -80,10 +80,10 @@ export class InMemoryClient extends AbstractClient<InMemoryClientParams> {
       type: "mem",
       name: this.name,
       source: this.source,
-      toolPrefix: this.toolPrefix,
-      disabledTools: this.disabledTools,
+      tools: this.tools,
+      prompts: this.prompts,
       disabled: this.disabled,
-      tools: include?.tools
+      toolsList: include?.tools
         ? (await this.originalListTools()).tools
         : undefined,
       connectionInfo: include?.connectionInfo

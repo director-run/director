@@ -60,7 +60,7 @@ export class ClaudeInstaller extends AbstractClient<ClaudeConfig> {
         `server '${name}' is not installed`,
       );
     }
-    this.logger.info(`uninstalling ${name}`);
+    this.logger.debug(`uninstalling ${name}`);
     const newConfig: ClaudeConfig = {
       ...this.config,
       mcpServers: { ...this.config?.mcpServers },
@@ -93,7 +93,7 @@ export class ClaudeInstaller extends AbstractClient<ClaudeConfig> {
         `server '${attributes.name}' is already installed`,
       );
     }
-    this.logger.info(`installing ${attributes.name}`);
+    this.logger.debug(`installing ${attributes.name}`);
     const newConfig: ClaudeConfig = {
       ...this.config,
       mcpServers: { ...this.config?.mcpServers },
@@ -114,7 +114,7 @@ export class ClaudeInstaller extends AbstractClient<ClaudeConfig> {
 
   public async reset(params?: { includeUnmanaged?: boolean }) {
     await this.initialize();
-    this.logger.info("purging claude config");
+    this.logger.debug("purging claude config");
     const newConfig: ClaudeConfig = {
       ...this.config,
       mcpServers: {},
@@ -146,7 +146,7 @@ export class ClaudeInstaller extends AbstractClient<ClaudeConfig> {
 
   public async list(params?: { includeUnmanaged?: boolean }) {
     await this.initialize();
-    this.logger.info("listing servers");
+    this.logger.debug("listing servers");
     return Object.entries(this.config?.mcpServers ?? {})
       .filter(([name]) =>
         params?.includeUnmanaged ? true : this.isManagedConfigKey(name),
@@ -158,14 +158,14 @@ export class ClaudeInstaller extends AbstractClient<ClaudeConfig> {
   }
 
   public async openConfig() {
-    this.logger.info("opening claude config");
+    this.logger.debug("opening claude config");
     await os.openFileInCode(this.configPath);
   }
 
   public async restart() {
     await this.initialize();
     if (!isTest()) {
-      this.logger.info("restarting claude");
+      this.logger.debug("restarting claude");
       await os.restartApp(App.CLAUDE);
     } else {
       this.logger.warn("skipping restart of claude in test environment");
@@ -174,12 +174,12 @@ export class ClaudeInstaller extends AbstractClient<ClaudeConfig> {
 
   private async updateConfig(newConfig: ClaudeConfig) {
     this.config = newConfig;
-    this.logger.info(`writing config to ${this.configPath}`);
+    this.logger.debug(`writing config to ${this.configPath}`);
     await writeJSONFile(this.configPath, this.config);
   }
 
   public async createConfig() {
-    this.logger.info(`initializing claude config`);
+    this.logger.debug(`initializing claude config`);
     await writeJSONFile(this.configPath, {
       mcpServers: {},
     });

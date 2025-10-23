@@ -27,7 +27,7 @@ export const HTTPClientSchema = AbsractClientSchema.extend({
 export type HTTPClientParams = z.infer<typeof HTTPClientSchema>;
 export type HTTPClientPlainObject = HTTPClientParams & {
   type: "http";
-  tools?: Tool[];
+  toolsList?: Tool[];
   connectionInfo?: {
     status: ClientStatus;
     lastConnectedAt?: Date;
@@ -277,12 +277,12 @@ export class HTTPClient extends AbstractClient<HTTPClientParams> {
       type: "http",
       name: this.name,
       source: this.source,
-      toolPrefix: this.toolPrefix,
-      disabledTools: this.disabledTools,
+      tools: this.tools,
+      prompts: this.prompts,
       disabled: this.disabled,
       url: this.url,
       headers: this.headers,
-      tools: include?.tools
+      toolsList: include?.tools
         ? (await this.originalListTools()).tools
         : undefined,
       connectionInfo: include?.connectionInfo

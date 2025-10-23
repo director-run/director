@@ -24,26 +24,26 @@ export const PromptManagerSchema = z.object({
 export type PromptManagerParams = z.infer<typeof PromptManagerSchema>;
 
 export class PromptManager extends InMemoryClient {
-  private _prompts: Prompt[];
+  private _promptList: Prompt[];
 
-  constructor(params: PromptManagerParams) {
+  constructor(prompts: Prompt[] = []) {
     super(
       {
         name: PROMPT_MANAGER_TARGET_NAME,
       },
       {
-        server: makePromptServer(_.cloneDeep(params?.prompts || [])),
+        server: makePromptServer(_.cloneDeep(prompts)),
       },
     );
-    this._prompts = _.cloneDeep(params?.prompts || []);
+    this._promptList = _.cloneDeep(prompts);
   }
 
-  get prompts() {
-    return this._prompts;
+  get promptList() {
+    return this._promptList;
   }
 
   async addPromptEntry(prompt: Prompt) {
-    const existingPrompt = this._prompts.find((p) => p.name === prompt.name);
+    const existingPrompt = this._promptList.find((p) => p.name === prompt.name);
 
     if (existingPrompt) {
       throw new AppError(
@@ -52,7 +52,7 @@ export class PromptManager extends InMemoryClient {
       );
     }
 
-    this._prompts.push(prompt);
+    this._promptList.push(prompt);
     await this.reconnectToServer();
     return prompt;
   }
@@ -61,26 +61,26 @@ export class PromptManager extends InMemoryClient {
     promptId: string,
     prompt: Partial<Pick<Prompt, "title" | "description" | "body">>,
   ) {
-    const index = this._prompts.findIndex((p) => p.name === promptId);
+    const index = this._promptList.findIndex((p) => p.name === promptId);
     if (index === -1) {
       throw new AppError(ErrorCode.NOT_FOUND, `Prompt ${promptId} not found`);
     }
-    this._prompts[index] = { ...this._prompts[index], ...prompt };
+    this._promptList[index] = { ...this._promptList[index], ...prompt };
     await this.reconnectToServer();
-    return this._prompts[index];
+    return this._promptList[index];
   }
 
   async removePromptEntry(promptId: string) {
-    const index = this._prompts.findIndex((p) => p.name === promptId);
+    const index = this._promptList.findIndex((p) => p.name === promptId);
     if (index === -1) {
       throw new AppError(ErrorCode.NOT_FOUND, `Prompt ${promptId} not found`);
     }
-    this._prompts.splice(index, 1);
+    this._promptList.splice(index, 1);
     await this.reconnectToServer();
   }
 
   getPromptEntry(promptId: string): Prompt {
-    const prompt = this._prompts.find((p) => p.name === promptId);
+    const prompt = this._promptList.find((p) => p.name === promptId);
     if (!prompt) {
       throw new AppError(ErrorCode.NOT_FOUND, `Prompt ${promptId} not found`);
     }
@@ -90,7 +90,7 @@ export class PromptManager extends InMemoryClient {
   private async reconnectToServer() {
     await this.close();
     await this.server.close();
-    this.server = makePromptServer(this._prompts);
+    this.server = makePromptServer(this._promptList);
     await this.connectToTarget({ throwOnError: true });
   }
 }

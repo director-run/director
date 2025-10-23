@@ -46,9 +46,9 @@ describe("Playbook Target CRUD operations", () => {
         serverName: "echo",
         queryParams: { includeTools: true },
       });
-      expect(retrievedTarget.tools).toBeDefined();
-      expect(retrievedTarget.tools?.length).toBeGreaterThan(0);
-      expect(retrievedTarget.tools?.[0].name).toBe("echo");
+      expect(retrievedTarget.toolsList).toBeDefined();
+      expect(retrievedTarget.toolsList?.length).toBeGreaterThan(0);
+      expect(retrievedTarget.toolsList?.[0].name).toBe("echo");
     });
   });
 
@@ -233,9 +233,9 @@ describe("Playbook Target CRUD operations", () => {
         },
         queryParams: { includeTools: true },
       });
-      expect(retrievedTarget.tools).toBeDefined();
-      expect(retrievedTarget.tools?.length).toBeGreaterThan(0);
-      expect(retrievedTarget.tools?.[0].name).toBe("echo");
+      expect(retrievedTarget.toolsList).toBeDefined();
+      expect(retrievedTarget.toolsList?.length).toBeGreaterThan(0);
+      expect(retrievedTarget.toolsList?.[0].name).toBe("echo");
     });
 
     describe("valid target", () => {
@@ -245,8 +245,7 @@ describe("Playbook Target CRUD operations", () => {
           playbookId: playbook.id,
           server: {
             ...harness.getConfigForTarget("echo"),
-            toolPrefix: "echo",
-            disabledTools: ["echo"],
+            tools: { prefix: "echo", exclude: ["echo"] },
           },
         });
       });
@@ -270,8 +269,7 @@ describe("Playbook Target CRUD operations", () => {
             type: "http",
             url: (echoConfig as { transport: { url: string } }).transport.url,
             name: echoConfig.name,
-            toolPrefix: "echo",
-            disabledTools: ["echo"],
+            tools: { prefix: "echo", exclude: ["echo"] },
           }),
         );
       });
@@ -285,12 +283,11 @@ describe("Playbook Target CRUD operations", () => {
           expect.objectContaining({
             url: echoConfig.transport.url,
             type: echoConfig.transport.type,
-            toolPrefix: "echo",
-            disabledTools: ["echo"],
+            tools: { prefix: "echo", exclude: ["echo"] },
             disabled: false,
             name: echoConfig.name,
             source: undefined,
-            tools: undefined,
+            toolsList: undefined,
             headers: echoConfig.transport.headers,
             connectionInfo: {
               status: "connected",
@@ -316,8 +313,7 @@ describe("Playbook Target CRUD operations", () => {
             playbookId: playbook.id,
             server: {
               ...harness.getConfigForTarget("echo"),
-              toolPrefix: "echo",
-              disabledTools: ["echo"],
+              tools: { prefix: "echo", exclude: ["echo"] },
             },
           }),
         ).rejects.toThrow();
@@ -366,8 +362,7 @@ describe("Playbook Target CRUD operations", () => {
     describe("target attributes", () => {
       let playbook: GatewayRouterOutputs["store"]["create"];
       let updatedResponse: GatewayRouterOutputs["store"]["updateServer"];
-      const toolPrefix = "prefix__";
-      const disabledTools = ["ping", "add"];
+      const toolsConfig = { prefix: "prefix__", exclude: ["ping", "add"] };
       beforeEach(async () => {
         await harness.purge();
         playbook = await harness.client.store.create.mutate({
@@ -381,14 +376,12 @@ describe("Playbook Target CRUD operations", () => {
           playbookId: playbook.id,
           serverName: "echo",
           attributes: {
-            toolPrefix: toolPrefix,
-            disabledTools: disabledTools,
+            tools: toolsConfig,
           },
         });
       });
       it("should return the updated target", () => {
-        expect(updatedResponse.toolPrefix).toBe(toolPrefix);
-        expect(updatedResponse.disabledTools).toMatchObject(disabledTools);
+        expect(updatedResponse.tools).toMatchObject(toolsConfig);
         expect(updatedResponse.name).toBe("echo");
       });
       it("should return tools if includeTools is true", async () => {
@@ -396,49 +389,46 @@ describe("Playbook Target CRUD operations", () => {
           playbookId: playbook.id,
           serverName: "echo",
           attributes: {
-            toolPrefix: "",
-            disabledTools: [],
+            tools: { prefix: "", exclude: [] },
           },
           queryParams: { includeTools: true },
         });
-        expect(retrievedTarget.tools).toBeDefined();
-        expect(retrievedTarget.tools?.length).toBeGreaterThan(0);
-        expect(retrievedTarget.tools?.[0].name).toBe("echo");
+        expect(retrievedTarget.toolsList).toBeDefined();
+        expect(retrievedTarget.toolsList?.length).toBeGreaterThan(0);
+        expect(retrievedTarget.toolsList?.[0].name).toBe("echo");
       });
       it("should update the target", async () => {
         const target = await harness.client.store.getServer.query({
           playbookId: playbook.id,
           serverName: "echo",
         });
-        expect(target.toolPrefix).toBe(toolPrefix);
-        expect(target.disabledTools).toMatchObject(disabledTools);
+        expect(target.tools).toMatchObject(toolsConfig);
       });
       it("should update the configuration file", async () => {
         const configEntry = (
           await harness.database.playbooks.getPlaybook(playbook.id)
         ).servers.find((server) => server.name === "echo");
-        expect(configEntry?.toolPrefix).toBe(toolPrefix);
-        expect(configEntry?.disabledTools).toMatchObject(disabledTools);
+        expect(configEntry?.tools).toMatchObject(toolsConfig);
       });
       it("should be able to unset attributes", async () => {
         updatedResponse = await harness.client.store.updateServer.mutate({
           playbookId: playbook.id,
           serverName: "echo",
-          attributes: { toolPrefix: "", disabledTools: [] },
+          attributes: { tools: { prefix: "", exclude: [] } },
         });
-        expect(updatedResponse.toolPrefix).toBe("");
-        expect(updatedResponse.disabledTools).toMatchObject([]);
+        expect(updatedResponse.tools).toMatchObject({
+          prefix: "",
+          exclude: [],
+        });
         const target = await harness.client.store.getServer.query({
           playbookId: playbook.id,
           serverName: "echo",
         });
-        expect(target.toolPrefix).toBe("");
-        expect(target.disabledTools).toMatchObject([]);
+        expect(target.tools).toMatchObject({ prefix: "", exclude: [] });
         const configEntry = (
           await harness.database.playbooks.getPlaybook(playbook.id)
         ).servers.find((server) => server.name === "echo");
-        expect(configEntry?.toolPrefix).toBe("");
-        expect(configEntry?.disabledTools).toMatchObject([]);
+        expect(configEntry?.tools).toMatchObject({ prefix: "", exclude: [] });
       });
     });
 

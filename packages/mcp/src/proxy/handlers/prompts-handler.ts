@@ -1,85 +1,38 @@
 import { getLogger } from "@director.run/utilities/logger";
 import {
-  ErrorCode,
   GetPromptRequestSchema,
-  GetPromptResultSchema,
   ListPromptsRequestSchema,
-  ListPromptsResultSchema,
-  McpError,
   type Prompt,
 } from "@modelcontextprotocol/sdk/types.js";
 import type { ProxyServer, ProxyTarget } from "../proxy-server";
 
 const logger = getLogger("proxy/handlers/promptsHandler");
 
-export function setupPromptHandlers(
-  server: ProxyServer,
-  connectedClients: ProxyTarget[],
-) {
-  const promptToClientMap = new Map<string, ProxyTarget>();
-  // Get Prompt Handler
+export function setupPromptHandlers(server: ProxyServer) {
+  const promptToTarget = new Map<string, ProxyTarget>();
+
   server.setRequestHandler(GetPromptRequestSchema, async (request) => {
     const { name } = request.params;
-    const clientForPrompt = promptToClientMap.get(name);
+    const clientForPrompt = promptToTarget.get(name);
 
     if (!clientForPrompt) {
       throw new Error(`Unknown prompt: ${name}`);
     }
 
-    try {
-      // Match the exact structure from the example code
-      const response = await clientForPrompt.request(
-        {
-          method: "prompts/get" as const,
-          params: {
-            name,
-            arguments: request.params.arguments || {},
-            _meta: request.params._meta || {
-              progressToken: undefined,
-            },
-          },
-        },
-        GetPromptResultSchema,
-      );
-
-      return response;
-    } catch (error) {
-      logger.error(
-        {
-          error,
-          clientName: clientForPrompt.name,
-          promptName: name,
-          proxyId: server.id,
-        },
-        "Error getting prompt from client",
-      );
-      throw error;
-    }
+    return await clientForPrompt.getPrompt(request.params);
   });
 
-  // List Prompts Handler
   server.setRequestHandler(ListPromptsRequestSchema, async (request) => {
     const allPrompts: Prompt[] = [];
-    promptToClientMap.clear();
+    promptToTarget.clear();
 
-    for (const connectedClient of connectedClients) {
+    for (const connectedClient of server.targets) {
       try {
-        const result = await connectedClient.request(
-          {
-            method: "prompts/list" as const,
-            params: {
-              cursor: request.params?.cursor,
-              _meta: request.params?._meta || {
-                progressToken: undefined,
-              },
-            },
-          },
-          ListPromptsResultSchema,
-        );
+        const result = await connectedClient.listPrompts(request.params);
 
         if (result.prompts) {
           const promptsWithSource = result.prompts.map((prompt) => {
-            promptToClientMap.set(prompt.name, connectedClient);
+            promptToTarget.set(prompt.name, connectedClient);
             return {
               ...prompt,
               description: prompt.description || "",
@@ -88,29 +41,14 @@ export function setupPromptHandlers(
           allPrompts.push(...promptsWithSource);
         }
       } catch (error) {
-        if (
-          error instanceof McpError &&
-          error.code === ErrorCode.MethodNotFound
-        ) {
-          logger.warn(
-            {
-              clientName: connectedClient.name,
-              proxyId: server.id,
-            },
-            "Target does not support prompts/list",
-          );
-          continue;
-        } else {
-          logger.warn(
-            {
-              error,
-              clientName: connectedClient.name,
-              proxyId: server.id,
-            },
-            "Could not fetch prompts from client. Continuing with other clients.",
-          );
-          continue;
-        }
+        logger.warn(
+          {
+            error,
+            clientName: connectedClient.name,
+          },
+          "Could not fetch prompts from client. Continuing with other clients.",
+        );
+        continue;
       }
     }
 

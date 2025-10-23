@@ -1,5 +1,5 @@
-import {} from "@director.run/utilities/cli/colors";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
+import { registerPromptsCommand } from "./mcp/prompts";
 import { registerToolsCommand } from "./mcp/tools";
 
 export function registerMCPCommands(program: DirectorCommand): void {
@@ -8,4 +8,5 @@ export function registerMCPCommands(program: DirectorCommand): void {
   );
   program.addCommand(command);
   registerToolsCommand(command);
+  registerPromptsCommand(command);
 }

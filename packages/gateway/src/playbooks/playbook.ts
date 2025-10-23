@@ -69,9 +69,7 @@ export class Playbook extends ProxyServer {
             oAuthHandler: params?.oAuthHandler,
           }),
         ),
-        new PromptManager({
-          prompts: attributes.prompts,
-        }),
+        new PromptManager(attributes.prompts),
       ],
     });
 
@@ -124,7 +122,7 @@ export class Playbook extends ProxyServer {
 
   public async updateTarget(
     serverName: string,
-    attributes: Partial<Pick<PlaybookTarget, "toolPrefix" | "disabledTools">>,
+    attributes: Partial<Pick<PlaybookTarget, "tools" | "disabled">>,
   ): Promise<ProxyTarget> {
     const target = await super.updateTarget(serverName, attributes);
     await this.persistToConfig();
@@ -175,7 +173,7 @@ export class Playbook extends ProxyServer {
     const promptManager = (await super.getTarget(
       PROMPT_MANAGER_TARGET_NAME,
     )) as PromptManager;
-    return promptManager.prompts;
+    return promptManager.promptList;
   }
 
   public async update(
@@ -283,8 +281,8 @@ function createClientForTarget(params: {
           url: target.url,
           name: target.name,
           source: target.source,
-          toolPrefix: target.toolPrefix,
-          disabledTools: target.disabledTools,
+          tools: target.tools,
+          prompts: target.prompts,
           disabled: target.disabled,
           headers: target.headers,
         },
@@ -297,8 +295,8 @@ function createClientForTarget(params: {
         args: target.args,
         env: target.env,
         source: target.source,
-        toolPrefix: target.toolPrefix,
-        disabledTools: target.disabledTools,
+        tools: target.tools,
+        prompts: target.prompts,
         disabled: target.disabled,
       });
   }

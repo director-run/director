@@ -54,7 +54,7 @@ export class CursorInstaller extends AbstractClient<CursorConfig> {
         `server '${name}' is not installed`,
       );
     }
-    this.logger.info(`uninstalling ${name}`);
+    this.logger.debug(`uninstalling ${name}`);
     const newConfig: CursorConfig = {
       ...this.config,
       mcpServers: { ...(this.config?.mcpServers ?? {}) },
@@ -86,7 +86,7 @@ export class CursorInstaller extends AbstractClient<CursorConfig> {
         `server '${attributes.name}' is already installed`,
       );
     }
-    this.logger.info(`installing ${attributes.name}`);
+    this.logger.debug(`installing ${attributes.name}`);
     const newConfig: CursorConfig = {
       ...this.config,
       mcpServers: { ...(this.config?.mcpServers ?? {}) },
@@ -105,7 +105,7 @@ export class CursorInstaller extends AbstractClient<CursorConfig> {
     await this.initialize();
 
     if (!isTest()) {
-      this.logger.info("restarting cursor");
+      this.logger.debug("restarting cursor");
       await os.restartApp(App.CURSOR);
     } else {
       this.logger.warn("skipping restart of cursor in test environment");
@@ -115,7 +115,7 @@ export class CursorInstaller extends AbstractClient<CursorConfig> {
   public async list(params?: { includeUnmanaged?: boolean }) {
     await this.initialize();
 
-    this.logger.info("listing servers");
+    this.logger.debug("listing servers");
     return Object.entries(this.config?.mcpServers ?? {})
       .filter(([name]) =>
         params?.includeUnmanaged ? true : this.isManagedConfigKey(name),
@@ -137,7 +137,7 @@ export class CursorInstaller extends AbstractClient<CursorConfig> {
   }
 
   public async openConfig() {
-    this.logger.info("opening cursor config");
+    this.logger.debug("opening cursor config");
     await os.openFileInCode(this.configPath);
   }
 
@@ -146,7 +146,7 @@ export class CursorInstaller extends AbstractClient<CursorConfig> {
   }): Promise<InstallerResult> {
     await this.initialize();
 
-    this.logger.info("purging cursor config");
+    this.logger.debug("purging cursor config");
     const newConfig: CursorConfig = {
       ...this.config,
       mcpServers: {},
@@ -177,14 +177,14 @@ export class CursorInstaller extends AbstractClient<CursorConfig> {
   }
 
   private async updateConfig(newConfig: CursorConfig) {
-    this.logger.info(`writing config to ${this.configPath}`);
+    this.logger.debug(`writing config to ${this.configPath}`);
     await writeJSONFile(this.configPath, newConfig);
     // wait a second for changes in cursor to take effect
     // await sleep(1000);
     this.config = newConfig;
   }
   public async createConfig() {
-    this.logger.info(`initializing cursor config`);
+    this.logger.debug(`initializing cursor config`);
     await writeJSONFile(this.configPath, {
       mcpServers: {},
     });

@@ -278,6 +278,7 @@ export class HTTPClient extends AbstractClient<HTTPClientParams> {
       name: this.name,
       source: this.source,
       tools: this.tools,
+      prompts: this.prompts,
       disabled: this.disabled,
       url: this.url,
       headers: this.headers,

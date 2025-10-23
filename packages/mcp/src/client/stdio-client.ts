@@ -98,6 +98,7 @@ export class StdioClient extends AbstractClient<StdioClientParams> {
       name: this.name,
       source: this.source,
       tools: this.tools,
+      prompts: this.prompts,
       disabled: this.disabled,
       command: this.command,
       args: this.args,

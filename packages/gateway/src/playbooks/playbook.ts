@@ -173,7 +173,7 @@ export class Playbook extends ProxyServer {
     const promptManager = (await super.getTarget(
       PROMPT_MANAGER_TARGET_NAME,
     )) as PromptManager;
-    return promptManager.prompts;
+    return promptManager.promptList;
   }
 
   public async update(
@@ -282,6 +282,9 @@ function createClientForTarget(params: {
           name: target.name,
           source: target.source,
           tools: target.tools,
+          prompts: {
+            include: [],
+          },
           disabled: target.disabled,
           headers: target.headers,
         },
@@ -295,6 +298,9 @@ function createClientForTarget(params: {
         env: target.env,
         source: target.source,
         tools: target.tools,
+        prompts: {
+          include: [],
+        },
         disabled: target.disabled,
       });
   }

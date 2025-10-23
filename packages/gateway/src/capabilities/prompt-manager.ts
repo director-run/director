@@ -38,7 +38,7 @@ export class PromptManager extends InMemoryClient {
     this._prompts = _.cloneDeep(prompts);
   }
 
-  get prompts() {
+  get promptList() {
     return this._prompts;
   }
 

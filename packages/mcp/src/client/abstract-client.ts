@@ -44,7 +44,7 @@ export const AbsractClientSchema = z.object({
   name: requiredStringSchema,
   source: SourceDataSchema.optional(),
   tools: ToolsConfigSchema.optional(),
-  promptsConfig: PromptsConfigSchema.optional(),
+  prompts: PromptsConfigSchema.optional(),
   disabled: z.boolean().optional(),
 });
 
@@ -63,11 +63,11 @@ export abstract class AbstractClient<
   public lastErrorMessage?: string;
   public readonly source?: SourceData;
   public tools?: ToolsConfig;
-  public promptsConfig?: PromptsConfig;
+  public prompts?: PromptsConfig;
   protected _disabled: boolean = false;
 
   constructor(params: Params) {
-    const { name, source, tools, promptsConfig, disabled } = params;
+    const { name, source, tools, prompts: promptsConfig, disabled } = params;
     super(
       {
         name,
@@ -84,7 +84,7 @@ export abstract class AbstractClient<
     this.name = name;
     this.source = source;
     this.tools = tools;
-    this.promptsConfig = promptsConfig;
+    this.prompts = promptsConfig;
     this._disabled = disabled ?? false;
   }
 
@@ -135,18 +135,15 @@ export abstract class AbstractClient<
       ...result,
       prompts: result.prompts.filter((prompt) => {
         // Apply include filter if specified
-        if (
-          this.promptsConfig?.include &&
-          this.promptsConfig.include.length > 0
-        ) {
-          if (!this.promptsConfig.include.includes(prompt.name)) {
+        if (this.prompts?.include && this.prompts.include.length > 0) {
+          if (!this.prompts.include.includes(prompt.name)) {
             return false;
           }
         }
         // Apply exclude filter
         if (
-          this.promptsConfig?.exclude &&
-          this.promptsConfig.exclude.includes(prompt.name)
+          this.prompts?.exclude &&
+          this.prompts.exclude.includes(prompt.name)
         ) {
           return false;
         }
@@ -247,10 +244,7 @@ export abstract class AbstractClient<
     const promptName = params.name;
 
     // Check if prompt is explicitly excluded
-    if (
-      this.promptsConfig?.exclude &&
-      this.promptsConfig.exclude.includes(promptName)
-    ) {
+    if (this.prompts?.exclude && this.prompts.exclude.includes(promptName)) {
       throw new McpError(
         ErrorCode.InternalError,
         `Prompt "${promptName}" is disabled`,
@@ -258,8 +252,8 @@ export abstract class AbstractClient<
     }
 
     // Check if prompt is in include list (if include list is specified)
-    if (this.promptsConfig?.include && this.promptsConfig.include.length > 0) {
-      if (!this.promptsConfig.include.includes(promptName)) {
+    if (this.prompts?.include && this.prompts.include.length > 0) {
+      if (!this.prompts.include.includes(promptName)) {
         throw new McpError(
           ErrorCode.InternalError,
           `Prompt "${promptName}" is disabled`,

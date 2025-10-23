@@ -343,11 +343,11 @@ describe("client integration tests", () => {
 
   describe("excluded prompts", () => {
     beforeEach(() => {
-      client.promptsConfig = { exclude: ["greeting", "farewell"] };
+      client.prompts = { exclude: ["greeting", "farewell"] };
     });
 
     afterEach(() => {
-      client.promptsConfig = undefined;
+      client.prompts = undefined;
     });
 
     describe("getPrompt", () => {
@@ -387,7 +387,7 @@ describe("client integration tests", () => {
       });
 
       test("should return all prompts when prompts config is undefined", async () => {
-        client.promptsConfig = undefined;
+        client.prompts = undefined;
         const result = await client.listPrompts();
         expect(result.prompts.map((p) => p.name)).toEqual([
           "greeting",
@@ -400,11 +400,11 @@ describe("client integration tests", () => {
 
   describe("included prompts", () => {
     beforeEach(() => {
-      client.promptsConfig = { include: ["greeting", "farewell"] };
+      client.prompts = { include: ["greeting", "farewell"] };
     });
 
     afterEach(() => {
-      client.promptsConfig = undefined;
+      client.prompts = undefined;
     });
 
     describe("getPrompt", () => {

@@ -81,6 +81,7 @@ export class InMemoryClient extends AbstractClient<InMemoryClientParams> {
       name: this.name,
       source: this.source,
       tools: this.tools,
+      prompts: this.prompts,
       disabled: this.disabled,
       toolsList: include?.tools
         ? (await this.originalListTools()).tools

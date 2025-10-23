@@ -105,7 +105,7 @@ describe("MCP Playbook", () => {
               playbookId: playbook.id,
               serverName: "echo",
               attributes: {
-                toolPrefix: "prefix__",
+                tools: { prefix: "prefix__" },
               },
             });
           });
@@ -142,7 +142,7 @@ describe("MCP Playbook", () => {
               playbookId: playbook.id,
               serverName: "echo",
               attributes: {
-                toolPrefix: "",
+                tools: { prefix: "" },
               },
             });
 
@@ -162,7 +162,7 @@ describe("MCP Playbook", () => {
               playbookId: playbook.id,
               serverName: "kitchen-sink",
               attributes: {
-                disabledTools: ["ping", "add"],
+                tools: { exclude: ["ping", "add"] },
               },
             });
           });
@@ -188,7 +188,7 @@ describe("MCP Playbook", () => {
               playbookId: playbook.id,
               serverName: "kitchen-sink",
               attributes: {
-                disabledTools: [],
+                tools: { exclude: [] },
               },
             });
 

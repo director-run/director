@@ -47,6 +47,26 @@ describe("Tools Router", () => {
       });
       expect(toolsResult.map((t) => t.name)).toEqual(["echo"]);
     });
+
+    it("should correctly mark disabled tools as disabled", async () => {
+      await harness.client.tools.updateBatch.mutate({
+        playbookId: playbook.id,
+        tools: [
+          {
+            serverName: "echo",
+            name: "echo",
+            disabled: true,
+          },
+        ],
+      });
+
+      const toolsResult = await harness.client.tools.list.query({
+        playbookId: playbook.id,
+        serverName: "echo",
+      });
+      expect(toolsResult.map((t) => t.name)).toEqual(["echo"]);
+      expect(toolsResult.find((t) => t.name === "echo")?.disabled).toBe(true);
+    });
   });
 
   describe("updateBatch", () => {

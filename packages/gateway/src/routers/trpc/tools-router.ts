@@ -47,11 +47,22 @@ export function createToolsRouter({
 
           const tools = await target.originalListTools();
           ret.push(
-            ...tools.tools.map((tool) => ({
-              ...tool,
-              serverName: target.name,
-              disabled: target.disabledTools?.includes(tool.name) ?? false,
-            })),
+            ...tools.tools.map((tool) => {
+              // Check if tool is disabled via exclude list or not in include list
+              const isExcluded =
+                target.tools?.exclude?.includes(tool.name) ?? false;
+              const isNotIncluded =
+                target.tools?.include &&
+                target.tools.include.length > 0 &&
+                !target.tools.include.includes(tool.name);
+              const disabled = isExcluded || !!isNotIncluded;
+
+              return {
+                ...tool,
+                serverName: target.name,
+                disabled,
+              };
+            }),
           );
         }
         return ret.sort((a, b) => a.name.localeCompare(b.name));
@@ -74,9 +85,11 @@ export function createToolsRouter({
         const groupedTools = _.groupBy(input.tools, "serverName");
         for (const serverName in groupedTools) {
           await playbook.updateTarget(serverName, {
-            disabledTools: groupedTools[serverName]
-              .filter((tool) => tool.disabled)
-              .map((tool) => tool.name),
+            tools: {
+              exclude: groupedTools[serverName]
+                .filter((tool) => tool.disabled)
+                .map((tool) => tool.name),
+            },
           });
         }
       }),

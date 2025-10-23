@@ -27,15 +27,22 @@ export const SourceDataSchema = z.object({
 // TODO: deprecate this as soon as clients no longer use it
 export type SourceData = z.infer<typeof SourceDataSchema>;
 
+export const ToolsConfigSchema = z.object({
+  include: z.array(z.string()).optional(),
+  exclude: z.array(z.string()).optional(),
+  prefix: z.string().optional(),
+});
+
 export const AbsractClientSchema = z.object({
   name: requiredStringSchema,
   source: SourceDataSchema.optional(),
-  toolPrefix: z.string().optional(),
-  disabledTools: z.array(z.string()).optional(),
+  tools: ToolsConfigSchema.optional(),
   disabled: z.boolean().optional(),
 });
 
 export type AbstractClientParams = z.infer<typeof AbsractClientSchema>;
+
+export type ToolsConfig = z.infer<typeof ToolsConfigSchema>;
 
 export abstract class AbstractClient<
   Params extends AbstractClientParams,
@@ -45,12 +52,11 @@ export abstract class AbstractClient<
   public lastConnectedAt?: Date;
   public lastErrorMessage?: string;
   public readonly source?: SourceData;
-  public toolPrefix?: string;
-  public disabledTools?: string[];
+  public tools?: ToolsConfig;
   protected _disabled: boolean = false;
 
   constructor(params: Params) {
-    const { name, source, toolPrefix, disabledTools, disabled } = params;
+    const { name, source, tools, disabled } = params;
     super(
       {
         name,
@@ -66,8 +72,7 @@ export abstract class AbstractClient<
     );
     this.name = name;
     this.source = source;
-    this.toolPrefix = toolPrefix;
-    this.disabledTools = disabledTools;
+    this.tools = tools;
     this._disabled = disabled ?? false;
   }
 
@@ -85,12 +90,24 @@ export abstract class AbstractClient<
     return {
       ...result,
       tools: result.tools
-        .filter((tool) => !this.disabledTools?.includes(tool.name))
+        .filter((tool) => {
+          // Apply include filter if specified
+          if (this.tools?.include && this.tools.include.length > 0) {
+            if (!this.tools.include.includes(tool.name)) {
+              return false;
+            }
+          }
+          // Apply exclude filter
+          if (this.tools?.exclude && this.tools.exclude.includes(tool.name)) {
+            return false;
+          }
+          return true;
+        })
         .map((tool) => {
           return {
             ...tool,
-            name: this.toolPrefix
-              ? `${this.toolPrefix}${tool.name}`
+            name: this.tools?.prefix
+              ? `${this.tools.prefix}${tool.name}`
               : tool.name,
           };
         }),
@@ -140,7 +157,8 @@ export abstract class AbstractClient<
       | typeof CompatibilityCallToolResultSchema,
     options?: RequestOptions,
   ) {
-    if (this.toolPrefix && !params.name.startsWith(this.toolPrefix)) {
+    const prefix = this.tools?.prefix;
+    if (prefix && !params.name.startsWith(prefix)) {
       // Throw an error if trying to use the original tool name when using a tool prefix
       throw new McpError(
         ErrorCode.InternalError,
@@ -149,15 +167,26 @@ export abstract class AbstractClient<
     }
 
     const toolName =
-      this.toolPrefix && params.name.startsWith(this.toolPrefix)
-        ? params.name.substring(this.toolPrefix.length)
+      prefix && params.name.startsWith(prefix)
+        ? params.name.substring(prefix.length)
         : params.name;
 
-    if (this.disabledTools?.includes(toolName)) {
+    // Check if tool is explicitly excluded
+    if (this.tools?.exclude && this.tools.exclude.includes(toolName)) {
       throw new McpError(
         ErrorCode.InternalError,
         `Tool "${params.name}" is disabled`,
       );
+    }
+
+    // Check if tool is in include list (if include list is specified)
+    if (this.tools?.include && this.tools.include.length > 0) {
+      if (!this.tools.include.includes(toolName)) {
+        throw new McpError(
+          ErrorCode.InternalError,
+          `Tool "${params.name}" is disabled`,
+        );
+      }
     }
 
     return await super.callTool(
@@ -194,7 +223,7 @@ export abstract class AbstractClient<
   }): Promise<
     Params & {
       type: string;
-      tools?: Tool[];
+      toolsList?: Tool[];
       connectionInfo?: {
         status: ClientStatus;
         lastConnectedAt?: Date;

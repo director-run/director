@@ -53,13 +53,13 @@ describe("client integration tests", () => {
     await client.close();
   });
 
-  describe("disabled tools", () => {
+  describe("excluded tools", () => {
     beforeEach(() => {
-      client.disabledTools = ["echo", "foo"];
+      client.tools = { exclude: ["echo", "foo"] };
     });
 
     afterEach(() => {
-      client.disabledTools = undefined;
+      client.tools = undefined;
     });
 
     describe("callTool", () => {
@@ -81,7 +81,7 @@ describe("client integration tests", () => {
       });
 
       test("should work with tool prefix", async () => {
-        client.toolPrefix = "prefix__";
+        client.tools = { exclude: ["echo", "foo"], prefix: "prefix__" };
         await expect(
           client.callTool({
             name: "bar",
@@ -116,19 +116,19 @@ describe("client integration tests", () => {
     });
 
     describe("listTools", () => {
-      test("should not return disabled tools", async () => {
+      test("should not return excluded tools", async () => {
         const result = await client.listTools();
         expect(result.tools.map((t) => t.name)).toEqual(["bar"]);
       });
 
-      test("should not return disabled tools when tool prefix is set", async () => {
-        client.toolPrefix = "prefix__";
+      test("should not return excluded tools when tool prefix is set", async () => {
+        client.tools = { exclude: ["echo", "foo"], prefix: "prefix__" };
         const result = await client.listTools();
         expect(result.tools.map((t) => t.name)).toEqual(["prefix__bar"]);
       });
 
-      test("should return all tools when disabledTools = undefined", async () => {
-        client.disabledTools = undefined;
+      test("should return all tools when tools config is undefined", async () => {
+        client.tools = undefined;
         const result2 = await client.listTools();
         expect(result2.tools.map((t) => t.name)).toEqual([
           "echo",
@@ -143,11 +143,11 @@ describe("client integration tests", () => {
     const toolPrefix = "echo-service__";
 
     beforeEach(() => {
-      client.toolPrefix = toolPrefix;
+      client.tools = { prefix: toolPrefix };
     });
 
     afterEach(() => {
-      client.toolPrefix = undefined;
+      client.tools = undefined;
     });
 
     describe("originalCallTool", () => {
@@ -193,7 +193,7 @@ describe("client integration tests", () => {
       });
 
       test("should call original tools when tool prefix is undefined", async () => {
-        client.toolPrefix = undefined;
+        client.tools = undefined;
         const result2 = (await client.callTool({
           name: "echo",
           arguments: {
@@ -217,9 +217,76 @@ describe("client integration tests", () => {
       });
 
       test("should return original tools when tool prefix is undefined", async () => {
-        client.toolPrefix = undefined;
+        client.tools = undefined;
         const tools = await client.listTools();
         expect(tools.tools.map((t) => t.name)).toEqual(["echo", "foo", "bar"]);
+      });
+    });
+  });
+
+  describe("included tools", () => {
+    beforeEach(() => {
+      client.tools = { include: ["echo", "foo"] };
+    });
+
+    afterEach(() => {
+      client.tools = undefined;
+    });
+
+    describe("callTool", () => {
+      test("should call included tools", async () => {
+        const result1 = (await client.callTool({
+          name: "echo",
+          arguments: { message: "Hello, world!" },
+        })) as CallToolResult;
+        expect(result1.content?.[0].text).toContain("Hello, world!");
+
+        const result2 = (await client.callTool({
+          name: "foo",
+          arguments: { message: "Hello, world!" },
+        })) as CallToolResult;
+        expect(result2.content?.[0].text).toContain("Hello, world!");
+      });
+
+      test("should not call non-included tools", async () => {
+        await expect(
+          client.callTool({
+            name: "bar",
+            arguments: { message: "Hello, world!" },
+          }),
+        ).rejects.toThrow(McpError);
+      });
+
+      test("should work with tool prefix", async () => {
+        client.tools = { include: ["echo", "foo"], prefix: "prefix__" };
+        const result = (await client.callTool({
+          name: "prefix__echo",
+          arguments: { message: "Hello, world!" },
+        })) as CallToolResult;
+        expect(result.content?.[0].text).toContain("Hello, world!");
+
+        await expect(
+          client.callTool({
+            name: "prefix__bar",
+            arguments: { message: "Hello, world!" },
+          }),
+        ).rejects.toThrow(McpError);
+      });
+    });
+
+    describe("listTools", () => {
+      test("should only return included tools", async () => {
+        const result = await client.listTools();
+        expect(result.tools.map((t) => t.name).sort()).toEqual(["echo", "foo"]);
+      });
+
+      test("should only return included tools when tool prefix is set", async () => {
+        client.tools = { include: ["echo", "foo"], prefix: "prefix__" };
+        const result = await client.listTools();
+        expect(result.tools.map((t) => t.name).sort()).toEqual([
+          "prefix__echo",
+          "prefix__foo",
+        ]);
       });
     });
   });

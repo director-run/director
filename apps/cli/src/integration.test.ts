@@ -154,9 +154,7 @@ describe("CLI integration tests", () => {
         "test",
         "hackernews",
         "-a",
-        "toolPrefix=h_",
-        "-a",
-        'disabledTools=["get_story_info", "get_user_info", "search_stories"]',
+        'tools={"prefix":"h_","exclude":["get_story_info","get_user_info","search_stories"]}',
       );
 
       const playbook = await gatewayClient.store.get.query({
@@ -167,8 +165,8 @@ describe("CLI integration tests", () => {
       );
 
       expect(hackernewsTarget).toBeDefined();
-      expect(hackernewsTarget?.toolPrefix).toBe("h_");
-      expect(hackernewsTarget?.disabledTools).toEqual([
+      expect(hackernewsTarget?.tools?.prefix).toBe("h_");
+      expect(hackernewsTarget?.tools?.exclude).toEqual([
         "get_story_info",
         "get_user_info",
         "search_stories",

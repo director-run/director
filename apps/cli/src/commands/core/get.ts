@@ -63,10 +63,9 @@ export function printTargetDetails(
     type,
     connectionInfo,
     source,
-    toolPrefix,
-    disabledTools,
-    disabled,
     tools,
+    disabled,
+    toolsList,
   } = target;
 
   console.log();
@@ -90,17 +89,18 @@ export function printTargetDetails(
       lastErrorMessage: connectionInfo?.lastErrorMessage ?? "--",
       sourceName: source?.name ?? "--",
       sourceId: source?.entryId ?? "--",
-      toolPrefix: toolPrefix ?? "''",
-      disabledTools: disabledTools ?? "[]",
+      toolsPrefix: tools?.prefix ?? "''",
+      toolsInclude: tools?.include ? JSON.stringify(tools.include) : "[]",
+      toolsExclude: tools?.exclude ? JSON.stringify(tools.exclude) : "[]",
       disabled: disabled ? "yes" : "no",
     }),
   );
   console.log();
 
-  if (tools) {
+  if (toolsList) {
     console.log(subtitle(`tools`));
     console.log();
-    console.log(makeToolTable(tools).toString());
+    console.log(makeToolTable(toolsList).toString());
     console.log();
   }
 }

@@ -124,7 +124,7 @@ export class Playbook extends ProxyServer {
 
   public async updateTarget(
     serverName: string,
-    attributes: Partial<Pick<PlaybookTarget, "toolPrefix" | "disabledTools">>,
+    attributes: Partial<Pick<PlaybookTarget, "tools" | "disabled">>,
   ): Promise<ProxyTarget> {
     const target = await super.updateTarget(serverName, attributes);
     await this.persistToConfig();
@@ -283,8 +283,7 @@ function createClientForTarget(params: {
           url: target.url,
           name: target.name,
           source: target.source,
-          toolPrefix: target.toolPrefix,
-          disabledTools: target.disabledTools,
+          tools: target.tools,
           disabled: target.disabled,
           headers: target.headers,
         },
@@ -297,8 +296,7 @@ function createClientForTarget(params: {
         args: target.args,
         env: target.env,
         source: target.source,
-        toolPrefix: target.toolPrefix,
-        disabledTools: target.disabledTools,
+        tools: target.tools,
         disabled: target.disabled,
       });
   }

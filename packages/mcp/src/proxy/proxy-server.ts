@@ -124,17 +124,12 @@ export class ProxyServer extends Server {
   public async updateTarget(
     targetName: string,
 
-    attributes: Partial<
-      Pick<AbstractClientParams, "toolPrefix" | "disabledTools" | "disabled">
-    >,
+    attributes: Partial<Pick<AbstractClientParams, "tools" | "disabled">>,
   ) {
     const target = await this.getTarget(targetName);
 
-    if (attributes.toolPrefix !== undefined) {
-      target.toolPrefix = attributes.toolPrefix;
-    }
-    if (attributes.disabledTools !== undefined) {
-      target.disabledTools = attributes.disabledTools;
+    if (attributes.tools !== undefined) {
+      target.tools = attributes.tools;
     }
     if (attributes.disabled !== undefined) {
       await target.setDisabled(attributes.disabled);

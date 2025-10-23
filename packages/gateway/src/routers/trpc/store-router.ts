@@ -277,8 +277,7 @@ const oldServerToTargetParams = (server: ServerConfigEntry): PlaybookTarget => {
       name: server.name,
       url: server.transport.url,
       headers: server.transport.headers,
-      toolPrefix: server.toolPrefix,
-      disabledTools: server.disabledTools,
+      tools: server.tools,
       disabled: server.disabled,
     };
   } else if (server.transport.type === "stdio") {
@@ -288,8 +287,7 @@ const oldServerToTargetParams = (server: ServerConfigEntry): PlaybookTarget => {
       command: server.transport.command,
       args: server.transport.args,
       env: server.transport.env,
-      toolPrefix: server.toolPrefix,
-      disabledTools: server.disabledTools,
+      tools: server.tools,
       disabled: server.disabled,
     };
   } else {

@@ -19,7 +19,7 @@ export const StdioClientSchema = AbsractClientSchema.extend({
 export type StdioClientParams = z.infer<typeof StdioClientSchema>;
 export type StdioClientPlainObject = StdioClientParams & {
   type: "stdio";
-  tools?: Tool[];
+  toolsList?: Tool[];
   connectionInfo?: {
     status: ClientStatus;
     lastConnectedAt?: Date;
@@ -97,13 +97,12 @@ export class StdioClient extends AbstractClient<StdioClientParams> {
       type: "stdio",
       name: this.name,
       source: this.source,
-      toolPrefix: this.toolPrefix,
-      disabledTools: this.disabledTools,
+      tools: this.tools,
       disabled: this.disabled,
       command: this.command,
       args: this.args,
       env: this.env,
-      tools: include?.tools
+      toolsList: include?.tools
         ? (await this.originalListTools()).tools
         : undefined,
       connectionInfo: include?.connectionInfo

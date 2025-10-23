@@ -1,10 +1,11 @@
 import { z } from "zod";
 
-// Schema for attribute values that can be strings, booleans, arrays, or empty values
+// Schema for attribute values that can be strings, booleans, arrays, objects, or empty values
 const attributeValueSchema = z.union([
   z.string(),
   z.boolean(),
   z.array(z.string()),
+  z.record(z.unknown()),
   z.literal(""),
 ]);
 
@@ -29,6 +30,7 @@ export type AllowedAttributesConfig = z.infer<
  * - String values: "name=value"
  * - Boolean values: "enabled=true" or "enabled=false"
  * - Array values: "disabledTools=['tool1', 'tool2']"
+ * - JSON objects: "tools={\"prefix\":\"p_\",\"exclude\":[\"tool1\"]}"
  * - Empty values: "toolPrefix=''" or "disabledTools=[]"
  *
  * @param attributeStrings - Array of key=value strings
@@ -78,7 +80,7 @@ export function parseKeyValueAttributes(
 function parseAttributeValue(
   key: string,
   value: string,
-): string | boolean | string[] {
+): string | boolean | string[] | Record<string, unknown> {
   // Handle empty values
   if (value === "" || value === "''" || value === '""') {
     return "";
@@ -90,6 +92,17 @@ function parseAttributeValue(
   }
   if (value.toLowerCase() === "false" || value === "0") {
     return false;
+  }
+
+  // Handle JSON objects (format: {key: value})
+  if (value.startsWith("{") && value.endsWith("}")) {
+    try {
+      return JSON.parse(value) as Record<string, unknown>;
+    } catch (_error) {
+      throw new Error(
+        `Invalid JSON object format for ${key}: ${value}. Expected valid JSON`,
+      );
+    }
   }
 
   // Handle array values (format: ['item1', 'item2'] or [item1, item2])

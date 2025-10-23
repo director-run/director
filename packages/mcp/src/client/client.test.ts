@@ -442,4 +442,96 @@ describe("client integration tests", () => {
       });
     });
   });
+
+  describe("empty include arrays", () => {
+    describe("tools", () => {
+      beforeEach(() => {
+        client.tools = { include: [] };
+      });
+
+      afterEach(() => {
+        client.tools = undefined;
+      });
+
+      test("should not return any tools when include is empty", async () => {
+        const result = await client.listTools();
+        expect(result.tools).toEqual([]);
+      });
+
+      test("should not call any tools when include is empty", async () => {
+        await expect(
+          client.callTool({
+            name: "echo",
+            arguments: { message: "Hello, world!" },
+          }),
+        ).rejects.toThrow(McpError);
+
+        await expect(
+          client.callTool({
+            name: "foo",
+            arguments: { message: "Hello, world!" },
+          }),
+        ).rejects.toThrow(McpError);
+
+        await expect(
+          client.callTool({
+            name: "bar",
+            arguments: { message: "Hello, world!" },
+          }),
+        ).rejects.toThrow(McpError);
+      });
+    });
+
+    describe("prompts", () => {
+      beforeEach(() => {
+        client.prompts = { include: [] };
+      });
+
+      afterEach(() => {
+        client.prompts = undefined;
+      });
+
+      test("should not return any prompts when include is empty", async () => {
+        const result = await client.listPrompts();
+        expect(result.prompts).toEqual([]);
+      });
+
+      test("should not get any prompts when include is empty", async () => {
+        await expect(
+          client.getPrompt({
+            name: "greeting",
+            arguments: { name: "World" },
+          }),
+        ).rejects.toThrow(McpError);
+
+        await expect(
+          client.getPrompt({
+            name: "farewell",
+            arguments: { name: "World" },
+          }),
+        ).rejects.toThrow(McpError);
+
+        await expect(
+          client.getPrompt({
+            name: "welcome",
+            arguments: { name: "World" },
+          }),
+        ).rejects.toThrow(McpError);
+      });
+    });
+  });
+
+  describe("validation errors", () => {
+    test("should throw error when both include and exclude are specified for tools", () => {
+      expect(() => {
+        client.tools = { include: ["echo"], exclude: ["foo"] };
+      }).toThrow("Cannot use both 'include' and 'exclude' at the same time");
+    });
+
+    test("should throw error when both include and exclude are specified for prompts", () => {
+      expect(() => {
+        client.prompts = { include: ["greeting"], exclude: ["farewell"] };
+      }).toThrow("Cannot use both 'include' and 'exclude' at the same time");
+    });
+  });
 });

@@ -282,9 +282,7 @@ function createClientForTarget(params: {
           name: target.name,
           source: target.source,
           tools: target.tools,
-          prompts: {
-            include: [],
-          },
+          prompts: target.prompts,
           disabled: target.disabled,
           headers: target.headers,
         },
@@ -298,9 +296,7 @@ function createClientForTarget(params: {
         env: target.env,
         source: target.source,
         tools: target.tools,
-        prompts: {
-          include: [],
-        },
+        prompts: target.prompts,
         disabled: target.disabled,
       });
   }

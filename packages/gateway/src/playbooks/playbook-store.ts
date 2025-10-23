@@ -71,6 +71,7 @@ export class PlaybookStore {
         name: playbookConfig.name,
         description: playbookConfig.description ?? undefined,
         servers: playbookConfig.servers,
+        prompts: playbookConfig.prompts,
       });
     }
   }

@@ -29,16 +29,26 @@ export const SourceDataSchema = z.object({
 // TODO: deprecate this as soon as clients no longer use it
 export type SourceData = z.infer<typeof SourceDataSchema>;
 
-export const ToolsConfigSchema = z.object({
-  include: z.array(z.string()).optional(),
-  exclude: z.array(z.string()).optional(),
-  prefix: z.string().optional(),
-});
+export const ToolsConfigSchema = z
+  .object({
+    include: z.array(z.string()).optional(),
+    exclude: z.array(z.string()).optional(),
+    prefix: z.string().optional(),
+  })
+  .refine((data) => !(data.include && data.exclude), {
+    message: "Cannot use both 'include' and 'exclude' at the same time",
+    path: ["include", "exclude"],
+  });
 
-export const PromptsConfigSchema = z.object({
-  include: z.array(z.string()).optional(),
-  exclude: z.array(z.string()).optional(),
-});
+export const PromptsConfigSchema = z
+  .object({
+    include: z.array(z.string()).optional(),
+    exclude: z.array(z.string()).optional(),
+  })
+  .refine((data) => !(data.include && data.exclude), {
+    message: "Cannot use both 'include' and 'exclude' at the same time",
+    path: ["include", "exclude"],
+  });
 
 export const AbsractClientSchema = z.object({
   name: requiredStringSchema,
@@ -62,8 +72,8 @@ export abstract class AbstractClient<
   public lastConnectedAt?: Date;
   public lastErrorMessage?: string;
   public readonly source?: SourceData;
-  public tools?: ToolsConfig;
-  public prompts?: PromptsConfig;
+  private _tools?: ToolsConfig;
+  private _prompts?: PromptsConfig;
   protected _disabled: boolean = false;
 
   constructor(params: Params) {
@@ -83,8 +93,8 @@ export abstract class AbstractClient<
     );
     this.name = name;
     this.source = source;
-    this.tools = tools;
-    this.prompts = promptsConfig;
+    this._tools = tools;
+    this._prompts = promptsConfig;
     this._disabled = disabled ?? false;
   }
 
@@ -104,13 +114,17 @@ export abstract class AbstractClient<
       tools: result.tools
         .filter((tool) => {
           // Apply include filter if specified
-          if (this.tools?.include && this.tools.include.length > 0) {
-            if (!this.tools.include.includes(tool.name)) {
+          if (this._tools?.include !== undefined) {
+            if (this._tools.include.length === 0) {
+              // Empty include array means no tools should be included
+              return false;
+            }
+            if (!this._tools.include.includes(tool.name)) {
               return false;
             }
           }
           // Apply exclude filter
-          if (this.tools?.exclude && this.tools.exclude.includes(tool.name)) {
+          if (this._tools?.exclude && this._tools.exclude.includes(tool.name)) {
             return false;
           }
           return true;
@@ -118,8 +132,8 @@ export abstract class AbstractClient<
         .map((tool) => {
           return {
             ...tool,
-            name: this.tools?.prefix
-              ? `${this.tools.prefix}${tool.name}`
+            name: this._tools?.prefix
+              ? `${this._tools.prefix}${tool.name}`
               : tool.name,
           };
         }),
@@ -135,15 +149,19 @@ export abstract class AbstractClient<
       ...result,
       prompts: result.prompts.filter((prompt) => {
         // Apply include filter if specified
-        if (this.prompts?.include && this.prompts.include.length > 0) {
-          if (!this.prompts.include.includes(prompt.name)) {
+        if (this._prompts?.include !== undefined) {
+          if (this._prompts.include.length === 0) {
+            // Empty include array means no prompts should be included
+            return false;
+          }
+          if (!this._prompts.include.includes(prompt.name)) {
             return false;
           }
         }
         // Apply exclude filter
         if (
-          this.prompts?.exclude &&
-          this.prompts.exclude.includes(prompt.name)
+          this._prompts?.exclude &&
+          this._prompts.exclude.includes(prompt.name)
         ) {
           return false;
         }
@@ -163,6 +181,36 @@ export abstract class AbstractClient<
     } else {
       await this.connectToTarget({ throwOnError: true });
     }
+  }
+
+  public get tools(): ToolsConfig | undefined {
+    return this._tools;
+  }
+
+  public set tools(tools: ToolsConfig | undefined) {
+    if (tools) {
+      // Validate the tools config
+      const result = ToolsConfigSchema.safeParse(tools);
+      if (!result.success) {
+        throw new Error(result.error.errors[0].message);
+      }
+    }
+    this._tools = tools;
+  }
+
+  public get prompts(): PromptsConfig | undefined {
+    return this._prompts;
+  }
+
+  public set prompts(prompts: PromptsConfig | undefined) {
+    if (prompts) {
+      // Validate the prompts config
+      const result = PromptsConfigSchema.safeParse(prompts);
+      if (!result.success) {
+        throw new Error(result.error.errors[0].message);
+      }
+    }
+    this._prompts = prompts;
   }
 
   public isConnected(): boolean {
@@ -195,7 +243,7 @@ export abstract class AbstractClient<
       | typeof CompatibilityCallToolResultSchema,
     options?: RequestOptions,
   ) {
-    const prefix = this.tools?.prefix;
+    const prefix = this._tools?.prefix;
     if (prefix && !params.name.startsWith(prefix)) {
       // Throw an error if trying to use the original tool name when using a tool prefix
       throw new McpError(
@@ -210,7 +258,7 @@ export abstract class AbstractClient<
         : params.name;
 
     // Check if tool is explicitly excluded
-    if (this.tools?.exclude && this.tools.exclude.includes(toolName)) {
+    if (this._tools?.exclude && this._tools.exclude.includes(toolName)) {
       throw new McpError(
         ErrorCode.InternalError,
         `Tool "${params.name}" is disabled`,
@@ -218,8 +266,15 @@ export abstract class AbstractClient<
     }
 
     // Check if tool is in include list (if include list is specified)
-    if (this.tools?.include && this.tools.include.length > 0) {
-      if (!this.tools.include.includes(toolName)) {
+    if (this._tools?.include !== undefined) {
+      if (this._tools.include.length === 0) {
+        // Empty include array means no tools should be included
+        throw new McpError(
+          ErrorCode.InternalError,
+          `Tool "${params.name}" is disabled`,
+        );
+      }
+      if (!this._tools.include.includes(toolName)) {
         throw new McpError(
           ErrorCode.InternalError,
           `Tool "${params.name}" is disabled`,
@@ -244,7 +299,7 @@ export abstract class AbstractClient<
     const promptName = params.name;
 
     // Check if prompt is explicitly excluded
-    if (this.prompts?.exclude && this.prompts.exclude.includes(promptName)) {
+    if (this._prompts?.exclude && this._prompts.exclude.includes(promptName)) {
       throw new McpError(
         ErrorCode.InternalError,
         `Prompt "${promptName}" is disabled`,
@@ -252,8 +307,15 @@ export abstract class AbstractClient<
     }
 
     // Check if prompt is in include list (if include list is specified)
-    if (this.prompts?.include && this.prompts.include.length > 0) {
-      if (!this.prompts.include.includes(promptName)) {
+    if (this._prompts?.include !== undefined) {
+      if (this._prompts.include.length === 0) {
+        // Empty include array means no prompts should be included
+        throw new McpError(
+          ErrorCode.InternalError,
+          `Prompt "${promptName}" is disabled`,
+        );
+      }
+      if (!this._prompts.include.includes(promptName)) {
         throw new McpError(
           ErrorCode.InternalError,
           `Prompt "${promptName}" is disabled`,

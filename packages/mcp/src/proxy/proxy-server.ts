@@ -55,7 +55,7 @@ export class ProxyServer extends Server {
     }
 
     setupToolHandlers(this);
-    setupPromptHandlers(this, this._targets);
+    setupPromptHandlers(this);
     setupResourceHandlers(this, this._targets);
     setupResourceTemplateHandlers(this, this._targets);
   }

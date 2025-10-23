@@ -29,11 +29,16 @@ export const stdioTransportSchema = z.object({
 
 export type STDIOTransport = z.infer<typeof stdioTransportSchema>;
 
-export const ToolsConfigSchema = z.object({
-  include: z.array(requiredStringSchema).optional(),
-  exclude: z.array(requiredStringSchema).optional(),
-  prefix: z.string().trim().optional(),
-});
+export const ToolsConfigSchema = z
+  .object({
+    include: z.array(requiredStringSchema).optional(),
+    exclude: z.array(requiredStringSchema).optional(),
+    prefix: z.string().trim().optional(),
+  })
+  .refine((data) => !(data.include && data.exclude), {
+    message: "Cannot use both 'include' and 'exclude' at the same time",
+    path: ["include", "exclude"],
+  });
 
 export const ServerConfigEntrySchema = z.object({
   name: slugStringSchema,

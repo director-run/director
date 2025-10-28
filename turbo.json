@@ -33,6 +33,9 @@
     "format": {
       "dependsOn": ["^format"]
     },
+    "spellcheck": {
+      "dependsOn": ["^spellcheck"]
+    },
     "start": {
       "persistent": true,
       "cache": false

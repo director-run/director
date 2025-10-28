@@ -8,7 +8,7 @@ import { BASE_PATH, GATEWAY_URL, REGISTRY_URL } from "./config";
 import { AuthProvider } from "./contexts/auth-context";
 import { useAuth } from "./contexts/auth-context";
 import { BackendProvider } from "./contexts/backend-context";
-import { GlobalErrorBoundary } from "./helpers/global-error-boundry";
+import { GlobalErrorBoundary } from "./helpers/global-error-boundary";
 import { usePlaybooks } from "./hooks/use-playbooks";
 import { OAuthCallbackPage } from "./pages/oauth-callback-page";
 import { GetStartedPage } from "./pages/onboarding";
@@ -21,7 +21,7 @@ import { RootLayout } from "./root-layout";
 
 import "./fonts.css";
 import "./globals.css";
-import { ConnectionBoundary } from "./helpers/connection-boundry";
+import { ConnectionBoundary } from "./helpers/connection-boundary";
 
 export const App = () => {
   const { isInitializing } = useAuth();

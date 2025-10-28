@@ -1,5 +1,5 @@
 <h1 align="center">Director</h1>
-<p align="center">Playbooks for AI agents</p>
+<p align="center">MCP Playbooks for AI agents</p>
 
 <p align="center"><code>curl -LsSf https://director.run/install.sh | sh</code></p>
 
@@ -16,12 +16,14 @@
 
 # Overview
 
-Director helps you provide **playbooks** to your AI Agents. Playbooks are set of tools, prompts and configuration, that enable a specific task (like [Claude Skills](https://www.anthropic.com/news/skills)) and can be used by any agent through a single, unified MCP endpoint.
+Director allows you to provide <ins>**playbooks**</ins> to AI Agents. A playbook is a set of <ins>**MCP tools**</ins>, <ins>**prompts**</ins> and <ins>**configuration**</ins>, that give agents new <ins>**skills**</ins>. You can connect Claude, Cursor and VSCode in 1-click, or integrate manually through a single MCP endpoint.
 
 Playbooks are portable, declarative YAML files that can easily be shared (or committed to version control). Director is local-first - installation and client integration takes 30 seconds. In addition, Director provides all of the MCP management functionality that you'd expect: tool filtering, logging, strong isolation, and unified OAuth.
 
 <br />
-<img src="https://github.com/director-run/director/blob/main/apps/docs/images/demo.gif" width="100%" alt="director demo">
+
+https://github.com/user-attachments/assets/cafc0902-a854-4ee8-ac89-b7535f10c93d
+
 
 ## Key Features
 

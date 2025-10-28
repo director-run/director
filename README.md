@@ -22,11 +22,7 @@ Playbooks are portable, declarative YAML files that can easily be shared (or com
 
 <br />
 
-
-
 https://github.com/user-attachments/assets/cafc0902-a854-4ee8-ac89-b7535f10c93d
-
-
 
 
 ## Key Features
@@ -39,7 +35,7 @@ https://github.com/user-attachments/assets/cafc0902-a854-4ee8-ac89-b7535f10c93d
 - 🎯 **Tool Filtering** - Select only the MCP tools that are required for the specific task, preserving context.  
 - 📋 **Declarative** - Like terraform for AI agents, Director will enforce playbook to client mapping on startup.
 - 🔧 **Flexibility** - You can configure director through the UI, by editing the config file, through the CLI or even using the Typescript SDK.  
-- 📊 **Observability** - Centralised JSON logging, that allows you to understand exactly what your agent is doing.
+- 📊 **Observability** - Centralized JSON logging, that allows you to understand exactly what your agent is doing.
 - 🔌 **MCP Compliant** - Just works with any MCP server or client. Up to date with the latest MCP spec.
 
 # Quickstart
@@ -109,7 +105,7 @@ playbooks:
           search logs for errors, identify root cause
 ```
 
-## Architechture
+## Architecture
 
 At a high level, Director is a service that sits between your agents and MCP servers. It's transparent to clients, requiring no additional tokens. It models playbooks, which can be thought of as standalone, portable skills that enhance your AI agent with new capabilities.
 
@@ -266,7 +262,7 @@ const result = await playbook.callTool('github.create_issue', {
 
 - [`apps/cli`](./apps/cli/README.md) - The command-line interface, the primary way to interact with Director. Available on [npm](https://www.npmjs.com/package/@director.run/cli).
 - [`apps/sdk`](./apps/sdk/README.md) - The Typescript SDK, available on [npm](https://www.npmjs.com/package/@director.run/sdk).
-- [`apps/docker`](./apps/docker/README.md) - The Director docker image, which allows you to run Director (and all MCP servers) securly inside a container. Available on [Docker Hub](https://hub.docker.com/r/barnaby/director).
+- [`apps/docker`](./apps/docker/README.md) - The Director docker image, which allows you to run Director (and all MCP servers) securely inside a container. Available on [Docker Hub](https://hub.docker.com/r/barnaby/director).
 - [`apps/docs`](./apps/docs/README.md) - Project documentation hosted at [https://docs.director.run](https://docs.director.run)
 - [`apps/registry`](./apps/registry/README.md) - Backend for the registry hosted at [https://registry.director.run](https://registry.director.run)
 - [`apps/sandbox`](./apps/sandbox/README.md) - A tool for running Director (and all MCP servers) securely inside a VM. Apple Silicon only.

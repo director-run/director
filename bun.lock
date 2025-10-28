@@ -20,6 +20,9 @@
       "bin": {
         "director": "./dist/cli.js",
       },
+      "dependencies": {
+        "cspell": "^9.2.2",
+      },
       "devDependencies": {
         "@director.run/client-configurator": "workspace:*",
         "@director.run/gateway": "workspace:*",

@@ -1,5 +1,11 @@
 # @director.run/cli
 
+## 1.0.1
+
+### Patch Changes
+
+- [#407](https://github.com/director-run/director/pull/407) [`5ef3608`](https://github.com/director-run/director/commit/5ef36081008b194e54b8dfd3a11b14c9ae8ef5e4) Thanks [@barnaby](https://github.com/barnaby)! - Fix typeos & spelling
+
 ## 1.0.0
 
 ### Major Changes

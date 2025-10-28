@@ -1,7 +1,7 @@
 {
   "name": "@director.run/cli",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "files": ["dist", "README.md", "package.json"],
   "bin": {
     "director": "./dist/cli.js"
@@ -57,9 +57,7 @@
     "update-notifier": "^7.3.1",
     "vitest": "^3.1.1",
     "zod": "^3.25.76",
-    "zx": "^8.8.0"
-  },
-  "dependencies": {
+    "zx": "^8.8.0",
     "cspell": "^9.2.2"
   }
 }

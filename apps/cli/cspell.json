@@ -4,15 +4,15 @@
     "node_modules",
     "package.json",
     "bun.lock",
-    "**/next/**",
     "**/dist/**",
-    "dist-storybook/**"
+    "src/config.ts"
   ],
   "words": [
     "streamable",
     "hackernews",
     "modelcontextprotocol",
     "turborepo",
-    "configurator"
+    "configurator",
+    "awslabs"
   ]
 }

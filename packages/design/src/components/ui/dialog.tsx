@@ -27,13 +27,13 @@ function DialogOverlay({
 
 interface DialogContentProps
   extends React.ComponentProps<typeof DialogPrimitive.Content> {
-  dismissable?: boolean;
+  dismissible?: boolean;
 }
 
 function DialogContent({
   className,
   children,
-  dismissable = true,
+  dismissible = true,
   ...props
 }: DialogContentProps) {
   return (
@@ -51,7 +51,7 @@ function DialogContent({
         {...props}
       >
         {children}
-        {dismissable && (
+        {dismissible && (
           <DialogPrimitive.Close
             className={cn("absolute top-1 right-1 rounded-lg")}
             asChild

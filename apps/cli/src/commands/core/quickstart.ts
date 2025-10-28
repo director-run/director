@@ -47,7 +47,7 @@ async function checkPrerequisites() {
 
   for (const dependency of status.dependencies) {
     lines.push(
-      dependecyStatus({
+      dependencyStatus({
         name: dependency.name,
         installed: dependency.installed,
         successText: `${dependency.name} is installed`,
@@ -75,7 +75,7 @@ async function checkPrerequisites() {
 
   for (const client of clientStore.all()) {
     lines.push(
-      dependecyStatus({
+      dependencyStatus({
         name: client.name,
         installed: await client.isClientPresent(),
       }),
@@ -120,7 +120,7 @@ async function checkPrerequisites() {
   }
 }
 
-function dependecyStatus(dependency: {
+function dependencyStatus(dependency: {
   installed: boolean;
   name: string;
   successText?: string;

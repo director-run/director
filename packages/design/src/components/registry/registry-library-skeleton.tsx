@@ -44,7 +44,7 @@ export function RegistryLibrarySkeleton({
             <SectionHeader>
               <SectionTitle>Discover MCP servers</SectionTitle>
               <SectionDescription>
-                Find MCP servers for your favourite tools and install them
+                Find MCP servers for your favorite tools and install them
                 directly to your Director playbooks.
               </SectionDescription>
             </SectionHeader>

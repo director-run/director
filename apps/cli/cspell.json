@@ -1,0 +1,18 @@
+{
+  "dictionaries": ["npm", "node", "typescript", "css"],
+  "ignorePaths": [
+    "node_modules",
+    "package.json",
+    "bun.lock",
+    "**/dist/**",
+    "src/config.ts"
+  ],
+  "words": [
+    "streamable",
+    "hackernews",
+    "modelcontextprotocol",
+    "turborepo",
+    "configurator",
+    "awslabs"
+  ]
+}

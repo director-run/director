@@ -1,0 +1,14 @@
+{
+  "dictionaries": ["npm", "node", "typescript", "css"],
+  "ignorePaths": [
+    "node_modules",
+    "package.json",
+    "bun.lock",
+    "**/next/**",
+    "**/dist/**",
+    "dist-storybook/**",
+    "tsconfig.tsbuildinfo",
+    "src/test/fixtures/**"
+  ],
+  "words": ["modelcontextprotocol", "invisibles", "streamable"]
+}

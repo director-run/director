@@ -9,7 +9,8 @@
     "format:fix-all": "biome format --write ./src",
     "format:fix-imports": "biome check --formatter-enabled=false --linter-enabled=false --organize-imports-enabled=true --write ./src",
     "format:fix-classnames": "biome lint --fix --unsafe --only=lint/nursery/useSortedClasses ./src",
-    "lint": "biome check ./src"
+    "lint": "biome check ./src",
+    "spellcheck": "cspell \"**\""
   },
   "exports": {
     "./*": "./src/*"
@@ -38,6 +39,7 @@
     "@tanstack/react-query": "^5.77.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cspell": "^9.2.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.56.4",

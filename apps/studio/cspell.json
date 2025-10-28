@@ -1,0 +1,12 @@
+{
+  "dictionaries": ["npm", "node", "typescript", "css"],
+  "ignorePaths": [
+    "node_modules",
+    "package.json",
+    "bun.lock",
+    "**/next/**",
+    "**/dist/**",
+    "dist-storybook/**"
+  ],
+  "words": ["streamable"]
+}

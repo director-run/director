@@ -1,5 +1,5 @@
 <h1 align="center">Director</h1>
-<p align="center">Playbooks for AI agents</p>
+<p align="center">MCP Playbooks for AI agents</p>
 
 <p align="center"><code>curl -LsSf https://director.run/install.sh | sh</code></p>
 
@@ -16,12 +16,14 @@
 
 # Overview
 
-Director helps you provide **playbooks** to your AI Agents. Playbooks are set of tools, prompts and configuration, that enable a specific task (like [Claude Skills](https://www.anthropic.com/news/skills)) and can be used by any agent through a single, unified MCP endpoint.
+Director allows you to provide <ins>**playbooks**</ins> to AI Agents. A playbook is a set of <ins>**MCP tools**</ins>, <ins>**prompts**</ins> and <ins>**configuration**</ins>, that give agents new <ins>**skills**</ins>. You can connect Claude, Cursor and VSCode in 1-click, or integrate manually through a single MCP endpoint.
 
 Playbooks are portable, declarative YAML files that can easily be shared (or committed to version control). Director is local-first - installation and client integration takes 30 seconds. In addition, Director provides all of the MCP management functionality that you'd expect: tool filtering, logging, strong isolation, and unified OAuth.
 
 <br />
-<img src="https://github.com/director-run/director/blob/main/apps/docs/images/demo.gif" width="100%" alt="director demo">
+
+[![Watch the video](https://image.mux.com/LkXOkiGsfatE6XLxda8ZEm02ydvxJ1K004y5EgqYV7dus/thumbnail.png?time=60)](https://player.mux.com/LkXOkiGsfatE6XLxda8ZEm02ydvxJ1K004y5EgqYV7dus)
+
 
 ## Key Features
 
@@ -33,7 +35,7 @@ Playbooks are portable, declarative YAML files that can easily be shared (or com
 - 🎯 **Tool Filtering** - Select only the MCP tools that are required for the specific task, preserving context.  
 - 📋 **Declarative** - Like terraform for AI agents, Director will enforce playbook to client mapping on startup.
 - 🔧 **Flexibility** - You can configure director through the UI, by editing the config file, through the CLI or even using the Typescript SDK.  
-- 📊 **Observability** - Centralised JSON logging, that allows you to understand exactly what your agent is doing.
+- 📊 **Observability** - Centralized JSON logging, that allows you to understand exactly what your agent is doing.
 - 🔌 **MCP Compliant** - Just works with any MCP server or client. Up to date with the latest MCP spec.
 
 # Quickstart
@@ -103,7 +105,7 @@ playbooks:
           search logs for errors, identify root cause
 ```
 
-## Architechture
+## Architecture
 
 At a high level, Director is a service that sits between your agents and MCP servers. It's transparent to clients, requiring no additional tokens. It models playbooks, which can be thought of as standalone, portable skills that enhance your AI agent with new capabilities.
 
@@ -260,7 +262,7 @@ const result = await playbook.callTool('github.create_issue', {
 
 - [`apps/cli`](./apps/cli/README.md) - The command-line interface, the primary way to interact with Director. Available on [npm](https://www.npmjs.com/package/@director.run/cli).
 - [`apps/sdk`](./apps/sdk/README.md) - The Typescript SDK, available on [npm](https://www.npmjs.com/package/@director.run/sdk).
-- [`apps/docker`](./apps/docker/README.md) - The Director docker image, which allows you to run Director (and all MCP servers) securly inside a container. Available on [Docker Hub](https://hub.docker.com/r/barnaby/director).
+- [`apps/docker`](./apps/docker/README.md) - The Director docker image, which allows you to run Director (and all MCP servers) securely inside a container. Available on [Docker Hub](https://hub.docker.com/r/barnaby/director).
 - [`apps/docs`](./apps/docs/README.md) - Project documentation hosted at [https://docs.director.run](https://docs.director.run)
 - [`apps/registry`](./apps/registry/README.md) - Backend for the registry hosted at [https://registry.director.run](https://registry.director.run)
 - [`apps/sandbox`](./apps/sandbox/README.md) - A tool for running Director (and all MCP servers) securely inside a VM. Apple Silicon only.

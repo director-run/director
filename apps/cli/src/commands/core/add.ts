@@ -78,7 +78,7 @@ export function registerAddCommand(program: DirectorCommand) {
             await addServerFromStdio(playbookId, command, args, options.name);
           } else {
             console.warn(
-              "No entry name or url provided. You must speciy --entry or --url and --name, alternatively update the config file directly and restart the gateway:",
+              "No entry name or url provided. You must specify --entry or --url and --name, alternatively update the config file directly and restart the gateway:",
             );
             console.log();
             console.log(

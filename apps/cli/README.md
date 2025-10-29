@@ -109,7 +109,7 @@ playbooks:
 
 At a high level, Director is a service that sits between your agents and MCP servers. It's transparent to clients, requiring no additional tokens. It models playbooks, which can be thought of as standalone, portable skills that enhance your AI agent with new capabilities.
 
-<img src="https://github.com/director-run/director/blob/main/apps/docs/images/director-highlevel-overview.webp" width="100%" alt="director demo">
+<img src="https://github.com/director-run/director/blob/main/apps/docs/images/director-highlevel-overview.png" width="100%" alt="director demo">
 
 # Usage
 

@@ -1,35 +1,52 @@
 ---
 sidebarTitle: Welcome!
 title: "Welcome to Director!"
-description: "The easiest way to manage and deploy MCP servers, locally or in the cloud."
+description: "MCP Playbooks for AI agents"
 icon: hand-wave
 ---
 
 import { BetaBadge } from '/snippets/beta-badge.mdx'
 
-<BetaBadge />
-<br />
-<br />
 
 <Frame caption="Director overview">
-  <img src="../images/director-highlevel-overview.webp" />
+  <img src="../images/director-highlevel-overview.png" />
 </Frame>
 
-[Director](https://director.run) is open source MCP middleware that acts as a playbook between models/agents and MCP servers. Supporting all MCP transports natively, it aggregates tools, prompts, and resources server-side while providing a unified client-side integration point. This abstraction eliminates MCP server management overhead, enabling developers to focus on prompt engineering and domain logic rather than infrastructure complexity.
+[Director](https://director.run) allows you to provide **playbooks** to AI Agents. A playbook is a set of **MCP tools**, **prompts** and **configuration** that give agents new **skills**. You can connect Claude, Cursor and VSCode in 1-click, or integrate manually through a single MCP endpoint.
 
-#### Open Source
-MIT-licensed with no vendor lock-in. Run locally with zero dependencies, in Docker, or as a cloud service.
-#### Centralized Configuration
-Eliminate client-side config files and secret management. Create isolated playbooks with dedicated connection endpoints.
-#### Protocol-Native
-Fully MCP-compliant implementation that works with any standard MCP client or server.
-#### Flexible Deployment
-Install and run locally in one command via npm. Deploy to any *nix server or containerized environment.
-#### Built-in Observability
-Structured JSON logging for all MCP operations. Stream logs to your existing aggregation tools for production monitoring.
-#### Security Features
-- VM Isolation: Sandbox MCP servers in VMs or containers to prevent code injection
-- OAuth2 Support (coming soon): Automated token management and secure authentication
-- Multi-tenancy (coming soon): Transform single-tenant MCP servers into multi-tenant deployments
+Playbooks are portable, declarative YAML files that can easily be shared (or committed to version control). Director is local-first - installation and client integration takes 30 seconds. Director provides all the MCP management functionality you'd expect: tool filtering, logging, strong isolation, and unified OAuth.
+
+## Key Features
+
+#### 📚 Playbooks
+Maintain sets of tools, prompts and config for different tasks or environments.
+
+#### 🚀 1-Click Integration
+Switch playbooks with a single click. Currently supports Claude Code, Claude Desktop, Cursor, VSCode.
+
+#### 🔗 Shareable
+Playbooks are flat files which can be shared or committed to version control easily.
+
+#### 🏠 Local-First
+Director is local-first, designed to easily run on your own machine or infrastructure.
+
+#### 🔑 Unified OAuth
+Connect to OAuth MCPs centrally, and use them across all of your agents.
+
+#### 🎯 Tool Filtering
+Select only the MCP tools that are required for the specific task, preserving context.
+
+#### 📋 Declarative
+Like terraform for AI agents, Director will enforce playbook to client mapping on startup.
+
+#### 🔧 Flexibility
+Configure director through the UI, by editing the config file, through the CLI or using the Typescript SDK.
+
+#### 📊 Observability
+Centralized JSON logging that allows you to understand exactly what your agent is doing.
+
+#### 🔌 MCP Compliant
+Just works with any MCP server or client. Up to date with the latest MCP spec.
+
 #### MCP Registry
-Discover and evaluate MCP servers securely with built-in isolation. Future releases will enable dynamic server management through MCP tool calls.
+Discover and evaluate MCP servers securely. Browse available servers through the [Studio](./studio) or CLI.

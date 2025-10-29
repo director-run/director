@@ -35,14 +35,14 @@ director studio # open the studio in your browser
 
 ## Getting started with the CLI
 
-If you'd like to set up director without going through the UI, you can do so via the CLI. If you'd like to see a more detailed example, you can check out the [CLI Reference](../sdk/cli).
+If you'd like to set up director without going through the UI, you can do so via the CLI. For more detailed information, check out the [CLI Reference](../concepts/cli).
 
 ```bash
 npm install -g @director.run/cli
 director serve # start the gateway
 director create my-first-playbook # create a playbook
-director add fetch --target=my-first-playbook # add the fetch server to the playbook
-director connect my-first-playbook --target=claude # connect the playbook to Claude
-director connect my-first-playbook --target=cursor # connect the playbook to Cursor
+director add my-first-playbook --entry fetch # add the fetch server to the playbook
+director connect my-first-playbook --target claude # connect the playbook to Claude
+director connect my-first-playbook --target cursor # connect the playbook to Cursor
 director connect my-first-playbook # print the manual connection details
 ```

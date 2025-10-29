@@ -8,20 +8,46 @@ icon: sitemap
   <img src="../images/director-architecture-overview.png" />
 </Frame>
 
-Director is MCP middleware bridging MCP Clients and Servers. It provides clients a single connection point and aggregates server tools, prompts, and resources - supporting all MCP transports (HTTP Streamable, Stdio, SSE).
+Director is a service that sits between your AI agents and MCP servers, providing a **playbook-based architecture** for organizing and managing MCP capabilities. It's transparent to clients, requiring no additional tokens or configuration changes.
 
-Director centralizes MCP configuration and abstracts server management through CLI, Studio (GUI), and SDK interfaces.
+## Core Concepts
 
-# Gateway
+### Playbooks
 
-The `Gateway` implements a playbook pattern aggregating MCP servers and serving them to clients via standard protocol transports. Additional components:
-- `ClientConfigurator`: Automates adding and removing client connections (Claude, Cursor, VSCode) to the `Gateway` without manual JSON configuration
-- `Controller`: Exposes HTTP API ([TRPC](https://trpc.io/)) for dynamic `Playbook` management
+A **playbook** is a set of tools, prompts, and configuration that gives your AI agent new skills. Think of playbooks as portable, declarative skill sets that can be:
+- Shared across teams via version control (YAML files)
+- Connected to multiple clients (Claude, Cursor, VSCode) with 1-click
+- Configured to include only the tools needed for specific tasks
+- Enforced declaratively (like Terraform for AI agents)
 
-# Gateway Management
+### Gateway
 
-The `Gateway` runs as standalone infrastructure (currently locally is the best supported). Director's client/server architecture for management (distinct from MCP client/server connections) enables `Playbook` lifecycle management, target configuration, and service health monitoring via the `Controller` layer.
+The `Gateway` implements the playbook pattern by:
+- Aggregating multiple MCP servers into a single playbook endpoint
+- Supporting all MCP transports (HTTP Streamable, Stdio, SSE)
+- Providing tool filtering to preserve context
+- Offering unified OAuth for centralized authentication
 
-Management interfaces:
-- [CLI](../sdk/cli): Primary `Gateway` runtime and management tool (npm installable)
-- [Studio](../concepts/studio): Web interface for visual `Gateway` and `Playbooks` management, ideal for complex deployments
+### Client Integration
+
+Director provides multiple ways to connect MCP clients:
+
+- **1-Click Integration**: Automatically configure Claude, Cursor, or VSCode via the `ClientConfigurator`
+- **Manual Integration**: Use standard MCP connection details for any MCP-compliant client
+- **Declarative Mapping**: Define client-to-playbook connections in config that are enforced on startup
+
+## Management Interfaces
+
+Director can be managed through multiple interfaces:
+
+- [CLI](../concepts/cli): Primary management tool (npm installable) - `director serve`, `director create`, etc.
+- [Studio](../concepts/studio): Web interface for visual playbook and server management
+- **SDK**: Programmatic control via TypeScript SDK for advanced use cases
+- **Config File**: Direct YAML editing at `~/.director/director.config.yaml`
+
+## Architecture Components
+
+- **Gateway**: Core service that runs the playbooks and serves MCP clients
+- **Controller**: HTTP API (TRPC) for dynamic playbook management
+- **ClientConfigurator**: Automates client connection setup without manual JSON editing
+- **Registry**: Discover and add MCP servers from the community registry

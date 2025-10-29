@@ -17,7 +17,7 @@ $ curl -LsSf https://director.run/install.sh | sh
 ```bash
 $ director --help
 
-The easiest way to manage and deploy MCP servers
+Playbooks for your AI agent
 
 USAGE
   director <command> [subcommand] [flags]
@@ -27,23 +27,43 @@ CORE COMMANDS
    serve                                         Start the web service
    studio                                        Open the UI in your browser
    ls                                            List playbooks
-   get <playbookId>                              Show playbook details
+   get <playbookId> [serverName]                 Show playbook details
+   auth <playbookId> <server>                    Authenticate a server
    create <name>                                 Create a new playbook
    destroy <playbookId>                          Delete a playbook
    connect <playbookId> [options]                Connect a playbook to a MCP client
    disconnect <playbookId> [options]             Disconnect a playbook from an MCP client
-   add <playbookId> [options]                   Add a server to a playbook.
+   add <playbookId> [options]                    Add a server to a playbook
    remove <playbookId> <serverName>              Remove a server from a playbook
+   update <playbookId> [serverName] [options]    Update playbook attributes
    http2stdio <url>                              Proxy an HTTP connection (sse or streamable) to a stdio stream
    env [options]                                 Print environment variables
+   status                                        Get the status of the director
 
 REGISTRY
    registry ls                                   List all available servers in the registry
    registry get <entryName>                      Get detailed information about a registry item
    registry readme <entryName>                   Print the readme for a registry item
 
+MCP
+   mcp list-tools <playbookId>                   List tools on a playbook
+   mcp get-tool <playbookId> <toolName>          Get the details of a tool
+   mcp call-tool <playbookId> <toolName> [options]  Call a tool on a playbook
+
+PROMPTS
+   prompts ls <playbookId>                       List all prompts for a playbook
+   prompts add <playbookId>                      Add a new prompt to a playbook
+   prompts edit <playbookId> <promptName>        Edit an existing prompt
+   prompts remove <playbookId> <promptName>      Remove a prompt from a playbook
+   prompts get <playbookId> <promptName>         Show the details of a specific prompt
+
 FLAGS
    -V, --version                                 output the version number
+
+EXAMPLES
+  $ director create my-playbook                 Create a new playbook
+  $ director add my-playbook --entry fetch      Add a server to a playbook
+  $ director connect my-playbook --target claude  Connect my-playbook to claude
 ```
 
 

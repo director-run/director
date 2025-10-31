@@ -18,7 +18,7 @@ export function createOauthCallbackRouter(params: {
     providerId: string,
     error: Error,
   ) => MaybePromise<void | RedirectResult>;
-}) {
+}): express.Router {
   const router = express.Router();
 
   router.get(

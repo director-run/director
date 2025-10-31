@@ -42,7 +42,10 @@
     "typescript": "^5.8.3",
     "vitest": "^3.1.1",
     "@director.run/gateway": "workspace:*",
-    "@director.run/registry": "workspace:*"
+    "@director.run/registry": "workspace:*",
+    "@director.run/client-configurator": "workspace:*",
+    "@director.run/mcp": "workspace:*",
+    "@director.run/utilities": "workspace:*"
   },
   "dependencies": {
     "@trpc/client": "^11.0.2",

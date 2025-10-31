@@ -5,7 +5,7 @@ import express from "express";
 export const spaMiddleware = (options: {
   distPath: string;
   config?: Record<string, unknown>;
-}) => {
+}): express.Router => {
   const { distPath, config } = options;
   const indexPath = path.join(distPath, "index.html");
 

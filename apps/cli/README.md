@@ -290,24 +290,30 @@ playbooks:
 Programmatic control for advanced use cases:
 
 ```typescript
-import { Director } from '@director.run/sdk';
+import { Gateway } from "@director.run/sdk";
 
-const director = new Director();
-
-// Create playbook programmatically
-const playbook = await director.playbooks.create({
-  name: 'ci-environment',
-  servers: [{
-    name: 'github',
-    command: 'mcp-server-github',
-    env: { GITHUB_TOKEN: process.env.GITHUB_TOKEN }
-  }]
+// Start the gateway
+const gateway = await Gateway.start({
+  config: await Config.createMemoryBasedConfig({
+    defaults: {
+      server: {
+        port: 3673,
+      },
+    },
+  }),
+  baseUrl: "http://localhost:3673",
 });
 
-// Execute tools
-const result = await playbook.callTool('github.create_issue', {
-  title: 'Automated issue from CI',
-  body: 'This issue was created by Director'
+// Add a new playbook
+await gateway.playbookStore.create({
+  name: "test",
+  servers: [
+    {
+      name: "notion",
+      type: "http",
+      url: "https://mcp.notion.com/mcp",
+    },
+  ],
 });
 ```
 

@@ -7,44 +7,38 @@ The Gateway API allows you to start and manage a director instance programmatica
 
 ## Examples
 
-#### Starting a Server
 ```typescript
-import { Gateway } from "@director.run/gateway/gateway";
+import { Gateway } from "@director.run/sdk";
 
 // Start the gateway
-await Gateway.start({
-  port: 8080, // which port to listen to
-  databaseFilePath: '~/.director/director.config.yaml', // config file location
-  registryURL: 'https://registry.director.run', // registry API URL
-  allowedOrigins: [
-    'https://studio.director.run',
-    /^https?:\/\/localhost(:\d+)?$/,
-    /^https?:\/\/vercel.app/
-  ], // CORS
-});
-```
-
-#### Managing Playbooks
-
-```typescript
-import { createGatewayClient } from "@director.run/gateway/client";
-const gatewayClient = createGatewayClient('http://localhost:8080');
-
-// Create a playbook
-await gatewayClient.proxy.create.mutate({
-  name: "my-playbook",
-});
-
-// Add a server to a playbook
-await gatewayClient.proxy.addServer.mutate({
-  proxyId: "my-playbook",
-  server: {
-    name: "my-server",
-    transport: {
-      type: "stdio",
-      command: "npx",
-      args: ["-y", "@director.run/cli", "http2stdio", "http://localhost:3673/my-server/sse"],
+const gateway = await Gateway.start({
+  config: await Config.createMemoryBasedConfig({
+    defaults: {
+      server: {
+        port: 3673,
+      },
+      registry: {
+        url: "https://registry.director.run",
+      },
+      telemetry: {
+        writeKey: "",
+        enabled: false,
+      },
     },
-  },
+  }),
+  baseUrl: "http://localhost:3673",
+});
+
+// Add a new playbook
+await gateway.playbookStore.create({
+  name: "test",
+  servers: [
+    {
+      name: "notion",
+      type: "http",
+      url: "https://mcp.notion.com/mcp",
+    },
+  ],
 });
 ```
+

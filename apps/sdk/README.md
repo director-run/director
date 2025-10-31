@@ -1,16 +1,92 @@
 # Director SDK
 
-#### Example
+## Examples
+
+### Gateway Example
+
 ```typescript
-import { createRegistryClient } from "@director.run/sdk";
+import { Gateway } from "@director.run/sdk";
 
-const registryClient = createRegistryClient("https://registry.director.run");
+// Start the gateway
+const gateway = await Gateway.start({
+  config: await Config.createMemoryBasedConfig({
+    defaults: {
+      server: {
+        port: 3673,
+      },
+      registry: {
+        url: "https://registry.director.run",
+      },
+      telemetry: {
+        writeKey: "",
+        enabled: false,
+      },
+    },
+  }),
+  baseUrl: "http://localhost:3673",
+});
 
-const entries = await registryClient.entries.getEntries.query({
-    pageIndex: 0,
-    pageSize: 1,
-  });
+// Add a new playbook
+await gateway.playbookStore.create({
+  name: "test",
+  servers: [
+    {
+      name: "notion",
+      type: "http",
+      url: "https://mcp.notion.com/mcp",
+    },
+  ],
+});
+```
 
-console.log(entries);
+### Proxy Server Example
+
+
+```typescript
+import { HTTPClient } from "@director.run/sdk";
+import { StdioClient } from "@director.run/sdk";
+import { ProxyServer } from "@director.run/sdk";
+import { serveOverSSE, serveOverStdio, serveOverStreamable } from "@director.run/sdk";
+
+const proxy = new ProxyServer({
+  id: "my-proxy",
+  servers: [
+    new StdioClient({
+      name: "stdio-server",
+      command: "npx",
+      args: ["-y", "@director.run/cli", "http2stdio", "http://example.com/sse"],
+    }),
+    new HTTPClient({
+      name: "http-server",
+      // supports SSE & Streamable
+      url: "http://example.com/mcp",
+    }),
+  ],
+});
+
+// Connect to the servers
+await proxy.connectTargets();
+
+// Helper methods to serve the proxy
+await serveOverStreamable(proxy, 3673);
+await serveOverSSE(proxy, 3674);
+await serveOverStdio(proxy);
+
+// Connect over Streamable or SSE
+const httpClient = await HTTPClient.createAndConnectToHTTP(
+  "http://localhost:3673/mcp",
+);
+
+// Connect over Stdio
+const stdioClient = await StdioClient.createAndConnectToStdio(
+  "server-command",
+  ["server-args"],
+);
+
+// List the tools via HTTP client
+console.log(await httpClient.listTools());
+
+// List the tools via Stdio client
+console.log(await stdioClient.listTools());
 
 ```

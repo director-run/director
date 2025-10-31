@@ -61,48 +61,68 @@ The easiest way to author a playbook is via the UI (`director studio`). But you 
 # Client <> Playbook mappings (enforced on startup)
 #
 clients:
-  claude-code: [ production-support ]
-  cursor: [ production-support ]
+  cursor: [ demo ]
 
-#
-# Playbooks
-#
 playbooks:
-  - id: production-support
-    name: Production Support
-    description: Investigate and resolve production issues
+  - id: demo
+    name: demo
+    description: A demonstration playbook
     #
-    # MCP Servers / Tools
+    # Prompts
+    #
+    prompts:
+      - name: changelog
+        title: changelog
+        description: ""
+        body: "write a short changelog based on recent changes on the
+          director-run/director repository and the post it to to the slack
+          #general channel. Make sure the message will format correctly inside
+          of slack"
+
+    #
+    # MCP Servers
     #
     servers:
-      # Get alerts
-      - name: sentry
-        type: http
-        url: https://mcp.sentry.dev/mcp
-      
-      # Read the logs
-      - name: cloudwatch
-        type: stdio
-        command: uvx
-        args: ["awslabs.cloudwatch-mcp-server@latest"]
-        env:
-          AWS_PROFILE: "[The AWS Profile Name to use for AWS access]",
-        include: [search_logs, get_metrics] # No write access
-
-      # Write back to the repository
+      # GitHub server
       - name: github
         type: http
         url: https://api.githubcopilot.com/mcp/
+        headers:
+          Authorization: Bearer
+            <YOUR_GITHUB_TOKEN>
+        # This server is enabled
+        disabled: false
+        # Only include the tools you need
         tools:
-          include: [ create_pr, search_code ] 
-    #
-    # Prompts
-    # 
-    prompts:
-      - name: investigate
-        content: |
-          Check recent alerts, correlate with deployment times,
-          search logs for errors, identify root cause
+          include:
+            - list_commits
+            - search_pull_requests
+            - get_latest_release
+        # Prompts from MCP server are disabled by default
+        prompts:
+          include: []
+
+        
+      - name: slack
+        type: stdio
+        command: npx
+        args:
+          - -y
+          - "@modelcontextprotocol/server-slack"
+        env:
+          SLACK_TEAM_ID: <YOUR_SLACK_TEAM_ID>
+          SLACK_BOT_TOKEN: <YOUR_SLACK_BOT_TOKEN>
+          SLACK_CHANNEL_IDS: <YOUR_SLACK_CHANNEL_ID>
+        # This server is enabled
+        disabled: false
+        # Only include the tools you need
+        tools:
+          include:
+            - slack_list_channels
+            - slack_post_message
+        # Prompts from MCP server are disabled by default
+        prompts:
+          include: []
 ```
 
 ## Architecture
@@ -194,40 +214,75 @@ EXAMPLES
 # Server config
 #
 server:
+  # Defaults to 3673
   port: 1234
 
 #
-# Client Connections
-# 
-clients:
-  claude-code: [ code_review ] # connect claude code to the code_review playbook
-
+# Client <> Playbook mappings (enforced on startup)
 #
-# Playbooks
-# 
+clients:
+  cursor: [ demo ]
+
 playbooks:
-  - name: code_review
-    description: Automates code reviews
+  - id: demo
+    name: demo
+    description: A demonstration playbook
+    #
+    # Prompts
+    #
+    prompts:
+      - name: changelog
+        title: changelog
+        description: ""
+        body: "write a short changelog based on recent changes on the
+          director-run/director repository and the post it to to the slack
+          #general channel. Make sure the message will format correctly inside
+          of slack"
+
+    #
+    # MCP Servers
+    #
     servers:
-      - name: filesystem
-        type: stdio
-        command: npx
-        args: [ "@modelcontextprotocol/server-filesystem", "./src" ]
-      
+      # GitHub server
       - name: github
         type: http
         url: https://api.githubcopilot.com/mcp/
+        headers:
+          Authorization: Bearer
+            <YOUR_GITHUB_TOKEN>
+        # This server is enabled
+        disabled: false
+        # Only include the tools you need
         tools:
-          # include only these tools
-          include: [ create_issue, search_code ] 
+          include:
+            - list_commits
+            - search_pull_requests
+            - get_latest_release
+        # Prompts from MCP server are disabled by default
+        prompts:
+          include: []
 
-    # invoke with slash commands
-    prompts:
-      - name: code_review
-        content: "Review this code for security vulnerabilities and performance issues"
-      
-      - name: write_tests
-        content: "Write comprehensive unit tests including edge cases"
+        
+      - name: slack
+        type: stdio
+        command: npx
+        args:
+          - -y
+          - "@modelcontextprotocol/server-slack"
+        env:
+          SLACK_TEAM_ID: <YOUR_SLACK_TEAM_ID>
+          SLACK_BOT_TOKEN: <YOUR_SLACK_BOT_TOKEN>
+          SLACK_CHANNEL_IDS: <YOUR_SLACK_CHANNEL_ID>
+        # This server is enabled
+        disabled: false
+        # Only include the tools you need
+        tools:
+          include:
+            - slack_list_channels
+            - slack_post_message
+        # Prompts from MCP server are disabled by default
+        prompts:
+          include: []
 ```
 
 ### TypeScript SDK

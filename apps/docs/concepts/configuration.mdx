@@ -1,78 +1,167 @@
 ---
 title: "Configuration Files"
 sidebarTitle: Configuration
-description: "Understand how to configure director."
+description: "Learn about Director's configuration files."
 icon: gear
 ---
 
-The main way to manage your director instance is via the [CLI](../concepts/cli) or [Studio UI](https://studio.director.run). These tools are functionally equivalent, and ultimately, they both use the same configuration files:
 
-- `~/.director/director.config.yaml` - This is the main configuration file that contains the list of playbooks, client connections, and their configuration.
-- `~/.director/config.env` - This file is not created by default, but can be used to override the service level configuration (which can also be set via environment variables directly).
+Director doesn't use a database, everything is stored in a `director.config.yaml` file. The easiest way to manage this file is via the [Studio UI](https://studio.director.run) or the [CLI](../concepts/cli). But you can of course edit it manually. 
 
 *Note: If you'd like to manually edit the configuration files, you'll need to make sure you restart the service for the changes to take effect.*
 
-## director.config.yaml
+# Search Paths
 
-Your configuration file is a YAML file that defines playbooks and client connections (default location: `~/.director/director.config.yaml`). Here's how to structure it:
+Director will search for the configuration file in the following paths (in order):
+
+- `./director.config.yaml`
+- `~/.director/director.config.yaml`
+
+# Configuration File Reference
+
+## Example
+
+Your configuration file is a YAML file that defines playbooks and client connections. Here's a example of how to structure it:
 
 ```yaml
+#
+# Server config
+#
+server:
+  # Defaults to 3673
+  port: 1234
+
+#
 # Client <> Playbook mappings (enforced on startup)
+#
 clients:
-  claude-code: [production-support]
-  cursor: [production-support]
+  cursor: [ demo ]
 
-# Playbooks
+#
+# Playbooks (MCP servers, prompts, etc.)
+#
 playbooks:
-  - id: production-support
-    name: Production Support
-    description: Investigate and resolve production issues
+  - id: demo
+    name: demo
+    description: A demonstration playbook
 
-    # MCP Servers / Tools
+    #
+    # Prompts
+    #
+    prompts:
+      - name: changelog
+        title: changelog
+        description: ""
+        body: "write a short changelog based on recent changes on the
+          director-run/director repository and the post it to to the slack
+          #general channel. Make sure the message will format correctly inside
+          of slack"
+
+    #
+    # MCP Servers
+    #
     servers:
-      # Get alerts from Sentry
-      - name: sentry
-        type: http
-        url: https://mcp.sentry.dev/mcp
-
-      # Read CloudWatch logs (stdio transport)
-      - name: cloudwatch
-        type: stdio
-        command: uvx
-        args: ["awslabs.cloudwatch-mcp-server@latest"]
-        env:
-          AWS_PROFILE: "[The AWS Profile Name to use for AWS access]"
-        tools:
-          include: [search_logs, get_metrics] # Only allow read operations
-
-      # Write back to GitHub
+      # GitHub server
       - name: github
         type: http
         url: https://api.githubcopilot.com/mcp/
+        headers:
+          Authorization: Bearer
+            <YOUR_GITHUB_TOKEN>
+        # This server is enabled
+        disabled: false
+        # Only include the tools you need
         tools:
-          include: [create_pr, search_code]
+          include:
+            - list_commits
+            - search_pull_requests
+            - get_latest_release
+        # Prompts from MCP server are disabled by default
+        prompts:
+          include: []
 
-    # Prompts (invoke with slash commands)
-    prompts:
-      - name: investigate
-        content: |
-          Check recent alerts, correlate with deployment times,
-          search logs for errors, identify root cause
+        
+      - name: slack
+        type: stdio
+        command: npx
+        args:
+          - -y
+          - "@modelcontextprotocol/server-slack"
+        env:
+          SLACK_TEAM_ID: <YOUR_SLACK_TEAM_ID>
+          SLACK_BOT_TOKEN: <YOUR_SLACK_BOT_TOKEN>
+          SLACK_CHANNEL_IDS: <YOUR_SLACK_CHANNEL_ID>
+        # This server is enabled
+        disabled: false
+        # Only include the tools you need
+        tools:
+          include:
+            - slack_list_channels
+            - slack_post_message
+        # Prompts from MCP server are disabled by default
+        prompts:
+          include: []
 ```
 
-### Server Configuration Options
+## Server Configuration
 
-Each server in the `servers` array supports the following fields:
+By default, Director will start a server on port 3673. You can change this by setting the `port` option in the `server` section.
 
-- **name** (required): A unique identifier for the server within this playbook
-- **type** (required): The transport type (either `stdio` or `http`)
-- **command** (required for stdio): The command to execute for stdio-based servers
-- **args** (optional for stdio): Command-line arguments for stdio servers
-- **url** (required for http): The URL endpoint for HTTP-based servers (supports both Streamable and SSE transports)
-- **env** (optional): Environment variables to pass to the server
-- **tools** (optional): Tool filtering configuration with `include` array to specify which tools are available
+```yaml
+server:
+  port: 1234
+```
 
-#### Tool Filtering
+## Client Connections
+
+The `clients` section defines which playbooks are available to which MCP clients. This mapping is enforced on startup:
+
+```yaml
+clients:
+  claude-code: [my-playbook, another-playbook]
+  cursor: [my-playbook]
+  vscode: [development-tools]
+```
+
+Supported client identifiers:
+- `claude-code` - Claude Code (command-line tool)
+- `claude` - Claude Desktop app
+- `cursor` - Cursor IDE
+- `vscode` - Visual Studio Code
+
+## Playbooks
+
+Each playbook supports the following fields:
+
+- **id** (required): A unique identifier for the playbook
+- **name** (required): The name of the playbook
+- **description** (optional): The description of the playbook
+- **servers** (optional): The MCP servers to include in the playbook
+- **prompts** (optional): The prompts to include in the playbook
+
+### Prompts
+
+Prompts are used to invoke the playbook from a MCP client. Each prompt supports the following fields:
+- **name** (required): The name of the prompt
+- **title** (optional): The title of the prompt
+- **description** (optional): The description of the prompt
+- **body** (optional): The body of the prompt
+
+### MCP Servers
+
+MCP servers are used to provide the tools and prompts to the playbook. Each server supports the following fields:
+- **name** (required): The name of the server
+- **type** (required): The type of the server (either `stdio` or `http`).
+- **url** (optional): The URL of the server (only for http servers)
+- **headers** (optional): The headers to pass to the server (only for http servers)
+- **command** (optional): The command to execute for stdio-based servers
+- **args** (optional): The command-line arguments for stdio-based servers
+- **env** (optional): The environment variables to pass to the server
+- **disabled** (optional): Whether the server is disabled (default: false)
+- **tools** (optional): The tools to include in the server
+- **prompts** (optional): The prompts to include in the server
+
+#### Tools
 
 The `tools.include` option allows you to select only specific tools from an MCP server, which helps preserve context by limiting the available tool set:
 
@@ -90,42 +179,13 @@ This is particularly useful when:
 - You need to preserve context by only exposing relevant tools for a specific task
 - You want to prevent accidental use of destructive operations
 
-#### Client Connections
+#### Prompts
 
-The `clients` section defines which playbooks are available to which MCP clients. This mapping is enforced on startup:
+The `prompts.include` option allows you to select only specific prompts from an MCP server, which helps preserve context by limiting the available prompt set:
 
 ```yaml
-clients:
-  claude-code: [my-playbook, another-playbook]
-  cursor: [my-playbook]
-  vscode: [development-tools]
-```
-
-Supported client identifiers:
-- `claude-code` - Claude Code (command-line tool)
-- `claude` - Claude Desktop app
-- `cursor` - Cursor IDE
-- `vscode` - Visual Studio Code
-
-## config.env
-
-The `config.env` file is not created by default, but can be used to override the service level configuration (which can also be ser via environment variables directly).
-
-```bash
-# The port that the gateway will listen on (if running locally)
-GATEWAY_PORT=3673 
-# The url that the cli should connect to (change if you're using a remote instance)
-GATEWAY_URL=http://localhost:3673 
-# The GUI url, used for the `quickstart` and `studio` commands
-STUDIO_URL=https://studio.director.run 
-# The registry url, you can change this if you're running your own registry somewhere else
-REGISTRY_API_URL=https://registry.director.run 
-# When running your own registry, you can set an api key to use to write to the registry
-REGISTRY_API_KEY=secret-api-write-key 
-# The path to the main config file
-CONFIG_FILE_PATH=/path/to/config.json 
-# Enable debug cli commands (for example the registry write commands)
-ENABLE_DEBUG_COMMANDS=false 
-# The log level to use for the service
-LOG_LEVEL=debug 
+servers:
+  - name: github
+    prompts:
+      include: [create_pr, search_code] # Only expose these specific prompts
 ```

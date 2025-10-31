@@ -8,7 +8,7 @@ icon: sitemap
   <img src="../images/director-architecture-overview.png" />
 </Frame>
 
-Director is a service that sits between your AI agents and MCP servers, providing a **playbook-based architecture** for organizing and managing MCP capabilities. It's transparent to clients, requiring no additional tokens or configuration changes.
+Director is a service that sits between your AI agents and MCP servers. It acts as a middleware for organizing and managing MCP capabilities. It's transparent to clients, requiring no additional tokens or configuration changes.
 
 ## Core Concepts
 
@@ -22,11 +22,11 @@ A **playbook** is a set of tools, prompts, and configuration that gives your AI 
 
 ### Gateway
 
-The `Gateway` implements the playbook pattern by:
-- Aggregating multiple MCP servers into a single playbook endpoint
-- Supporting all MCP transports (HTTP Streamable, Stdio, SSE)
-- Providing tool filtering to preserve context
-- Offering unified OAuth for centralized authentication
+The `Gateway` implements a proxy pattern in order to:
+- Aggregate multiple MCP servers into a single playbook endpoint
+- Support all MCP transports (HTTP Streamable, Stdio, SSE)
+- Provide tool filtering to preserve context
+- Offer unified OAuth for centralized authentication
 
 ### Client Integration
 

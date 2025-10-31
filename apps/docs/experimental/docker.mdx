@@ -5,6 +5,8 @@ title: "Running in Docker"
 
 We currently have an experimental Docker image that you can use to run the gateway in a containerized environment.
 
+**Note:** Automatic client connections are not supported in the Docker image. You will need to connect manually using the connect command.
+
 ```bash
 # Start the gateway container, listening on port 8080
 # Mount the data directory to persist the gateway's state (config files, etc)
@@ -20,4 +22,5 @@ docker logs -f director
 # Interact with the gateway using the CLI, on the host machine
 director create my-playbook
 director add my-playbook --entry fetch
+director connect my-playbook # print connection details
 ```

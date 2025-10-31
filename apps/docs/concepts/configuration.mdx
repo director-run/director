@@ -1,7 +1,7 @@
 ---
 title: "Configuration Files"
 sidebarTitle: Configuration
-description: "Learn about director's configuration files."
+description: "Learn about Director's configuration files."
 icon: gear
 ---
 
@@ -10,16 +10,16 @@ Director doean't use a database, everything is stored in a `director.config.yaml
 
 *Note: If you'd like to manually edit the configuration files, you'll need to make sure you restart the service for the changes to take effect.*
 
-## Search Paths
+# Search Paths
 
 Director will search for the configuration file in the following paths (in order):
 
 - `./director.config.yaml`
 - `~/.director/director.config.yaml`
 
-## Configuration File Reference
+# Configuration File Reference
 
-### Example
+## Example
 
 Your configuration file is a YAML file that defines playbooks and client connections. Here's a example of how to structure it:
 
@@ -44,7 +44,7 @@ playbooks:
   - id: demo
     name: demo
     description: A demonstration playbook
-    
+
     #
     # Prompts
     #
@@ -103,7 +103,16 @@ playbooks:
           include: []
 ```
 
-#### Client Connections
+## Server Configuration
+
+By default, Director will start a server on port 3673. You can change this by setting the `port` option in the `server` section.
+
+```yaml
+server:
+  port: 1234
+```
+
+## Client Connections
 
 The `clients` section defines which playbooks are available to which MCP clients. This mapping is enforced on startup:
 
@@ -120,19 +129,39 @@ Supported client identifiers:
 - `cursor` - Cursor IDE
 - `vscode` - Visual Studio Code
 
-### Server Configuration Options
+## Playbooks
 
-Each server in the `servers` array supports the following fields:
+Each playbook supports the following fields:
 
-- **name** (required): A unique identifier for the server within this playbook
-- **type** (required): The transport type (either `stdio` or `http`)
-- **command** (required for stdio): The command to execute for stdio-based servers
-- **args** (optional for stdio): Command-line arguments for stdio servers
-- **url** (required for http): The URL endpoint for HTTP-based servers (supports both Streamable and SSE transports)
-- **env** (optional): Environment variables to pass to the server
-- **tools** (optional): Tool filtering configuration with `include` array to specify which tools are available
+- **id** (required): A unique identifier for the playbook
+- **name** (required): The name of the playbook
+- **description** (optional): The description of the playbook
+- **servers** (optional): The MCP servers to include in the playbook
+- **prompts** (optional): The prompts to include in the playbook
 
-#### Tool Filtering
+### Prompts
+
+Prompts are used to invoke the playbook from a MCP client. Each prompt supports the following fields:
+- **name** (required): The name of the prompt
+- **title** (optional): The title of the prompt
+- **description** (optional): The description of the prompt
+- **body** (optional): The body of the prompt
+
+### MCP Servers
+
+MCP servers are used to provide the tools and prompts to the playbook. Each server supports the following fields:
+- **name** (required): The name of the server
+- **type** (required): The type of the server (either `stdio` or `http`).
+- **url** (optional): The URL of the server (only for http servers)
+- **headers** (optional): The headers to pass to the server (only for http servers)
+- **command** (optional): The command to execute for stdio-based servers
+- **args** (optional): The command-line arguments for stdio-based servers
+- **env** (optional): The environment variables to pass to the server
+- **disabled** (optional): Whether the server is disabled (default: false)
+- **tools** (optional): The tools to include in the server
+- **prompts** (optional): The prompts to include in the server
+
+#### Tools
 
 The `tools.include` option allows you to select only specific tools from an MCP server, which helps preserve context by limiting the available tool set:
 
@@ -150,25 +179,13 @@ This is particularly useful when:
 - You need to preserve context by only exposing relevant tools for a specific task
 - You want to prevent accidental use of destructive operations
 
-## config.env
+#### Prompts
 
-The `config.env` file is not created by default, but can be used to override the service level configuration (which can also be ser via environment variables directly).
+The `prompts.include` option allows you to select only specific prompts from an MCP server, which helps preserve context by limiting the available prompt set:
 
-```bash
-# The port that the gateway will listen on (if running locally)
-GATEWAY_PORT=3673 
-# The url that the cli should connect to (change if you're using a remote instance)
-GATEWAY_URL=http://localhost:3673 
-# The GUI url, used for the `quickstart` and `studio` commands
-STUDIO_URL=https://studio.director.run 
-# The registry url, you can change this if you're running your own registry somewhere else
-REGISTRY_API_URL=https://registry.director.run 
-# When running your own registry, you can set an api key to use to write to the registry
-REGISTRY_API_KEY=secret-api-write-key 
-# The path to the main config file
-CONFIG_FILE_PATH=/path/to/config.json 
-# Enable debug cli commands (for example the registry write commands)
-ENABLE_DEBUG_COMMANDS=false 
-# The log level to use for the service
-LOG_LEVEL=debug 
+```yaml
+servers:
+  - name: github
+    prompts:
+      include: [create_pr, search_code] # Only expose these specific prompts
 ```

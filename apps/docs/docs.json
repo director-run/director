@@ -28,7 +28,7 @@
       },
       {
         "group": "Experimental",
-        "pages": ["experimental/docker", "experimental/sandboxing"]
+        "pages": ["experimental/docker"]
       },
       {
         "group": "Project",

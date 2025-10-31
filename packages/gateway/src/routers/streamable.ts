@@ -16,7 +16,7 @@ export const createStreamableRouter = ({
 }: {
   playbookStore: PlaybookStore;
   telemetry?: Telemetry;
-}) => {
+}): express.Router => {
   const router = express.Router();
   const transports: Map<string, StreamableHTTPServerTransport> = new Map();
   // router.get(

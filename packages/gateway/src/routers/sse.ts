@@ -16,7 +16,7 @@ export const createSSERouter = ({
 }: {
   playbookStore: PlaybookStore;
   telemetry?: Telemetry;
-}) => {
+}): express.Router => {
   const router = express.Router();
   const transports: Map<string, SSEServerTransport> = new Map();
 

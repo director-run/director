@@ -1,5 +1,11 @@
 # @director.run/sdk
 
+## 1.1.1
+
+### Patch Changes
+
+- [#414](https://github.com/director-run/director/pull/414) [`e21f9d1`](https://github.com/director-run/director/commit/e21f9d19fb6eb2601342c7cb4b0dab7f162492ee) Thanks [@barnaby](https://github.com/barnaby)! - Fix Gateway SDK example
+
 ## 1.1.0
 
 ### Minor Changes

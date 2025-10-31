@@ -40,11 +40,11 @@
     "tree-kill": "^1.2.2",
     "tsup": "^8.5.0",
     "typescript": "^5.8.3",
-    "vitest": "^3.1.1"
+    "vitest": "^3.1.1",
+    "@director.run/gateway": "workspace:*",
+    "@director.run/registry": "workspace:*"
   },
   "dependencies": {
-    "@director.run/gateway": "workspace:*",
-    "@director.run/registry": "workspace:*",
     "@trpc/client": "^11.0.2",
     "@trpc/server": "^11.0.2"
   }

@@ -1,5 +1,11 @@
 # @director.run/docker
 
+## 1.0.2
+
+### Patch Changes
+
+- [#410](https://github.com/director-run/director/pull/410) [`b36a070`](https://github.com/director-run/director/commit/b36a07010cf25b4b763bff3f4b98dbba08d7d87c) Thanks [@barnaby](https://github.com/barnaby)! - Update documentation & fix broken sdk install
+
 ## 1.0.1
 
 ## 1.0.0

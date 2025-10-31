@@ -1,5 +1,11 @@
 # @director.run/sdk
 
+## 1.1.0
+
+### Minor Changes
+
+- [#412](https://github.com/director-run/director/pull/412) [`f937d85`](https://github.com/director-run/director/commit/f937d85ae8a79eba1e349477533472ac51bba797) Thanks [@barnaby](https://github.com/barnaby)! - Add gateway and mcp classes to sdk
+
 ## 1.0.2
 
 ### Patch Changes

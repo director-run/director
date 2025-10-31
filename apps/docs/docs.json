@@ -23,7 +23,7 @@
         ]
       },
       {
-        "group": "SDK",
+        "group": "Typescript SDK",
         "pages": ["sdk/gateway", "sdk/mcp", "sdk/client-configurator"]
       },
       {

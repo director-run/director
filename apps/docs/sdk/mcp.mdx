@@ -8,39 +8,24 @@ The Director MCP API provides a simple interface for creating MCP servers, proxi
 ## API
 
 ```typescript
-import { ProxyServer } from "@director.run/mcp/proxy-server";
-import { SimpleClient } from "@director.run/mcp/simple-client";
-import {
-  serveOverSSE,
-  serveOverStdio,
-  serveOverStreamable,
-} from "@director.run/mcp/transport";
+import { HTTPClient } from "@director.run/sdk";
+import { StdioClient } from "@director.run/sdk";
+import { ProxyServer } from "@director.run/sdk";
+import { serveOverSSE, serveOverStdio, serveOverStreamable } from "@director.run/sdk";
 
 const proxy = new ProxyServer({
   id: "my-proxy",
-  name: "my-proxy",
   servers: [
-    {
+    new StdioClient({
       name: "stdio-server",
-      transport: {
-        type: "stdio",
-        command: "npx",
-        args: [
-          "-y",
-          "@director.run/cli",
-          "http2stdio",
-          "http://example.com/sse",
-        ],
-      },
-    },
-    {
+      command: "npx",
+      args: ["-y", "@director.run/cli", "http2stdio", "http://example.com/sse"],
+    }),
+    new HTTPClient({
       name: "http-server",
-      transport: {
-        type: "http",
-        // supports SSE & Streamable
-        url: "http://example.com/mcp",
-      },
-    },
+      // supports SSE & Streamable
+      url: "http://example.com/mcp",
+    }),
   ],
 });
 
@@ -53,17 +38,20 @@ await serveOverSSE(proxy, 3674);
 await serveOverStdio(proxy);
 
 // Connect over Streamable or SSE
-const httpClient = await SimpleClient.createAndConnectToHTTP(
+const httpClient = await HTTPClient.createAndConnectToHTTP(
   "http://localhost:3673/mcp",
 );
 
 // Connect over Stdio
-const stdioClient = await SimpleClient.createAndConnectToStdio(
+const stdioClient = await StdioClient.createAndConnectToStdio(
   "server-command",
   ["server-args"],
 );
 
-
-// List the tools
+// List the tools via HTTP client
 console.log(await httpClient.listTools());
+
+// List the tools via Stdio client
+console.log(await stdioClient.listTools());
+
 ```

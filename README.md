@@ -288,11 +288,11 @@ playbooks:
 Programmatic control for advanced use cases:
 
 ```typescript
-import { Gateway } from "@director.run/sdk";
+import { Gateway, GatewayConfig } from "@director.run/sdk";
 
 // Start the gateway
 const gateway = await Gateway.start({
-  config: await Config.createMemoryBasedConfig({
+  config: await GatewayConfig.createMemoryBasedConfig({
     defaults: {
       server: {
         port: 3673,

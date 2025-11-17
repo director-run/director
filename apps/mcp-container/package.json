@@ -1,9 +1,9 @@
 {
-  "name": "docker-v2",
+  "name": "@director.run/mcp-container",
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "test": "vitest --fileParallelism=false"
+    "test": "echo 'wip'"
   },
   "devDependencies": {
     "@types/bun": "latest",

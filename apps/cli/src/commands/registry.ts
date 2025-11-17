@@ -5,7 +5,11 @@ import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { spinnerWrap } from "@director.run/utilities/cli/loader";
 import { confirm } from "@inquirer/prompts";
 import { registryClient } from "../client";
-import { printReadme, printRegistryEntry } from "../views/registry-entry";
+import {
+  printReadme,
+  printRegistryEntry,
+  printTransport,
+} from "../views/registry-entry";
 import { listEntries } from "../views/registry-list";
 
 export function registerRegistryCommands(program: DirectorCommand) {
@@ -63,6 +67,23 @@ export function registerRegistryCommands(program: DirectorCommand) {
           .succeed("Entry details fetched.")
           .run();
         printReadme(item);
+      }),
+    );
+
+  command
+    .command("transport <entryName>")
+    .description("Print the transport for a registry item")
+    .action(
+      actionWithErrorHandler(async (entryName: string) => {
+        const item = await spinnerWrap(() =>
+          registryClient.entries.getEntryByName.query({
+            name: entryName,
+          }),
+        )
+          .start("fetching entry details...")
+          .succeed("Entry details fetched.")
+          .run();
+        printTransport(item);
       }),
     );
 

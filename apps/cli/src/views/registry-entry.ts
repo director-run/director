@@ -26,6 +26,14 @@ ${printTool(entry)}
 `);
 }
 
+export function printTransport(entry: RegistryEntry) {
+  console.log(`
+${whiteBold("TRANSPORT")}
+${JSON.stringify(entry.transport, null, 2)}
+${printParameters(entry.parameters)}
+`);
+}
+
 const printTool = (entry: RegistryEntry) => {
   if (!entry.tools) {
     return "";

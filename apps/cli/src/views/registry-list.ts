@@ -13,6 +13,8 @@ export function listEntries(items: Entries) {
     }),
   );
   console.log(table.toString());
+  console.log("");
+  console.log(`Total entries: ${items.length}`);
 }
 
 function printUrl(url: string) {

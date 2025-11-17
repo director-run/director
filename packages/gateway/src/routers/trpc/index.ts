@@ -30,7 +30,7 @@ export function createTRPCExpressMiddleware({
 }: {
   playbookStore: PlaybookStore;
   clientStore: ClientStore;
-}) {
+}): ReturnType<typeof trpcExpress.createExpressMiddleware> {
   return trpcExpress.createExpressMiddleware({
     router: createAppRouter({ playbookStore, clientStore }),
     createContext: ({ res }) => {

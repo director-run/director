@@ -1,0 +1,22 @@
+{
+  "name": "docker-v2",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "test": "vitest --fileParallelism=false"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@director.run/mcp": "workspace:*",
+    "vitest": "^3.1.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.21.0",
+    "@modelcontextprotocol/server-slack": "^2025.4.25",
+    "@types/express": "^5.0.0",
+    "express": "^4.21.2"
+  }
+}

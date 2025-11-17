@@ -6,6 +6,9 @@
   "author": "Barnaby Malet <barnaby@director.run>",
   "license": "AGPL-3.0",
   "private": true,
+  "bin": {
+    "sandbox": "./dist/cli.js"
+  },
   "scripts": {
     "lint": "biome check .",
     "format": "biome format --write .",
@@ -13,7 +16,7 @@
     "test": "echo 'no tests'",
     "cli": "NODE_ENV=development bun run bin/cli.ts",
     "typecheck": "tsc --noEmit",
-    "build": "echo 'no build'",
+    "build": "bun run clean && bun build --production --target=node bin/cli.ts --outdir dist",
     "release": "bun publish --access public --omit=peer",
     "prepare": "echo 'no prepare'",
     "dev": "bun --watch bin/cli.ts"

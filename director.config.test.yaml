@@ -1,0 +1,4 @@
+playbooks:
+  - id: test
+    name: test
+    servers: []

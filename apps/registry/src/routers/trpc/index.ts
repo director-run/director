@@ -12,7 +12,9 @@ export function createAppRouter({ store }: { store: Store }) {
   });
 }
 
-export function createTRPCExpressMiddleware({ store }: { store: Store }): ReturnType<typeof trpcExpress.createExpressMiddleware> {
+export function createTRPCExpressMiddleware({
+  store,
+}: { store: Store }): ReturnType<typeof trpcExpress.createExpressMiddleware> {
   return trpcExpress.createExpressMiddleware({
     router: createAppRouter({ store }),
     createContext: (opts) => {

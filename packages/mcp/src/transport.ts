@@ -57,7 +57,7 @@ export async function proxyHTTPToStdio(url: string) {
 
 export function streamableRouter(
   getServer: (req: express.Request) => Promise<Server> | Server,
-) {
+): express.Router {
   //
   // make the router
   //

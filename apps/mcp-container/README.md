@@ -1,4 +1,4 @@
-# docker-v2
+# mcp-container
 
 To install dependencies:
 

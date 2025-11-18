@@ -153,9 +153,4 @@ const configSchema = {
   "telemetry.enabled": z.boolean(),
   "oauth.storage": z.literal("disk").or(z.literal("memory")).default("disk"),
   "oauth.tokenDirectory": z.string().default("./tokens"),
-  // clients
-  "clients.claude": z.array(z.string()).default([]),
-  "clients.claude-code": z.array(z.string()).default([]),
-  "clients.cursor": z.array(z.string()).default([]),
-  "clients.vscode": z.array(z.string()).default([]),
 } as const satisfies Record<string, z.ZodType>;

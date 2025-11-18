@@ -16,43 +16,31 @@ export class PlaybookStore {
   private config: Config;
   private telemetry: Telemetry;
   private _oauth?: OAuthProviderFactoryParams;
-  private _onPlaybookListChange?: (playbookId: string) => Promise<void>;
-  private _onPlaybookRemove?: (playbookId: string) => Promise<void>;
 
   private constructor(params: {
     config: Config;
     telemetry?: Telemetry;
     oauth?: OAuthProviderFactoryParams;
-    onPlaybookListChange?: (playbookId: string) => Promise<void>;
-    onPlaybookRemove?: (playbookId: string) => Promise<void>;
   }) {
     this.config = params.config;
     this.telemetry = params.telemetry || Telemetry.noTelemetry();
     this._oauth = params.oauth;
-    this._onPlaybookListChange = params.onPlaybookListChange;
-    this._onPlaybookRemove = params.onPlaybookRemove;
   }
 
   public static async create({
     config,
     telemetry,
     oauth,
-    onPlaybookListChange,
-    onPlaybookRemove,
   }: {
     config: Config;
     telemetry?: Telemetry;
     oauth?: OAuthProviderFactoryParams;
-    onPlaybookListChange?: (playbookId: string) => Promise<void>;
-    onPlaybookRemove?: (playbookId: string) => Promise<void>;
   }): Promise<PlaybookStore> {
     logger.debug("initializing PlaybookStore");
     const store = new PlaybookStore({
       config,
       telemetry,
       oauth,
-      onPlaybookListChange,
-      onPlaybookRemove,
     });
     await store.initialize();
     logger.debug("initialization complete");
@@ -109,7 +97,6 @@ export class PlaybookStore {
     await this.config.playbooks.remove(playbookId);
     this.playbooks.delete(playbookId);
 
-    await this._onPlaybookRemove?.(playbookId);
     logger.info(`successfully deleted playbook configuration: ${playbookId}`);
   }
 
@@ -198,10 +185,6 @@ export class PlaybookStore {
     });
 
     this.playbooks.set(playbook.id, playbook);
-
-    if (this._onPlaybookListChange) {
-      playbook.setListChangeListner(this._onPlaybookListChange);
-    }
 
     return playbook;
   }

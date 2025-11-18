@@ -162,9 +162,7 @@ export class Gateway {
     successCallback?: () => void,
   ) {
     logger.info(`starting director gateway`);
-    const clientStore = new ClientStore({
-      config: attribs.config,
-    });
+    const clientStore = new ClientStore();
     const playbookStore = await PlaybookStore.create({
       config: attribs.config,
       telemetry: attribs.telemetry,
@@ -181,12 +179,6 @@ export class Gateway {
               storage: "memory",
               baseCallbackUrl: attribs.baseUrl,
             },
-      onPlaybookListChange: async (playbookId: string) => {
-        await clientStore.handlePlaybookListChange(playbookId);
-      },
-      onPlaybookRemove: async (playbookId: string) => {
-        await clientStore.handlePlaybookRemove(playbookId);
-      },
     });
 
     attribs.telemetry?.trackEvent("gateway_start");
@@ -214,10 +206,6 @@ export class Gateway {
   private async start(successCallback?: () => void) {
     this.server = this.app.listen(this.port, () => {
       logger.info(`director gateway running on port ${this.port}`);
-      this.clientStore.enforceClientConfigs({
-        playbookStore: this.playbookStore,
-        baseUrl: this.baseUrl,
-      });
       successCallback?.();
     });
   }

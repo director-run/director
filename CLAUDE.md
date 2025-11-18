@@ -2,6 +2,76 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Quality Standards and Workflow
+
+**CRITICAL: All changes must meet these standards before being marked as complete.**
+
+### Engineering Excellence
+
+Every code change must demonstrate:
+
+- **Simplicity**: Prefer straightforward solutions over clever ones. Avoid premature optimization.
+- **Elegance**: Write clean, readable code that follows existing patterns and conventions.
+- **Product Engineering**: Think holistically about user experience, maintainability, and system design.
+- **Type Safety**: Leverage TypeScript's type system fully. No `any` types (enforced by Biome).
+- **Error Handling**: Use structured error handling via `@director.run/utilities/error`.
+- **Consistency**: Match the existing codebase style and architectural patterns.
+
+### Definition of Done
+
+**MANDATORY**: Before marking any task or change as complete, you MUST:
+
+1. Run the full quality assurance suite:
+   ```bash
+   bun run lint && bun run typecheck && bun run test && bun run build
+   ```
+
+2. Verify that ALL checks pass:
+   - **Lint**: No Biome violations (formatting, imports, code quality)
+   - **Typecheck**: No TypeScript errors across all packages
+   - **Test**: All Vitest tests pass
+   - **Build**: All packages and apps build successfully
+
+3. If ANY check fails:
+   - DO NOT mark the task as complete
+   - Fix the issues immediately
+   - Re-run the full suite
+   - Only proceed when everything passes
+
+**Everything needs to work. No exceptions.**
+
+### Code Change Guidelines
+
+When implementing changes:
+
+- **Read Before Writing**: Always read existing code to understand patterns before making changes
+- **Small Commits**: Make focused, atomic changes that are easy to review
+- **No Default Exports**: Enforced by Biome (except in config files, stories, and .d.ts files)
+- **Import Organization**: Imports are auto-organized by Biome
+- **Line Length**: Maximum 80 characters (enforced by Biome formatter)
+- **Quote Style**: Use double quotes for JavaScript/TypeScript
+- **Error Messages**: Provide clear, actionable error messages with context
+- **Logging**: Use structured logging via `@director.run/utilities/logger`
+
+### Testing Requirements
+
+- Write tests for new functionality
+- Update tests when modifying existing code
+- Tests must be deterministic and fast
+- Use descriptive test names that explain the behavior being tested
+- Remember: tests run with `--fileParallelism=false` due to shared resources
+
+### Common Pitfalls to Avoid
+
+- ❌ Using `any` type (Biome will error)
+- ❌ Default exports (Biome will error, except in allowed files)
+- ❌ Non-null assertions `!` (Biome will error)
+- ❌ Unused imports or variables (Biome will error)
+- ❌ Missing await on async functions (Biome will error)
+- ❌ Skipping the verification suite before marking tasks complete
+- ❌ Breaking existing functionality without updating tests
+- ❌ Ignoring TypeScript errors or using `@ts-ignore`
+
 ## Development Commands
 
 ### Setup and Installation

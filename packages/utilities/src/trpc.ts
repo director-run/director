@@ -1,5 +1,5 @@
 import type { AnyTRPCMiddlewareFunction } from "@trpc/server";
-import { initTRPC } from "@trpc/server";
+import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { getLogger } from "./logger";
 
@@ -79,8 +79,26 @@ export const trpcBase = initTRPC.context<object>().create({
 
 const baseProcedure = trpcBase.procedure.use(logTRPCRequest);
 
+const enforceUserIsAuthed = trpcBase.middleware(({ ctx, next }) => {
+  const contextWithUserId = ctx as { userId?: string };
+  if (!contextWithUserId.userId) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  return next({
+    ctx: {
+      ...ctx,
+      userId: contextWithUserId.userId,
+    },
+  });
+});
+
+export const publicProcedure = baseProcedure;
+export const protectedProcedure = baseProcedure.use(enforceUserIsAuthed);
+
 export const t = {
   router: trpcBase.router,
   procedure: baseProcedure,
   middleware: trpcBase.middleware,
+  publicProcedure,
+  protectedProcedure,
 };

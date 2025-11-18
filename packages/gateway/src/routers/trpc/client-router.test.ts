@@ -64,6 +64,7 @@ describe("Client Router", () => {
       cliVersion: null,
       playbookStore,
       clientStore,
+      userId: "test-user-id",
     });
 
     const result = await caller.clients.allClients();
@@ -86,6 +87,7 @@ describe("Client Router", () => {
       cliVersion: null,
       playbookStore,
       clientStore,
+      userId: "test-user-id",
     });
     const playbook = await playbookStore.create({ name: "Test Playbook" });
 
@@ -118,6 +120,7 @@ describe("Client Router", () => {
       cliVersion: null,
       playbookStore,
       clientStore,
+      userId: "test-user-id",
     });
     const playbook = await playbookStore.create({ name: "Another Playbook" });
 
@@ -141,6 +144,7 @@ describe("Client Router", () => {
       cliVersion: null,
       playbookStore,
       clientStore,
+      userId: "test-user-id",
     });
 
     const claude = clientStore.get("claude");
@@ -161,5 +165,16 @@ describe("Client Router", () => {
     expect(cursorReset).toHaveBeenCalled();
     expect(claudeRestart).toHaveBeenCalledTimes(1);
     expect(cursorRestart).not.toHaveBeenCalled();
+  });
+
+  it("should throw UNAUTHORIZED error when userId is not in context", async () => {
+    const caller = app.createCaller({
+      cliVersion: null,
+      playbookStore,
+      clientStore,
+      userId: undefined,
+    });
+
+    await expect(caller.clients.allClients()).rejects.toThrow("UNAUTHORIZED");
   });
 });

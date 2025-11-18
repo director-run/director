@@ -1,15 +1,15 @@
-import { t } from "@director.run/utilities/trpc";
+import { protectedProcedure, t } from "@director.run/utilities/trpc";
 import { z } from "zod";
 import type { ClientId } from "../../client-store";
 import type { GatewayContext } from "./index";
 
 export function createClientRouter() {
   return t.router({
-    allClients: t.procedure.query(({ ctx }) => {
+    allClients: protectedProcedure.query(({ ctx }) => {
       const { clientStore } = ctx as GatewayContext;
       return clientStore.toPlainObject();
     }),
-    install: t.procedure
+    install: protectedProcedure
       .input(
         z.object({
           clientId: z.string(),
@@ -25,7 +25,7 @@ export function createClientRouter() {
           baseUrl: input.baseUrl,
         });
       }),
-    uninstall: t.procedure
+    uninstall: protectedProcedure
       .input(
         z.object({
           clientId: z.string(),
@@ -37,7 +37,7 @@ export function createClientRouter() {
         const playbook = playbookStore.get(input.playbookId);
         await clientStore.uninstall(input.clientId as ClientId, playbook.id);
       }),
-    resetAll: t.procedure.mutation(async ({ ctx }) => {
+    resetAll: protectedProcedure.mutation(async ({ ctx }) => {
       const { clientStore } = ctx as GatewayContext;
       await clientStore.resetAll();
     }),

@@ -1,6 +1,6 @@
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
-import { t } from "@director.run/utilities/trpc";
+import { protectedProcedure, t } from "@director.run/utilities/trpc";
 import { z } from "zod";
 import {
   type ServerConfigEntry,
@@ -33,7 +33,7 @@ const PromptSchema = z.object({
 
 export function createPlaybookStoreRouter() {
   return t.router({
-    getAll: t.procedure.query(async ({ ctx }) => {
+    getAll: protectedProcedure.query(async ({ ctx }) => {
       const { playbookStore } = ctx as GatewayContext;
       return await Promise.all(
         await playbookStore
@@ -42,7 +42,7 @@ export function createPlaybookStoreRouter() {
       );
     }),
 
-    get: t.procedure
+    get: protectedProcedure
       .input(
         z.object({
           playbookId: z.string(),
@@ -55,7 +55,7 @@ export function createPlaybookStoreRouter() {
         return await playbook.toPlainObject();
       }),
 
-    create: t.procedure
+    create: protectedProcedure
       .input(PlaybookCreateSchema)
       .mutation(async ({ ctx, input }) => {
         const { playbookStore } = ctx as GatewayContext;
@@ -67,7 +67,7 @@ export function createPlaybookStoreRouter() {
           })
         ).toPlainObject();
       }),
-    update: t.procedure
+    update: protectedProcedure
       .input(
         z.object({
           playbookId: z.string(),
@@ -83,14 +83,14 @@ export function createPlaybookStoreRouter() {
         });
         return await updated.toPlainObject();
       }),
-    delete: t.procedure
+    delete: protectedProcedure
       .input(z.object({ playbookId: z.string() }))
       .mutation(async ({ ctx, input }) => {
         const { playbookStore } = ctx as GatewayContext;
         await playbookStore.delete(input.playbookId);
         return { success: true };
       }),
-    addServer: t.procedure
+    addServer: protectedProcedure
       .input(
         z.object({
           playbookId: z.string(),
@@ -119,7 +119,7 @@ export function createPlaybookStoreRouter() {
         });
       }),
 
-    updateServer: t.procedure
+    updateServer: protectedProcedure
       .input(
         z.object({
           playbookId: z.string(),
@@ -145,7 +145,7 @@ export function createPlaybookStoreRouter() {
         });
       }),
 
-    getServer: t.procedure
+    getServer: protectedProcedure
       .input(
         z.object({
           playbookId: z.string(),
@@ -168,7 +168,7 @@ export function createPlaybookStoreRouter() {
         });
       }),
 
-    authenticate: t.procedure
+    authenticate: protectedProcedure
       .input(z.object({ playbookId: z.string(), serverName: z.string() }))
       .query(async ({ ctx, input }) => {
         const { playbookStore } = ctx as GatewayContext;
@@ -192,7 +192,7 @@ export function createPlaybookStoreRouter() {
         }
       }),
 
-    logout: t.procedure
+    logout: protectedProcedure
       .input(z.object({ playbookId: z.string(), serverName: z.string() }))
       .mutation(async ({ ctx, input }) => {
         const { playbookStore } = ctx as GatewayContext;
@@ -208,12 +208,12 @@ export function createPlaybookStoreRouter() {
         }
       }),
 
-    purge: t.procedure.mutation(({ ctx }) => {
+    purge: protectedProcedure.mutation(({ ctx }) => {
       const { playbookStore } = ctx as GatewayContext;
       return playbookStore.purge();
     }),
 
-    removeServer: t.procedure
+    removeServer: protectedProcedure
       .input(
         z.object({
           playbookId: z.string(),
@@ -229,7 +229,7 @@ export function createPlaybookStoreRouter() {
         });
       }),
 
-    addPrompt: t.procedure
+    addPrompt: protectedProcedure
       .input(
         z.object({
           playbookId: z.string(),
@@ -243,7 +243,7 @@ export function createPlaybookStoreRouter() {
         return prompt;
       }),
 
-    removePrompt: t.procedure
+    removePrompt: protectedProcedure
       .input(
         z.object({
           playbookId: z.string(),
@@ -257,7 +257,7 @@ export function createPlaybookStoreRouter() {
         return result;
       }),
 
-    updatePrompt: t.procedure
+    updatePrompt: protectedProcedure
       .input(
         z.object({
           playbookId: z.string(),
@@ -275,7 +275,7 @@ export function createPlaybookStoreRouter() {
         return prompt;
       }),
 
-    listPrompts: t.procedure
+    listPrompts: protectedProcedure
       .input(
         z.object({
           playbookId: z.string(),

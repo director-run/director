@@ -1,4 +1,4 @@
-import { t } from "@director.run/utilities/trpc";
+import { publicProcedure, t } from "@director.run/utilities/trpc";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import type { ClientStore } from "../../client-store";
 import { PlaybookStore } from "../../playbooks/playbook-store";
@@ -11,11 +11,12 @@ export type GatewayContext = {
   cliVersion: string | null;
   playbookStore: PlaybookStore;
   clientStore: ClientStore;
+  userId: string | undefined;
 };
 
 export function createAppRouter() {
   return t.router({
-    health: t.procedure.query(({ ctx }) => {
+    health: publicProcedure.query(({ ctx }) => {
       return getStatus(ctx.cliVersion);
     }),
     store: createPlaybookStoreRouter(),
@@ -35,13 +36,16 @@ export function createTRPCExpressMiddleware({
     router: createAppRouter(),
     createContext: ({ res }): GatewayContext => {
       const headerValue = res.getHeader("x-cli-version");
-      const cliVersion =
-        typeof headerValue === "string" ? headerValue : null;
+      const cliVersion = typeof headerValue === "string" ? headerValue : null;
+
+      // TODO: Replace with actual authentication logic
+      const userId = "dummy-user-id";
 
       return {
         cliVersion,
         playbookStore,
         clientStore,
+        userId,
       };
     },
   });

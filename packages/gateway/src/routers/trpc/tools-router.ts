@@ -1,4 +1,4 @@
-import { t } from "@director.run/utilities/trpc";
+import { protectedProcedure, t } from "@director.run/utilities/trpc";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import _ from "lodash";
 import { z } from "zod";
@@ -11,7 +11,7 @@ type EnhancedTool = Tool & {
 
 export function createToolsRouter() {
   return t.router({
-    callTool: t.procedure
+    callTool: protectedProcedure
       .input(
         z.object({
           playbookId: z.string(),
@@ -29,7 +29,7 @@ export function createToolsRouter() {
           arguments: input.arguments,
         });
       }),
-    list: t.procedure
+    list: protectedProcedure
       .input(
         z.object({
           playbookId: z.string(),
@@ -67,7 +67,7 @@ export function createToolsRouter() {
         }
         return ret.sort((a, b) => a.name.localeCompare(b.name));
       }),
-    updateBatch: t.procedure
+    updateBatch: protectedProcedure
       .input(
         z.object({
           playbookId: z.string(),

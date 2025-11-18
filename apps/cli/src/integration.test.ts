@@ -1,4 +1,6 @@
+import { createGatewayClient } from "@director.run/gateway/client";
 import { Config } from "@director.run/gateway/config/index";
+import { SERVER_PORT } from "@director.run/gateway/env";
 import { Gateway } from "@director.run/gateway/gateway";
 import {
   afterAll,
@@ -8,18 +10,19 @@ import {
   expect,
   test,
 } from "vitest";
-import { gatewayClient } from "./client";
 import { runCLICommand } from "./test/helpers";
 
 describe("CLI integration tests", () => {
   let gateway: Gateway;
+  const gatewayClient = createGatewayClient(`http://localhost:${SERVER_PORT}`);
+
   beforeAll(async () => {
     gateway = await Gateway.start({
       config: await Config.createMemoryBasedConfig({
         defaults: {},
       }),
-      baseUrl: `http://localhost:3673`,
-      port: 3673,
+      baseUrl: `http://localhost:${SERVER_PORT}`,
+      port: SERVER_PORT,
     });
   });
 

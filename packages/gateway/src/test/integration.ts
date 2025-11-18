@@ -50,6 +50,7 @@ export class IntegrationTestHarness {
     const gateway = await Gateway.start({
       config,
       baseUrl: `http://localhost:${SERVER_PORT}`,
+      port: SERVER_PORT,
     });
 
     const client = createGatewayClient(`http://localhost:${SERVER_PORT}`);

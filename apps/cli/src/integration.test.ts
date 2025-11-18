@@ -1,6 +1,5 @@
-import { SERVER_PORT } from "@director.run/gateway/env";
+import { Config } from "@director.run/gateway/config/index";
 import { Gateway } from "@director.run/gateway/gateway";
-import { makeTestConfig } from "@director.run/gateway/test/config";
 import {
   afterAll,
   beforeAll,
@@ -16,8 +15,11 @@ describe("CLI integration tests", () => {
   let gateway: Gateway;
   beforeAll(async () => {
     gateway = await Gateway.start({
-      config: await makeTestConfig(),
-      baseUrl: `http://localhost:${SERVER_PORT}`,
+      config: await Config.createMemoryBasedConfig({
+        defaults: {},
+      }),
+      baseUrl: `http://localhost:3673`,
+      port: 3673,
     });
   });
 

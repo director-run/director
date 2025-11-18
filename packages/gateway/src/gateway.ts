@@ -13,7 +13,7 @@ import cors from "cors";
 import express from "express";
 import { ClientStore } from "./client-store";
 import { Config } from "./config";
-import { OAUTH_STORAGE, OAUTH_TOKEN_DIRECTORY, SERVER_PORT } from "./env";
+import { OAUTH_STORAGE, OAUTH_TOKEN_DIRECTORY } from "./env";
 import { PlaybookStore } from "./playbooks/playbook-store";
 import { createSSERouter } from "./routers/sse";
 import { createStreamableRouter } from "./routers/streamable";
@@ -31,11 +31,8 @@ export class Gateway {
   private telemetry?: Telemetry;
   private studioAssetsPath?: string;
   private baseUrl: string;
+  public readonly port: number;
   public readonly clientStore: ClientStore;
-
-  public get port() {
-    return SERVER_PORT;
-  }
 
   private constructor(attribs: {
     playbookStore: PlaybookStore;
@@ -44,6 +41,7 @@ export class Gateway {
     studioAssetsPath?: string;
     baseUrl: string;
     clientStore: ClientStore;
+    port: number;
   }) {
     this.playbookStore = attribs.playbookStore;
     this.config = attribs.config;
@@ -51,6 +49,7 @@ export class Gateway {
     this.studioAssetsPath = attribs.studioAssetsPath;
     this.baseUrl = attribs.baseUrl;
     this.clientStore = attribs.clientStore;
+    this.port = attribs.port;
 
     this.app = express();
 
@@ -159,6 +158,7 @@ export class Gateway {
       config: Config;
       telemetry?: Telemetry;
       baseUrl: string;
+      port: number;
     },
     successCallback?: () => void,
   ) {
@@ -189,6 +189,7 @@ export class Gateway {
       studioAssetsPath: attribs.studioAssetsPath,
       baseUrl: attribs.baseUrl,
       clientStore,
+      port: attribs.port,
     });
 
     await gateway.start(successCallback);

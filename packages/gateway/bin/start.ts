@@ -8,6 +8,7 @@ async function start() {
       defaults: {},
     }),
     baseUrl: `http://localhost:${SERVER_PORT}`,
+    port: SERVER_PORT,
   });
 }
 

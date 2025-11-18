@@ -2,16 +2,14 @@ import { t } from "@director.run/utilities/trpc";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import _ from "lodash";
 import { z } from "zod";
-import { PlaybookStore } from "../../playbooks/playbook-store";
+import type { GatewayContext } from "./index";
 
 type EnhancedTool = Tool & {
   serverName?: string;
   disabled?: boolean;
 };
 
-export function createToolsRouter({
-  playbookStore,
-}: { playbookStore: PlaybookStore }) {
+export function createToolsRouter() {
   return t.router({
     callTool: t.procedure
       .input(
@@ -22,7 +20,8 @@ export function createToolsRouter({
           arguments: z.any(),
         }),
       )
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const { playbookStore } = ctx as GatewayContext;
         const playbook = await playbookStore.get(input.playbookId);
         const target = await playbook.getTarget(input.serverName);
         return await target.originalCallTool({
@@ -37,7 +36,8 @@ export function createToolsRouter({
           serverName: z.string().optional(),
         }),
       )
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        const { playbookStore } = ctx as GatewayContext;
         const playbook = await playbookStore.get(input.playbookId);
         const ret: EnhancedTool[] = [];
         for (const target of playbook.targets) {
@@ -80,7 +80,8 @@ export function createToolsRouter({
           ),
         }),
       )
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const { playbookStore } = ctx as GatewayContext;
         const playbook = await playbookStore.get(input.playbookId);
         const groupedTools = _.groupBy(input.tools, "serverName");
         for (const serverName in groupedTools) {

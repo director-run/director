@@ -1,14 +1,14 @@
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
-import { type ClientId, ClientStore } from "../../client-store";
-import type { PlaybookStore } from "../../playbooks/playbook-store";
+import type { ClientId } from "../../client-store";
+import type { GatewayContext } from "./index";
 
-export function createClientRouter({
-  playbookStore,
-  clientStore,
-}: { playbookStore: PlaybookStore; clientStore: ClientStore }) {
+export function createClientRouter() {
   return t.router({
-    allClients: t.procedure.query(() => clientStore.toPlainObject()),
+    allClients: t.procedure.query(({ ctx }) => {
+      const { clientStore } = ctx as GatewayContext;
+      return clientStore.toPlainObject();
+    }),
     install: t.procedure
       .input(
         z.object({
@@ -17,7 +17,8 @@ export function createClientRouter({
           baseUrl: z.string(),
         }),
       )
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const { playbookStore, clientStore } = ctx as GatewayContext;
         await clientStore.install({
           clientId: input.clientId as ClientId,
           playbook: playbookStore.get(input.playbookId),
@@ -31,11 +32,13 @@ export function createClientRouter({
           playbookId: z.string(),
         }),
       )
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const { playbookStore, clientStore } = ctx as GatewayContext;
         const playbook = playbookStore.get(input.playbookId);
         await clientStore.uninstall(input.clientId as ClientId, playbook.id);
       }),
-    resetAll: t.procedure.mutation(async () => {
+    resetAll: t.procedure.mutation(async ({ ctx }) => {
+      const { clientStore } = ctx as GatewayContext;
       await clientStore.resetAll();
     }),
   });

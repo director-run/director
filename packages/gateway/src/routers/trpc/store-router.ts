@@ -7,7 +7,7 @@ import {
   ServerConfigEntrySchema,
 } from "../../config/config-schema";
 import type { PlaybookTarget } from "../../playbooks/playbook";
-import { PlaybookStore } from "../../playbooks/playbook-store";
+import type { GatewayContext } from "./index";
 
 const PlaybookCreateSchema = z.object({
   name: z.string(),
@@ -31,11 +31,10 @@ const PromptSchema = z.object({
   body: z.string(),
 });
 
-export function createPlaybookStoreRouter({
-  playbookStore,
-}: { playbookStore: PlaybookStore }) {
+export function createPlaybookStoreRouter() {
   return t.router({
-    getAll: t.procedure.query(async () => {
+    getAll: t.procedure.query(async ({ ctx }) => {
+      const { playbookStore } = ctx as GatewayContext;
       return await Promise.all(
         await playbookStore
           .getAll()
@@ -50,14 +49,16 @@ export function createPlaybookStoreRouter({
           queryParams: z.object({}).optional(),
         }),
       )
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        const { playbookStore } = ctx as GatewayContext;
         const playbook = await playbookStore.get(input.playbookId);
         return await playbook.toPlainObject();
       }),
 
     create: t.procedure
       .input(PlaybookCreateSchema)
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const { playbookStore } = ctx as GatewayContext;
         return (
           await playbookStore.create({
             name: input.name,
@@ -73,7 +74,8 @@ export function createPlaybookStoreRouter({
           attributes: PlaybookUpdateSchema,
         }),
       )
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const { playbookStore } = ctx as GatewayContext;
         const playbook = await playbookStore.get(input.playbookId);
         const updated = await playbook.update({
           name: input.attributes.name,
@@ -83,7 +85,8 @@ export function createPlaybookStoreRouter({
       }),
     delete: t.procedure
       .input(z.object({ playbookId: z.string() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const { playbookStore } = ctx as GatewayContext;
         await playbookStore.delete(input.playbookId);
         return { success: true };
       }),
@@ -99,7 +102,8 @@ export function createPlaybookStoreRouter({
             .optional(),
         }),
       )
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const { playbookStore } = ctx as GatewayContext;
         const playbook = await playbookStore.get(input.playbookId);
 
         const target = await playbook.addTarget({
@@ -128,7 +132,8 @@ export function createPlaybookStoreRouter({
             .optional(),
         }),
       )
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const { playbookStore } = ctx as GatewayContext;
         const playbook = await playbookStore.get(input.playbookId);
         const server = await playbook.updateTarget(
           input.serverName,
@@ -152,7 +157,8 @@ export function createPlaybookStoreRouter({
             .optional(),
         }),
       )
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        const { playbookStore } = ctx as GatewayContext;
         const playbook = await playbookStore.get(input.playbookId);
         const target = await playbook.getTarget(input.serverName);
 
@@ -164,7 +170,8 @@ export function createPlaybookStoreRouter({
 
     authenticate: t.procedure
       .input(z.object({ playbookId: z.string(), serverName: z.string() }))
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        const { playbookStore } = ctx as GatewayContext;
         const playbook = await playbookStore.get(input.playbookId);
         const target = await playbook.getTarget(input.serverName);
 
@@ -187,7 +194,8 @@ export function createPlaybookStoreRouter({
 
     logout: t.procedure
       .input(z.object({ playbookId: z.string(), serverName: z.string() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const { playbookStore } = ctx as GatewayContext;
         const playbook = await playbookStore.get(input.playbookId);
         const target = await playbook.getTarget(input.serverName);
         if (target instanceof HTTPClient) {
@@ -200,7 +208,10 @@ export function createPlaybookStoreRouter({
         }
       }),
 
-    purge: t.procedure.mutation(() => playbookStore.purge()),
+    purge: t.procedure.mutation(({ ctx }) => {
+      const { playbookStore } = ctx as GatewayContext;
+      return playbookStore.purge();
+    }),
 
     removeServer: t.procedure
       .input(
@@ -209,7 +220,8 @@ export function createPlaybookStoreRouter({
           serverName: z.string(),
         }),
       )
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const { playbookStore } = ctx as GatewayContext;
         const playbook = await playbookStore.get(input.playbookId);
         const server = await playbook.removeTarget(input.serverName);
         return await server.toPlainObject({
@@ -224,7 +236,8 @@ export function createPlaybookStoreRouter({
           prompt: PromptSchema,
         }),
       )
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const { playbookStore } = ctx as GatewayContext;
         const playbook = await playbookStore.get(input.playbookId);
         const prompt = await playbook.addPrompt(input.prompt);
         return prompt;
@@ -237,7 +250,8 @@ export function createPlaybookStoreRouter({
           promptName: z.string(),
         }),
       )
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const { playbookStore } = ctx as GatewayContext;
         const playbook = await playbookStore.get(input.playbookId);
         const result = await playbook.removePrompt(input.promptName);
         return result;
@@ -251,7 +265,8 @@ export function createPlaybookStoreRouter({
           prompt: PromptSchema.partial(),
         }),
       )
-      .mutation(async ({ input }) => {
+      .mutation(async ({ ctx, input }) => {
+        const { playbookStore } = ctx as GatewayContext;
         const playbook = await playbookStore.get(input.playbookId);
         const prompt = await playbook.updatePrompt(
           input.promptName,
@@ -266,7 +281,8 @@ export function createPlaybookStoreRouter({
           playbookId: z.string(),
         }),
       )
-      .query(async ({ input }) => {
+      .query(async ({ ctx, input }) => {
+        const { playbookStore } = ctx as GatewayContext;
         const playbook = await playbookStore.get(input.playbookId);
         return await playbook.listPrompts();
       }),

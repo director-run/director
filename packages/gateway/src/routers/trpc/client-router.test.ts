@@ -56,11 +56,15 @@ describe("Client Router", () => {
       new FakeClient({ name: "claude-code", installables: [] }),
     ]);
 
-    app = createAppRouter({ playbookStore, clientStore });
+    app = createAppRouter();
   });
 
   it("allClients returns statuses for all clients", async () => {
-    const caller = app.createCaller({ cliVersion: null });
+    const caller = app.createCaller({
+      cliVersion: null,
+      playbookStore,
+      clientStore,
+    });
 
     const result = await caller.clients.allClients();
     expect(result).toHaveLength(4);
@@ -78,7 +82,11 @@ describe("Client Router", () => {
   });
 
   it("install installs playbook on selected client and restarts if required", async () => {
-    const caller = app.createCaller({ cliVersion: null });
+    const caller = app.createCaller({
+      cliVersion: null,
+      playbookStore,
+      clientStore,
+    });
     const playbook = await playbookStore.create({ name: "Test Playbook" });
 
     // Spy restart on one client and make install return requiresRestart
@@ -106,7 +114,11 @@ describe("Client Router", () => {
   });
 
   it("uninstall removes playbook from selected client and restarts if required", async () => {
-    const caller = app.createCaller({ cliVersion: null });
+    const caller = app.createCaller({
+      cliVersion: null,
+      playbookStore,
+      clientStore,
+    });
     const playbook = await playbookStore.create({ name: "Another Playbook" });
 
     const target = clientStore.get("cursor");
@@ -125,7 +137,11 @@ describe("Client Router", () => {
   });
 
   it("resetAll calls reset and restart per client as needed", async () => {
-    const caller = app.createCaller({ cliVersion: null });
+    const caller = app.createCaller({
+      cliVersion: null,
+      playbookStore,
+      clientStore,
+    });
 
     const claude = clientStore.get("claude");
     const cursor = clientStore.get("cursor");

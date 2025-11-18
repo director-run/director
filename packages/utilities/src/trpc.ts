@@ -65,7 +65,7 @@ export const logTRPCRequest: AnyTRPCMiddlewareFunction = async ({
   }
 };
 
-export const trpcBase = initTRPC.context().create({
+export const trpcBase = initTRPC.context<object>().create({
   transformer: superjson,
   errorFormatter: ({ shape }) => {
     return {

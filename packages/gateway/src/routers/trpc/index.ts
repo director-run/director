@@ -7,20 +7,20 @@ import { createClientRouter } from "./client-router";
 import { createPlaybookStoreRouter } from "./store-router";
 import { createToolsRouter } from "./tools-router";
 
-export function createAppRouter({
-  playbookStore,
-  clientStore,
-}: {
+export type GatewayContext = {
+  cliVersion: string | null;
   playbookStore: PlaybookStore;
   clientStore: ClientStore;
-}) {
+};
+
+export function createAppRouter() {
   return t.router({
     health: t.procedure.query(({ ctx }) => {
       return getStatus(ctx.cliVersion);
     }),
-    store: createPlaybookStoreRouter({ playbookStore }),
-    clients: createClientRouter({ playbookStore, clientStore }),
-    tools: createToolsRouter({ playbookStore }),
+    store: createPlaybookStoreRouter(),
+    clients: createClientRouter(),
+    tools: createToolsRouter(),
   });
 }
 
@@ -32,12 +32,16 @@ export function createTRPCExpressMiddleware({
   clientStore: ClientStore;
 }): ReturnType<typeof trpcExpress.createExpressMiddleware> {
   return trpcExpress.createExpressMiddleware({
-    router: createAppRouter({ playbookStore, clientStore }),
-    createContext: ({ res }) => {
-      const cliVersion = res.getHeader("x-cli-version") ?? null;
+    router: createAppRouter(),
+    createContext: ({ res }): GatewayContext => {
+      const headerValue = res.getHeader("x-cli-version");
+      const cliVersion =
+        typeof headerValue === "string" ? headerValue : null;
 
       return {
         cliVersion,
+        playbookStore,
+        clientStore,
       };
     },
   });

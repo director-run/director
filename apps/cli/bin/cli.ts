@@ -11,7 +11,7 @@ import { registerCoreCommands } from "../src/commands/core";
 import { registerMCPCommands } from "../src/commands/mcp";
 import { registerPromptsCommands } from "../src/commands/prompts";
 import { registerRegistryCommands } from "../src/commands/registry";
-import { config } from "../src/config";
+import { DEBUG } from "../src/config";
 
 // add this to prevent the program from exiting (useful for working on help text in live reload)
 // process.exit = (code?: number) => {};
@@ -22,12 +22,12 @@ const program = new DirectorCommand();
 
 program
   .name("director")
-  .showDebugCommands(!!config.get("debug"))
+  .showDebugCommands(DEBUG)
   .description(packageJson.description)
   .version(packageJson.version);
 
 registerCoreCommands(program);
-config.get("debug") && registerClientCommands(program);
+DEBUG && registerClientCommands(program);
 registerRegistryCommands(program);
 registerMCPCommands(program);
 registerPromptsCommands(program);

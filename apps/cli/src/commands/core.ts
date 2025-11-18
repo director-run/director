@@ -14,16 +14,12 @@ import { registerConfigCommand } from "./core/config";
 import { registerConnectCommand } from "./core/connect";
 import { registerDebugCommands } from "./core/debug";
 import { registerGetCommand } from "./core/get";
-import { registerQuickstartCommand } from "./core/quickstart";
 import { registerRemoveCommand } from "./core/remove";
-import { registerServeCommand } from "./core/serve";
 import { registerStatusCommand } from "./core/status";
 import { registerStudioCommand } from "./core/studio";
 import { registerUpdateCommand } from "./core/update";
 
 export function registerCoreCommands(program: DirectorCommand): void {
-  registerQuickstartCommand(program);
-  registerServeCommand(program);
   registerStudioCommand(program);
 
   program

@@ -1,5 +1,6 @@
-import fs from "fs";
-import { ChildProcess } from "node:child_process";
+import { SERVER_PORT } from "@director.run/gateway/env";
+import { Gateway } from "@director.run/gateway/gateway";
+import { makeTestConfig } from "@director.run/gateway/test/config";
 import {
   afterAll,
   beforeAll,
@@ -9,25 +10,19 @@ import {
   test,
 } from "vitest";
 import { gatewayClient } from "./client";
-import { getConfigFilePath } from "./config";
-import { runCLICommand, runCLIServe } from "./test/helpers";
+import { runCLICommand } from "./test/helpers";
 
 describe("CLI integration tests", () => {
-  let serveProcess: ChildProcess;
+  let gateway: Gateway;
   beforeAll(async () => {
-    try {
-      serveProcess = await runCLIServe({ verbose: false, timeout: 30000 });
-    } catch (error) {
-      console.error("Failed to start gateway server:", error);
-      throw error;
-    }
-  }, 60000);
+    gateway = await Gateway.start({
+      config: await makeTestConfig(),
+      baseUrl: `http://localhost:${SERVER_PORT}`,
+    });
+  });
 
   afterAll(async () => {
-    if (serveProcess) {
-      serveProcess.kill();
-    }
-    await fs.promises.unlink(getConfigFilePath());
+    await gateway.stop();
   });
 
   beforeEach(async () => {

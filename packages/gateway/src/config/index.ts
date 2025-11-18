@@ -143,14 +143,5 @@ function slugifyName(name: string): string {
 }
 
 const configSchema = {
-  version: z.string().default("1.0.0"),
   playbooks: z.array(PlaybookSchema).default([]),
-  debug: z.boolean().default(false),
-  "server.port": z.number().min(0),
-  "registry.url": z.string(),
-  "registry.apiKey": z.string().optional(),
-  "telemetry.writeKey": z.string(),
-  "telemetry.enabled": z.boolean(),
-  "oauth.storage": z.literal("disk").or(z.literal("memory")).default("disk"),
-  "oauth.tokenDirectory": z.string().default("./tokens"),
 } as const satisfies Record<string, z.ZodType>;

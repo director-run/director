@@ -8,6 +8,7 @@ import { serveOverSSE, serveOverStreamable } from "@director.run/mcp/transport";
 import { requiredStringSchema } from "@director.run/utilities/schema";
 import { z } from "zod";
 import { createGatewayClient } from "../client";
+import { SERVER_PORT } from "../env";
 import { Gateway } from "../gateway";
 import { makeTestConfig } from "./config";
 
@@ -16,7 +17,7 @@ const PROXY_TARGET_PORT = 4521;
 export class IntegrationTestHarness {
   public readonly gateway: Gateway;
   public readonly client: ReturnType<typeof createGatewayClient>;
-  public static gatewayPort: number = 4673;
+  public static gatewayPort: number = SERVER_PORT;
 
   private echoServerSSEInstance: Server;
   private kitchenSinkServerInstance: Server;
@@ -48,12 +49,10 @@ export class IntegrationTestHarness {
     const config = await makeTestConfig();
     const gateway = await Gateway.start({
       config,
-      baseUrl: `http://localhost:${config.get("server.port")}`,
+      baseUrl: `http://localhost:${SERVER_PORT}`,
     });
 
-    const client = createGatewayClient(
-      `http://localhost:${config.get("server.port")}`,
-    );
+    const client = createGatewayClient(`http://localhost:${SERVER_PORT}`);
 
     const echoServerSSEInstance = await serveOverSSE(
       makeEchoServer(),

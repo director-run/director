@@ -1,6 +1,6 @@
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
-import { config } from "../../config";
+// import { config } from "../../config";
 
 export function registerConfigCommand(program: DirectorCommand): void {
   program
@@ -8,7 +8,7 @@ export function registerConfigCommand(program: DirectorCommand): void {
     .description("Print config")
     .action(
       actionWithErrorHandler(() => {
-        config.prettyPrint();
+        console.log("TODO...");
       }),
     );
 }

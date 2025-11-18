@@ -13,6 +13,7 @@ import cors from "cors";
 import express from "express";
 import { ClientStore } from "./client-store";
 import { Config } from "./config";
+import { OAUTH_STORAGE, OAUTH_TOKEN_DIRECTORY, SERVER_PORT } from "./env";
 import { PlaybookStore } from "./playbooks/playbook-store";
 import { createSSERouter } from "./routers/sse";
 import { createStreamableRouter } from "./routers/streamable";
@@ -33,7 +34,7 @@ export class Gateway {
   public readonly clientStore: ClientStore;
 
   public get port() {
-    return this.config.get("server.port") as number;
+    return SERVER_PORT;
   }
 
   private constructor(attribs: {
@@ -167,12 +168,10 @@ export class Gateway {
       config: attribs.config,
       telemetry: attribs.telemetry,
       oauth:
-        attribs.config.get("oauth.storage") === "disk"
+        OAUTH_STORAGE === "disk"
           ? {
               storage: "disk",
-              tokenDirectory: attribs.config.get(
-                "oauth.tokenDirectory",
-              ) as string,
+              tokenDirectory: OAUTH_TOKEN_DIRECTORY,
               baseCallbackUrl: attribs.baseUrl,
             }
           : {

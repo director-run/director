@@ -23,6 +23,10 @@ describe("CLI integration tests", () => {
       }),
       baseUrl: `http://localhost:${SERVER_PORT}`,
       port: SERVER_PORT,
+      oauth: {
+        storage: "memory",
+        baseCallbackUrl: `http://localhost:${SERVER_PORT}`,
+      },
     });
   });
 

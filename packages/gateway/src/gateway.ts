@@ -1,5 +1,6 @@
 import { Server } from "node:http";
 import { createOauthCallbackRouter } from "@director.run/mcp/oauth/oauth-callback-router";
+import type { OAuthProviderFactoryParams } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { isDevelopment } from "@director.run/utilities/env";
 import { getLogger } from "@director.run/utilities/logger";
 import {
@@ -13,7 +14,6 @@ import cors from "cors";
 import express from "express";
 import { ClientStore } from "./client-store";
 import { Config } from "./config";
-import { OAUTH_STORAGE, OAUTH_TOKEN_DIRECTORY } from "./env";
 import { PlaybookStore } from "./playbooks/playbook-store";
 import { createSSERouter } from "./routers/sse";
 import { createStreamableRouter } from "./routers/streamable";
@@ -159,6 +159,7 @@ export class Gateway {
       telemetry?: Telemetry;
       baseUrl: string;
       port: number;
+      oauth: OAuthProviderFactoryParams;
     },
     successCallback?: () => void,
   ) {
@@ -167,17 +168,7 @@ export class Gateway {
     const playbookStore = await PlaybookStore.create({
       config: attribs.config,
       telemetry: attribs.telemetry,
-      oauth:
-        OAUTH_STORAGE === "disk"
-          ? {
-              storage: "disk",
-              tokenDirectory: OAUTH_TOKEN_DIRECTORY,
-              baseCallbackUrl: attribs.baseUrl,
-            }
-          : {
-              storage: "memory",
-              baseCallbackUrl: attribs.baseUrl,
-            },
+      oauth: attribs.oauth,
     });
 
     attribs.telemetry?.trackEvent("gateway_start");

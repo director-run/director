@@ -12,6 +12,7 @@ export function createOauthCallbackRouter(params: {
     factoryId: string,
     providerId: string,
     code: string,
+    userId: string,
   ) => MaybePromise<void | RedirectResult>;
   onAuthorizationError: (
     factoryId: string,
@@ -30,6 +31,9 @@ export function createOauthCallbackRouter(params: {
       const factoryId = req.params.factoryId;
       const providerId = req.params.providerId;
 
+      // TODO: Replace with actual authentication logic (e.g., better-auth session)
+      const userId = "dummy-user-id";
+
       if (code) {
         logger.info({
           message: "received oauth callback, authorization successful",
@@ -39,6 +43,7 @@ export function createOauthCallbackRouter(params: {
           factoryId,
           providerId,
           code,
+          userId,
         );
 
         if (result?.redirectUrl) {

@@ -1,12 +1,12 @@
 import { protectedProcedure, t } from "@director.run/utilities/trpc";
 import { z } from "zod";
 import type { ClientId } from "../../client-store";
-import type { GatewayContext } from "./index";
+import type { AuthenticatedGatewayContext } from "./index";
 
 export function createClientRouter() {
   return t.router({
     allClients: protectedProcedure.query(({ ctx }) => {
-      const { clientStore } = ctx as GatewayContext;
+      const { clientStore } = ctx as AuthenticatedGatewayContext;
       return clientStore.toPlainObject();
     }),
     install: protectedProcedure
@@ -18,10 +18,11 @@ export function createClientRouter() {
         }),
       )
       .mutation(async ({ ctx, input }) => {
-        const { playbookStore, clientStore } = ctx as GatewayContext;
+        const { playbookStore, clientStore, userId } =
+          ctx as AuthenticatedGatewayContext;
         await clientStore.install({
           clientId: input.clientId as ClientId,
-          playbook: playbookStore.get(input.playbookId),
+          playbook: playbookStore.get(input.playbookId, userId),
           baseUrl: input.baseUrl,
         });
       }),
@@ -33,12 +34,13 @@ export function createClientRouter() {
         }),
       )
       .mutation(async ({ ctx, input }) => {
-        const { playbookStore, clientStore } = ctx as GatewayContext;
-        const playbook = playbookStore.get(input.playbookId);
+        const { playbookStore, clientStore, userId } =
+          ctx as AuthenticatedGatewayContext;
+        const playbook = playbookStore.get(input.playbookId, userId);
         await clientStore.uninstall(input.clientId as ClientId, playbook.id);
       }),
     resetAll: protectedProcedure.mutation(async ({ ctx }) => {
-      const { clientStore } = ctx as GatewayContext;
+      const { clientStore } = ctx as AuthenticatedGatewayContext;
       await clientStore.resetAll();
     }),
   });

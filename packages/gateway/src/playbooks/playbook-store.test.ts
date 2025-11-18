@@ -17,6 +17,7 @@ describe("PlaybookStore", () => {
     });
     await playbookStore.create({
       name: "test-playbook",
+      userId: "test-user-id",
       servers: [],
     });
   });
@@ -26,6 +27,7 @@ describe("PlaybookStore", () => {
       await playbookStore.purge();
       const playbook = await playbookStore.create({
         name: "test-playbook",
+        userId: "test-user-id",
         servers: [],
       });
 
@@ -36,7 +38,7 @@ describe("PlaybookStore", () => {
       );
 
       const httpClient = (await playbookStore
-        .get("test-playbook")
+        .get("test-playbook", "test-user-id")
         .getTarget("http1")) as HTTPClient;
       httpClient.completeAuthFlow = vi.fn();
 
@@ -44,6 +46,7 @@ describe("PlaybookStore", () => {
         playbook.id,
         target.name,
         "some-code",
+        "test-user-id",
       );
 
       expect(httpClient.completeAuthFlow).toHaveBeenCalledWith("some-code");

@@ -70,13 +70,14 @@ export class PlaybookStore {
         id: playbookId,
         name: playbookConfig.name,
         description: playbookConfig.description ?? undefined,
+        userId: playbookConfig.userId,
         servers: playbookConfig.servers,
         prompts: playbookConfig.prompts,
       });
     }
   }
 
-  public get(playbookId: string) {
+  public get(playbookId: string, userId: string) {
     const server = this.playbooks.get(playbookId);
     if (!server) {
       throw new AppError(
@@ -84,12 +85,21 @@ export class PlaybookStore {
         `playbook '${playbookId}' not found or failed to initialize.`,
       );
     }
+
+    // Verify user owns this playbook
+    if (server.userId !== userId) {
+      throw new AppError(
+        ErrorCode.FORBIDDEN,
+        `You do not have permission to access this playbook.`,
+      );
+    }
+
     return server;
   }
 
-  async delete(playbookId: string) {
+  async delete(playbookId: string, userId: string) {
     this.telemetry.trackEvent("playbook_deleted");
-    const playbook = this.get(playbookId);
+    const playbook = this.get(playbookId, userId);
     for (const server of playbook.targets) {
       if (server instanceof HTTPClient && (await server.isAuthenticated())) {
         await server.logout();
@@ -117,16 +127,19 @@ export class PlaybookStore {
     logger.info("finished cleaning up all playbooks.");
   }
 
-  public getAll(): Playbook[] {
-    return Array.from(this.playbooks.values());
+  public getAll(userId: string): Playbook[] {
+    return Array.from(this.playbooks.values()).filter(
+      (playbook) => playbook.userId === userId,
+    );
   }
 
   public async onAuthorizationSuccess(
     factoryId: string,
     providerId: string,
     code: string,
+    userId: string,
   ) {
-    const playbook = await this.get(factoryId);
+    const playbook = await this.get(factoryId, userId);
     const target = await playbook.getTarget(providerId);
 
     if (target instanceof HTTPClient) {
@@ -143,27 +156,32 @@ export class PlaybookStore {
     name,
     description,
     servers,
+    userId,
   }: {
     name: string;
     description?: string;
     servers?: PlaybookTarget[];
+    userId: string;
   }): Promise<Playbook> {
     this.telemetry.trackEvent("playbook_created");
 
     const configEntry = await this.config.playbooks.create({
       name,
       description,
+      userId,
       servers: servers ?? [],
     });
     const playbook = await this.initializeAndAddPlaybook({
       name,
       description,
+      userId,
       servers: servers ?? [],
       id: configEntry.id,
     });
     logger.info({
       message: `Created new playbook`,
       playbookId: configEntry.id,
+      userId,
     });
     return playbook;
   }

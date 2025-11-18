@@ -51,6 +51,7 @@ export class Playbook extends ProxyServer {
   private _oAuthHandler?: OAuthProviderFactory;
   private _description?: string;
   private _name: string; // TODO: change to 'displayName'
+  private _userId: string;
 
   constructor(
     attributes: PlaybookParams,
@@ -75,6 +76,7 @@ export class Playbook extends ProxyServer {
 
     this._name = attributes.name;
     this._description = attributes.description;
+    this._userId = attributes.userId;
     this._oAuthHandler = params?.oAuthHandler;
     this._config = params?.config;
     this._telemetry = params?.telemetry;
@@ -86,6 +88,10 @@ export class Playbook extends ProxyServer {
 
   get name() {
     return this._name;
+  }
+
+  get userId() {
+    return this._userId;
   }
 
   public async addTarget(
@@ -231,6 +237,7 @@ export class Playbook extends ProxyServer {
       id: this.id,
       name: this.name,
       description: this.description,
+      userId: this.userId,
       prompts: await this.listPrompts(),
       servers: await Promise.all(
         this.targets
@@ -248,6 +255,7 @@ export class Playbook extends ProxyServer {
       id: this.id,
       name: this.name,
       description: this.description,
+      userId: this.userId,
       prompts: await this.listPrompts(),
       servers: await Promise.all(
         this.targets

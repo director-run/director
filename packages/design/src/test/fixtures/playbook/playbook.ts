@@ -4,6 +4,7 @@ export const mockPlaybook: () => PlaybookDetail = () => ({
   id: "test",
   name: "test",
   description: "A playbook for getting started",
+  userId: "test-user-id",
   prompts: [
     {
       name: "Test prompt",

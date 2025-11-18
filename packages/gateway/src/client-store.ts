@@ -45,7 +45,8 @@ export class ClientStore {
           message: `Installing ${playbookId} on ${client.name}`,
         });
         try {
-          const playbook = playbookStore.get(playbookId);
+          // TODO: Update to support multi-tenancy - this system operation needs redesign
+          const playbook = playbookStore.get(playbookId, "dummy-user-id");
           const result = await client.install({
             name: playbook.id,
             sseURL: joinURL(baseUrl, getSSEPathForPlaybook(playbook.id)),

@@ -2,7 +2,7 @@ import { protectedProcedure, t } from "@director.run/utilities/trpc";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import _ from "lodash";
 import { z } from "zod";
-import type { GatewayContext } from "./index";
+import type { AuthenticatedGatewayContext } from "./index";
 
 type EnhancedTool = Tool & {
   serverName?: string;
@@ -21,8 +21,8 @@ export function createToolsRouter() {
         }),
       )
       .mutation(async ({ ctx, input }) => {
-        const { playbookStore } = ctx as GatewayContext;
-        const playbook = await playbookStore.get(input.playbookId);
+        const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
+        const playbook = await playbookStore.get(input.playbookId, userId);
         const target = await playbook.getTarget(input.serverName);
         return await target.originalCallTool({
           name: input.toolName,
@@ -37,8 +37,8 @@ export function createToolsRouter() {
         }),
       )
       .query(async ({ ctx, input }) => {
-        const { playbookStore } = ctx as GatewayContext;
-        const playbook = await playbookStore.get(input.playbookId);
+        const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
+        const playbook = await playbookStore.get(input.playbookId, userId);
         const ret: EnhancedTool[] = [];
         for (const target of playbook.targets) {
           if (input.serverName && input.serverName !== target.name) {
@@ -81,8 +81,8 @@ export function createToolsRouter() {
         }),
       )
       .mutation(async ({ ctx, input }) => {
-        const { playbookStore } = ctx as GatewayContext;
-        const playbook = await playbookStore.get(input.playbookId);
+        const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
+        const playbook = await playbookStore.get(input.playbookId, userId);
         const groupedTools = _.groupBy(input.tools, "serverName");
         for (const serverName in groupedTools) {
           await playbook.updateTarget(serverName, {

@@ -7,7 +7,7 @@ import {
   ServerConfigEntrySchema,
 } from "../../config/config-schema";
 import type { PlaybookTarget } from "../../playbooks/playbook";
-import type { GatewayContext } from "./index";
+import type { AuthenticatedGatewayContext } from "./index";
 
 const PlaybookCreateSchema = z.object({
   name: z.string(),
@@ -34,10 +34,10 @@ const PromptSchema = z.object({
 export function createPlaybookStoreRouter() {
   return t.router({
     getAll: protectedProcedure.query(async ({ ctx }) => {
-      const { playbookStore } = ctx as GatewayContext;
+      const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
       return await Promise.all(
         await playbookStore
-          .getAll()
+          .getAll(userId)
           .map((playbook) => playbook.toPlainObject()),
       );
     }),
@@ -50,20 +50,21 @@ export function createPlaybookStoreRouter() {
         }),
       )
       .query(async ({ ctx, input }) => {
-        const { playbookStore } = ctx as GatewayContext;
-        const playbook = await playbookStore.get(input.playbookId);
+        const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
+        const playbook = await playbookStore.get(input.playbookId, userId);
         return await playbook.toPlainObject();
       }),
 
     create: protectedProcedure
       .input(PlaybookCreateSchema)
       .mutation(async ({ ctx, input }) => {
-        const { playbookStore } = ctx as GatewayContext;
+        const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
         return (
           await playbookStore.create({
             name: input.name,
             description: input.description ?? undefined,
             servers: input.servers?.map(oldServerToTargetParams),
+            userId,
           })
         ).toPlainObject();
       }),
@@ -75,8 +76,8 @@ export function createPlaybookStoreRouter() {
         }),
       )
       .mutation(async ({ ctx, input }) => {
-        const { playbookStore } = ctx as GatewayContext;
-        const playbook = await playbookStore.get(input.playbookId);
+        const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
+        const playbook = await playbookStore.get(input.playbookId, userId);
         const updated = await playbook.update({
           name: input.attributes.name,
           description: input.attributes.description ?? undefined,
@@ -86,8 +87,8 @@ export function createPlaybookStoreRouter() {
     delete: protectedProcedure
       .input(z.object({ playbookId: z.string() }))
       .mutation(async ({ ctx, input }) => {
-        const { playbookStore } = ctx as GatewayContext;
-        await playbookStore.delete(input.playbookId);
+        const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
+        await playbookStore.delete(input.playbookId, userId);
         return { success: true };
       }),
     addServer: protectedProcedure
@@ -103,8 +104,8 @@ export function createPlaybookStoreRouter() {
         }),
       )
       .mutation(async ({ ctx, input }) => {
-        const { playbookStore } = ctx as GatewayContext;
-        const playbook = await playbookStore.get(input.playbookId);
+        const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
+        const playbook = await playbookStore.get(input.playbookId, userId);
 
         const target = await playbook.addTarget({
           ...oldServerToTargetParams(input.server),
@@ -133,8 +134,8 @@ export function createPlaybookStoreRouter() {
         }),
       )
       .mutation(async ({ ctx, input }) => {
-        const { playbookStore } = ctx as GatewayContext;
-        const playbook = await playbookStore.get(input.playbookId);
+        const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
+        const playbook = await playbookStore.get(input.playbookId, userId);
         const server = await playbook.updateTarget(
           input.serverName,
           input.attributes,
@@ -158,8 +159,8 @@ export function createPlaybookStoreRouter() {
         }),
       )
       .query(async ({ ctx, input }) => {
-        const { playbookStore } = ctx as GatewayContext;
-        const playbook = await playbookStore.get(input.playbookId);
+        const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
+        const playbook = await playbookStore.get(input.playbookId, userId);
         const target = await playbook.getTarget(input.serverName);
 
         return await target.toPlainObject({
@@ -171,8 +172,8 @@ export function createPlaybookStoreRouter() {
     authenticate: protectedProcedure
       .input(z.object({ playbookId: z.string(), serverName: z.string() }))
       .query(async ({ ctx, input }) => {
-        const { playbookStore } = ctx as GatewayContext;
-        const playbook = await playbookStore.get(input.playbookId);
+        const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
+        const playbook = await playbookStore.get(input.playbookId, userId);
         const target = await playbook.getTarget(input.serverName);
 
         if (target instanceof HTTPClient) {
@@ -195,8 +196,8 @@ export function createPlaybookStoreRouter() {
     logout: protectedProcedure
       .input(z.object({ playbookId: z.string(), serverName: z.string() }))
       .mutation(async ({ ctx, input }) => {
-        const { playbookStore } = ctx as GatewayContext;
-        const playbook = await playbookStore.get(input.playbookId);
+        const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
+        const playbook = await playbookStore.get(input.playbookId, userId);
         const target = await playbook.getTarget(input.serverName);
         if (target instanceof HTTPClient) {
           await target.logout();
@@ -209,7 +210,7 @@ export function createPlaybookStoreRouter() {
       }),
 
     purge: protectedProcedure.mutation(({ ctx }) => {
-      const { playbookStore } = ctx as GatewayContext;
+      const { playbookStore } = ctx as AuthenticatedGatewayContext;
       return playbookStore.purge();
     }),
 
@@ -221,8 +222,8 @@ export function createPlaybookStoreRouter() {
         }),
       )
       .mutation(async ({ ctx, input }) => {
-        const { playbookStore } = ctx as GatewayContext;
-        const playbook = await playbookStore.get(input.playbookId);
+        const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
+        const playbook = await playbookStore.get(input.playbookId, userId);
         const server = await playbook.removeTarget(input.serverName);
         return await server.toPlainObject({
           connectionInfo: true,
@@ -237,8 +238,8 @@ export function createPlaybookStoreRouter() {
         }),
       )
       .mutation(async ({ ctx, input }) => {
-        const { playbookStore } = ctx as GatewayContext;
-        const playbook = await playbookStore.get(input.playbookId);
+        const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
+        const playbook = await playbookStore.get(input.playbookId, userId);
         const prompt = await playbook.addPrompt(input.prompt);
         return prompt;
       }),
@@ -251,8 +252,8 @@ export function createPlaybookStoreRouter() {
         }),
       )
       .mutation(async ({ ctx, input }) => {
-        const { playbookStore } = ctx as GatewayContext;
-        const playbook = await playbookStore.get(input.playbookId);
+        const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
+        const playbook = await playbookStore.get(input.playbookId, userId);
         const result = await playbook.removePrompt(input.promptName);
         return result;
       }),
@@ -266,8 +267,8 @@ export function createPlaybookStoreRouter() {
         }),
       )
       .mutation(async ({ ctx, input }) => {
-        const { playbookStore } = ctx as GatewayContext;
-        const playbook = await playbookStore.get(input.playbookId);
+        const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
+        const playbook = await playbookStore.get(input.playbookId, userId);
         const prompt = await playbook.updatePrompt(
           input.promptName,
           input.prompt,
@@ -282,8 +283,8 @@ export function createPlaybookStoreRouter() {
         }),
       )
       .query(async ({ ctx, input }) => {
-        const { playbookStore } = ctx as GatewayContext;
-        const playbook = await playbookStore.get(input.playbookId);
+        const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
+        const playbook = await playbookStore.get(input.playbookId, userId);
         return await playbook.listPrompts();
       }),
   });

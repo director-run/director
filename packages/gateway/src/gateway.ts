@@ -95,11 +95,12 @@ export class Gateway {
     this.app.use(
       "/",
       createOauthCallbackRouter({
-        onAuthorizationSuccess: async (factoryId, providerId, code) => {
+        onAuthorizationSuccess: async (factoryId, providerId, code, userId) => {
           await this.playbookStore.onAuthorizationSuccess(
             factoryId,
             providerId,
             code,
+            userId,
           );
           if (this.studioAssetsPath) {
             // Redirect to hosted studio callback page

@@ -14,6 +14,10 @@ export type GatewayContext = {
   userId: string | undefined;
 };
 
+export type AuthenticatedGatewayContext = GatewayContext & {
+  userId: string;
+};
+
 export function createAppRouter() {
   return t.router({
     health: publicProcedure.query(({ ctx }) => {

@@ -89,7 +89,10 @@ describe("Client Router", () => {
       clientStore,
       userId: "test-user-id",
     });
-    const playbook = await playbookStore.create({ name: "Test Playbook" });
+    const playbook = await playbookStore.create({
+      name: "Test Playbook",
+      userId: "test-user-id",
+    });
 
     // Spy restart on one client and make install return requiresRestart
     const target = clientStore.get("claude");
@@ -122,7 +125,10 @@ describe("Client Router", () => {
       clientStore,
       userId: "test-user-id",
     });
-    const playbook = await playbookStore.create({ name: "Another Playbook" });
+    const playbook = await playbookStore.create({
+      name: "Another Playbook",
+      userId: "test-user-id",
+    });
 
     const target = clientStore.get("cursor");
     const restartSpy = vi.spyOn(target, "restart").mockResolvedValue();

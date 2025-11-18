@@ -66,6 +66,7 @@ describe("Config", () => {
       await existingDb.playbooks.create({
         name: "test-playbook",
         description: "Test playbook",
+        userId: "test-user-id",
         servers: [],
       });
 
@@ -86,6 +87,7 @@ describe("Config", () => {
       id: "test-playbook",
       name: "test-playbook-with-servers",
       description: "A test playbook with servers",
+      userId: "test-user-id",
       servers: [
         {
           name: "server-1",
@@ -104,6 +106,7 @@ describe("Config", () => {
       id: "test-playbook-2",
       name: "test-playbook-with-servers-2",
       description: "A test playbook with servers 2",
+      userId: "test-user-id",
       servers: [],
     };
     describe("set", () => {
@@ -150,6 +153,7 @@ describe("Config", () => {
       const playbookData = {
         name: "test-playbook",
         description: "A test playbook",
+        userId: "test-user-id",
         servers: [],
       };
 
@@ -165,6 +169,7 @@ describe("Config", () => {
       const playbookData = {
         name: "test-playbook-with-servers",
         description: "A test playbook with servers",
+        userId: "test-user-id",
         servers: [
           {
             name: "server-1",
@@ -192,6 +197,7 @@ describe("Config", () => {
       const playbookData = {
         name: "test-playbook",
         description: "A test playbook",
+        userId: "test-user-id",
         servers: [
           {
             name: "Server Name With Spaces",
@@ -210,6 +216,7 @@ describe("Config", () => {
       const playbookData = {
         name: "duplicate-playbook",
         description: "First playbook",
+        userId: "test-user-id",
         servers: [],
       };
 
@@ -231,12 +238,14 @@ describe("Config", () => {
       const playbook1 = await config.playbooks.create({
         name: "playbook-1",
         description: "First playbook",
+        userId: "test-user-id",
         servers: [],
       });
 
       const playbook2 = await config.playbooks.create({
         name: "playbook-2",
         description: "Second playbook",
+        userId: "test-user-id",
         servers: [
           {
             name: "server-1",
@@ -300,12 +309,14 @@ describe("Config", () => {
       await config.playbooks.create({
         name: "playbook-1",
         description: "First playbook",
+        userId: "test-user-id",
         servers: [],
       });
 
       await config.playbooks.create({
         name: "playbook-2",
         description: "Second playbook",
+        userId: "test-user-id",
         servers: [],
       });
 
@@ -324,6 +335,7 @@ describe("Config", () => {
       await config.playbooks.create({
         name: "test-playbook",
         description: "A test playbook",
+        userId: "test-user-id",
         servers: [],
       });
 
@@ -333,6 +345,7 @@ describe("Config", () => {
       const newPlaybook = await config.playbooks.create({
         name: "new-playbook",
         description: "New playbook after purge",
+        userId: "test-user-id",
         servers: [],
       });
 

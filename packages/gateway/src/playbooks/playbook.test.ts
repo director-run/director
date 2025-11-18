@@ -13,6 +13,7 @@ describe("Playbook", async () => {
       {
         id: "test-playbook",
         name: "test-playbook",
+        userId: "test-user-id",
         servers: [],
       },
       {

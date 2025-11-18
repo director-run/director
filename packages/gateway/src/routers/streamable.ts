@@ -48,7 +48,9 @@ export const createStreamableRouter = ({
     "/:playbook_id/mcp",
     asyncHandler(async (req, res) => {
       const playbookId = req.params.playbook_id;
-      const playbook = await playbookStore.get(playbookId);
+      // TODO: Replace with actual authentication logic (e.g., better-auth session)
+      const userId = "dummy-user-id";
+      const playbook = await playbookStore.get(playbookId, userId);
 
       const sessionId = req.headers["mcp-session-id"] as string | undefined;
       let transport: StreamableHTTPServerTransport;
@@ -124,7 +126,9 @@ export const createStreamableRouter = ({
   const handleSessionRequest = asyncHandler(
     async (req: express.Request, res: express.Response) => {
       const playbookId = req.params.playbook_id;
-      const playbook = playbookStore.get(playbookId);
+      // TODO: Replace with actual authentication logic (e.g., better-auth session)
+      const userId = "dummy-user-id";
+      const playbook = playbookStore.get(playbookId, userId);
       const sessionId = req.headers["mcp-session-id"] as string | undefined;
 
       if (!sessionId || !transports.has(sessionId)) {

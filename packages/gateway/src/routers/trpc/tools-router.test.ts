@@ -9,6 +9,11 @@ describe("Tools Router", () => {
 
   beforeAll(async () => {
     harness = await IntegrationTestHarness.start();
+    await harness.register({
+      email: "test@example.com",
+      password: "password123",
+      name: "Test User",
+    });
   });
 
   afterAll(async () => {

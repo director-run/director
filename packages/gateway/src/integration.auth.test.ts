@@ -74,26 +74,15 @@ describe("Authentication integration", () => {
     });
 
     it("should prevent access without authentication", async () => {
-      // Clear database
-      await harness.purgeWithUsers();
-
-      // Try to create a playbook without authentication (should use dummy-user-id)
+      // Try to create a playbook without authentication
       const unauthenticatedClient = createGatewayClient(baseURL);
 
-      const playbook = await unauthenticatedClient.store.create.mutate({
-        name: "Unauthenticated Playbook",
-      });
-
-      expect(playbook).toBeDefined();
-
-      // Verify it's assigned to dummy-user-id (the fallback user when not authenticated)
-      const playbookDetails = await harness.database.getPlaybookWithDetails(
-        playbook.id,
-        "dummy-user-id",
-      );
-
-      expect(playbookDetails).toBeDefined();
-      expect(playbookDetails?.userId).toBe("dummy-user-id");
+      // Should throw UNAUTHORIZED error
+      await expect(
+        unauthenticatedClient.store.create.mutate({
+          name: "Unauthenticated Playbook",
+        }),
+      ).rejects.toThrow("UNAUTHORIZED");
     });
   });
 

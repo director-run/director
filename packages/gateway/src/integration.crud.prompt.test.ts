@@ -11,6 +11,11 @@ describe("Prompt Capabilities", () => {
 
   beforeAll(async () => {
     harness = await IntegrationTestHarness.start();
+    await harness.register({
+      email: "test@example.com",
+      password: "password123",
+      name: "Test User",
+    });
   });
 
   afterAll(async () => {
@@ -43,7 +48,7 @@ describe("Prompt Capabilities", () => {
     it("should update the config file when a prompt is added", async () => {
       const config = await harness.database.getPlaybookWithDetails(
         playbook.id,
-        "dummy-user-id",
+        harness.getUserId(),
       );
       expect(config.prompts).toEqual([prompt]);
     });
@@ -158,7 +163,7 @@ describe("Prompt Capabilities", () => {
     it("should update the config file when a prompt is removed", async () => {
       const config = await harness.database.getPlaybookWithDetails(
         playbook.id,
-        "dummy-user-id",
+        harness.getUserId(),
       );
       expect(config.prompts).toEqual([]);
     });
@@ -326,7 +331,7 @@ describe("Prompt Capabilities", () => {
       });
       const config = await harness.database.getPlaybookWithDetails(
         playbook.id,
-        "dummy-user-id",
+        harness.getUserId(),
       );
       expect(config.prompts).toEqual([
         {

@@ -7,7 +7,11 @@ import {
 import { serveOverSSE, serveOverStreamable } from "@director.run/mcp/transport";
 import { requiredStringSchema } from "@director.run/utilities/schema";
 import { z } from "zod";
-import { createGatewayClient } from "../client";
+import {
+  login as clientLogin,
+  register as clientRegister,
+  createGatewayClient,
+} from "../client";
 import { SERVER_PORT } from "../env";
 import { Gateway } from "../gateway";
 import { makeTestDbStore } from "./db";
@@ -16,12 +20,15 @@ const PROXY_TARGET_PORT = 4521;
 
 export class IntegrationTestHarness {
   public readonly gateway: Gateway;
-  public readonly client: ReturnType<typeof createGatewayClient>;
+  public client: ReturnType<typeof createGatewayClient>;
   public static gatewayPort: number = SERVER_PORT;
 
   private echoServerSSEInstance: Server;
   private kitchenSinkServerInstance: Server;
   private fooBarServerInstance: Server;
+  private sessionCookie: string | null = null;
+  private baseURL: string;
+  public userId: string | null = null;
 
   private constructor(params: {
     gateway: Gateway;
@@ -29,12 +36,14 @@ export class IntegrationTestHarness {
     echoServerSSEInstance: Server;
     kitchenSinkServerInstance: Server;
     fooBarServerInstance: Server;
+    baseURL: string;
   }) {
     this.gateway = params.gateway;
     this.client = params.client;
     this.echoServerSSEInstance = params.echoServerSSEInstance;
     this.kitchenSinkServerInstance = params.kitchenSinkServerInstance;
     this.fooBarServerInstance = params.fooBarServerInstance;
+    this.baseURL = params.baseURL;
   }
 
   public async purge() {
@@ -49,23 +58,80 @@ export class IntegrationTestHarness {
     return this.gateway.dbStore;
   }
 
+  public getUserId(): string {
+    if (!this.userId) {
+      throw new Error(
+        "User not authenticated. Call register() or login() first.",
+      );
+    }
+    return this.userId;
+  }
+
+  public async register(params: {
+    email: string;
+    password: string;
+    name: string;
+  }): Promise<{ user: { id: string; email: string; name: string } }> {
+    const { user, sessionCookie } = await clientRegister(this.baseURL, params);
+
+    this.sessionCookie = sessionCookie;
+    this.userId = user.id;
+
+    // Recreate client with new session
+    this.client = createGatewayClient(this.baseURL, {
+      getAuthToken: () => this.sessionCookie,
+    });
+
+    return { user };
+  }
+
+  public async login(params: {
+    email: string;
+    password: string;
+  }): Promise<{ user: { id: string; email: string; name: string } }> {
+    const { user, sessionCookie } = await clientLogin(this.baseURL, params);
+
+    this.sessionCookie = sessionCookie;
+    this.userId = user.id;
+
+    // Recreate client with new session
+    this.client = createGatewayClient(this.baseURL, {
+      getAuthToken: () => this.sessionCookie,
+    });
+
+    return { user };
+  }
+
+  public logout(): void {
+    this.sessionCookie = null;
+    this.userId = null;
+
+    // Recreate client without session
+    this.client = createGatewayClient(this.baseURL);
+  }
+
   public static async start() {
     const dbStore = makeTestDbStore();
+
+    // Clear all users before starting
+    await dbStore.deleteAllUsers();
 
     // Ensure dummy user exists for unauthenticated requests
     await dbStore.createDummyUser();
 
+    const baseURL = `http://localhost:${SERVER_PORT}`;
+
     const gateway = await Gateway.start({
       dbStore,
-      baseUrl: `http://localhost:${SERVER_PORT}`,
+      baseUrl: baseURL,
       port: SERVER_PORT,
       oauth: {
         storage: "memory",
-        baseCallbackUrl: `http://localhost:${SERVER_PORT}`,
+        baseCallbackUrl: baseURL,
       },
     });
 
-    const client = createGatewayClient(`http://localhost:${SERVER_PORT}`);
+    const client = createGatewayClient(baseURL);
 
     const echoServerSSEInstance = await serveOverSSE(
       makeEchoServer(),
@@ -86,6 +152,7 @@ export class IntegrationTestHarness {
       echoServerSSEInstance,
       kitchenSinkServerInstance,
       fooBarServerInstance,
+      baseURL,
     });
   }
 

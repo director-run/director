@@ -1,4 +1,4 @@
-import { createGatewayClient } from "@director.run/gateway/client";
+import { createGatewayClient, register } from "@director.run/gateway/client";
 import { createStore } from "@director.run/gateway/db";
 import { DATABASE_URL, SERVER_PORT } from "@director.run/gateway/env";
 import { Gateway } from "@director.run/gateway/gateway";
@@ -11,27 +11,44 @@ import {
   test,
 } from "vitest";
 import { runCLICommand } from "./test/helpers";
+import { clearAuthToken, saveAuthToken } from "./utils/auth";
 
 describe("CLI integration tests", () => {
   let gateway: Gateway;
-  const gatewayClient = createGatewayClient(`http://localhost:${SERVER_PORT}`);
+  let gatewayClient: ReturnType<typeof createGatewayClient>;
+  const baseURL = `http://localhost:${SERVER_PORT}`;
 
   beforeAll(async () => {
     const dbStore = createStore({ connectionString: DATABASE_URL }).playbooks;
     await dbStore.deleteAllPlaybooks();
+    await dbStore.deleteAllUsers();
+    await dbStore.createDummyUser();
 
     gateway = await Gateway.start({
       dbStore,
-      baseUrl: `http://localhost:${SERVER_PORT}`,
+      baseUrl: baseURL,
       port: SERVER_PORT,
       oauth: {
         storage: "memory",
-        baseCallbackUrl: `http://localhost:${SERVER_PORT}`,
+        baseCallbackUrl: baseURL,
       },
+    });
+
+    // Register a test user
+    const { sessionCookie } = await register(baseURL, {
+      email: "test@example.com",
+      password: "password123",
+      name: "Test User",
+    });
+
+    saveAuthToken(sessionCookie);
+    gatewayClient = createGatewayClient(baseURL, {
+      getAuthToken: () => sessionCookie,
     });
   });
 
   afterAll(async () => {
+    clearAuthToken();
     await gateway.stop();
   });
 

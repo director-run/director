@@ -8,6 +8,11 @@ describe("Playbook CRUD operations", () => {
 
   beforeAll(async () => {
     harness = await IntegrationTestHarness.start();
+    await harness.register({
+      email: "test@example.com",
+      password: "password123",
+      name: "Test User",
+    });
   });
 
   afterAll(async () => {
@@ -58,12 +63,12 @@ describe("Playbook CRUD operations", () => {
     it("update the configuration file", async () => {
       expect(
         await harness.database
-          .getAllPlaybooks("dummy-user-id")
+          .getAllPlaybooks(harness.getUserId())
           .then((p) => p.length),
       ).toBe(1);
       const configEntry = await harness.database.getPlaybookWithDetails(
         "test-playbook",
-        "dummy-user-id",
+        harness.getUserId(),
       );
       expect(configEntry).toBeDefined();
       expect(configEntry?.name).toBe("Test playbook");
@@ -109,7 +114,7 @@ describe("Playbook CRUD operations", () => {
         expect(updatedPlaybook?.description).toBe("");
         const configEntry = await harness.database.getPlaybookWithDetails(
           "test-playbook",
-          "dummy-user-id",
+          harness.getUserId(),
         );
         expect(configEntry?.description).toBe("");
       });
@@ -144,7 +149,7 @@ describe("Playbook CRUD operations", () => {
         expect(updatedPlaybook?.name).toBe(playbook.name);
         const configEntry = await harness.database.getPlaybookWithDetails(
           "test-playbook",
-          "dummy-user-id",
+          harness.getUserId(),
         );
         expect(configEntry?.name).toBe(playbook.name);
       });
@@ -163,7 +168,7 @@ describe("Playbook CRUD operations", () => {
       });
       const configEntry = await harness.database.getPlaybookWithDetails(
         "test-playbook",
-        "dummy-user-id",
+        harness.getUserId(),
       );
       expect(configEntry?.description).toBe(newDescription);
       expect(configEntry?.name).toBe(newName);
@@ -192,7 +197,7 @@ describe("Playbook CRUD operations", () => {
     it("should delete the playbook from the configuration file", async () => {
       expect(
         await harness.database
-          .getAllPlaybooks("dummy-user-id")
+          .getAllPlaybooks(harness.getUserId())
           .then((p) => p.length),
       ).toBe(0);
     });

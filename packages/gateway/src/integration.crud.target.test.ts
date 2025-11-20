@@ -10,6 +10,11 @@ describe("Playbook Target CRUD operations", () => {
 
   beforeAll(async () => {
     harness = await IntegrationTestHarness.start();
+    await harness.register({
+      email: "test@example.com",
+      password: "password123",
+      name: "Test User",
+    });
   });
 
   afterAll(async () => {
@@ -98,7 +103,7 @@ describe("Playbook Target CRUD operations", () => {
         const configEntry = (
           await harness.database.getPlaybookWithDetails(
             playbook.id,
-            "dummy-user-id",
+            harness.getUserId(),
           )
         ).servers.find((server) => server.name === "notion");
 
@@ -131,7 +136,7 @@ describe("Playbook Target CRUD operations", () => {
         expect(
           await harness.database.getPlaybookWithDetails(
             playbook.id,
-            "dummy-user-id",
+            harness.getUserId(),
           ),
         ).toEqual(
           expect.objectContaining({
@@ -174,7 +179,7 @@ describe("Playbook Target CRUD operations", () => {
         expect(
           await harness.database.getPlaybookWithDetails(
             playbook.id,
-            "dummy-user-id",
+            harness.getUserId(),
           ),
         ).toEqual(
           expect.objectContaining({
@@ -215,7 +220,7 @@ describe("Playbook Target CRUD operations", () => {
         expect(
           await harness.database.getPlaybookWithDetails(
             playbook.id,
-            "dummy-user-id",
+            harness.getUserId(),
           ),
         ).toEqual(
           expect.objectContaining({
@@ -276,7 +281,7 @@ describe("Playbook Target CRUD operations", () => {
           (
             await harness.database.getPlaybookWithDetails(
               playbook.id,
-              "dummy-user-id",
+              harness.getUserId(),
             )
           ).servers.find((server) => server.name === "echo"),
         ).toEqual(
@@ -423,7 +428,7 @@ describe("Playbook Target CRUD operations", () => {
         const configEntry = (
           await harness.database.getPlaybookWithDetails(
             playbook.id,
-            "dummy-user-id",
+            harness.getUserId(),
           )
         ).servers.find((server) => server.name === "echo");
         expect(configEntry?.tools).toMatchObject(toolsConfig);
@@ -446,7 +451,7 @@ describe("Playbook Target CRUD operations", () => {
         const configEntry = (
           await harness.database.getPlaybookWithDetails(
             playbook.id,
-            "dummy-user-id",
+            harness.getUserId(),
           )
         ).servers.find((server) => server.name === "echo");
         expect(configEntry?.tools).toMatchObject({ prefix: "", exclude: [] });
@@ -483,7 +488,7 @@ describe("Playbook Target CRUD operations", () => {
         const configEntry = (
           await harness.database.getPlaybookWithDetails(
             playbook.id,
-            "dummy-user-id",
+            harness.getUserId(),
           )
         ).servers.find((server) => server.name === "echo");
         expect(configEntry?.disabled).toBe(true);
@@ -513,7 +518,7 @@ describe("Playbook Target CRUD operations", () => {
           const configEntry = (
             await harness.database.getPlaybookWithDetails(
               playbook.id,
-              "dummy-user-id",
+              harness.getUserId(),
             )
           ).servers.find((server) => server.name === "echo");
           expect(configEntry?.disabled).toBe(false);

@@ -24,9 +24,7 @@ export const createSSERouter = ({
     "/:playbook_id/sse",
     asyncHandler(async (req, res) => {
       const playbookId = req.params.playbook_id;
-      // TODO: Replace with actual authentication logic (e.g., better-auth session)
-      const userId = "dummy-user-id";
-      const playbook = playbookStore.get(playbookId, userId);
+      const playbook = playbookStore.getByIdOnly(playbookId);
       const transport = new SSEServerTransport(`/${playbook.id}/message`, res);
 
       transports.set(transport.sessionId, transport);
@@ -66,9 +64,7 @@ export const createSSERouter = ({
     "/:playbook_id/message",
     asyncHandler(async (req, res) => {
       const playbookId = req.params.playbook_id;
-      // TODO: Replace with actual authentication logic (e.g., better-auth session)
-      const userId = "dummy-user-id";
-      const playbook = playbookStore.get(playbookId, userId);
+      const playbook = playbookStore.getByIdOnly(playbookId);
       const sessionId = req.query.sessionId?.toString();
 
       if (!sessionId) {

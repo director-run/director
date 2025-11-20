@@ -106,6 +106,18 @@ export class PlaybookStore {
     return server;
   }
 
+  public getByIdOnly(playbookId: string) {
+    const server = this.playbooks.get(playbookId);
+    if (!server) {
+      throw new AppError(
+        ErrorCode.NOT_FOUND,
+        `playbook '${playbookId}' not found or failed to initialize.`,
+      );
+    }
+
+    return server;
+  }
+
   async delete(playbookId: string, userId: string) {
     this.telemetry.trackEvent("playbook_deleted");
     const playbook = this.get(playbookId, userId);

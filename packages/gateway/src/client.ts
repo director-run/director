@@ -44,3 +44,79 @@ export function createGatewayClient(
 export type GatewayClient = ReturnType<typeof createGatewayClient>;
 export type GatewayRouterInputs = inferRouterInputs<AppRouter>;
 export type GatewayRouterOutputs = inferRouterOutputs<AppRouter>;
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  name: string;
+}
+
+export interface AuthResponse {
+  user: AuthUser;
+  sessionCookie: string;
+}
+
+export async function register(
+  baseURL: string,
+  params: {
+    email: string;
+    password: string;
+    name: string;
+  },
+): Promise<AuthResponse> {
+  const response = await fetch(joinURL(baseURL, "/api/auth/sign-up/email"), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(params),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Registration failed: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  const sessionCookie = response.headers.get("set-cookie");
+
+  if (!sessionCookie) {
+    throw new Error("No session cookie returned from registration");
+  }
+
+  return {
+    user: data.user,
+    sessionCookie,
+  };
+}
+
+export async function login(
+  baseURL: string,
+  params: {
+    email: string;
+    password: string;
+  },
+): Promise<AuthResponse> {
+  const response = await fetch(joinURL(baseURL, "/api/auth/sign-in/email"), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(params),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Login failed: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  const sessionCookie = response.headers.get("set-cookie");
+
+  if (!sessionCookie) {
+    throw new Error("No session cookie returned from login");
+  }
+
+  return {
+    user: data.user,
+    sessionCookie,
+  };
+}

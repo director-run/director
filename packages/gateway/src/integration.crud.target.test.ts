@@ -96,7 +96,10 @@ describe("Playbook Target CRUD operations", () => {
         });
 
         const configEntry = (
-          await harness.database.playbooks.getPlaybook(playbook.id)
+          await harness.database.getPlaybookWithDetails(
+            playbook.id,
+            "dummy-user-id",
+          )
         ).servers.find((server) => server.name === "notion");
 
         expect(configEntry).toEqual(
@@ -126,7 +129,10 @@ describe("Playbook Target CRUD operations", () => {
         );
 
         expect(
-          await harness.database.playbooks.getPlaybook(playbook.id),
+          await harness.database.getPlaybookWithDetails(
+            playbook.id,
+            "dummy-user-id",
+          ),
         ).toEqual(
           expect.objectContaining({
             name: "Test Playbook",
@@ -166,7 +172,10 @@ describe("Playbook Target CRUD operations", () => {
         );
 
         expect(
-          await harness.database.playbooks.getPlaybook(playbook.id),
+          await harness.database.getPlaybookWithDetails(
+            playbook.id,
+            "dummy-user-id",
+          ),
         ).toEqual(
           expect.objectContaining({
             name: "Test Playbook",
@@ -204,7 +213,10 @@ describe("Playbook Target CRUD operations", () => {
         );
 
         expect(
-          await harness.database.playbooks.getPlaybook(playbook.id),
+          await harness.database.getPlaybookWithDetails(
+            playbook.id,
+            "dummy-user-id",
+          ),
         ).toEqual(
           expect.objectContaining({
             name: "Test Playbook",
@@ -262,7 +274,10 @@ describe("Playbook Target CRUD operations", () => {
         const echoConfig = harness.getConfigForTarget("echo");
         expect(
           (
-            await harness.database.playbooks.getPlaybook(playbook.id)
+            await harness.database.getPlaybookWithDetails(
+              playbook.id,
+              "dummy-user-id",
+            )
           ).servers.find((server) => server.name === "echo"),
         ).toEqual(
           expect.objectContaining({
@@ -406,7 +421,10 @@ describe("Playbook Target CRUD operations", () => {
       });
       it("should update the configuration file", async () => {
         const configEntry = (
-          await harness.database.playbooks.getPlaybook(playbook.id)
+          await harness.database.getPlaybookWithDetails(
+            playbook.id,
+            "dummy-user-id",
+          )
         ).servers.find((server) => server.name === "echo");
         expect(configEntry?.tools).toMatchObject(toolsConfig);
       });
@@ -426,7 +444,10 @@ describe("Playbook Target CRUD operations", () => {
         });
         expect(target.tools).toMatchObject({ prefix: "", exclude: [] });
         const configEntry = (
-          await harness.database.playbooks.getPlaybook(playbook.id)
+          await harness.database.getPlaybookWithDetails(
+            playbook.id,
+            "dummy-user-id",
+          )
         ).servers.find((server) => server.name === "echo");
         expect(configEntry?.tools).toMatchObject({ prefix: "", exclude: [] });
       });
@@ -460,7 +481,10 @@ describe("Playbook Target CRUD operations", () => {
       });
       it("should be stored in the configuration file", async () => {
         const configEntry = (
-          await harness.database.playbooks.getPlaybook(playbook.id)
+          await harness.database.getPlaybookWithDetails(
+            playbook.id,
+            "dummy-user-id",
+          )
         ).servers.find((server) => server.name === "echo");
         expect(configEntry?.disabled).toBe(true);
       });
@@ -487,7 +511,10 @@ describe("Playbook Target CRUD operations", () => {
         });
         it("should be reflected in the configuration file", async () => {
           const configEntry = (
-            await harness.database.playbooks.getPlaybook(playbook.id)
+            await harness.database.getPlaybookWithDetails(
+              playbook.id,
+              "dummy-user-id",
+            )
           ).servers.find((server) => server.name === "echo");
           expect(configEntry?.disabled).toBe(false);
         });

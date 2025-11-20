@@ -13,7 +13,7 @@ import { Telemetry } from "@director.run/utilities/telemetry";
 import cors from "cors";
 import express from "express";
 import { ClientStore } from "./client-store";
-import { Config } from "./config";
+import type { PlaybookDbStore } from "./db/playbooks";
 import { PlaybookStore } from "./playbooks/playbook-store";
 import { createSSERouter } from "./routers/sse";
 import { createStreamableRouter } from "./routers/streamable";
@@ -26,7 +26,7 @@ const ALLOWED_ORIGINS = [/^https?:\/\/localhost(:\d+)?$/];
 export class Gateway {
   public readonly playbookStore: PlaybookStore;
   private server?: Server;
-  public readonly config: Config;
+  public readonly dbStore: PlaybookDbStore;
   private app: express.Express;
   private telemetry?: Telemetry;
   private studioAssetsPath?: string;
@@ -36,7 +36,7 @@ export class Gateway {
 
   private constructor(attribs: {
     playbookStore: PlaybookStore;
-    config: Config;
+    dbStore: PlaybookDbStore;
     telemetry?: Telemetry;
     studioAssetsPath?: string;
     baseUrl: string;
@@ -44,7 +44,7 @@ export class Gateway {
     port: number;
   }) {
     this.playbookStore = attribs.playbookStore;
-    this.config = attribs.config;
+    this.dbStore = attribs.dbStore;
     this.telemetry = attribs.telemetry;
     this.studioAssetsPath = attribs.studioAssetsPath;
     this.baseUrl = attribs.baseUrl;
@@ -155,7 +155,7 @@ export class Gateway {
   public static async start(
     attribs: {
       studioAssetsPath?: string;
-      config: Config;
+      dbStore: PlaybookDbStore;
       telemetry?: Telemetry;
       baseUrl: string;
       port: number;
@@ -166,7 +166,7 @@ export class Gateway {
     logger.info(`starting director gateway`);
     const clientStore = new ClientStore();
     const playbookStore = await PlaybookStore.create({
-      config: attribs.config,
+      dbStore: attribs.dbStore,
       telemetry: attribs.telemetry,
       oauth: attribs.oauth,
     });
@@ -174,7 +174,7 @@ export class Gateway {
     attribs.telemetry?.trackEvent("gateway_start");
 
     const gateway = new Gateway({
-      config: attribs.config,
+      dbStore: attribs.dbStore,
       playbookStore,
       telemetry: attribs.telemetry,
       studioAssetsPath: attribs.studioAssetsPath,

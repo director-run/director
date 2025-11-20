@@ -56,9 +56,15 @@ describe("Playbook CRUD operations", () => {
     });
 
     it("update the configuration file", async () => {
-      expect(await harness.database.playbooks.count()).toBe(1);
-      const configEntry =
-        await harness.database.playbooks.getPlaybook("test-playbook");
+      expect(
+        await harness.database
+          .getAllPlaybooks("dummy-user-id")
+          .then((p) => p.length),
+      ).toBe(1);
+      const configEntry = await harness.database.getPlaybookWithDetails(
+        "test-playbook",
+        "dummy-user-id",
+      );
       expect(configEntry).toBeDefined();
       expect(configEntry?.name).toBe("Test playbook");
       expect(configEntry?.description).toBe("Test description");
@@ -101,8 +107,10 @@ describe("Playbook CRUD operations", () => {
           playbookId: "test-playbook",
         });
         expect(updatedPlaybook?.description).toBe("");
-        const configEntry =
-          await harness.database.playbooks.getPlaybook("test-playbook");
+        const configEntry = await harness.database.getPlaybookWithDetails(
+          "test-playbook",
+          "dummy-user-id",
+        );
         expect(configEntry?.description).toBe("");
       });
     });
@@ -134,8 +142,10 @@ describe("Playbook CRUD operations", () => {
           playbookId: "test-playbook",
         });
         expect(updatedPlaybook?.name).toBe(playbook.name);
-        const configEntry =
-          await harness.database.playbooks.getPlaybook("test-playbook");
+        const configEntry = await harness.database.getPlaybookWithDetails(
+          "test-playbook",
+          "dummy-user-id",
+        );
         expect(configEntry?.name).toBe(playbook.name);
       });
     });
@@ -151,8 +161,10 @@ describe("Playbook CRUD operations", () => {
           name: newName,
         },
       });
-      const configEntry =
-        await harness.database.playbooks.getPlaybook("test-playbook");
+      const configEntry = await harness.database.getPlaybookWithDetails(
+        "test-playbook",
+        "dummy-user-id",
+      );
       expect(configEntry?.description).toBe(newDescription);
       expect(configEntry?.name).toBe(newName);
     });
@@ -178,7 +190,11 @@ describe("Playbook CRUD operations", () => {
     });
 
     it("should delete the playbook from the configuration file", async () => {
-      expect(await harness.database.playbooks.count()).toBe(0);
+      expect(
+        await harness.database
+          .getAllPlaybooks("dummy-user-id")
+          .then((p) => p.length),
+      ).toBe(0);
     });
   });
 });

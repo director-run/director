@@ -8,9 +8,13 @@
     "format": "biome format --write .",
     "clean": "rm -rf .turbo dist/*",
     "test": "bun run vitest  --fileParallelism=false",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "db:push": "drizzle-kit push",
+    "start": "bun run bin/start.ts"
   },
   "exports": {
+    "./db": "./src/db/index.ts",
+    "./db/schema": "./src/db/schema.ts",
     "./*": "./src/*.ts"
   },
   "dependencies": {
@@ -25,11 +29,13 @@
     "bytes": "^3.1.2",
     "content-type": "^1.0.5",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
+    "dotenv": "^17.2.3",
+    "drizzle-orm": "^0.43.1",
     "express": "^4.21.2",
     "http-errors": "^2.0.0",
     "iconv-lite": "^0.6.3",
     "lodash": "^4.17.21",
+    "pg": "^8.15.6",
     "pino": "^9.6.0",
     "pino-pretty": "^13.0.0",
     "raw-body": "^3.0.0",
@@ -48,8 +54,10 @@
     "@types/content-type": "^1.1.8",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
+    "@types/pg": "^8.11.14",
     "@types/raw-body": "^2.3.0",
     "@types/semver": "^7.7.0",
+    "drizzle-kit": "^0.31.1",
     "type-fest": "^4.40.0",
     "vitest": "^3.1.1"
   }

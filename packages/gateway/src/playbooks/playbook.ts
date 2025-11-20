@@ -13,7 +13,7 @@ import {
   type Prompt,
   PromptManager,
 } from "../capabilities/prompt-manager";
-import { Config } from "../config";
+import type { PlaybookDbStore } from "../db/playbooks";
 import {
   getSSEPathForPlaybook,
   getStreamablePathForPlaybook,
@@ -46,7 +46,7 @@ export {
 };
 
 export class Playbook extends ProxyServer {
-  private _config?: Config;
+  private _dbStore: PlaybookDbStore;
   private _telemetry?: Telemetry;
   private _oAuthHandler?: OAuthProviderFactory;
   private _description?: string;
@@ -55,9 +55,9 @@ export class Playbook extends ProxyServer {
 
   constructor(
     attributes: PlaybookParams,
-    params?: {
+    params: {
       oAuthHandler?: OAuthProviderFactory;
-      config?: Config;
+      dbStore: PlaybookDbStore;
       telemetry?: Telemetry;
     },
   ) {
@@ -77,9 +77,9 @@ export class Playbook extends ProxyServer {
     this._name = attributes.name;
     this._description = attributes.description;
     this._userId = attributes.userId;
-    this._oAuthHandler = params?.oAuthHandler;
-    this._config = params?.config;
-    this._telemetry = params?.telemetry;
+    this._oAuthHandler = params.oAuthHandler;
+    this._dbStore = params.dbStore;
+    this._telemetry = params.telemetry;
   }
 
   public get description() {
@@ -205,16 +205,16 @@ export class Playbook extends ProxyServer {
 
   static async fromConfig(
     attributes: PlaybookParams,
-    params?: {
+    params: {
       oAuthHandler?: OAuthProviderFactory;
-      config?: Config;
+      dbStore: PlaybookDbStore;
       telemetry?: Telemetry;
     },
   ): Promise<Playbook> {
     const playbook = new Playbook(attributes, {
-      oAuthHandler: params?.oAuthHandler,
-      config: params?.config,
-      telemetry: params?.telemetry,
+      oAuthHandler: params.oAuthHandler,
+      dbStore: params.dbStore,
+      telemetry: params.telemetry,
     });
     await playbook.connectTargets();
     return playbook;
@@ -227,27 +227,85 @@ export class Playbook extends ProxyServer {
   }
 
   private async persistToConfig(): Promise<void> {
-    if (this._config) {
-      await this._config.playbooks.update(this.id, await this.toConfig());
-    }
+    await this.persistToDatabase();
   }
 
-  private async toConfig(): Promise<PlaybookParams> {
-    return {
-      id: this.id,
+  private async persistToDatabase(): Promise<void> {
+    // Update playbook metadata
+    await this._dbStore.updatePlaybook(this.id, this.userId, {
       name: this.name,
       description: this.description,
-      userId: this.userId,
-      prompts: await this.listPrompts(),
-      servers: await Promise.all(
-        this.targets
-          .filter(
-            (target) =>
-              target instanceof HTTPClient || target instanceof StdioClient,
-          )
-          .map((target) => target.toPlainObject()),
-      ),
-    };
+    });
+
+    // Get current servers from database
+    const currentServers = await this._dbStore.getServers(this.id);
+    const currentServerNames = new Set(currentServers.map((s) => s.name));
+
+    // Get current servers from memory
+    const memoryServers = this.targets.filter(
+      (target) => target instanceof HTTPClient || target instanceof StdioClient,
+    );
+    const memoryServerNames = new Set(memoryServers.map((s) => s.name));
+
+    // Remove servers that are in database but not in memory
+    for (const serverName of currentServerNames) {
+      if (!memoryServerNames.has(serverName)) {
+        await this._dbStore.removeServer(this.id, serverName);
+      }
+    }
+
+    // Add or update servers that are in memory
+    for (const target of memoryServers) {
+      const plainObject = await target.toPlainObject();
+      const serverParams = this._dbStore.targetToServerInsertParams(
+        this.id,
+        plainObject,
+      );
+
+      if (currentServerNames.has(target.name)) {
+        // Update existing server
+        await this._dbStore.updateServer(this.id, target.name, serverParams);
+      } else {
+        // Add new server
+        await this._dbStore.addServer(serverParams);
+      }
+    }
+
+    // Get current prompts from database
+    const currentPrompts = await this._dbStore.getPrompts(this.id);
+    const currentPromptNames = new Set(currentPrompts.map((p) => p.name));
+
+    // Get current prompts from memory
+    const memoryPrompts = await this.listPrompts();
+    const memoryPromptNames = new Set(memoryPrompts.map((p) => p.name));
+
+    // Remove prompts that are in database but not in memory
+    for (const promptName of currentPromptNames) {
+      if (!memoryPromptNames.has(promptName)) {
+        await this._dbStore.removePrompt(this.id, promptName);
+      }
+    }
+
+    // Add or update prompts that are in memory
+    for (const prompt of memoryPrompts) {
+      if (currentPromptNames.has(prompt.name)) {
+        // Update existing prompt
+        await this._dbStore.updatePrompt(this.id, prompt.name, {
+          title: prompt.title,
+          description: prompt.description,
+          body: prompt.body,
+        });
+      } else {
+        // Add new prompt
+        await this._dbStore.addPrompt({
+          playbookId: this.id,
+          name: prompt.name,
+          title: prompt.title,
+          description: prompt.description,
+          body: prompt.body,
+        });
+      }
+    }
   }
 
   public async toPlainObject(): Promise<PlaybookPlainObject> {

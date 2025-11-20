@@ -1,63 +1,72 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { Config } from "../config";
-import { makeTestConfig } from "../test/config";
+import { makeTestDbStore } from "../test/db";
 import { makeFooBarServerStdioConfig } from "../test/fixtures";
 import { Playbook } from "./playbook";
 
 describe("Playbook", async () => {
-  const config: Config = await makeTestConfig();
+  const dbStore = makeTestDbStore();
   let playbook: Playbook;
+  const userId = "dummy-user-id";
 
   beforeEach(async () => {
+    // Clear the database
+    await dbStore.deleteAllPlaybooks();
+
+    // Create a test playbook
+    const created = await dbStore.createPlaybook({
+      name: "test-playbook",
+      userId,
+    });
+
     playbook = await Playbook.fromConfig(
       {
-        id: "test-playbook",
+        id: created.id,
         name: "test-playbook",
-        userId: "test-user-id",
+        userId,
         servers: [],
       },
       {
-        config,
+        dbStore,
       },
     );
   });
 
   describe("addTarget", () => {
-    it("should persist changes to the config file", async () => {
+    it("should persist changes to the database", async () => {
       const target = await playbook.addTarget(makeFooBarServerStdioConfig());
       expect(target.name).toBe("foo");
 
       expect(playbook.targets).toHaveLength(2); // 1 server + 1 prompt manager
 
-      const playbookEntry = await config.playbooks.getPlaybook("test-playbook");
-      expect(playbookEntry.servers).toHaveLength(1);
-      expect(playbookEntry.servers[0].name).toBe("foo");
+      const servers = await dbStore.getServers(playbook.id);
+      expect(servers).toHaveLength(1);
+      expect(servers[0].name).toBe("foo");
     });
   });
 
   describe("removeTarget", () => {
-    it("should persist changes to the config file", async () => {
+    it("should persist changes to the database", async () => {
       await playbook.addTarget(makeFooBarServerStdioConfig());
 
       const removedTarget = await playbook.removeTarget("foo");
       expect(playbook.targets).toHaveLength(1); // Only prompt manager remains
       expect(removedTarget.status).toBe("disconnected");
 
-      const playbookEntry = await config.playbooks.getPlaybook("test-playbook");
-      expect(playbookEntry.servers).toHaveLength(0);
+      const servers = await dbStore.getServers(playbook.id);
+      expect(servers).toHaveLength(0);
     });
   });
 
   describe("update", () => {
-    it("should persist target changes to the config", async () => {
+    it("should persist target changes to the database", async () => {
       await playbook.addTarget(makeFooBarServerStdioConfig());
-      const playbookEntry = await config.playbooks.getPlaybook("test-playbook");
 
-      expect(playbookEntry.servers).toHaveLength(1);
-      expect(playbookEntry.servers[0].name).toBe("foo");
+      const servers = await dbStore.getServers(playbook.id);
+      expect(servers).toHaveLength(1);
+      expect(servers[0].name).toBe("foo");
     });
 
-    it("should persist playbook changes to the config", async () => {
+    it("should persist playbook changes to the database", async () => {
       await playbook.addTarget(makeFooBarServerStdioConfig());
       await playbook.update({
         name: "test-playbook-updated",
@@ -66,10 +75,10 @@ describe("Playbook", async () => {
       expect(playbook.name).toBe("test-playbook-updated");
       expect(playbook.description).toBe("test-playbook-updated");
 
-      const playbookEntry = await config.playbooks.getPlaybook("test-playbook");
+      const playbookData = await dbStore.getPlaybookById(playbook.id, userId);
 
-      expect(playbookEntry.name).toBe("test-playbook-updated");
-      expect(playbookEntry.description).toBe("test-playbook-updated");
+      expect(playbookData.name).toBe("test-playbook-updated");
+      expect(playbookData.description).toBe("test-playbook-updated");
     });
   });
 });

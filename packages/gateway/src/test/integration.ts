@@ -10,7 +10,7 @@ import { z } from "zod";
 import { createGatewayClient } from "../client";
 import { SERVER_PORT } from "../env";
 import { Gateway } from "../gateway";
-import { makeTestConfig } from "./config";
+import { makeTestDbStore } from "./db";
 
 const PROXY_TARGET_PORT = 4521;
 
@@ -42,13 +42,13 @@ export class IntegrationTestHarness {
   }
 
   public get database() {
-    return this.gateway.config;
+    return this.gateway.dbStore;
   }
 
   public static async start() {
-    const config = await makeTestConfig();
+    const dbStore = makeTestDbStore();
     const gateway = await Gateway.start({
-      config,
+      dbStore,
       baseUrl: `http://localhost:${SERVER_PORT}`,
       port: SERVER_PORT,
       oauth: {

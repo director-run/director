@@ -8,7 +8,7 @@ import {
   getStreamablePathForPlaybook,
 } from "../../helpers";
 import { PlaybookStore } from "../../playbooks/playbook-store";
-import { makeTestConfig } from "../../test/config";
+import { makeTestDbStore } from "../../test/db";
 import { createAppRouter } from "./index";
 
 class TestClientStore extends ClientStore {
@@ -40,9 +40,10 @@ describe("Client Router", () => {
   const BASE_URL = "http://local.test";
 
   beforeAll(async () => {
-    const config = await makeTestConfig();
+    const dbStore = makeTestDbStore();
+    await dbStore.deleteAllPlaybooks();
     playbookStore = await PlaybookStore.create({
-      config,
+      dbStore,
       oauth: { storage: "memory", baseCallbackUrl: BASE_URL },
     });
   });
@@ -63,7 +64,7 @@ describe("Client Router", () => {
       cliVersion: null,
       playbookStore,
       clientStore,
-      userId: "test-user-id",
+      userId: "dummy-user-id",
     });
 
     const result = await caller.clients.allClients();
@@ -86,11 +87,11 @@ describe("Client Router", () => {
       cliVersion: null,
       playbookStore,
       clientStore,
-      userId: "test-user-id",
+      userId: "dummy-user-id",
     });
     const playbook = await playbookStore.create({
       name: "Test Playbook",
-      userId: "test-user-id",
+      userId: "dummy-user-id",
     });
 
     // Spy restart on one client and make install return requiresRestart
@@ -122,11 +123,11 @@ describe("Client Router", () => {
       cliVersion: null,
       playbookStore,
       clientStore,
-      userId: "test-user-id",
+      userId: "dummy-user-id",
     });
     const playbook = await playbookStore.create({
       name: "Another Playbook",
-      userId: "test-user-id",
+      userId: "dummy-user-id",
     });
 
     const target = clientStore.get("cursor");
@@ -149,7 +150,7 @@ describe("Client Router", () => {
       cliVersion: null,
       playbookStore,
       clientStore,
-      userId: "test-user-id",
+      userId: "dummy-user-id",
     });
 
     const claude = clientStore.get("claude");

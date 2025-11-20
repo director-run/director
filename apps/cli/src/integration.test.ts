@@ -1,6 +1,6 @@
 import { createGatewayClient } from "@director.run/gateway/client";
-import { Config } from "@director.run/gateway/config/index";
-import { SERVER_PORT } from "@director.run/gateway/env";
+import { createStore } from "@director.run/gateway/db";
+import { DATABASE_URL, SERVER_PORT } from "@director.run/gateway/env";
 import { Gateway } from "@director.run/gateway/gateway";
 import {
   afterAll,
@@ -17,10 +17,11 @@ describe("CLI integration tests", () => {
   const gatewayClient = createGatewayClient(`http://localhost:${SERVER_PORT}`);
 
   beforeAll(async () => {
+    const dbStore = createStore({ connectionString: DATABASE_URL }).playbooks;
+    await dbStore.deleteAllPlaybooks();
+
     gateway = await Gateway.start({
-      config: await Config.createMemoryBasedConfig({
-        defaults: {},
-      }),
+      dbStore,
       baseUrl: `http://localhost:${SERVER_PORT}`,
       port: SERVER_PORT,
       oauth: {

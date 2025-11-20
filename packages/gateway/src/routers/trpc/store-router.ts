@@ -1,13 +1,56 @@
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
+import { requiredStringSchema } from "@director.run/utilities/schema";
 import { protectedProcedure, t } from "@director.run/utilities/trpc";
 import { z } from "zod";
-import {
-  type ServerConfigEntry,
-  ServerConfigEntrySchema,
-} from "../../config/config-schema";
 import type { PlaybookTarget } from "../../playbooks/playbook";
 import type { AuthenticatedGatewayContext } from "./index";
+
+const httpTransportSchema = z.object({
+  type: z.literal("http"),
+  url: requiredStringSchema.url(),
+  headers: z.record(requiredStringSchema, z.string()).optional(),
+});
+
+export type HTTPTransport = z.infer<typeof httpTransportSchema>;
+
+const stdioTransportSchema = z.object({
+  type: z.literal("stdio"),
+  command: requiredStringSchema,
+  args: z.array(z.string()).default([]),
+  env: z.record(requiredStringSchema, z.string()).optional(),
+});
+
+export type STDIOTransport = z.infer<typeof stdioTransportSchema>;
+
+const ToolsConfigSchema = z
+  .object({
+    include: z.array(requiredStringSchema).optional(),
+    exclude: z.array(requiredStringSchema).optional(),
+    prefix: z.string().trim().optional(),
+  })
+  .refine((data) => !(data.include && data.exclude), {
+    message: "Cannot use both 'include' and 'exclude' at the same time",
+    path: ["include", "exclude"],
+  });
+
+const ServerConfigEntrySchema = z.object({
+  name: z.string().trim().min(1),
+  transport: z.discriminatedUnion("type", [
+    httpTransportSchema,
+    stdioTransportSchema,
+  ]),
+  source: z
+    .object({
+      name: z.literal("registry"),
+      entryId: requiredStringSchema,
+    })
+    .optional(),
+  tools: ToolsConfigSchema.optional(),
+  disabled: z.boolean().optional(),
+});
+
+export type ServerConfigEntry = z.infer<typeof ServerConfigEntrySchema>;
 
 const PlaybookCreateSchema = z.object({
   name: z.string(),
@@ -59,8 +102,11 @@ export function createPlaybookStoreRouter() {
       .input(PlaybookCreateSchema)
       .mutation(async ({ ctx, input }) => {
         const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
+        const slugify = (await import("slugify")).default;
+        const id = slugify(input.name, { lower: true, strict: true });
         return (
           await playbookStore.create({
+            id,
             name: input.name,
             description: input.description ?? undefined,
             servers: input.servers?.map(oldServerToTargetParams),

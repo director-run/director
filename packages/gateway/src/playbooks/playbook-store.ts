@@ -6,39 +6,39 @@ import {
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { Telemetry } from "@director.run/utilities/telemetry";
-import type { Config } from "../config";
+import type { PlaybookDbStore } from "../db/playbooks";
 import { Playbook, type PlaybookParams, type PlaybookTarget } from "./playbook";
 
 const logger = getLogger("PlaybookStore");
 
 export class PlaybookStore {
   private playbooks: Map<string, Playbook> = new Map();
-  private config: Config;
+  private dbStore: PlaybookDbStore;
   private telemetry: Telemetry;
   private _oauth?: OAuthProviderFactoryParams;
 
   private constructor(params: {
-    config: Config;
+    dbStore: PlaybookDbStore;
     telemetry?: Telemetry;
     oauth?: OAuthProviderFactoryParams;
   }) {
-    this.config = params.config;
+    this.dbStore = params.dbStore;
     this.telemetry = params.telemetry || Telemetry.noTelemetry();
     this._oauth = params.oauth;
   }
 
   public static async create({
-    config,
+    dbStore,
     telemetry,
     oauth,
   }: {
-    config: Config;
+    dbStore: PlaybookDbStore;
     telemetry?: Telemetry;
     oauth?: OAuthProviderFactoryParams;
   }): Promise<PlaybookStore> {
     logger.debug("initializing PlaybookStore");
     const store = new PlaybookStore({
-      config,
+      dbStore,
       telemetry,
       oauth,
     });
@@ -48,7 +48,28 @@ export class PlaybookStore {
   }
 
   private async initialize(): Promise<void> {
-    let playbooks = await this.config.playbooks.all();
+    // Load from database
+    const dbStore = this.dbStore;
+    const dbPlaybooks = await dbStore.getAllPlaybooks("");
+    const playbooks = await Promise.all(
+      dbPlaybooks.map(async (dbPlaybook) => {
+        const servers = await dbStore.getServers(dbPlaybook.id);
+        const prompts = await dbStore.getPrompts(dbPlaybook.id);
+        return {
+          id: dbPlaybook.id,
+          name: dbPlaybook.name,
+          description: dbPlaybook.description ?? undefined,
+          userId: dbPlaybook.userId,
+          servers: servers.map((s) => dbStore.serverRowToTarget(s)),
+          prompts: prompts.map((p) => ({
+            name: p.name,
+            title: p.title,
+            description: p.description ?? undefined,
+            body: p.body,
+          })),
+        };
+      }),
+    );
 
     for (const playbookConfig of playbooks) {
       const playbookId = playbookConfig.id;
@@ -94,7 +115,7 @@ export class PlaybookStore {
       }
     }
     await playbook.close();
-    await this.config.playbooks.remove(playbookId);
+    await this.dbStore.deletePlaybook(playbookId, userId);
     this.playbooks.delete(playbookId);
 
     logger.info(`successfully deleted playbook configuration: ${playbookId}`);
@@ -102,7 +123,7 @@ export class PlaybookStore {
 
   async purge() {
     await this.closeAll();
-    await this.config.purge();
+    await this.dbStore.deleteAllPlaybooks();
     this.playbooks.clear();
   }
 
@@ -140,11 +161,13 @@ export class PlaybookStore {
   }
 
   public async create({
+    id,
     name,
     description,
     servers,
     userId,
   }: {
+    id?: string;
     name: string;
     description?: string;
     servers?: PlaybookTarget[];
@@ -152,22 +175,31 @@ export class PlaybookStore {
   }): Promise<Playbook> {
     this.telemetry.trackEvent("playbook_created");
 
-    const configEntry = await this.config.playbooks.create({
+    const dbPlaybook = await this.dbStore.createPlaybook({
+      id,
       name,
       description,
       userId,
-      servers: servers ?? [],
     });
+    const playbookId = dbPlaybook.id;
+
+    // Create servers
+    for (const server of servers ?? []) {
+      await this.dbStore.addServer(
+        this.dbStore.targetToServerInsertParams(playbookId, server),
+      );
+    }
+
     const playbook = await this.initializeAndAddPlaybook({
       name,
       description,
       userId,
       servers: servers ?? [],
-      id: configEntry.id,
+      id: playbookId,
     });
     logger.info({
       message: `Created new playbook`,
-      playbookId: configEntry.id,
+      playbookId,
       userId,
     });
     return playbook;
@@ -181,7 +213,7 @@ export class PlaybookStore {
             id: playbookParams.id,
           })
         : undefined,
-      config: this.config,
+      dbStore: this.dbStore,
     });
 
     this.playbooks.set(playbook.id, playbook);

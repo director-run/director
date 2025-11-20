@@ -6,9 +6,13 @@ import {
   type PlaybookInsertParams,
   type PlaybookPromptInsertParams,
   type PlaybookServerInsertParams,
+  accountTable,
   playbookPromptsTable,
   playbookServersTable,
   playbooksTable,
+  sessionTable,
+  userTable,
+  verificationTable,
 } from "./schema";
 
 export class PlaybookDbStore {
@@ -86,6 +90,24 @@ export class PlaybookDbStore {
 
   public async deleteAllPlaybooks() {
     await this.dbConnection.db.delete(playbooksTable);
+  }
+
+  public async deleteAllUsers() {
+    // Delete in order to respect foreign key constraints
+    await this.dbConnection.db.delete(verificationTable);
+    await this.dbConnection.db.delete(sessionTable);
+    await this.dbConnection.db.delete(accountTable);
+    await this.dbConnection.db.delete(playbooksTable);
+    await this.dbConnection.db.delete(userTable);
+  }
+
+  public async createDummyUser() {
+    await this.dbConnection.db.insert(userTable).values({
+      id: "dummy-user-id",
+      email: "dummy@example.com",
+      name: "Dummy User",
+      emailVerified: true,
+    });
   }
 
   // Server operations

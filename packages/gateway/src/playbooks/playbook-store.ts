@@ -127,6 +127,13 @@ export class PlaybookStore {
     this.playbooks.clear();
   }
 
+  async purgeWithUsers() {
+    await this.closeAll();
+    await this.dbStore.deleteAllUsers();
+    await this.dbStore.createDummyUser();
+    this.playbooks.clear();
+  }
+
   async closeAll() {
     logger.info("cleaning up all playbooks...");
     await Promise.all(

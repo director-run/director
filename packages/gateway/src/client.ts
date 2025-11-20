@@ -5,13 +5,27 @@ import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import superjson from "superjson";
 import type { AppRouter } from "./routers/trpc";
 
-export function createGatewayClient(baseURL: string) {
+export function createGatewayClient(
+  baseURL: string,
+  options?: {
+    getAuthToken?: () => string | null;
+  },
+) {
   const url = joinURL(baseURL, "/trpc");
   return createTRPCClient<AppRouter>({
     links: [
       httpBatchLink({
         url,
         transformer: superjson,
+        headers() {
+          const authToken = options?.getAuthToken?.();
+          if (authToken) {
+            return {
+              cookie: authToken,
+            };
+          }
+          return {};
+        },
         async fetch(url, options) {
           return fetch(url, options).catch((error) => {
             if (error.code === "ConnectionRefused") {

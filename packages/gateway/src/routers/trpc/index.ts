@@ -1,5 +1,6 @@
 import { publicProcedure, t } from "@director.run/utilities/trpc";
 import * as trpcExpress from "@trpc/server/adapters/express";
+import { auth } from "../../auth";
 import type { ClientStore } from "../../client-store";
 import { PlaybookStore } from "../../playbooks/playbook-store";
 import { getStatus } from "../../status";
@@ -38,12 +39,21 @@ export function createTRPCExpressMiddleware({
 }): ReturnType<typeof trpcExpress.createExpressMiddleware> {
   return trpcExpress.createExpressMiddleware({
     router: createAppRouter(),
-    createContext: ({ res }): GatewayContext => {
+    createContext: async ({ req, res }): Promise<GatewayContext> => {
       const headerValue = res.getHeader("x-cli-version");
       const cliVersion = typeof headerValue === "string" ? headerValue : null;
 
-      // TODO: Replace with actual authentication logic
-      const userId = "dummy-user-id";
+      let userId: string | undefined = undefined;
+
+      const session = await auth.api.getSession({
+        headers: req.headers as Record<string, string>,
+      });
+
+      if (session) {
+        userId = session.user.id;
+      } else {
+        userId = "dummy-user-id";
+      }
 
       return {
         cliVersion,

@@ -10,8 +10,10 @@ import {
 import { logRequests } from "@director.run/utilities/middleware/index";
 import { spaMiddleware } from "@director.run/utilities/middleware/spa";
 import { Telemetry } from "@director.run/utilities/telemetry";
+import { toNodeHandler } from "better-auth/node";
 import cors from "cors";
 import express from "express";
+import { auth } from "./auth";
 import { ClientStore } from "./client-store";
 import type { PlaybookDbStore } from "./db/playbooks";
 import { PlaybookStore } from "./playbooks/playbook-store";
@@ -133,6 +135,8 @@ export class Gateway {
         },
       }),
     );
+
+    this.app.all("/api/auth/*", toNodeHandler(auth));
 
     this.app.use(
       "/trpc",

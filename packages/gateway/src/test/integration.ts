@@ -41,6 +41,10 @@ export class IntegrationTestHarness {
     await this.gateway.playbookStore.purge();
   }
 
+  public async purgeWithUsers() {
+    await this.gateway.playbookStore.purgeWithUsers();
+  }
+
   public get database() {
     return this.gateway.dbStore;
   }

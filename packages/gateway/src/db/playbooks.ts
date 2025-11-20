@@ -102,12 +102,16 @@ export class PlaybookDbStore {
   }
 
   public async createDummyUser() {
-    await this.dbConnection.db.insert(userTable).values({
-      id: "dummy-user-id",
-      email: "dummy@example.com",
-      name: "Dummy User",
-      emailVerified: true,
-    });
+    // Use onConflictDoNothing to avoid errors if user already exists
+    await this.dbConnection.db
+      .insert(userTable)
+      .values({
+        id: "dummy-user-id",
+        email: "dummy@example.com",
+        name: "Dummy User",
+        emailVerified: true,
+      })
+      .onConflictDoNothing();
   }
 
   // Server operations

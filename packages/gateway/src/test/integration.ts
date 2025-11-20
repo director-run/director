@@ -51,6 +51,10 @@ export class IntegrationTestHarness {
 
   public static async start() {
     const dbStore = makeTestDbStore();
+
+    // Ensure dummy user exists for unauthenticated requests
+    await dbStore.createDummyUser();
+
     const gateway = await Gateway.start({
       dbStore,
       baseUrl: `http://localhost:${SERVER_PORT}`,

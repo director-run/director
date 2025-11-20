@@ -6,6 +6,7 @@ import {
   pgTable,
   text,
   timestamp,
+  unique,
   varchar,
 } from "drizzle-orm/pg-core";
 import type { PlaybookTarget } from "../playbooks/playbook-schema";
@@ -76,16 +77,20 @@ export const verificationTable = pgTable("verification", {
   updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
 });
 
-export const playbooksTable = pgTable("playbooks", {
-  id: varchar("id", { length: 255 }).primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
-  description: text("description"),
-  userId: text("user_id")
-    .notNull()
-    .references(() => userTable.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
+export const playbooksTable = pgTable(
+  "playbooks",
+  {
+    id: varchar("id", { length: 255 }).primaryKey(),
+    name: varchar("name", { length: 255 }).notNull(),
+    description: text("description"),
+    userId: text("user_id")
+      .notNull()
+      .references(() => userTable.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => [unique("playbooks_userId_id_unique").on(table.userId, table.id)],
+);
 
 export const playbookServersTable = pgTable("playbook_servers", {
   id: varchar("id", { length: 255 })

@@ -124,6 +124,7 @@ export class PlaybookStore {
   async purge() {
     await this.closeAll();
     await this.dbStore.deleteAllPlaybooks();
+    await this.dbStore.createDummyUser();
     this.playbooks.clear();
   }
 

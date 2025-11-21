@@ -52,9 +52,6 @@ export function createTRPCExpressMiddleware({
       if (session) {
         userId = session.user.id;
       }
-      //  else {
-      //   userId = "dummy-user-id";
-      // }
 
       return {
         cliVersion,

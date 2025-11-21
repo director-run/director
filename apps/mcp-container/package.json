@@ -1,5 +1,7 @@
 {
   "name": "@director.run/mcp-container",
+  "version": "0.0.0",
+  "private": true,
   "module": "index.ts",
   "type": "module",
   "scripts": {

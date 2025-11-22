@@ -78,10 +78,9 @@ export function createPlaybookStoreRouter() {
   return t.router({
     getAll: protectedProcedure.query(async ({ ctx }) => {
       const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
+      const playbooks = await playbookStore.getAll(userId);
       return await Promise.all(
-        await playbookStore
-          .getAll(userId)
-          .map((playbook) => playbook.toPlainObject()),
+        playbooks.map((playbook) => playbook.toPlainObject()),
       );
     }),
 

@@ -20,9 +20,10 @@ export function createClientRouter() {
       .mutation(async ({ ctx, input }) => {
         const { playbookStore, clientStore, userId } =
           ctx as AuthenticatedGatewayContext;
+        const playbook = await playbookStore.get(input.playbookId, userId);
         await clientStore.install({
           clientId: input.clientId as ClientId,
-          playbook: playbookStore.get(input.playbookId, userId),
+          playbook,
           baseUrl: input.baseUrl,
         });
       }),
@@ -36,7 +37,7 @@ export function createClientRouter() {
       .mutation(async ({ ctx, input }) => {
         const { playbookStore, clientStore, userId } =
           ctx as AuthenticatedGatewayContext;
-        const playbook = playbookStore.get(input.playbookId, userId);
+        const playbook = await playbookStore.get(input.playbookId, userId);
         await clientStore.uninstall(input.clientId as ClientId, playbook.id);
       }),
     resetAll: protectedProcedure.mutation(async ({ ctx }) => {

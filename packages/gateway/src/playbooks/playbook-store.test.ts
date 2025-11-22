@@ -42,9 +42,13 @@ describe("PlaybookStore", () => {
         { throwOnError: false },
       );
 
-      const httpClient = (await playbookStore
-        .get("test-playbook", "dummy-user-id")
-        .getTarget("http1")) as HTTPClient;
+      const fetchedPlaybook = await playbookStore.get(
+        "test-playbook",
+        "dummy-user-id",
+      );
+      const httpClient = (await fetchedPlaybook.getTarget(
+        "http1",
+      )) as HTTPClient;
       httpClient.completeAuthFlow = vi.fn();
 
       await playbookStore.onAuthorizationSuccess(

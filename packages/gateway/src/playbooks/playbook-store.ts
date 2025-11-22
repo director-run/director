@@ -86,24 +86,36 @@ export class PlaybookStore {
     }
   }
 
-  public get(playbookId: string, userId: string) {
-    const server = this.playbooks.get(playbookId);
-    if (!server) {
-      throw new AppError(
-        ErrorCode.NOT_FOUND,
-        `playbook '${playbookId}' not found or failed to initialize.`,
+  public async get(playbookId: string, userId: string): Promise<Playbook> {
+    // Check if already in memory
+    let playbook = this.playbooks.get(playbookId);
+
+    // If not in memory, try to load from database
+    if (!playbook) {
+      const dbPlaybook = await this.dbStore.getPlaybookWithDetails(
+        playbookId,
+        userId,
       );
+
+      playbook = await this.initializeAndAddPlaybook({
+        id: dbPlaybook.id,
+        name: dbPlaybook.name,
+        description: dbPlaybook.description ?? undefined,
+        userId: dbPlaybook.userId,
+        servers: dbPlaybook.servers,
+        prompts: dbPlaybook.prompts,
+      });
     }
 
     // Verify user owns this playbook
-    if (server.userId !== userId) {
+    if (playbook.userId !== userId) {
       throw new AppError(
         ErrorCode.FORBIDDEN,
         `You do not have permission to access this playbook.`,
       );
     }
 
-    return server;
+    return playbook;
   }
 
   public getByIdOnly(playbookId: string) {
@@ -120,7 +132,7 @@ export class PlaybookStore {
 
   async delete(playbookId: string, userId: string) {
     this.telemetry.trackEvent("playbook_deleted");
-    const playbook = this.get(playbookId, userId);
+    const playbook = await this.get(playbookId, userId);
     for (const server of playbook.targets) {
       if (server instanceof HTTPClient && (await server.isAuthenticated())) {
         await server.logout();
@@ -155,7 +167,31 @@ export class PlaybookStore {
     logger.info("finished cleaning up all playbooks.");
   }
 
-  public getAll(userId: string): Playbook[] {
+  public async getAll(userId: string): Promise<Playbook[]> {
+    // Load user's playbooks from database that aren't in memory yet
+    const dbPlaybooks = await this.dbStore.getAllPlaybooks(userId);
+
+    for (const dbPlaybook of dbPlaybooks) {
+      if (!this.playbooks.has(dbPlaybook.id)) {
+        const servers = await this.dbStore.getServers(dbPlaybook.id);
+        const prompts = await this.dbStore.getPrompts(dbPlaybook.id);
+
+        await this.initializeAndAddPlaybook({
+          id: dbPlaybook.id,
+          name: dbPlaybook.name,
+          description: dbPlaybook.description ?? undefined,
+          userId: dbPlaybook.userId,
+          servers: servers.map((s) => this.dbStore.serverRowToTarget(s)),
+          prompts: prompts.map((p) => ({
+            name: p.name,
+            title: p.title,
+            description: p.description ?? undefined,
+            body: p.body,
+          })),
+        });
+      }
+    }
+
     return Array.from(this.playbooks.values()).filter(
       (playbook) => playbook.userId === userId,
     );

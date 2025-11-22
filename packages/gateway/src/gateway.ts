@@ -75,6 +75,10 @@ export class Gateway {
           },
         }),
       );
+
+      this.app.get("/", (_, res) => {
+        res.redirect("/studio");
+      });
     } else {
       logger.warn({
         message: "studioAssetsPath not provided, studio will not be available",

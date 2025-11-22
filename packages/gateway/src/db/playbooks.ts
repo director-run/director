@@ -107,8 +107,8 @@ export class PlaybookDbStore {
       .insert(userTable)
       .values({
         id: "dummy-user-id",
+        name: "dummy@example.com",
         email: "dummy@example.com",
-        name: "Dummy User",
         emailVerified: true,
       })
       .onConflictDoNothing();

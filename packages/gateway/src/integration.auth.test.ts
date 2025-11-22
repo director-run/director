@@ -28,7 +28,7 @@ describe("Authentication integration", () => {
         body: JSON.stringify({
           email: "test@example.com",
           password: "testpassword123",
-          name: "Test User",
+          name: "test@example.com",
         }),
       });
 
@@ -36,7 +36,6 @@ describe("Authentication integration", () => {
       const signupData = await signupResponse.json();
       expect(signupData.user).toBeDefined();
       expect(signupData.user.email).toBe("test@example.com");
-      expect(signupData.user.name).toBe("Test User");
 
       // Extract session cookie
       const sessionCookie = signupResponse.headers.get("set-cookie");
@@ -100,7 +99,7 @@ describe("Authentication integration", () => {
         body: JSON.stringify({
           email: "existing@example.com",
           password: "password123",
-          name: "Existing User",
+          name: "existing@example.com",
         }),
       });
 
@@ -189,7 +188,7 @@ describe("Authentication integration", () => {
         body: JSON.stringify({
           email: "user1@example.com",
           password: "password123",
-          name: "User One",
+          name: "user1@example.com",
         }),
       });
 
@@ -208,7 +207,7 @@ describe("Authentication integration", () => {
         body: JSON.stringify({
           email: "user2@example.com",
           password: "password123",
-          name: "User Two",
+          name: "user2@example.com",
         }),
       });
 

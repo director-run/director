@@ -51,7 +51,6 @@ export type GatewayRouterOutputs = inferRouterOutputs<AppRouter>;
 export interface AuthUser {
   id: string;
   email: string;
-  name: string;
 }
 
 export interface AuthResponse {
@@ -64,7 +63,6 @@ export async function register(
   params: {
     email: string;
     password: string;
-    name: string;
   },
 ): Promise<AuthResponse> {
   const response = await fetch(joinURL(baseURL, "/api/auth/sign-up/email"), {
@@ -72,7 +70,10 @@ export async function register(
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(params),
+    body: JSON.stringify({
+      ...params,
+      name: params.email, // better-auth requires name, we use email as placeholder
+    }),
   });
 
   if (!response.ok) {

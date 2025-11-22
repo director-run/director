@@ -9,8 +9,9 @@ describe("Playbook", async () => {
   const userId = "dummy-user-id";
 
   beforeEach(async () => {
-    // Clear the database
+    // Clear the database and create dummy user
     await dbStore.deleteAllPlaybooks();
+    await dbStore.createDummyUser();
 
     // Create a test playbook
     const created = await dbStore.createPlaybook({

@@ -42,6 +42,7 @@ describe("Client Router", () => {
   beforeAll(async () => {
     const dbStore = makeTestDbStore();
     await dbStore.deleteAllPlaybooks();
+    await dbStore.createDummyUser();
     playbookStore = await PlaybookStore.create({
       dbStore,
       oauth: { storage: "memory", baseCallbackUrl: BASE_URL },

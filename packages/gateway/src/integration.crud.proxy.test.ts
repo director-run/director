@@ -11,7 +11,6 @@ describe("Playbook CRUD operations", () => {
     await harness.register({
       email: "test@example.com",
       password: "password123",
-      name: "Test User",
     });
   });
 

@@ -4,7 +4,6 @@ import { signIn, signOut, useSession } from "../lib/auth-client";
 type User = {
   id: string;
   email: string;
-  name: string;
 };
 
 type AuthContextType = {
@@ -61,7 +60,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     ? {
         id: session.user.id,
         email: session.user.email,
-        name: session.user.name,
       }
     : null;
 

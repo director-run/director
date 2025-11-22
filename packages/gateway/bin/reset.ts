@@ -11,7 +11,7 @@ await auth.api.signUpEmail({
   body: {
     email: "user@example.com",
     password: "password",
-    name: "Dumy User",
+    name: "user@example.com",
   },
 });
 

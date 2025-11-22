@@ -21,16 +21,6 @@ export function registerSignupCommand(program: DirectorCommand) {
           },
         });
 
-        const name = await input({
-          message: "Name:",
-          validate: (value) => {
-            if (value.trim().length === 0) {
-              return "Name is required";
-            }
-            return true;
-          },
-        });
-
         const pass = await password({
           message: "Password:",
           mask: "*",
@@ -61,7 +51,7 @@ export function registerSignupCommand(program: DirectorCommand) {
           body: JSON.stringify({
             email,
             password: pass,
-            name,
+            name: email,
           }),
         });
 
@@ -72,15 +62,13 @@ export function registerSignupCommand(program: DirectorCommand) {
           );
         }
 
-        const data = await response.json();
-
         const sessionToken = response.headers.get("set-cookie");
         if (sessionToken) {
           saveAuthToken(sessionToken);
         }
 
         console.log(chalk.green("✓ Account created successfully!"));
-        console.log(chalk.dim(`Welcome, ${data.user.name}!`));
+        console.log(chalk.dim(`Signed in as ${email}`));
       }),
     );
 }

@@ -70,8 +70,7 @@ export class IntegrationTestHarness {
   public async register(params: {
     email: string;
     password: string;
-    name: string;
-  }): Promise<{ user: { id: string; email: string; name: string } }> {
+  }): Promise<{ user: { id: string; email: string } }> {
     const { user, sessionCookie } = await clientRegister(this.baseURL, params);
 
     this.sessionCookie = sessionCookie;
@@ -88,7 +87,7 @@ export class IntegrationTestHarness {
   public async login(params: {
     email: string;
     password: string;
-  }): Promise<{ user: { id: string; email: string; name: string } }> {
+  }): Promise<{ user: { id: string; email: string } }> {
     const { user, sessionCookie } = await clientLogin(this.baseURL, params);
 
     this.sessionCookie = sessionCookie;

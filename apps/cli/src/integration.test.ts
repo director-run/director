@@ -38,7 +38,6 @@ describe("CLI integration tests", () => {
     const { sessionCookie } = await register(baseURL, {
       email: "test@example.com",
       password: "password123",
-      name: "Test User",
     });
 
     saveAuthToken(sessionCookie);

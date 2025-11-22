@@ -16,14 +16,13 @@ import express from "express";
 import { auth } from "./auth";
 import { ClientStore } from "./client-store";
 import type { PlaybookDbStore } from "./db/playbooks";
+import { ALLOWED_ORIGINS } from "./env";
 import { PlaybookStore } from "./playbooks/playbook-store";
 import { createSSERouter } from "./routers/sse";
 import { createStreamableRouter } from "./routers/streamable";
 import { createTRPCExpressMiddleware } from "./routers/trpc";
 
 const logger = getLogger("Gateway");
-
-const ALLOWED_ORIGINS = [/^https?:\/\/localhost(:\d+)?$/];
 
 export class Gateway {
   public readonly playbookStore: PlaybookStore;
@@ -58,6 +57,7 @@ export class Gateway {
     this.app.use(
       cors({
         origin: ALLOWED_ORIGINS,
+        credentials: true,
       }),
     );
     this.app.use(logRequests());

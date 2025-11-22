@@ -18,5 +18,6 @@ export const TELEMETRY_WRITE_KEY = "";
 export const TELEMETRY_ENABLED = false;
 export const OAUTH_STORAGE = "disk";
 export const OAUTH_TOKEN_DIRECTORY = "./tokens";
+export const ALLOWED_ORIGINS = ["http://localhost:3000"];
 
 export const DATABASE_URL = process.env.DATABASE_URL || "";

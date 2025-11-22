@@ -57,15 +57,6 @@ jobs:
         working-directory: ${{ inputs.working-directory }}
         run: bun run build && docker build -t ${{ inputs.image_name }} .
 
-      - name: Run database migrations
-        if: ${{ inputs.migrations }}
-        working-directory: ${{ inputs.working-directory }}
-        run: |
-          DATABASE_URL=$(gcloud run services describe ${{ inputs.service_name }} \
-            --region ${{ vars.REGION }} \
-            --format=json | jq -r '.spec.template.spec.containers[0].env[] | select(.name=="DATABASE_URL") | .value')
-          DATABASE_URL=$DATABASE_URL bun run db:push
-
       - name: Tag Docker image
         run: |
           docker tag ${{ inputs.image_name }}:latest ${{ vars.REPOSITORY_URL }}/${{ inputs.image_name }}:${{ github.sha }}
@@ -81,3 +72,12 @@ jobs:
           gcloud run deploy ${{ inputs.service_name }} \
             --image ${{ vars.REPOSITORY_URL }}/${{ inputs.image_name }}:${{ github.sha }} \
             --region ${{ vars.REGION }}
+
+      - name: Run database migrations
+        if: ${{ inputs.migrations }}
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          DATABASE_URL=$(gcloud run services describe ${{ inputs.service_name }} \
+            --region ${{ vars.REGION }} \
+            --format=json | jq -r '.spec.template.spec.containers[0].env[] | select(.name=="DATABASE_URL") | .value')
+          DATABASE_URL=$DATABASE_URL bun run db:push

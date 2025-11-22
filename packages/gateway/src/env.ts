@@ -1,21 +1,24 @@
 import path from "path";
-import { isTest } from "@director.run/utilities/env";
+import { isDevelopment, isTest } from "@director.run/utilities/env";
 import dotenv from "dotenv";
 
 if (isTest()) {
   console.log("Loading test environment");
   dotenv.config({ path: path.join(__dirname, "../env/.env.test") });
-} else {
+} else if (isDevelopment()) {
   console.log("Loading development environment");
   dotenv.config({ path: path.join(__dirname, "../env/.env.dev") });
+} else {
+  console.log("Loading production environment");
 }
 
-export const DEBUG = false;
-export const SERVER_PORT = isTest() ? 4673 : 3673;
-export const REGISTRY_URL = "https://registry.director.run";
-export const REGISTRY_API_KEY = "";
+export const DEBUG = process.env.DEBUG === "true";
+export const SERVER_PORT = parseInt(process.env.PORT || "3673");
+export const REGISTRY_URL =
+  process.env.REGISTRY_URL || "https://registry.director.run";
+export const REGISTRY_API_KEY = process.env.REGISTRY_API_KEY;
 export const TELEMETRY_WRITE_KEY = "";
-export const TELEMETRY_ENABLED = false;
+export const TELEMETRY_ENABLED = process.env.TELEMETRY_ENABLED === "true";
 export const OAUTH_STORAGE = "disk";
 export const OAUTH_TOKEN_DIRECTORY = "./tokens";
 export const ALLOWED_ORIGINS = ["http://localhost:3000"];

@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "db:push": "drizzle-kit push",
     "serve:dev": "bun run --watch bin/start.ts",
-    "serve": "bun run bin/start.ts"
+    "serve": "NODE_ENV=development bun run bin/server.ts",
+    "build": "bun run clean && bun build --production --target=node bin/server.ts --outdir dist"
   },
   "exports": {
     "./db": "./src/db/index.ts",

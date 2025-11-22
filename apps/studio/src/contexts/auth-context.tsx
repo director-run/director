@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext } from "react";
-import { signIn, signOut, useSession } from "../lib/auth-client";
+import { signIn, signOut, signUp, useSession } from "../lib/auth-client";
 
 type User = {
   id: string;
@@ -10,6 +10,7 @@ type AuthContextType = {
   user: User | null;
   isAuthenticated: boolean;
   login: (params: { email: string; password: string }) => Promise<void>;
+  signup: (params: { email: string; password: string }) => Promise<void>;
   logout: () => Promise<void>;
   isInitializing: boolean;
 };
@@ -18,6 +19,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   isAuthenticated: false,
   login: async () => {},
+  signup: async () => {},
   logout: async () => {},
   isInitializing: true,
 });
@@ -52,6 +54,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     [refetch],
   );
 
+  const signup = useCallback(
+    async (params: { email: string; password: string }) => {
+      const result = await signUp.email({
+        email: params.email,
+        password: params.password,
+        name: params.email, // better-auth requires name, we use email as placeholder
+      });
+
+      if (result.error) {
+        throw new Error(result.error.message || "Signup failed");
+      }
+
+      // Refetch session to update auth state after successful signup
+      await refetch();
+    },
+    [refetch],
+  );
+
   const logout = useCallback(async () => {
     await signOut();
   }, []);
@@ -68,6 +88,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     isAuthenticated: !!session?.user,
     isInitializing: isPending,
     login,
+    signup,
     logout,
   };
 

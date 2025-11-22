@@ -20,6 +20,7 @@ import { PlaybookDetailPage } from "./pages/playbook-detail-page";
 import { PlaybookTargetDetailPage } from "./pages/playbook-target-detail-page";
 import { RegistryDetailPage } from "./pages/registry-detail-page";
 import { RegistryListPage } from "./pages/registry-list-page";
+import { SignupPage } from "./pages/signup-page";
 import { RootLayout } from "./root-layout";
 
 import "./fonts.css";
@@ -63,6 +64,7 @@ export const App = () => {
     <AuthErrorBoundary>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
         <Route element={<ProtectedRoute />}>
           <Route
             path="/oauth/:playbookId/:targetId/callback"

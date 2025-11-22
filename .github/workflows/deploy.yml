@@ -1,0 +1,24 @@
+name: Deploy
+
+on:
+  # workflow_run:
+  #   workflows: ["CI"]
+  #   types:
+  #     - completed
+  #   branches: [multi-tenancy]
+  push:
+    branches: [ "multi-tenancy" ]
+
+jobs:
+  deploy:
+    name: Deploy apps/server to Cloud Run
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/shared/cloudrun-deploy.yml
+    with:
+      service_name: api
+      image_name: ex0-server
+      working-directory: packages/gateway
+      migrations: true

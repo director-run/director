@@ -1,0 +1,79 @@
+name: Deploy to Cloud Run
+
+on:
+  workflow_call:
+    inputs:
+      service_name:
+        required: true
+        type: string
+      image_name:
+        required: true
+        type: string
+      migrations:
+        required: false
+        type: boolean
+        default: false
+      working-directory:
+        required: true
+        type: string
+        default: .
+
+jobs:
+  deploy:
+    name: Deploy to Cloud Run
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.0
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.SERVICE_ACCOUNT_EMAIL }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ vars.REGION }}-docker.pkg.dev
+
+      - name: Build Docker image
+        working-directory: ${{ inputs.working-directory }}
+        run: bun run build && docker build -t ${{ inputs.image_name }} .
+
+      - name: Run database migrations
+        if: ${{ inputs.migrations }}
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          DATABASE_URL=$(gcloud run services describe ${{ inputs.service_name }} \
+            --region ${{ vars.REGION }} \
+            --format=json | jq -r '.spec.template.spec.containers[0].env[] | select(.name=="DATABASE_URL") | .value')
+          DATABASE_URL=$DATABASE_URL bun run db:push
+
+      - name: Tag Docker image
+        run: |
+          docker tag ${{ inputs.image_name }}:latest ${{ vars.REPOSITORY_URL }}/${{ inputs.image_name }}:${{ github.sha }}
+          docker tag ${{ inputs.image_name }}:latest ${{ vars.REPOSITORY_URL }}/${{ inputs.image_name }}:latest
+
+      - name: Push Docker image
+        run: |
+          docker push ${{ vars.REPOSITORY_URL }}/${{ inputs.image_name }}:${{ github.sha }}
+          docker push ${{ vars.REPOSITORY_URL }}/${{ inputs.image_name }}:latest
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy ${{ inputs.service_name }} \
+            --image ${{ vars.REPOSITORY_URL }}/${{ inputs.image_name }}:${{ github.sha }} \
+            --region ${{ vars.REGION }}

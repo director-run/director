@@ -1,10 +1,10 @@
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { requiredStringSchema } from "@director.run/utilities/schema";
-import { protectedProcedure, t } from "@director.run/utilities/trpc";
+import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
 import type { PlaybookTarget } from "../../playbooks/playbook";
-import type { AuthenticatedGatewayContext } from "./index";
+import { type AuthenticatedGatewayContext, protectedProcedure } from "./index";
 
 const httpTransportSchema = z.object({
   type: z.literal("http"),

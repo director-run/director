@@ -1,14 +1,18 @@
 import { createContext, useCallback, useContext } from "react";
 import { signIn, signOut, signUp, useSession } from "../lib/auth-client";
 
+type UserStatus = "ACTIVE" | "PENDING";
+
 type User = {
   id: string;
   email: string;
+  status: UserStatus;
 };
 
 type AuthContextType = {
   user: User | null;
   isAuthenticated: boolean;
+  isPending: boolean;
   login: (params: { email: string; password: string }) => Promise<void>;
   signup: (params: { email: string; password: string }) => Promise<void>;
   logout: () => Promise<void>;
@@ -18,6 +22,7 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType>({
   user: null,
   isAuthenticated: false,
+  isPending: false,
   login: async () => {},
   signup: async () => {},
   logout: async () => {},
@@ -80,12 +85,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     ? {
         id: session.user.id,
         email: session.user.email,
+        status: ((session.user as { status?: UserStatus }).status ??
+          "PENDING") as UserStatus,
       }
     : null;
 
   const value: AuthContextType = {
     user,
     isAuthenticated: !!session?.user,
+    isPending: user?.status === "PENDING",
     isInitializing: isPending,
     login,
     signup,

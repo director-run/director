@@ -73,6 +73,9 @@ export class IntegrationTestHarness {
   }): Promise<{ user: { id: string; email: string } }> {
     const { user, sessionCookie } = await clientRegister(this.baseURL, params);
 
+    // Activate user for testing - new users are PENDING by default
+    await this.gateway.dbStore.activateUser(user.id);
+
     this.sessionCookie = sessionCookie;
     this.userId = user.id;
 

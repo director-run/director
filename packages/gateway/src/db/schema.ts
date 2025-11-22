@@ -11,6 +11,9 @@ import {
 } from "drizzle-orm/pg-core";
 import type { PlaybookTarget } from "../playbooks/playbook-schema";
 
+// User status type
+export type UserStatus = "ACTIVE" | "PENDING";
+
 // Better Auth tables
 export const userTable = pgTable("user", {
   id: text("id").primaryKey(),
@@ -18,6 +21,7 @@ export const userTable = pgTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
+  status: text("status").$type<UserStatus>().default("PENDING").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()

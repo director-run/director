@@ -1,7 +1,10 @@
 import { publicProcedure, t } from "@director.run/utilities/trpc";
+import { TRPCError } from "@trpc/server";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { auth } from "../../auth";
 import type { ClientStore } from "../../client-store";
+import type { UserStatus } from "../../db/schema";
+import { WAITLIST_ENABLED } from "../../env";
 import { PlaybookStore } from "../../playbooks/playbook-store";
 import { getStatus } from "../../status";
 import { createClientRouter } from "./client-router";
@@ -13,11 +16,36 @@ export type GatewayContext = {
   playbookStore: PlaybookStore;
   clientStore: ClientStore;
   userId: string | undefined;
+  userStatus: UserStatus | undefined;
 };
 
 export type AuthenticatedGatewayContext = GatewayContext & {
   userId: string;
+  userStatus: UserStatus;
 };
+
+// Middleware that enforces user is authenticated (and active if waitlist is enabled)
+const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
+  const context = ctx as GatewayContext;
+  if (!context.userId) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  if (WAITLIST_ENABLED && context.userStatus === "PENDING") {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "USER_PENDING",
+    });
+  }
+  return next({
+    ctx: {
+      ...ctx,
+      userId: context.userId,
+      userStatus: context.userStatus,
+    },
+  });
+});
+
+export const protectedProcedure = publicProcedure.use(enforceUserIsAuthed);
 
 export function createAppRouter() {
   return t.router({
@@ -44,6 +72,7 @@ export function createTRPCExpressMiddleware({
       const cliVersion = typeof headerValue === "string" ? headerValue : null;
 
       let userId: string | undefined = undefined;
+      let userStatus: UserStatus | undefined = undefined;
 
       const session = await auth.api.getSession({
         headers: req.headers as Record<string, string>,
@@ -51,6 +80,8 @@ export function createTRPCExpressMiddleware({
 
       if (session) {
         userId = session.user.id;
+        // Get user status from the session user object
+        userStatus = (session.user as { status?: UserStatus }).status;
       }
 
       return {
@@ -58,6 +89,7 @@ export function createTRPCExpressMiddleware({
         playbookStore,
         clientStore,
         userId,
+        userStatus,
       };
     },
   });

@@ -9,6 +9,7 @@ import { AuthProvider, useAuth } from "./contexts/auth-context";
 import {
   BackendProvider,
   useAuthErrorHandler,
+  usePendingErrorHandler,
 } from "./contexts/backend-context";
 import { GlobalErrorBoundary } from "./helpers/global-error-boundary";
 import { usePlaybooks } from "./hooks/use-playbooks";
@@ -21,6 +22,7 @@ import { PlaybookTargetDetailPage } from "./pages/playbook-target-detail-page";
 import { RegistryDetailPage } from "./pages/registry-detail-page";
 import { RegistryListPage } from "./pages/registry-list-page";
 import { SignupPage } from "./pages/signup-page";
+import { WaitlistPage } from "./pages/waitlist-page";
 import { RootLayout } from "./root-layout";
 
 import "./fonts.css";
@@ -38,6 +40,9 @@ function ProtectedRoute() {
     return <Navigate to="/login" replace />;
   }
 
+  // Note: Pending user redirect is handled by AuthErrorBoundary when API returns
+  // USER_PENDING error. This allows WAITLIST_ENABLED env var to control behavior.
+
   return <Outlet />;
 }
 
@@ -48,7 +53,12 @@ function AuthErrorBoundary({ children }: { children: React.ReactNode }) {
     navigate("/login", { replace: true });
   }, [navigate]);
 
+  const handlePendingError = useCallback(() => {
+    navigate("/waitlist", { replace: true });
+  }, [navigate]);
+
   useAuthErrorHandler(handleAuthError);
+  usePendingErrorHandler(handlePendingError);
 
   return <>{children}</>;
 }
@@ -65,6 +75,7 @@ export const App = () => {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/waitlist" element={<WaitlistPage />} />
         <Route element={<ProtectedRoute />}>
           <Route
             path="/oauth/:playbookId/:targetId/callback"

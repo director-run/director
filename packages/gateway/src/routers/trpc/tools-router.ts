@@ -1,8 +1,8 @@
-import { protectedProcedure, t } from "@director.run/utilities/trpc";
+import { t } from "@director.run/utilities/trpc";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import _ from "lodash";
 import { z } from "zod";
-import type { AuthenticatedGatewayContext } from "./index";
+import { type AuthenticatedGatewayContext, protectedProcedure } from "./index";
 
 type EnhancedTool = Tool & {
   serverName?: string;

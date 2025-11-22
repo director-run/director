@@ -37,6 +37,9 @@ describe("Authentication integration", () => {
       expect(signupData.user).toBeDefined();
       expect(signupData.user.email).toBe("test@example.com");
 
+      // Activate user for testing - new users are PENDING by default
+      await harness.database.activateUser(signupData.user.id);
+
       // Extract session cookie
       const sessionCookie = signupResponse.headers.get("set-cookie");
       expect(sessionCookie).toBeDefined();
@@ -106,6 +109,9 @@ describe("Authentication integration", () => {
       expect(signupResponse.ok).toBe(true);
       const signupData = await signupResponse.json();
       const signupCookie = signupResponse.headers.get("set-cookie");
+
+      // Activate user for testing - new users are PENDING by default
+      await harness.database.activateUser(signupData.user.id);
 
       // Create a playbook as the registered user
       const signupClient = createGatewayClient(baseURL, {
@@ -194,6 +200,10 @@ describe("Authentication integration", () => {
 
       const user1Data = await user1Response.json();
       const user1Cookie = user1Response.headers.get("set-cookie");
+
+      // Activate user 1 for testing - new users are PENDING by default
+      await harness.database.activateUser(user1Data.user.id);
+
       const user1Client = createGatewayClient(baseURL, {
         getAuthToken: () => user1Cookie,
       });
@@ -213,6 +223,10 @@ describe("Authentication integration", () => {
 
       const user2Data = await user2Response.json();
       const user2Cookie = user2Response.headers.get("set-cookie");
+
+      // Activate user 2 for testing - new users are PENDING by default
+      await harness.database.activateUser(user2Data.user.id);
+
       const user2Client = createGatewayClient(baseURL, {
         getAuthToken: () => user2Cookie,
       });

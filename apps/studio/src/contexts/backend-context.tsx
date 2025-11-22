@@ -15,6 +15,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 
@@ -30,20 +31,37 @@ function isUnauthorizedError(error: unknown): boolean {
   return false;
 }
 
-type AuthErrorHandler = () => void;
+function isPendingUserError(error: unknown): boolean {
+  if (error instanceof TRPCClientError) {
+    return error.data?.code === "FORBIDDEN" && error.message === "USER_PENDING";
+  }
+  return false;
+}
+
+type ErrorHandler = () => void;
 
 const AuthErrorContext = createContext<{
-  setOnAuthError: (handler: AuthErrorHandler | null) => void;
+  setOnAuthError: (handler: ErrorHandler | null) => void;
+  setOnPendingError: (handler: ErrorHandler | null) => void;
 }>({
   setOnAuthError: () => {},
+  setOnPendingError: () => {},
 });
 
-export function useAuthErrorHandler(handler: AuthErrorHandler) {
+export function useAuthErrorHandler(handler: ErrorHandler) {
   const { setOnAuthError } = useContext(AuthErrorContext);
   useEffect(() => {
     setOnAuthError(handler);
     return () => setOnAuthError(null);
   }, [setOnAuthError, handler]);
+}
+
+export function usePendingErrorHandler(handler: ErrorHandler) {
+  const { setOnPendingError } = useContext(AuthErrorContext);
+  useEffect(() => {
+    setOnPendingError(handler);
+    return () => setOnPendingError(null);
+  }, [setOnPendingError, handler]);
 }
 
 export function BackendProvider(
@@ -53,17 +71,19 @@ export function BackendProvider(
     children: React.ReactNode;
   }>,
 ) {
-  const [authErrorHandler, setAuthErrorHandler] =
-    useState<AuthErrorHandler | null>(null);
+  // Use refs to avoid stale closures in QueryCache callbacks.
+  // The QueryClient is created once and captures the handleError callback,
+  // so we need refs to always access the current handlers.
+  const authErrorHandlerRef = useRef<ErrorHandler | null>(null);
+  const pendingErrorHandlerRef = useRef<ErrorHandler | null>(null);
 
-  const handleError = useCallback(
-    (error: unknown) => {
-      if (isUnauthorizedError(error) && authErrorHandler) {
-        authErrorHandler();
-      }
-    },
-    [authErrorHandler],
-  );
+  const handleError = useCallback((error: unknown) => {
+    if (isPendingUserError(error) && pendingErrorHandlerRef.current) {
+      pendingErrorHandlerRef.current();
+    } else if (isUnauthorizedError(error) && authErrorHandlerRef.current) {
+      authErrorHandlerRef.current();
+    }
+  }, []);
 
   const [gatewayQueryClient] = useState(
     () =>
@@ -71,7 +91,7 @@ export function BackendProvider(
         defaultOptions: {
           queries: {
             retry: (failureCount, error) => {
-              if (isUnauthorizedError(error)) {
+              if (isUnauthorizedError(error) || isPendingUserError(error)) {
                 return false;
               }
               return failureCount < 3;
@@ -97,12 +117,16 @@ export function BackendProvider(
     createRegistryClient(props.registryUrl),
   );
 
-  const setOnAuthError = useCallback((handler: AuthErrorHandler | null) => {
-    setAuthErrorHandler(() => handler);
+  const setOnAuthError = useCallback((handler: ErrorHandler | null) => {
+    authErrorHandlerRef.current = handler;
+  }, []);
+
+  const setOnPendingError = useCallback((handler: ErrorHandler | null) => {
+    pendingErrorHandlerRef.current = handler;
   }, []);
 
   return (
-    <AuthErrorContext.Provider value={{ setOnAuthError }}>
+    <AuthErrorContext.Provider value={{ setOnAuthError, setOnPendingError }}>
       <gatewayClient.Provider
         queryClient={gatewayQueryClient}
         client={gatewayTrpcClient}

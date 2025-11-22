@@ -1,7 +1,7 @@
-import { protectedProcedure, t } from "@director.run/utilities/trpc";
+import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
 import type { ClientId } from "../../client-store";
-import type { AuthenticatedGatewayContext } from "./index";
+import { type AuthenticatedGatewayContext, protectedProcedure } from "./index";
 
 export function createClientRouter() {
   return t.router({

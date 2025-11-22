@@ -21,3 +21,4 @@ export const OAUTH_TOKEN_DIRECTORY = "./tokens";
 export const ALLOWED_ORIGINS = ["http://localhost:3000"];
 
 export const DATABASE_URL = process.env.DATABASE_URL || "";
+export const WAITLIST_ENABLED = true; //process.env.WAITLIST_ENABLED === "true";

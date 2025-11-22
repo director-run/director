@@ -23,6 +23,16 @@ export const auth = betterAuth({
     requireEmailVerification: false,
   },
   trustedOrigins: ALLOWED_ORIGINS,
+  user: {
+    additionalFields: {
+      status: {
+        type: "string",
+        required: false,
+        defaultValue: "PENDING",
+        input: false, // don't allow user to set status
+      },
+    },
+  },
 });
 
 export type Session = typeof auth.$Infer.Session.session;

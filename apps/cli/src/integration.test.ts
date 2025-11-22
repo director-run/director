@@ -35,10 +35,13 @@ describe("CLI integration tests", () => {
     });
 
     // Register a test user
-    const { sessionCookie } = await register(baseURL, {
+    const { user, sessionCookie } = await register(baseURL, {
       email: "test@example.com",
       password: "password123",
     });
+
+    // Activate user for testing - new users are PENDING by default
+    await dbStore.activateUser(user.id);
 
     saveAuthToken(sessionCookie);
     gatewayClient = createGatewayClient(baseURL, {

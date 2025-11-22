@@ -110,8 +110,16 @@ export class PlaybookDbStore {
         name: "dummy@example.com",
         email: "dummy@example.com",
         emailVerified: true,
+        status: "ACTIVE",
       })
       .onConflictDoNothing();
+  }
+
+  public async activateUser(userId: string) {
+    await this.dbConnection.db
+      .update(userTable)
+      .set({ status: "ACTIVE" })
+      .where(eq(userTable.id, userId));
   }
 
   // Server operations

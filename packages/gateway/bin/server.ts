@@ -7,22 +7,6 @@ import { DATABASE_URL, SERVER_PORT } from "../src/env";
 import { Gateway } from "../src/gateway";
 
 const logger = getLogger("Server");
-async function start() {
-  const dbStore = createStore({ connectionString: DATABASE_URL }).playbooks;
-
-  await Gateway.start({
-    dbStore,
-    baseUrl: `http://localhost:${SERVER_PORT}`,
-    port: SERVER_PORT,
-    studioAssetsPath: getStudioAssetsPath(),
-    oauth: {
-      storage: "memory",
-      baseCallbackUrl: `http://localhost:${SERVER_PORT}`,
-    },
-  });
-}
-
-await start();
 
 const getStudioAssetsPath = (): string | undefined => {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -40,3 +24,20 @@ const getStudioAssetsPath = (): string | undefined => {
   const match = findFirstMatch(candidates);
   return match ? path.dirname(match) : undefined;
 };
+
+async function start() {
+  const dbStore = createStore({ connectionString: DATABASE_URL }).playbooks;
+
+  await Gateway.start({
+    dbStore,
+    baseUrl: `http://localhost:${SERVER_PORT}`,
+    port: SERVER_PORT,
+    studioAssetsPath: getStudioAssetsPath(),
+    oauth: {
+      storage: "memory",
+      baseCallbackUrl: `http://localhost:${SERVER_PORT}`,
+    },
+  });
+}
+
+await start();

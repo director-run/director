@@ -3,12 +3,13 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as schema from "./db/schema";
-import { ALLOWED_ORIGINS, DATABASE_URL } from "./env";
+import { ALLOWED_ORIGINS, BETTER_AUTH_SECRET, DATABASE_URL } from "./env";
 
 const pool = new Pool({ connectionString: DATABASE_URL });
 const db = drizzle(pool, { schema });
 
 export const auth = betterAuth({
+  secret: BETTER_AUTH_SECRET,
   database: drizzleAdapter(db, {
     provider: "pg",
     schema: {

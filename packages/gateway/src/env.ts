@@ -25,3 +25,5 @@ export const ALLOWED_ORIGINS = ["http://localhost:3000"];
 
 export const DATABASE_URL = process.env.DATABASE_URL || "";
 export const WAITLIST_ENABLED = true; //process.env.WAITLIST_ENABLED === "true";
+export const BETTER_AUTH_SECRET =
+  process.env.BETTER_AUTH_SECRET || "development-secret-change-in-production";

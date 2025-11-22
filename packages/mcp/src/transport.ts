@@ -58,10 +58,7 @@ export async function proxyHTTPToStdio(url: string) {
 export function streamableRouter(
   getServer: (req: express.Request) => Promise<Server> | Server,
 ): express.Router {
-  //
-  // make the router
-  //
-  const router = express.Router();
+  const router = express.Router({ mergeParams: true });
 
   router.use(express.json());
   router.post("/mcp", async (req, res) => {

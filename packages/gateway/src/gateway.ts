@@ -91,7 +91,6 @@ export class Gateway {
       "/",
       createStreamableRouter({
         playbookStore: this.playbookStore,
-        telemetry: this.telemetry,
       }),
     );
     this.app.use(

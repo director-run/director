@@ -1,6 +1,6 @@
 import { SignupPage as SignupPageComponent } from "@director.run/design/components/pages/auth/signup.tsx";
 import { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/auth-context.tsx";
 
 export function SignupPage() {
@@ -31,6 +31,11 @@ export function SignupPage() {
         }
       }}
       isLoading={isLoading}
+      loginLink={
+        <Link to="/login" className="text-fg underline hover:no-underline">
+          Log in
+        </Link>
+      }
     />
   );
 }

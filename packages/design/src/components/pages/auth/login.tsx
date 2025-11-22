@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { LoginForm } from "../../forms/login-form.tsx";
 import { Container } from "../../ui/container.tsx";
 import { Logo } from "../../ui/icons/logo.tsx";
@@ -5,7 +6,7 @@ import { Section, SectionHeader } from "../../ui/section.tsx";
 import { SectionDescription, SectionTitle } from "../../ui/section.tsx";
 
 export function LoginPage(props: Props) {
-  const { error, isLoading, defaultValues, onSubmit } = props;
+  const { error, isLoading, defaultValues, onSubmit, signupLink } = props;
   return (
     <>
       <div className="flex min-h-dvh w-full items-center justify-center">
@@ -28,6 +29,11 @@ export function LoginPage(props: Props) {
               onSubmit={onSubmit}
               isSubmitting={isLoading}
             />
+            {signupLink && (
+              <p className="text-center text-fg-subtle text-sm">
+                Don't have an account? {signupLink}
+              </p>
+            )}
           </Section>
         </Container>
       </div>
@@ -43,4 +49,5 @@ type Props = {
     password: string;
   };
   onSubmit: (user: { email: string; password: string }) => Promise<void> | void;
+  signupLink?: ReactNode;
 };

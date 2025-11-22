@@ -12,7 +12,7 @@
     "db:push": "drizzle-kit push",
     "serve:dev": "bun run --watch bin/start.ts",
     "serve": "NODE_ENV=development bun run bin/server.ts",
-    "build": "bun run clean && bun build --production --target=node bin/server.ts --outdir dist"
+    "build": "bun run clean && bun build --production --target=node bin/server.ts --outdir dist && cp -r ../../apps/studio/dist dist/studio"
   },
   "exports": {
     "./db": "./src/db/index.ts",

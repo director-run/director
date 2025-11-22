@@ -53,9 +53,12 @@ jobs:
       - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker ${{ vars.REGION }}-docker.pkg.dev
 
+      - name: Build Monorepo
+        run: bun run build
+
       - name: Build Docker image
         working-directory: ${{ inputs.working-directory }}
-        run: bun run build && docker build -t ${{ inputs.image_name }} .
+        run: docker build -t ${{ inputs.image_name }} .
 
       - name: Tag Docker image
         run: |

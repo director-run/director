@@ -19,7 +19,7 @@ jobs:
     uses: ./.github/workflows/cloudrun-deploy.yml
     with:
       environment: staging
-      service_name: api
+      service_name: app
       image_name: ex0-server
       working-directory: packages/gateway
       migrations: true

@@ -18,6 +18,7 @@ jobs:
       id-token: write
     uses: ./.github/workflows/cloudrun-deploy.yml
     with:
+      environment: staging
       service_name: api
       image_name: ex0-server
       working-directory: packages/gateway

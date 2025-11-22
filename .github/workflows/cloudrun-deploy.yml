@@ -3,6 +3,9 @@ name: Deploy to Cloud Run
 on:
   workflow_call:
     inputs:
+      environment:
+        required: true
+        type: string
       service_name:
         required: true
         type: string
@@ -22,6 +25,7 @@ jobs:
   deploy:
     name: Deploy to Cloud Run
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
 
     permissions:
       contents: read

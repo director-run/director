@@ -28,6 +28,7 @@ import { RootLayout } from "./root-layout";
 import "./fonts.css";
 import "./globals.css";
 import { ConnectionBoundary } from "./helpers/connection-boundary";
+import { SettingsPage } from "./pages/settings-page";
 
 function ProtectedRoute() {
   const { isAuthenticated, isInitializing } = useAuth();
@@ -93,6 +94,7 @@ export const App = () => {
               element={<PlaybookTargetDetailPage />}
             />
             <Route path="/new" element={<PlaybookCreatePage />} />
+            <Route path="/settings" element={<SettingsPage />} />
           </Route>
           <Route path="/get-started" element={<GetStartedPage />} />
           <Route path="*" element={<DefaultRoute />} />

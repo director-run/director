@@ -17,6 +17,16 @@ Every code change must demonstrate:
 - **Error Handling**: Use structured error handling via `@director.run/utilities/error`.
 - **Consistency**: Match the existing codebase style and architectural patterns.
 
+### Library Documentation Lookup
+
+**MANDATORY**: Before making changes that involve external libraries, you MUST:
+
+1. Use the **Context7 MCP** to look up the current documentation for any libraries being used
+2. Use `mcp__context7__resolve-library-id` to find the library ID, then `mcp__context7__get-library-docs` to fetch relevant documentation
+3. This ensures you're using up-to-date APIs and best practices
+
+**If Context7 MCP is not available**: STOP and ask the user if they want to proceed without documentation lookup. Do not assume or guess library APIs.
+
 ### Definition of Done
 
 **MANDATORY**: Before marking any task or change as complete, you MUST:
@@ -52,6 +62,43 @@ When implementing changes:
 - **Quote Style**: Use double quotes for JavaScript/TypeScript
 - **Error Messages**: Provide clear, actionable error messages with context
 - **Logging**: Use structured logging via `@director.run/utilities/logger`
+
+### Full-Stack Awareness
+
+**IMPORTANT**: Always consider the full stack when making changes:
+
+- **Gateway** (`packages/gateway/`) is the backend - API changes here affect all clients
+- **Studio** (`apps/studio/`) is the web UI client
+- **CLI** (`apps/cli/`) is the command-line client
+
+When making changes:
+
+1. **Backend changes**: Always check if Studio and/or CLI need updates to reflect the change
+2. **API modifications**: Update all consuming clients (Studio, CLI) accordingly
+3. **New backend features**: Consider whether they should be exposed in Studio, CLI, or both
+4. **Data model changes**: Propagate through the entire stack (Gateway → Studio/CLI)
+
+Do not leave clients out of sync with the backend.
+
+### Frontend Component Architecture
+
+When building frontend components (Studio, design system):
+
+1. **Separate Business Logic from Presentation**:
+   - Create "dumb" (presentational) components that only handle rendering
+   - Dumb components receive all data via props and emit events for actions
+   - Keep business logic, data fetching, and state management in container/page components
+   - Dumb components should be reusable and testable in isolation
+
+2. **Storybook Requirement**:
+   - When creating a new dumb/presentational component, you MUST also create a Storybook story
+   - Stories go in `packages/design/src/components/` alongside the component
+   - Stories should demonstrate all component variants and states
+   - Use the `*.stories.tsx` naming convention
+
+3. **Component Location**:
+   - Reusable presentational components: `packages/design/src/components/`
+   - App-specific containers/pages: `apps/studio/src/pages/` or `apps/studio/src/components/`
 
 ### Testing Requirements
 

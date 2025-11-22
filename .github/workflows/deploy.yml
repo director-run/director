@@ -12,11 +12,11 @@ on:
 jobs:
   deploy:
     name: Deploy apps/server to Cloud Run
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
     permissions:
       contents: read
       id-token: write
-    uses: ./.github/workflows/shared/cloudrun-deploy.yml
+    uses: ./.github/workflows/cloudrun-deploy.yml
     with:
       service_name: api
       image_name: ex0-server

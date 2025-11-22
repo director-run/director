@@ -84,7 +84,6 @@ export class Gateway {
       "/",
       createSSERouter({
         playbookStore: this.playbookStore,
-        telemetry: this.telemetry,
       }),
     );
     this.app.use(

@@ -2,23 +2,67 @@ import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+
 import express from "express";
 import { HTTPClient } from "./client/http-client";
 import { ProxyServer } from "./proxy/proxy-server";
 
+export function sseRouter(
+  getServer: (req: express.Request) => Promise<Server> | Server,
+  options?: {
+    getMessagePath?: (req: express.Request) => string;
+  },
+): express.Router {
+  const router = express.Router({ mergeParams: true });
+  const transports: Map<string, SSEServerTransport> = new Map();
+
+  router.get("/sse", async (req, res, next) => {
+    try {
+      const server = await getServer(req);
+      const messagePath = options?.getMessagePath?.(req) ?? "/message";
+      const transport = new SSEServerTransport(messagePath, res);
+
+      transports.set(transport.sessionId, transport);
+
+      req.socket.on("close", () => {
+        transports.delete(transport.sessionId);
+      });
+
+      await server.connect(transport);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.post("/message", async (req, res, next) => {
+    try {
+      const sessionId = req.query.sessionId?.toString();
+
+      if (!sessionId) {
+        res.status(400).json({ error: "No sessionId provided" });
+        return;
+      }
+
+      const transport = transports.get(sessionId);
+
+      if (!transport) {
+        res.status(404).json({ error: "Transport not found" });
+        return;
+      }
+
+      await transport.handlePostMessage(req, res);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  return router;
+}
+
 export function serveOverSSE(server: Server, port: number) {
   const app = express();
 
-  let transport: SSEServerTransport;
-
-  app.get("/sse", async (_req, res) => {
-    transport = new SSEServerTransport("/message", res);
-    await server.connect(transport);
-  });
-
-  app.post("/message", async (req, res) => {
-    await transport.handlePostMessage(req, res);
-  });
+  app.use(sseRouter(() => server));
 
   const instance = app.listen(port);
   return instance;
@@ -61,19 +105,23 @@ export function streamableRouter(
   const router = express.Router({ mergeParams: true });
 
   router.use(express.json());
-  router.post("/mcp", async (req, res) => {
-    const transport = new StreamableHTTPServerTransport({
-      sessionIdGenerator: undefined,
-      enableJsonResponse: true,
-    });
+  router.post("/mcp", async (req, res, next) => {
+    try {
+      const transport = new StreamableHTTPServerTransport({
+        sessionIdGenerator: undefined,
+        enableJsonResponse: true,
+      });
 
-    res.on("close", () => {
-      transport.close();
-    });
+      res.on("close", () => {
+        transport.close();
+      });
 
-    const server = await getServer(req);
-    await server.connect(transport);
-    await transport.handleRequest(req, res, req.body);
+      const server = await getServer(req);
+      await server.connect(transport);
+      await transport.handleRequest(req, res, req.body);
+    } catch (error) {
+      next(error);
+    }
   });
 
   return router;

@@ -10,6 +10,7 @@
     "test": "bun run vitest  --fileParallelism=false",
     "typecheck": "tsc --noEmit",
     "db:push": "drizzle-kit push",
+    "serve:dev": "bun run --watch bin/start.ts",
     "serve": "bun run bin/start.ts"
   },
   "exports": {

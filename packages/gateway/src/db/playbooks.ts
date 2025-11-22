@@ -92,7 +92,7 @@ export class PlaybookDbStore {
     await this.dbConnection.db.delete(playbooksTable);
   }
 
-  public async deleteAllUsers() {
+  public async reset() {
     // Delete in order to respect foreign key constraints
     await this.dbConnection.db.delete(verificationTable);
     await this.dbConnection.db.delete(sessionTable);

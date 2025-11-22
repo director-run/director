@@ -21,7 +21,7 @@ describe("CLI integration tests", () => {
   beforeAll(async () => {
     const dbStore = createStore({ connectionString: DATABASE_URL }).playbooks;
     await dbStore.deleteAllPlaybooks();
-    await dbStore.deleteAllUsers();
+    await dbStore.reset();
     await dbStore.createDummyUser();
 
     gateway = await Gateway.start({

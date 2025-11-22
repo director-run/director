@@ -7,7 +7,7 @@ export function createStore(params: { connectionString: string }) {
   return {
     playbooks,
     close: () => db.close(),
-    purge: () => playbooks.deleteAllPlaybooks(),
+    purge: () => playbooks.reset(),
   };
 }
 

@@ -114,7 +114,7 @@ export class IntegrationTestHarness {
     const dbStore = makeTestDbStore();
 
     // Clear all users before starting
-    await dbStore.deleteAllUsers();
+    await dbStore.reset();
 
     // Ensure dummy user exists for unauthenticated requests
     await dbStore.createDummyUser();

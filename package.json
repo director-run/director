@@ -33,6 +33,8 @@
     "version-packages-formatted": "changeset version && bun run format",
     "release-packages": "bun run build && changeset publish",
     "serve": "bun run ./packages/gateway/bin/serve.ts",
+    "serve:dev": "bun run ./packages/gateway/bin/serve.ts --watch",
+    "reset": "bun run ./packages/gateway/bin/reset.ts",
     "check": "bun run lint && bun run typecheck && bun run test && bun run build"
   },
   "devDependencies": {

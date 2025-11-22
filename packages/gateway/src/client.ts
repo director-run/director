@@ -26,8 +26,11 @@ export function createGatewayClient(
           }
           return {};
         },
-        async fetch(url, options) {
-          return fetch(url, options).catch((error) => {
+        fetch(url, options) {
+          return fetch(url, {
+            ...options,
+            credentials: "include",
+          }).catch((error) => {
             if (error.code === "ConnectionRefused") {
               throw new Error(
                 `Could not connect to the gateway service on ${baseURL}. Is it running?`,

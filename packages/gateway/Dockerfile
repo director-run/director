@@ -2,7 +2,7 @@ FROM oven/bun:1
 
 RUN apt-get update && apt-get install -y openssh-client && rm -rf /var/lib/apt/lists/*
 
-COPY ./dist/server.js ./
+COPY ./dist ./
 
 ENV NODE_ENV=production
 ENV PORT=1234

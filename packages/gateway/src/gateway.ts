@@ -16,7 +16,7 @@ import express from "express";
 import { auth } from "./auth";
 import { ClientStore } from "./client-store";
 import type { PlaybookDbStore } from "./db/playbooks";
-import { ALLOWED_ORIGINS } from "./env";
+import { ALLOWED_ORIGINS, REGISTRY_URL } from "./env";
 import { PlaybookStore } from "./playbooks/playbook-store";
 import { createSSERouter } from "./routers/sse";
 import { createStreamableRouter } from "./routers/streamable";
@@ -72,6 +72,8 @@ export class Gateway {
           distPath: this.studioAssetsPath,
           config: {
             basePath: "/studio",
+            gatewayUrl: this.baseUrl,
+            registryUrl: REGISTRY_URL,
           },
         }),
       );

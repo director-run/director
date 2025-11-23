@@ -4,7 +4,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: ex0-controller-development
+      POSTGRES_DB: director-gateway-development
     ports:
       - "5433:5432"
     volumes:
@@ -13,14 +13,15 @@ services:
   director-gateway-server:
     build:
       context: .
-    ports:
-      - "6784:1111"
+    # ports:
+    #   - "6784:1111"
+    network_mode: host
     environment:
       NODE_ENV: development
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/ex0-controller-development
+      DATABASE_URL: postgresql://postgres:travel-china-spend-nothing@localhost:5432/director-gateway-dev
       PORT: 1111
     depends_on:
-      - ex0-postgres
-
+      - director-gateway-postgres
+    
 volumes:
   postgres-data:

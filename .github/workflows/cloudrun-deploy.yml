@@ -70,12 +70,6 @@ jobs:
           docker push ${{ vars.REPOSITORY_URL }}/${{ inputs.image_name }}:${{ github.sha }}
           docker push ${{ vars.REPOSITORY_URL }}/${{ inputs.image_name }}:latest
 
-      - name: Deploy to Cloud Run
-        run: |
-          gcloud run deploy ${{ inputs.service_name }} \
-            --image ${{ vars.REPOSITORY_URL }}/${{ inputs.image_name }}:${{ github.sha }} \
-            --region ${{ vars.REGION }}
-
       - name: Run database migrations
         if: ${{ inputs.migrations }}
         working-directory: ${{ inputs.working-directory }}
@@ -84,3 +78,10 @@ jobs:
             --region ${{ vars.REGION }} \
             --format=json | jq -r '.spec.template.spec.containers[0].env[] | select(.name=="DATABASE_URL") | .value')
           DATABASE_URL=$DATABASE_URL bun run db:push
+          
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy ${{ inputs.service_name }} \
+            --image ${{ vars.REPOSITORY_URL }}/${{ inputs.image_name }}:${{ github.sha }} \
+            --region ${{ vars.REGION }}
+

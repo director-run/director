@@ -1,7 +1,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import { createStore } from "../src/db";
-import { DATABASE_URL, SERVER_PORT } from "../src/env";
+import { BASE_URL, DATABASE_URL, SERVER_PORT } from "../src/env";
 import { Gateway } from "../src/gateway";
 
 // const logger = getLogger("Server");
@@ -31,12 +31,12 @@ async function start() {
 
   await Gateway.start({
     dbStore,
-    baseUrl: `http://localhost:${SERVER_PORT}`,
+    baseUrl: BASE_URL,
     port: SERVER_PORT,
     studioAssetsPath: assetsPath,
     oauth: {
       storage: "memory",
-      baseCallbackUrl: `http://localhost:${SERVER_PORT}`,
+      baseCallbackUrl: BASE_URL,
     },
   });
 }

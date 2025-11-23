@@ -26,13 +26,8 @@ import { Gateway } from "../src/gateway";
 async function start() {
   const dbStore = createStore({ connectionString: DATABASE_URL }).playbooks;
 
-  console.log("--------------------------------");
-  console.log("--------------------------------");
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
-  const assetsPath = path.join(__dirname, "./studio/index.html");
-  console.log(assetsPath);
-  console.log("--------------------------------");
-  console.log("--------------------------------");
+  const assetsPath = path.join(__dirname, "./studio");
 
   await Gateway.start({
     dbStore,

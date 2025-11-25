@@ -1,5 +1,3 @@
-import { drizzle } from "drizzle-orm/node-postgres";
-import { Pool } from "pg";
 import { Database } from "../db/database";
 import {
   accountTable,
@@ -8,45 +6,29 @@ import {
   userTable,
   verificationTable,
 } from "../db/schema";
-import * as schema from "../db/schema";
-import { DATABASE_URL } from "../env";
 import type { PlaybookStore } from "../playbooks/playbook-store";
 
-// Shared test database connection for direct drizzle operations
-let testPool: Pool | null = null;
-let testDb: ReturnType<typeof drizzle<typeof schema>> | null = null;
-
-function getTestDb() {
-  if (!testPool || !testDb) {
-    testPool = new Pool({ connectionString: DATABASE_URL });
-    testDb = drizzle(testPool, { schema });
-  }
-  return testDb;
-}
-
-export function makeTestDatabase() {
-  return Database.create(DATABASE_URL);
+/**
+ * Resets the playbook store by closing all connections and clearing cache.
+ */
+export async function resetPlaybookStore(playbookStore: PlaybookStore) {
+  await playbookStore.closeAll();
+  playbookStore.clearCache();
 }
 
 /**
  * Test utility for initializing database state between tests.
  * This is only intended for use in test environments.
  *
- * @param params.playbookStore - Optional playbook store to close connections and clear cache
+ * @param params.database - The database instance to use
  * @param params.keepUsers - When true, only deletes playbooks. When false, resets entire database and creates dummy user.
  */
 export async function initializeTestDatabase(params: {
-  playbookStore?: PlaybookStore;
-  keepUsers?: boolean;
+  database: Database;
+  keepUsers: boolean;
 }) {
-  const { playbookStore, keepUsers = false } = params;
-  const db = getTestDb();
-
-  // Close all active playbook connections and clear cache if available
-  if (playbookStore) {
-    await playbookStore.closeAll();
-    playbookStore.clearCache();
-  }
+  const { database, keepUsers } = params;
+  const db = database.drizzle;
 
   if (keepUsers) {
     // Delete only playbooks, keeping users intact

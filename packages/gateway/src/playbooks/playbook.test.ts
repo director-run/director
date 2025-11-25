@@ -1,16 +1,26 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { initializeTestDatabase, makeTestDatabase } from "../test/db";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { Database } from "../db/database";
+import { DATABASE_URL } from "../env";
+import { initializeTestDatabase } from "../test/db";
 import { makeFooBarServerStdioConfig } from "../test/fixtures";
 import { Playbook } from "./playbook";
 
 describe("Playbook", async () => {
-  const database = makeTestDatabase();
+  let database: Database;
   let playbook: Playbook;
   const userId = "dummy-user-id";
 
+  beforeAll(() => {
+    database = Database.create(DATABASE_URL);
+  });
+
+  afterAll(async () => {
+    await database.close();
+  });
+
   beforeEach(async () => {
     // Clear the database and create dummy user
-    await initializeTestDatabase({ keepUsers: true });
+    await initializeTestDatabase({ database, keepUsers: true });
 
     // Create a test playbook
     const created = await database.createPlaybook({

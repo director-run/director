@@ -12,9 +12,10 @@ import {
   register as clientRegister,
   createGatewayClient,
 } from "../client";
-import { SERVER_PORT } from "../env";
+import { Database } from "../db/database";
+import { DATABASE_URL, SERVER_PORT } from "../env";
 import { Gateway } from "../gateway";
-import { initializeTestDatabase, makeTestDatabase } from "./db";
+import { initializeTestDatabase, resetPlaybookStore } from "./db";
 
 const PROXY_TARGET_PORT = 4521;
 
@@ -28,10 +29,12 @@ export class IntegrationTestHarness {
   private fooBarServerInstance: Server;
   private sessionCookie: string | null = null;
   private baseURL: string;
+  private _database: Database;
   public userId: string | null = null;
 
   private constructor(params: {
     gateway: Gateway;
+    database: Database;
     client: ReturnType<typeof createGatewayClient>;
     echoServerSSEInstance: Server;
     kitchenSinkServerInstance: Server;
@@ -39,6 +42,7 @@ export class IntegrationTestHarness {
     baseURL: string;
   }) {
     this.gateway = params.gateway;
+    this._database = params.database;
     this.client = params.client;
     this.echoServerSSEInstance = params.echoServerSSEInstance;
     this.kitchenSinkServerInstance = params.kitchenSinkServerInstance;
@@ -51,10 +55,8 @@ export class IntegrationTestHarness {
    * @param keepUsers - When true, only deletes playbooks. When false, resets entire database.
    */
   public async initializeDatabase(keepUsers = false) {
-    await initializeTestDatabase({
-      playbookStore: this.gateway.playbookStore,
-      keepUsers,
-    });
+    await resetPlaybookStore(this.gateway.playbookStore);
+    await initializeTestDatabase({ database: this._database, keepUsers });
   }
 
   public get database() {
@@ -116,10 +118,10 @@ export class IntegrationTestHarness {
   }
 
   public static async start() {
-    const database = makeTestDatabase();
+    const database = Database.create(DATABASE_URL);
 
     // Initialize test database before starting
-    await initializeTestDatabase({});
+    await initializeTestDatabase({ database, keepUsers: false });
 
     const baseURL = `http://localhost:${SERVER_PORT}`;
 
@@ -150,6 +152,7 @@ export class IntegrationTestHarness {
 
     return new IntegrationTestHarness({
       gateway,
+      database,
       client,
       echoServerSSEInstance,
       kitchenSinkServerInstance,
@@ -161,6 +164,7 @@ export class IntegrationTestHarness {
   public async stop() {
     await this.initializeDatabase(true);
     await this.gateway.stop();
+    await this._database.close();
     await this.echoServerSSEInstance?.close();
     await this.kitchenSinkServerInstance?.close();
     await this.fooBarServerInstance?.close();

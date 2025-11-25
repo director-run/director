@@ -16,11 +16,11 @@ import * as schema from "./schema";
 
 export class Database {
   private pool: Pool;
-  private db: ReturnType<typeof drizzle>;
+  private _drizzle: ReturnType<typeof drizzle>;
 
   private constructor(connectionString: string) {
     this.pool = new Pool({ connectionString });
-    this.db = drizzle(this.pool, { schema });
+    this._drizzle = drizzle(this.pool, { schema });
   }
 
   public static create(connectionString: string): Database {
@@ -31,8 +31,13 @@ export class Database {
     await this.pool.end();
   }
 
+  /** Direct access to drizzle instance for advanced operations */
+  public get drizzle() {
+    return this._drizzle;
+  }
+
   public async getPlaybookById(id: string, userId: string) {
-    const playbook = await this.db
+    const playbook = await this._drizzle
       .select()
       .from(playbooksTable)
       .where(and(eq(playbooksTable.id, id), eq(playbooksTable.userId, userId)))
@@ -66,7 +71,7 @@ export class Database {
   }
 
   public async getAllPlaybooks(userId: string) {
-    return await this.db
+    return await this._drizzle
       .select()
       .from(playbooksTable)
       .where(eq(playbooksTable.userId, userId));
@@ -77,7 +82,7 @@ export class Database {
   ) {
     const id = playbook.id || crypto.randomUUID();
     return (
-      await this.db
+      await this._drizzle
         .insert(playbooksTable)
         .values({ ...playbook, id })
         .returning()
@@ -89,20 +94,20 @@ export class Database {
     userId: string,
     playbook: Partial<PlaybookInsertParams>,
   ) {
-    await this.db
+    await this._drizzle
       .update(playbooksTable)
       .set({ ...playbook, updatedAt: new Date() })
       .where(and(eq(playbooksTable.id, id), eq(playbooksTable.userId, userId)));
   }
 
   public async deletePlaybook(id: string, userId: string) {
-    await this.db
+    await this._drizzle
       .delete(playbooksTable)
       .where(and(eq(playbooksTable.id, id), eq(playbooksTable.userId, userId)));
   }
 
   public async activateUser(userId: string) {
-    await this.db
+    await this._drizzle
       .update(userTable)
       .set({ status: "ACTIVE" })
       .where(eq(userTable.id, userId));
@@ -110,14 +115,14 @@ export class Database {
 
   // Server operations
   public async getServers(playbookId: string) {
-    return await this.db
+    return await this._drizzle
       .select()
       .from(playbookServersTable)
       .where(eq(playbookServersTable.playbookId, playbookId));
   }
 
   public async getServerByName(playbookId: string, name: string) {
-    const servers = await this.db
+    const servers = await this._drizzle
       .select()
       .from(playbookServersTable)
       .where(
@@ -140,7 +145,10 @@ export class Database {
 
   public async addServer(server: PlaybookServerInsertParams) {
     return (
-      await this.db.insert(playbookServersTable).values(server).returning()
+      await this._drizzle
+        .insert(playbookServersTable)
+        .values(server)
+        .returning()
     )[0];
   }
 
@@ -149,7 +157,7 @@ export class Database {
     serverName: string,
     server: Partial<PlaybookServerInsertParams>,
   ) {
-    await this.db
+    await this._drizzle
       .update(playbookServersTable)
       .set({ ...server, updatedAt: new Date() })
       .where(
@@ -161,7 +169,7 @@ export class Database {
   }
 
   public async removeServer(playbookId: string, serverName: string) {
-    await this.db
+    await this._drizzle
       .delete(playbookServersTable)
       .where(
         and(
@@ -173,14 +181,14 @@ export class Database {
 
   // Prompt operations
   public async getPrompts(playbookId: string) {
-    return await this.db
+    return await this._drizzle
       .select()
       .from(playbookPromptsTable)
       .where(eq(playbookPromptsTable.playbookId, playbookId));
   }
 
   public async getPromptByName(playbookId: string, name: string) {
-    const prompts = await this.db
+    const prompts = await this._drizzle
       .select()
       .from(playbookPromptsTable)
       .where(
@@ -203,7 +211,10 @@ export class Database {
 
   public async addPrompt(prompt: PlaybookPromptInsertParams) {
     return (
-      await this.db.insert(playbookPromptsTable).values(prompt).returning()
+      await this._drizzle
+        .insert(playbookPromptsTable)
+        .values(prompt)
+        .returning()
     )[0];
   }
 
@@ -212,7 +223,7 @@ export class Database {
     promptName: string,
     prompt: Partial<PlaybookPromptInsertParams>,
   ) {
-    await this.db
+    await this._drizzle
       .update(playbookPromptsTable)
       .set({ ...prompt, updatedAt: new Date() })
       .where(
@@ -224,7 +235,7 @@ export class Database {
   }
 
   public async removePrompt(playbookId: string, promptName: string) {
-    await this.db
+    await this._drizzle
       .delete(playbookPromptsTable)
       .where(
         and(

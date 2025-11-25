@@ -1,14 +1,24 @@
 import { FakeClient } from "@director.run/client-configurator/test/fake-client";
 import type { AbstractClient } from "@director.run/client-configurator/types";
 import { joinURL } from "@director.run/utilities/url";
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 import { ClientStore } from "../..//client-store";
+import { Database } from "../../db/database";
+import { DATABASE_URL } from "../../env";
 import {
   getSSEPathForPlaybook,
   getStreamablePathForPlaybook,
 } from "../../helpers";
 import { PlaybookStore } from "../../playbooks/playbook-store";
-import { initializeTestDatabase, makeTestDatabase } from "../../test/db";
+import { initializeTestDatabase } from "../../test/db";
 import { createAppRouter } from "./index";
 
 class TestClientStore extends ClientStore {
@@ -33,6 +43,7 @@ class TestClientStore extends ClientStore {
 }
 
 describe("Client Router", () => {
+  let database: Database;
   let playbookStore: PlaybookStore;
   let clientStore: TestClientStore;
   let app: ReturnType<typeof createAppRouter>;
@@ -40,12 +51,16 @@ describe("Client Router", () => {
   const BASE_URL = "http://local.test";
 
   beforeAll(async () => {
-    const database = makeTestDatabase();
-    await initializeTestDatabase({});
+    database = Database.create(DATABASE_URL);
+    await initializeTestDatabase({ database, keepUsers: false });
     playbookStore = await PlaybookStore.create({
       database,
       oauth: { storage: "memory", baseCallbackUrl: BASE_URL },
     });
+  });
+
+  afterAll(async () => {
+    await database.close();
   });
 
   beforeEach(() => {

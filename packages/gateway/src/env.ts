@@ -1,30 +1,63 @@
 import path from "path";
+import { fileURLToPath } from "url";
 import { isDevelopment, isTest } from "@director.run/utilities/env";
+import { createEnv } from "@t3-oss/env-core";
 import dotenv from "dotenv";
+import { z } from "zod";
 
+// Get the package root directory relative to this file's location
+// This works correctly regardless of where the process is run from
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const packageRoot = path.resolve(__dirname, "..");
+
+// Load environment-specific .env files before validation
+// Override is needed because some shells may have empty strings for env vars
 if (isTest()) {
-  console.log("Loading test environment");
-  dotenv.config({ path: path.join(__dirname, "../env/.env.test") });
+  dotenv.config({
+    path: path.join(packageRoot, "env/.env.test"),
+    override: true,
+  });
 } else if (isDevelopment()) {
-  console.log("Loading development environment");
-  dotenv.config({ path: path.join(__dirname, "../env/.env.dev") });
-} else {
-  console.log("Loading production environment");
+  dotenv.config({
+    path: path.join(packageRoot, "env/.env.dev"),
+    override: true,
+  });
 }
 
-export const DEBUG = process.env.DEBUG === "true";
-export const SERVER_PORT = parseInt(process.env.PORT || "3673");
-export const REGISTRY_URL =
-  process.env.REGISTRY_URL || "https://registry.director.run";
-export const REGISTRY_API_KEY = process.env.REGISTRY_API_KEY;
-export const TELEMETRY_WRITE_KEY = "";
-export const TELEMETRY_ENABLED = process.env.TELEMETRY_ENABLED === "true";
-export const OAUTH_STORAGE = "disk";
-export const OAUTH_TOKEN_DIRECTORY = "./tokens";
-
-export const DATABASE_URL = process.env.DATABASE_URL || "";
-export const WAITLIST_ENABLED = process.env.WAITLIST_ENABLED === "true";
-export const BETTER_AUTH_SECRET =
-  process.env.BETTER_AUTH_SECRET || "development-secret-change-in-production";
-export const BASE_URL = process.env.BASE_URL || "";
-export const ALLOWED_ORIGINS = [BASE_URL];
+export const env = createEnv({
+  server: {
+    DATABASE_URL: z.string().url(),
+    BASE_URL: z.string().url(),
+    SERVER_PORT: z
+      .string()
+      .default("3673")
+      .transform((s) => parseInt(s, 10))
+      .pipe(z.number().positive()),
+    DEBUG: z
+      .string()
+      .default("false")
+      .transform((s) => s === "true"),
+    REGISTRY_URL: z.string().url().default("https://registry.director.run"),
+    REGISTRY_API_KEY: z.string().optional(),
+    TELEMETRY_ENABLED: z
+      .string()
+      .default("false")
+      .transform((s) => s === "true"),
+    TELEMETRY_WRITE_KEY: z.string().default(""),
+    WAITLIST_ENABLED: z
+      .string()
+      .default("false")
+      .transform((s) => s === "true"),
+    OAUTH_STORAGE: z.string().default("disk"),
+    OAUTH_TOKEN_DIRECTORY: z.string().default("./tokens"),
+    BETTER_AUTH_SECRET: z
+      .string()
+      .default("development-secret-change-in-production"),
+    ALLOWED_ORIGINS: z
+      .string()
+      .default("")
+      .transform((s) => s.split(",").filter(Boolean)),
+  },
+  runtimeEnv: process.env,
+  emptyStringAsUndefined: true,
+});

@@ -1,6 +1,6 @@
 import { createGatewayClient, register } from "@director.run/gateway/client";
 import { Database } from "@director.run/gateway/db/database";
-import { DATABASE_URL, SERVER_PORT } from "@director.run/gateway/env";
+import { env } from "@director.run/gateway/env";
 import { Gateway } from "@director.run/gateway/gateway";
 import {
   initializeTestDatabase,
@@ -21,16 +21,16 @@ describe("CLI integration tests", () => {
   let gateway: Gateway;
   let database: Database;
   let gatewayClient: ReturnType<typeof createGatewayClient>;
-  const baseURL = `http://localhost:${SERVER_PORT}`;
+  const baseURL = `http://localhost:${env.SERVER_PORT}`;
 
   beforeAll(async () => {
-    database = Database.create(DATABASE_URL);
+    database = Database.create(env.DATABASE_URL);
     await initializeTestDatabase({ database, keepUsers: false });
 
     gateway = await Gateway.start({
       database,
       baseUrl: baseURL,
-      port: SERVER_PORT,
+      port: env.SERVER_PORT,
       oauth: {
         storage: "memory",
         baseCallbackUrl: baseURL,

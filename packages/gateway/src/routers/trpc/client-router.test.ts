@@ -12,7 +12,7 @@ import {
 } from "vitest";
 import { ClientStore } from "../..//client-store";
 import { Database } from "../../db/database";
-import { DATABASE_URL } from "../../env";
+import { env } from "../../env";
 import {
   getSSEPathForPlaybook,
   getStreamablePathForPlaybook,
@@ -52,7 +52,7 @@ describe("Client Router", () => {
   const BASE_URL = "http://local.test";
 
   beforeAll(async () => {
-    database = Database.create(DATABASE_URL);
+    database = Database.create(env.DATABASE_URL);
     await initializeTestDatabase({ database, keepUsers: false });
     testUser = await createTestUser(database);
     playbookStore = await PlaybookStore.create({

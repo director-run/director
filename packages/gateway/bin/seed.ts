@@ -1,7 +1,7 @@
 import { generateRandomString, hashPassword } from "better-auth/crypto";
 import { Database } from "../src/db/database";
 import { accountTable, userTable } from "../src/db/schema";
-import { DATABASE_URL } from "../src/env";
+import { env } from "../src/env";
 import { PlaybookStore } from "../src/playbooks/playbook-store";
 import { initializeTestDatabase } from "../src/test/db";
 
@@ -55,7 +55,7 @@ async function createSeedUser(
 async function seed() {
   console.log("Seeding database...");
 
-  const database = Database.create(DATABASE_URL);
+  const database = Database.create(env.DATABASE_URL);
 
   try {
     // Reset the database completely

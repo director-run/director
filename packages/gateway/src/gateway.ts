@@ -16,7 +16,7 @@ import express from "express";
 import { auth } from "./auth";
 import { ClientStore } from "./client-store";
 import type { Database } from "./db/database";
-import { ALLOWED_ORIGINS, REGISTRY_URL } from "./env";
+import { env } from "./env";
 import { PlaybookStore } from "./playbooks/playbook-store";
 import { createSSERouter } from "./routers/sse";
 import { createStreamableRouter } from "./routers/streamable";
@@ -56,7 +56,7 @@ export class Gateway {
 
     this.app.use(
       cors({
-        origin: ALLOWED_ORIGINS,
+        origin: [env.BASE_URL, ...env.ALLOWED_ORIGINS],
         credentials: true,
       }),
     );
@@ -73,7 +73,7 @@ export class Gateway {
           config: {
             basePath: "/studio",
             gatewayUrl: this.baseUrl,
-            registryUrl: REGISTRY_URL,
+            registryUrl: env.REGISTRY_URL,
           },
         }),
       );

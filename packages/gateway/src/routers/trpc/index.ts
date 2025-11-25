@@ -4,7 +4,7 @@ import * as trpcExpress from "@trpc/server/adapters/express";
 import { auth } from "../../auth";
 import type { ClientStore } from "../../client-store";
 import type { UserStatus } from "../../db/schema";
-import { WAITLIST_ENABLED } from "../../env";
+import { env } from "../../env";
 import { PlaybookStore } from "../../playbooks/playbook-store";
 import { getStatus } from "../../status";
 import { createClientRouter } from "./client-router";
@@ -30,7 +30,7 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
   if (!context.userId) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
-  if (WAITLIST_ENABLED && context.userStatus === "PENDING") {
+  if (env.WAITLIST_ENABLED && context.userStatus === "PENDING") {
     throw new TRPCError({
       code: "FORBIDDEN",
       message: "USER_PENDING",

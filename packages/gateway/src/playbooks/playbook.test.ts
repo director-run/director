@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { Database } from "../db/database";
-import { DATABASE_URL } from "../env";
+import { env } from "../env";
 import { createTestUser, initializeTestDatabase } from "../test/db";
 import { makeFooBarServerStdioConfig } from "../test/fixtures";
 import { Playbook } from "./playbook";
@@ -11,7 +11,7 @@ describe("Playbook", async () => {
   let testUser: Awaited<ReturnType<typeof createTestUser>>;
 
   beforeAll(async () => {
-    database = Database.create(DATABASE_URL);
+    database = Database.create(env.DATABASE_URL);
     await initializeTestDatabase({ database, keepUsers: false });
     testUser = await createTestUser(database);
   });

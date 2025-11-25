@@ -9,7 +9,7 @@ import {
   vi,
 } from "vitest";
 import { Database } from "../db/database";
-import { DATABASE_URL } from "../env";
+import { env } from "../env";
 import {
   createTestUser,
   initializeTestDatabase,
@@ -24,7 +24,7 @@ describe("PlaybookStore", () => {
   let testUser: Awaited<ReturnType<typeof createTestUser>>;
 
   beforeAll(async () => {
-    database = Database.create(DATABASE_URL);
+    database = Database.create(env.DATABASE_URL);
     await initializeTestDatabase({ database, keepUsers: false });
     testUser = await createTestUser(database);
   });

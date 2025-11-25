@@ -1,7 +1,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import { Database } from "../src/db/database";
-import { BASE_URL, DATABASE_URL, SERVER_PORT } from "../src/env";
+import { env } from "../src/env";
 import { Gateway } from "../src/gateway";
 
 // KEEP THIS COMMENTED OUT FOR NOW
@@ -25,19 +25,19 @@ import { Gateway } from "../src/gateway";
 // };
 
 async function start() {
-  const database = Database.create(DATABASE_URL);
+  const database = Database.create(env.DATABASE_URL);
 
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const assetsPath = path.join(__dirname, "./studio");
 
   await Gateway.start({
     database,
-    baseUrl: BASE_URL,
-    port: SERVER_PORT,
+    baseUrl: env.BASE_URL,
+    port: env.SERVER_PORT,
     studioAssetsPath: assetsPath,
     oauth: {
       storage: "memory",
-      baseCallbackUrl: BASE_URL,
+      baseCallbackUrl: env.BASE_URL,
     },
   });
 }

@@ -13,7 +13,7 @@ import {
   type Prompt,
   PromptManager,
 } from "../capabilities/prompt-manager";
-import type { PlaybookDbStore } from "../db/playbooks";
+import type { Database } from "../db";
 import {
   getSSEPathForPlaybook,
   getStreamablePathForPlaybook,
@@ -46,7 +46,7 @@ export {
 };
 
 export class Playbook extends ProxyServer {
-  private _dbStore: PlaybookDbStore;
+  private _database: Database;
   private _telemetry?: Telemetry;
   private _oAuthHandler?: OAuthProviderFactory;
   private _description?: string;
@@ -57,7 +57,7 @@ export class Playbook extends ProxyServer {
     attributes: PlaybookParams,
     params: {
       oAuthHandler?: OAuthProviderFactory;
-      dbStore: PlaybookDbStore;
+      database: Database;
       telemetry?: Telemetry;
     },
   ) {
@@ -78,7 +78,7 @@ export class Playbook extends ProxyServer {
     this._description = attributes.description;
     this._userId = attributes.userId;
     this._oAuthHandler = params.oAuthHandler;
-    this._dbStore = params.dbStore;
+    this._database = params.database;
     this._telemetry = params.telemetry;
   }
 
@@ -207,13 +207,13 @@ export class Playbook extends ProxyServer {
     attributes: PlaybookParams,
     params: {
       oAuthHandler?: OAuthProviderFactory;
-      dbStore: PlaybookDbStore;
+      database: Database;
       telemetry?: Telemetry;
     },
   ): Promise<Playbook> {
     const playbook = new Playbook(attributes, {
       oAuthHandler: params.oAuthHandler,
-      dbStore: params.dbStore,
+      database: params.database,
       telemetry: params.telemetry,
     });
     await playbook.connectTargets();
@@ -232,13 +232,13 @@ export class Playbook extends ProxyServer {
 
   private async persistToDatabase(): Promise<void> {
     // Update playbook metadata
-    await this._dbStore.updatePlaybook(this.id, this.userId, {
+    await this._database.updatePlaybook(this.id, this.userId, {
       name: this.name,
       description: this.description,
     });
 
     // Get current servers from database
-    const currentServers = await this._dbStore.getServers(this.id);
+    const currentServers = await this._database.getServers(this.id);
     const currentServerNames = new Set(currentServers.map((s) => s.name));
 
     // Get current servers from memory
@@ -250,29 +250,29 @@ export class Playbook extends ProxyServer {
     // Remove servers that are in database but not in memory
     for (const serverName of currentServerNames) {
       if (!memoryServerNames.has(serverName)) {
-        await this._dbStore.removeServer(this.id, serverName);
+        await this._database.removeServer(this.id, serverName);
       }
     }
 
     // Add or update servers that are in memory
     for (const target of memoryServers) {
       const plainObject = await target.toPlainObject();
-      const serverParams = this._dbStore.targetToServerInsertParams(
+      const serverParams = this._database.targetToServerInsertParams(
         this.id,
         plainObject,
       );
 
       if (currentServerNames.has(target.name)) {
         // Update existing server
-        await this._dbStore.updateServer(this.id, target.name, serverParams);
+        await this._database.updateServer(this.id, target.name, serverParams);
       } else {
         // Add new server
-        await this._dbStore.addServer(serverParams);
+        await this._database.addServer(serverParams);
       }
     }
 
     // Get current prompts from database
-    const currentPrompts = await this._dbStore.getPrompts(this.id);
+    const currentPrompts = await this._database.getPrompts(this.id);
     const currentPromptNames = new Set(currentPrompts.map((p) => p.name));
 
     // Get current prompts from memory
@@ -282,7 +282,7 @@ export class Playbook extends ProxyServer {
     // Remove prompts that are in database but not in memory
     for (const promptName of currentPromptNames) {
       if (!memoryPromptNames.has(promptName)) {
-        await this._dbStore.removePrompt(this.id, promptName);
+        await this._database.removePrompt(this.id, promptName);
       }
     }
 
@@ -290,14 +290,14 @@ export class Playbook extends ProxyServer {
     for (const prompt of memoryPrompts) {
       if (currentPromptNames.has(prompt.name)) {
         // Update existing prompt
-        await this._dbStore.updatePrompt(this.id, prompt.name, {
+        await this._database.updatePrompt(this.id, prompt.name, {
           title: prompt.title,
           description: prompt.description,
           body: prompt.body,
         });
       } else {
         // Add new prompt
-        await this._dbStore.addPrompt({
+        await this._database.addPrompt({
           playbookId: this.id,
           name: prompt.name,
           title: prompt.title,

@@ -14,7 +14,7 @@ import {
 } from "../client";
 import { SERVER_PORT } from "../env";
 import { Gateway } from "../gateway";
-import { initializeTestDatabase, makeTestDbStore } from "./db";
+import { initializeTestDatabase, makeTestDatabase } from "./db";
 
 const PROXY_TARGET_PORT = 4521;
 
@@ -52,14 +52,14 @@ export class IntegrationTestHarness {
    */
   public async initializeDatabase(keepUsers = false) {
     await initializeTestDatabase({
-      dbStore: this.gateway.dbStore,
+      database: this.gateway.database,
       playbookStore: this.gateway.playbookStore,
       keepUsers,
     });
   }
 
   public get database() {
-    return this.gateway.dbStore;
+    return this.gateway.database;
   }
 
   public getUserId(): string {
@@ -78,7 +78,7 @@ export class IntegrationTestHarness {
     const { user, sessionCookie } = await clientRegister(this.baseURL, params);
 
     // Activate user for testing - new users are PENDING by default
-    await this.gateway.dbStore.activateUser(user.id);
+    await this.gateway.database.activateUser(user.id);
 
     this.sessionCookie = sessionCookie;
     this.userId = user.id;
@@ -117,15 +117,15 @@ export class IntegrationTestHarness {
   }
 
   public static async start() {
-    const dbStore = makeTestDbStore();
+    const database = makeTestDatabase();
 
     // Initialize test database before starting
-    await initializeTestDatabase({ dbStore });
+    await initializeTestDatabase({ database });
 
     const baseURL = `http://localhost:${SERVER_PORT}`;
 
     const gateway = await Gateway.start({
-      dbStore,
+      database,
       baseUrl: baseURL,
       port: SERVER_PORT,
       oauth: {

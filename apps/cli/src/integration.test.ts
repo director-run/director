@@ -1,5 +1,5 @@
 import { createGatewayClient, register } from "@director.run/gateway/client";
-import { createStore } from "@director.run/gateway/db";
+import { createDatabase } from "@director.run/gateway/db";
 import { DATABASE_URL, SERVER_PORT } from "@director.run/gateway/env";
 import { Gateway } from "@director.run/gateway/gateway";
 import { initializeTestDatabase } from "@director.run/gateway/test/db";
@@ -18,15 +18,15 @@ describe("CLI integration tests", () => {
   let gateway: Gateway;
   let gatewayClient: ReturnType<typeof createGatewayClient>;
   const baseURL = `http://localhost:${SERVER_PORT}`;
-  const dbStore = createStore({ connectionString: DATABASE_URL }).playbooks;
+  const database = createDatabase(DATABASE_URL);
 
   beforeAll(async () => {
-    await dbStore.deleteAllPlaybooks();
-    await dbStore.reset();
-    await dbStore.createDummyUser();
+    await database.deleteAllPlaybooks();
+    await database.reset();
+    await database.createDummyUser();
 
     gateway = await Gateway.start({
-      dbStore,
+      database,
       baseUrl: baseURL,
       port: SERVER_PORT,
       oauth: {
@@ -42,7 +42,7 @@ describe("CLI integration tests", () => {
     });
 
     // Activate user for testing - new users are PENDING by default
-    await dbStore.activateUser(user.id);
+    await database.activateUser(user.id);
 
     saveAuthToken(sessionCookie);
     gatewayClient = createGatewayClient(baseURL, {
@@ -57,7 +57,7 @@ describe("CLI integration tests", () => {
 
   beforeEach(async () => {
     await initializeTestDatabase({
-      dbStore,
+      database,
       playbookStore: gateway.playbookStore,
       keepUsers: true,
     });

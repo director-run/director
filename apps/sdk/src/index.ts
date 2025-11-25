@@ -5,11 +5,7 @@ export {
 
 export { Gateway } from "@director.run/gateway/gateway";
 
-export {
-  DatabaseConnection,
-  createStore,
-  PlaybookDbStore,
-} from "@director.run/gateway/db";
+export { createDatabase, Database } from "@director.run/gateway/db";
 
 export type {
   PlaybookInsertParams,

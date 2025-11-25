@@ -1,7 +1,8 @@
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { and, eq } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 import type { PlaybookTarget } from "../playbooks/playbook-schema";
-import type { DatabaseConnection } from "./index";
 import {
   type PlaybookInsertParams,
   type PlaybookPromptInsertParams,
@@ -14,12 +15,27 @@ import {
   userTable,
   verificationTable,
 } from "./schema";
+import * as schema from "./schema";
 
-export class PlaybookDbStore {
-  constructor(private readonly dbConnection: DatabaseConnection) {}
+export class Database {
+  private pool: Pool;
+  private db: ReturnType<typeof drizzle>;
+
+  private constructor(connectionString: string) {
+    this.pool = new Pool({ connectionString });
+    this.db = drizzle(this.pool, { schema });
+  }
+
+  public static create(connectionString: string): Database {
+    return new Database(connectionString);
+  }
+
+  public async close(): Promise<void> {
+    await this.pool.end();
+  }
 
   public async getPlaybookById(id: string, userId: string) {
-    const playbook = await this.dbConnection.db
+    const playbook = await this.db
       .select()
       .from(playbooksTable)
       .where(and(eq(playbooksTable.id, id), eq(playbooksTable.userId, userId)))
@@ -53,7 +69,7 @@ export class PlaybookDbStore {
   }
 
   public async getAllPlaybooks(userId: string) {
-    return await this.dbConnection.db
+    return await this.db
       .select()
       .from(playbooksTable)
       .where(eq(playbooksTable.userId, userId));
@@ -64,7 +80,7 @@ export class PlaybookDbStore {
   ) {
     const id = playbook.id || crypto.randomUUID();
     return (
-      await this.dbConnection.db
+      await this.db
         .insert(playbooksTable)
         .values({ ...playbook, id })
         .returning()
@@ -76,34 +92,34 @@ export class PlaybookDbStore {
     userId: string,
     playbook: Partial<PlaybookInsertParams>,
   ) {
-    await this.dbConnection.db
+    await this.db
       .update(playbooksTable)
       .set({ ...playbook, updatedAt: new Date() })
       .where(and(eq(playbooksTable.id, id), eq(playbooksTable.userId, userId)));
   }
 
   public async deletePlaybook(id: string, userId: string) {
-    await this.dbConnection.db
+    await this.db
       .delete(playbooksTable)
       .where(and(eq(playbooksTable.id, id), eq(playbooksTable.userId, userId)));
   }
 
   public async deleteAllPlaybooks() {
-    await this.dbConnection.db.delete(playbooksTable);
+    await this.db.delete(playbooksTable);
   }
 
   public async reset() {
     // Delete in order to respect foreign key constraints
-    await this.dbConnection.db.delete(verificationTable);
-    await this.dbConnection.db.delete(sessionTable);
-    await this.dbConnection.db.delete(accountTable);
-    await this.dbConnection.db.delete(playbooksTable);
-    await this.dbConnection.db.delete(userTable);
+    await this.db.delete(verificationTable);
+    await this.db.delete(sessionTable);
+    await this.db.delete(accountTable);
+    await this.db.delete(playbooksTable);
+    await this.db.delete(userTable);
   }
 
   public async createDummyUser() {
     // Use onConflictDoNothing to avoid errors if user already exists
-    await this.dbConnection.db
+    await this.db
       .insert(userTable)
       .values({
         id: "dummy-user-id",
@@ -116,7 +132,7 @@ export class PlaybookDbStore {
   }
 
   public async activateUser(userId: string) {
-    await this.dbConnection.db
+    await this.db
       .update(userTable)
       .set({ status: "ACTIVE" })
       .where(eq(userTable.id, userId));
@@ -124,14 +140,14 @@ export class PlaybookDbStore {
 
   // Server operations
   public async getServers(playbookId: string) {
-    return await this.dbConnection.db
+    return await this.db
       .select()
       .from(playbookServersTable)
       .where(eq(playbookServersTable.playbookId, playbookId));
   }
 
   public async getServerByName(playbookId: string, name: string) {
-    const servers = await this.dbConnection.db
+    const servers = await this.db
       .select()
       .from(playbookServersTable)
       .where(
@@ -154,10 +170,7 @@ export class PlaybookDbStore {
 
   public async addServer(server: PlaybookServerInsertParams) {
     return (
-      await this.dbConnection.db
-        .insert(playbookServersTable)
-        .values(server)
-        .returning()
+      await this.db.insert(playbookServersTable).values(server).returning()
     )[0];
   }
 
@@ -166,7 +179,7 @@ export class PlaybookDbStore {
     serverName: string,
     server: Partial<PlaybookServerInsertParams>,
   ) {
-    await this.dbConnection.db
+    await this.db
       .update(playbookServersTable)
       .set({ ...server, updatedAt: new Date() })
       .where(
@@ -178,7 +191,7 @@ export class PlaybookDbStore {
   }
 
   public async removeServer(playbookId: string, serverName: string) {
-    await this.dbConnection.db
+    await this.db
       .delete(playbookServersTable)
       .where(
         and(
@@ -190,14 +203,14 @@ export class PlaybookDbStore {
 
   // Prompt operations
   public async getPrompts(playbookId: string) {
-    return await this.dbConnection.db
+    return await this.db
       .select()
       .from(playbookPromptsTable)
       .where(eq(playbookPromptsTable.playbookId, playbookId));
   }
 
   public async getPromptByName(playbookId: string, name: string) {
-    const prompts = await this.dbConnection.db
+    const prompts = await this.db
       .select()
       .from(playbookPromptsTable)
       .where(
@@ -220,10 +233,7 @@ export class PlaybookDbStore {
 
   public async addPrompt(prompt: PlaybookPromptInsertParams) {
     return (
-      await this.dbConnection.db
-        .insert(playbookPromptsTable)
-        .values(prompt)
-        .returning()
+      await this.db.insert(playbookPromptsTable).values(prompt).returning()
     )[0];
   }
 
@@ -232,7 +242,7 @@ export class PlaybookDbStore {
     promptName: string,
     prompt: Partial<PlaybookPromptInsertParams>,
   ) {
-    await this.dbConnection.db
+    await this.db
       .update(playbookPromptsTable)
       .set({ ...prompt, updatedAt: new Date() })
       .where(
@@ -244,7 +254,7 @@ export class PlaybookDbStore {
   }
 
   public async removePrompt(playbookId: string, promptName: string) {
-    await this.dbConnection.db
+    await this.db
       .delete(playbookPromptsTable)
       .where(
         and(
@@ -317,4 +327,8 @@ export class PlaybookDbStore {
       };
     }
   }
+}
+
+export function createDatabase(connectionString: string): Database {
+  return Database.create(connectionString);
 }

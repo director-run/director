@@ -8,7 +8,7 @@ import {
   getStreamablePathForPlaybook,
 } from "../../helpers";
 import { PlaybookStore } from "../../playbooks/playbook-store";
-import { makeTestDbStore } from "../../test/db";
+import { makeTestDatabase } from "../../test/db";
 import { createAppRouter } from "./index";
 
 class TestClientStore extends ClientStore {
@@ -40,11 +40,11 @@ describe("Client Router", () => {
   const BASE_URL = "http://local.test";
 
   beforeAll(async () => {
-    const dbStore = makeTestDbStore();
-    await dbStore.deleteAllPlaybooks();
-    await dbStore.createDummyUser();
+    const database = makeTestDatabase();
+    await database.deleteAllPlaybooks();
+    await database.createDummyUser();
     playbookStore = await PlaybookStore.create({
-      dbStore,
+      database,
       oauth: { storage: "memory", baseCallbackUrl: BASE_URL },
     });
   });

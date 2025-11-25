@@ -15,7 +15,7 @@ import cors from "cors";
 import express from "express";
 import { auth } from "./auth";
 import { ClientStore } from "./client-store";
-import type { PlaybookDbStore } from "./db/playbooks";
+import type { Database } from "./db";
 import { ALLOWED_ORIGINS, REGISTRY_URL } from "./env";
 import { PlaybookStore } from "./playbooks/playbook-store";
 import { createSSERouter } from "./routers/sse";
@@ -27,7 +27,7 @@ const logger = getLogger("Gateway");
 export class Gateway {
   public readonly playbookStore: PlaybookStore;
   private server?: Server;
-  public readonly dbStore: PlaybookDbStore;
+  public readonly database: Database;
   private app: express.Express;
   private telemetry?: Telemetry;
   private studioAssetsPath?: string;
@@ -37,7 +37,7 @@ export class Gateway {
 
   private constructor(attribs: {
     playbookStore: PlaybookStore;
-    dbStore: PlaybookDbStore;
+    database: Database;
     telemetry?: Telemetry;
     studioAssetsPath?: string;
     baseUrl: string;
@@ -45,7 +45,7 @@ export class Gateway {
     port: number;
   }) {
     this.playbookStore = attribs.playbookStore;
-    this.dbStore = attribs.dbStore;
+    this.database = attribs.database;
     this.telemetry = attribs.telemetry;
     this.studioAssetsPath = attribs.studioAssetsPath;
     this.baseUrl = attribs.baseUrl;
@@ -163,7 +163,7 @@ export class Gateway {
   public static async start(
     attribs: {
       studioAssetsPath?: string;
-      dbStore: PlaybookDbStore;
+      database: Database;
       telemetry?: Telemetry;
       baseUrl: string;
       port: number;
@@ -174,7 +174,7 @@ export class Gateway {
     logger.info(`starting director gateway`);
     const clientStore = new ClientStore();
     const playbookStore = await PlaybookStore.create({
-      dbStore: attribs.dbStore,
+      database: attribs.database,
       telemetry: attribs.telemetry,
       oauth: attribs.oauth,
     });
@@ -182,7 +182,7 @@ export class Gateway {
     attribs.telemetry?.trackEvent("gateway_start");
 
     const gateway = new Gateway({
-      dbStore: attribs.dbStore,
+      database: attribs.database,
       playbookStore,
       telemetry: attribs.telemetry,
       studioAssetsPath: attribs.studioAssetsPath,

@@ -6,39 +6,39 @@ import {
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { Telemetry } from "@director.run/utilities/telemetry";
-import type { PlaybookDbStore } from "../db/playbooks";
+import type { Database } from "../db";
 import { Playbook, type PlaybookParams, type PlaybookTarget } from "./playbook";
 
 const logger = getLogger("PlaybookStore");
 
 export class PlaybookStore {
   private playbooks: Map<string, Playbook> = new Map();
-  private dbStore: PlaybookDbStore;
+  private database: Database;
   private telemetry: Telemetry;
   private _oauth?: OAuthProviderFactoryParams;
 
   private constructor(params: {
-    dbStore: PlaybookDbStore;
+    database: Database;
     telemetry?: Telemetry;
     oauth?: OAuthProviderFactoryParams;
   }) {
-    this.dbStore = params.dbStore;
+    this.database = params.database;
     this.telemetry = params.telemetry || Telemetry.noTelemetry();
     this._oauth = params.oauth;
   }
 
   public static async create({
-    dbStore,
+    database,
     telemetry,
     oauth,
   }: {
-    dbStore: PlaybookDbStore;
+    database: Database;
     telemetry?: Telemetry;
     oauth?: OAuthProviderFactoryParams;
   }): Promise<PlaybookStore> {
     logger.debug("initializing PlaybookStore");
     const store = new PlaybookStore({
-      dbStore,
+      database,
       telemetry,
       oauth,
     });
@@ -49,18 +49,18 @@ export class PlaybookStore {
 
   private async initialize(): Promise<void> {
     // Load from database
-    const dbStore = this.dbStore;
-    const dbPlaybooks = await dbStore.getAllPlaybooks("");
+    const database = this.database;
+    const dbPlaybooks = await database.getAllPlaybooks("");
     const playbooks = await Promise.all(
       dbPlaybooks.map(async (dbPlaybook) => {
-        const servers = await dbStore.getServers(dbPlaybook.id);
-        const prompts = await dbStore.getPrompts(dbPlaybook.id);
+        const servers = await database.getServers(dbPlaybook.id);
+        const prompts = await database.getPrompts(dbPlaybook.id);
         return {
           id: dbPlaybook.id,
           name: dbPlaybook.name,
           description: dbPlaybook.description ?? undefined,
           userId: dbPlaybook.userId,
-          servers: servers.map((s) => dbStore.serverRowToTarget(s)),
+          servers: servers.map((s) => database.serverRowToTarget(s)),
           prompts: prompts.map((p) => ({
             name: p.name,
             title: p.title,
@@ -92,7 +92,7 @@ export class PlaybookStore {
 
     // If not in memory, try to load from database
     if (!playbook) {
-      const dbPlaybook = await this.dbStore.getPlaybookWithDetails(
+      const dbPlaybook = await this.database.getPlaybookWithDetails(
         playbookId,
         userId,
       );
@@ -139,7 +139,7 @@ export class PlaybookStore {
       }
     }
     await playbook.close();
-    await this.dbStore.deletePlaybook(playbookId, userId);
+    await this.database.deletePlaybook(playbookId, userId);
     this.playbooks.delete(playbookId);
 
     logger.info(`successfully deleted playbook configuration: ${playbookId}`);
@@ -162,19 +162,19 @@ export class PlaybookStore {
 
   public async getAll(userId: string): Promise<Playbook[]> {
     // Load user's playbooks from database that aren't in memory yet
-    const dbPlaybooks = await this.dbStore.getAllPlaybooks(userId);
+    const dbPlaybooks = await this.database.getAllPlaybooks(userId);
 
     for (const dbPlaybook of dbPlaybooks) {
       if (!this.playbooks.has(dbPlaybook.id)) {
-        const servers = await this.dbStore.getServers(dbPlaybook.id);
-        const prompts = await this.dbStore.getPrompts(dbPlaybook.id);
+        const servers = await this.database.getServers(dbPlaybook.id);
+        const prompts = await this.database.getPrompts(dbPlaybook.id);
 
         await this.initializeAndAddPlaybook({
           id: dbPlaybook.id,
           name: dbPlaybook.name,
           description: dbPlaybook.description ?? undefined,
           userId: dbPlaybook.userId,
-          servers: servers.map((s) => this.dbStore.serverRowToTarget(s)),
+          servers: servers.map((s) => this.database.serverRowToTarget(s)),
           prompts: prompts.map((p) => ({
             name: p.name,
             title: p.title,
@@ -224,7 +224,7 @@ export class PlaybookStore {
   }): Promise<Playbook> {
     this.telemetry.trackEvent("playbook_created");
 
-    const dbPlaybook = await this.dbStore.createPlaybook({
+    const dbPlaybook = await this.database.createPlaybook({
       id,
       name,
       description,
@@ -234,8 +234,8 @@ export class PlaybookStore {
 
     // Create servers
     for (const server of servers ?? []) {
-      await this.dbStore.addServer(
-        this.dbStore.targetToServerInsertParams(playbookId, server),
+      await this.database.addServer(
+        this.database.targetToServerInsertParams(playbookId, server),
       );
     }
 
@@ -262,7 +262,7 @@ export class PlaybookStore {
             id: playbookParams.id,
           })
         : undefined,
-      dbStore: this.dbStore,
+      database: this.database,
     });
 
     this.playbooks.set(playbook.id, playbook);

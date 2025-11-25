@@ -1,9 +1,10 @@
 import path from "path";
 import { fileURLToPath } from "url";
-import { createStore } from "../src/db";
+import { createDatabase } from "../src/db";
 import { BASE_URL, DATABASE_URL, SERVER_PORT } from "../src/env";
 import { Gateway } from "../src/gateway";
 
+// KEEP THIS COMMENTED OUT FOR NOW
 // const logger = getLogger("Server");
 
 // const getStudioAssetsPath = (): string | undefined => {
@@ -24,13 +25,13 @@ import { Gateway } from "../src/gateway";
 // };
 
 async function start() {
-  const dbStore = createStore({ connectionString: DATABASE_URL }).playbooks;
+  const database = createDatabase(DATABASE_URL);
 
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const assetsPath = path.join(__dirname, "./studio");
 
   await Gateway.start({
-    dbStore,
+    database,
     baseUrl: BASE_URL,
     port: SERVER_PORT,
     studioAssetsPath: assetsPath,

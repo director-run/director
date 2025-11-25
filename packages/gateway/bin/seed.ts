@@ -17,10 +17,40 @@ const HACKERNEWS_SERVER = {
   args: ["--from", "git+https://github.com/erithwik/mcp-hn", "mcp-hn"],
 };
 
+/**
+ * Creates a user with email/password credentials directly in the database.
+ * This bypasses the better-auth HTTP API for seeding purposes.
+ */
+async function createSeedUser(
+  database: Database,
+  params: { email: string; password: string },
+) {
+  const userId = generateRandomString(32, "a-z", "A-Z", "0-9");
+  const hashedPassword = await hashPassword(params.password);
+
+  await database.drizzle.insert(userTable).values({
+    id: userId,
+    name: params.email,
+    email: params.email,
+    emailVerified: true,
+    status: "ACTIVE",
+  });
+
+  // better-auth stores passwords in the account table with providerId "credential"
+  await database.drizzle.insert(accountTable).values({
+    id: generateRandomString(32, "a-z", "A-Z", "0-9"),
+    userId,
+    accountId: userId,
+    providerId: "credential",
+    password: hashedPassword,
+  });
+
+  return { id: userId, email: params.email };
+}
+
 async function seed() {
   console.log("Seeding database...");
 
-  // Create database connection
   const database = Database.create(DATABASE_URL);
 
   try {
@@ -28,30 +58,10 @@ async function seed() {
     console.log("Resetting database...");
     await initializeTestDatabase({ database, keepUsers: false });
 
-    // Create user directly in database
+    // Create user
     console.log(`Creating user: ${SEED_USER.email}`);
-    const userId = generateRandomString(32, "a-z", "A-Z", "0-9");
-    const hashedPassword = await hashPassword(SEED_USER.password);
-
-    await database.drizzle.insert(userTable).values({
-      id: userId,
-      name: SEED_USER.email,
-      email: SEED_USER.email,
-      emailVerified: true,
-      status: "ACTIVE",
-    });
-
-    // Create account with password (better-auth stores passwords in account table)
-    const accountId = generateRandomString(32, "a-z", "A-Z", "0-9");
-    await database.drizzle.insert(accountTable).values({
-      id: accountId,
-      userId,
-      accountId: userId,
-      providerId: "credential",
-      password: hashedPassword,
-    });
-
-    console.log(`User created with id: ${userId}`);
+    const user = await createSeedUser(database, SEED_USER);
+    console.log(`User created with id: ${user.id}`);
 
     // Create PlaybookStore
     console.log("Initializing PlaybookStore...");
@@ -68,7 +78,7 @@ async function seed() {
     const playbook = await playbookStore.create({
       id: "test",
       name: "test",
-      userId,
+      userId: user.id,
     });
     console.log(`Playbook created with id: ${playbook.id}`);
 

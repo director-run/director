@@ -1,7 +1,8 @@
-import { createGatewayClient, register } from "../src/client";
+import { generateRandomString, hashPassword } from "better-auth/crypto";
 import { Database } from "../src/db/database";
-import { BASE_URL, DATABASE_URL, SERVER_PORT } from "../src/env";
-import { Gateway } from "../src/gateway";
+import { accountTable, userTable } from "../src/db/schema";
+import { DATABASE_URL } from "../src/env";
+import { PlaybookStore } from "../src/playbooks/playbook-store";
 import { initializeTestDatabase } from "../src/test/db";
 
 const SEED_USER = {
@@ -11,74 +12,79 @@ const SEED_USER = {
 
 const HACKERNEWS_SERVER = {
   name: "hackernews",
-  transport: {
-    type: "stdio" as const,
-    command: "uvx",
-    args: ["--from", "git+https://github.com/erithwik/mcp-hn", "mcp-hn"],
-  },
+  type: "stdio" as const,
+  command: "uvx",
+  args: ["--from", "git+https://github.com/erithwik/mcp-hn", "mcp-hn"],
 };
 
 async function seed() {
   console.log("Seeding database...");
 
-  const baseUrl = BASE_URL || `http://localhost:${SERVER_PORT}`;
-
   // Create database connection
   const database = Database.create(DATABASE_URL);
 
-  // Reset the database completely
-  console.log("Resetting database...");
-  await initializeTestDatabase({ database, keepUsers: false });
-
-  // Start the gateway server
-  console.log("Starting gateway server...");
-  const gateway = await Gateway.start({
-    database,
-    baseUrl,
-    port: SERVER_PORT,
-    oauth: {
-      storage: "memory",
-      baseCallbackUrl: baseUrl,
-    },
-  });
-
   try {
-    // Register user via HTTP API
-    console.log(`Registering user: ${SEED_USER.email}`);
-    const { user, sessionCookie } = await register(baseUrl, SEED_USER);
-    console.log(`User created with id: ${user.id}`);
+    // Reset the database completely
+    console.log("Resetting database...");
+    await initializeTestDatabase({ database, keepUsers: false });
 
-    // Activate user so they can log in
-    console.log("Activating user...");
-    await database.activateUser(user.id);
+    // Create user directly in database
+    console.log(`Creating user: ${SEED_USER.email}`);
+    const userId = generateRandomString(32, "a-z", "A-Z", "0-9");
+    const hashedPassword = await hashPassword(SEED_USER.password);
 
-    // Create authenticated client
-    const client = createGatewayClient(baseUrl, {
-      getAuthToken: () => sessionCookie,
+    await database.drizzle.insert(userTable).values({
+      id: userId,
+      name: SEED_USER.email,
+      email: SEED_USER.email,
+      emailVerified: true,
+      status: "ACTIVE",
+    });
+
+    // Create account with password (better-auth stores passwords in account table)
+    const accountId = generateRandomString(32, "a-z", "A-Z", "0-9");
+    await database.drizzle.insert(accountTable).values({
+      id: accountId,
+      userId,
+      accountId: userId,
+      providerId: "credential",
+      password: hashedPassword,
+    });
+
+    console.log(`User created with id: ${userId}`);
+
+    // Create PlaybookStore
+    console.log("Initializing PlaybookStore...");
+    const playbookStore = await PlaybookStore.create({
+      database,
+      oauth: {
+        storage: "memory",
+        baseCallbackUrl: "http://localhost:3673",
+      },
     });
 
     // Create playbook
     console.log("Creating playbook: test");
-    const playbook = await client.store.create.mutate({
+    const playbook = await playbookStore.create({
+      id: "test",
       name: "test",
+      userId,
     });
     console.log(`Playbook created with id: ${playbook.id}`);
 
     // Add hackernews server
     console.log("Adding hackernews server...");
-    await client.store.addServer.mutate({
-      playbookId: playbook.id,
-      server: HACKERNEWS_SERVER,
-    });
+    await playbook.addTarget(HACKERNEWS_SERVER, { throwOnError: false });
     console.log("Hackernews server added.");
+
+    // Close playbook connections
+    await playbookStore.closeAll();
 
     console.log("\n✓ Seed complete!");
     console.log(`\nYou can now log in with:`);
     console.log(`  Email: ${SEED_USER.email}`);
     console.log(`  Password: ${SEED_USER.password}`);
   } finally {
-    // Stop the gateway
-    await gateway.stop();
     await database.close();
   }
 }

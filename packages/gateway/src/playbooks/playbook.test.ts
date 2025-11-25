@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { makeTestDatabase } from "../test/db";
+import { initializeTestDatabase, makeTestDatabase } from "../test/db";
 import { makeFooBarServerStdioConfig } from "../test/fixtures";
 import { Playbook } from "./playbook";
 
@@ -10,8 +10,7 @@ describe("Playbook", async () => {
 
   beforeEach(async () => {
     // Clear the database and create dummy user
-    await database.deleteAllPlaybooks();
-    await database.createDummyUser();
+    await initializeTestDatabase({ keepUsers: true });
 
     // Create a test playbook
     const created = await database.createPlaybook({

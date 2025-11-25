@@ -52,7 +52,6 @@ export class IntegrationTestHarness {
    */
   public async initializeDatabase(keepUsers = false) {
     await initializeTestDatabase({
-      database: this.gateway.database,
       playbookStore: this.gateway.playbookStore,
       keepUsers,
     });
@@ -120,7 +119,7 @@ export class IntegrationTestHarness {
     const database = makeTestDatabase();
 
     // Initialize test database before starting
-    await initializeTestDatabase({ database });
+    await initializeTestDatabase({});
 
     const baseURL = `http://localhost:${SERVER_PORT}`;
 

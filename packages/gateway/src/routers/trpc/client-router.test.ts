@@ -8,7 +8,7 @@ import {
   getStreamablePathForPlaybook,
 } from "../../helpers";
 import { PlaybookStore } from "../../playbooks/playbook-store";
-import { makeTestDatabase } from "../../test/db";
+import { initializeTestDatabase, makeTestDatabase } from "../../test/db";
 import { createAppRouter } from "./index";
 
 class TestClientStore extends ClientStore {
@@ -41,8 +41,7 @@ describe("Client Router", () => {
 
   beforeAll(async () => {
     const database = makeTestDatabase();
-    await database.deleteAllPlaybooks();
-    await database.createDummyUser();
+    await initializeTestDatabase({});
     playbookStore = await PlaybookStore.create({
       database,
       oauth: { storage: "memory", baseCallbackUrl: BASE_URL },

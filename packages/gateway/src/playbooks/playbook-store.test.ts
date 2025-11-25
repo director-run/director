@@ -9,7 +9,7 @@ describe("PlaybookStore", () => {
   const database = makeTestDatabase();
 
   beforeEach(async () => {
-    await initializeTestDatabase({ database, keepUsers: true });
+    await initializeTestDatabase({ keepUsers: true });
 
     playbookStore = await PlaybookStore.create({
       database,
@@ -29,7 +29,6 @@ describe("PlaybookStore", () => {
   describe("onAuthorizationSuccess", () => {
     it("should properly update the targets with the new oauth token", async () => {
       await initializeTestDatabase({
-        database,
         playbookStore,
         keepUsers: true,
       });

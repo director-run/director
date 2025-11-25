@@ -1,8 +1,10 @@
 import { createGatewayClient, register } from "@director.run/gateway/client";
-import { Database } from "@director.run/gateway/db/database";
-import { DATABASE_URL, SERVER_PORT } from "@director.run/gateway/env";
+import { SERVER_PORT } from "@director.run/gateway/env";
 import { Gateway } from "@director.run/gateway/gateway";
-import { initializeTestDatabase } from "@director.run/gateway/test/db";
+import {
+  initializeTestDatabase,
+  makeTestDatabase,
+} from "@director.run/gateway/test/db";
 import {
   afterAll,
   beforeAll,
@@ -18,12 +20,10 @@ describe("CLI integration tests", () => {
   let gateway: Gateway;
   let gatewayClient: ReturnType<typeof createGatewayClient>;
   const baseURL = `http://localhost:${SERVER_PORT}`;
-  const database = Database.create(DATABASE_URL);
+  const database = makeTestDatabase();
 
   beforeAll(async () => {
-    await database.deleteAllPlaybooks();
-    await database.reset();
-    await database.createDummyUser();
+    await initializeTestDatabase({});
 
     gateway = await Gateway.start({
       database,
@@ -57,7 +57,6 @@ describe("CLI integration tests", () => {
 
   beforeEach(async () => {
     await initializeTestDatabase({
-      database,
       playbookStore: gateway.playbookStore,
       keepUsers: true,
     });

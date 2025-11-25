@@ -7,13 +7,10 @@ import {
   type PlaybookInsertParams,
   type PlaybookPromptInsertParams,
   type PlaybookServerInsertParams,
-  accountTable,
   playbookPromptsTable,
   playbookServersTable,
   playbooksTable,
-  sessionTable,
   userTable,
-  verificationTable,
 } from "./schema";
 import * as schema from "./schema";
 
@@ -102,33 +99,6 @@ export class Database {
     await this.db
       .delete(playbooksTable)
       .where(and(eq(playbooksTable.id, id), eq(playbooksTable.userId, userId)));
-  }
-
-  public async deleteAllPlaybooks() {
-    await this.db.delete(playbooksTable);
-  }
-
-  public async reset() {
-    // Delete in order to respect foreign key constraints
-    await this.db.delete(verificationTable);
-    await this.db.delete(sessionTable);
-    await this.db.delete(accountTable);
-    await this.db.delete(playbooksTable);
-    await this.db.delete(userTable);
-  }
-
-  public async createDummyUser() {
-    // Use onConflictDoNothing to avoid errors if user already exists
-    await this.db
-      .insert(userTable)
-      .values({
-        id: "dummy-user-id",
-        name: "dummy@example.com",
-        email: "dummy@example.com",
-        emailVerified: true,
-        status: "ACTIVE",
-      })
-      .onConflictDoNothing();
   }
 
   public async activateUser(userId: string) {

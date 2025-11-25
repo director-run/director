@@ -26,7 +26,7 @@ const PROXY_TARGET_PORT = 4521;
 export class IntegrationTestHarness {
   public readonly gateway: Gateway;
   public client: ReturnType<typeof createGatewayClient>;
-  public static gatewayPort: number = env.SERVER_PORT;
+  public static gatewayPort: number = env.PORT;
 
   private echoServerSSEInstance: Server;
   private kitchenSinkServerInstance: Server;
@@ -128,12 +128,12 @@ export class IntegrationTestHarness {
     await initializeTestDatabase({ database, keepUsers: false });
     await createTestUser(database);
 
-    const baseURL = `http://localhost:${env.SERVER_PORT}`;
+    const baseURL = `http://localhost:${env.PORT}`;
 
     const gateway = await Gateway.start({
       database,
       baseUrl: baseURL,
-      port: env.SERVER_PORT,
+      port: env.PORT,
       oauth: {
         storage: "memory",
         baseCallbackUrl: baseURL,

@@ -21,7 +21,7 @@ describe("CLI integration tests", () => {
   let gateway: Gateway;
   let database: Database;
   let gatewayClient: ReturnType<typeof createGatewayClient>;
-  const baseURL = `http://localhost:${env.SERVER_PORT}`;
+  const baseURL = `http://localhost:${env.PORT}`;
 
   beforeAll(async () => {
     database = Database.create(env.DATABASE_URL);
@@ -30,7 +30,7 @@ describe("CLI integration tests", () => {
     gateway = await Gateway.start({
       database,
       baseUrl: baseURL,
-      port: env.SERVER_PORT,
+      port: env.PORT,
       oauth: {
         storage: "memory",
         baseCallbackUrl: baseURL,

@@ -33,7 +33,7 @@ async function start() {
   await Gateway.start({
     database,
     baseUrl: env.BASE_URL,
-    port: env.SERVER_PORT,
+    port: env.PORT,
     studioAssetsPath: assetsPath,
     oauth: {
       storage: "memory",

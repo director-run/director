@@ -10,16 +10,23 @@ import {
 } from "vitest";
 import { Database } from "../db/database";
 import { DATABASE_URL } from "../env";
-import { initializeTestDatabase, resetPlaybookStore } from "../test/db";
+import {
+  createTestUser,
+  initializeTestDatabase,
+  resetPlaybookStore,
+} from "../test/db";
 import { makeHTTPTargetConfig } from "../test/fixtures";
 import { PlaybookStore } from "./playbook-store";
 
 describe("PlaybookStore", () => {
   let playbookStore: PlaybookStore;
   let database: Database;
+  let testUser: Awaited<ReturnType<typeof createTestUser>>;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     database = Database.create(DATABASE_URL);
+    await initializeTestDatabase({ database, keepUsers: false });
+    testUser = await createTestUser(database);
   });
 
   afterAll(async () => {
@@ -39,7 +46,7 @@ describe("PlaybookStore", () => {
     await playbookStore.create({
       id: "test-playbook",
       name: "test-playbook",
-      userId: "dummy-user-id",
+      userId: testUser.id,
       servers: [],
     });
   });
@@ -51,7 +58,7 @@ describe("PlaybookStore", () => {
       const playbook = await playbookStore.create({
         id: "test-playbook",
         name: "test-playbook",
-        userId: "dummy-user-id",
+        userId: testUser.id,
         servers: [],
       });
 
@@ -63,7 +70,7 @@ describe("PlaybookStore", () => {
 
       const fetchedPlaybook = await playbookStore.get(
         "test-playbook",
-        "dummy-user-id",
+        testUser.id,
       );
       const httpClient = (await fetchedPlaybook.getTarget(
         "http1",
@@ -74,7 +81,7 @@ describe("PlaybookStore", () => {
         playbook.id,
         target.name,
         "some-code",
-        "dummy-user-id",
+        testUser.id,
       );
 
       expect(httpClient.completeAuthFlow).toHaveBeenCalledWith("some-code");

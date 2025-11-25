@@ -17,11 +17,28 @@ export async function resetPlaybookStore(playbookStore: PlaybookStore) {
 }
 
 /**
+ * Creates a test user in the database and returns the user object.
+ */
+export async function createTestUser(database: Database) {
+  const user = {
+    id: "test-user-id",
+    name: "testuser@example.com",
+    email: "testuser@example.com",
+    emailVerified: true,
+    status: "ACTIVE" as const,
+  };
+
+  await database.drizzle.insert(userTable).values(user).onConflictDoNothing();
+
+  return user;
+}
+
+/**
  * Test utility for initializing database state between tests.
  * This is only intended for use in test environments.
  *
  * @param params.database - The database instance to use
- * @param params.keepUsers - When true, only deletes playbooks. When false, resets entire database and creates dummy user.
+ * @param params.keepUsers - When true, only deletes playbooks. When false, resets entire database.
  */
 export async function initializeTestDatabase(params: {
   database: Database;
@@ -41,17 +58,5 @@ export async function initializeTestDatabase(params: {
     await db.delete(accountTable);
     await db.delete(playbooksTable);
     await db.delete(userTable);
-
-    // Create a dummy user for unauthenticated test requests
-    await db
-      .insert(userTable)
-      .values({
-        id: "dummy-user-id",
-        name: "dummy@example.com",
-        email: "dummy@example.com",
-        emailVerified: true,
-        status: "ACTIVE",
-      })
-      .onConflictDoNothing();
   }
 }

@@ -1,17 +1,19 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { Database } from "../db/database";
 import { DATABASE_URL } from "../env";
-import { initializeTestDatabase } from "../test/db";
+import { createTestUser, initializeTestDatabase } from "../test/db";
 import { makeFooBarServerStdioConfig } from "../test/fixtures";
 import { Playbook } from "./playbook";
 
 describe("Playbook", async () => {
   let database: Database;
   let playbook: Playbook;
-  const userId = "dummy-user-id";
+  let testUser: Awaited<ReturnType<typeof createTestUser>>;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     database = Database.create(DATABASE_URL);
+    await initializeTestDatabase({ database, keepUsers: false });
+    testUser = await createTestUser(database);
   });
 
   afterAll(async () => {
@@ -19,20 +21,20 @@ describe("Playbook", async () => {
   });
 
   beforeEach(async () => {
-    // Clear the database and create dummy user
+    // Clear playbooks only, keep user
     await initializeTestDatabase({ database, keepUsers: true });
 
     // Create a test playbook
     const created = await database.createPlaybook({
       name: "test-playbook",
-      userId,
+      userId: testUser.id,
     });
 
     playbook = await Playbook.fromConfig(
       {
         id: created.id,
         name: "test-playbook",
-        userId,
+        userId: testUser.id,
         servers: [],
       },
       {
@@ -85,7 +87,10 @@ describe("Playbook", async () => {
       expect(playbook.name).toBe("test-playbook-updated");
       expect(playbook.description).toBe("test-playbook-updated");
 
-      const playbookData = await database.getPlaybookById(playbook.id, userId);
+      const playbookData = await database.getPlaybookById(
+        playbook.id,
+        testUser.id,
+      );
 
       expect(playbookData.name).toBe("test-playbook-updated");
       expect(playbookData.description).toBe("test-playbook-updated");

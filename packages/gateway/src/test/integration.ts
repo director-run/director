@@ -15,7 +15,11 @@ import {
 import { Database } from "../db/database";
 import { DATABASE_URL, SERVER_PORT } from "../env";
 import { Gateway } from "../gateway";
-import { initializeTestDatabase, resetPlaybookStore } from "./db";
+import {
+  createTestUser,
+  initializeTestDatabase,
+  resetPlaybookStore,
+} from "./db";
 
 const PROXY_TARGET_PORT = 4521;
 
@@ -122,6 +126,7 @@ export class IntegrationTestHarness {
 
     // Initialize test database before starting
     await initializeTestDatabase({ database, keepUsers: false });
+    await createTestUser(database);
 
     const baseURL = `http://localhost:${SERVER_PORT}`;
 

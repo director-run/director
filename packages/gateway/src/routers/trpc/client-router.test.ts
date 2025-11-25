@@ -18,7 +18,7 @@ import {
   getStreamablePathForPlaybook,
 } from "../../helpers";
 import { PlaybookStore } from "../../playbooks/playbook-store";
-import { initializeTestDatabase } from "../../test/db";
+import { createTestUser, initializeTestDatabase } from "../../test/db";
 import { createAppRouter } from "./index";
 
 class TestClientStore extends ClientStore {
@@ -47,12 +47,14 @@ describe("Client Router", () => {
   let playbookStore: PlaybookStore;
   let clientStore: TestClientStore;
   let app: ReturnType<typeof createAppRouter>;
+  let testUser: Awaited<ReturnType<typeof createTestUser>>;
 
   const BASE_URL = "http://local.test";
 
   beforeAll(async () => {
     database = Database.create(DATABASE_URL);
     await initializeTestDatabase({ database, keepUsers: false });
+    testUser = await createTestUser(database);
     playbookStore = await PlaybookStore.create({
       database,
       oauth: { storage: "memory", baseCallbackUrl: BASE_URL },
@@ -79,7 +81,7 @@ describe("Client Router", () => {
       cliVersion: null,
       playbookStore,
       clientStore,
-      userId: "dummy-user-id",
+      userId: testUser.id,
     });
 
     const result = await caller.clients.allClients();
@@ -102,11 +104,11 @@ describe("Client Router", () => {
       cliVersion: null,
       playbookStore,
       clientStore,
-      userId: "dummy-user-id",
+      userId: testUser.id,
     });
     const playbook = await playbookStore.create({
       name: "Test Playbook",
-      userId: "dummy-user-id",
+      userId: testUser.id,
     });
 
     // Spy restart on one client and make install return requiresRestart
@@ -138,11 +140,11 @@ describe("Client Router", () => {
       cliVersion: null,
       playbookStore,
       clientStore,
-      userId: "dummy-user-id",
+      userId: testUser.id,
     });
     const playbook = await playbookStore.create({
       name: "Another Playbook",
-      userId: "dummy-user-id",
+      userId: testUser.id,
     });
 
     const target = clientStore.get("cursor");
@@ -165,7 +167,7 @@ describe("Client Router", () => {
       cliVersion: null,
       playbookStore,
       clientStore,
-      userId: "dummy-user-id",
+      userId: testUser.id,
     });
 
     const claude = clientStore.get("claude");

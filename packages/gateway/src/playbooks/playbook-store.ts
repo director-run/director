@@ -145,26 +145,19 @@ export class PlaybookStore {
     logger.info(`successfully deleted playbook configuration: ${playbookId}`);
   }
 
-  async purge() {
-    await this.closeAll();
-    await this.dbStore.deleteAllPlaybooks();
-    await this.dbStore.createDummyUser();
-    this.playbooks.clear();
-  }
-
-  async purgeWithUsers() {
-    await this.closeAll();
-    await this.dbStore.reset();
-    await this.dbStore.createDummyUser();
-    this.playbooks.clear();
-  }
-
   async closeAll() {
     logger.info("cleaning up all playbooks...");
     await Promise.all(
       Array.from(this.playbooks.values()).map((playbook) => playbook.close()),
     );
     logger.info("finished cleaning up all playbooks.");
+  }
+
+  /**
+   * Clears the in-memory cache. For use in test environments only.
+   */
+  clearCache() {
+    this.playbooks.clear();
   }
 
   public async getAll(userId: string): Promise<Playbook[]> {

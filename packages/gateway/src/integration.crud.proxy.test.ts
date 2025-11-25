@@ -20,7 +20,7 @@ describe("Playbook CRUD operations", () => {
 
   describe("read", () => {
     beforeAll(async () => {
-      await harness.purge();
+      await harness.resetPlaybooks();
     });
 
     it("should get all playbooks", async () => {
@@ -41,7 +41,7 @@ describe("Playbook CRUD operations", () => {
 
   describe("create", () => {
     beforeAll(async () => {
-      await harness.purge();
+      await harness.resetPlaybooks();
       await harness.client.store.create.mutate({
         name: "Test playbook",
         description: "Test description",
@@ -78,7 +78,7 @@ describe("Playbook CRUD operations", () => {
   describe("update", () => {
     let playbook: GatewayRouterOutputs["store"]["create"];
     beforeEach(async () => {
-      await harness.purge();
+      await harness.resetPlaybooks();
       playbook = await harness.client.store.create.mutate({
         name: "Test playbook",
         description: "Old description",
@@ -176,7 +176,7 @@ describe("Playbook CRUD operations", () => {
 
   describe("delete", () => {
     beforeEach(async () => {
-      await harness.purge();
+      await harness.resetPlaybooks();
       await harness.client.store.create.mutate({
         name: "Test playbook",
       });

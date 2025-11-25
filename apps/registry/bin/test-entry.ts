@@ -64,8 +64,7 @@ export async function runInteractiveTestForEntry({
   console.log(resolvedTransport);
   console.log("");
 
-  logger.info("reseting gateway...");
-  await gatewayClient.store.purge.mutate();
+  logger.info("creating test playbook...");
   const playbook = await gatewayClient.store.create.mutate({
     name: "test-playbook",
   });

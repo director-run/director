@@ -254,11 +254,6 @@ export function createPlaybookStoreRouter() {
         }
       }),
 
-    purge: protectedProcedure.mutation(({ ctx }) => {
-      const { playbookStore } = ctx as AuthenticatedGatewayContext;
-      return playbookStore.purge();
-    }),
-
     removeServer: protectedProcedure
       .input(
         z.object({

@@ -2,6 +2,7 @@ import { createGatewayClient, register } from "@director.run/gateway/client";
 import { createStore } from "@director.run/gateway/db";
 import { DATABASE_URL, SERVER_PORT } from "@director.run/gateway/env";
 import { Gateway } from "@director.run/gateway/gateway";
+import { resetTestPlaybooks } from "@director.run/gateway/test/reset";
 import {
   afterAll,
   beforeAll,
@@ -17,9 +18,9 @@ describe("CLI integration tests", () => {
   let gateway: Gateway;
   let gatewayClient: ReturnType<typeof createGatewayClient>;
   const baseURL = `http://localhost:${SERVER_PORT}`;
+  const dbStore = createStore({ connectionString: DATABASE_URL }).playbooks;
 
   beforeAll(async () => {
-    const dbStore = createStore({ connectionString: DATABASE_URL }).playbooks;
     await dbStore.deleteAllPlaybooks();
     await dbStore.reset();
     await dbStore.createDummyUser();
@@ -55,7 +56,10 @@ describe("CLI integration tests", () => {
   });
 
   beforeEach(async () => {
-    await gatewayClient.store.purge.mutate();
+    await resetTestPlaybooks({
+      dbStore,
+      playbookStore: gateway.playbookStore,
+    });
   });
 
   test("should be able to create a playbook server", async () => {

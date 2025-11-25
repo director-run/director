@@ -19,7 +19,7 @@ describe("Playbook Router", () => {
   });
 
   beforeEach(async () => {
-    await harness.purge();
+    await harness.resetPlaybooks();
     playbook = await harness.client.store.create.mutate({
       name: "Test Playbook",
       servers: [harness.getConfigForTarget("echo")],

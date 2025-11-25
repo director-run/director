@@ -2,14 +2,15 @@ import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { makeTestDbStore } from "../test/db";
 import { makeHTTPTargetConfig } from "../test/fixtures";
+import { resetTestPlaybooks } from "../test/reset";
 import { PlaybookStore } from "./playbook-store";
 
 describe("PlaybookStore", () => {
   let playbookStore: PlaybookStore;
+  const dbStore = makeTestDbStore();
 
   beforeEach(async () => {
-    const dbStore = makeTestDbStore();
-    await dbStore.deleteAllPlaybooks();
+    await resetTestPlaybooks({ dbStore });
 
     playbookStore = await PlaybookStore.create({
       dbStore,
@@ -28,7 +29,7 @@ describe("PlaybookStore", () => {
 
   describe("onAuthorizationSuccess", () => {
     it("should properly update the targets with the new oauth token", async () => {
-      await playbookStore.purge();
+      await resetTestPlaybooks({ dbStore, playbookStore });
       const playbook = await playbookStore.create({
         id: "test-playbook",
         name: "test-playbook",

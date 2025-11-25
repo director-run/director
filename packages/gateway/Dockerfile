@@ -1,23 +1,11 @@
 FROM oven/bun:1
 
-#
-# Install MCP dependencies
-# 
-RUN apt-get update 
-
-# Install dependencies
-RUN apt-get install -y \
-    curl \
-    git \
-    python3-pip \
-    pipx 
-
-# Used by many MCP servers
+# Install MCP server dependencies (uvx for Python servers, npx for Node servers)
+RUN apt-get update && apt-get install -y pipx && rm -rf /var/lib/apt/lists/*
 RUN pipx install uv
-#
-#
-#
 
+# Add pipx and uv binaries to PATH
+ENV PATH="/root/.local/bin:$PATH"
 
 COPY ./dist ./
 

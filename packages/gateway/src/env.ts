@@ -27,7 +27,7 @@ if (isTest()) {
 export const env = createEnv({
   server: {
     DATABASE_URL: z.string().url(),
-    BASE_URL: z.string().url(),
+    BASE_URL: z.string().url().default("http://localhost:3673"),
     SERVER_PORT: z
       .string()
       .default("3673")

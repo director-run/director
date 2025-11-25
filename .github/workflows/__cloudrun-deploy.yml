@@ -13,6 +13,10 @@ on:
         required: false
         type: boolean
         default: false
+      seed:
+        required: false
+        type: boolean
+        default: false
       working-directory:
         required: true
         type: string
@@ -79,6 +83,15 @@ jobs:
             --format=json | jq -r '.spec.template.spec.containers[0].env[] | select(.name=="DATABASE_URL") | .value')
           DATABASE_URL=$DATABASE_URL bun run db:push
           
+      - name: Seed database
+        if: ${{ inputs.seed }}
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          DATABASE_URL=$(gcloud run services describe ${{ inputs.service_name }} \
+            --region ${{ vars.REGION }} \
+            --format=json | jq -r '.spec.template.spec.containers[0].env[] | select(.name=="DATABASE_URL") | .value')
+          DATABASE_URL=$DATABASE_URL bun run db:seed
+         
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy ${{ inputs.service_name }} \

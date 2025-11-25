@@ -16,7 +16,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    uses: ./.github/workflows/cloudrun-deploy.yml
+    uses: ./.github/workflows/__cloudrun-deploy.yml
     with:
       environment: staging
       service_name: app

@@ -20,7 +20,7 @@ describe("Tools Router", () => {
   });
 
   beforeEach(async () => {
-    await harness.resetPlaybooks();
+    await harness.initializeDatabase(true);
     playbook = await harness.client.store.create.mutate({
       name: "Test Playbook",
       servers: [

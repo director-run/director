@@ -27,7 +27,7 @@ describe("Prompt Capabilities", () => {
     let addedPrompt: GatewayRouterOutputs["store"]["addPrompt"];
 
     beforeEach(async () => {
-      await harness.resetPlaybooks();
+      await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test Playbook",
         servers: [],
@@ -82,7 +82,7 @@ describe("Prompt Capabilities", () => {
     let playbook: GatewayRouterOutputs["store"]["create"];
 
     beforeEach(async () => {
-      await harness.resetPlaybooks();
+      await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test Playbook",
         servers: [],
@@ -134,7 +134,7 @@ describe("Prompt Capabilities", () => {
     let result: GatewayRouterOutputs["store"]["removePrompt"];
 
     beforeEach(async () => {
-      await harness.resetPlaybooks();
+      await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test Playbook",
         servers: [],
@@ -231,7 +231,7 @@ describe("Prompt Capabilities", () => {
     const originalPrompt = makePrompt();
 
     beforeEach(async () => {
-      await harness.resetPlaybooks();
+      await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test Playbook",
         servers: [],

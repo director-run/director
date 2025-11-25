@@ -54,7 +54,7 @@ describe("MCP Playbook", () => {
 
   [Transport.SSE, Transport.STREAMABLE].forEach((transport) => {
     beforeEach(async () => {
-      await harness.resetPlaybooks();
+      await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test Playbook",
         servers: [

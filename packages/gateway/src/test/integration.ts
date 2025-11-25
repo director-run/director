@@ -15,7 +15,7 @@ import {
 import { SERVER_PORT } from "../env";
 import { Gateway } from "../gateway";
 import { makeTestDbStore } from "./db";
-import { resetTestData, resetTestPlaybooks } from "./reset";
+import { initializeTestDatabase } from "./reset";
 
 const PROXY_TARGET_PORT = 4521;
 
@@ -48,24 +48,14 @@ export class IntegrationTestHarness {
   }
 
   /**
-   * Reset only playbooks, keeping users intact.
-   * Useful for tests that need to reset playbook state but keep user sessions.
+   * Initialize test database state.
+   * @param keepUsers - When true, only deletes playbooks. When false, resets entire database.
    */
-  public async resetPlaybooks() {
-    await resetTestPlaybooks({
+  public async initializeDatabase(keepUsers = false) {
+    await initializeTestDatabase({
       dbStore: this.gateway.dbStore,
       playbookStore: this.gateway.playbookStore,
-    });
-  }
-
-  /**
-   * Reset all test data including users.
-   * Use this when tests need a completely fresh database state.
-   */
-  public async resetAll() {
-    await resetTestData({
-      dbStore: this.gateway.dbStore,
-      playbookStore: this.gateway.playbookStore,
+      keepUsers,
     });
   }
 
@@ -130,8 +120,8 @@ export class IntegrationTestHarness {
   public static async start() {
     const dbStore = makeTestDbStore();
 
-    // Reset test data before starting
-    await resetTestData({ dbStore });
+    // Initialize test database before starting
+    await initializeTestDatabase({ dbStore });
 
     const baseURL = `http://localhost:${SERVER_PORT}`;
 
@@ -171,7 +161,7 @@ export class IntegrationTestHarness {
   }
 
   public async stop() {
-    await this.resetPlaybooks();
+    await this.initializeDatabase(true);
     await this.gateway.stop();
     await this.echoServerSSEInstance?.close();
     await this.kitchenSinkServerInstance?.close();

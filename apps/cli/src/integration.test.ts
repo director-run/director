@@ -2,7 +2,7 @@ import { createGatewayClient, register } from "@director.run/gateway/client";
 import { createStore } from "@director.run/gateway/db";
 import { DATABASE_URL, SERVER_PORT } from "@director.run/gateway/env";
 import { Gateway } from "@director.run/gateway/gateway";
-import { resetTestPlaybooks } from "@director.run/gateway/test/reset";
+import { initializeTestDatabase } from "@director.run/gateway/test/reset";
 import {
   afterAll,
   beforeAll,
@@ -56,9 +56,10 @@ describe("CLI integration tests", () => {
   });
 
   beforeEach(async () => {
-    await resetTestPlaybooks({
+    await initializeTestDatabase({
       dbStore,
       playbookStore: gateway.playbookStore,
+      keepUsers: true,
     });
   });
 

@@ -23,7 +23,7 @@ describe("Playbook Target CRUD operations", () => {
   describe("read", () => {
     let playbook: GatewayRouterOutputs["store"]["create"];
     beforeAll(async () => {
-      await harness.resetPlaybooks();
+      await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test Playbook",
         servers: [harness.getConfigForTarget("echo")],
@@ -59,7 +59,7 @@ describe("Playbook Target CRUD operations", () => {
   describe("create", () => {
     let playbook: GatewayRouterOutputs["store"]["create"];
     beforeEach(async () => {
-      await harness.resetPlaybooks();
+      await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test Playbook",
         servers: [],
@@ -344,7 +344,7 @@ describe("Playbook Target CRUD operations", () => {
     let playbook: GatewayRouterOutputs["store"]["create"];
 
     beforeAll(async () => {
-      await harness.resetPlaybooks();
+      await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test Playbook",
         servers: [harness.getConfigForTarget("echo")],
@@ -383,7 +383,7 @@ describe("Playbook Target CRUD operations", () => {
       let updatedResponse: GatewayRouterOutputs["store"]["updateServer"];
       const toolsConfig = { prefix: "prefix__", exclude: ["ping", "add"] };
       beforeEach(async () => {
-        await harness.resetPlaybooks();
+        await harness.initializeDatabase(true);
         playbook = await harness.client.store.create.mutate({
           name: "Test Playbook",
           servers: [
@@ -460,7 +460,7 @@ describe("Playbook Target CRUD operations", () => {
     describe("disabling targets", () => {
       let playbook: GatewayRouterOutputs["store"]["create"];
       beforeEach(async () => {
-        await harness.resetPlaybooks();
+        await harness.initializeDatabase(true);
         playbook = await harness.client.store.create.mutate({
           name: "Test Playbook",
           servers: [

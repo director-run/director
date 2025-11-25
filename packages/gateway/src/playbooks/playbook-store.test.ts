@@ -2,7 +2,7 @@ import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { makeTestDbStore } from "../test/db";
 import { makeHTTPTargetConfig } from "../test/fixtures";
-import { resetTestPlaybooks } from "../test/reset";
+import { initializeTestDatabase } from "../test/reset";
 import { PlaybookStore } from "./playbook-store";
 
 describe("PlaybookStore", () => {
@@ -10,7 +10,7 @@ describe("PlaybookStore", () => {
   const dbStore = makeTestDbStore();
 
   beforeEach(async () => {
-    await resetTestPlaybooks({ dbStore });
+    await initializeTestDatabase({ dbStore, keepUsers: true });
 
     playbookStore = await PlaybookStore.create({
       dbStore,
@@ -29,7 +29,7 @@ describe("PlaybookStore", () => {
 
   describe("onAuthorizationSuccess", () => {
     it("should properly update the targets with the new oauth token", async () => {
-      await resetTestPlaybooks({ dbStore, playbookStore });
+      await initializeTestDatabase({ dbStore, playbookStore, keepUsers: true });
       const playbook = await playbookStore.create({
         id: "test-playbook",
         name: "test-playbook",

@@ -17,7 +17,7 @@ describe("Authentication integration", () => {
   describe("signup flow", () => {
     it("should register a new user and create a playbook", async () => {
       // Clear database
-      await harness.resetAll();
+      await harness.initializeDatabase();
 
       // Register a new user
       const signupResponse = await fetch(`${baseURL}/api/auth/sign-up/email`, {
@@ -91,7 +91,7 @@ describe("Authentication integration", () => {
   describe("login flow", () => {
     it("should login an existing user and access their playbooks", async () => {
       // Clear database
-      await harness.resetAll();
+      await harness.initializeDatabase();
 
       // First, register a user
       const signupResponse = await fetch(`${baseURL}/api/auth/sign-up/email`, {
@@ -183,7 +183,7 @@ describe("Authentication integration", () => {
   describe("user isolation", () => {
     it("should isolate playbooks between different users", async () => {
       // Clear database
-      await harness.resetAll();
+      await harness.initializeDatabase();
 
       // Register first user
       const user1Response = await fetch(`${baseURL}/api/auth/sign-up/email`, {

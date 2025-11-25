@@ -19,7 +19,7 @@ on:
         default: .
 
 env:
-  IMAGE_NAME: ${{ inputs.service_name }}-${{ inputs.environment }}
+  IMAGE_NAME: ${{ inputs.service_name }}
 
 jobs:
   deploy:

@@ -5,9 +5,13 @@ import { DATABASE_URL } from "../src/env";
 import { PlaybookStore } from "../src/playbooks/playbook-store";
 import { initializeTestDatabase } from "../src/test/db";
 
+if (!process.env.SEED_USER_PASSWORD) {
+  throw new Error("SEED_USER_PASSWORD must be set");
+}
+
 const SEED_USER = {
-  email: "user@example.com",
-  password: "password",
+  email: "user@director.run",
+  password: process.env.SEED_USER_PASSWORD,
 };
 
 const HACKERNEWS_SERVER = {

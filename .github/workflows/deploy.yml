@@ -22,4 +22,3 @@ jobs:
       service_name: director-gateway
       working-directory: packages/gateway
       migrations: true
-      seed: true

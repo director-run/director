@@ -21,10 +21,10 @@ export const TELEMETRY_WRITE_KEY = "";
 export const TELEMETRY_ENABLED = process.env.TELEMETRY_ENABLED === "true";
 export const OAUTH_STORAGE = "disk";
 export const OAUTH_TOKEN_DIRECTORY = "./tokens";
-export const ALLOWED_ORIGINS = ["http://localhost:3000"];
 
 export const DATABASE_URL = process.env.DATABASE_URL || "";
-export const WAITLIST_ENABLED = true; //process.env.WAITLIST_ENABLED === "true";
+export const WAITLIST_ENABLED = process.env.WAITLIST_ENABLED === "true";
 export const BETTER_AUTH_SECRET =
   process.env.BETTER_AUTH_SECRET || "development-secret-change-in-production";
 export const BASE_URL = process.env.BASE_URL || "";
+export const ALLOWED_ORIGINS = [BASE_URL];

@@ -2,7 +2,7 @@ import { createGatewayClient, register } from "@director.run/gateway/client";
 import { createStore } from "@director.run/gateway/db";
 import { DATABASE_URL, SERVER_PORT } from "@director.run/gateway/env";
 import { Gateway } from "@director.run/gateway/gateway";
-import { initializeTestDatabase } from "@director.run/gateway/test/reset";
+import { initializeTestDatabase } from "@director.run/gateway/test/db";
 import {
   afterAll,
   beforeAll,

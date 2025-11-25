@@ -1,8 +1,7 @@
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { makeTestDbStore } from "../test/db";
+import { initializeTestDatabase, makeTestDbStore } from "../test/db";
 import { makeHTTPTargetConfig } from "../test/fixtures";
-import { initializeTestDatabase } from "../test/reset";
 import { PlaybookStore } from "./playbook-store";
 
 describe("PlaybookStore", () => {

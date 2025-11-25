@@ -14,8 +14,7 @@ import {
 } from "../client";
 import { SERVER_PORT } from "../env";
 import { Gateway } from "../gateway";
-import { makeTestDbStore } from "./db";
-import { initializeTestDatabase } from "./reset";
+import { initializeTestDatabase, makeTestDbStore } from "./db";
 
 const PROXY_TARGET_PORT = 4521;
 

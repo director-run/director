@@ -86,7 +86,7 @@ jobs:
           DATABASE_URL=$(gcloud run services describe ${{ inputs.service_name }} \
             --region ${{ vars.REGION }} \
             --format=json | jq -r '.spec.template.spec.containers[0].env[] | select(.name=="DATABASE_URL") | .value')
-          DATABASE_URL=$DATABASE_URL bun run db:seed
+          DATABASE_URL=$DATABASE_URL SEED_USER_PASSWORD=${{ vars.SEED_USER_PASSWORD }} bun run db:seed
          
       - name: Deploy to Cloud Run
         run: |

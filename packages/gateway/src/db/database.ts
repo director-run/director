@@ -328,7 +328,3 @@ export class Database {
     }
   }
 }
-
-export function createDatabase(connectionString: string): Database {
-  return Database.create(connectionString);
-}

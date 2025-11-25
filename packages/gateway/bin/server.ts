@@ -1,6 +1,6 @@
 import path from "path";
 import { fileURLToPath } from "url";
-import { createDatabase } from "../src/db";
+import { Database } from "../src/db/database";
 import { BASE_URL, DATABASE_URL, SERVER_PORT } from "../src/env";
 import { Gateway } from "../src/gateway";
 
@@ -25,7 +25,7 @@ import { Gateway } from "../src/gateway";
 // };
 
 async function start() {
-  const database = createDatabase(DATABASE_URL);
+  const database = Database.create(DATABASE_URL);
 
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const assetsPath = path.join(__dirname, "./studio");

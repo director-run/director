@@ -20,6 +20,5 @@ jobs:
     with:
       environment: staging
       service_name: app
-      image_name: director-app-staging
       working-directory: packages/gateway
       migrations: true

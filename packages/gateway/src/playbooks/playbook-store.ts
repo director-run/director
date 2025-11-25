@@ -6,7 +6,7 @@ import {
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { Telemetry } from "@director.run/utilities/telemetry";
-import type { Database } from "../db";
+import type { Database } from "../db/database";
 import { Playbook, type PlaybookParams, type PlaybookTarget } from "./playbook";
 
 const logger = getLogger("PlaybookStore");

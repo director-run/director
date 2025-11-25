@@ -1,9 +1,9 @@
-import { type Database, createDatabase } from "../db";
+import { Database } from "../db/database";
 import { DATABASE_URL } from "../env";
 import type { PlaybookStore } from "../playbooks/playbook-store";
 
 export function makeTestDatabase() {
-  return createDatabase(DATABASE_URL);
+  return Database.create(DATABASE_URL);
 }
 
 /**

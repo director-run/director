@@ -9,9 +9,6 @@ on:
       service_name:
         required: true
         type: string
-      image_name:
-        required: true
-        type: string
       migrations:
         required: false
         type: boolean
@@ -20,6 +17,9 @@ on:
         required: true
         type: string
         default: .
+
+env:
+  IMAGE_NAME: ${{ inputs.service_name }}-${{ inputs.environment }}
 
 jobs:
   deploy:
@@ -58,17 +58,17 @@ jobs:
 
       - name: Build Docker image
         working-directory: ${{ inputs.working-directory }}
-        run: docker build -t ${{ inputs.image_name }} .
+        run: docker build -t ${{ env.IMAGE_NAME }} .
 
       - name: Tag Docker image
         run: |
-          docker tag ${{ inputs.image_name }}:latest ${{ vars.REPOSITORY_URL }}/${{ inputs.image_name }}:${{ github.sha }}
-          docker tag ${{ inputs.image_name }}:latest ${{ vars.REPOSITORY_URL }}/${{ inputs.image_name }}:latest
+          docker tag ${{ env.IMAGE_NAME }}:latest ${{ vars.REPOSITORY_URL }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker tag ${{ env.IMAGE_NAME }}:latest ${{ vars.REPOSITORY_URL }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Push Docker image
         run: |
-          docker push ${{ vars.REPOSITORY_URL }}/${{ inputs.image_name }}:${{ github.sha }}
-          docker push ${{ vars.REPOSITORY_URL }}/${{ inputs.image_name }}:latest
+          docker push ${{ vars.REPOSITORY_URL }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker push ${{ vars.REPOSITORY_URL }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Run database migrations
         if: ${{ inputs.migrations }}
@@ -82,6 +82,6 @@ jobs:
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy ${{ inputs.service_name }} \
-            --image ${{ vars.REPOSITORY_URL }}/${{ inputs.image_name }}:${{ github.sha }} \
+            --image ${{ vars.REPOSITORY_URL }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
             --region ${{ vars.REGION }}
 

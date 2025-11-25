@@ -1,5 +1,5 @@
 import { createGatewayClient, register } from "@director.run/gateway/client";
-import { createDatabase } from "@director.run/gateway/db";
+import { Database } from "@director.run/gateway/db/database";
 import { DATABASE_URL, SERVER_PORT } from "@director.run/gateway/env";
 import { Gateway } from "@director.run/gateway/gateway";
 import { initializeTestDatabase } from "@director.run/gateway/test/db";
@@ -18,7 +18,7 @@ describe("CLI integration tests", () => {
   let gateway: Gateway;
   let gatewayClient: ReturnType<typeof createGatewayClient>;
   const baseURL = `http://localhost:${SERVER_PORT}`;
-  const database = createDatabase(DATABASE_URL);
+  const database = Database.create(DATABASE_URL);
 
   beforeAll(async () => {
     await database.deleteAllPlaybooks();

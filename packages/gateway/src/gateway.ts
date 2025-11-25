@@ -15,7 +15,7 @@ import cors from "cors";
 import express from "express";
 import { auth } from "./auth";
 import { ClientStore } from "./client-store";
-import type { Database } from "./db";
+import type { Database } from "./db/database";
 import { ALLOWED_ORIGINS, REGISTRY_URL } from "./env";
 import { PlaybookStore } from "./playbooks/playbook-store";
 import { createSSERouter } from "./routers/sse";

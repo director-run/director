@@ -13,6 +13,7 @@
     "serve:dev": "bun run --watch bin/start.ts",
     "serve": "NODE_ENV=development bun run bin/server.ts",
     "db:seed": "bun run bin/seed.ts",
+    "docker:dev": "docker compose up --build",
     "build": "bun run clean && bun build --production --target=node --sourcemap=linked bin/server.ts --outdir dist && cp -r ../../apps/studio/dist dist/studio"
   },
   "exports": {

@@ -1,30 +1,41 @@
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
-import { input, password } from "@inquirer/prompts";
+import { input, password as passwordPrompt } from "@inquirer/prompts";
 import chalk from "chalk";
 import { getGatewayBaseUrl } from "../../config";
 import { saveAuthToken } from "../../utils/auth";
+
+interface LoginOptions {
+  email?: string;
+  password?: string;
+}
 
 export function registerLoginCommand(program: DirectorCommand) {
   program
     .command("login")
     .description("Log in to your account")
+    .option("-e, --email <email>", "Email address")
+    .option("-p, --password <password>", "Password")
     .action(
-      actionWithErrorHandler(async () => {
-        const email = await input({
-          message: "Email:",
-          validate: (value) => {
-            if (!value.includes("@")) {
-              return "Please enter a valid email address";
-            }
-            return true;
-          },
-        });
+      actionWithErrorHandler(async (options: LoginOptions) => {
+        const email =
+          options.email ??
+          (await input({
+            message: "Email:",
+            validate: (value) => {
+              if (!value.includes("@")) {
+                return "Please enter a valid email address";
+              }
+              return true;
+            },
+          }));
 
-        const pass = await password({
-          message: "Password:",
-          mask: "*",
-        });
+        const pass =
+          options.password ??
+          (await passwordPrompt({
+            message: "Password:",
+            mask: "*",
+          }));
 
         const baseURL = getGatewayBaseUrl();
         const response = await fetch(`${baseURL}/api/auth/sign-in/email`, {

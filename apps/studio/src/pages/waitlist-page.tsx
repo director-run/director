@@ -3,15 +3,17 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../contexts/auth-context.tsx";
 
 export function WaitlistPage() {
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, isPending, logout } = useAuth();
 
   // Redirect to login if not authenticated
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
-  // Note: We don't redirect active users away - they can navigate away themselves.
-  // This page is shown when the API returns USER_PENDING error.
+  // Redirect active users to home (e.g., after admin activates their account)
+  if (!isPending) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <WaitlistPageComponent

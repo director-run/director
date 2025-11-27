@@ -36,12 +36,19 @@ async function main(): Promise<void> {
   app.use(
     createOauthCallbackRouter({
       onAuthorizationSuccess: async (serverUrl, code) => {
-        logger.info("received authorization success", { serverUrl, code });
+        logger.info({
+          message: "received authorization success",
+          serverUrl,
+          code,
+        });
         await httpTarget.completeAuthFlow(code);
         await runNotionMCPChecks(httpTarget);
       },
       onAuthorizationError: (error) => {
-        logger.error("received authorization error", { error });
+        logger.error({
+          message: "received authorization error",
+          error,
+        });
       },
     }),
   );

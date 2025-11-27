@@ -19,6 +19,6 @@ jobs:
     uses: ./.github/workflows/__cloudrun-deploy.yml
     with:
       environment: staging
-      service_name: director-gateway
+      service_name: director-staging-gateway
       working-directory: packages/gateway
       migrations: true

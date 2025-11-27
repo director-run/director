@@ -1,18 +1,20 @@
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-// import { Config } from "@director.run/gateway/config/index";
-import {
-  isDevelopment,
-  // isProduction,
-  isTest,
-} from "@director.run/utilities/env";
+import { isDevelopment, isTest } from "@director.run/utilities/env";
 import { findFirstMatch } from "@director.run/utilities/fs";
-// import { Telemetry } from "@director.run/utilities/telemetry";
 
-// import packageJson from "../package.json" assert { type: "json" };
-
-// const SEGMENT_PRODUCTION_WRITE_KEY = "Z8wjEfWMFnlltCpGPPWlvsEQH1aVEUH3";
+// if (isTest()) {
+//   dotenv.config({
+//     path: path.join(__dirname, "../env/.env.test"),
+//     override: true,
+//   });
+// } else if (isDevelopment()) {
+//   dotenv.config({
+//     path: path.join(__dirname, "../env/.env.dev"),
+//     override: true,
+//   });
+// }
 
 export const REGISTRY_URL = "https://registry.director.run";
 export const REGISTRY_API_KEY = "";
@@ -93,7 +95,7 @@ export function getGatewayBaseUrl(): string {
   // console.log("--------------------------------");
   // console.log("--------------------------------");
 
-  return process.env.GATEWAY_URL || `http://localhost:3673`;
+  return process.env.GATEWAY_URL || `http://localhost:3600`;
 }
 
 export function getStudioUrl(): string {

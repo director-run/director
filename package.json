@@ -35,7 +35,8 @@
     "serve": "NODE_ENV=development bun run ./packages/gateway/bin/server.ts",
     "serve:dev": "NODE_ENV=development bun --watch ./packages/gateway/bin/server.ts",
     "reset": "bun run ./packages/gateway/bin/reset.ts",
-    "check": "bun run lint && bun run typecheck && bun run test && bun run build"
+    "check": "bun run lint && bun run typecheck && bun run test && bun run build",
+    "db:push": "cd packages/gateway && NODE_ENV=development bun run db:push"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

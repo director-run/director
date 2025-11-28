@@ -1,6 +1,5 @@
 import { Server } from "node:http";
 import { createOauthCallbackRouter } from "@director.run/mcp/oauth/oauth-callback-router";
-import type { OAuthProviderFactoryParams } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { isDevelopment } from "@director.run/utilities/env";
 import { getLogger } from "@director.run/utilities/logger";
 import {
@@ -101,6 +100,15 @@ export class Gateway {
     this.app.use(
       "/",
       createOauthCallbackRouter({
+        getSession: async (req) => {
+          const session = await auth.api.getSession({
+            headers: req.headers as Record<string, string>,
+          });
+          if (!session) {
+            return null;
+          }
+          return { userId: session.user.id };
+        },
         onAuthorizationSuccess: async (factoryId, providerId, code, userId) => {
           await this.playbookStore.onAuthorizationSuccess(
             factoryId,
@@ -167,7 +175,6 @@ export class Gateway {
       telemetry?: Telemetry;
       baseUrl: string;
       port: number;
-      oauth: OAuthProviderFactoryParams;
     },
     successCallback?: () => void,
   ) {
@@ -176,7 +183,7 @@ export class Gateway {
     const playbookStore = await PlaybookStore.create({
       database: attribs.database,
       telemetry: attribs.telemetry,
-      oauth: attribs.oauth,
+      baseCallbackUrl: attribs.baseUrl,
     });
 
     attribs.telemetry?.trackEvent("gateway_start");

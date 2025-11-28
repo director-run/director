@@ -1,12 +1,10 @@
 import { HTTPClient } from "@director.run/mcp/client/http-client";
-import {
-  OAuthProviderFactory,
-  type OAuthProviderFactoryParams,
-} from "@director.run/mcp/oauth/oauth-provider-factory";
+import { OAuthProviderFactory } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { Telemetry } from "@director.run/utilities/telemetry";
 import type { Database } from "../db/database";
+import { DatabaseOAuthStorage } from "../db/oauth-storage";
 import { Playbook, type PlaybookParams, type PlaybookTarget } from "./playbook";
 
 const logger = getLogger("PlaybookStore");
@@ -15,32 +13,32 @@ export class PlaybookStore {
   private playbooks: Map<string, Playbook> = new Map();
   private database: Database;
   private telemetry: Telemetry;
-  private _oauth?: OAuthProviderFactoryParams;
+  private baseCallbackUrl: string;
 
   private constructor(params: {
     database: Database;
     telemetry?: Telemetry;
-    oauth?: OAuthProviderFactoryParams;
+    baseCallbackUrl: string;
   }) {
     this.database = params.database;
     this.telemetry = params.telemetry || Telemetry.noTelemetry();
-    this._oauth = params.oauth;
+    this.baseCallbackUrl = params.baseCallbackUrl;
   }
 
   public static async create({
     database,
     telemetry,
-    oauth,
+    baseCallbackUrl,
   }: {
     database: Database;
     telemetry?: Telemetry;
-    oauth?: OAuthProviderFactoryParams;
+    baseCallbackUrl: string;
   }): Promise<PlaybookStore> {
     logger.debug("initializing PlaybookStore");
     const store = new PlaybookStore({
       database,
       telemetry,
-      oauth,
+      baseCallbackUrl,
     });
     await store.initialize();
     logger.debug("initialization complete");
@@ -254,14 +252,28 @@ export class PlaybookStore {
     return playbook;
   }
 
+  private createOAuthProviderFactory(
+    playbookId: string,
+    userId: string,
+  ): OAuthProviderFactory {
+    const storage = new DatabaseOAuthStorage({
+      database: this.database,
+      userId,
+    });
+    return new OAuthProviderFactory({
+      storage: "custom",
+      storageInstance: storage,
+      baseCallbackUrl: this.baseCallbackUrl,
+      id: playbookId,
+    });
+  }
+
   private async initializeAndAddPlaybook(playbookParams: PlaybookParams) {
     const playbook = await Playbook.fromConfig(playbookParams, {
-      oAuthHandler: this._oauth
-        ? new OAuthProviderFactory({
-            ...this._oauth,
-            id: playbookParams.id,
-          })
-        : undefined,
+      oAuthHandler: this.createOAuthProviderFactory(
+        playbookParams.id,
+        playbookParams.userId,
+      ),
       database: this.database,
     });
 

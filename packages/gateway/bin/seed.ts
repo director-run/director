@@ -71,10 +71,7 @@ async function seed() {
     console.log("Initializing PlaybookStore...");
     const playbookStore = await PlaybookStore.create({
       database,
-      oauth: {
-        storage: "memory",
-        baseCallbackUrl: "http://localhost:3673",
-      },
+      baseCallbackUrl: "http://localhost:3673",
     });
 
     // Create playbook

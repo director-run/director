@@ -13,54 +13,6 @@ export type ClientId = "claude" | "claude-code" | "cursor" | "vscode";
 export class ClientStore {
   public constructor() {}
 
-  // public async enforceClientConfigs({
-  //   playbookStore,
-  //   baseUrl,
-  // }: {
-  //   playbookStore: PlaybookStore;
-  //   baseUrl: string;
-  // }) {
-  //   logger.debug({ message: "Enforcing client configs" });
-
-  //   await this.resetAll({ restartIfNeeded: false });
-  //   logger.debug({ message: "Waiting for 1 second" });
-  //   await sleep(1000);
-
-  //   logger.debug({ message: "Adding back" });
-  //   for (const client of this.all()) {
-  //     const playbookIds =
-  //       this._config.get(`clients.${client.name as ClientId}`) ?? [];
-  //     for (const playbookId of playbookIds) {
-  //       logger.debug({
-  //         message: `Installing ${playbookId} on ${client.name}`,
-  //       });
-  //       try {
-  //         // TODO: Update to support multi-tenancy - this system operation needs redesign
-  //         const playbook = playbookStore.get(playbookId, "dummy-user-id");
-  //         const result = await client.install({
-  //           name: playbook.id,
-  //           sseURL: joinURL(baseUrl, getSSEPathForPlaybook(playbook.id)),
-  //           streamableURL: joinURL(
-  //             baseUrl,
-  //             getStreamablePathForPlaybook(playbook.id),
-  //           ),
-  //         });
-  //         if (result.requiresRestart) {
-  //           await client.restart();
-  //         }
-  //       } catch (error) {
-  //         if (error instanceof AppError && error.code === ErrorCode.NOT_FOUND) {
-  //           logger.warn({
-  //             message: `Playbook '${playbookId}' not found, skipping installation on ${client.name}`,
-  //           });
-  //           continue;
-  //         }
-  //         throw error;
-  //       }
-  //     }
-  //   }
-  // }
-
   public async getClientsByPlaybook(playbookId: string) {
     const clients: AbstractClient<unknown>[] = [];
     for (const client of this.all()) {
@@ -153,30 +105,4 @@ export class ClientStore {
   public async toPlainObject() {
     return await Promise.all(this.all().map((client) => client.getStatus()));
   }
-
-  // public async handlePlaybookListChange(playbookId: string) {
-  //   const clients = await this.getClientsByPlaybook(playbookId);
-  //   for (const client of clients) {
-  //     if (!(await client.isClientPresent())) {
-  //       continue;
-  //     }
-  //     if (client.getCapabilities().requiresRestartOnUpdate) {
-  //       logger.debug({ message: `restarting ${client.name}` });
-  //       await client.restart();
-  //     }
-  //   }
-  // }
-
-  // public async handlePlaybookRemove(playbookId: string) {
-  //   const clients = await this.getClientsByPlaybook(playbookId);
-  //   for (const client of clients) {
-  //     if (!(await client.isClientPresent())) {
-  //       continue;
-  //     }
-  //     const result = await client.uninstall(playbookId);
-  //     if (result.requiresRestart) {
-  //       await client.restart();
-  //     }
-  //   }
-  // }
 }

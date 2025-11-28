@@ -57,7 +57,7 @@ describe("Client Router", () => {
     testUser = await createTestUser(database);
     playbookStore = await PlaybookStore.create({
       database,
-      oauth: { storage: "memory", baseCallbackUrl: BASE_URL },
+      baseCallbackUrl: BASE_URL,
     });
   });
 

@@ -139,6 +139,40 @@ export const playbookPromptsTable = pgTable("playbook_prompts", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// OAuth credentials for MCP servers (stored per-user, per-server)
+export const oauthCredentialsTable = pgTable(
+  "oauth_credentials",
+  {
+    id: varchar("id", { length: 255 })
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    // The user who owns these credentials
+    userId: text("user_id")
+      .notNull()
+      .references(() => userTable.id, { onDelete: "cascade" }),
+    // The provider ID (typically serverId within a playbook)
+    providerId: varchar("provider_id", { length: 255 }).notNull(),
+    // OAuth client information (client_id, client_secret, etc.)
+    clientInformation: jsonb("client_information"),
+    // OAuth tokens (access_token, refresh_token, etc.)
+    tokens: jsonb("tokens"),
+    // PKCE code verifier for in-progress auth flows
+    codeVerifier: text("code_verifier"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("oauth_credentials_userId_idx").on(table.userId),
+    unique("oauth_credentials_userId_providerId_unique").on(
+      table.userId,
+      table.providerId,
+    ),
+  ],
+);
+
 export type PlaybookInsertParams = InferInsertModel<typeof playbooksTable>;
 export type PlaybookServerInsertParams = InferInsertModel<
   typeof playbookServersTable

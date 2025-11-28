@@ -134,10 +134,6 @@ export class IntegrationTestHarness {
       database,
       baseUrl: baseURL,
       port: env.PORT,
-      oauth: {
-        storage: "memory",
-        baseCallbackUrl: baseURL,
-      },
     });
 
     const client = createGatewayClient(baseURL);

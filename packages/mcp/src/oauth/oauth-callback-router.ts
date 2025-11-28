@@ -7,7 +7,12 @@ const logger = getLogger("oauth/callback-router");
 type MaybePromise<T> = T | Promise<T>;
 type RedirectResult = { redirectUrl: string };
 
+export type GetSessionFn = (
+  req: Request,
+) => MaybePromise<{ userId: string } | null>;
+
 export function createOauthCallbackRouter(params: {
+  getSession: GetSessionFn;
   onAuthorizationSuccess: (
     factoryId: string,
     providerId: string,
@@ -31,8 +36,21 @@ export function createOauthCallbackRouter(params: {
       const factoryId = req.params.factoryId;
       const providerId = req.params.providerId;
 
-      // TODO: Replace with actual authentication logic (e.g., better-auth session)
-      const userId = "dummy-user-id";
+      // Get the authenticated user from the session
+      const session = await params.getSession(req);
+      if (!session) {
+        logger.error({
+          message: "oauth callback received without authenticated session",
+          factoryId,
+          providerId,
+        });
+        res.status(401).send({
+          status: "error",
+          message: "Authentication required. Please log in before authorizing.",
+        });
+        return;
+      }
+      const userId = session.userId;
 
       if (code) {
         logger.info({

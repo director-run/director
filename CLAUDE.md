@@ -1,6 +1,16 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## Product overview and Development Workflow
+
+Director is an MCP gateway. It allows users to create and manage multiple playbooks. Each playbook aggregates MCP servers and prompts.
+
+We've just migrated director from a single tenant, local first architecture to a multi tenant architecture.
+
+We have a login system, powered by better-auth. In development, we have two components: apps/studio which is the frontend. And packages/gateway that's the backend.
+
+You can start the frontend by running `bun run studio` from the root of the repo and you can start the backend by running `bun run serve` from the root of the repo. There’s a command called `bun run db:seed` that will seed the development database. It’ll make a test user with the email: [`user@director.run`](mailto:user@director.run) and the password `password`. These credentials are pre-filled on the app login screen.
+
+When developing for the frontend, you should use the playwright MCP to interact with the frontend: in development, it’ll run on `http://localhost:3000`
 
 ## Quality Standards and Workflow
 
@@ -119,43 +129,6 @@ When building frontend components (Studio, design system):
 - ❌ Breaking existing functionality without updating tests
 - ❌ Ignoring TypeScript errors or using `@ts-ignore`
 
-## Development Commands
-
-### Setup and Installation
-- `bun install` - Install dependencies for all packages
-- `bun run setup-development.sh` - Setup development environment (located in scripts/)
-
-### Build and Development
-- `bun run dev` - Start development mode for all apps
-- `bun run build` - Build all apps and packages
-- `bun run start` - Start production mode for all apps
-- `bun run dev:reset` - Clean and reinstall dependencies
-
-### Quality Assurance
-- `bun run lint` - Run linting across all packages
-- `bun run format` - Format code using Biome
-- `bun run format:fix-imports` - Fix import organization only
-- `bun run typecheck` - Run TypeScript type checking
-- `bun run test` - Run tests with Vitest (uses `--fileParallelism=false`)
-
-### Release Management
-- `bun run changeset` - Create a new changeset to declare package changes
-- `bun run version-packages` - Version packages and update changelogs based on changesets
-- `bun run release-packages` - Build and publish packages to registries
-
-### Local Development
-- `bun run cli` - Run CLI in development mode
-- `bun run cli:dev` - Run CLI with watch mode
-- `bun run registry` - Run registry API in development mode  
-- `bun run registry:dev` - Run registry API with watch mode
-
-### Cleanup
-- `bun run clean` - Clean build artifacts and node_modules
-
-## Architecture Overview
-
-Director is MCP (Model Context Protocol) middleware that acts as a proxy between AI models/agents and MCP servers. The architecture consists of:
-
 ### Core Components
 
 **Gateway** (`packages/gateway/`)
@@ -163,18 +136,6 @@ Director is MCP (Model Context Protocol) middleware that acts as a proxy between
 - Serves unified interface to clients via standard MCP transports (HTTP Streamable, Stdio, SSE)
 - Manages `ProxyServer` instances through `ProxyServerStore`
 - Exposes HTTP API via TRPC for dynamic management
-
-**MCP Extensions** (`packages/mcp/`)
-- Extensions to the official TypeScript MCP SDK
-- `ProxyServer` class extends MCP Server to aggregate multiple MCP servers
-- Handles prompts, resources, and tools from multiple upstream servers
-- `ProxyTarget` manages individual server connections
-
-**Client Configurator** (`packages/client-configurator/`)
-- Automates client connection setup (Claude, Cursor, VSCode)
-- Manages MCP client configuration files without manual JSON editing
-
-### Applications
 
 **CLI** (`apps/cli/`)
 - Primary interface for Director management
@@ -191,11 +152,6 @@ Director is MCP (Model Context Protocol) middleware that acts as a proxy between
 - Database schema in `src/db/schema.ts`
 - TRPC routers in `src/routers/trpc/`
 
-**Sandbox** (`apps/sandbox/`)
-- VM-based sandboxing for secure MCP server execution
-- Ansible playbooks for provisioning in `ansible/`
-- Apple Silicon only
-
 ### Development Standards
 
 - **Package Manager**: Bun (version ~1.2.5)
@@ -204,47 +160,3 @@ Director is MCP (Model Context Protocol) middleware that acts as a proxy between
 - **Linting**: Biome with strict rules (no default exports, no explicit any)
 - **Testing**: Vitest with file parallelism disabled
 - **TypeScript**: Strict configuration across all packages
-
-### Release Process
-
-Director uses [Changesets](https://github.com/changesets/changesets) for automated release management with the following workflow:
-
-#### Creating Releases
-
-1. **Add Changeset**: Run `bun run changeset` to declare package changes and version bumps
-2. **Version Packages**: Changesets automatically creates versioning PRs when changes are merged to main
-3. **Automated Publishing**: 
-   - **npm**: `@director.run/cli` and `@director.run/sdk` are published to npm with public access
-   - **Docker**: `@director.run/docker` is published to Docker Hub as `barnaby/director`
-
-#### GitHub Configuration Required
-
-The following secrets must be configured in GitHub repository settings:
-
-- `NPM_TOKEN`: npm authentication token with publish access to `@director.run` org
-- `DOCKER_USERNAME`: Docker Hub username (`barnaby`)
-- `DOCKER_PASSWORD`: Docker Hub access token or password
-
-#### Package Release Targets
-
-- `@director.run/cli`: Published to npm as public package
-- `@director.run/sdk`: Published to npm as public package (bundles gateway and registry internally)
-- `@director.run/docker`: Published to Docker Hub as `barnaby/director` with version tags
-- Private packages (`@director.run/gateway`, `@director.run/registry`): Versioned but not published (bundled into SDK)
-- Ignored packages (`@director.run/studio`, `@director.run/sandbox`): Not versioned or published
-
-#### Changelog Format
-
-A single changelog is generated at the root of the repository using:
-- GitHub integration for PR and user attribution links
-- Commit hash references
-- Consolidated release notes for all packages in each version
-- Fixed versioning ensures all public packages are released together
-
-### Key Patterns
-
-- No default exports (enforced by Biome)
-- Consistent error handling via `@director.run/utilities/error`
-- Structured logging via `@director.run/utilities/logger`
-- TRPC for type-safe APIs
-- Proxy pattern for MCP server aggregation

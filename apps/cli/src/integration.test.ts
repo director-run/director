@@ -31,10 +31,6 @@ describe("CLI integration tests", () => {
       database,
       baseUrl: baseURL,
       port: env.PORT,
-      oauth: {
-        storage: "memory",
-        baseCallbackUrl: baseURL,
-      },
     });
 
     // Register a test user

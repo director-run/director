@@ -34,6 +34,8 @@ async function main(url: string = "https://mcp.notion.com/mcp"): Promise<void> {
 
   app.use(
     createOauthCallbackRouter({
+      // For local CLI usage, use a mock session since there's no user auth
+      getSession: async () => ({ userId: "local-example-user" }),
       onAuthorizationSuccess: async (factoryId, providerId, code) => {
         logger.info({
           message: "received authorization success",

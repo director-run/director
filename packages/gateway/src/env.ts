@@ -48,8 +48,6 @@ export const env = createEnv({
       .string()
       .default("false")
       .transform((s) => s === "true"),
-    OAUTH_STORAGE: z.string().default("disk"),
-    OAUTH_TOKEN_DIRECTORY: z.string().default("./tokens"),
     BETTER_AUTH_SECRET: z
       .string()
       .default("development-secret-change-in-production"),

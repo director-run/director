@@ -38,10 +38,7 @@ describe("PlaybookStore", () => {
 
     playbookStore = await PlaybookStore.create({
       database,
-      oauth: {
-        storage: "memory",
-        baseCallbackUrl: "http://localhost:3000/callback",
-      },
+      baseCallbackUrl: "http://localhost:3000/callback",
     });
     await playbookStore.create({
       id: "test-playbook",

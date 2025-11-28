@@ -1,6 +1,7 @@
 import { Database } from "../db/database";
 import {
   accountTable,
+  oauthCredentialsTable,
   playbooksTable,
   sessionTable,
   userTable,
@@ -48,14 +49,16 @@ export async function initializeTestDatabase(params: {
   const db = database.drizzle;
 
   if (keepUsers) {
-    // Delete only playbooks, keeping users intact
+    // Delete only playbooks and oauth credentials, keeping users intact
+    await db.delete(oauthCredentialsTable);
     await db.delete(playbooksTable);
   } else {
-    // Reset database (deletes all users, accounts, sessions, verification, playbooks)
+    // Reset database (deletes all users, accounts, sessions, verification, playbooks, oauth credentials)
     // Delete in order to respect foreign key constraints
     await db.delete(verificationTable);
     await db.delete(sessionTable);
     await db.delete(accountTable);
+    await db.delete(oauthCredentialsTable);
     await db.delete(playbooksTable);
     await db.delete(userTable);
   }

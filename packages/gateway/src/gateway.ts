@@ -9,6 +9,7 @@ import {
 import { logRequests } from "@director.run/utilities/middleware/index";
 import { spaMiddleware } from "@director.run/utilities/middleware/spa";
 import { Telemetry } from "@director.run/utilities/telemetry";
+import { joinURL } from "@director.run/utilities/url";
 import { toNodeHandler } from "better-auth/node";
 import cors from "cors";
 import express from "express";
@@ -119,7 +120,10 @@ export class Gateway {
           if (this.studioAssetsPath) {
             // Redirect to hosted studio callback page
             return {
-              redirectUrl: `${this.baseUrl}/studio/oauth/${factoryId}/${providerId}/callback`,
+              redirectUrl: joinURL(
+                this.baseUrl,
+                `studio/oauth/${factoryId}/${providerId}/callback`,
+              ),
             };
           } else if (isDevelopment()) {
             // redirect to dev studio callback page
@@ -136,7 +140,10 @@ export class Gateway {
           if (this.studioAssetsPath) {
             // Redirect to hosted studio callback page
             return {
-              redirectUrl: `${this.baseUrl}/studio/oauth/${factoryId}/${providerId}/callback?error=${JSON.stringify(error)}`,
+              redirectUrl: joinURL(
+                this.baseUrl,
+                `studio/oauth/${factoryId}/${providerId}/callback?error=${JSON.stringify(error)}`,
+              ),
             };
           } else if (isDevelopment()) {
             // redirect to dev studio callback page

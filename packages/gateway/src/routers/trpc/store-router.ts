@@ -2,6 +2,7 @@ import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { requiredStringSchema } from "@director.run/utilities/schema";
 import { t } from "@director.run/utilities/trpc";
+import { joinURL } from "@director.run/utilities/url";
 import { z } from "zod";
 import { auth } from "../../auth";
 import { decrypt, encrypt } from "../../crypto";
@@ -395,14 +396,15 @@ export function createPlaybookStoreRouter() {
           apiKey = decrypt(user.encryptedApiKey, env.BETTER_AUTH_SECRET);
         }
 
-        const baseUrl = env.BASE_URL;
-
         // Build URLs with API key
         const streamablePath = getStreamablePathForPlaybook(playbookId);
         const ssePath = getSSEPathForPlaybook(playbookId);
 
-        const streamableUrl = `${baseUrl}${streamablePath}?key=${apiKey}`;
-        const sseUrl = `${baseUrl}${ssePath}?key=${apiKey}`;
+        const streamableUrl = joinURL(
+          env.BASE_URL,
+          `${streamablePath}?key=${apiKey}`,
+        );
+        const sseUrl = joinURL(env.BASE_URL, `${ssePath}?key=${apiKey}`);
 
         // Build stdio command config
         const stdioCommand = {

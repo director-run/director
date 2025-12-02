@@ -5,14 +5,12 @@ import { auth } from "../auth";
 
 const logger = getLogger("auth");
 
-// Extend Express Request type to include userId
-declare global {
-  // biome-ignore lint/style/noNamespace: Required for Express type augmentation
-  namespace Express {
-    interface Request {
-      userId?: string;
-    }
-  }
+/**
+ * Express Request with authenticated user.
+ * Use this type in handlers that run after requireAPIKeyAuth middleware.
+ */
+export interface AuthenticatedRequest extends Request {
+  userId: string;
 }
 
 /**
@@ -22,10 +20,15 @@ declare global {
  * API key can be passed via x-api-key header, Authorization Bearer header,
  * or ?key= query param.
  *
- * Attaches userId to the request object for downstream handlers.
+ * After this middleware, req.userId is guaranteed to be set.
+ * Use AuthenticatedRequest type for downstream handlers.
  */
-export function createAuthMiddleware() {
-  return async (req: Request, res: Response, next: NextFunction) => {
+export function requireAPIKeyAuth() {
+  return async (
+    req: Request & { userId?: string },
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
       const headers = fromNodeHeaders(req.headers);
 

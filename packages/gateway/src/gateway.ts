@@ -18,8 +18,7 @@ import { ClientStore } from "./client-store";
 import type { Database } from "./db/database";
 import { env } from "./env";
 import { PlaybookStore } from "./playbooks/playbook-store";
-import { createSSERouter } from "./routers/sse";
-import { createStreamableRouter } from "./routers/streamable";
+import { createMCPRouter } from "./routers/mcp";
 import { createTRPCExpressMiddleware } from "./routers/trpc";
 
 const logger = getLogger("Gateway");
@@ -88,13 +87,7 @@ export class Gateway {
     }
     this.app.use(
       "/playbooks",
-      createSSERouter({
-        playbookStore: this.playbookStore,
-      }),
-    );
-    this.app.use(
-      "/playbooks",
-      createStreamableRouter({
+      createMCPRouter({
         playbookStore: this.playbookStore,
       }),
     );

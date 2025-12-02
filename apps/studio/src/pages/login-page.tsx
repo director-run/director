@@ -18,7 +18,7 @@ export function LoginPage() {
   return (
     <LoginPageComponent
       error={error}
-      defaultValues={{ email: "user@director.run", password: "password" }}
+      defaultValues={{ email: "", password: "" }}
       onSubmit={async (credentials) => {
         try {
           setError(null);

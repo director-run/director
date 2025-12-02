@@ -98,14 +98,18 @@ jobs:
       - name: Seed database
         if: ${{ inputs.seed_enabled }}
         run: |
-          # Get the service URL
-          SERVICE_URL=$(gcloud run services describe ${{ inputs.service_name }} \
+          # Get the service config as JSON
+          SERVICE_CONFIG=$(gcloud run services describe ${{ inputs.service_name }} \
             --region ${{ vars.REGION }} \
-            --format='value(status.url)')
+            --format=json)
+
+          # Extract service URL and management API key from the deployed container
+          SERVICE_URL=$(echo "$SERVICE_CONFIG" | jq -r '.status.url')
+          MANAGEMENT_API_KEY=$(echo "$SERVICE_CONFIG" | jq -r '.spec.template.spec.containers[0].env[] | select(.name=="MANAGEMENT_API_KEY") | .value')
 
           # Call the seed endpoint with management API key
           curl -X POST "${SERVICE_URL}/api/management/seed" \
-            -H "Authorization: Bearer ${{ secrets.MANAGEMENT_API_KEY }}" \
+            -H "Authorization: Bearer ${MANAGEMENT_API_KEY}" \
             -H "Content-Type: application/json" \
             -d '{"password": "${{ vars.SEED_USER_PASSWORD }}"}' \
             --fail-with-body

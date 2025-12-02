@@ -6,13 +6,13 @@ import {
 } from "@director.run/mcp/test/fixtures";
 import { serveOverSSE, serveOverStreamable } from "@director.run/mcp/transport";
 import { requiredStringSchema } from "@director.run/utilities/schema";
-import { joinURL } from "@director.run/utilities/url";
 import { z } from "zod";
 import {
   login as clientLogin,
   register as clientRegister,
   createGatewayClient,
 } from "../client";
+import { decrypt } from "../crypto";
 import { Database } from "../db/database";
 import { env } from "../env";
 import { Gateway } from "../gateway";
@@ -21,33 +21,6 @@ import {
   initializeTestDatabase,
   resetPlaybookStore,
 } from "./db";
-
-/**
- * Creates an API key for the authenticated user via better-auth API.
- */
-async function createApiKeyViaAuth(
-  baseURL: string,
-  sessionCookie: string,
-): Promise<string> {
-  const response = await fetch(joinURL(baseURL, "/api/auth/api-key/create"), {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Cookie: sessionCookie,
-      Origin: baseURL,
-    },
-    body: JSON.stringify({
-      name: "test-api-key",
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to create API key: ${response.statusText}`);
-  }
-
-  const data = await response.json();
-  return data.key;
-}
 
 const PROXY_TARGET_PORT = 4521;
 
@@ -117,8 +90,12 @@ export class IntegrationTestHarness {
     this.sessionCookie = sessionCookie;
     this.userId = user.id;
 
-    // Create an API key for the user via better-auth (for MCP endpoint access)
-    this.apiKey = await createApiKeyViaAuth(this.baseURL, sessionCookie);
+    // Retrieve the API key that was created during registration
+    const dbUser = await this.gateway.database.getUser(user.id);
+    if (!dbUser?.encryptedApiKey) {
+      throw new Error("No API key found for user after registration");
+    }
+    this.apiKey = decrypt(dbUser.encryptedApiKey, env.BETTER_AUTH_SECRET);
 
     // Recreate client with new session
     this.client = createGatewayClient(this.baseURL, {
@@ -137,9 +114,12 @@ export class IntegrationTestHarness {
     this.sessionCookie = sessionCookie;
     this.userId = user.id;
 
-    // Create an API key for the user via better-auth (for MCP endpoint access)
-    // This will create a new key each time (better-auth supports multiple keys)
-    this.apiKey = await createApiKeyViaAuth(this.baseURL, sessionCookie);
+    // Retrieve the API key that was created during registration
+    const dbUser = await this.gateway.database.getUser(user.id);
+    if (!dbUser?.encryptedApiKey) {
+      throw new Error("No API key found for user");
+    }
+    this.apiKey = decrypt(dbUser.encryptedApiKey, env.BETTER_AUTH_SECRET);
 
     // Recreate client with new session
     this.client = createGatewayClient(this.baseURL, {

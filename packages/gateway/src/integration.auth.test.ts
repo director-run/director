@@ -93,6 +93,25 @@ describe("Authentication integration", () => {
         }),
       ).rejects.toThrow("UNAUTHORIZED");
     });
+
+    it("should create an encrypted API key for the user on signup", async () => {
+      await harness.initializeDatabase();
+
+      const { user } = await harness.register({
+        email: "apikey-test@example.com",
+        password: "testpassword123",
+      });
+
+      // Verify that an encrypted API key was created for the user
+      const dbUser = await harness.database.getUser(user.id);
+      expect(dbUser).toBeDefined();
+      expect(dbUser?.encryptedApiKey).toBeDefined();
+      expect(dbUser?.encryptedApiKey).not.toBeNull();
+      // Encrypted key format: base64(iv):base64(authTag):base64(ciphertext)
+      expect(dbUser?.encryptedApiKey).toMatch(
+        /^[A-Za-z0-9+/=]+:[A-Za-z0-9+/=]+:[A-Za-z0-9+/=]+$/,
+      );
+    });
   });
 
   describe("login flow", () => {

@@ -8,9 +8,7 @@ const meta = {
   parameters: { layout: "fullscreen" },
   args: {
     settings: {
-      theme: "dark",
-      language: "en",
-      notifications: "enabled",
+      Email: "user@director.run",
     },
     onClickLogout: () => {
       console.log("Logout clicked");
@@ -18,7 +16,7 @@ const meta = {
     apiKey: null,
     newApiKey: null,
     isLoadingApiKey: false,
-    isCreatingApiKey: false,
+    isRecyclingApiKey: false,
     onCreateApiKey: () => {
       console.log("Create API key clicked");
     },
@@ -27,6 +25,10 @@ const meta = {
     },
     onClearNewApiKey: () => {
       console.log("Clear new API key clicked");
+    },
+    onCopyApiKey: (text: string) => {
+      console.log("Copy API key:", text);
+      navigator.clipboard.writeText(text);
     },
   },
   decorators: [withLayoutView],
@@ -45,12 +47,6 @@ export const WithApiKey: Story = {
       createdAt: new Date().toISOString(),
       lastUsedAt: new Date().toISOString(),
     },
-  },
-};
-
-export const WithNewApiKey: Story = {
-  args: {
-    newApiKey: "dk_abc123def456ghi789jkl012mno345",
   },
 };
 

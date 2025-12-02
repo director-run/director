@@ -13,12 +13,12 @@ type ApiKeyData = {
 };
 
 export function SettingsPage() {
-  const { user, logout, isAuthenticated, isInitializing } = useAuth();
+  const { user, logout, isAuthenticated } = useAuth();
 
   const [newApiKey, setNewApiKey] = useState<string | null>(null);
   const [apiKey, setApiKey] = useState<ApiKeyData | null>(null);
   const [isLoadingApiKey, setIsLoadingApiKey] = useState(true);
-  const [isCreatingApiKey, setIsCreatingApiKey] = useState(false);
+  const [isRecyclingApiKey, setIsRecyclingApiKey] = useState(false);
 
   const fetchApiKeys = useCallback(async () => {
     try {
@@ -50,20 +50,20 @@ export function SettingsPage() {
 
   const handleCreateApiKey = async () => {
     try {
-      setIsCreatingApiKey(true);
+      setIsRecyclingApiKey(true);
       const result = await authClient.apiKey.create({ name: "studio-key" });
       if (result.data?.key) {
         setNewApiKey(result.data.key);
         await fetchApiKeys();
       }
     } finally {
-      setIsCreatingApiKey(false);
+      setIsRecyclingApiKey(false);
     }
   };
 
   const handleRecycleApiKey = async () => {
     try {
-      setIsCreatingApiKey(true);
+      setIsRecyclingApiKey(true);
       // Delete existing key first
       if (apiKey) {
         await authClient.apiKey.delete({ keyId: apiKey.id });
@@ -75,8 +75,12 @@ export function SettingsPage() {
         await fetchApiKeys();
       }
     } finally {
-      setIsCreatingApiKey(false);
+      setIsRecyclingApiKey(false);
     }
+  };
+
+  const handleCopyApiKey = async (text: string) => {
+    await navigator.clipboard.writeText(text);
   };
 
   return (
@@ -92,18 +96,17 @@ export function SettingsPage() {
       <LayoutViewContent>
         <SettingsPageComponent
           settings={{
-            user: JSON.stringify(user),
-            isAuthenticated: JSON.stringify(isAuthenticated),
-            isInitializing: JSON.stringify(isInitializing),
+            Email: user?.email ?? "Unknown",
           }}
           onClickLogout={logout}
           apiKey={apiKey}
           newApiKey={newApiKey}
           isLoadingApiKey={isLoadingApiKey}
-          isCreatingApiKey={isCreatingApiKey}
+          isRecyclingApiKey={isRecyclingApiKey}
           onCreateApiKey={handleCreateApiKey}
           onRecycleApiKey={handleRecycleApiKey}
           onClearNewApiKey={() => setNewApiKey(null)}
+          onCopyApiKey={handleCopyApiKey}
         />
       </LayoutViewContent>
     </>

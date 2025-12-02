@@ -49,6 +49,8 @@ export const env = createEnv({
       .string()
       .default("")
       .transform((s) => s.split(",").filter(Boolean)),
+    MANAGEMENT_API_KEY: z.string().optional(),
+    SEED_USER_PASSWORD: z.string().optional(),
   },
   runtimeEnv: process.env,
   emptyStringAsUndefined: true,

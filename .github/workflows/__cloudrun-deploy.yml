@@ -91,12 +91,18 @@ jobs:
           
       - name: Seed database
         if: ${{ inputs.seed_enabled }}
-        working-directory: ${{ inputs.working-directory }}
         run: |
-          DATABASE_URL=$(gcloud run services describe ${{ inputs.service_name }} \
+          # Get the service URL
+          SERVICE_URL=$(gcloud run services describe ${{ inputs.service_name }} \
             --region ${{ vars.REGION }} \
-            --format=json | jq -r '.spec.template.spec.containers[0].env[] | select(.name=="DATABASE_URL") | .value')
-          DATABASE_URL=$DATABASE_URL SEED_USER_PASSWORD=${{ vars.SEED_USER_PASSWORD }} bun run db:seed
+            --format='value(status.url)')
+
+          # Call the seed endpoint with management API key
+          curl -X POST "${SERVICE_URL}/api/management/seed" \
+            -H "Authorization: Bearer ${{ secrets.MANAGEMENT_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"password": "${{ vars.SEED_USER_PASSWORD }}"}' \
+            --fail-with-body
          
       - name: Deploy to Cloud Run
         run: |

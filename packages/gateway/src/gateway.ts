@@ -18,6 +18,7 @@ import { ClientStore } from "./client-store";
 import type { Database } from "./db/database";
 import { env } from "./env";
 import { PlaybookStore } from "./playbooks/playbook-store";
+import { createManagementRouter } from "./routers/management";
 import { createMCPRouter } from "./routers/mcp";
 import { createTRPCExpressMiddleware } from "./routers/trpc";
 
@@ -149,6 +150,15 @@ export class Gateway {
     );
 
     this.app.all("/api/auth/*", toNodeHandler(auth));
+
+    this.app.use(
+      "/api/management",
+      createManagementRouter({
+        database: this.database,
+        playbookStore: this.playbookStore,
+        baseCallbackUrl: this.baseUrl,
+      }),
+    );
 
     this.app.use(
       "/trpc",

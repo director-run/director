@@ -11,7 +11,7 @@
     "clean": "rm -rf .turbo dist/*",
     "typecheck": "tsc --noEmit",
     "test": "bun run vitest",
-    "build": "bun build --production --target=node bin/*.ts --outdir dist",
+    "build": "bun run clean && bun build --production --target=node bin/*.ts --outdir dist",
     "db:push": "drizzle-kit push",
     "dev": "bun --watch bin/api.ts"
   },

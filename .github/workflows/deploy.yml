@@ -10,8 +10,8 @@ on:
     branches: [ "multi-tenancy" ]
 
 jobs:
-  deploy:
-    name: Deploy apps/server to Cloud Run
+  deploy-gateway:
+    name: Deploy packages/gateway to Cloud Run
     # if: ${{ github.event.workflow_run.conclusion == 'success' }}
     permissions:
       contents: read
@@ -21,4 +21,17 @@ jobs:
       environment: staging
       service_name: director-staging-gateway
       working-directory: packages/gateway
+      migrations: true
+
+  deploy-registry:
+    name: Deploy apps/registry to Cloud Run
+    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/__cloudrun-deploy.yml
+    with:
+      environment: staging
+      service_name: director-staging-registry
+      working-directory: apps/registry
       migrations: true

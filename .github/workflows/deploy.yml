@@ -36,4 +36,4 @@ jobs:
       service_name: director-staging-registry
       working-directory: apps/registry
       migrations: true
-      seed_enabled: false
+      seed_enabled: true

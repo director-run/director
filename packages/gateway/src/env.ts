@@ -1,25 +1,19 @@
 import path from "path";
-import { fileURLToPath } from "url";
 import { isDevelopment, isTest } from "@director.run/utilities/env";
 import { createEnv } from "@t3-oss/env-core";
 import dotenv from "dotenv";
 import { z } from "zod";
 
-// Get the package root directory relative to this file's location
-// This works correctly regardless of where the process is run from
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const packageRoot = path.resolve(__dirname, "..");
-
 // Load environment-specific .env files before validation
 // Override is needed because some shells may have empty strings for env vars
 if (isTest()) {
   dotenv.config({
-    path: path.join(packageRoot, "env/.env.test"),
+    path: path.join(__dirname, "../env/.env.test"),
     override: true,
   });
 } else if (isDevelopment()) {
   dotenv.config({
-    path: path.join(packageRoot, "env/.env.dev"),
+    path: path.join(__dirname, "../env/.env.dev"),
     override: true,
   });
 }

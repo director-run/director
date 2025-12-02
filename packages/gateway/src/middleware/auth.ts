@@ -6,9 +6,12 @@ import { auth } from "../auth";
 const logger = getLogger("auth");
 
 // Extend Express Request type to include userId
-declare module "express-serve-static-core" {
-  interface Request {
-    userId?: string;
+declare global {
+  // biome-ignore lint/style/noNamespace: Required for Express type augmentation
+  namespace Express {
+    interface Request {
+      userId?: string;
+    }
   }
 }
 

@@ -32,8 +32,15 @@ describe("Authentication integration", () => {
         }),
       });
 
-      expect(signupResponse.ok).toBe(true);
       const signupData = await signupResponse.json();
+      if (!signupResponse.ok) {
+        console.error(
+          "Signup failed:",
+          signupResponse.status,
+          JSON.stringify(signupData, null, 2),
+        );
+      }
+      expect(signupResponse.ok).toBe(true);
       expect(signupData.user).toBeDefined();
       expect(signupData.user.email).toBe("test@example.com");
 

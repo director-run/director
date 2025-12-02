@@ -2,6 +2,7 @@ import type { InferInsertModel } from "drizzle-orm";
 import {
   boolean,
   index,
+  integer,
   jsonb,
   pgTable,
   text,
@@ -22,6 +23,9 @@ export const userTable = pgTable("user", {
   emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
   status: text("status").$type<UserStatus>().default("PENDING").notNull(),
+  // Encrypted API key (AES-256-GCM) - stores the user's default API key
+  // Format: base64(iv):base64(authTag):base64(ciphertext)
+  encryptedApiKey: text("encrypted_api_key"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
@@ -171,6 +175,40 @@ export const oauthCredentialsTable = pgTable(
       table.providerId,
     ),
   ],
+);
+
+// API key table for better-auth's apiKey plugin
+export const apikeyTable = pgTable(
+  "apikey",
+  {
+    id: text("id").primaryKey(),
+    name: text("name"),
+    start: text("start"),
+    prefix: text("prefix"),
+    key: text("key").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => userTable.id, { onDelete: "cascade" }),
+    refillInterval: integer("refill_interval"),
+    refillAmount: integer("refill_amount"),
+    lastRefillAt: timestamp("last_refill_at"),
+    enabled: boolean("enabled").default(true).notNull(),
+    rateLimitEnabled: boolean("rate_limit_enabled").default(true).notNull(),
+    rateLimitTimeWindow: integer("rate_limit_time_window"),
+    rateLimitMax: integer("rate_limit_max"),
+    requestCount: integer("request_count").default(0),
+    remaining: integer("remaining"),
+    lastRequest: timestamp("last_request"),
+    expiresAt: timestamp("expires_at"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+    permissions: text("permissions"),
+    metadata: text("metadata"),
+  },
+  (table) => [index("apikey_userId_idx").on(table.userId)],
 );
 
 export type PlaybookInsertParams = InferInsertModel<typeof playbooksTable>;

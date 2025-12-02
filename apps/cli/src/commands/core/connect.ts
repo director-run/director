@@ -1,14 +1,9 @@
-import {
-  getSSEPathForPlaybook,
-  getStreamablePathForPlaybook,
-} from "@director.run/gateway/helpers";
 import { blue, whiteBold } from "@director.run/utilities/cli/colors";
 import {
   DirectorCommand,
   makeOption,
 } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
-import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../../client";
 import { getGatewayBaseUrl } from "../../config";
 
@@ -47,34 +42,22 @@ export function registerConnectCommand(program: DirectorCommand) {
               "director connect " + playbookId + " --target <target>",
             );
             console.log();
-            const playbook = await gatewayClient.store.get.query({
-              playbookId: playbookId,
-            });
-            const baseUrl = getGatewayBaseUrl();
-            const sseURL = joinURL(baseUrl, getSSEPathForPlaybook(playbook.id));
-            const streamableURL = joinURL(
-              baseUrl,
-              getStreamablePathForPlaybook(playbook.id),
+
+            // Get connection info from gateway (includes API key)
+            const connectionInfo =
+              await gatewayClient.store.getConnectionInfo.query({
+                playbookId,
+              });
+
+            console.log(
+              whiteBold("HTTP Streamable:") +
+                " " +
+                connectionInfo.streamableUrl,
             );
-
-            const stdioCommand = {
-              command: "npx",
-              args: [
-                "-y",
-                "@director.run/cli@latest",
-                "http2stdio",
-                streamableURL,
-              ],
-              env: {
-                LOG_LEVEL: "silent",
-              },
-            };
-
-            console.log(whiteBold("HTTP Streamable:") + " " + streamableURL);
-            console.log(whiteBold("HTTP SSE:") + " " + sseURL);
+            console.log(whiteBold("HTTP SSE:") + " " + connectionInfo.sseUrl);
             console.log(
               whiteBold("Stdio:"),
-              JSON.stringify(stdioCommand, null, 2),
+              JSON.stringify(connectionInfo.stdioCommand, null, 2),
             );
             console.log();
           }

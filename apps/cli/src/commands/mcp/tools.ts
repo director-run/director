@@ -6,12 +6,21 @@ import {
 } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { makeTable } from "@director.run/utilities/cli/index";
-import { joinURL } from "@director.run/utilities/url";
 import { input } from "@inquirer/prompts";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
+import { gatewayClient } from "../../client";
 import { title } from "../../common";
-import { getGatewayBaseUrl } from "../../config";
+
+/**
+ * Creates an authenticated MCP client for a playbook.
+ */
+async function createPlaybookClient(playbookId: string): Promise<Client> {
+  const connectionInfo = await gatewayClient.store.getConnectionInfo.query({
+    playbookId,
+  });
+  return HTTPClient.createAndConnectToHTTP(connectionInfo.streamableUrl);
+}
 
 export function registerToolsCommand(program: DirectorCommand) {
   program
@@ -19,10 +28,7 @@ export function registerToolsCommand(program: DirectorCommand) {
     .description("List tools on a playbook")
     .action(
       actionWithErrorHandler(async (playbookId: string) => {
-        const client = await HTTPClient.createAndConnectToHTTP(
-          joinURL(getGatewayBaseUrl(), `${playbookId}/mcp`),
-        );
-
+        const client = await createPlaybookClient(playbookId);
         await printTools(client);
         await client.close();
       }),
@@ -33,10 +39,7 @@ export function registerToolsCommand(program: DirectorCommand) {
     .description("Get the details of a tool")
     .action(
       actionWithErrorHandler(async (playbookId: string, toolName: string) => {
-        const client = await HTTPClient.createAndConnectToHTTP(
-          joinURL(getGatewayBaseUrl(), `${playbookId}/mcp`),
-        );
-
+        const client = await createPlaybookClient(playbookId);
         await printTool(client, toolName);
         await client.close();
       }),
@@ -55,9 +58,7 @@ export function registerToolsCommand(program: DirectorCommand) {
     .description("Call a tool on a playbook")
     .action(
       actionWithErrorHandler(async (playbookId: string, toolName: string) => {
-        const client = await HTTPClient.createAndConnectToHTTP(
-          joinURL(getGatewayBaseUrl(), `${playbookId}/mcp`),
-        );
+        const client = await createPlaybookClient(playbookId);
         await callTool(client, toolName);
         await client.close();
       }),

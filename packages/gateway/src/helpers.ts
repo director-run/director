@@ -1,7 +1,7 @@
 export function getStreamablePathForPlaybook(playbookId: string) {
-  return `/${playbookId}/mcp`;
+  return `/playbooks/${playbookId}/mcp`;
 }
 
 export function getSSEPathForPlaybook(playbookId: string) {
-  return `/${playbookId}/sse`;
+  return `/playbooks/${playbookId}/sse`;
 }

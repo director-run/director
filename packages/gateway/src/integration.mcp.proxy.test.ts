@@ -27,12 +27,17 @@ enum Transport {
 }
 
 function getPlaybookUrl(transport: Transport, playbookId: string) {
-  return `http://localhost:${IntegrationTestHarness.gatewayPort}/${playbookId}/${transport === Transport.SSE ? "sse" : "mcp"}`;
+  return `http://localhost:${IntegrationTestHarness.gatewayPort}/playbooks/${playbookId}/${transport === Transport.SSE ? "sse" : "mcp"}`;
 }
 
-async function createPlaybookClient(transport: Transport, playbookId: string) {
+async function createPlaybookClient(
+  transport: Transport,
+  playbookId: string,
+  apiKey: string,
+) {
   return await HTTPClient.createAndConnectToHTTP(
     getPlaybookUrl(transport, playbookId),
+    { Authorization: `Bearer ${apiKey}` },
   );
 }
 
@@ -68,17 +73,35 @@ describe("MCP Playbook", () => {
       let playbookClient: HTTPClient;
 
       beforeEach(async () => {
-        playbookClient = await createPlaybookClient(transport, playbook.id);
+        playbookClient = await createPlaybookClient(
+          transport,
+          playbook.id,
+          harness.getApiKey(),
+        );
       });
 
       afterEach(async () => {
         await playbookClient.close();
       });
 
-      it("should return 404 when playbook not found", async () => {
+      it("should return 401 when no API key provided", async () => {
         const res = await fetch(
           getPlaybookUrl(transport, "not_existing_playbook"),
         );
+        expect(res.status).toEqual(401);
+        expect(res.ok).toBeFalsy();
+      });
+
+      it("should return 404 when playbook not found", async () => {
+        const res = await fetch(
+          getPlaybookUrl(transport, "not_existing_playbook"),
+          {
+            headers: {
+              Authorization: `Bearer ${harness.getApiKey()}`,
+            },
+          },
+        );
+        // Returns 404 because the playbook doesn't exist
         expect(res.status).toEqual(404);
         expect(res.ok).toBeFalsy();
       });

@@ -1,5 +1,6 @@
 import { sseRouter } from "@director.run/mcp/transport";
 import express from "express";
+import { createAuthMiddleware } from "../middleware/auth";
 import type { PlaybookStore } from "../playbooks/playbook-store";
 
 export const createSSERouter = ({
@@ -9,11 +10,23 @@ export const createSSERouter = ({
 }): express.Router => {
   const router = express.Router();
 
+  // Apply authentication middleware (supports both sessions and API keys)
+  router.use("/:playbook_id", createAuthMiddleware());
+
   router.use(
     "/:playbook_id",
-    sseRouter((req) => playbookStore.getByIdOnly(req.params.playbook_id), {
-      getMessagePath: (req) => `/${req.params.playbook_id}/message`,
-    }),
+    sseRouter(
+      (req) => {
+        const userId = req.userId;
+        if (!userId) {
+          throw new Error("Authentication required");
+        }
+        return playbookStore.getForUser(req.params.playbook_id, userId);
+      },
+      {
+        getMessagePath: (req) => `/playbooks/${req.params.playbook_id}/message`,
+      },
+    ),
   );
 
   return router;

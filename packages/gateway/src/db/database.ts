@@ -7,6 +7,7 @@ import {
   type PlaybookInsertParams,
   type PlaybookPromptInsertParams,
   type PlaybookServerInsertParams,
+  apikeyTable,
   playbookPromptsTable,
   playbookServersTable,
   playbooksTable,
@@ -111,6 +112,38 @@ export class Database {
       .update(userTable)
       .set({ status: "ACTIVE" })
       .where(eq(userTable.id, userId));
+  }
+
+  public async getUser(userId: string) {
+    const users = await this._drizzle
+      .select()
+      .from(userTable)
+      .where(eq(userTable.id, userId))
+      .limit(1);
+
+    return users[0] ?? null;
+  }
+
+  public async updateUserEncryptedApiKey(
+    userId: string,
+    encryptedApiKey: string,
+  ) {
+    await this._drizzle
+      .update(userTable)
+      .set({ encryptedApiKey })
+      .where(eq(userTable.id, userId));
+  }
+
+  // API key operations
+  public async getApiKeysByUserId(userId: string) {
+    return await this._drizzle
+      .select()
+      .from(apikeyTable)
+      .where(eq(apikeyTable.userId, userId));
+  }
+
+  public async deleteApiKey(keyId: string) {
+    await this._drizzle.delete(apikeyTable).where(eq(apikeyTable.id, keyId));
   }
 
   // Server operations

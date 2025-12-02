@@ -3,6 +3,13 @@ import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { requiredStringSchema } from "@director.run/utilities/schema";
 import { t } from "@director.run/utilities/trpc";
 import { z } from "zod";
+import { auth } from "../../auth";
+import { decrypt, encrypt } from "../../crypto";
+import { env } from "../../env";
+import {
+  getSSEPathForPlaybook,
+  getStreamablePathForPlaybook,
+} from "../../helpers";
 import type { PlaybookTarget } from "../../playbooks/playbook";
 import { type AuthenticatedGatewayContext, protectedProcedure } from "./index";
 
@@ -326,6 +333,92 @@ export function createPlaybookStoreRouter() {
         const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
         const playbook = await playbookStore.get(input.playbookId, userId);
         return await playbook.listPrompts();
+      }),
+
+    /**
+     * Get connection info for a playbook including URLs with API key.
+     * Uses the user's stored encrypted API key (created on registration).
+     * For existing users without an encrypted key, creates one on first access.
+     */
+    getConnectionInfo: protectedProcedure
+      .input(
+        z.object({
+          playbookId: z.string(),
+        }),
+      )
+      .query(async ({ ctx, input }) => {
+        const { playbookStore, database, userId } =
+          ctx as AuthenticatedGatewayContext;
+
+        // Verify playbook exists and belongs to user
+        const playbook = await playbookStore.get(input.playbookId, userId);
+        const playbookId = playbook.id;
+
+        // Get the user's encrypted API key
+        let user = await database.getUser(userId);
+        let apiKey: string;
+
+        if (!user?.encryptedApiKey) {
+          // For existing users without an encrypted key, create one now
+          // First check if they have an existing API key in the database
+          const existingKeys = await database.getApiKeysByUserId(userId);
+          const defaultKey = existingKeys.find((k) => k.name === "default");
+
+          if (defaultKey) {
+            // User has a key but we don't have it encrypted - need to regenerate
+            // Delete the old key and create a new one
+            await database.deleteApiKey(defaultKey.id);
+          }
+
+          // Create a new API key
+          const result = await auth.api.createApiKey({
+            body: {
+              name: "default",
+              userId,
+            },
+          });
+
+          if (!result.key) {
+            throw new AppError(
+              ErrorCode.BAD_REQUEST,
+              "Failed to create API key",
+            );
+          }
+
+          // Store the encrypted key
+          const encryptedKey = encrypt(result.key, env.BETTER_AUTH_SECRET);
+          await database.updateUserEncryptedApiKey(userId, encryptedKey);
+
+          apiKey = result.key;
+        } else {
+          // Decrypt the existing API key
+          apiKey = decrypt(user.encryptedApiKey, env.BETTER_AUTH_SECRET);
+        }
+
+        const baseUrl = env.BASE_URL;
+
+        // Build URLs with API key
+        const streamablePath = getStreamablePathForPlaybook(playbookId);
+        const ssePath = getSSEPathForPlaybook(playbookId);
+
+        const streamableUrl = `${baseUrl}${streamablePath}?key=${apiKey}`;
+        const sseUrl = `${baseUrl}${ssePath}?key=${apiKey}`;
+
+        // Build stdio command config
+        const stdioCommand = {
+          command: "npx",
+          args: ["-y", "@director.run/cli@latest", "http2stdio", streamableUrl],
+          env: {
+            LOG_LEVEL: "silent",
+          },
+        };
+
+        return {
+          playbookId,
+          streamableUrl,
+          sseUrl,
+          stdioCommand,
+        };
       }),
   });
 }

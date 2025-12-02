@@ -3,11 +3,20 @@ import { yellow } from "@director.run/utilities/cli/colors";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { makeTable } from "@director.run/utilities/cli/index";
-import { joinURL } from "@director.run/utilities/url";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import type { Prompt } from "@modelcontextprotocol/sdk/types.js";
+import { gatewayClient } from "../../client";
 import { title } from "../../common";
-import { getGatewayBaseUrl } from "../../config";
+
+/**
+ * Creates an authenticated MCP client for a playbook.
+ */
+async function createPlaybookClient(playbookId: string): Promise<Client> {
+  const connectionInfo = await gatewayClient.store.getConnectionInfo.query({
+    playbookId,
+  });
+  return HTTPClient.createAndConnectToHTTP(connectionInfo.streamableUrl);
+}
 
 export function registerPromptsCommand(program: DirectorCommand) {
   program
@@ -15,10 +24,7 @@ export function registerPromptsCommand(program: DirectorCommand) {
     .description("List prompts on a playbook")
     .action(
       actionWithErrorHandler(async (playbookId: string) => {
-        const client = await HTTPClient.createAndConnectToHTTP(
-          joinURL(getGatewayBaseUrl(), `${playbookId}/mcp`),
-        );
-
+        const client = await createPlaybookClient(playbookId);
         await printPrompts(client);
         await client.close();
       }),

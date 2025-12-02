@@ -116,16 +116,43 @@ export class PlaybookStore {
     return playbook;
   }
 
-  public getByIdOnly(playbookId: string) {
-    const server = this.playbooks.get(playbookId);
-    if (!server) {
+  /**
+   * Get a playbook for an authenticated user request.
+   * Validates that the user owns the playbook.
+   */
+  public async getForUser(
+    playbookId: string,
+    userId: string,
+  ): Promise<Playbook> {
+    // Check if already in memory
+    let playbook = this.playbooks.get(playbookId);
+
+    // If not in memory, try to load from database
+    if (!playbook) {
+      const dbPlaybook = await this.database.getPlaybookWithDetails(
+        playbookId,
+        userId,
+      );
+
+      playbook = await this.initializeAndAddPlaybook({
+        id: dbPlaybook.id,
+        name: dbPlaybook.name,
+        description: dbPlaybook.description ?? undefined,
+        userId: dbPlaybook.userId,
+        servers: dbPlaybook.servers,
+        prompts: dbPlaybook.prompts,
+      });
+    }
+
+    // Verify user owns this playbook
+    if (playbook.userId !== userId) {
       throw new AppError(
-        ErrorCode.NOT_FOUND,
-        `playbook '${playbookId}' not found or failed to initialize.`,
+        ErrorCode.FORBIDDEN,
+        `You do not have permission to access this playbook.`,
       );
     }
 
-    return server;
+    return playbook;
   }
 
   async delete(playbookId: string, userId: string) {

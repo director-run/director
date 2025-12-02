@@ -86,13 +86,13 @@ export class Gateway {
       });
     }
     this.app.use(
-      "/",
+      "/playbooks",
       createSSERouter({
         playbookStore: this.playbookStore,
       }),
     );
     this.app.use(
-      "/",
+      "/playbooks",
       createStreamableRouter({
         playbookStore: this.playbookStore,
       }),
@@ -155,6 +155,7 @@ export class Gateway {
       createTRPCExpressMiddleware({
         playbookStore: this.playbookStore,
         clientStore: this.clientStore,
+        database: this.database,
       }),
     );
     this.app.get("/", (_, res, next) => {

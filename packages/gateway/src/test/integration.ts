@@ -6,6 +6,7 @@ import {
 } from "@director.run/mcp/test/fixtures";
 import { serveOverSSE, serveOverStreamable } from "@director.run/mcp/transport";
 import { requiredStringSchema } from "@director.run/utilities/schema";
+import { joinURL } from "@director.run/utilities/url";
 import { z } from "zod";
 import {
   login as clientLogin,
@@ -21,6 +22,33 @@ import {
   resetPlaybookStore,
 } from "./db";
 
+/**
+ * Creates an API key for the authenticated user via better-auth API.
+ */
+async function createApiKeyViaAuth(
+  baseURL: string,
+  sessionCookie: string,
+): Promise<string> {
+  const response = await fetch(joinURL(baseURL, "/api/auth/api-key/create"), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: sessionCookie,
+      Origin: baseURL,
+    },
+    body: JSON.stringify({
+      name: "test-api-key",
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to create API key: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return data.key;
+}
+
 const PROXY_TARGET_PORT = 4521;
 
 export class IntegrationTestHarness {
@@ -35,6 +63,7 @@ export class IntegrationTestHarness {
   private baseURL: string;
   private _database: Database;
   public userId: string | null = null;
+  public apiKey: string | null = null;
 
   private constructor(params: {
     gateway: Gateway;
@@ -88,6 +117,9 @@ export class IntegrationTestHarness {
     this.sessionCookie = sessionCookie;
     this.userId = user.id;
 
+    // Create an API key for the user via better-auth (for MCP endpoint access)
+    this.apiKey = await createApiKeyViaAuth(this.baseURL, sessionCookie);
+
     // Recreate client with new session
     this.client = createGatewayClient(this.baseURL, {
       getAuthToken: () => this.sessionCookie,
@@ -105,6 +137,10 @@ export class IntegrationTestHarness {
     this.sessionCookie = sessionCookie;
     this.userId = user.id;
 
+    // Create an API key for the user via better-auth (for MCP endpoint access)
+    // This will create a new key each time (better-auth supports multiple keys)
+    this.apiKey = await createApiKeyViaAuth(this.baseURL, sessionCookie);
+
     // Recreate client with new session
     this.client = createGatewayClient(this.baseURL, {
       getAuthToken: () => this.sessionCookie,
@@ -116,9 +152,19 @@ export class IntegrationTestHarness {
   public logout(): void {
     this.sessionCookie = null;
     this.userId = null;
+    this.apiKey = null;
 
     // Recreate client without session
     this.client = createGatewayClient(this.baseURL);
+  }
+
+  public getApiKey(): string {
+    if (!this.apiKey) {
+      throw new Error(
+        "API key not available. Call register() or login() first.",
+      );
+    }
+    return this.apiKey;
   }
 
   public static async start() {

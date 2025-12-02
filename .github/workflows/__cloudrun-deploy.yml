@@ -13,6 +13,10 @@ on:
         required: false
         type: boolean
         default: false
+      seed_enabled:
+        required: false
+        type: boolean
+        default: false
       working-directory:
         required: true
         type: string

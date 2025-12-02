@@ -4,6 +4,7 @@ import { StdioClient } from "@director.run/mcp/client/stdio-client";
 import { getLogger } from "@director.run/utilities/logger";
 import type { inferRouterOutputs } from "@trpc/server";
 import type { RegistryClient } from "../client";
+import type { Store } from "../db/store";
 import { type AppRouter } from "../routers/trpc";
 
 type Entry =
@@ -43,6 +44,47 @@ export async function enrichEntryTools(registryClient: RegistryClient) {
 
     await registryClient.entries.updateEntry.mutate({
       id: entry.id,
+      isConnectable: true,
+      lastConnectionAttemptedAt: new Date(),
+      lastConnectionError: undefined,
+      tools,
+    });
+  }
+}
+
+/**
+ * Same as enrichEntryTools but uses the store directly instead of HTTP client.
+ * Use this when running within the same process (e.g., management API seed).
+ */
+export async function enrichEntryToolsWithStore(store: Store) {
+  const { entries } = await store.entries.paginateEntries({
+    pageIndex: 0,
+    pageSize: 100,
+    state: "published",
+  });
+
+  for (const entry of entries) {
+    if (entry.lastConnectionAttemptedAt) {
+      logger.info(`skipping ${entry.name}, already processed`);
+      continue;
+    }
+    let tools;
+
+    try {
+      tools = await fetchEntryTools(entry);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      logger.error(`error enriching ${entry.name}: ${errorMessage}`);
+      await store.entries.updateEntry(entry.id, {
+        isConnectable: false,
+        lastConnectionAttemptedAt: new Date(),
+        lastConnectionError: errorMessage,
+      });
+      continue;
+    }
+
+    await store.entries.updateEntry(entry.id, {
       isConnectable: true,
       lastConnectionAttemptedAt: new Date(),
       lastConnectionError: undefined,

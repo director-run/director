@@ -1,11 +1,10 @@
 import { getLogger } from "@director.run/utilities/logger";
 import type { NextFunction, Request, Response, Router } from "express";
 import express from "express";
-import { createRegistryClient } from "../client";
 import { env } from "../config";
 import type { Store } from "../db/store";
 import { enrichEntries } from "../enrichment/enrich";
-import { enrichEntryTools } from "../enrichment/enrich-tools";
+import { enrichEntryToolsWithStore } from "../enrichment/enrich-tools";
 import { entries } from "../seed/entries";
 
 const logger = getLogger("management");
@@ -38,10 +37,7 @@ function requireManagementApiKey(
   next();
 }
 
-export function createManagementRouter(deps: {
-  store: Store;
-  port: number;
-}): Router {
+export function createManagementRouter(deps: { store: Store }): Router {
   const router = express.Router();
 
   router.use(express.json());
@@ -69,12 +65,7 @@ export function createManagementRouter(deps: {
 
       // Step 3: Enrich tools - connect to servers and fetch tool metadata
       logger.info("Step 3/3: Enriching tools...");
-      // Create a registry client pointing to ourselves
-      const registryClient = createRegistryClient(
-        `http://localhost:${deps.port}`,
-        { apiKey: env.API_KEY },
-      );
-      await enrichEntryTools(registryClient);
+      await enrichEntryToolsWithStore(deps.store);
       logger.info("Enrich tools complete");
 
       res.json({

@@ -44,10 +44,7 @@ export class Registry {
     app.use("/public", express.static(path.join(__dirname, "../", "public")));
     app.use(express.json());
     app.use("/trpc", createTRPCExpressMiddleware({ store }));
-    app.use(
-      "/api/management",
-      createManagementRouter({ store, port: params.port }),
-    );
+    app.use("/api/management", createManagementRouter({ store }));
     app.all("*", notFoundHandler);
     app.use(errorRequestHandler);
 

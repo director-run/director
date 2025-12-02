@@ -89,6 +89,12 @@ jobs:
             --format=json | jq -r '.spec.template.spec.containers[0].env[] | select(.name=="DATABASE_URL") | .value')
           DATABASE_URL=$DATABASE_URL bun run db:push
           
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy ${{ inputs.service_name }} \
+            --image ${{ vars.REPOSITORY_URL }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            --region ${{ vars.REGION }}
+
       - name: Seed database
         if: ${{ inputs.seed_enabled }}
         run: |
@@ -104,9 +110,3 @@ jobs:
             -d '{"password": "${{ vars.SEED_USER_PASSWORD }}"}' \
             --fail-with-body
          
-      - name: Deploy to Cloud Run
-        run: |
-          gcloud run deploy ${{ inputs.service_name }} \
-            --image ${{ vars.REPOSITORY_URL }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
-            --region ${{ vars.REGION }}
-

@@ -86,7 +86,7 @@ jobs:
           DATABASE_URL=$DATABASE_URL bun run db:push
           
       - name: Seed database
-        if: ${{ vars.SEED_ENABLED && inputs.migrations }}
+        if: ${{ inputs.seed_enabled }}
         working-directory: ${{ inputs.working-directory }}
         run: |
           DATABASE_URL=$(gcloud run services describe ${{ inputs.service_name }} \

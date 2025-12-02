@@ -22,6 +22,7 @@ jobs:
       service_name: director-staging-gateway
       working-directory: packages/gateway
       migrations: true
+      seed_enabled: true
 
   deploy-registry:
     name: Deploy apps/registry to Cloud Run
@@ -35,3 +36,4 @@ jobs:
       service_name: director-staging-registry
       working-directory: apps/registry
       migrations: true
+      seed_enabled: false

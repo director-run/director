@@ -5,7 +5,7 @@ import {
 } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { gatewayClient } from "../../client";
-import { env } from "../../config";
+import { type ClientId, clientStore } from "../../client-store";
 
 export function registerConnectCommand(program: DirectorCommand) {
   program
@@ -20,14 +20,21 @@ export function registerConnectCommand(program: DirectorCommand) {
     .action(
       actionWithErrorHandler(
         async (playbookId: string, options: { target: string }) => {
-          if (options.target) {
-            const playbook = await gatewayClient.store.get.query({
-              playbookId: playbookId,
+          // Get connection info from gateway (includes API key in URLs)
+          const connectionInfo =
+            await gatewayClient.store.getConnectionInfo.query({
+              playbookId,
             });
-            await gatewayClient.clients.install.mutate({
-              clientId: options.target,
-              playbookId: playbook.id,
-              baseUrl: env.GATEWAY_URL,
+
+          if (options.target) {
+            // Install directly using client configurator
+            await clientStore.install({
+              clientId: options.target as ClientId,
+              name: connectionInfo.playbookId,
+              connectionDetails: {
+                sseUrl: connectionInfo.sseUrl,
+                streamableUrl: connectionInfo.streamableUrl,
+              },
             });
           } else {
             console.log();
@@ -42,13 +49,6 @@ export function registerConnectCommand(program: DirectorCommand) {
               "director connect " + playbookId + " --target <target>",
             );
             console.log();
-
-            // Get connection info from gateway (includes API key)
-            const connectionInfo =
-              await gatewayClient.store.getConnectionInfo.query({
-                playbookId,
-              });
-
             console.log(
               whiteBold("HTTP Streamable:") +
                 " " +

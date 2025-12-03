@@ -4,7 +4,7 @@ import {
   makeTable,
 } from "@director.run/utilities/cli/index";
 import { attributeTable } from "@director.run/utilities/cli/index";
-import { gatewayClient } from "../client";
+import { clientStore } from "../client-store";
 
 export function registerClientCommands(program: DirectorCommand): void {
   const command = new DirectorCommand("client").description(
@@ -18,7 +18,7 @@ export function registerClientCommands(program: DirectorCommand): void {
     .description("get the details of a client")
     .action(
       actionWithErrorHandler(async (clientName: string) => {
-        const clients = await gatewayClient.clients.allClients.query();
+        const clients = await clientStore.toPlainObject();
         const client = clients.find((c) => c.name === clientName);
         if (!client) {
           console.log(`client '${clientName}' not found`);
@@ -41,7 +41,7 @@ export function registerClientCommands(program: DirectorCommand): void {
     .description("Delete all servers from all clients")
     .action(
       actionWithErrorHandler(async () => {
-        await gatewayClient.clients.resetAll.mutate();
+        await clientStore.resetAll();
       }),
     );
 
@@ -62,7 +62,7 @@ export function registerClientCommands(program: DirectorCommand): void {
     .description("Show a list of the clients")
     .action(
       actionWithErrorHandler(async () => {
-        const clients = await gatewayClient.clients.allClients.query();
+        const clients = await clientStore.toPlainObject();
         const table = makeTable(["name", "installed", "playbooks"]);
         table.push(
           ...clients.map((client) => [

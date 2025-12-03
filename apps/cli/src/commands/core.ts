@@ -7,6 +7,7 @@ import { makeTable } from "@director.run/utilities/cli/index";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../client";
+import { type ClientId, clientStore } from "../client-store";
 import { env } from "../config";
 import { registerAddCommand } from "./core/add";
 import { registerAuthCommand } from "./core/authenticate";
@@ -96,13 +97,12 @@ export function registerCoreCommands(program: DirectorCommand): void {
     .action(
       actionWithErrorHandler(
         async (playbookId: string, options: { target: string }) => {
+          // Verify playbook exists via gateway
           const playbook = await gatewayClient.store.get.query({
             playbookId: playbookId,
           });
-          await gatewayClient.clients.uninstall.mutate({
-            clientId: options.target,
-            playbookId: playbook.id,
-          });
+          // Uninstall directly using client configurator (no TRPC)
+          await clientStore.uninstall(options.target as ClientId, playbook.id);
         },
       ),
     );

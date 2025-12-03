@@ -13,7 +13,8 @@
     "test": "bun run vitest",
     "build": "bun run clean && bun build --production --target=node bin/*.ts --outdir dist",
     "db:push": "drizzle-kit push",
-    "dev": "bun --watch bin/api.ts"
+    "dev": "bun --watch bin/api.ts",
+    "docker:dev": "docker compose up --build"
   },
   "exports": {
     "./*": "./src/*.ts"

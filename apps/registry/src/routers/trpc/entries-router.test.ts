@@ -50,7 +50,7 @@ describe("Entries Router", () => {
       authenticatedClient = createRegistryClient(
         `http://localhost:${env.PORT}`,
         {
-          apiKey: env.API_KEY,
+          apiKey: env.MANAGEMENT_API_KEY,
         },
       );
     });

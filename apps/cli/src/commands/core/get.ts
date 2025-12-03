@@ -16,7 +16,7 @@ import { makeTable } from "@director.run/utilities/cli/index";
 import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../../client";
 import { subtitle } from "../../common";
-import { getGatewayBaseUrl } from "../../config";
+import { env } from "../../config";
 import { listPrompts } from "../../views/prompts-list";
 import { makeToolTable } from "../mcp/tools";
 
@@ -112,10 +112,10 @@ export function printPlaybookDetails(
       name,
       description: description ?? "--",
       streamableURL: joinURL(
-        getGatewayBaseUrl(),
+        env.GATEWAY_URL,
         getStreamablePathForPlaybook(playbook.id),
       ),
-      sseURL: joinURL(getGatewayBaseUrl(), getSSEPathForPlaybook(playbook.id)),
+      sseURL: joinURL(env.GATEWAY_URL, getSSEPathForPlaybook(playbook.id)),
     }),
   );
 

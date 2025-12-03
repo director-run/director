@@ -1,5 +1,4 @@
 import type { AppRouter } from "@director.run/registry/routers/trpc/index";
-import { whiteBold } from "@director.run/utilities/cli/colors";
 import {
   DirectorCommand,
   makeOption,
@@ -9,7 +8,6 @@ import { spinnerWrap } from "@director.run/utilities/cli/loader";
 import { input, password } from "@inquirer/prompts";
 import type { inferRouterOutputs } from "@trpc/server";
 import { gatewayClient, registryClient } from "../../client";
-import { getConfigFilePath } from "../../config";
 
 type RegistryEntry = inferRouterOutputs<AppRouter>["entries"]["getEntryByName"];
 
@@ -79,10 +77,6 @@ export function registerAddCommand(program: DirectorCommand) {
           } else {
             console.warn(
               "No entry name or url provided. You must specify --entry or --url and --name, alternatively update the config file directly and restart the gateway:",
-            );
-            console.log();
-            console.log(
-              `${whiteBold("CONFIG_FILE_PATH:")} ${getConfigFilePath()}`,
             );
             console.log();
           }

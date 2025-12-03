@@ -7,7 +7,7 @@ import { makeTable } from "@director.run/utilities/cli/index";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../client";
-import { getGatewayBaseUrl } from "../config";
+import { env } from "../config";
 import { registerAddCommand } from "./core/add";
 import { registerAuthCommand } from "./core/authenticate";
 import { registerConfigCommand } from "./core/config";
@@ -43,7 +43,7 @@ export function registerCoreCommands(program: DirectorCommand): void {
             ...playbooks.map((playbook) => [
               playbook.id,
               playbook.name,
-              joinURL(getGatewayBaseUrl(), playbook.paths.streamable),
+              joinURL(env.GATEWAY_URL, playbook.paths.streamable),
             ]),
           );
 

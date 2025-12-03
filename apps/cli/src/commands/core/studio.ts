@@ -3,7 +3,7 @@ import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { loader } from "@director.run/utilities/cli/loader";
 import { openUrl } from "@director.run/utilities/os";
 import { gatewayClient } from "../../client";
-import { getStudioUrl } from "../../config";
+import { env } from "../../config";
 
 export function registerStudioCommand(program: DirectorCommand) {
   program
@@ -24,7 +24,7 @@ export function registerStudioCommand(program: DirectorCommand) {
         try {
           openStudio();
         } catch (_error) {
-          spinner.fail(`failed to open ${getStudioUrl()}, try manually`);
+          spinner.fail(`failed to open ${env.STUDIO_URL}, try manually`);
         }
         spinner.stop();
       }),
@@ -32,5 +32,5 @@ export function registerStudioCommand(program: DirectorCommand) {
 }
 
 export async function openStudio() {
-  await openUrl(getStudioUrl());
+  await openUrl(env.STUDIO_URL);
 }

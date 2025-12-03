@@ -2,7 +2,7 @@ import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { input, password as passwordPrompt } from "@inquirer/prompts";
 import chalk from "chalk";
-import { getGatewayBaseUrl } from "../../config";
+import { env } from "../../config";
 import { saveAuthToken } from "../../utils/auth";
 
 interface LoginOptions {
@@ -37,7 +37,7 @@ export function registerLoginCommand(program: DirectorCommand) {
             mask: "*",
           }));
 
-        const baseURL = getGatewayBaseUrl();
+        const baseURL = env.GATEWAY_URL;
         const response = await fetch(`${baseURL}/api/auth/sign-in/email`, {
           method: "POST",
           headers: {

@@ -5,7 +5,7 @@ import {
 } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { gatewayClient } from "../../client";
-import { getGatewayBaseUrl } from "../../config";
+import { env } from "../../config";
 
 export function registerConnectCommand(program: DirectorCommand) {
   program
@@ -27,7 +27,7 @@ export function registerConnectCommand(program: DirectorCommand) {
             await gatewayClient.clients.install.mutate({
               clientId: options.target,
               playbookId: playbook.id,
-              baseUrl: getGatewayBaseUrl(),
+              baseUrl: env.GATEWAY_URL,
             });
           } else {
             console.log();

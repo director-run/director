@@ -2,7 +2,7 @@ import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { input, password } from "@inquirer/prompts";
 import chalk from "chalk";
-import { getGatewayBaseUrl } from "../../config";
+import { env } from "../../config";
 import { saveAuthToken } from "../../utils/auth";
 
 export function registerSignupCommand(program: DirectorCommand) {
@@ -42,7 +42,7 @@ export function registerSignupCommand(program: DirectorCommand) {
           process.exit(1);
         }
 
-        const baseURL = getGatewayBaseUrl();
+        const baseURL = env.GATEWAY_URL;
         const response = await fetch(`${baseURL}/api/auth/sign-up/email`, {
           method: "POST",
           headers: {

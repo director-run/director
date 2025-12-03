@@ -16,9 +16,10 @@ import { findFirstMatch } from "@director.run/utilities/fs";
 //   });
 // }
 
-export const REGISTRY_URL = "https://registry.director.run";
-export const REGISTRY_API_KEY = "";
-export const DEBUG = false;
+export const REGISTRY_URL =
+  process.env.REGISTRY_URL || "https://registry.director.run";
+export const REGISTRY_API_KEY = process.env.REGISTRY_API_KEY || "";
+export const DEBUG = process.env.DEBUG === "true";
 
 export function getConfigFilePath(): string {
   if (isTest()) {

@@ -29,7 +29,7 @@ export type AppRouter = ReturnType<typeof createAppRouter>;
 
 export const protectedProcedure = t.procedure.use(function isAuthed(opts) {
   const apiKey = opts.ctx.apiKey;
-  if (apiKey !== env.API_KEY) {
+  if (apiKey !== env.MANAGEMENT_API_KEY) {
     throw new AppError(ErrorCode.UNAUTHORIZED, "Unauthorized");
   }
   return opts.next();

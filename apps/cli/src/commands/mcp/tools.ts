@@ -12,37 +12,69 @@ import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { gatewayClient } from "../../client";
 import { title } from "../../common";
 
+export type TransportType = "streamable" | "sse";
+
 /**
  * Creates an authenticated MCP client for a playbook.
  */
-async function createPlaybookClient(playbookId: string): Promise<Client> {
+async function createPlaybookClient(
+  playbookId: string,
+  transport: TransportType = "streamable",
+): Promise<Client> {
   const connectionInfo = await gatewayClient.store.getConnectionInfo.query({
     playbookId,
   });
-  return HTTPClient.createAndConnectToHTTP(connectionInfo.streamableUrl);
+  return HTTPClient.createAndConnectToHTTP(
+    transport === "sse" ? connectionInfo.sseUrl : connectionInfo.streamableUrl,
+  );
+}
+
+function transportOption() {
+  return makeOption({
+    flags: "--transport <type>",
+    description: "Transport type to use for connection",
+    defaultValue: "streamable",
+    choices: ["streamable", "sse"],
+  });
 }
 
 export function registerToolsCommand(program: DirectorCommand) {
   program
     .command("list-tools <playbookId>")
     .description("List tools on a playbook")
+    .addOption(transportOption())
     .action(
-      actionWithErrorHandler(async (playbookId: string) => {
-        const client = await createPlaybookClient(playbookId);
-        await printTools(client);
-        await client.close();
-      }),
+      actionWithErrorHandler(
+        async (playbookId: string, options: { transport: TransportType }) => {
+          const client = await createPlaybookClient(
+            playbookId,
+            options.transport,
+          );
+          await printTools(client);
+          await client.close();
+        },
+      ),
     );
 
   program
     .command("get-tool <playbookId> <toolName>")
     .description("Get the details of a tool")
+    .addOption(transportOption())
     .action(
-      actionWithErrorHandler(async (playbookId: string, toolName: string) => {
-        const client = await createPlaybookClient(playbookId);
-        await printTool(client, toolName);
-        await client.close();
-      }),
+      actionWithErrorHandler(
+        async (
+          playbookId: string,
+          toolName: string,
+          options: { transport: TransportType },
+        ) => {
+          const client = await createPlaybookClient(
+            playbookId,
+            options.transport,
+          );
+          await printTool(client, toolName);
+          await client.close();
+        },
+      ),
     );
 
   program
@@ -55,13 +87,23 @@ export function registerToolsCommand(program: DirectorCommand) {
         variadic: true,
       }),
     )
+    .addOption(transportOption())
     .description("Call a tool on a playbook")
     .action(
-      actionWithErrorHandler(async (playbookId: string, toolName: string) => {
-        const client = await createPlaybookClient(playbookId);
-        await callTool(client, toolName);
-        await client.close();
-      }),
+      actionWithErrorHandler(
+        async (
+          playbookId: string,
+          toolName: string,
+          options: { transport: TransportType },
+        ) => {
+          const client = await createPlaybookClient(
+            playbookId,
+            options.transport,
+          );
+          await callTool(client, toolName);
+          await client.close();
+        },
+      ),
     );
 }
 

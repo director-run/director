@@ -1,3 +1,4 @@
+import os from "node:os";
 import path from "path";
 import { isDevelopment, isTest } from "@director.run/utilities/env";
 import { createEnv } from "@t3-oss/env-core";
@@ -20,6 +21,9 @@ export const env = createEnv({
   server: {
     REGISTRY_URL: z.string().url().default("https://registry.director.run"),
     REGISTRY_API_KEY: z.string().optional(),
+    AUTH_TOKEN_FILE: z
+      .string()
+      .default(path.join(os.homedir(), ".director", "auth")),
     DEBUG: z
       .string()
       .default("false")

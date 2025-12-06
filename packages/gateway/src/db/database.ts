@@ -124,6 +124,15 @@ export class Database {
     return users[0] ?? null;
   }
 
+  public async getUserByEmail(email: string) {
+    const users = await this._drizzle
+      .select()
+      .from(userTable)
+      .where(eq(userTable.email, email))
+      .limit(1);
+    return users[0] ?? null;
+  }
+
   public async updateUserEncryptedApiKey(
     userId: string,
     encryptedApiKey: string,

@@ -90,6 +90,7 @@ export class Gateway {
       "/playbooks",
       createMCPRouter({
         playbookStore: this.playbookStore,
+        database: this.database,
       }),
     );
     this.app.use(

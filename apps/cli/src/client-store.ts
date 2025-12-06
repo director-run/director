@@ -64,6 +64,11 @@ export class ClientStore {
   }): Promise<void> {
     const client = this.get(clientId);
 
+    // Uninstall first if already installed (reinstall scenario)
+    if (await client.isInstalled(name)) {
+      await client.uninstall(name);
+    }
+
     const result = await client.install({
       name,
       sseURL: connectionDetails.sseUrl,

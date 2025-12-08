@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { env } from "../config";
+import { env } from "../env";
 
 export function saveAuthToken(sessionCookie: string): void {
   const dirPath = path.dirname(env.AUTH_TOKEN_FILE);

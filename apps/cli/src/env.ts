@@ -5,17 +5,22 @@ import { createEnv } from "@t3-oss/env-core";
 import dotenv from "dotenv";
 import { z } from "zod";
 
+let envFilePath = "";
+
 if (isTest()) {
-  dotenv.config({
-    path: path.join(__dirname, "../env/.env.test"),
-    override: true,
-  });
+  envFilePath = path.join(__dirname, "../env/.env.test");
 } else if (isDevelopment()) {
+  envFilePath = path.join(__dirname, "../env/.env.dev");
+}
+
+if (envFilePath) {
   dotenv.config({
-    path: path.join(__dirname, "../env/.env.dev"),
+    path: envFilePath,
     override: true,
   });
 }
+
+export const ENV_FILE_PATH = envFilePath;
 
 export const env = createEnv({
   server: {

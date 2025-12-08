@@ -1,6 +1,6 @@
 import { createGatewayClient } from "@director.run/gateway/client";
 import { createRegistryClient } from "@director.run/registry/client";
-import { env } from "./config";
+import { env } from "./env";
 import { getAuthToken } from "./utils/auth";
 
 export const gatewayClient = createGatewayClient(env.GATEWAY_URL, {

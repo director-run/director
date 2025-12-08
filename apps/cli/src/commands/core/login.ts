@@ -2,7 +2,7 @@ import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { input, password as passwordPrompt } from "@inquirer/prompts";
 import chalk from "chalk";
-import { env } from "../../config";
+import { env } from "../../env";
 import { saveAuthToken } from "../../utils/auth";
 
 interface LoginOptions {

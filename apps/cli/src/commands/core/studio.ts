@@ -3,7 +3,7 @@ import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { loader } from "@director.run/utilities/cli/loader";
 import { openUrl } from "@director.run/utilities/os";
 import { gatewayClient } from "../../client";
-import { env } from "../../config";
+import { env } from "../../env";
 
 export function registerStudioCommand(program: DirectorCommand) {
   program

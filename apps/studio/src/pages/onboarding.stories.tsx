@@ -1,11 +1,18 @@
 import { GetStartedCompleteDialog } from "@director.run/design/components/get-started/get-started-complete-dialog.tsx";
 import { GetStartedInstallServerDialog } from "@director.run/design/components/get-started/get-started-install-server-dialog.tsx";
 import { GetStartedPageView } from "@director.run/design/components/pages/get-started.tsx";
-import { mockClients } from "@director.run/design/test/fixtures/playbook/clients.ts";
+import type { ConnectionInfo } from "@director.run/design/components/playbooks-clients/playbook-section-connect.tsx";
 import { mockRegistryEntryList } from "@director.run/design/test/fixtures/registry/entry-list.ts";
 import { mockRegistryEntry } from "@director.run/design/test/fixtures/registry/entry.ts";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
+
+const mockConnectionInfo: ConnectionInfo = {
+  playbookId: "playbook-1",
+  apiKey: "sk_test_abc123def456ghi789",
+  streamableUrl: "https://gateway.director.run/mcp/playbook-1",
+  sseUrl: "https://gateway.director.run/sse/playbook-1",
+};
 
 const meta = {
   title: "pages/onboarding",
@@ -16,13 +23,13 @@ const meta = {
   args: {
     currentPlaybook: null,
     registryEntries: [],
-    clientStatuses: [],
-    isAddingPlaybookToClient: false,
+    connectionInfo: undefined,
+    isConnectionInfoLoading: false,
+    onDone: () => {},
     isCreatePlaybookLoading: false,
     searchQuery: "",
     onSearchQueryChange: () => {},
     onClickRegistryEntry: () => {},
-    onAddPlaybookToClient: () => {},
     isPromptCompleted: false,
     onSkipPrompt: () => {},
     onPromptFormSubmit: async () => {},
@@ -44,7 +51,6 @@ function StatefulPage(args: React.ComponentProps<typeof GetStartedPageView>) {
       searchQuery={searchQuery}
       onSearchQueryChange={setSearchQuery}
       onClickRegistryEntry={() => {}}
-      onAddPlaybookToClient={() => {}}
       onCreatePlaybook={async () => {}}
     />
   );
@@ -55,8 +61,8 @@ export const Step1a_NewPlaybook: Story = {
   args: {
     currentPlaybook: null,
     registryEntries: [],
-    clientStatuses: mockClients,
-    isAddingPlaybookToClient: false,
+    connectionInfo: undefined,
+    isConnectionInfoLoading: false,
     isCreatePlaybookLoading: false,
     onPromptFormSubmit: async () => {},
     isPromptSubmitting: false,
@@ -68,8 +74,8 @@ export const Step1b_NewPlaybookLoading: Story = {
   args: {
     currentPlaybook: null,
     registryEntries: [],
-    clientStatuses: mockClients,
-    isAddingPlaybookToClient: false,
+    connectionInfo: undefined,
+    isConnectionInfoLoading: false,
     isCreatePlaybookLoading: true,
     onPromptFormSubmit: async () => {},
     isPromptSubmitting: false,
@@ -81,8 +87,8 @@ export const Step2a_RegistryEntryList: Story = {
   args: {
     currentPlaybook: { id: "playbook-1", servers: [] },
     registryEntries: mockRegistryEntryList,
-    clientStatuses: mockClients,
-    isAddingPlaybookToClient: false,
+    connectionInfo: mockConnectionInfo,
+    isConnectionInfoLoading: false,
     isCreatePlaybookLoading: false,
     isPromptCompleted: false,
     onPromptFormSubmit: async () => {},
@@ -95,8 +101,8 @@ export const Step2b_RegistryEntryDetail: Story = {
   args: {
     currentPlaybook: { id: "playbook-1", servers: [] },
     registryEntries: mockRegistryEntryList,
-    clientStatuses: mockClients,
-    isAddingPlaybookToClient: false,
+    connectionInfo: mockConnectionInfo,
+    isConnectionInfoLoading: false,
     isCreatePlaybookLoading: false,
     onPromptFormSubmit: async () => {},
     isPromptSubmitting: false,
@@ -124,8 +130,8 @@ export const Step3_PromptStep: Story = {
   args: {
     currentPlaybook: { id: "playbook-1", servers: [{ name: "github-mcp" }] },
     registryEntries: mockRegistryEntryList,
-    clientStatuses: mockClients,
-    isAddingPlaybookToClient: false,
+    connectionInfo: mockConnectionInfo,
+    isConnectionInfoLoading: false,
     isCreatePlaybookLoading: false,
     isPromptCompleted: false,
     onPromptFormSubmit: async () => {},
@@ -133,13 +139,13 @@ export const Step3_PromptStep: Story = {
   },
 };
 
-// step 4: client installers (playbook with a server, prompt completed)
-export const Step4_ClientInstallers: Story = {
+// step 4: connect step (playbook with a server, prompt completed)
+export const Step4_Connect: Story = {
   args: {
     currentPlaybook: { id: "playbook-1", servers: [{ name: "github-mcp" }] },
     registryEntries: mockRegistryEntryList,
-    clientStatuses: mockClients,
-    isAddingPlaybookToClient: false,
+    connectionInfo: mockConnectionInfo,
+    isConnectionInfoLoading: false,
     isCreatePlaybookLoading: false,
     isPromptCompleted: true,
     onPromptFormSubmit: async () => {},
@@ -147,13 +153,13 @@ export const Step4_ClientInstallers: Story = {
   },
 };
 
-// step 4b: client install loading
-export const Step4b_ClientInstallLoading: Story = {
+// step 4b: connect loading
+export const Step4b_ConnectLoading: Story = {
   args: {
     currentPlaybook: { id: "playbook-1", servers: [{ name: "github-mcp" }] },
     registryEntries: mockRegistryEntryList,
-    clientStatuses: mockClients,
-    isAddingPlaybookToClient: true,
+    connectionInfo: undefined,
+    isConnectionInfoLoading: true,
     isCreatePlaybookLoading: false,
     isPromptCompleted: true,
     onPromptFormSubmit: async () => {},

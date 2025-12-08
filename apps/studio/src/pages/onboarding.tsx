@@ -7,12 +7,10 @@ import { toast } from "@director.run/design/components/ui/toast.tsx";
 import { useEffect, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { GATEWAY_URL } from "../config.ts";
 import {
   registryClient,
   gatewayClient as trpc,
 } from "../contexts/backend-context.tsx";
-import { useClients } from "../hooks/use-clients.ts";
 import { useCreatePrompt } from "../hooks/use-create-prompt.ts";
 import { useInstallServerFromRegistry } from "../hooks/use-install-server-from-registry.ts";
 import { useOnboardingProgress } from "../hooks/use-onboarding-progress.ts";
@@ -35,7 +33,9 @@ export function GetStartedPage() {
     string | null
   >(null);
   const [isInstallDialogOpen, setIsInstallDialogOpen] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(false);
+  // Note: isCompleted is now manually set - there's no auto-completion
+  // since the user manually copies their connection info
+  const [isCompleted] = useState(false);
 
   const { setInProgress } = useOnboardingProgress();
 
@@ -60,7 +60,11 @@ export function GetStartedPage() {
     searchQuery,
   });
 
-  const listClientsQuery = useClients(currentPlaybookId as string);
+  // Connection info for step 4
+  const connectionInfoQuery = trpc.store.getConnectionInfo.useQuery(
+    { playbookId: currentPlaybookId ?? "" },
+    { enabled: !!currentPlaybookId },
+  );
 
   const entryQuery = registryClient.entries.getEntryByName.useQuery(
     {
@@ -77,23 +81,6 @@ export function GetStartedPage() {
       toast({
         title: "Playbook created",
         description: "This playbook was successfully created.",
-      });
-    },
-  });
-
-  const installationMutation = trpc.clients.install.useMutation({
-    onSuccess: () => {
-      utils.clients.allClients.invalidate();
-      toast({
-        title: "Playbook installed",
-        description: `This playbook was successfully installed`,
-      });
-      setIsCompleted(true);
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error.message,
       });
     },
   });
@@ -154,17 +141,6 @@ export function GetStartedPage() {
     await createPlaybookMutation.mutateAsync({ ...values, servers: [] });
   };
 
-  const handleClientInstall = (client: string) => {
-    if (!currentPlaybook?.id) {
-      return;
-    }
-    installationMutation.mutate({
-      playbookId: currentPlaybook.id,
-      clientId: client,
-      baseUrl: GATEWAY_URL,
-    });
-  };
-
   const handleMcpSelect = (entry: { name: string }) => {
     setSelectedRegistryEntryName(entry.name);
     setIsInstallDialogOpen(true);
@@ -207,14 +183,14 @@ export function GetStartedPage() {
       <GetStartedPageView
         currentPlaybook={currentPlaybook}
         registryEntries={registryEntriesQuery.data?.entries ?? []}
-        clientStatuses={listClientsQuery.data ?? []}
-        isAddingPlaybookToClient={installationMutation.isPending}
         isCreatePlaybookLoading={createPlaybookMutation.isPending}
         onCreatePlaybook={handlePlaybookSubmit}
         searchQuery={searchQuery}
         onSearchQueryChange={setSearchQuery}
         onClickRegistryEntry={handleMcpSelect}
-        onAddPlaybookToClient={handleClientInstall}
+        connectionInfo={connectionInfoQuery.data}
+        isConnectionInfoLoading={connectionInfoQuery.isLoading}
+        onDone={() => navigate(`/${currentPlaybookId}`)}
         isPromptCompleted={isPromptCompleted}
         onSkipPrompt={() => setIsPromptCompleted(true)}
         onPromptFormSubmit={handlePromptFormSubmit}

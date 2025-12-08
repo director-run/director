@@ -5,21 +5,15 @@ import chalk from "chalk";
 import { env } from "../../env";
 import { saveAuthToken } from "../../utils/auth";
 
-interface LoginOptions {
-  email?: string;
-  password?: string;
-}
-
 export function registerLoginCommand(program: DirectorCommand) {
   program
     .command("login")
     .description("Log in to your account")
-    .option("-e, --email <email>", "Email address")
-    .option("-p, --password <password>", "Password")
+
     .action(
-      actionWithErrorHandler(async (options: LoginOptions) => {
+      actionWithErrorHandler(async () => {
         const email =
-          options.email ??
+          env.USER_EMAIL ??
           (await input({
             message: "Email:",
             validate: (value) => {
@@ -30,8 +24,8 @@ export function registerLoginCommand(program: DirectorCommand) {
             },
           }));
 
-        const pass =
-          options.password ??
+        const password =
+          env.USER_PASSWORD ??
           (await passwordPrompt({
             message: "Password:",
             mask: "*",
@@ -45,7 +39,7 @@ export function registerLoginCommand(program: DirectorCommand) {
           },
           body: JSON.stringify({
             email,
-            password: pass,
+            password,
           }),
         });
 

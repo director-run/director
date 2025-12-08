@@ -1,6 +1,6 @@
 import os from "node:os";
 import path from "path";
-import { isDevelopment, isTest } from "@director.run/utilities/env";
+import { isDevelopment, isStaging, isTest } from "@director.run/utilities/env";
 import { createEnv } from "@t3-oss/env-core";
 import dotenv from "dotenv";
 import { z } from "zod";
@@ -11,6 +11,8 @@ if (isTest()) {
   envFilePath = path.join(__dirname, "../env/.env.test");
 } else if (isDevelopment()) {
   envFilePath = path.join(__dirname, "../env/.env.dev");
+} else if (isStaging()) {
+  envFilePath = path.join(__dirname, "../env/.env.staging");
 }
 
 if (envFilePath) {
@@ -35,6 +37,8 @@ export const env = createEnv({
       .transform((s) => s === "true"),
     GATEWAY_URL: z.string().url().default("https://app.staging.ex0.co"),
     STUDIO_URL: z.string().url().default("https://app.staging.ex0.co/studio"),
+    USER_EMAIL: z.string().email().optional(),
+    USER_PASSWORD: z.string().optional(),
   },
   runtimeEnv: process.env,
   emptyStringAsUndefined: true,

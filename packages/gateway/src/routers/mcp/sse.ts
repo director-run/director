@@ -32,7 +32,11 @@ export const createSSERouter = ({
       const playbookId = req.params.playbook_id;
       const userId = authReq.userId;
       const playbook = await playbookStore.get(playbookId, userId);
-      const transport = new SSEServerTransport(`/${playbook.id}/message`, res);
+      const transport = new SSEServerTransport(
+        // TODO: Make this configurable.
+        `playbooks/${playbook.id}/message`,
+        res,
+      );
 
       transports.set(transport.sessionId, transport);
 

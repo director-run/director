@@ -1,19 +1,27 @@
 import express from "express";
 import type { Database } from "../../db/database";
-import { fakeAPIKeyAuth } from "../../middleware/auth";
+import { requireAPIKeyAuth } from "../../middleware/auth";
 import type { PlaybookStore } from "../../playbooks/playbook-store";
+import { createSSERouter } from "./sse";
 import { createStreamableRouter } from "./streamable";
 
 export function createMCPRouter({
   playbookStore,
-  database,
+  //   database,
 }: {
   playbookStore: PlaybookStore;
   database: Database;
 }): express.Router {
   const router = express.Router();
 
-  router.use(fakeAPIKeyAuth(database));
+  router.use(requireAPIKeyAuth());
+
+  router.use(
+    createSSERouter({
+      playbookStore,
+    }),
+  );
+
   router.use(
     createStreamableRouter({
       playbookStore,

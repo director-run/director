@@ -8,7 +8,7 @@ import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 import express from "express";
 import {
   type AuthenticatedRequest,
-  requireAPIKeyAuth,
+  // requireAPIKeyAuth,
 } from "../../middleware/auth";
 import type { PlaybookStore } from "../../playbooks/playbook-store";
 
@@ -25,7 +25,7 @@ export const createStreamableRouter = ({
   const transports: Map<string, StreamableHTTPServerTransport> = new Map();
 
   router.use(express.json());
-  router.use("/:playbook_id", requireAPIKeyAuth());
+  // router.use("/:playbook_id", requireAPIKeyAuth());
   router.post(
     "/:playbook_id/mcp",
     asyncHandler(async (req, res) => {

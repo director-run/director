@@ -4,6 +4,7 @@ import { cn } from "../../helpers/cn";
 import { useCopyToClipboard } from "../../hooks/use-copy-to-clipboard";
 import { Button } from "../ui/button";
 import { Section, SectionHeader, SectionTitle } from "../ui/section";
+import { SelectNative } from "../ui/select-native";
 
 type ConnectionMethod = "automatic" | "http" | "stdio";
 
@@ -92,12 +93,8 @@ export function PlaybookSectionConnect({
 
       <div className="flex w-full flex-col gap-y-0 overflow-hidden rounded-xl bg-accent-subtle shadow-[0_0_0_0.5px_rgba(55,50,46,0.15)]">
         <div className="flex flex-col gap-y-4 p-4">
-          <select
-            className={cn(
-              "flex h-10 w-full rounded-md border border-input bg-surface px-3 py-2 text-sm",
-              "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-              "disabled:cursor-not-allowed disabled:opacity-50",
-            )}
+          <SelectNative
+            className="w-full"
             value={method}
             onChange={(e) => setMethod(e.target.value as ConnectionMethod)}
             disabled={isLoading}
@@ -105,7 +102,7 @@ export function PlaybookSectionConnect({
             <option value="automatic">Automatically</option>
             <option value="http">Via HTTP</option>
             <option value="stdio">Via Stdio</option>
-          </select>
+          </SelectNative>
         </div>
         <div className="flex items-center justify-between border-fg/7 border-t-[0.5px] bg-accent px-4 py-2.5">
           <div

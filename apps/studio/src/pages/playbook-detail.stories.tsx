@@ -1,4 +1,5 @@
 import { PlaybookSectionClients } from "@director.run/design/components/playbooks-clients/playbook-section-clients.tsx";
+import { PlaybookSectionConnect } from "@director.run/design/components/playbooks-clients/playbook-section-connect.tsx";
 import { PromptList } from "@director.run/design/components/prompts/prompt-list.tsx";
 import { PlaybookServerList } from "@director.run/design/components/servers/server-list.tsx";
 import {
@@ -24,7 +25,6 @@ import { mockPlaybook } from "@director.run/design/test/fixtures/playbook/playbo
 import { DesktopIcon, NotebookIcon, ToolboxIcon } from "@phosphor-icons/react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../helpers/decorators";
-
 const PlaybookDetailComponent = ({
   playbook,
   tools,
@@ -81,6 +81,7 @@ const PlaybookDetailComponent = ({
           onChangeInstall={() => console.log("change install")}
           isLoading={false}
         />
+        <PlaybookSectionConnect />
       </SplitViewSide>
     </SplitView>
   </Container>

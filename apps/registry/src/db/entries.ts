@@ -1,3 +1,4 @@
+import { joinURL } from "@director.run/utilities/url";
 import { and, asc, count, eq, inArray, or, sql } from "drizzle-orm";
 import { env } from "../config";
 import { DatabaseConnection } from "./index";
@@ -15,7 +16,7 @@ function resolveIconUrl(icon: string | null): string | null {
     return null;
   }
   if (icon.startsWith("/")) {
-    return `${env.BASE_URL}${icon}`;
+    return joinURL(env.BASE_URL, icon);
   }
   return icon;
 }

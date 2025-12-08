@@ -1,4 +1,5 @@
 import { CheckIcon, CopyIcon } from "@phosphor-icons/react";
+import type { ReactNode } from "react";
 import { useState } from "react";
 import { cn } from "../../helpers/cn";
 import { useCopyToClipboard } from "../../hooks/use-copy-to-clipboard";
@@ -62,8 +63,8 @@ export function PlaybookSectionConnect({
     }
   };
 
-  // Display command with obfuscated key
-  const getDisplayCommand = (): string => {
+  // Display command with obfuscated key (can be multiline for display)
+  const getDisplayCommand = (): ReactNode => {
     if (!connectionInfo) {
       return "";
     }
@@ -73,11 +74,22 @@ export function PlaybookSectionConnect({
 
     switch (method) {
       case "automatic":
-        return `npx @director.run/cli@latest connect ${connectionInfo.playbookId}`;
+        return (
+          <>npx @director.run/cli@latest connect {connectionInfo.playbookId}</>
+        );
       case "http":
         return urlWithObfuscatedKey;
       case "stdio":
-        return `npx -y @director.run/cli@latest http2stdio ${urlWithObfuscatedKey}`;
+        // Format with line breaks and alignment for readability
+        // "npx " is 4 chars, so indent continuation lines by 4 spaces
+        return (
+          <>
+            npx -y @director.run/cli@latest \<br />
+            {"    "}http2stdio \<br />
+            {"    "}
+            {urlWithObfuscatedKey}
+          </>
+        );
     }
   };
 
@@ -108,17 +120,13 @@ export function PlaybookSectionConnect({
           <div
             className={cn(
               "flex w-full resize-none flex-col rounded-md bg-surface text-sm",
-              "-mx-px border-[0.5px] border-fg/30 pr-0 font-medium font-mono text-[13px]",
+              "-mx-px border-[0.5px] border-fg/30 pr-0 font-medium font-mono text-[12px]",
             )}
           >
-            <div className="flex-1 break-all px-3 pt-2 pb-0">
-              {isLoading
-                ? "Loading..."
-                : displayCommand
-                  ? `${displayCommand}`
-                  : ""}
+            <div className="flex-1 break-all px-3 pt-2 pb-0 whitespace-pre-wrap">
+              {isLoading ? "Loading..." : displayCommand || ""}
             </div>
-            <div className="flex flex-1 justify-end px-2 pt-0 pb-2">
+            <div className="flex flex-1 justify-end px-2 pt-2 pb-2">
               <Button
                 type="button"
                 size="icon"

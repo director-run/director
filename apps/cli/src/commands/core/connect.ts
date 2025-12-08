@@ -1,3 +1,7 @@
+import {
+  type ClientId,
+  clientStore,
+} from "@director.run/client-configurator/client-store";
 import { blue, whiteBold } from "@director.run/utilities/cli/colors";
 import {
   DirectorCommand,
@@ -5,7 +9,6 @@ import {
 } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { gatewayClient } from "../../client";
-import { type ClientId, clientStore } from "../../client-store";
 
 export function registerConnectCommand(program: DirectorCommand) {
   program

@@ -1,10 +1,10 @@
+import { clientStore } from "@director.run/client-configurator/client-store";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import {
   actionWithErrorHandler,
   makeTable,
 } from "@director.run/utilities/cli/index";
 import { attributeTable } from "@director.run/utilities/cli/index";
-import { clientStore } from "../client-store";
 
 export function registerClientCommands(program: DirectorCommand): void {
   const command = new DirectorCommand("client").description(

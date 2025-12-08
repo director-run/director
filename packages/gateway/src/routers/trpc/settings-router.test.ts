@@ -3,7 +3,7 @@ import { decrypt } from "../../crypto";
 import { env } from "../../env";
 import { IntegrationTestHarness } from "../../test/integration";
 
-describe("API Key Router", () => {
+describe("Settings Router", () => {
   let harness: IntegrationTestHarness;
 
   beforeAll(async () => {
@@ -22,20 +22,21 @@ describe("API Key Router", () => {
     });
   });
 
-  describe("getInfo", () => {
-    it("should return API key info for authenticated user", async () => {
-      const info = await harness.client.apiKey.getInfo.query();
+  describe("getAllSettings", () => {
+    it("should return all settings for authenticated user", async () => {
+      const settings = await harness.client.settings.getAllSettings.query();
 
-      expect(info.hasApiKey).toBe(true);
-      expect(info.keyStart).toBeDefined();
-      expect(info.keyStart).toMatch(/^dk_/);
-      expect(info.createdAt).toBeDefined();
+      expect(settings.email).toBe("test@example.com");
+      expect(settings.apiKey.hasApiKey).toBe(true);
+      expect(settings.apiKey.keyStart).toBeDefined();
+      expect(settings.apiKey.keyStart).toMatch(/^dk_/);
+      expect(settings.apiKey.createdAt).toBeDefined();
     });
   });
 
-  describe("regenerate", () => {
+  describe("regenerateApiKey", () => {
     it("should create a new API key and return full key", async () => {
-      const result = await harness.client.apiKey.regenerate.mutate();
+      const result = await harness.client.settings.regenerateApiKey.mutate();
 
       expect(result.key).toBeDefined();
       expect(result.key).toMatch(/^dk_/);
@@ -53,7 +54,7 @@ describe("API Key Router", () => {
       expect(originalEncryptedKey).toBeDefined();
 
       // Regenerate the key
-      const result = await harness.client.apiKey.regenerate.mutate();
+      const result = await harness.client.settings.regenerateApiKey.mutate();
 
       // Verify encrypted key was updated
       const updatedUser = await harness.database.getUser(userId);
@@ -77,7 +78,7 @@ describe("API Key Router", () => {
       const originalKeyIds = originalKeys.map((k) => k.id);
 
       // Regenerate the key
-      await harness.client.apiKey.regenerate.mutate();
+      await harness.client.settings.regenerateApiKey.mutate();
 
       // Verify old keys were deleted
       const newKeys = await harness.database.getApiKeysByUserId(userId);
@@ -88,20 +89,22 @@ describe("API Key Router", () => {
       expect(originalKeyIds).not.toContain(newKeyId);
     });
 
-    it("should update getInfo after regeneration", async () => {
+    it("should update getAllSettings after regeneration", async () => {
       // Get original info
-      const originalInfo = await harness.client.apiKey.getInfo.query();
-      const originalKeyStart = originalInfo.keyStart;
+      const originalSettings =
+        await harness.client.settings.getAllSettings.query();
+      const originalKeyStart = originalSettings.apiKey.keyStart;
 
       // Regenerate the key
-      const result = await harness.client.apiKey.regenerate.mutate();
+      const result = await harness.client.settings.regenerateApiKey.mutate();
 
       // Get updated info
-      const updatedInfo = await harness.client.apiKey.getInfo.query();
+      const updatedSettings =
+        await harness.client.settings.getAllSettings.query();
 
-      expect(updatedInfo.hasApiKey).toBe(true);
-      expect(updatedInfo.keyStart).toBe(result.keyStart);
-      expect(updatedInfo.keyStart).not.toBe(originalKeyStart);
+      expect(updatedSettings.apiKey.hasApiKey).toBe(true);
+      expect(updatedSettings.apiKey.keyStart).toBe(result.keyStart);
+      expect(updatedSettings.apiKey.keyStart).not.toBe(originalKeyStart);
     });
 
     it("should update connection info after regeneration", async () => {
@@ -120,7 +123,7 @@ describe("API Key Router", () => {
       expect(originalApiKey).toBeDefined();
 
       // Regenerate the key
-      const result = await harness.client.apiKey.regenerate.mutate();
+      const result = await harness.client.settings.regenerateApiKey.mutate();
 
       // Get updated connection info
       const updatedConnectionInfo =

@@ -1,89 +1,51 @@
 import { LayoutBreadcrumbHeader } from "@director.run/design/components/layout/layout-breadcrumb-header.tsx";
 import { LayoutViewContent } from "@director.run/design/components/layout/layout.tsx";
 import { SettingsPage as SettingsPageComponent } from "@director.run/design/components/pages/settings.tsx";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useAuth } from "../contexts/auth-context";
 import { gatewayClient } from "../contexts/backend-context";
-import { authClient } from "../lib/auth-client";
-
-type ApiKeyData = {
-  id: string;
-  keyPrefix: string;
-  createdAt: string;
-  lastUsedAt: string | null;
-};
 
 export function SettingsPage() {
-  const { user, logout, isAuthenticated } = useAuth();
+  const { logout } = useAuth();
+  const utils = gatewayClient.useUtils();
 
   const [newApiKey, setNewApiKey] = useState<string | null>(null);
-  const [apiKey, setApiKey] = useState<ApiKeyData | null>(null);
-  const [isLoadingApiKey, setIsLoadingApiKey] = useState(true);
-  const [isRecyclingApiKey, setIsRecyclingApiKey] = useState(false);
 
-  // Use TRPC mutation to regenerate API key - this properly updates encryptedApiKey
+  // Use TRPC query to get all settings including API key info
+  const settingsQuery = gatewayClient.settings.getAllSettings.useQuery();
+
+  // Use TRPC mutation to regenerate API key
   const regenerateApiKeyMutation =
-    gatewayClient.apiKey.regenerate.useMutation();
+    gatewayClient.settings.regenerateApiKey.useMutation({
+      onSuccess: async (result) => {
+        if (result.key) {
+          setNewApiKey(result.key);
+        }
+        await utils.settings.getAllSettings.invalidate();
+      },
+    });
 
-  const fetchApiKeys = useCallback(async () => {
-    try {
-      setIsLoadingApiKey(true);
-      const result = await authClient.apiKey.list();
-      if (result.data && result.data.length > 0) {
-        const key = result.data[0];
-        setApiKey({
-          id: key.id,
-          keyPrefix: key.start ?? key.prefix ?? "dk_",
-          createdAt: key.createdAt.toISOString(),
-          lastUsedAt: key.lastRequest?.toISOString() ?? null,
-        });
-      } else {
-        setApiKey(null);
-      }
-    } catch {
-      setApiKey(null);
-    } finally {
-      setIsLoadingApiKey(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      fetchApiKeys();
-    }
-  }, [isAuthenticated, fetchApiKeys]);
-
-  // Both create and recycle use the same TRPC mutation which handles
-  // creating a new key, encrypting it, and deleting old keys
   const handleCreateApiKey = async () => {
-    try {
-      setIsRecyclingApiKey(true);
-      const result = await regenerateApiKeyMutation.mutateAsync();
-      if (result.key) {
-        setNewApiKey(result.key);
-        await fetchApiKeys();
-      }
-    } finally {
-      setIsRecyclingApiKey(false);
-    }
+    await regenerateApiKeyMutation.mutateAsync();
   };
 
   const handleRecycleApiKey = async () => {
-    try {
-      setIsRecyclingApiKey(true);
-      const result = await regenerateApiKeyMutation.mutateAsync();
-      if (result.key) {
-        setNewApiKey(result.key);
-        await fetchApiKeys();
-      }
-    } finally {
-      setIsRecyclingApiKey(false);
-    }
+    await regenerateApiKeyMutation.mutateAsync();
   };
 
   const handleCopyApiKey = async (text: string) => {
     await navigator.clipboard.writeText(text);
   };
+
+  // Map settings query to the expected apiKey format
+  const apiKey = settingsQuery.data?.apiKey.hasApiKey
+    ? {
+        id: "default",
+        keyPrefix: settingsQuery.data.apiKey.keyStart ?? "dk_",
+        createdAt: settingsQuery.data.apiKey.createdAt?.toISOString() ?? "",
+        lastUsedAt: null,
+      }
+    : null;
 
   return (
     <>
@@ -98,13 +60,13 @@ export function SettingsPage() {
       <LayoutViewContent>
         <SettingsPageComponent
           settings={{
-            Email: user?.email ?? "Unknown",
+            Email: settingsQuery.data?.email ?? "Unknown",
           }}
           onClickLogout={logout}
           apiKey={apiKey}
           newApiKey={newApiKey}
-          isLoadingApiKey={isLoadingApiKey}
-          isRecyclingApiKey={isRecyclingApiKey}
+          isLoadingApiKey={settingsQuery.isLoading}
+          isRecyclingApiKey={regenerateApiKeyMutation.isPending}
           onCreateApiKey={handleCreateApiKey}
           onRecycleApiKey={handleRecycleApiKey}
           onClearNewApiKey={() => setNewApiKey(null)}

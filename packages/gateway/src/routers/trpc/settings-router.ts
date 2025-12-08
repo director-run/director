@@ -4,13 +4,36 @@ import { encrypt } from "../../crypto";
 import { env } from "../../env";
 import { type AuthenticatedGatewayContext, protectedProcedure } from "./index";
 
-export function createApiKeyRouter() {
+export function createSettingsRouter() {
   return t.router({
+    /**
+     * Get all settings for the authenticated user.
+     */
+    getAllSettings: protectedProcedure.query(async ({ ctx }) => {
+      const { database, userId } = ctx as AuthenticatedGatewayContext;
+
+      const user = await database.getUser(userId);
+      const hasApiKey = !!user?.encryptedApiKey;
+
+      // Get the key metadata from database
+      const keys = await database.getApiKeysByUserId(userId);
+      const defaultKey = keys.find((k) => k.name === "default");
+
+      return {
+        email: user?.email ?? null,
+        apiKey: {
+          hasApiKey,
+          keyStart: defaultKey?.start ?? null,
+          createdAt: defaultKey?.createdAt ?? null,
+        },
+      };
+    }),
+
     /**
      * Regenerate the user's API key.
      * This creates a new API key, stores it encrypted, and deletes the old one.
      */
-    regenerate: protectedProcedure.mutation(async ({ ctx }) => {
+    regenerateApiKey: protectedProcedure.mutation(async ({ ctx }) => {
       const { database, userId } = ctx as AuthenticatedGatewayContext;
 
       // Get existing API keys from database
@@ -44,26 +67,6 @@ export function createApiKeyRouter() {
         key: result.key,
         // Return just the start of the key for display purposes
         keyStart: result.start,
-      };
-    }),
-
-    /**
-     * Get info about the user's current API key (without the full key).
-     */
-    getInfo: protectedProcedure.query(async ({ ctx }) => {
-      const { database, userId } = ctx as AuthenticatedGatewayContext;
-
-      const user = await database.getUser(userId);
-      const hasApiKey = !!user?.encryptedApiKey;
-
-      // Get the key metadata from database
-      const keys = await database.getApiKeysByUserId(userId);
-      const defaultKey = keys.find((k) => k.name === "default");
-
-      return {
-        hasApiKey,
-        keyStart: defaultKey?.start ?? null,
-        createdAt: defaultKey?.createdAt ?? null,
       };
     }),
   });

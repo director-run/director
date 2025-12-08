@@ -7,7 +7,7 @@ import type { UserStatus } from "../../db/schema";
 import { env } from "../../env";
 import { PlaybookStore } from "../../playbooks/playbook-store";
 import { getStatus } from "../../status";
-import { createApiKeyRouter } from "./api-key-router";
+import { createSettingsRouter } from "./settings-router";
 import { createPlaybookStoreRouter } from "./store-router";
 import { createToolsRouter } from "./tools-router";
 
@@ -54,7 +54,7 @@ export function createAppRouter() {
     }),
     store: createPlaybookStoreRouter(),
     tools: createToolsRouter(),
-    apiKey: createApiKeyRouter(),
+    settings: createSettingsRouter(),
   });
 }
 

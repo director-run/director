@@ -8,6 +8,7 @@ RUN pipx install uv
 ENV PATH="/root/.local/bin:$PATH"
 
 COPY ./dist ./
+COPY ./public ./public
 
 ENV NODE_ENV=production
 ENV PORT=3080

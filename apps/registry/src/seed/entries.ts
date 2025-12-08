@@ -22,7 +22,7 @@ export const entries: EntryCreateParams[] = [
     description:
       "A Postgres MCP server with index tuning, explain plans, health checks, and safe sql execution.",
     isOfficial: false,
-    icon: "https://registry.director.run/postgres.svg",
+    icon: "/assets/postgres.svg",
     homepage: "https://github.com/crystaldba/postgres-mcp",
     transport: {
       type: "stdio",
@@ -49,7 +49,7 @@ export const entries: EntryCreateParams[] = [
     description:
       "Enable secure connectivity between Sentry issues and debugging data, and LLM clients.",
     isOfficial: true,
-    icon: "https://registry.director.run/sentry.svg",
+    icon: "/assets/sentry.svg",
     homepage: "https://github.com/getsentry/sentry-mcp/",
     transport: {
       type: "http",
@@ -63,7 +63,7 @@ export const entries: EntryCreateParams[] = [
     description:
       "Provides seamless integration with GitHub APIs, enabling advanced automation and interaction capabilities for developers and tools.",
     isOfficial: true,
-    icon: "https://registry.director.run/github.svg",
+    icon: "/assets/github.svg",
     homepage: "https://github.com/github/github-mcp-server",
     transport: {
       type: "http",
@@ -89,7 +89,7 @@ export const entries: EntryCreateParams[] = [
     description:
       "Connect to Notion API, enabling advanced automation and interaction capabilities for developers and tools.",
     isOfficial: true,
-    icon: "https://registry.director.run/notion.svg",
+    icon: "/assets/notion.svg",
     homepage: "https://github.com/makenotion/notion-mcp-server",
     transport: {
       type: "http",
@@ -102,7 +102,7 @@ export const entries: EntryCreateParams[] = [
     title: "Hackernews",
     description: "Provides tools for fetching information from Hacker News.",
     isOfficial: false,
-    icon: "https://registry.director.run/hackernews.svg",
+    icon: "/assets/hackernews.svg",
     homepage: "https://github.com/erithwik/mcp-hn",
     transport: {
       type: "stdio",
@@ -117,7 +117,7 @@ export const entries: EntryCreateParams[] = [
     description:
       "Provides tools to read, search, and manipulate Git repositories.",
     isOfficial: false,
-    icon: "https://registry.director.run/git.svg",
+    icon: "/assets/git.svg",
     homepage:
       "https://github.com/modelcontextprotocol/servers/tree/main/src/git",
     transport: {
@@ -132,7 +132,7 @@ export const entries: EntryCreateParams[] = [
     title: "Filesystem",
     description: "Secure file operations with configurable access controls.",
     isOfficial: false,
-    icon: "https://registry.director.run/mcp.svg",
+    icon: "/assets/mcp.svg",
     homepage:
       "https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem",
     transport: {
@@ -159,7 +159,7 @@ export const entries: EntryCreateParams[] = [
     title: "Fetch",
     description: "Retrieves and converts web content for efficient LLM usage.",
     isOfficial: false,
-    icon: "https://registry.director.run/mcp.svg",
+    icon: "/assets/mcp.svg",
     homepage:
       "https://github.com/modelcontextprotocol/servers/tree/main/src/fetch",
     transport: {
@@ -174,7 +174,7 @@ export const entries: EntryCreateParams[] = [
     title: "Memory",
     description: "Knowledge graph-based persistent memory system.",
     isOfficial: false,
-    icon: "https://registry.director.run/mcp.svg",
+    icon: "/assets/mcp.svg",
     homepage:
       "https://github.com/modelcontextprotocol/servers/tree/main/src/memory",
     transport: {
@@ -190,7 +190,7 @@ export const entries: EntryCreateParams[] = [
     description:
       "Dynamic and reflective problem-solving through a structured thinking process.",
     isOfficial: false,
-    icon: "https://registry.director.run/mcp.svg",
+    icon: "/assets/mcp.svg",
     homepage:
       "https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking",
     transport: {
@@ -205,7 +205,7 @@ export const entries: EntryCreateParams[] = [
     title: "Time",
     description: "Time and timezone conversion capabilities.",
     isOfficial: false,
-    icon: "https://registry.director.run/mcp.svg",
+    icon: "/assets/mcp.svg",
     homepage:
       "https://github.com/modelcontextprotocol/servers/tree/main/src/time",
     transport: {
@@ -220,7 +220,7 @@ export const entries: EntryCreateParams[] = [
     title: "Slack",
     description: "Allows you to interact with the Slack API.",
     isOfficial: true,
-    icon: "https://registry.director.run/slack.svg",
+    icon: "/assets/slack.svg",
     homepage:
       "https://github.com/modelcontextprotocol/servers-archived/tree/main/src/slack",
     transport: {
@@ -261,7 +261,7 @@ export const entries: EntryCreateParams[] = [
     title: "Google Calendar",
     description: "Allows you to interact with Google Calendar integration.",
     isOfficial: false,
-    icon: "https://registry.director.run/google-calendar.png",
+    icon: "/assets/google-calendar.png",
     homepage: "https://github.com/nspady/google-calendar-mcp",
     transport: {
       type: "stdio",
@@ -286,7 +286,7 @@ export const entries: EntryCreateParams[] = [
     description:
       "Context7 MCP pulls up-to-date, version-specific documentation and code examples straight from the source — and places them directly into your prompt.",
     isOfficial: true,
-    icon: "https://registry.director.run/context7.svg",
+    icon: "/assets/context7.svg",
     homepage: "https://github.com/upstash/context7/blob/master/README.md",
     transport: {
       type: "stdio",
@@ -301,7 +301,7 @@ export const entries: EntryCreateParams[] = [
     description:
       "Interact with web pages through structured accessibility snapshots, bypassing the need for screenshots or visually-tuned models.",
     isOfficial: true,
-    icon: "https://registry.director.run/playwright.svg",
+    icon: "/assets/playwright.svg",
     homepage: "https://github.com/microsoft/playwright-mcp",
     transport: {
       type: "stdio",
@@ -315,7 +315,7 @@ export const entries: EntryCreateParams[] = [
     title: "Supabase",
     description: "Connect your AI tools to Supabase.",
     isOfficial: true,
-    icon: "https://registry.director.run/supabase.svg",
+    icon: "/assets/supabase.svg",
     homepage: "https://supabase.com/docs/guides/getting-started/mcp",
     transport: {
       type: "stdio",
@@ -355,7 +355,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "A Model Context Protocol server for Brave Search. This server provides tools to read, search, and manipulate Brave Search repositories via Large Language Models.",
 //     isOfficial: true,
-//     icon: "https://registry.director.run/brave.svg",
+//     icon: "/assets/brave.svg",
 //     homepage:
 //       "https://github.com/modelcontextprotocol/servers/tree/HEAD/src/brave-search",
 //     transport: {
@@ -374,7 +374,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "This server provides data retrieval capabilities powered by Chroma, enabling AI models to create collections over generated data and user inputs, and retrieve that data using vector search, full text search, metadata filtering, and more.",
 //     isOfficial: true,
-//     icon: "https://registry.director.run/chroma.svg",
+//     icon: "/assets/chroma.svg",
 //     homepage: "https://github.com/chroma-core/chroma-mcp",
 //     transport: {
 //       type: "stdio",
@@ -399,7 +399,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "A Model Context Protocol server for Git repository interaction and automation. This server provides tools to read, search, and manipulate Git repositories via Large Language Models.",
 //     isOfficial: true,
-//     icon: "https://registry.director.run/git.svg",
+//     icon: "/assets/git.svg",
 //     homepage:
 //       "https://github.com/modelcontextprotocol/servers/tree/main/src/git",
 //     transport: {
@@ -415,7 +415,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "The GitHub MCP Server is a Model Context Protocol (MCP) server that provides seamless integration with GitHub APIs, enabling advanced automation and interaction capabilities for developers and tools.",
 //     isOfficial: true,
-//     icon: "https://registry.director.run/github.svg",
+//     icon: "/assets/github.svg",
 //     homepage:
 //       "https://github.com/github/github-mcp-server?utm_source=Blog&utm_medium=GitHub&utm_campaign=proplus&utm_notesblogtop",
 //     transport: {
@@ -441,7 +441,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "MCP Server for the GitLab API, enabling project management, file operations, and more.",
 //     isOfficial: true,
-//     icon: "https://registry.director.run/gitlab.svg",
+//     icon: "/assets/gitlab.svg",
 //     homepage:
 //       "https://github.com/modelcontextprotocol/servers/tree/main/src/gitlab",
 //     transport: {
@@ -461,7 +461,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "A Model Context Protocol server for running code in a secure sandbox by [E2B](https://e2b.dev/).",
 //     isOfficial: true,
-//     icon: "https://registry.director.run/e2b.svg",
+//     icon: "/assets/e2b.svg",
 //     homepage:
 //       "https://github.com/e2b-dev/mcp-server/blob/main/packages/js/README.md",
 //     transport: {
@@ -480,7 +480,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "A Model Context Protocol (MCP) server lets AI assistants like Claude use the Exa AI Search API for web searches. This setup allows AI models to get real-time web information in a safe and controlled way.",
 //     isOfficial: true,
-//     icon: "https://registry.director.run/exa.svg",
+//     icon: "/assets/exa.svg",
 //     homepage: "https://github.com/exa-labs/exa-mcp-server",
 //     transport: {
 //       type: "stdio",
@@ -498,7 +498,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "This MCP server integrates with Google Drive to allow listing, reading, and searching over files.",
 //     isOfficial: true,
-//     icon: "https://registry.director.run/drive.svg",
+//     icon: "/assets/drive.svg",
 //     homepage:
 //       "https://github.com/modelcontextprotocol/servers/tree/main/src/gdrive",
 //     transport: {
@@ -516,7 +516,7 @@ export const entries: EntryCreateParams[] = [
 //     title: "JetBrains",
 //     description: "The server proxies requests from client to JetBrains IDE.",
 //     isOfficial: true,
-//     icon: "https://registry.director.run/jetbrains.svg",
+//     icon: "/assets/jetbrains.svg",
 //     homepage: "https://github.com/JetBrains/mcp-jetbrains",
 //     transport: {
 //       type: "stdio",
@@ -531,7 +531,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "The Heroku Platform MCP Server is a specialized Model Context Protocol (MCP) implementation designed to facilitate seamless interaction between large language models (LLMs) and the Heroku Platform. This server provides a robust set of tools and capabilities that enable LLMs to read, manage, and operate Heroku Platform resources.",
 //     isOfficial: true,
-//     icon: "https://registry.director.run/heroku.svg",
+//     icon: "/assets/heroku.svg",
 //     homepage: "https://github.com/heroku/heroku-mcp-server",
 //     transport: {
 //       type: "stdio",
@@ -549,7 +549,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "Paddle Billing is the developer-first merchant of record. We take care of payments, tax, subscriptions, and metrics with one unified API that does it all. This is a Model Context Protocol (MCP) server that provides tools for interacting with the Paddle API.",
 //     isOfficial: true,
-//     icon: "https://registry.director.run/paddle.svg",
+//     icon: "/assets/paddle.svg",
 //     homepage: "https://github.com/PaddleHQ/paddle-mcp-server",
 //     transport: {
 //       type: "stdio",
@@ -569,7 +569,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "An MCP server implementation that integrates the Sonar API to provide Claude with unparalleled real-time, web-wide research.",
 //     isOfficial: true,
-//     icon: "https://registry.director.run/perplexity.svg",
+//     icon: "/assets/perplexity.svg",
 //     homepage: "https://github.com/ppl-ai/modelcontextprotocol",
 //     transport: {
 //       type: "stdio",
@@ -587,7 +587,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "This service provides a Model Context Provider (MCP) for interacting with Sentry's API.",
 //     isOfficial: true,
-//     icon: "https://registry.director.run/sentry.svg",
+//     icon: "/assets/sentry.svg",
 //     homepage: "https://mcp.sentry.dev/",
 //     transport: {
 //       type: "stdio",
@@ -602,7 +602,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "This project follows the Model Context Protocol standard, allowing AI assistants to interact with Stripe's API.",
 //     isOfficial: true,
-//     icon: "https://registry.director.run/stripe.svg",
+//     icon: "/assets/stripe.svg",
 //     homepage: "https://github.com/stripe/agent-toolkit",
 //     transport: {
 //       type: "stdio",
@@ -623,7 +623,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "This project follows the Model Context Protocol standard, allowing AI assistants to interact with Tavily's API.",
 //     isOfficial: true,
-//     icon: "https://registry.director.run/tavily.svg",
+//     icon: "/assets/tavily.svg",
 //     homepage: "https://github.com/tavily-ai/tavily-mcp",
 //     transport: {
 //       type: "stdio",
@@ -641,7 +641,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "This is a Model Context Protocol (MCP) server implementation for Xero. It provides a bridge between the MCP protocol and Xero's API, allowing for standardized access to Xero's accounting and business features.",
 //     isOfficial: true,
-//     icon: "https://registry.director.run/xero.svg",
+//     icon: "/assets/xero.svg",
 //     homepage: "https://github.com/XeroAPI/xero-mcp-server",
 //     transport: {
 //       type: "stdio",
@@ -660,7 +660,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "A Model Context Protocol (MCP) server implementation that integrates with Firecrawl for web scraping capabilities.",
 //     isOfficial: true,
-//     icon: "https://registry.director.run/mcp.svg",
+//     icon: "/assets/mcp.svg",
 //     homepage: "https://github.com/mendableai/firecrawl-mcp-server",
 //     transport: {
 //       type: "stdio",
@@ -678,7 +678,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "A Model Context Protocol server that provides browser automation capabilities using Playwright. This server enables LLMs to interact with web pages through structured accessibility snapshots, bypassing the need for screenshots or visually-tuned models.",
 //     isOfficial: true,
-//     icon: "https://registry.director.run/playwright.svg",
+//     icon: "/assets/playwright.svg",
 //     homepage: "https://github.com/microsoft/playwright-mcp",
 //     transport: {
 //       type: "stdio",
@@ -693,7 +693,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "The Notion MCP Server is a Model Context Protocol (MCP) server that provides seamless integration with Notion APIs, enabling advanced automation and interaction capabilities for developers and tools.",
 //     isOfficial: true,
-//     icon: "https://registry.director.run/notion.svg",
+//     icon: "/assets/notion.svg",
 //     homepage: "https://github.com/makenotion/notion-mcp-server",
 //     transport: {
 //       type: "stdio",
@@ -712,7 +712,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "The MCP Run Python package is an MCP server that allows agents to execute Python code in a secure, sandboxed environment. It uses Pyodide to run Python code in a JavaScript environment with Deno, isolating execution from the host system.",
 //     isOfficial: true,
-//     icon: "https://registry.director.run/pydantic.svg",
+//     icon: "/assets/pydantic.svg",
 //     homepage: "https://ai.pydantic.dev/mcp/run-python/",
 //     transport: {
 //       type: "stdio",
@@ -735,7 +735,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "This repository contains a Model Context Protocol (MCP) server with tools that can access the OpenTelemetry traces and metrics you've sent to Logfire.\n\nThis MCP server enables LLMs to retrieve your application's telemetry data, analyze distributed traces, and make use of the results of arbitrary SQL queries executed using the Logfire APIs.",
 //     isOfficial: true,
-//     icon: "https://registry.director.run/pydantic.svg",
+//     icon: "/assets/pydantic.svg",
 //     homepage: "https://github.com/pydantic/logfire-mcp",
 //     transport: {
 //       type: "stdio",
@@ -750,7 +750,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "Extend the capabilities of your AI Agents with Polar as MCP Server",
 //     isOfficial: true,
-//     icon: "https://registry.director.run/polar.svg",
+//     icon: "/assets/polar.svg",
 //     homepage: "https://docs.polar.sh/integrate/mcp",
 //     transport: {
 //       type: "stdio",
@@ -774,7 +774,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "Official ElevenLabs Model Context Protocol (MCP) server that enables interaction with powerful Text to Speech and audio processing APIs. This server allows MCP clients like Claude Desktop, Cursor, Windsurf, OpenAI Agents and others to generate speech, clone voices, transcribe audio, and more.",
 //     isOfficial: true,
-//     icon: "https://registry.director.run/elevenlabs.svg",
+//     icon: "/assets/elevenlabs.svg",
 //     homepage: "https://github.com/elevenlabs/elevenlabs-mcp",
 //     transport: {
 //       type: "stdio",
@@ -792,7 +792,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "This project implements a Model Context Protocol (MCP) integration between Cursor AI and Figma, allowing Cursor to communicate with Figma for reading designs and modifying them programmatically.",
 //     isOfficial: false,
-//     icon: "https://registry.director.run/figma.svg",
+//     icon: "/assets/figma.svg",
 //     homepage: "https://github.com/sonnylazuardi/cursor-talk-to-figma-mcp",
 //     transport: {
 //       type: "stdio",
@@ -806,7 +806,7 @@ export const entries: EntryCreateParams[] = [
 //     title: "Airbnb",
 //     description: "MCP Server for searching Airbnb and get listing details.",
 //     isOfficial: false,
-//     icon: "https://registry.director.run/airbnb.svg",
+//     icon: "/assets/airbnb.svg",
 //     homepage: "https://github.com/openbnb-org/mcp-server-airbnb",
 //     transport: {
 //       type: "stdio",
@@ -821,7 +821,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "A Model Context Protocol server that provides read and write access to Airtable databases. This server enables LLMs to inspect database schemas, then read and write records.",
 //     isOfficial: false,
-//     icon: "https://registry.director.run/airtable.svg",
+//     icon: "/assets/airtable.svg",
 //     homepage: "https://github.com/domdomegg/airtable-mcp-server",
 //     transport: {
 //       type: "stdio",
@@ -839,7 +839,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "A Model Context Protocol (MCP) server that lets you run AppleScript code to interact with Mac. This MCP is intentionally designed to be simple, straightforward, intuitive, and require minimal setup.",
 //     isOfficial: false,
-//     icon: "https://registry.director.run/applescript.svg",
+//     icon: "/assets/applescript.svg",
 //     homepage: "https://github.com/peakmojo/applescript-mcp",
 //     transport: {
 //       type: "stdio",
@@ -854,7 +854,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "Basic Memory lets you build persistent knowledge through natural conversations with Large Language Models (LLMs) like Claude, while keeping everything in simple Markdown files on your computer. It uses the Model Context Protocol (MCP) to enable any compatible LLM to read and write to your local knowledge base.",
 //     isOfficial: false,
-//     icon: "https://registry.director.run/mcp.svg",
+//     icon: "/assets/mcp.svg",
 //     homepage: "https://github.com/basicmachines-co/basic-memory",
 //     transport: {
 //       type: "stdio",
@@ -869,7 +869,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "A Model Context Protocol server that provides access to BigQuery. This server enables LLMs to inspect database schemas and execute queries.",
 //     isOfficial: false,
-//     icon: "https://registry.director.run/bigquery.svg",
+//     icon: "/assets/bigquery.svg",
 //     homepage: "https://github.com/LucasHild/mcp-server-bigquery",
 //     transport: {
 //       type: "stdio",
@@ -890,7 +890,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "A Model Context Protocol (MCP) server for integrating ClickUp tasks with AI applications. This server allows AI agents to interact with ClickUp tasks, spaces, lists, and folders through a standardized protocol.",
 //     isOfficial: false,
-//     icon: "https://registry.director.run/clickup.svg",
+//     icon: "/assets/clickup.svg",
 //     homepage: "https://github.com/TaazKareem/clickup-mcp-server",
 //     transport: {
 //       type: "stdio",
@@ -910,7 +910,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "A Model Context Protocol (MCP) server for the Discord API (JDA), allowing seamless integration of Discord Bot with MCP-compatible applications like Claude Desktop. Enable your AI assistants to seamlessly interact with Discord. Manage channels, send messages, and retrieve server information effortlessly. Enhance your Discord experience with powerful automation capabilities.",
 //     isOfficial: false,
-//     icon: "https://registry.director.run/discord.svg",
+//     icon: "/assets/discord.svg",
 //     homepage: "https://github.com/SaseQ/discord-mcp",
 //     transport: {
 //       type: "stdio",
@@ -928,7 +928,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "Firebase MCP enables AI assistants to work directly with Firebase services.",
 //     isOfficial: false,
-//     icon: "https://registry.director.run/firebase.svg",
+//     icon: "/assets/firebase.svg",
 //     homepage: "https://github.com/gannonh/firebase-mcp",
 //     transport: {
 //       type: "stdio",
@@ -948,7 +948,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "A Model Context Protocol (MCP) server for interacting with Ghost CMS through LLM interfaces like Claude. This server provides secure and comprehensive access to your Ghost blog, leveraging JWT authentication and a rich set of MCP tools for managing posts, users, members, tiers, offers, and newsletters.",
 //     isOfficial: false,
-//     icon: "https://registry.director.run/ghost.png",
+//     icon: "/assets/ghost.png",
 //     homepage: "https://github.com/MFYDev/ghost-mcp",
 //     transport: {
 //       type: "stdio",
@@ -968,7 +968,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "A Model Context Protocol server that provides access to your iTerm session.",
 //     isOfficial: false,
-//     icon: "https://registry.director.run/iterm.png",
+//     icon: "/assets/iterm.png",
 //     homepage: "https://github.com/ferrislucas/iterm-mcp",
 //     transport: {
 //       type: "stdio",
@@ -983,7 +983,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "This server provides MCP-compatible access to Lightdash's API, allowing AI assistants to interact with your Lightdash data through a standardized interface.",
 //     isOfficial: false,
-//     icon: "https://registry.director.run/lightdash.png",
+//     icon: "/assets/lightdash.png",
 //     homepage: "https://github.com/syucream/lightdash-mcp-server",
 //     transport: {
 //       type: "stdio",
@@ -1002,7 +1002,7 @@ export const entries: EntryCreateParams[] = [
 //     description:
 //       "MCP Server for monday.com, enabling MCP clients to interact with Monday.com boards, items, updates, and documents.",
 //     isOfficial: false,
-//     icon: "https://registry.director.run/monday.svg",
+//     icon: "/assets/monday.svg",
 //     homepage: "https://github.com/sakce/mcp-server-monday",
 //     transport: {
 //       type: "stdio",
@@ -1020,7 +1020,7 @@ export const entries: EntryCreateParams[] = [
 //     title: "Hackernews",
 //     description:
 //       "A Model Context Protocol (MCP) server that provides tools for fetching information from Hacker News.",
-//     icon: "https://registry.director.run/hackernews.svg",
+//     icon: "/assets/hackernews.svg",
 //     homepage: "https://github.com/erithwik/mcp-hn",
 //     transport: {
 //       type: "stdio",

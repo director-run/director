@@ -18,7 +18,7 @@
 
 Director allows you to provide <ins>**playbooks**</ins> to AI Agents. A playbook is a set of <ins>**MCP tools**</ins>, <ins>**prompts**</ins> and <ins>**configuration**</ins>, that give agents new <ins>**skills**</ins>. You can connect Claude, Cursor and VSCode in 1-click, or integrate manually through a single MCP endpoint.
 
-Playbooks are portable, declarative YAML files that can easily be shared (or committed to version control). Director is local-first - installation and client integration takes 30 seconds. In addition, Director provides all of the MCP management functionality that you'd expect: tool filtering, logging, strong isolation, and unified OAuth.
+Playbooks are portable and can easily be switched in and out of context. Director is local-first - setip and client integration takes 30 seconds. In addition, Director provides all of the MCP management functionality that you'd expect: tool filtering, logging, strong isolation, and unified OAuth.
 
 <br />
 
@@ -29,12 +29,10 @@ https://github.com/user-attachments/assets/cafc0902-a854-4ee8-ac89-b7535f10c93d
 
 - 📚 **Playbooks** - Maintain sets of tools, prompts and config for different tasks or environments.
 - 🚀 **1-Click Integration** - Switch playbooks with a single click. Currently supports Claude Code, Claude Desktop, Cursor, VSCode
-- 🔗 **Shareable** - Playbooks are flat files which can be shared or committed to version control easily.
+- 🔗 **Shareable** - Playbooks are accessible through a single MCP endpoint, making them easy to share across agents.
 - 🏠 **Local-First** - Director is local-first, designed to easily run on your own machine or infrastructure.
 - 🔑 **Unified OAuth** - Connect to OAuth MCPs centrally, and use them across all of your agents.
 - 🎯 **Tool Filtering** - Select only the MCP tools that are required for the specific task, preserving context.  
-- 📋 **Declarative** - Like terraform for AI agents, Director will enforce playbook to client mapping on startup.
-- 🔧 **Flexibility** - You can configure director through the UI, by editing the config file, through the CLI or even using the Typescript SDK.  
 - 📊 **Observability** - Centralized JSON logging, that allows you to understand exactly what your agent is doing.
 - 🔌 **MCP Compliant** - Just works with any MCP server or client. Up to date with the latest MCP spec.
 
@@ -54,74 +52,7 @@ $ director quickstart
 
 A playbook is a set of tools, prompts and configuration, used to provide specific capabilities to your agent. Under the hood, playbooks are built on top of the MCP tools & prompts primitives. 
 
-The easiest way to author a playbook is via the UI (`director studio`). But you can also use the CLI or write the config manually (see below). You can have many playbooks, typically one per task or per environment. Connecting them is one click in the UI (or one CLI command / config entry), connections are enforced on startup. 
-
-```yaml
-# Client <> Playbook mappings (enforced on startup)
-clients:
-  cursor: [ demo ]
-
-playbooks:
-  - id: demo
-    name: demo
-    description: A demonstration playbook
-    #
-    # Prompts
-    #
-    prompts:
-      - name: changelog
-        title: changelog
-        description: ""
-        body: "write a short changelog based on recent changes on the
-          director-run/director repository and the post it to to the slack
-          #general channel. Make sure the message will format correctly inside
-          of slack"
-
-    #
-    # MCP Servers
-    #
-    servers:
-      # GitHub server
-      - name: github
-        type: http
-        url: https://api.githubcopilot.com/mcp/
-        headers:
-          Authorization: Bearer
-            <YOUR_GITHUB_TOKEN>
-        # This server is enabled
-        disabled: false
-        # Only include the tools you need
-        tools:
-          include:
-            - list_commits
-            - search_pull_requests
-            - get_latest_release
-        # Prompts from MCP server are disabled by default
-        prompts:
-          include: []
-
-        
-      - name: slack
-        type: stdio
-        command: npx
-        args:
-          - -y
-          - "@modelcontextprotocol/server-slack"
-        env:
-          SLACK_TEAM_ID: <YOUR_SLACK_TEAM_ID>
-          SLACK_BOT_TOKEN: <YOUR_SLACK_BOT_TOKEN>
-          SLACK_CHANNEL_IDS: <YOUR_SLACK_CHANNEL_ID>
-        # This server is enabled
-        disabled: false
-        # Only include the tools you need
-        tools:
-          include:
-            - slack_list_channels
-            - slack_post_message
-        # Prompts from MCP server are disabled by default
-        prompts:
-          include: []
-```
+The easiest way to author a playbook is via the UI (`director studio`). But you can also use the CLI. You can have many playbooks, typically one per task or per environment. You can connect to them via a single CLI command or directly over a URL. 
 
 ## Architecture
 
@@ -203,84 +134,6 @@ EXAMPLES
   $ director add my-playbook --entry fetch # Add a server to a playbook
   $ director connect my-playbook --target claude # Connect my-playbook to claude
 
-```
-
-## Configuration File Reference
-
-```yaml
-#
-# Server config
-#
-server:
-  # Defaults to 3673
-  port: 1234
-
-#
-# Client <> Playbook mappings (enforced on startup)
-#
-clients:
-  cursor: [ demo ]
-
-playbooks:
-  - id: demo
-    name: demo
-    description: A demonstration playbook
-    #
-    # Prompts
-    #
-    prompts:
-      - name: changelog
-        title: changelog
-        description: ""
-        body: "write a short changelog based on recent changes on the
-          director-run/director repository and the post it to to the slack
-          #general channel. Make sure the message will format correctly inside
-          of slack"
-
-    #
-    # MCP Servers
-    #
-    servers:
-      # GitHub server
-      - name: github
-        type: http
-        url: https://api.githubcopilot.com/mcp/
-        headers:
-          Authorization: Bearer
-            <YOUR_GITHUB_TOKEN>
-        # This server is enabled
-        disabled: false
-        # Only include the tools you need
-        tools:
-          include:
-            - list_commits
-            - search_pull_requests
-            - get_latest_release
-        # Prompts from MCP server are disabled by default
-        prompts:
-          include: []
-
-        
-      - name: slack
-        type: stdio
-        command: npx
-        args:
-          - -y
-          - "@modelcontextprotocol/server-slack"
-        env:
-          SLACK_TEAM_ID: <YOUR_SLACK_TEAM_ID>
-          SLACK_BOT_TOKEN: <YOUR_SLACK_BOT_TOKEN>
-          SLACK_CHANNEL_IDS: <YOUR_SLACK_CHANNEL_ID>
-        # This server is enabled
-        disabled: false
-        # Only include the tools you need
-        tools:
-          include:
-            - slack_list_channels
-            - slack_post_message
-        # Prompts from MCP server are disabled by default
-        prompts:
-          include: []
 ```
 
 ### TypeScript SDK

@@ -2,21 +2,18 @@ import { publicProcedure, t } from "@director.run/utilities/trpc";
 import { TRPCError } from "@trpc/server";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { auth } from "../../auth";
-import type { ClientStore } from "../../client-store";
 import type { Database } from "../../db/database";
 import type { UserStatus } from "../../db/schema";
 import { env } from "../../env";
 import { PlaybookStore } from "../../playbooks/playbook-store";
 import { getStatus } from "../../status";
 import { createApiKeyRouter } from "./api-key-router";
-import { createClientRouter } from "./client-router";
 import { createPlaybookStoreRouter } from "./store-router";
 import { createToolsRouter } from "./tools-router";
 
 export type GatewayContext = {
   cliVersion: string | null;
   playbookStore: PlaybookStore;
-  clientStore: ClientStore;
   database: Database;
   userId: string | undefined;
   userStatus: UserStatus | undefined;
@@ -56,7 +53,6 @@ export function createAppRouter() {
       return getStatus(ctx.cliVersion);
     }),
     store: createPlaybookStoreRouter(),
-    clients: createClientRouter(),
     tools: createToolsRouter(),
     apiKey: createApiKeyRouter(),
   });
@@ -64,11 +60,9 @@ export function createAppRouter() {
 
 export function createTRPCExpressMiddleware({
   playbookStore,
-  clientStore,
   database,
 }: {
   playbookStore: PlaybookStore;
-  clientStore: ClientStore;
   database: Database;
 }): ReturnType<typeof trpcExpress.createExpressMiddleware> {
   return trpcExpress.createExpressMiddleware({
@@ -93,7 +87,6 @@ export function createTRPCExpressMiddleware({
       return {
         cliVersion,
         playbookStore,
-        clientStore,
         database,
         userId,
         userStatus,

@@ -14,7 +14,6 @@ import { toNodeHandler } from "better-auth/node";
 import cors from "cors";
 import express from "express";
 import { auth } from "./auth";
-import { ClientStore } from "./client-store";
 import type { Database } from "./db/database";
 import { env } from "./env";
 import { PlaybookStore } from "./playbooks/playbook-store";
@@ -32,7 +31,6 @@ export class Gateway {
   private studioAssetsPath?: string;
   private baseUrl: string;
   public readonly port: number;
-  public readonly clientStore: ClientStore;
 
   private constructor(attribs: {
     playbookStore: PlaybookStore;
@@ -40,14 +38,12 @@ export class Gateway {
     telemetry?: Telemetry;
     studioAssetsPath?: string;
     baseUrl: string;
-    clientStore: ClientStore;
     port: number;
   }) {
     this.playbookStore = attribs.playbookStore;
     this.database = attribs.database;
     this.studioAssetsPath = attribs.studioAssetsPath;
     this.baseUrl = attribs.baseUrl;
-    this.clientStore = attribs.clientStore;
     this.port = attribs.port;
 
     this.app = express();
@@ -165,7 +161,6 @@ export class Gateway {
       "/trpc",
       createTRPCExpressMiddleware({
         playbookStore: this.playbookStore,
-        clientStore: this.clientStore,
         database: this.database,
       }),
     );
@@ -191,7 +186,6 @@ export class Gateway {
     successCallback?: () => void,
   ) {
     logger.info(`starting director gateway`);
-    const clientStore = new ClientStore();
     const playbookStore = await PlaybookStore.create({
       database: attribs.database,
       telemetry: attribs.telemetry,
@@ -206,7 +200,6 @@ export class Gateway {
       telemetry: attribs.telemetry,
       studioAssetsPath: attribs.studioAssetsPath,
       baseUrl: attribs.baseUrl,
-      clientStore,
       port: attribs.port,
     });
 

@@ -41,7 +41,7 @@ export class Registry {
 
     app.use(cors());
     app.use(logRequests());
-    app.use("/assets", express.static(path.join(__dirname, "public")));
+    app.use("/assets", express.static(path.join(process.cwd(), "public")));
     app.use(express.json());
     app.use("/trpc", createTRPCExpressMiddleware({ store }));
     app.use("/api/management", createManagementRouter({ store }));

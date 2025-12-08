@@ -19,7 +19,7 @@ import type { Database } from "./db/database";
 import { env } from "./env";
 import { PlaybookStore } from "./playbooks/playbook-store";
 import { createManagementRouter } from "./routers/management";
-import { createMCPRouter } from "./routers/mcp";
+import { createMCPRouter } from "./routers/mcp/mcp";
 import { createTRPCExpressMiddleware } from "./routers/trpc";
 
 const logger = getLogger("Gateway");
@@ -29,7 +29,6 @@ export class Gateway {
   private server?: Server;
   public readonly database: Database;
   private app: express.Express;
-  private telemetry?: Telemetry;
   private studioAssetsPath?: string;
   private baseUrl: string;
   public readonly port: number;
@@ -46,7 +45,6 @@ export class Gateway {
   }) {
     this.playbookStore = attribs.playbookStore;
     this.database = attribs.database;
-    this.telemetry = attribs.telemetry;
     this.studioAssetsPath = attribs.studioAssetsPath;
     this.baseUrl = attribs.baseUrl;
     this.clientStore = attribs.clientStore;
@@ -86,6 +84,7 @@ export class Gateway {
         message: "studioAssetsPath not provided, studio will not be available",
       });
     }
+
     this.app.use(
       "/playbooks",
       createMCPRouter({
@@ -93,6 +92,7 @@ export class Gateway {
         database: this.database,
       }),
     );
+
     this.app.use(
       "/",
       createOauthCallbackRouter({

@@ -1,12 +1,11 @@
 import { streamableRouter } from "@director.run/mcp/transport";
 import express from "express";
-import type { NextFunction } from "express";
-import type { Database } from "../db/database";
+import type { Database } from "../../db/database";
 import {
   type AuthenticatedRequest,
-  // requireAPIKeyAuth,
-} from "../middleware/auth";
-import type { PlaybookStore } from "../playbooks/playbook-store";
+  fakeAPIKeyAuth,
+} from "../../middleware/auth";
+import type { PlaybookStore } from "../../playbooks/playbook-store";
 
 export function createMCPRouter({
   playbookStore,
@@ -44,19 +43,4 @@ export function createMCPRouter({
   );
 
   return router;
-}
-
-function fakeAPIKeyAuth(database: Database): express.RequestHandler {
-  return async (
-    req: express.Request & { userId?: string },
-    _: express.Response,
-    next: NextFunction,
-  ) => {
-    const user = await database.getUserByEmail("user@director.run");
-    if (!user) {
-      throw new Error("User not found");
-    }
-    req.userId = user.id;
-    next(null);
-  };
 }

@@ -1,7 +1,9 @@
 import { getLogger } from "@director.run/utilities/logger";
 import { fromNodeHeaders } from "better-auth/node";
 import type { NextFunction, Request, Response } from "express";
+import express from "express";
 import { auth } from "../auth";
+import type { Database } from "../db/database";
 
 const logger = getLogger("auth");
 
@@ -67,5 +69,20 @@ export function requireAPIKeyAuth() {
         message: "An error occurred during authentication",
       });
     }
+  };
+}
+
+export function fakeAPIKeyAuth(database: Database): express.RequestHandler {
+  return async (
+    req: express.Request & { userId?: string },
+    _: express.Response,
+    next: NextFunction,
+  ) => {
+    const user = await database.getUserByEmail("user@director.run");
+    if (!user) {
+      throw new Error("User not found");
+    }
+    req.userId = user.id;
+    next(null);
   };
 }

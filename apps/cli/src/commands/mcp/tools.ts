@@ -24,9 +24,11 @@ async function createPlaybookClient(
   const connectionInfo = await gatewayClient.store.getConnectionInfo.query({
     playbookId,
   });
-  return HTTPClient.createAndConnectToHTTP(
-    transport === "sse" ? connectionInfo.sseUrl : connectionInfo.streamableUrl,
-  );
+  // Build URL with API key
+  const baseUrl =
+    transport === "sse" ? connectionInfo.sseUrl : connectionInfo.streamableUrl;
+  const urlWithKey = `${baseUrl}?key=${connectionInfo.apiKey}`;
+  return HTTPClient.createAndConnectToHTTP(urlWithKey);
 }
 
 function transportOption() {

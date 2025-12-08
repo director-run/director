@@ -40,6 +40,8 @@ export function createApiKeyRouter() {
       }
 
       return {
+        // Return the full key so user can copy it (shown only once)
+        key: result.key,
         // Return just the start of the key for display purposes
         keyStart: result.start,
       };

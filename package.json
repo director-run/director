@@ -23,7 +23,7 @@
     "clean": "turbo run clean",
     "cli": "bun run ./apps/cli/bin/cli.ts",
     "studio": "turbo run dev --filter=@director.run/studio",
-    "storybook": "turbo run dev --filter=@director.run/storybook",
+    "storybook": "cd apps/studio && bun run storybook:dev",
     "cli:dev": "NODE_ENV=development bun ./apps/cli/bin/cli.ts",
     "registry": "NODE_ENV=development bun run ./apps/registry/bin/api.ts",
     "registry:dev": "NODE_ENV=development bun  --watch ./apps/registry/bin/api.ts",

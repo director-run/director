@@ -3,6 +3,7 @@ import { LayoutViewContent } from "@director.run/design/components/layout/layout
 import { SettingsPage as SettingsPageComponent } from "@director.run/design/components/pages/settings.tsx";
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "../contexts/auth-context";
+import { gatewayClient } from "../contexts/backend-context";
 import { authClient } from "../lib/auth-client";
 
 type ApiKeyData = {
@@ -19,6 +20,10 @@ export function SettingsPage() {
   const [apiKey, setApiKey] = useState<ApiKeyData | null>(null);
   const [isLoadingApiKey, setIsLoadingApiKey] = useState(true);
   const [isRecyclingApiKey, setIsRecyclingApiKey] = useState(false);
+
+  // Use TRPC mutation to regenerate API key - this properly updates encryptedApiKey
+  const regenerateApiKeyMutation =
+    gatewayClient.apiKey.regenerate.useMutation();
 
   const fetchApiKeys = useCallback(async () => {
     try {
@@ -48,12 +53,14 @@ export function SettingsPage() {
     }
   }, [isAuthenticated, fetchApiKeys]);
 
+  // Both create and recycle use the same TRPC mutation which handles
+  // creating a new key, encrypting it, and deleting old keys
   const handleCreateApiKey = async () => {
     try {
       setIsRecyclingApiKey(true);
-      const result = await authClient.apiKey.create({ name: "studio-key" });
-      if (result.data?.key) {
-        setNewApiKey(result.data.key);
+      const result = await regenerateApiKeyMutation.mutateAsync();
+      if (result.key) {
+        setNewApiKey(result.key);
         await fetchApiKeys();
       }
     } finally {
@@ -64,14 +71,9 @@ export function SettingsPage() {
   const handleRecycleApiKey = async () => {
     try {
       setIsRecyclingApiKey(true);
-      // Delete existing key first
-      if (apiKey) {
-        await authClient.apiKey.delete({ keyId: apiKey.id });
-      }
-      // Create new key
-      const result = await authClient.apiKey.create({ name: "studio-key" });
-      if (result.data?.key) {
-        setNewApiKey(result.data.key);
+      const result = await regenerateApiKeyMutation.mutateAsync();
+      if (result.key) {
+        setNewApiKey(result.key);
         await fetchApiKeys();
       }
     } finally {

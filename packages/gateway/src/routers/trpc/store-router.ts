@@ -396,30 +396,18 @@ export function createPlaybookStoreRouter() {
           apiKey = decrypt(user.encryptedApiKey, env.BETTER_AUTH_SECRET);
         }
 
-        // Build URLs with API key
+        // Build URLs without API key (key returned separately for obfuscation)
         const streamablePath = getStreamablePathForPlaybook(playbookId);
         const ssePath = getSSEPathForPlaybook(playbookId);
 
-        const streamableUrl = joinURL(
-          env.BASE_URL,
-          `${streamablePath}?key=${apiKey}`,
-        );
-        const sseUrl = joinURL(env.BASE_URL, `${ssePath}?key=${apiKey}`);
-
-        // Build stdio command config
-        const stdioCommand = {
-          command: "npx",
-          args: ["-y", "@director.run/cli@latest", "http2stdio", streamableUrl],
-          env: {
-            LOG_LEVEL: "silent",
-          },
-        };
+        const streamableUrl = joinURL(env.BASE_URL, streamablePath);
+        const sseUrl = joinURL(env.BASE_URL, ssePath);
 
         return {
           playbookId,
+          apiKey,
           streamableUrl,
           sseUrl,
-          stdioCommand,
         };
       }),
   });

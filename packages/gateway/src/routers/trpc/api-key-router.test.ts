@@ -110,15 +110,13 @@ describe("API Key Router", () => {
         name: "Test Playbook",
       });
 
-      // Get original connection info
+      // Get original connection info (key is returned separately)
       const originalConnectionInfo =
         await harness.client.store.getConnectionInfo.query({
           playbookId: playbook.id,
         });
 
-      // Extract the API key from the streamable URL
-      const originalUrl = new URL(originalConnectionInfo.streamableUrl);
-      const originalApiKey = originalUrl.searchParams.get("key");
+      const originalApiKey = originalConnectionInfo.apiKey;
       expect(originalApiKey).toBeDefined();
 
       // Regenerate the key
@@ -130,11 +128,9 @@ describe("API Key Router", () => {
           playbookId: playbook.id,
         });
 
-      // Extract the API key from the updated streamable URL
-      const updatedUrl = new URL(updatedConnectionInfo.streamableUrl);
-      const updatedApiKey = updatedUrl.searchParams.get("key");
+      const updatedApiKey = updatedConnectionInfo.apiKey;
 
-      // Verify the API key in the connection string was updated
+      // Verify the API key was updated
       expect(updatedApiKey).toBe(result.key);
       expect(updatedApiKey).not.toBe(originalApiKey);
     });

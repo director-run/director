@@ -23,11 +23,29 @@ export function registerConnectCommand(program: DirectorCommand) {
     .action(
       actionWithErrorHandler(
         async (playbookId: string, options: { target: string }) => {
-          // Get connection info from gateway (includes API key in URLs)
+          // Get connection info from gateway (key returned separately)
           const connectionInfo =
             await gatewayClient.store.getConnectionInfo.query({
               playbookId,
             });
+
+          // Build full URLs with API key
+          const streamableUrlWithKey = `${connectionInfo.streamableUrl}?key=${connectionInfo.apiKey}`;
+          const sseUrlWithKey = `${connectionInfo.sseUrl}?key=${connectionInfo.apiKey}`;
+
+          // Build stdio command config
+          const stdioCommand = {
+            command: "npx",
+            args: [
+              "-y",
+              "@director.run/cli@latest",
+              "http2stdio",
+              streamableUrlWithKey,
+            ],
+            env: {
+              LOG_LEVEL: "silent",
+            },
+          };
 
           if (options.target) {
             // Install directly using client configurator
@@ -35,8 +53,8 @@ export function registerConnectCommand(program: DirectorCommand) {
               clientId: options.target as ClientId,
               name: connectionInfo.playbookId,
               connectionDetails: {
-                sseUrl: connectionInfo.sseUrl,
-                streamableUrl: connectionInfo.streamableUrl,
+                sseUrl: sseUrlWithKey,
+                streamableUrl: streamableUrlWithKey,
               },
             });
           } else {
@@ -53,14 +71,12 @@ export function registerConnectCommand(program: DirectorCommand) {
             );
             console.log();
             console.log(
-              whiteBold("HTTP Streamable:") +
-                " " +
-                connectionInfo.streamableUrl,
+              whiteBold("HTTP Streamable:") + " " + streamableUrlWithKey,
             );
-            console.log(whiteBold("HTTP SSE:") + " " + connectionInfo.sseUrl);
+            console.log(whiteBold("HTTP SSE:") + " " + sseUrlWithKey);
             console.log(
               whiteBold("Stdio:"),
-              JSON.stringify(connectionInfo.stdioCommand, null, 2),
+              JSON.stringify(stdioCommand, null, 2),
             );
             console.log();
           }

@@ -43,9 +43,7 @@ export const env = createEnv({
       .string()
       .default("false")
       .transform((s) => s === "true"),
-    BETTER_AUTH_SECRET: z
-      .string()
-      .default("development-secret-change-in-production"),
+    BETTER_AUTH_SECRET: z.string(),
     ALLOWED_ORIGINS: z
       .string()
       .default("")

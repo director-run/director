@@ -11,7 +11,7 @@ import { EmptyStateDescription } from "@director.run/design/components/ui/empty-
 import { toast } from "@director.run/design/components/ui/toast.js";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAddServer } from "../hooks/use-add-server";
+import { useAddHTTPServer, useAddStdioServer } from "../hooks/use-add-server";
 import { usePlaybooks } from "../hooks/use-playbooks";
 import { useRegistryEntries } from "../hooks/use-registry-entries";
 
@@ -28,22 +28,34 @@ export const RegistryListPage: React.FC = () => {
     pageSize: 20,
     searchQuery,
   });
-  const { addServer, isPending } = useAddServer({
-    onSuccess: (_data, variables) => {
-      toast({
-        title: "Server added",
-        description: "The server has been added to the playbook",
-      });
-      setAddSheetOpen(false);
-      navigate(`/${variables.playbookId}`);
-    },
-    onError: () => {
-      toast({
-        title: "Failed to add server",
-        description: "Please check Director CLI logs for more information.",
-      });
-    },
+
+  const onAddSuccess = (playbookId: string) => {
+    toast({
+      title: "Server added",
+      description: "The server has been added to the playbook",
+    });
+    setAddSheetOpen(false);
+    navigate(`/${playbookId}`);
+  };
+
+  const onAddError = () => {
+    toast({
+      title: "Failed to add server",
+      description: "Please check Director CLI logs for more information.",
+    });
+  };
+
+  const { addHTTPServer, isPending: isHTTPPending } = useAddHTTPServer({
+    onSuccess: (_data, variables) => onAddSuccess(variables.playbookId),
+    onError: onAddError,
   });
+
+  const { addStdioServer, isPending: isStdioPending } = useAddStdioServer({
+    onSuccess: (_data, variables) => onAddSuccess(variables.playbookId),
+    onError: onAddError,
+  });
+
+  const isPending = isHTTPPending || isStdioPending;
 
   if (isLoading) {
     return <RegistryLibrarySkeleton />;
@@ -98,13 +110,22 @@ export const RegistryListPage: React.FC = () => {
               return;
             }
 
-            await addServer({
-              playbookId: data.playbookId,
-              server: {
+            if (data.server.type === "http") {
+              await addHTTPServer({
+                playbookId: data.playbookId,
                 name: data.server.name,
-                transport: data.server,
-              },
-            });
+                url: data.server.url,
+                headers: data.server.headers,
+              });
+            } else {
+              await addStdioServer({
+                playbookId: data.playbookId,
+                name: data.server.name,
+                command: data.server.command,
+                args: data.server.args,
+                env: data.server.env,
+              });
+            }
           }}
           isSubmitting={isPending}
         />

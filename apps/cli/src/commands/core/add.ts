@@ -92,16 +92,11 @@ async function addServerFromStdio(
   name: string,
 ) {
   await spinnerWrap(async () => {
-    await gatewayClient.store.addServer.mutate({
-      playbookId: playbookId,
-      server: {
-        name,
-        transport: {
-          type: "stdio",
-          command,
-          args,
-        },
-      },
+    await gatewayClient.store.addStdioServer.mutate({
+      playbookId,
+      name,
+      command,
+      args,
     });
   })
     .start("installing server...")
@@ -111,15 +106,10 @@ async function addServerFromStdio(
 
 async function addServerFromUrl(playbookId: string, url: string, name: string) {
   await spinnerWrap(async () => {
-    await gatewayClient.store.addServer.mutate({
-      playbookId: playbookId,
-      server: {
-        name,
-        transport: {
-          type: "http",
-          url,
-        },
-      },
+    await gatewayClient.store.addHTTPServer.mutate({
+      playbookId,
+      name,
+      url,
     });
   })
     .start("installing server...")

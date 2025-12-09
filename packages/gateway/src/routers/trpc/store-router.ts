@@ -289,6 +289,86 @@ export function createPlaybookStoreRouter() {
         });
       }),
 
+    /**
+     * Add an HTTP server to a playbook.
+     */
+    addHTTPServer: protectedProcedure
+      .input(
+        z.object({
+          playbookId: z.string(),
+          name: z.string().trim().min(1),
+          url: requiredStringSchema.url(),
+          headers: z.record(requiredStringSchema, z.string()).optional(),
+        }),
+      )
+      .mutation(async ({ ctx, input }) => {
+        const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
+        const playbook = await playbookStore.get(input.playbookId, userId);
+
+        const target = await playbook.addTarget({
+          type: "http",
+          name: input.name,
+          url: input.url,
+          headers: input.headers,
+          prompts: {
+            include: [], // Disable prompts by default
+          },
+        });
+
+        logger.info({
+          message: "added HTTP server to playbook",
+          playbookId: input.playbookId,
+          serverName: input.name,
+          url: input.url,
+        });
+
+        return await target.toPlainObject({
+          tools: false,
+          connectionInfo: true,
+        });
+      }),
+
+    /**
+     * Add a stdio server to a playbook.
+     */
+    addStdioServer: protectedProcedure
+      .input(
+        z.object({
+          playbookId: z.string(),
+          name: z.string().trim().min(1),
+          command: requiredStringSchema,
+          args: z.array(z.string()).default([]),
+          env: z.record(requiredStringSchema, z.string()).optional(),
+        }),
+      )
+      .mutation(async ({ ctx, input }) => {
+        const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
+        const playbook = await playbookStore.get(input.playbookId, userId);
+
+        const target = await playbook.addTarget({
+          type: "stdio",
+          name: input.name,
+          command: input.command,
+          args: input.args,
+          env: input.env,
+          prompts: {
+            include: [], // Disable prompts by default
+          },
+        });
+
+        logger.info({
+          message: "added stdio server to playbook",
+          playbookId: input.playbookId,
+          serverName: input.name,
+          command: input.command,
+        });
+
+        return await target.toPlainObject({
+          tools: false,
+          connectionInfo: true,
+        });
+      }),
+
     updateServer: protectedProcedure
       .input(
         z.object({

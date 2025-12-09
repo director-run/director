@@ -297,6 +297,14 @@ export function createPlaybookStoreRouter() {
 
     /**
      * Add a stdio server to a playbook.
+     *
+     * This endpoint is disabled by default for security reasons. Stdio servers
+     * can execute arbitrary commands on the host system, which is dangerous in
+     * multi-tenant environments.
+     *
+     * To enable, set DANGEROUSLY_ALLOW_ARBITRARY_STDIO_SERVERS=true in the
+     * environment. Only do this for local development or trusted single-user
+     * deployments.
      */
     addStdioServer: protectedProcedure
       .input(
@@ -309,6 +317,14 @@ export function createPlaybookStoreRouter() {
         }),
       )
       .mutation(async ({ ctx, input }) => {
+        // Check if arbitrary stdio servers are allowed
+        if (!env.DANGEROUSLY_ALLOW_ARBITRARY_STDIO_SERVERS) {
+          throw new AppError(
+            ErrorCode.UNAUTHORIZED,
+            "Adding arbitrary stdio servers is disabled for security reasons. ",
+          );
+        }
+
         const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
         const playbook = await playbookStore.get(input.playbookId, userId);
 

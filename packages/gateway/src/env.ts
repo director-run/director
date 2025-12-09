@@ -1,4 +1,5 @@
 import path from "path";
+import { red } from "@director.run/utilities/cli/colors";
 import { isDevelopment, isTest } from "@director.run/utilities/env";
 import { createEnv } from "@t3-oss/env-core";
 import dotenv from "dotenv";
@@ -51,7 +52,33 @@ export const env = createEnv({
       .transform((s) => s.split(",").filter(Boolean)),
     MANAGEMENT_API_KEY: z.string().optional(),
     SEED_USER_PASSWORD: z.string().optional(),
+    DANGEROUSLY_ALLOW_ARBITRARY_STDIO_SERVERS: z
+      .string()
+      .default("false")
+      .transform((s) => s === "true"),
   },
   runtimeEnv: process.env,
   emptyStringAsUndefined: true,
 });
+
+// Print warning if dangerous stdio mode is enabled
+if (env.DANGEROUSLY_ALLOW_ARBITRARY_STDIO_SERVERS) {
+  const warningLines = [
+    "╔════════════════════════════════════════════════════════╗",
+    "║                      WARNING                           ║",
+    "╠════════════════════════════════════════════════════════╣",
+    "║  DANGEROUSLY_ALLOW_ARBITRARY_STDIO_SERVERS is enabled  ║",
+    "║                                                        ║",
+    "║  This allows users to execute arbitrary commands on    ║",
+    "║  the host system via stdio MCP servers. This is a      ║",
+    "║  significant security risk in multi-tenant or          ║",
+    "║  production environments.                              ║",
+    "║                                                        ║",
+    "║  Only enable this for local development or trusted     ║",
+    "║  single-user deployments.                              ║",
+    "╚════════════════════════════════════════════════════════╝",
+  ];
+  for (const line of warningLines) {
+    console.warn(red(line));
+  }
+}

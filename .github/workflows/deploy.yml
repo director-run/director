@@ -11,7 +11,7 @@ on:
 
 jobs:
   deploy-gateway:
-    name: Deploy Gateway
+    name: Gateway
     # if: ${{ github.event.workflow_run.conclusion == 'success' }}
     permissions:
       contents: read
@@ -25,7 +25,7 @@ jobs:
       seed_enabled: true
 
   deploy-registry:
-    name: Deploy Registry
+    name: Registry
     # if: ${{ github.event.workflow_run.conclusion == 'success' }}
     permissions:
       contents: read

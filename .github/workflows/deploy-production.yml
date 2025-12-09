@@ -1,16 +1,17 @@
 name: Production Deploy
 
 on:
-  workflow_run:
-    workflows: ["CI"]
-    types:
-      - completed
+  push:
     branches: [production]
 
 jobs:
+  ci:
+    name: CI
+    uses: ./.github/workflows/__ci.yml
+
   deploy-gateway:
     name: Gateway
-    if: github.event.workflow_run.head_branch == 'production' && github.event.workflow_run.conclusion == 'success'
+    needs: ci
     permissions:
       contents: read
       id-token: write
@@ -24,7 +25,7 @@ jobs:
 
   deploy-registry:
     name: Registry
-    if: github.event.workflow_run.head_branch == 'production' && github.event.workflow_run.conclusion == 'success'
+    needs: ci
     permissions:
       contents: read
       id-token: write

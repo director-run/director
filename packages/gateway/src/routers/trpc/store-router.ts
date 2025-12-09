@@ -148,34 +148,6 @@ export function createPlaybookStoreRouter() {
         await playbookStore.delete(input.playbookId, userId);
         return { success: true };
       }),
-    addServer: protectedProcedure
-      .input(
-        z.object({
-          playbookId: z.string(),
-          server: ServerConfigEntrySchema,
-          queryParams: z
-            .object({
-              includeTools: z.boolean().optional(),
-            })
-            .optional(),
-        }),
-      )
-      .mutation(async ({ ctx, input }) => {
-        const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
-        const playbook = await playbookStore.get(input.playbookId, userId);
-
-        const target = await playbook.addTarget({
-          ...oldServerToTargetParams(input.server),
-          prompts: {
-            include: [], // Disable prompts by default
-          },
-        });
-
-        return await target.toPlainObject({
-          tools: input.queryParams?.includeTools,
-          connectionInfo: true,
-        });
-      }),
 
     /**
      * Add a server from the registry by looking up its entry and building

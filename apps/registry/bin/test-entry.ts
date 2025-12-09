@@ -68,13 +68,22 @@ export async function runInteractiveTestForEntry({
   const playbook = await gatewayClient.store.create.mutate({
     name: "test-playbook",
   });
-  await gatewayClient.store.addServer.mutate({
-    playbookId: playbook.id,
-    server: {
+  if (resolvedTransport.type === "http") {
+    await gatewayClient.store.addHTTPServer.mutate({
+      playbookId: playbook.id,
       name: entry.name,
-      transport: resolvedTransport,
-    },
-  });
+      url: resolvedTransport.url,
+      headers: resolvedTransport.headers,
+    });
+  } else {
+    await gatewayClient.store.addStdioServer.mutate({
+      playbookId: playbook.id,
+      name: entry.name,
+      command: resolvedTransport.command,
+      args: resolvedTransport.args,
+      env: resolvedTransport.env,
+    });
+  }
   logger.info("creating mcp client & listing tools...");
   const mcpClient = await HTTPClient.createAndConnectToHTTP(
     joinURL(gatewayUrl, getStreamablePathForPlaybook(playbook.id)),

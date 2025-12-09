@@ -230,11 +230,13 @@ describe("MCP Playbook", () => {
         });
       });
 
-      describe("addServer", () => {
+      describe("addHTTPServer", () => {
         it("should be able to add a server to a playbook", async () => {
-          await harness.client.store.addServer.mutate({
+          const foobarConfig = harness.getConfigForTarget("foobar");
+          await harness.client.store.addHTTPServer.mutate({
             playbookId: playbook.id,
-            server: harness.getConfigForTarget("foobar"),
+            name: foobarConfig.name,
+            url: foobarConfig.transport.url,
           });
 
           await expectListToolsToReturnToolNames(playbookClient, [

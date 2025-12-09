@@ -54,6 +54,10 @@ export const env = createEnv({
       .string()
       .default("false")
       .transform((s) => s === "true"),
+    DANGEROUSLY_ALLOW_INSECURE_HTTP_SERVERS: z
+      .string()
+      .default("false")
+      .transform((s) => s === "true"),
   },
   runtimeEnv: process.env,
   emptyStringAsUndefined: true,

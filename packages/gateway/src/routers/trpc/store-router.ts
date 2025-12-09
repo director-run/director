@@ -3,6 +3,7 @@ import { createRegistryClient } from "@director.run/registry/client";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { requiredStringSchema } from "@director.run/utilities/schema";
+import { assertSecureURL } from "@director.run/utilities/security";
 import { t } from "@director.run/utilities/trpc";
 import { joinURL } from "@director.run/utilities/url";
 import { z } from "zod";
@@ -258,6 +259,10 @@ export function createPlaybookStoreRouter() {
 
     /**
      * Add an HTTP server to a playbook.
+     *
+     * By default, only HTTPS URLs with valid hostnames are allowed to prevent
+     * SSRF attacks. IP addresses and non-HTTPS URLs are blocked unless
+     * DANGEROUSLY_ALLOW_INSECURE_HTTP_SERVERS=true is set in the environment.
      */
     addHTTPServer: protectedProcedure
       .input(
@@ -269,6 +274,11 @@ export function createPlaybookStoreRouter() {
         }),
       )
       .mutation(async ({ ctx, input }) => {
+        // Validate URL for SSRF protection unless explicitly allowed
+        if (!env.DANGEROUSLY_ALLOW_INSECURE_HTTP_SERVERS) {
+          assertSecureURL(input.url);
+        }
+
         const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
         const playbook = await playbookStore.get(input.playbookId, userId);
 

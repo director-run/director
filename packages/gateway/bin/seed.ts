@@ -92,9 +92,6 @@ async function seed() {
     await playbookStore.closeAll();
 
     console.log("\n✓ Seed complete!");
-    console.log(`\nYou can now log in with:`);
-    console.log(`  Email: ${SEED_USER.email}`);
-    console.log(`  Password: ${SEED_USER.password}`);
   } finally {
     await database.close();
   }

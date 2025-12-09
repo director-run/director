@@ -128,18 +128,20 @@ export class Gateway {
             error,
             message: `failed to authorize ${factoryId} ${providerId}: ${error.message}`,
           });
+          // Only expose the error message to the client, not stack traces or internal details
+          const safeErrorMessage = encodeURIComponent(error.message);
           if (this.studioAssetsPath) {
             // Redirect to hosted studio callback page
             return {
               redirectUrl: joinURL(
                 this.baseUrl,
-                `studio/oauth/${factoryId}/${providerId}/callback?error=${JSON.stringify(error)}`,
+                `studio/oauth/${factoryId}/${providerId}/callback?error=${safeErrorMessage}`,
               ),
             };
           } else if (isDevelopment()) {
             // redirect to dev studio callback page
             return {
-              redirectUrl: `http://localhost:3000/oauth/${factoryId}/${providerId}/callback?error=${JSON.stringify(error)}`,
+              redirectUrl: `http://localhost:3000/oauth/${factoryId}/${providerId}/callback?error=${safeErrorMessage}`,
             };
           }
         },

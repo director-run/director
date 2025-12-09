@@ -1,8 +1,11 @@
+import { getLogger } from "@director.run/utilities/logger";
 import { t } from "@director.run/utilities/trpc";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import _ from "lodash";
 import { z } from "zod";
 import { type AuthenticatedGatewayContext, protectedProcedure } from "./index";
+
+const logger = getLogger("tools-router");
 
 type EnhancedTool = Tool & {
   serverName?: string;
@@ -45,25 +48,33 @@ export function createToolsRouter() {
             continue;
           }
 
-          const tools = await target.originalListTools();
-          ret.push(
-            ...tools.tools.map((tool) => {
-              // Check if tool is disabled via exclude list or not in include list
-              const isExcluded =
-                target.tools?.exclude?.includes(tool.name) ?? false;
-              const isNotIncluded =
-                target.tools?.include &&
-                target.tools.include.length > 0 &&
-                !target.tools.include.includes(tool.name);
-              const disabled = isExcluded || !!isNotIncluded;
+          try {
+            const tools = await target.originalListTools();
+            ret.push(
+              ...tools.tools.map((tool) => {
+                // Check if tool is disabled via exclude list or not in include list
+                const isExcluded =
+                  target.tools?.exclude?.includes(tool.name) ?? false;
+                const isNotIncluded =
+                  target.tools?.include &&
+                  target.tools.include.length > 0 &&
+                  !target.tools.include.includes(tool.name);
+                const disabled = isExcluded || !!isNotIncluded;
 
-              return {
-                ...tool,
-                serverName: target.name,
-                disabled,
-              };
-            }),
-          );
+                return {
+                  ...tool,
+                  serverName: target.name,
+                  disabled,
+                };
+              }),
+            );
+          } catch (error) {
+            logger.warn(
+              { error, targetName: target.name },
+              "Could not fetch tools from target. Skipping.",
+            );
+            continue;
+          }
         }
         return ret.sort((a, b) => a.name.localeCompare(b.name));
       }),

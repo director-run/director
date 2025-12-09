@@ -1,16 +1,14 @@
 import {
-  getSSEPathForPlaybook,
-  getStreamablePathForPlaybook,
-} from "@director.run/gateway/helpers";
+  type ClientId,
+  clientStore,
+} from "@director.run/client-configurator/client-store";
 import { blue, whiteBold } from "@director.run/utilities/cli/colors";
 import {
   DirectorCommand,
   makeOption,
 } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
-import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../../client";
-import { getGatewayBaseUrl } from "../../config";
 
 export function registerConnectCommand(program: DirectorCommand) {
   program
@@ -25,14 +23,39 @@ export function registerConnectCommand(program: DirectorCommand) {
     .action(
       actionWithErrorHandler(
         async (playbookId: string, options: { target: string }) => {
-          if (options.target) {
-            const playbook = await gatewayClient.store.get.query({
-              playbookId: playbookId,
+          // Get connection info from gateway (key returned separately)
+          const connectionInfo =
+            await gatewayClient.store.getConnectionInfo.query({
+              playbookId,
             });
-            await gatewayClient.clients.install.mutate({
-              clientId: options.target,
-              playbookId: playbook.id,
-              baseUrl: getGatewayBaseUrl(),
+
+          // Build full URLs with API key
+          const streamableUrlWithKey = `${connectionInfo.streamableUrl}?key=${connectionInfo.apiKey}`;
+          const sseUrlWithKey = `${connectionInfo.sseUrl}?key=${connectionInfo.apiKey}`;
+
+          // Build stdio command config
+          const stdioCommand = {
+            command: "npx",
+            args: [
+              "-y",
+              "@director.run/cli@latest",
+              "http2stdio",
+              streamableUrlWithKey,
+            ],
+            env: {
+              LOG_LEVEL: "silent",
+            },
+          };
+
+          if (options.target) {
+            // Install directly using client configurator
+            await clientStore.install({
+              clientId: options.target as ClientId,
+              name: connectionInfo.playbookId,
+              connectionDetails: {
+                sseUrl: sseUrlWithKey,
+                streamableUrl: streamableUrlWithKey,
+              },
             });
           } else {
             console.log();
@@ -47,31 +70,10 @@ export function registerConnectCommand(program: DirectorCommand) {
               "director connect " + playbookId + " --target <target>",
             );
             console.log();
-            const playbook = await gatewayClient.store.get.query({
-              playbookId: playbookId,
-            });
-            const baseUrl = getGatewayBaseUrl();
-            const sseURL = joinURL(baseUrl, getSSEPathForPlaybook(playbook.id));
-            const streamableURL = joinURL(
-              baseUrl,
-              getStreamablePathForPlaybook(playbook.id),
+            console.log(
+              whiteBold("HTTP Streamable:") + " " + streamableUrlWithKey,
             );
-
-            const stdioCommand = {
-              command: "npx",
-              args: [
-                "-y",
-                "@director.run/cli@latest",
-                "http2stdio",
-                streamableURL,
-              ],
-              env: {
-                LOG_LEVEL: "silent",
-              },
-            };
-
-            console.log(whiteBold("HTTP Streamable:") + " " + streamableURL);
-            console.log(whiteBold("HTTP SSE:") + " " + sseURL);
+            console.log(whiteBold("HTTP SSE:") + " " + sseUrlWithKey);
             console.log(
               whiteBold("Stdio:"),
               JSON.stringify(stdioCommand, null, 2),

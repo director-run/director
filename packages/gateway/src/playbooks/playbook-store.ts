@@ -1,58 +1,44 @@
 import { HTTPClient } from "@director.run/mcp/client/http-client";
-import {
-  OAuthProviderFactory,
-  type OAuthProviderFactoryParams,
-} from "@director.run/mcp/oauth/oauth-provider-factory";
+import { OAuthProviderFactory } from "@director.run/mcp/oauth/oauth-provider-factory";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { Telemetry } from "@director.run/utilities/telemetry";
-import type { Config } from "../config";
+import type { Database } from "../db/database";
+import { DatabaseOAuthStorage } from "../db/oauth-storage";
 import { Playbook, type PlaybookParams, type PlaybookTarget } from "./playbook";
 
 const logger = getLogger("PlaybookStore");
 
 export class PlaybookStore {
   private playbooks: Map<string, Playbook> = new Map();
-  private config: Config;
+  private database: Database;
   private telemetry: Telemetry;
-  private _oauth?: OAuthProviderFactoryParams;
-  private _onPlaybookListChange?: (playbookId: string) => Promise<void>;
-  private _onPlaybookRemove?: (playbookId: string) => Promise<void>;
+  private baseCallbackUrl: string;
 
   private constructor(params: {
-    config: Config;
+    database: Database;
     telemetry?: Telemetry;
-    oauth?: OAuthProviderFactoryParams;
-    onPlaybookListChange?: (playbookId: string) => Promise<void>;
-    onPlaybookRemove?: (playbookId: string) => Promise<void>;
+    baseCallbackUrl: string;
   }) {
-    this.config = params.config;
+    this.database = params.database;
     this.telemetry = params.telemetry || Telemetry.noTelemetry();
-    this._oauth = params.oauth;
-    this._onPlaybookListChange = params.onPlaybookListChange;
-    this._onPlaybookRemove = params.onPlaybookRemove;
+    this.baseCallbackUrl = params.baseCallbackUrl;
   }
 
   public static async create({
-    config,
+    database,
     telemetry,
-    oauth,
-    onPlaybookListChange,
-    onPlaybookRemove,
+    baseCallbackUrl,
   }: {
-    config: Config;
+    database: Database;
     telemetry?: Telemetry;
-    oauth?: OAuthProviderFactoryParams;
-    onPlaybookListChange?: (playbookId: string) => Promise<void>;
-    onPlaybookRemove?: (playbookId: string) => Promise<void>;
+    baseCallbackUrl: string;
   }): Promise<PlaybookStore> {
     logger.debug("initializing PlaybookStore");
     const store = new PlaybookStore({
-      config,
+      database,
       telemetry,
-      oauth,
-      onPlaybookListChange,
-      onPlaybookRemove,
+      baseCallbackUrl,
     });
     await store.initialize();
     logger.debug("initialization complete");
@@ -60,7 +46,28 @@ export class PlaybookStore {
   }
 
   private async initialize(): Promise<void> {
-    let playbooks = await this.config.playbooks.all();
+    // Load from database
+    const database = this.database;
+    const dbPlaybooks = await database.getAllPlaybooks("");
+    const playbooks = await Promise.all(
+      dbPlaybooks.map(async (dbPlaybook) => {
+        const servers = await database.getServers(dbPlaybook.id);
+        const prompts = await database.getPrompts(dbPlaybook.id);
+        return {
+          id: dbPlaybook.id,
+          name: dbPlaybook.name,
+          description: dbPlaybook.description ?? undefined,
+          userId: dbPlaybook.userId,
+          servers: servers.map((s) => database.serverRowToTarget(s)),
+          prompts: prompts.map((p) => ({
+            name: p.name,
+            title: p.title,
+            description: p.description ?? undefined,
+            body: p.body,
+          })),
+        };
+      }),
+    );
 
     for (const playbookConfig of playbooks) {
       const playbookId = playbookConfig.id;
@@ -70,43 +77,97 @@ export class PlaybookStore {
         id: playbookId,
         name: playbookConfig.name,
         description: playbookConfig.description ?? undefined,
+        userId: playbookConfig.userId,
         servers: playbookConfig.servers,
         prompts: playbookConfig.prompts,
       });
     }
   }
 
-  public get(playbookId: string) {
-    const server = this.playbooks.get(playbookId);
-    if (!server) {
+  public async get(playbookId: string, userId: string): Promise<Playbook> {
+    // Check if already in memory
+    let playbook = this.playbooks.get(playbookId);
+
+    // If not in memory, try to load from database
+    if (!playbook) {
+      const dbPlaybook = await this.database.getPlaybookWithDetails(
+        playbookId,
+        userId,
+      );
+
+      playbook = await this.initializeAndAddPlaybook({
+        id: dbPlaybook.id,
+        name: dbPlaybook.name,
+        description: dbPlaybook.description ?? undefined,
+        userId: dbPlaybook.userId,
+        servers: dbPlaybook.servers,
+        prompts: dbPlaybook.prompts,
+      });
+    }
+
+    // Verify user owns this playbook
+    if (playbook.userId !== userId) {
       throw new AppError(
-        ErrorCode.NOT_FOUND,
-        `playbook '${playbookId}' not found or failed to initialize.`,
+        ErrorCode.FORBIDDEN,
+        `You do not have permission to access this playbook.`,
       );
     }
-    return server;
+
+    return playbook;
   }
 
-  async delete(playbookId: string) {
+  /**
+   * Get a playbook for an authenticated user request.
+   * Validates that the user owns the playbook.
+   */
+  public async getForUser(
+    playbookId: string,
+    userId: string,
+  ): Promise<Playbook> {
+    // Check if already in memory
+    let playbook = this.playbooks.get(playbookId);
+
+    // If not in memory, try to load from database
+    if (!playbook) {
+      const dbPlaybook = await this.database.getPlaybookWithDetails(
+        playbookId,
+        userId,
+      );
+
+      playbook = await this.initializeAndAddPlaybook({
+        id: dbPlaybook.id,
+        name: dbPlaybook.name,
+        description: dbPlaybook.description ?? undefined,
+        userId: dbPlaybook.userId,
+        servers: dbPlaybook.servers,
+        prompts: dbPlaybook.prompts,
+      });
+    }
+
+    // Verify user owns this playbook
+    if (playbook.userId !== userId) {
+      throw new AppError(
+        ErrorCode.FORBIDDEN,
+        `You do not have permission to access this playbook.`,
+      );
+    }
+
+    return playbook;
+  }
+
+  async delete(playbookId: string, userId: string) {
     this.telemetry.trackEvent("playbook_deleted");
-    const playbook = this.get(playbookId);
+    const playbook = await this.get(playbookId, userId);
     for (const server of playbook.targets) {
       if (server instanceof HTTPClient && (await server.isAuthenticated())) {
         await server.logout();
       }
     }
     await playbook.close();
-    await this.config.playbooks.remove(playbookId);
+    await this.database.deletePlaybook(playbookId, userId);
     this.playbooks.delete(playbookId);
 
-    await this._onPlaybookRemove?.(playbookId);
     logger.info(`successfully deleted playbook configuration: ${playbookId}`);
-  }
-
-  async purge() {
-    await this.closeAll();
-    await this.config.purge();
-    this.playbooks.clear();
   }
 
   async closeAll() {
@@ -117,16 +178,50 @@ export class PlaybookStore {
     logger.info("finished cleaning up all playbooks.");
   }
 
-  public getAll(): Playbook[] {
-    return Array.from(this.playbooks.values());
+  /**
+   * Clears the in-memory cache. For use in test environments only.
+   */
+  clearCache() {
+    this.playbooks.clear();
+  }
+
+  public async getAll(userId: string): Promise<Playbook[]> {
+    // Load user's playbooks from database that aren't in memory yet
+    const dbPlaybooks = await this.database.getAllPlaybooks(userId);
+
+    for (const dbPlaybook of dbPlaybooks) {
+      if (!this.playbooks.has(dbPlaybook.id)) {
+        const servers = await this.database.getServers(dbPlaybook.id);
+        const prompts = await this.database.getPrompts(dbPlaybook.id);
+
+        await this.initializeAndAddPlaybook({
+          id: dbPlaybook.id,
+          name: dbPlaybook.name,
+          description: dbPlaybook.description ?? undefined,
+          userId: dbPlaybook.userId,
+          servers: servers.map((s) => this.database.serverRowToTarget(s)),
+          prompts: prompts.map((p) => ({
+            name: p.name,
+            title: p.title,
+            description: p.description ?? undefined,
+            body: p.body,
+          })),
+        });
+      }
+    }
+
+    return Array.from(this.playbooks.values()).filter(
+      (playbook) => playbook.userId === userId,
+    );
   }
 
   public async onAuthorizationSuccess(
     factoryId: string,
     providerId: string,
     code: string,
+    userId: string,
   ) {
-    const playbook = await this.get(factoryId);
+    const playbook = await this.get(factoryId, userId);
     const target = await playbook.getTarget(providerId);
 
     if (target instanceof HTTPClient) {
@@ -140,50 +235,76 @@ export class PlaybookStore {
   }
 
   public async create({
+    id,
     name,
     description,
     servers,
+    userId,
   }: {
+    id?: string;
     name: string;
     description?: string;
     servers?: PlaybookTarget[];
+    userId: string;
   }): Promise<Playbook> {
     this.telemetry.trackEvent("playbook_created");
 
-    const configEntry = await this.config.playbooks.create({
+    const dbPlaybook = await this.database.createPlaybook({
+      id,
       name,
       description,
-      servers: servers ?? [],
+      userId,
     });
+    const playbookId = dbPlaybook.id;
+
+    // Create servers
+    for (const server of servers ?? []) {
+      await this.database.addServer(
+        this.database.targetToServerInsertParams(playbookId, server),
+      );
+    }
+
     const playbook = await this.initializeAndAddPlaybook({
       name,
       description,
+      userId,
       servers: servers ?? [],
-      id: configEntry.id,
+      id: playbookId,
     });
     logger.info({
       message: `Created new playbook`,
-      playbookId: configEntry.id,
+      playbookId,
+      userId,
     });
     return playbook;
   }
 
+  private createOAuthProviderFactory(
+    playbookId: string,
+    userId: string,
+  ): OAuthProviderFactory {
+    const storage = new DatabaseOAuthStorage({
+      database: this.database,
+      userId,
+    });
+    return new OAuthProviderFactory({
+      storage: "custom",
+      storageInstance: storage,
+      baseCallbackUrl: this.baseCallbackUrl,
+      id: playbookId,
+    });
+  }
+
   private async initializeAndAddPlaybook(playbookParams: PlaybookParams) {
     const playbook = await Playbook.fromConfig(playbookParams, {
-      oAuthHandler: this._oauth
-        ? new OAuthProviderFactory({
-            ...this._oauth,
-            id: playbookParams.id,
-          })
-        : undefined,
-      config: this.config,
+      oAuthHandler: this.createOAuthProviderFactory(
+        playbookParams.id,
+        playbookParams.userId,
+      ),
+      database: this.database,
     });
 
     this.playbooks.set(playbook.id, playbook);
-
-    if (this._onPlaybookListChange) {
-      playbook.setListChangeListner(this._onPlaybookListChange);
-    }
 
     return playbook;
   }

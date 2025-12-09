@@ -1,4 +1,3 @@
-import path from "path";
 import {
   green,
   red,
@@ -8,6 +7,7 @@ import {
 import { ErrorCode, isAppErrorWithCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { openUrl } from "@director.run/utilities/os";
+import { sleep } from "@director.run/utilities/sleep";
 import express from "express";
 import { HTTPClient } from "../src/client/http-client";
 import { createOauthCallbackRouter } from "../src/oauth/oauth-callback-router";
@@ -15,17 +15,16 @@ import { OAuthProviderFactory } from "../src/oauth/oauth-provider-factory";
 
 const logger = getLogger("examples/oauth");
 
-async function main(): Promise<void> {
+async function main(url: string = "https://mcp.notion.com/mcp"): Promise<void> {
   const port = 8090;
   const httpTarget = new HTTPClient(
     {
       name: "oauth-test-client",
-      url: "https://mcp.notion.com/mcp",
+      url,
     },
     {
       oAuthHandler: new OAuthProviderFactory({
-        storage: "disk",
-        tokenDirectory: path.join(__dirname, "tokens"),
+        storage: "memory",
         baseCallbackUrl: `http://localhost:${port}`,
       }),
     },
@@ -35,13 +34,25 @@ async function main(): Promise<void> {
 
   app.use(
     createOauthCallbackRouter({
-      onAuthorizationSuccess: async (serverUrl, code) => {
-        logger.info("received authorization success", { serverUrl, code });
+      // For local CLI usage, use a mock session since there's no user auth
+      getSession: async () => ({ userId: "local-example-user" }),
+      onAuthorizationSuccess: async (factoryId, providerId, code) => {
+        logger.info({
+          message: "received authorization success",
+          factoryId,
+          providerId,
+          code,
+        });
         await httpTarget.completeAuthFlow(code);
         await runNotionMCPChecks(httpTarget);
       },
-      onAuthorizationError: (error) => {
-        logger.error("received authorization error", { error });
+      onAuthorizationError: (factoryId, providerId, error) => {
+        logger.error({
+          message: "received authorization error",
+          factoryId,
+          providerId,
+          error,
+        });
       },
     }),
   );
@@ -128,16 +139,10 @@ async function runNotionMCPChecks(client: HTTPClient) {
     countTools > 0 ? green(countTools.toString()) : red(countTools.toString()),
   );
 
-  const result = (await client.callTool({
-    name: "get-self",
-    arguments: {},
-  })) as { content: { text: string }[] };
-
-  const self = result?.content[0]?.text || "{}";
-
-  console.log(prefix, "get-self() =", self);
   console.log(green("ALL CHECKS PASSED!!!!"));
+  await sleep(1000);
   process.exit(0);
 }
 
-main();
+const url = process.argv[2] || "https://mcp.notion.com/mcp";
+main(url);

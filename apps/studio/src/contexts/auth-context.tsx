@@ -1,19 +1,32 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext } from "react";
+import { signIn, signOut, signUp, useSession } from "../lib/auth-client";
 
-const ENABLE_AUTH = false;
+type UserStatus = "ACTIVE" | "PENDING";
 
-const AuthContext = createContext<{
+type User = {
+  id: string;
+  email: string;
+  status: UserStatus;
+};
+
+type AuthContextType = {
   user: User | null;
   isAuthenticated: boolean;
+  isPending: boolean;
   login: (params: { email: string; password: string }) => Promise<void>;
-  logout: () => void;
+  signup: (params: { email: string; password: string }) => Promise<void>;
+  logout: () => Promise<void>;
   isInitializing: boolean;
-}>({
+};
+
+const AuthContext = createContext<AuthContextType>({
   user: null,
   isAuthenticated: false,
+  isPending: false,
   login: async () => {},
-  logout: () => {},
-  isInitializing: false,
+  signup: async () => {},
+  logout: async () => {},
+  isInitializing: true,
 });
 
 export const useAuth = () => {
@@ -24,74 +37,66 @@ export const useAuth = () => {
   return context;
 };
 
-type User = {
-  id: number;
-  email: string;
-};
-
-async function simulateApiCall() {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-}
-
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isInitializing, setIsInitializing] = useState<boolean>(true);
+  const { data: session, isPending, refetch } = useSession();
 
-  // check auth status on mount
-  useEffect(() => {
-    checkAuthStatus();
+  const login = useCallback(
+    async (params: { email: string; password: string }) => {
+      const result = await signIn.email({
+        email: params.email,
+        password: params.password,
+      });
+
+      if (result.error) {
+        throw new Error(result.error.message || "Login failed");
+      }
+
+      // Refetch session to update auth state after successful login
+      await refetch();
+    },
+    [refetch],
+  );
+
+  const signup = useCallback(
+    async (params: { email: string; password: string }) => {
+      const result = await signUp.email({
+        email: params.email,
+        password: params.password,
+        name: params.email, // better-auth requires name, we use email as placeholder
+      });
+
+      if (result.error) {
+        throw new Error(result.error.message || "Signup failed");
+      }
+
+      // Refetch session to update auth state after successful signup
+      await refetch();
+    },
+    [refetch],
+  );
+
+  const logout = useCallback(async () => {
+    await signOut();
   }, []);
 
-  const checkAuthStatus = async () => {
-    if (!ENABLE_AUTH) {
-      setIsInitializing(false);
-      setUser({
-        id: 1,
-        email: "anonymous@example.com",
-      });
-      return;
-    }
+  const user = session?.user
+    ? {
+        id: session.user.id,
+        email: session.user.email,
+        status: ((session.user as { status?: UserStatus }).status ??
+          "PENDING") as UserStatus,
+      }
+    : null;
 
-    setIsInitializing(true);
-    await simulateApiCall();
-    const savedUser = localStorage.getItem("user");
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-    setIsInitializing(false);
-  };
-
-  const login = async (params: { email: string; password: string }) => {
-    await simulateApiCall();
-
-    if (
-      params.email === "barnaby@example.com" &&
-      params.password === "password"
-    ) {
-      const userData = {
-        id: 1,
-        email: params.email,
-      };
-
-      setUser(userData);
-      localStorage.setItem("user", JSON.stringify(userData));
-    } else {
-      throw new Error("Invalid email or password");
-    }
-  };
-
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("user");
-  };
-
-  const value = {
+  const value: AuthContextType = {
     user,
-    isAuthenticated: !!user,
-    isInitializing,
+    isAuthenticated: !!session?.user,
+    isPending: user?.status === "PENDING",
+    isInitializing: isPending,
     login,
+    signup,
     logout,
   };
 

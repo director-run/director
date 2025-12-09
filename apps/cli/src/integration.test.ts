@@ -1,5 +1,11 @@
-import fs from "fs";
-import { ChildProcess } from "node:child_process";
+import { createGatewayClient, register } from "@director.run/gateway/client";
+import { Database } from "@director.run/gateway/db/database";
+import { env } from "@director.run/gateway/env";
+import { Gateway } from "@director.run/gateway/gateway";
+import {
+  initializeTestDatabase,
+  resetPlaybookStore,
+} from "@director.run/gateway/test/db";
 import {
   afterAll,
   beforeAll,
@@ -8,30 +14,49 @@ import {
   expect,
   test,
 } from "vitest";
-import { gatewayClient } from "./client";
-import { getConfigFilePath } from "./config";
-import { runCLICommand, runCLIServe } from "./test/helpers";
+import { runCLICommand } from "./test/helpers";
+import { clearAuthToken, saveAuthToken } from "./utils/auth";
 
 describe("CLI integration tests", () => {
-  let serveProcess: ChildProcess;
+  let gateway: Gateway;
+  let database: Database;
+  let gatewayClient: ReturnType<typeof createGatewayClient>;
+  const baseURL = `http://localhost:${env.PORT}`;
+
   beforeAll(async () => {
-    try {
-      serveProcess = await runCLIServe({ verbose: false, timeout: 30000 });
-    } catch (error) {
-      console.error("Failed to start gateway server:", error);
-      throw error;
-    }
-  }, 60000);
+    database = Database.create(env.DATABASE_URL);
+    await initializeTestDatabase({ database, keepUsers: false });
+
+    gateway = await Gateway.start({
+      database,
+      baseUrl: baseURL,
+      port: env.PORT,
+    });
+
+    // Register a test user
+    const { user, sessionCookie } = await register(baseURL, {
+      email: "test@example.com",
+      password: "password123",
+    });
+
+    // Activate user for testing - new users are PENDING by default
+    await database.activateUser(user.id);
+
+    saveAuthToken(sessionCookie);
+    gatewayClient = createGatewayClient(baseURL, {
+      getAuthToken: () => sessionCookie,
+    });
+  });
 
   afterAll(async () => {
-    if (serveProcess) {
-      serveProcess.kill();
-    }
-    await fs.promises.unlink(getConfigFilePath());
+    clearAuthToken();
+    await gateway.stop();
+    await database.close();
   });
 
   beforeEach(async () => {
-    await gatewayClient.store.purge.mutate();
+    await resetPlaybookStore(gateway.playbookStore);
+    await initializeTestDatabase({ database, keepUsers: true });
   });
 
   test("should be able to create a playbook server", async () => {

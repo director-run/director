@@ -1,31 +1,61 @@
 import { HTTPClient } from "@director.run/mcp/client/http-client";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { makeTestConfig } from "../test/config";
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
+import { Database } from "../db/database";
+import { env } from "../env";
+import {
+  createTestUser,
+  initializeTestDatabase,
+  resetPlaybookStore,
+} from "../test/db";
 import { makeHTTPTargetConfig } from "../test/fixtures";
 import { PlaybookStore } from "./playbook-store";
 
 describe("PlaybookStore", () => {
   let playbookStore: PlaybookStore;
+  let database: Database;
+  let testUser: Awaited<ReturnType<typeof createTestUser>>;
+
+  beforeAll(async () => {
+    database = Database.create(env.DATABASE_URL);
+    await initializeTestDatabase({ database, keepUsers: false });
+    testUser = await createTestUser(database);
+  });
+
+  afterAll(async () => {
+    await database.close();
+  });
 
   beforeEach(async () => {
+    await initializeTestDatabase({ database, keepUsers: true });
+
     playbookStore = await PlaybookStore.create({
-      config: await makeTestConfig(),
-      oauth: {
-        storage: "memory",
-        baseCallbackUrl: "http://localhost:3000/callback",
-      },
+      database,
+      baseCallbackUrl: "http://localhost:3000/callback",
     });
     await playbookStore.create({
+      id: "test-playbook",
       name: "test-playbook",
+      userId: testUser.id,
       servers: [],
     });
   });
 
   describe("onAuthorizationSuccess", () => {
     it("should properly update the targets with the new oauth token", async () => {
-      await playbookStore.purge();
+      await resetPlaybookStore(playbookStore);
+      await initializeTestDatabase({ database, keepUsers: true });
       const playbook = await playbookStore.create({
+        id: "test-playbook",
         name: "test-playbook",
+        userId: testUser.id,
         servers: [],
       });
 
@@ -35,15 +65,20 @@ describe("PlaybookStore", () => {
         { throwOnError: false },
       );
 
-      const httpClient = (await playbookStore
-        .get("test-playbook")
-        .getTarget("http1")) as HTTPClient;
+      const fetchedPlaybook = await playbookStore.get(
+        "test-playbook",
+        testUser.id,
+      );
+      const httpClient = (await fetchedPlaybook.getTarget(
+        "http1",
+      )) as HTTPClient;
       httpClient.completeAuthFlow = vi.fn();
 
       await playbookStore.onAuthorizationSuccess(
         playbook.id,
         target.name,
         "some-code",
+        testUser.id,
       );
 
       expect(httpClient.completeAuthFlow).toHaveBeenCalledWith("some-code");

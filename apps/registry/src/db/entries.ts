@@ -1,10 +1,25 @@
+import { joinURL } from "@director.run/utilities/url";
 import { and, asc, count, eq, inArray, or, sql } from "drizzle-orm";
+import { env } from "../config";
 import { DatabaseConnection } from "./index";
 import {
   type EntryCreateParams,
   type EntryState,
   entriesTable,
 } from "./schema";
+
+/**
+ * Resolves a relative icon path to an absolute URL using BASE_URL.
+ */
+function resolveIconUrl(icon: string | null): string | null {
+  if (!icon) {
+    return null;
+  }
+  if (icon.startsWith("/")) {
+    return joinURL(env.BASE_URL, icon);
+  }
+  return icon;
+}
 
 export class EntryStore {
   constructor(private readonly db: DatabaseConnection) {}
@@ -20,7 +35,10 @@ export class EntryStore {
       throw new Error(`No entry found with name: ${name}`);
     }
 
-    return entry[0];
+    return {
+      ...entry[0],
+      icon: resolveIconUrl(entry[0].icon),
+    };
   }
 
   public async getIconsAndDescriptionsForEntries(names: string[]) {
@@ -32,7 +50,10 @@ export class EntryStore {
       })
       .from(entriesTable)
       .where(inArray(entriesTable.name, names));
-    return entries;
+    return entries.map((entry) => ({
+      ...entry,
+      icon: resolveIconUrl(entry.icon),
+    }));
   }
 
   public async deleteAllEntries(): Promise<void> {
@@ -151,7 +172,10 @@ export class EntryStore {
     const totalPages = Math.ceil(totalCount / pageSize);
 
     return {
-      entries,
+      entries: entries.map((entry) => ({
+        ...entry,
+        icon: resolveIconUrl(entry.icon),
+      })),
       pagination: {
         pageIndex,
         pageSize,

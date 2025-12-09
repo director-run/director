@@ -1,7 +1,7 @@
 import { LayoutBreadcrumbHeader } from "@director.run/design/components/layout/layout-breadcrumb-header.tsx";
 import { LayoutViewContent } from "@director.run/design/components/layout/layout.tsx";
 import { FullScreenError } from "@director.run/design/components/pages/global/error.tsx";
-import { PlaybookSectionClients } from "@director.run/design/components/playbooks-clients/playbook-section-clients.tsx";
+import { PlaybookSectionConnect } from "@director.run/design/components/playbooks-clients/playbook-section-connect.tsx";
 import { PlaybookActionsDropdown } from "@director.run/design/components/playbooks/playbook-actions-dropdown.tsx";
 import { PlaybookSettingsSheet } from "@director.run/design/components/playbooks/playbook-settings-sheet.tsx";
 import { PlaybookSkeleton } from "@director.run/design/components/playbooks/playbook-skeleton.tsx";
@@ -23,11 +23,8 @@ import { toast } from "@director.run/design/components/ui/toast.js";
 import { DesktopIcon, NotebookIcon, ToolboxIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { GATEWAY_URL } from "../config.ts";
 import { gatewayClient } from "../contexts/backend-context.tsx";
 import { useAuthenticate } from "../hooks/use-authenticate.ts";
-import { useChangeInstallState } from "../hooks/use-change-install-state.ts";
-import { useClients } from "../hooks/use-clients.ts";
 import { useCreatePrompt } from "../hooks/use-create-prompt.ts";
 import { useDeletePrompt } from "../hooks/use-delete-prompt.ts";
 import { useEditPrompt } from "../hooks/use-edit-prompt.ts";
@@ -47,7 +44,8 @@ export const PlaybookDetailPage = () => {
   const { playbook, isPlaybookLoading, playbookError } =
     usePlaybook(playbookId);
   const { tools, isToolsLoading } = useListTools(playbookId);
-  const { data: clients, isLoading: isClientsLoading } = useClients(playbookId);
+  const { data: connectionInfo, isLoading: isConnectionInfoLoading } =
+    gatewayClient.store.getConnectionInfo.useQuery({ playbookId });
   const { updateTools, isPending: isUpdatingTools } = useUpdateTools(
     playbookId,
     {
@@ -65,24 +63,6 @@ export const PlaybookDetailPage = () => {
       },
     },
   );
-  const { changeInstallState, isPending } = useChangeInstallState(playbookId, {
-    onSuccess: (_client, install) => {
-      toast({
-        title: install ? "Playbook installed" : "Playbook uninstalled",
-        description: install
-          ? "This playbook was successfully installed"
-          : "This playbook was successfully uninstalled",
-      });
-    },
-    onError: (_client, install) => {
-      toast({
-        title: "Error",
-        description: install
-          ? "Failed to install this playbook"
-          : "Failed to uninstall this playbook",
-      });
-    },
-  });
 
   const { createPrompt, isPending: isCreatingPrompt } = useCreatePrompt(
     playbookId,
@@ -230,12 +210,9 @@ export const PlaybookDetailPage = () => {
               </Section>
             </SplitViewMain>
             <SplitViewSide>
-              <PlaybookSectionClients
-                playbook={playbook}
-                gatewayBaseUrl={GATEWAY_URL}
-                clients={clients ?? []}
-                onChangeInstall={changeInstallState}
-                isLoading={isPending || isClientsLoading}
+              <PlaybookSectionConnect
+                connectionInfo={connectionInfo}
+                isLoading={isConnectionInfoLoading}
               />
             </SplitViewSide>
           </SplitView>

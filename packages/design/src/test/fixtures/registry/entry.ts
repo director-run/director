@@ -8,7 +8,7 @@ export const mockRegistryEntry: RegistryEntryDetail = {
   title: "GitHub",
   description:
     "Provides seamless integration with GitHub APIs, enabling advanced automation and interaction capabilities for developers and tools.",
-  icon: "https://registry.director.run/github.svg",
+  icon: "/assets/github.svg",
   createdAt: new Date("2025-07-21T15:23:11.986Z"),
   isOfficial: true,
   isEnriched: true,

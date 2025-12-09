@@ -84,11 +84,7 @@ export abstract class AbstractClient<
         version: packageJson.version,
       },
       {
-        capabilities: {
-          prompts: {},
-          resources: { subscribe: true },
-          tools: {},
-        },
+        capabilities: {},
       },
     );
     this.name = name;

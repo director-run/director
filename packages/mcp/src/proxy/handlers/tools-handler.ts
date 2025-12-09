@@ -23,6 +23,13 @@ export function setupToolHandlers(server: ProxyServer) {
           toolToTarget.set(tool.name, connectedClient);
         }
       } catch (error) {
+        console.error("--------------------------------");
+        console.error("--------------------------------");
+        console.error("Error listing tools from client", connectedClient.name);
+        console.error(error);
+        console.error("--------------------------------");
+        console.error("--------------------------------");
+
         logger.warn(
           {
             error,

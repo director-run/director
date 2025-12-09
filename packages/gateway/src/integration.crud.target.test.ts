@@ -10,6 +10,10 @@ describe("Playbook Target CRUD operations", () => {
 
   beforeAll(async () => {
     harness = await IntegrationTestHarness.start();
+    await harness.register({
+      email: "test@example.com",
+      password: "password123",
+    });
   });
 
   afterAll(async () => {
@@ -19,10 +23,15 @@ describe("Playbook Target CRUD operations", () => {
   describe("read", () => {
     let playbook: GatewayRouterOutputs["store"]["create"];
     beforeAll(async () => {
-      await harness.purge();
+      await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test Playbook",
-        servers: [harness.getConfigForTarget("echo")],
+      });
+      const echoConfig = harness.getConfigForTarget("echo");
+      await harness.client.store.addHTTPServer.mutate({
+        playbookId: playbook.id,
+        name: echoConfig.name,
+        url: echoConfig.transport.url,
       });
     });
     it("should be able to retrieve a target", async () => {
@@ -55,24 +64,18 @@ describe("Playbook Target CRUD operations", () => {
   describe("create", () => {
     let playbook: GatewayRouterOutputs["store"]["create"];
     beforeEach(async () => {
-      await harness.purge();
+      await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test Playbook",
-        servers: [],
       });
     });
 
     describe("unauthorized target", () => {
       it("should succeed and return target", async () => {
-        const target = await harness.client.store.addServer.mutate({
+        const target = await harness.client.store.addHTTPServer.mutate({
           playbookId: playbook.id,
-          server: {
-            name: "notion",
-            transport: {
-              type: "http",
-              url: `https://mcp.notion.com/mcp`,
-            },
-          },
+          name: "notion",
+          url: `https://mcp.notion.com/mcp`,
         });
 
         expect(target.connectionInfo?.status).toBe("unauthorized");
@@ -84,19 +87,17 @@ describe("Playbook Target CRUD operations", () => {
       });
 
       it("should update the configuration file", async () => {
-        await harness.client.store.addServer.mutate({
+        await harness.client.store.addHTTPServer.mutate({
           playbookId: playbook.id,
-          server: {
-            name: "notion",
-            transport: {
-              type: "http",
-              url: `https://mcp.notion.com/mcp`,
-            },
-          },
+          name: "notion",
+          url: `https://mcp.notion.com/mcp`,
         });
 
         const configEntry = (
-          await harness.database.playbooks.getPlaybook(playbook.id)
+          await harness.database.getPlaybookWithDetails(
+            playbook.id,
+            harness.getUserId(),
+          )
         ).servers.find((server) => server.name === "notion");
 
         expect(configEntry).toEqual(
@@ -111,26 +112,23 @@ describe("Playbook Target CRUD operations", () => {
     describe("unreachable url", () => {
       it("should fail", async () => {
         await expect(
-          harness.client.store.addServer.mutate({
+          harness.client.store.addHTTPServer.mutate({
             playbookId: playbook.id,
-            server: {
-              name: "echo",
-              transport: {
-                type: "http",
-                url: `http://localhost/not_existing_server`,
-              },
-            },
+            name: "echo",
+            url: `http://localhost/not_existing_server`,
           }),
         ).rejects.toThrow(
           `[echo] failed to connect to http://localhost/not_existing_server`,
         );
 
         expect(
-          await harness.database.playbooks.getPlaybook(playbook.id),
+          await harness.database.getPlaybookWithDetails(
+            playbook.id,
+            harness.getUserId(),
+          ),
         ).toEqual(
           expect.objectContaining({
             name: "Test Playbook",
-            servers: [],
           }),
         );
 
@@ -141,7 +139,6 @@ describe("Playbook Target CRUD operations", () => {
         ).toEqual(
           expect.objectContaining({
             name: "Test Playbook",
-            servers: [],
           }),
         );
       });
@@ -150,27 +147,24 @@ describe("Playbook Target CRUD operations", () => {
     describe("invalid stdio command", () => {
       it("should fail if the command is not found", async () => {
         await expect(
-          harness.client.store.addServer.mutate({
+          harness.client.store.addStdioServer.mutate({
             playbookId: playbook.id,
-            server: {
-              name: "echo",
-              transport: {
-                type: "stdio",
-                command: "not_existing_command",
-                args: [],
-              },
-            },
+            name: "echo",
+            command: "not_existing_command",
+            args: [],
           }),
         ).rejects.toThrow(
           `[echo] command not found: 'not_existing_command'. Please make sure it is installed and available in your $PATH.`,
         );
 
         expect(
-          await harness.database.playbooks.getPlaybook(playbook.id),
+          await harness.database.getPlaybookWithDetails(
+            playbook.id,
+            harness.getUserId(),
+          ),
         ).toEqual(
           expect.objectContaining({
             name: "Test Playbook",
-            servers: [],
           }),
         );
 
@@ -181,34 +175,30 @@ describe("Playbook Target CRUD operations", () => {
         ).toEqual(
           expect.objectContaining({
             name: "Test Playbook",
-            servers: [],
           }),
         );
       });
 
       it("should fail if the command fails", async () => {
         await expect(
-          harness.client.store.addServer.mutate({
+          harness.client.store.addStdioServer.mutate({
             playbookId: playbook.id,
-            server: {
-              name: "echo",
-              transport: {
-                type: "stdio",
-                command: "ls",
-                args: ["not_existing_dir"],
-              },
-            },
+            name: "echo",
+            command: "ls",
+            args: ["not_existing_dir"],
           }),
         ).rejects.toThrow(
           `[echo] failed to run 'ls not_existing_dir'. Please check the logs for more details.`,
         );
 
         expect(
-          await harness.database.playbooks.getPlaybook(playbook.id),
+          await harness.database.getPlaybookWithDetails(
+            playbook.id,
+            harness.getUserId(),
+          ),
         ).toEqual(
           expect.objectContaining({
             name: "Test Playbook",
-            servers: [],
           }),
         );
 
@@ -219,34 +209,162 @@ describe("Playbook Target CRUD operations", () => {
         ).toEqual(
           expect.objectContaining({
             name: "Test Playbook",
-            servers: [],
           }),
         );
       });
     });
 
-    it("should return tools if includeTools is true", async () => {
-      const retrievedTarget = await harness.client.store.addServer.mutate({
-        playbookId: playbook.id,
-        server: {
-          ...harness.getConfigForTarget("echo"),
-        },
-        queryParams: { includeTools: true },
+    describe("addRegistryServer", () => {
+      it("should add a server from the registry and list its tools", async () => {
+        await harness.initializeDatabase(true);
+        const testPlaybook = await harness.client.store.create.mutate({
+          name: "Registry Test Playbook",
+        });
+
+        // Add the hackernews server from the registry
+        const addedServer = await harness.client.store.addRegistryServer.mutate(
+          {
+            playbookId: testPlaybook.id,
+            registryEntryName: "hackernews",
+          },
+        );
+
+        expect(addedServer.name).toBe("hackernews");
+        expect(addedServer.type).toBe("stdio");
+        expect(addedServer.connectionInfo?.status).toBe("connected");
+        expect(addedServer.source).toEqual({
+          name: "registry",
+          entryId: expect.any(String),
+        });
+
+        // List tools to verify the server works
+        const serverWithTools = await harness.client.store.getServer.query({
+          playbookId: testPlaybook.id,
+          serverName: "hackernews",
+          queryParams: { includeTools: true },
+        });
+
+        expect(serverWithTools.toolsList).toBeDefined();
+        expect(serverWithTools.toolsList?.length).toBeGreaterThan(0);
       });
-      expect(retrievedTarget.toolsList).toBeDefined();
-      expect(retrievedTarget.toolsList?.length).toBeGreaterThan(0);
-      expect(retrievedTarget.toolsList?.[0].name).toBe("echo");
+    });
+
+    describe("addHTTPServer", () => {
+      it("should add an HTTP server to a playbook", async () => {
+        await harness.initializeDatabase(true);
+        const testPlaybook = await harness.client.store.create.mutate({
+          name: "HTTP Server Test Playbook",
+        });
+
+        const echoConfig = harness.getConfigForTarget("echo");
+        const addedServer = await harness.client.store.addHTTPServer.mutate({
+          playbookId: testPlaybook.id,
+          name: "echo",
+          url: echoConfig.transport.url,
+        });
+
+        expect(addedServer.name).toBe("echo");
+        expect(addedServer.type).toBe("http");
+        expect(addedServer.connectionInfo?.status).toBe("connected");
+        expect((addedServer as PlaybookHTTPTarget).url).toBe(
+          echoConfig.transport.url,
+        );
+
+        // List tools to verify the server works
+        const serverWithTools = await harness.client.store.getServer.query({
+          playbookId: testPlaybook.id,
+          serverName: "echo",
+          queryParams: { includeTools: true },
+        });
+
+        expect(serverWithTools.toolsList).toBeDefined();
+        expect(serverWithTools.toolsList?.length).toBeGreaterThan(0);
+        expect(serverWithTools.toolsList?.[0].name).toBe("echo");
+      });
+
+      it("should add an HTTP server with headers", async () => {
+        await harness.initializeDatabase(true);
+        const testPlaybook = await harness.client.store.create.mutate({
+          name: "HTTP Server Headers Test",
+        });
+
+        const addedServer = await harness.client.store.addHTTPServer.mutate({
+          playbookId: testPlaybook.id,
+          name: "notion",
+          url: "https://mcp.notion.com/mcp",
+          headers: { Authorization: "Bearer test-token" },
+        });
+
+        expect(addedServer.name).toBe("notion");
+        expect(addedServer.type).toBe("http");
+        // Notion requires auth so it will be unauthorized
+        expect(addedServer.connectionInfo?.status).toBe("unauthorized");
+      });
+    });
+
+    describe("addStdioServer", () => {
+      it("should add a stdio server to a playbook", async () => {
+        await harness.initializeDatabase(true);
+        const testPlaybook = await harness.client.store.create.mutate({
+          name: "Stdio Server Test Playbook",
+        });
+
+        const addedServer = await harness.client.store.addStdioServer.mutate({
+          playbookId: testPlaybook.id,
+          name: "foobar-stdio",
+          command: "bun",
+          args: [
+            "-e",
+            `
+            import { makeFooBarServer } from "@director.run/mcp/test/fixtures";
+            import { serveOverStdio } from "@director.run/mcp/transport";
+            serveOverStdio(makeFooBarServer());
+          `,
+          ],
+        });
+
+        expect(addedServer.name).toBe("foobar-stdio");
+        expect(addedServer.type).toBe("stdio");
+        expect(addedServer.connectionInfo?.status).toBe("connected");
+
+        // List tools to verify the server works
+        const serverWithTools = await harness.client.store.getServer.query({
+          playbookId: testPlaybook.id,
+          serverName: "foobar-stdio",
+          queryParams: { includeTools: true },
+        });
+
+        expect(serverWithTools.toolsList).toBeDefined();
+        expect(serverWithTools.toolsList?.length).toBeGreaterThan(0);
+      });
+
+      it("should fail for invalid command", async () => {
+        await harness.initializeDatabase(true);
+        const testPlaybook = await harness.client.store.create.mutate({
+          name: "Invalid Stdio Test",
+        });
+
+        await expect(
+          harness.client.store.addStdioServer.mutate({
+            playbookId: testPlaybook.id,
+            name: "invalid",
+            command: "not_existing_command",
+            args: [],
+          }),
+        ).rejects.toThrow(
+          `[invalid] command not found: 'not_existing_command'. Please make sure it is installed and available in your $PATH.`,
+        );
+      });
     });
 
     describe("valid target", () => {
-      let addServerResponse: GatewayRouterOutputs["store"]["addServer"];
+      let addServerResponse: GatewayRouterOutputs["store"]["addHTTPServer"];
       beforeEach(async () => {
-        addServerResponse = await harness.client.store.addServer.mutate({
+        const echoConfig = harness.getConfigForTarget("echo");
+        addServerResponse = await harness.client.store.addHTTPServer.mutate({
           playbookId: playbook.id,
-          server: {
-            ...harness.getConfigForTarget("echo"),
-            tools: { prefix: "echo", exclude: ["echo"] },
-          },
+          name: echoConfig.name,
+          url: echoConfig.transport.url,
         });
       });
 
@@ -262,14 +380,16 @@ describe("Playbook Target CRUD operations", () => {
         const echoConfig = harness.getConfigForTarget("echo");
         expect(
           (
-            await harness.database.playbooks.getPlaybook(playbook.id)
+            await harness.database.getPlaybookWithDetails(
+              playbook.id,
+              harness.getUserId(),
+            )
           ).servers.find((server) => server.name === "echo"),
         ).toEqual(
           expect.objectContaining({
             type: "http",
             url: (echoConfig as { transport: { url: string } }).transport.url,
             name: echoConfig.name,
-            tools: { prefix: "echo", exclude: ["echo"] },
           }),
         );
       });
@@ -283,12 +403,10 @@ describe("Playbook Target CRUD operations", () => {
           expect.objectContaining({
             url: echoConfig.transport.url,
             type: echoConfig.transport.type,
-            tools: { prefix: "echo", exclude: ["echo"] },
             disabled: false,
             name: echoConfig.name,
             source: undefined,
             toolsList: undefined,
-            headers: echoConfig.transport.headers,
             connectionInfo: {
               status: "connected",
               lastConnectedAt: expect.any(Date),
@@ -308,13 +426,12 @@ describe("Playbook Target CRUD operations", () => {
       });
 
       it("should fail if server already exists", async () => {
+        const echoConfig = harness.getConfigForTarget("echo");
         await expect(
-          harness.client.store.addServer.mutate({
+          harness.client.store.addHTTPServer.mutate({
             playbookId: playbook.id,
-            server: {
-              ...harness.getConfigForTarget("echo"),
-              tools: { prefix: "echo", exclude: ["echo"] },
-            },
+            name: echoConfig.name,
+            url: echoConfig.transport.url,
           }),
         ).rejects.toThrow();
       });
@@ -325,10 +442,15 @@ describe("Playbook Target CRUD operations", () => {
     let playbook: GatewayRouterOutputs["store"]["create"];
 
     beforeAll(async () => {
-      await harness.purge();
+      await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test Playbook",
-        servers: [harness.getConfigForTarget("echo")],
+      });
+      const echoConfig = harness.getConfigForTarget("echo");
+      await harness.client.store.addHTTPServer.mutate({
+        playbookId: playbook.id,
+        name: echoConfig.name,
+        url: echoConfig.transport.url,
       });
     });
 
@@ -364,13 +486,21 @@ describe("Playbook Target CRUD operations", () => {
       let updatedResponse: GatewayRouterOutputs["store"]["updateServer"];
       const toolsConfig = { prefix: "prefix__", exclude: ["ping", "add"] };
       beforeEach(async () => {
-        await harness.purge();
+        await harness.initializeDatabase(true);
         playbook = await harness.client.store.create.mutate({
           name: "Test Playbook",
-          servers: [
-            harness.getConfigForTarget("echo"),
-            harness.getConfigForTarget("kitchenSink"),
-          ],
+        });
+        const echoConfig = harness.getConfigForTarget("echo");
+        await harness.client.store.addHTTPServer.mutate({
+          playbookId: playbook.id,
+          name: echoConfig.name,
+          url: echoConfig.transport.url,
+        });
+        const kitchenSinkConfig = harness.getConfigForTarget("kitchenSink");
+        await harness.client.store.addHTTPServer.mutate({
+          playbookId: playbook.id,
+          name: kitchenSinkConfig.name,
+          url: kitchenSinkConfig.transport.url,
         });
         updatedResponse = await harness.client.store.updateServer.mutate({
           playbookId: playbook.id,
@@ -406,7 +536,10 @@ describe("Playbook Target CRUD operations", () => {
       });
       it("should update the configuration file", async () => {
         const configEntry = (
-          await harness.database.playbooks.getPlaybook(playbook.id)
+          await harness.database.getPlaybookWithDetails(
+            playbook.id,
+            harness.getUserId(),
+          )
         ).servers.find((server) => server.name === "echo");
         expect(configEntry?.tools).toMatchObject(toolsConfig);
       });
@@ -426,7 +559,10 @@ describe("Playbook Target CRUD operations", () => {
         });
         expect(target.tools).toMatchObject({ prefix: "", exclude: [] });
         const configEntry = (
-          await harness.database.playbooks.getPlaybook(playbook.id)
+          await harness.database.getPlaybookWithDetails(
+            playbook.id,
+            harness.getUserId(),
+          )
         ).servers.find((server) => server.name === "echo");
         expect(configEntry?.tools).toMatchObject({ prefix: "", exclude: [] });
       });
@@ -435,13 +571,28 @@ describe("Playbook Target CRUD operations", () => {
     describe("disabling targets", () => {
       let playbook: GatewayRouterOutputs["store"]["create"];
       beforeEach(async () => {
-        await harness.purge();
+        await harness.initializeDatabase(true);
         playbook = await harness.client.store.create.mutate({
           name: "Test Playbook",
-          servers: [
-            { ...harness.getConfigForTarget("echo"), disabled: true },
-            harness.getConfigForTarget("kitchenSink"),
-          ],
+        });
+        // Add echo server and then disable it
+        const echoConfig = harness.getConfigForTarget("echo");
+        await harness.client.store.addHTTPServer.mutate({
+          playbookId: playbook.id,
+          name: echoConfig.name,
+          url: echoConfig.transport.url,
+        });
+        await harness.client.store.updateServer.mutate({
+          playbookId: playbook.id,
+          serverName: echoConfig.name,
+          attributes: { disabled: true },
+        });
+        // Add kitchen-sink server (enabled)
+        const kitchenSinkConfig = harness.getConfigForTarget("kitchenSink");
+        await harness.client.store.addHTTPServer.mutate({
+          playbookId: playbook.id,
+          name: kitchenSinkConfig.name,
+          url: kitchenSinkConfig.transport.url,
         });
       });
       it("should return the disabled target correctly", async () => {
@@ -460,7 +611,10 @@ describe("Playbook Target CRUD operations", () => {
       });
       it("should be stored in the configuration file", async () => {
         const configEntry = (
-          await harness.database.playbooks.getPlaybook(playbook.id)
+          await harness.database.getPlaybookWithDetails(
+            playbook.id,
+            harness.getUserId(),
+          )
         ).servers.find((server) => server.name === "echo");
         expect(configEntry?.disabled).toBe(true);
       });
@@ -487,7 +641,10 @@ describe("Playbook Target CRUD operations", () => {
         });
         it("should be reflected in the configuration file", async () => {
           const configEntry = (
-            await harness.database.playbooks.getPlaybook(playbook.id)
+            await harness.database.getPlaybookWithDetails(
+              playbook.id,
+              harness.getUserId(),
+            )
           ).servers.find((server) => server.name === "echo");
           expect(configEntry?.disabled).toBe(false);
         });

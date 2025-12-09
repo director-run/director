@@ -6,40 +6,76 @@ import {
 } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { makeTable } from "@director.run/utilities/cli/index";
-import { joinURL } from "@director.run/utilities/url";
 import { input } from "@inquirer/prompts";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
+import { gatewayClient } from "../../client";
 import { title } from "../../common";
-import { getGatewayBaseUrl } from "../../config";
+
+export type TransportType = "streamable" | "sse";
+
+/**
+ * Creates an authenticated MCP client for a playbook.
+ */
+async function createPlaybookClient(
+  playbookId: string,
+  transport: TransportType = "streamable",
+): Promise<HTTPClient> {
+  const connectionInfo = await gatewayClient.store.getConnectionInfo.query({
+    playbookId,
+  });
+  // Build URL with API key
+  const baseUrl =
+    transport === "sse" ? connectionInfo.sseUrl : connectionInfo.streamableUrl;
+  const urlWithKey = `${baseUrl}?key=${connectionInfo.apiKey}`;
+  return HTTPClient.createAndConnectToHTTP(urlWithKey);
+}
+
+function transportOption() {
+  return makeOption({
+    flags: "--transport <type>",
+    description: "Transport type to use for connection",
+    defaultValue: "streamable",
+    choices: ["streamable", "sse"],
+  });
+}
 
 export function registerToolsCommand(program: DirectorCommand) {
   program
     .command("list-tools <playbookId>")
     .description("List tools on a playbook")
+    .addOption(transportOption())
     .action(
-      actionWithErrorHandler(async (playbookId: string) => {
-        const client = await HTTPClient.createAndConnectToHTTP(
-          joinURL(getGatewayBaseUrl(), `${playbookId}/mcp`),
-        );
-
-        await printTools(client);
-        await client.close();
-      }),
+      actionWithErrorHandler(
+        async (playbookId: string, options: { transport: TransportType }) => {
+          const client = await createPlaybookClient(
+            playbookId,
+            options.transport,
+          );
+          await printTools(client);
+          await client.close();
+        },
+      ),
     );
 
   program
     .command("get-tool <playbookId> <toolName>")
     .description("Get the details of a tool")
+    .addOption(transportOption())
     .action(
-      actionWithErrorHandler(async (playbookId: string, toolName: string) => {
-        const client = await HTTPClient.createAndConnectToHTTP(
-          joinURL(getGatewayBaseUrl(), `${playbookId}/mcp`),
-        );
-
-        await printTool(client, toolName);
-        await client.close();
-      }),
+      actionWithErrorHandler(
+        async (
+          playbookId: string,
+          toolName: string,
+          options: { transport: TransportType },
+        ) => {
+          const client = await createPlaybookClient(
+            playbookId,
+            options.transport,
+          );
+          await printTool(client, toolName);
+          await client.close();
+        },
+      ),
     );
 
   program
@@ -52,19 +88,27 @@ export function registerToolsCommand(program: DirectorCommand) {
         variadic: true,
       }),
     )
+    .addOption(transportOption())
     .description("Call a tool on a playbook")
     .action(
-      actionWithErrorHandler(async (playbookId: string, toolName: string) => {
-        const client = await HTTPClient.createAndConnectToHTTP(
-          joinURL(getGatewayBaseUrl(), `${playbookId}/mcp`),
-        );
-        await callTool(client, toolName);
-        await client.close();
-      }),
+      actionWithErrorHandler(
+        async (
+          playbookId: string,
+          toolName: string,
+          options: { transport: TransportType },
+        ) => {
+          const client = await createPlaybookClient(
+            playbookId,
+            options.transport,
+          );
+          await callTool(client, toolName);
+          await client.close();
+        },
+      ),
     );
 }
 
-async function printTools(client: Client) {
+async function printTools(client: HTTPClient) {
   console.log("");
   console.log(title("tools"));
   console.log("");
@@ -93,10 +137,10 @@ export function makeToolTable(tools: Tool[]) {
   return table;
 }
 
-async function printTool(client: Client, toolName: string) {
+async function printTool(client: HTTPClient, toolName: string) {
   const { tools } = await client.listTools();
 
-  const tool = tools.find((tool) => tool.name === toolName);
+  const tool = tools.find((t: Tool) => t.name === toolName);
 
   if (!tool) {
     throw new Error("Tool not found");
@@ -128,13 +172,13 @@ async function printTool(client: Client, toolName: string) {
   console.log();
 }
 
-async function callTool(client: Client, toolName: string) {
+async function callTool(client: HTTPClient, toolName: string) {
   console.log(yellow("******************"));
   console.log(yellow(`* TOOL CALL: ${toolName} *`));
   console.log(yellow("******************"));
   console.log("");
   const { tools } = await client.listTools();
-  const toolToRun = tools.find((tool) => tool.name === toolName);
+  const toolToRun = tools.find((t: Tool) => t.name === toolName);
 
   if (!toolToRun) {
     console.log(yellow("Tool not found"));

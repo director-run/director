@@ -20,9 +20,9 @@ async function main() {
     {
       title: "Greeting Tool", // Display name for UI
       description: "A simple greeting tool",
-      inputSchema: {
+      inputSchema: z.object({
         name: z.string().describe("Name to greet"),
-      },
+      }),
     },
     async ({ name }): Promise<CallToolResult> => {
       return await {
@@ -41,9 +41,9 @@ async function main() {
     {
       title: "Greeting Template", // Display name for UI
       description: "A simple greeting prompt template",
-      argsSchema: {
+      argsSchema: z.object({
         name: z.string().describe("Name to include in greeting"),
-      },
+      }),
     },
     async ({ name }): Promise<GetPromptResult> => {
       return await {

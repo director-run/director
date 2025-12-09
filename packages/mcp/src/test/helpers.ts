@@ -3,8 +3,17 @@ import {
   type CallToolResult,
   ErrorCode,
   McpError,
+  type TextContent,
 } from "@modelcontextprotocol/sdk/types.js";
 import { expect } from "vitest";
+
+function getTextContent(result: CallToolResult): string | undefined {
+  const content = result.content?.[0];
+  if (content && content.type === "text") {
+    return (content as TextContent).text;
+  }
+  return undefined;
+}
 
 export async function expectListToolsToReturnToolNames(
   client: Client,
@@ -48,7 +57,16 @@ export async function expectGetPromptToReturn(params: {
   const result = await client.getPrompt({
     name: promptName,
   });
-  expect(result.messages[0].content.text).toEqual(expectedBody);
+  const content = result.messages[0].content;
+  if (
+    typeof content === "object" &&
+    "type" in content &&
+    content.type === "text"
+  ) {
+    expect((content as TextContent).text).toEqual(expectedBody);
+  } else {
+    throw new Error("Expected text content in prompt message");
+  }
 }
 
 export async function expectToolCallToHaveResult(params: {
@@ -65,9 +83,8 @@ export async function expectToolCallToHaveResult(params: {
     arguments: params.arguments,
   })) as CallToolResult;
 
-  expect(JSON.parse(result.content?.[0].text as string)).toEqual(
-    params.expectedResult,
-  );
+  const textContent = getTextContent(result);
+  expect(JSON.parse(textContent as string)).toEqual(params.expectedResult);
 }
 
 export async function expectUnknownToolError(params: {

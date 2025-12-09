@@ -9,53 +9,49 @@ import {
 import { logRequests } from "@director.run/utilities/middleware/index";
 import { spaMiddleware } from "@director.run/utilities/middleware/spa";
 import { Telemetry } from "@director.run/utilities/telemetry";
+import { joinURL } from "@director.run/utilities/url";
+import { toNodeHandler } from "better-auth/node";
 import cors from "cors";
 import express from "express";
-import { ClientStore } from "./client-store";
-import { Config } from "./config";
+import { auth } from "./auth";
+import type { Database } from "./db/database";
+import { env } from "./env";
 import { PlaybookStore } from "./playbooks/playbook-store";
-import { createSSERouter } from "./routers/sse";
-import { createStreamableRouter } from "./routers/streamable";
+import { createManagementRouter } from "./routers/management";
+import { createMCPRouter } from "./routers/mcp/mcp";
 import { createTRPCExpressMiddleware } from "./routers/trpc";
 
 const logger = getLogger("Gateway");
 
-const ALLOWED_ORIGINS = [/^https?:\/\/localhost(:\d+)?$/];
-
 export class Gateway {
   public readonly playbookStore: PlaybookStore;
   private server?: Server;
-  public readonly config: Config;
+  public readonly database: Database;
   private app: express.Express;
-  private telemetry?: Telemetry;
   private studioAssetsPath?: string;
   private baseUrl: string;
-  public readonly clientStore: ClientStore;
-
-  public get port() {
-    return this.config.get("server.port") as number;
-  }
+  public readonly port: number;
 
   private constructor(attribs: {
     playbookStore: PlaybookStore;
-    config: Config;
+    database: Database;
     telemetry?: Telemetry;
     studioAssetsPath?: string;
     baseUrl: string;
-    clientStore: ClientStore;
+    port: number;
   }) {
     this.playbookStore = attribs.playbookStore;
-    this.config = attribs.config;
-    this.telemetry = attribs.telemetry;
+    this.database = attribs.database;
     this.studioAssetsPath = attribs.studioAssetsPath;
     this.baseUrl = attribs.baseUrl;
-    this.clientStore = attribs.clientStore;
+    this.port = attribs.port;
 
     this.app = express();
 
     this.app.use(
       cors({
-        origin: ALLOWED_ORIGINS,
+        origin: [env.BASE_URL, ...env.ALLOWED_ORIGINS],
+        credentials: true,
       }),
     );
     this.app.use(logRequests());
@@ -70,41 +66,55 @@ export class Gateway {
           distPath: this.studioAssetsPath,
           config: {
             basePath: "/studio",
+            gatewayUrl: this.baseUrl,
+            registryUrl: env.REGISTRY_URL,
           },
         }),
       );
+
+      this.app.get("/", (_, res) => {
+        res.redirect("/studio");
+      });
     } else {
       logger.warn({
         message: "studioAssetsPath not provided, studio will not be available",
       });
     }
+
     this.app.use(
-      "/",
-      createSSERouter({
+      "/playbooks",
+      createMCPRouter({
         playbookStore: this.playbookStore,
-        telemetry: this.telemetry,
+        database: this.database,
       }),
     );
-    this.app.use(
-      "/",
-      createStreamableRouter({
-        playbookStore: this.playbookStore,
-        telemetry: this.telemetry,
-      }),
-    );
+
     this.app.use(
       "/",
       createOauthCallbackRouter({
-        onAuthorizationSuccess: async (factoryId, providerId, code) => {
+        getSession: async (req) => {
+          const session = await auth.api.getSession({
+            headers: req.headers as Record<string, string>,
+          });
+          if (!session) {
+            return null;
+          }
+          return { userId: session.user.id };
+        },
+        onAuthorizationSuccess: async (factoryId, providerId, code, userId) => {
           await this.playbookStore.onAuthorizationSuccess(
             factoryId,
             providerId,
             code,
+            userId,
           );
           if (this.studioAssetsPath) {
             // Redirect to hosted studio callback page
             return {
-              redirectUrl: `${this.baseUrl}/studio/oauth/${factoryId}/${providerId}/callback`,
+              redirectUrl: joinURL(
+                this.baseUrl,
+                `studio/oauth/${factoryId}/${providerId}/callback`,
+              ),
             };
           } else if (isDevelopment()) {
             // redirect to dev studio callback page
@@ -118,18 +128,34 @@ export class Gateway {
             error,
             message: `failed to authorize ${factoryId} ${providerId}: ${error.message}`,
           });
+          // Only expose the error message to the client, not stack traces or internal details
+          const safeErrorMessage = encodeURIComponent(error.message);
           if (this.studioAssetsPath) {
             // Redirect to hosted studio callback page
             return {
-              redirectUrl: `${this.baseUrl}/studio/oauth/${factoryId}/${providerId}/callback?error=${JSON.stringify(error)}`,
+              redirectUrl: joinURL(
+                this.baseUrl,
+                `studio/oauth/${factoryId}/${providerId}/callback?error=${safeErrorMessage}`,
+              ),
             };
           } else if (isDevelopment()) {
             // redirect to dev studio callback page
             return {
-              redirectUrl: `http://localhost:3000/oauth/${factoryId}/${providerId}/callback?error=${JSON.stringify(error)}`,
+              redirectUrl: `http://localhost:3000/oauth/${factoryId}/${providerId}/callback?error=${safeErrorMessage}`,
             };
           }
         },
+      }),
+    );
+
+    this.app.all("/api/auth/*", toNodeHandler(auth));
+
+    this.app.use(
+      "/api/management",
+      createManagementRouter({
+        database: this.database,
+        playbookStore: this.playbookStore,
+        baseCallbackUrl: this.baseUrl,
       }),
     );
 
@@ -137,7 +163,7 @@ export class Gateway {
       "/trpc",
       createTRPCExpressMiddleware({
         playbookStore: this.playbookStore,
-        clientStore: this.clientStore,
+        database: this.database,
       }),
     );
     this.app.get("/", (_, res, next) => {
@@ -154,49 +180,29 @@ export class Gateway {
   public static async start(
     attribs: {
       studioAssetsPath?: string;
-      config: Config;
+      database: Database;
       telemetry?: Telemetry;
       baseUrl: string;
+      port: number;
     },
     successCallback?: () => void,
   ) {
     logger.info(`starting director gateway`);
-    const clientStore = new ClientStore({
-      config: attribs.config,
-    });
     const playbookStore = await PlaybookStore.create({
-      config: attribs.config,
+      database: attribs.database,
       telemetry: attribs.telemetry,
-      oauth:
-        attribs.config.get("oauth.storage") === "disk"
-          ? {
-              storage: "disk",
-              tokenDirectory: attribs.config.get(
-                "oauth.tokenDirectory",
-              ) as string,
-              baseCallbackUrl: attribs.baseUrl,
-            }
-          : {
-              storage: "memory",
-              baseCallbackUrl: attribs.baseUrl,
-            },
-      onPlaybookListChange: async (playbookId: string) => {
-        await clientStore.handlePlaybookListChange(playbookId);
-      },
-      onPlaybookRemove: async (playbookId: string) => {
-        await clientStore.handlePlaybookRemove(playbookId);
-      },
+      baseCallbackUrl: attribs.baseUrl,
     });
 
     attribs.telemetry?.trackEvent("gateway_start");
 
     const gateway = new Gateway({
-      config: attribs.config,
+      database: attribs.database,
       playbookStore,
       telemetry: attribs.telemetry,
       studioAssetsPath: attribs.studioAssetsPath,
       baseUrl: attribs.baseUrl,
-      clientStore,
+      port: attribs.port,
     });
 
     await gateway.start(successCallback);
@@ -213,10 +219,6 @@ export class Gateway {
   private async start(successCallback?: () => void) {
     this.server = this.app.listen(this.port, () => {
       logger.info(`director gateway running on port ${this.port}`);
-      this.clientStore.enforceClientConfigs({
-        playbookStore: this.playbookStore,
-        baseUrl: this.baseUrl,
-      });
       successCallback?.();
     });
   }

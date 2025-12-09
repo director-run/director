@@ -1,6 +1,6 @@
 import { LoginPage as LoginPageComponent } from "@director.run/design/components/pages/auth/login.tsx";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/auth-context.tsx";
 
 export function LoginPage() {
@@ -8,26 +8,35 @@ export function LoginPage() {
   const [error, setError] = useState<Error | null>(null);
   const navigate = useNavigate();
 
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
+
+  // Redirect to home if already authenticated
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
   return (
     <LoginPageComponent
       error={error}
-      defaultValues={{
-        email: "barnaby@example.com",
-        password: "password",
-      }}
-      onSubmit={async (user) => {
+      defaultValues={{ email: "", password: "" }}
+      onSubmit={async (credentials) => {
         try {
-          await setIsLoading(true);
-          await login(user);
-          navigate("/");
-        } catch (error) {
-          await setError(error as Error);
+          setError(null);
+          setIsLoading(true);
+          await login(credentials);
+          navigate("/", { replace: true });
+        } catch (err) {
+          setError(err as Error);
         } finally {
-          await setIsLoading(false);
+          setIsLoading(false);
         }
       }}
       isLoading={isLoading}
+      signupLink={
+        <Link to="/signup" className="text-fg underline hover:no-underline">
+          Sign up
+        </Link>
+      }
     />
   );
 }

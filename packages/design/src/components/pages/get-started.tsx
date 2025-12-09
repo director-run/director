@@ -1,8 +1,11 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { useZodForm } from "../../hooks/use-zod-form";
+import {
+  GetStartedConnect,
+  type GetStartedConnectProps,
+} from "../get-started/get-started-connect";
 import { GetStartedHeader } from "../get-started/get-started-header";
-import { GetStartedInstallers } from "../get-started/get-started-installers";
 import {
   GetStartedList,
   GetStartedListItem,
@@ -15,7 +18,6 @@ import {
 import { playbookSchema } from "../get-started/get-started-playbook-form";
 import { PromptForm, type PromptFormData } from "../prompts/prompt-form";
 import type { RegistryEntryList } from "../types";
-import type { Client } from "../types.ts";
 import { Button } from "../ui/button";
 import { Container } from "../ui/container";
 import { Section } from "../ui/section";
@@ -35,10 +37,11 @@ export interface GetStartedPageViewProps {
     name: string;
   }) => void;
 
-  // Actions
-  onAddPlaybookToClient: (clientId: string) => void;
-  clientStatuses: Client[];
-  isAddingPlaybookToClient: boolean;
+  // Connection info for step 4
+  connectionInfo: GetStartedConnectProps["connectionInfo"];
+  isConnectionInfoLoading?: boolean;
+  onDone?: () => void;
+
   // Prompt step
   isPromptCompleted: boolean;
   onSkipPrompt: () => void;
@@ -50,21 +53,20 @@ export function GetStartedPageView(props: GetStartedPageViewProps) {
   const {
     currentPlaybook,
     registryEntries,
-    clientStatuses,
-    isAddingPlaybookToClient,
     isCreatePlaybookLoading,
     onCreatePlaybook,
     searchQuery,
     onSearchQueryChange,
     onClickRegistryEntry,
-    onAddPlaybookToClient,
+    connectionInfo,
+    isConnectionInfoLoading,
+    onDone,
     isPromptCompleted,
     onSkipPrompt,
     onPromptFormSubmit,
     isPromptSubmitting,
   } = props;
 
-  const [selectedClient, setSelectedClient] = useState<string | undefined>();
   const playbookForm = useZodForm({
     schema: playbookSchema,
     defaultValues: { name: "", description: "A playbook for getting started" },
@@ -160,13 +162,10 @@ export function GetStartedPageView(props: GetStartedPageViewProps) {
             open={steps.connect === "in-progress"}
             disabled={steps.connect !== "in-progress"}
           >
-            <GetStartedInstallers
-              selectedClient={selectedClient}
-              onClientSelect={setSelectedClient}
-              clients={clientStatuses}
-              isLoading={false}
-              isInstalling={isAddingPlaybookToClient}
-              onInstall={onAddPlaybookToClient}
+            <GetStartedConnect
+              connectionInfo={connectionInfo}
+              isLoading={isConnectionInfoLoading}
+              onDone={onDone}
             />
           </GetStartedListItem>
         </GetStartedList>

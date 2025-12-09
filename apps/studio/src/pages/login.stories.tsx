@@ -16,6 +16,7 @@ const meta = {
       console.log("Login form submitted");
       await new Promise((resolve) => setTimeout(resolve, 100));
     },
+    signupLink: <a href="/signup">Sign up</a>,
   },
 } satisfies Meta<typeof LoginPage>;
 

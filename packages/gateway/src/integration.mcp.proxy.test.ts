@@ -27,12 +27,17 @@ enum Transport {
 }
 
 function getPlaybookUrl(transport: Transport, playbookId: string) {
-  return `http://localhost:${IntegrationTestHarness.gatewayPort}/${playbookId}/${transport === Transport.SSE ? "sse" : "mcp"}`;
+  return `http://localhost:${IntegrationTestHarness.gatewayPort}/playbooks/${playbookId}/${transport === Transport.SSE ? "sse" : "mcp"}`;
 }
 
-async function createPlaybookClient(transport: Transport, playbookId: string) {
+async function createPlaybookClient(
+  transport: Transport,
+  playbookId: string,
+  apiKey: string,
+) {
   return await HTTPClient.createAndConnectToHTTP(
     getPlaybookUrl(transport, playbookId),
+    { Authorization: `Bearer ${apiKey}` },
   );
 }
 
@@ -42,6 +47,10 @@ describe("MCP Playbook", () => {
 
   beforeAll(async () => {
     harness = await IntegrationTestHarness.start();
+    await harness.register({
+      email: "test@example.com",
+      password: "password123",
+    });
   });
 
   afterAll(async () => {
@@ -50,13 +59,21 @@ describe("MCP Playbook", () => {
 
   [Transport.SSE, Transport.STREAMABLE].forEach((transport) => {
     beforeEach(async () => {
-      await harness.purge();
+      await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test Playbook",
-        servers: [
-          harness.getConfigForTarget("echo"),
-          harness.getConfigForTarget("kitchenSink"),
-        ],
+      });
+      const echoConfig = harness.getConfigForTarget("echo");
+      await harness.client.store.addHTTPServer.mutate({
+        playbookId: playbook.id,
+        name: echoConfig.name,
+        url: echoConfig.transport.url,
+      });
+      const kitchenSinkConfig = harness.getConfigForTarget("kitchenSink");
+      await harness.client.store.addHTTPServer.mutate({
+        playbookId: playbook.id,
+        name: kitchenSinkConfig.name,
+        url: kitchenSinkConfig.transport.url,
       });
     });
 
@@ -64,17 +81,35 @@ describe("MCP Playbook", () => {
       let playbookClient: HTTPClient;
 
       beforeEach(async () => {
-        playbookClient = await createPlaybookClient(transport, playbook.id);
+        playbookClient = await createPlaybookClient(
+          transport,
+          playbook.id,
+          harness.getApiKey(),
+        );
       });
 
       afterEach(async () => {
         await playbookClient.close();
       });
 
-      it("should return 404 when playbook not found", async () => {
+      it("should return 401 when no API key provided", async () => {
         const res = await fetch(
           getPlaybookUrl(transport, "not_existing_playbook"),
         );
+        expect(res.status).toEqual(401);
+        expect(res.ok).toBeFalsy();
+      });
+
+      it("should return 404 when playbook not found", async () => {
+        const res = await fetch(
+          getPlaybookUrl(transport, "not_existing_playbook"),
+          {
+            headers: {
+              Authorization: `Bearer ${harness.getApiKey()}`,
+            },
+          },
+        );
+        // Returns 404 because the playbook doesn't exist
         expect(res.status).toEqual(404);
         expect(res.ok).toBeFalsy();
       });
@@ -203,11 +238,13 @@ describe("MCP Playbook", () => {
         });
       });
 
-      describe("addServer", () => {
+      describe("addHTTPServer", () => {
         it("should be able to add a server to a playbook", async () => {
-          await harness.client.store.addServer.mutate({
+          const foobarConfig = harness.getConfigForTarget("foobar");
+          await harness.client.store.addHTTPServer.mutate({
             playbookId: playbook.id,
-            server: harness.getConfigForTarget("foobar"),
+            name: foobarConfig.name,
+            url: foobarConfig.transport.url,
           });
 
           await expectListToolsToReturnToolNames(playbookClient, [

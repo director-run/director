@@ -14,8 +14,12 @@
       "outputs": ["dist/**"],
       "env": ["DATABASE_URL"]
     },
+    "@director.run/gateway#build": {
+      "dependsOn": ["@director.run/studio#build"],
+      "inputs": ["$TURBO_DEFAULT$"],
+      "outputs": ["dist/**"]
+    },
     "@director.run/studio#build": {
-      "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$"],
       "outputs": ["dist/**", "dist-storybook/**"]
     },

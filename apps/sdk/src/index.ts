@@ -3,15 +3,15 @@ export {
   type GatewayClient,
 } from "@director.run/gateway/client";
 
-export {
-  type ConfigStorage,
-  InMemoryConfigStorage,
-  YamlConfigStorage,
-} from "@director.run/gateway/config/config-storage";
-
 export { Gateway } from "@director.run/gateway/gateway";
 
-export { Config as GatewayConfig } from "@director.run/gateway/config/index";
+export { Database } from "@director.run/gateway/db/database";
+
+export type {
+  PlaybookInsertParams,
+  PlaybookServerInsertParams,
+  PlaybookPromptInsertParams,
+} from "@director.run/gateway/db/schema";
 
 export {
   createRegistryClient,

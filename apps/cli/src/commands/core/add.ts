@@ -1,5 +1,4 @@
 import type { AppRouter } from "@director.run/registry/routers/trpc/index";
-import { whiteBold } from "@director.run/utilities/cli/colors";
 import {
   DirectorCommand,
   makeOption,
@@ -9,7 +8,6 @@ import { spinnerWrap } from "@director.run/utilities/cli/loader";
 import { input, password } from "@inquirer/prompts";
 import type { inferRouterOutputs } from "@trpc/server";
 import { gatewayClient, registryClient } from "../../client";
-import { getConfigFilePath } from "../../config";
 
 type RegistryEntry = inferRouterOutputs<AppRouter>["entries"]["getEntryByName"];
 
@@ -81,10 +79,6 @@ export function registerAddCommand(program: DirectorCommand) {
               "No entry name or url provided. You must specify --entry or --url and --name, alternatively update the config file directly and restart the gateway:",
             );
             console.log();
-            console.log(
-              `${whiteBold("CONFIG_FILE_PATH:")} ${getConfigFilePath()}`,
-            );
-            console.log();
           }
         },
       ),
@@ -98,16 +92,11 @@ async function addServerFromStdio(
   name: string,
 ) {
   await spinnerWrap(async () => {
-    await gatewayClient.store.addServer.mutate({
-      playbookId: playbookId,
-      server: {
-        name,
-        transport: {
-          type: "stdio",
-          command,
-          args,
-        },
-      },
+    await gatewayClient.store.addStdioServer.mutate({
+      playbookId,
+      name,
+      command,
+      args,
     });
   })
     .start("installing server...")
@@ -117,15 +106,10 @@ async function addServerFromStdio(
 
 async function addServerFromUrl(playbookId: string, url: string, name: string) {
   await spinnerWrap(async () => {
-    await gatewayClient.store.addServer.mutate({
-      playbookId: playbookId,
-      server: {
-        name,
-        transport: {
-          type: "http",
-          url,
-        },
-      },
+    await gatewayClient.store.addHTTPServer.mutate({
+      playbookId,
+      name,
+      url,
     });
   })
     .start("installing server...")
@@ -144,20 +128,10 @@ async function addServerFromRegistry(playbookId: string, entryName: string) {
     .run();
   const parameters = await promptForParameters(entry);
   await spinnerWrap(async () => {
-    const transport = await registryClient.entries.getTransportForEntry.query({
-      entryName,
+    await gatewayClient.store.addRegistryServer.mutate({
+      playbookId,
+      registryEntryName: entryName,
       parameters,
-    });
-    await gatewayClient.store.addServer.mutate({
-      playbookId: playbookId,
-      server: {
-        name: entryName,
-        transport,
-        source: {
-          name: "registry",
-          entryId: entry.id,
-        },
-      },
     });
   })
     .start("installing server...")

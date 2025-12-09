@@ -11,6 +11,7 @@ import {
   GithubLogoIcon,
   PlusIcon,
 } from "@phosphor-icons/react";
+import { GearIcon } from "@phosphor-icons/react";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
@@ -89,13 +90,13 @@ export const RootLayout = () => {
                   "noopener noreferrer",
                 ),
             },
-            // {
-            //   id: "settings",
-            //   label: "Settings",
-            //   icon: <GearIcon />,
-            //   isActive: location.pathname === "/settings",
-            //   onClick: () => navigate("/settings"),
-            // },
+            {
+              id: "settings",
+              label: "Settings",
+              icon: <GearIcon />,
+              isActive: location.pathname === "/settings",
+              onClick: () => navigate("/settings"),
+            },
           ],
         },
       ]}

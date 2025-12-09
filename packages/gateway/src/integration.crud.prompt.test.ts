@@ -11,6 +11,10 @@ describe("Prompt Capabilities", () => {
 
   beforeAll(async () => {
     harness = await IntegrationTestHarness.start();
+    await harness.register({
+      email: "test@example.com",
+      password: "password123",
+    });
   });
 
   afterAll(async () => {
@@ -23,10 +27,9 @@ describe("Prompt Capabilities", () => {
     let addedPrompt: GatewayRouterOutputs["store"]["addPrompt"];
 
     beforeEach(async () => {
-      await harness.purge();
+      await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test Playbook",
-        servers: [],
       });
       prompt = makePrompt();
 
@@ -41,7 +44,10 @@ describe("Prompt Capabilities", () => {
     });
 
     it("should update the config file when a prompt is added", async () => {
-      const config = await harness.database.playbooks.getPlaybook(playbook.id);
+      const config = await harness.database.getPlaybookWithDetails(
+        playbook.id,
+        harness.getUserId(),
+      );
       expect(config.prompts).toEqual([prompt]);
     });
 
@@ -75,10 +81,9 @@ describe("Prompt Capabilities", () => {
     let playbook: GatewayRouterOutputs["store"]["create"];
 
     beforeEach(async () => {
-      await harness.purge();
+      await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test Playbook",
-        servers: [],
       });
     });
 
@@ -127,10 +132,9 @@ describe("Prompt Capabilities", () => {
     let result: GatewayRouterOutputs["store"]["removePrompt"];
 
     beforeEach(async () => {
-      await harness.purge();
+      await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test Playbook",
-        servers: [],
       });
       prompt = makePrompt();
       await harness.client.store.addPrompt.mutate({
@@ -153,7 +157,10 @@ describe("Prompt Capabilities", () => {
     });
 
     it("should update the config file when a prompt is removed", async () => {
-      const config = await harness.database.playbooks.getPlaybook(playbook.id);
+      const config = await harness.database.getPlaybookWithDetails(
+        playbook.id,
+        harness.getUserId(),
+      );
       expect(config.prompts).toEqual([]);
     });
 
@@ -221,10 +228,9 @@ describe("Prompt Capabilities", () => {
     const originalPrompt = makePrompt();
 
     beforeEach(async () => {
-      await harness.purge();
+      await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test Playbook",
-        servers: [],
       });
 
       await harness.client.store.addPrompt.mutate({
@@ -318,7 +324,10 @@ describe("Prompt Capabilities", () => {
           body: "Updated body",
         },
       });
-      const config = await harness.database.playbooks.getPlaybook(playbook.id);
+      const config = await harness.database.getPlaybookWithDetails(
+        playbook.id,
+        harness.getUserId(),
+      );
       expect(config.prompts).toEqual([
         {
           name: originalPrompt.name,

@@ -1,13 +1,17 @@
 import { gatewayClient } from "../contexts/backend-context";
 
-type AddServerMutationOptions = Parameters<
-  typeof gatewayClient.store.addServer.useMutation
+type AddHTTPServerMutationOptions = Parameters<
+  typeof gatewayClient.store.addHTTPServer.useMutation
 >[0];
 
-export function useAddServer(options?: AddServerMutationOptions) {
+type AddStdioServerMutationOptions = Parameters<
+  typeof gatewayClient.store.addStdioServer.useMutation
+>[0];
+
+export function useAddHTTPServer(options?: AddHTTPServerMutationOptions) {
   const utils = gatewayClient.useUtils();
 
-  const mutation = gatewayClient.store.addServer.useMutation({
+  const mutation = gatewayClient.store.addHTTPServer.useMutation({
     ...options,
     async onSuccess(data, variables, context, meta) {
       await utils.store.getAll.invalidate();
@@ -17,7 +21,25 @@ export function useAddServer(options?: AddServerMutationOptions) {
   });
 
   return {
-    addServer: mutation.mutateAsync,
+    addHTTPServer: mutation.mutateAsync,
+    isPending: mutation.isPending,
+  };
+}
+
+export function useAddStdioServer(options?: AddStdioServerMutationOptions) {
+  const utils = gatewayClient.useUtils();
+
+  const mutation = gatewayClient.store.addStdioServer.useMutation({
+    ...options,
+    async onSuccess(data, variables, context, meta) {
+      await utils.store.getAll.invalidate();
+      await utils.store.get.invalidate({ playbookId: variables.playbookId });
+      await options?.onSuccess?.(data, variables, context, meta);
+    },
+  });
+
+  return {
+    addStdioServer: mutation.mutateAsync,
     isPending: mutation.isPending,
   };
 }

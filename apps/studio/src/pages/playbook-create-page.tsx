@@ -20,7 +20,7 @@ export function PlaybookCreatePage() {
   });
 
   const handleSubmit = async (values: PlaybookFormData) => {
-    await createPlaybook({ ...values, servers: [] });
+    await createPlaybook(values);
   };
 
   return (

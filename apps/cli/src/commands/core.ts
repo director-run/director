@@ -1,3 +1,7 @@
+import {
+  type ClientId,
+  clientStore,
+} from "@director.run/client-configurator/client-store";
 import { proxyHTTPToStdio } from "@director.run/mcp/transport";
 import {
   DirectorCommand,
@@ -7,24 +11,24 @@ import { makeTable } from "@director.run/utilities/cli/index";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../client";
-import { getGatewayBaseUrl } from "../config";
+import { env } from "../env";
 import { registerAddCommand } from "./core/add";
 import { registerAuthCommand } from "./core/authenticate";
-import { registerConfigCommand } from "./core/config";
 import { registerConnectCommand } from "./core/connect";
 import { registerDebugCommands } from "./core/debug";
+import { registerConfigCommand } from "./core/env";
 import { registerGetCommand } from "./core/get";
-import { registerQuickstartCommand } from "./core/quickstart";
+import { registerLoginCommand } from "./core/login";
 import { registerRemoveCommand } from "./core/remove";
-import { registerServeCommand } from "./core/serve";
+import { registerSignupCommand } from "./core/signup";
 import { registerStatusCommand } from "./core/status";
 import { registerStudioCommand } from "./core/studio";
 import { registerUpdateCommand } from "./core/update";
 
 export function registerCoreCommands(program: DirectorCommand): void {
-  registerQuickstartCommand(program);
-  registerServeCommand(program);
   registerStudioCommand(program);
+  registerSignupCommand(program);
+  registerLoginCommand(program);
 
   program
     .command("ls")
@@ -43,7 +47,7 @@ export function registerCoreCommands(program: DirectorCommand): void {
             ...playbooks.map((playbook) => [
               playbook.id,
               playbook.name,
-              joinURL(getGatewayBaseUrl(), playbook.paths.streamable),
+              joinURL(env.GATEWAY_URL, playbook.paths.streamable),
             ]),
           );
 
@@ -62,7 +66,6 @@ export function registerCoreCommands(program: DirectorCommand): void {
       actionWithErrorHandler(async (name: string) => {
         const playbook = await gatewayClient.store.create.mutate({
           name,
-          servers: [],
         });
 
         console.log(`playbook ${playbook.id} created`);
@@ -96,13 +99,12 @@ export function registerCoreCommands(program: DirectorCommand): void {
     .action(
       actionWithErrorHandler(
         async (playbookId: string, options: { target: string }) => {
+          // Verify playbook exists via gateway
           const playbook = await gatewayClient.store.get.query({
             playbookId: playbookId,
           });
-          await gatewayClient.clients.uninstall.mutate({
-            clientId: options.target,
-            playbookId: playbook.id,
-          });
+          // Uninstall directly using client configurator (no TRPC)
+          await clientStore.uninstall(options.target as ClientId, playbook.id);
         },
       ),
     );

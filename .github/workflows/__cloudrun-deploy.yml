@@ -1,0 +1,116 @@
+name: Deploy to Cloud Run
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      service_name:
+        required: true
+        type: string
+      migrations:
+        required: false
+        type: boolean
+        default: false
+      seed_enabled:
+        required: false
+        type: boolean
+        default: false
+      working-directory:
+        required: true
+        type: string
+        default: .
+
+env:
+  IMAGE_NAME: ${{ inputs.service_name }}
+  BUN_VERSION: "1.3.2"
+  NODE_VERSION: "22"
+
+jobs:
+  deploy:
+    name: Cloudrun
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.SERVICE_ACCOUNT_EMAIL }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ vars.REGION }}-docker.pkg.dev
+
+      - name: Build Monorepo
+        run: bun run build
+
+      - name: Build Docker image
+        working-directory: ${{ inputs.working-directory }}
+        run: docker build -t ${{ env.IMAGE_NAME }} .
+
+      - name: Tag Docker image
+        run: |
+          docker tag ${{ env.IMAGE_NAME }}:latest ${{ vars.REPOSITORY_URL }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker tag ${{ env.IMAGE_NAME }}:latest ${{ vars.REPOSITORY_URL }}/${{ env.IMAGE_NAME }}:latest
+
+      - name: Push Docker image
+        run: |
+          docker push ${{ vars.REPOSITORY_URL }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker push ${{ vars.REPOSITORY_URL }}/${{ env.IMAGE_NAME }}:latest
+
+      - name: Run database migrations
+        if: ${{ inputs.migrations }}
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          DATABASE_URL=$(gcloud run services describe ${{ inputs.service_name }} \
+            --region ${{ vars.REGION }} \
+            --format=json | jq -r '.spec.template.spec.containers[0].env[] | select(.name=="DATABASE_URL") | .value')
+          DATABASE_URL=$DATABASE_URL bun run db:push
+          
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy ${{ inputs.service_name }} \
+            --image ${{ vars.REPOSITORY_URL }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            --region ${{ vars.REGION }}
+
+      - name: Seed database
+        if: ${{ inputs.seed_enabled }}
+        run: |
+          # Get the service config as JSON
+          SERVICE_CONFIG=$(gcloud run services describe ${{ inputs.service_name }} \
+            --region ${{ vars.REGION }} \
+            --format=json)
+
+          # Extract service URL and management API key from the deployed container
+          SERVICE_URL=$(echo "$SERVICE_CONFIG" | jq -r '.status.url')
+          MANAGEMENT_API_KEY=$(echo "$SERVICE_CONFIG" | jq -r '.spec.template.spec.containers[0].env[] | select(.name=="MANAGEMENT_API_KEY") | .value')
+
+          # Call the seed endpoint with management API key
+          curl -X POST "${SERVICE_URL}/api/management/seed" \
+            -H "Authorization: Bearer ${MANAGEMENT_API_KEY}" \
+            -H "Content-Type: application/json" \
+            -d '{"password": "${{ vars.SEED_USER_PASSWORD }}"}' \
+            --fail-with-body
+         

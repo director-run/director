@@ -1,7 +1,7 @@
 #!/usr/bin/env -S node --no-warnings --enable-source-maps
 
 // This needs to run before anything else so that the environment variables are set before the logger is initialized
-import "../src/config";
+import "../src/env";
 
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import packageJson from "../package.json" assert { type: "json" };
@@ -11,7 +11,7 @@ import { registerCoreCommands } from "../src/commands/core";
 import { registerMCPCommands } from "../src/commands/mcp";
 import { registerPromptsCommands } from "../src/commands/prompts";
 import { registerRegistryCommands } from "../src/commands/registry";
-import { config } from "../src/config";
+import { env } from "../src/env";
 
 // add this to prevent the program from exiting (useful for working on help text in live reload)
 // process.exit = (code?: number) => {};
@@ -22,12 +22,12 @@ const program = new DirectorCommand();
 
 program
   .name("director")
-  .showDebugCommands(!!config.get("debug"))
+  .showDebugCommands(env.DEBUG)
   .description(packageJson.description)
   .version(packageJson.version);
 
 registerCoreCommands(program);
-config.get("debug") && registerClientCommands(program);
+env.DEBUG && registerClientCommands(program);
 registerRegistryCommands(program);
 registerMCPCommands(program);
 registerPromptsCommands(program);

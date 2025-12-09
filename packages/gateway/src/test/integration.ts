@@ -7,53 +7,162 @@ import {
 import { serveOverSSE, serveOverStreamable } from "@director.run/mcp/transport";
 import { requiredStringSchema } from "@director.run/utilities/schema";
 import { z } from "zod";
-import { createGatewayClient } from "../client";
+import {
+  login as clientLogin,
+  register as clientRegister,
+  createGatewayClient,
+} from "../client";
+import { decrypt } from "../crypto";
+import { Database } from "../db/database";
+import { env } from "../env";
 import { Gateway } from "../gateway";
-import { makeTestConfig } from "./config";
+import {
+  createTestUser,
+  initializeTestDatabase,
+  resetPlaybookStore,
+} from "./db";
 
 const PROXY_TARGET_PORT = 4521;
 
 export class IntegrationTestHarness {
   public readonly gateway: Gateway;
-  public readonly client: ReturnType<typeof createGatewayClient>;
-  public static gatewayPort: number = 4673;
+  public client: ReturnType<typeof createGatewayClient>;
+  public static gatewayPort: number = env.PORT;
 
   private echoServerSSEInstance: Server;
   private kitchenSinkServerInstance: Server;
   private fooBarServerInstance: Server;
+  private sessionCookie: string | null = null;
+  private baseURL: string;
+  private _database: Database;
+  public userId: string | null = null;
+  public apiKey: string | null = null;
 
   private constructor(params: {
     gateway: Gateway;
+    database: Database;
     client: ReturnType<typeof createGatewayClient>;
     echoServerSSEInstance: Server;
     kitchenSinkServerInstance: Server;
     fooBarServerInstance: Server;
+    baseURL: string;
   }) {
     this.gateway = params.gateway;
+    this._database = params.database;
     this.client = params.client;
     this.echoServerSSEInstance = params.echoServerSSEInstance;
     this.kitchenSinkServerInstance = params.kitchenSinkServerInstance;
     this.fooBarServerInstance = params.fooBarServerInstance;
+    this.baseURL = params.baseURL;
   }
 
-  public async purge() {
-    await this.gateway.playbookStore.purge();
+  /**
+   * Initialize test database state.
+   * @param keepUsers - When true, only deletes playbooks. When false, resets entire database.
+   */
+  public async initializeDatabase(keepUsers = false) {
+    await resetPlaybookStore(this.gateway.playbookStore);
+    await initializeTestDatabase({ database: this._database, keepUsers });
   }
 
   public get database() {
-    return this.gateway.config;
+    return this.gateway.database;
+  }
+
+  public getUserId(): string {
+    if (!this.userId) {
+      throw new Error(
+        "User not authenticated. Call register() or login() first.",
+      );
+    }
+    return this.userId;
+  }
+
+  public async register(params: {
+    email: string;
+    password: string;
+  }): Promise<{ user: { id: string; email: string } }> {
+    const { user, sessionCookie } = await clientRegister(this.baseURL, params);
+
+    // Activate user for testing - new users are PENDING by default
+    await this.gateway.database.activateUser(user.id);
+
+    this.sessionCookie = sessionCookie;
+    this.userId = user.id;
+
+    // Retrieve the API key that was created during registration
+    const dbUser = await this.gateway.database.getUser(user.id);
+    if (!dbUser?.encryptedApiKey) {
+      throw new Error("No API key found for user after registration");
+    }
+    this.apiKey = decrypt(dbUser.encryptedApiKey, env.BETTER_AUTH_SECRET);
+
+    // Recreate client with new session
+    this.client = createGatewayClient(this.baseURL, {
+      getAuthToken: () => this.sessionCookie,
+    });
+
+    return { user };
+  }
+
+  public async login(params: {
+    email: string;
+    password: string;
+  }): Promise<{ user: { id: string; email: string } }> {
+    const { user, sessionCookie } = await clientLogin(this.baseURL, params);
+
+    this.sessionCookie = sessionCookie;
+    this.userId = user.id;
+
+    // Retrieve the API key that was created during registration
+    const dbUser = await this.gateway.database.getUser(user.id);
+    if (!dbUser?.encryptedApiKey) {
+      throw new Error("No API key found for user");
+    }
+    this.apiKey = decrypt(dbUser.encryptedApiKey, env.BETTER_AUTH_SECRET);
+
+    // Recreate client with new session
+    this.client = createGatewayClient(this.baseURL, {
+      getAuthToken: () => this.sessionCookie,
+    });
+
+    return { user };
+  }
+
+  public logout(): void {
+    this.sessionCookie = null;
+    this.userId = null;
+    this.apiKey = null;
+
+    // Recreate client without session
+    this.client = createGatewayClient(this.baseURL);
+  }
+
+  public getApiKey(): string {
+    if (!this.apiKey) {
+      throw new Error(
+        "API key not available. Call register() or login() first.",
+      );
+    }
+    return this.apiKey;
   }
 
   public static async start() {
-    const config = await makeTestConfig();
+    const database = Database.create(env.DATABASE_URL);
+
+    // Initialize test database before starting
+    await initializeTestDatabase({ database, keepUsers: false });
+    await createTestUser(database);
+
+    const baseURL = `http://localhost:${env.PORT}`;
+
     const gateway = await Gateway.start({
-      config,
-      baseUrl: `http://localhost:${config.get("server.port")}`,
+      database,
+      baseUrl: baseURL,
+      port: env.PORT,
     });
 
-    const client = createGatewayClient(
-      `http://localhost:${config.get("server.port")}`,
-    );
+    const client = createGatewayClient(baseURL);
 
     const echoServerSSEInstance = await serveOverSSE(
       makeEchoServer(),
@@ -70,16 +179,19 @@ export class IntegrationTestHarness {
 
     return new IntegrationTestHarness({
       gateway,
+      database,
       client,
       echoServerSSEInstance,
       kitchenSinkServerInstance,
       fooBarServerInstance,
+      baseURL,
     });
   }
 
   public async stop() {
-    await this.gateway.playbookStore.purge();
+    await this.initializeDatabase(true);
     await this.gateway.stop();
+    await this._database.close();
     await this.echoServerSSEInstance?.close();
     await this.kitchenSinkServerInstance?.close();
     await this.fooBarServerInstance?.close();

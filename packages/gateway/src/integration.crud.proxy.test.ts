@@ -8,6 +8,10 @@ describe("Playbook CRUD operations", () => {
 
   beforeAll(async () => {
     harness = await IntegrationTestHarness.start();
+    await harness.register({
+      email: "test@example.com",
+      password: "password123",
+    });
   });
 
   afterAll(async () => {
@@ -16,7 +20,7 @@ describe("Playbook CRUD operations", () => {
 
   describe("read", () => {
     beforeAll(async () => {
-      await harness.purge();
+      await harness.initializeDatabase(true);
     });
 
     it("should get all playbooks", async () => {
@@ -37,7 +41,7 @@ describe("Playbook CRUD operations", () => {
 
   describe("create", () => {
     beforeAll(async () => {
-      await harness.purge();
+      await harness.initializeDatabase(true);
       await harness.client.store.create.mutate({
         name: "Test playbook",
         description: "Test description",
@@ -56,9 +60,15 @@ describe("Playbook CRUD operations", () => {
     });
 
     it("update the configuration file", async () => {
-      expect(await harness.database.playbooks.count()).toBe(1);
-      const configEntry =
-        await harness.database.playbooks.getPlaybook("test-playbook");
+      expect(
+        await harness.database
+          .getAllPlaybooks(harness.getUserId())
+          .then((p) => p.length),
+      ).toBe(1);
+      const configEntry = await harness.database.getPlaybookWithDetails(
+        "test-playbook",
+        harness.getUserId(),
+      );
       expect(configEntry).toBeDefined();
       expect(configEntry?.name).toBe("Test playbook");
       expect(configEntry?.description).toBe("Test description");
@@ -68,7 +78,7 @@ describe("Playbook CRUD operations", () => {
   describe("update", () => {
     let playbook: GatewayRouterOutputs["store"]["create"];
     beforeEach(async () => {
-      await harness.purge();
+      await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test playbook",
         description: "Old description",
@@ -101,8 +111,10 @@ describe("Playbook CRUD operations", () => {
           playbookId: "test-playbook",
         });
         expect(updatedPlaybook?.description).toBe("");
-        const configEntry =
-          await harness.database.playbooks.getPlaybook("test-playbook");
+        const configEntry = await harness.database.getPlaybookWithDetails(
+          "test-playbook",
+          harness.getUserId(),
+        );
         expect(configEntry?.description).toBe("");
       });
     });
@@ -134,8 +146,10 @@ describe("Playbook CRUD operations", () => {
           playbookId: "test-playbook",
         });
         expect(updatedPlaybook?.name).toBe(playbook.name);
-        const configEntry =
-          await harness.database.playbooks.getPlaybook("test-playbook");
+        const configEntry = await harness.database.getPlaybookWithDetails(
+          "test-playbook",
+          harness.getUserId(),
+        );
         expect(configEntry?.name).toBe(playbook.name);
       });
     });
@@ -151,8 +165,10 @@ describe("Playbook CRUD operations", () => {
           name: newName,
         },
       });
-      const configEntry =
-        await harness.database.playbooks.getPlaybook("test-playbook");
+      const configEntry = await harness.database.getPlaybookWithDetails(
+        "test-playbook",
+        harness.getUserId(),
+      );
       expect(configEntry?.description).toBe(newDescription);
       expect(configEntry?.name).toBe(newName);
     });
@@ -160,7 +176,7 @@ describe("Playbook CRUD operations", () => {
 
   describe("delete", () => {
     beforeEach(async () => {
-      await harness.purge();
+      await harness.initializeDatabase(true);
       await harness.client.store.create.mutate({
         name: "Test playbook",
       });
@@ -178,7 +194,11 @@ describe("Playbook CRUD operations", () => {
     });
 
     it("should delete the playbook from the configuration file", async () => {
-      expect(await harness.database.playbooks.count()).toBe(0);
+      expect(
+        await harness.database
+          .getAllPlaybooks(harness.getUserId())
+          .then((p) => p.length),
+      ).toBe(0);
     });
   });
 });

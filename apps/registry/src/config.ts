@@ -8,7 +8,8 @@ export const env = createEnv({
   envVars: {
     PORT: z.number({ coerce: true }).default(3080),
     DATABASE_URL: z.string(),
-    API_KEY: z.string().default(""),
+    MANAGEMENT_API_KEY: z.string().optional(),
+    BASE_URL: z.string().default("https://registry.director.run"),
   },
 });
 

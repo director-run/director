@@ -7,7 +7,7 @@ import {
   type OAuthClientMetadata,
   type OAuthTokens,
 } from "@modelcontextprotocol/sdk/shared/auth.js";
-import { AbstractOAuthStorage } from "./storage/abstract-oauth-storage";
+import type { AbstractOAuthStorage } from "./storage/abstract-oauth-storage";
 import { InMemoryOAuthStorage } from "./storage/in-memory-oauth-storage";
 import { OnDiskOAuthStorage } from "./storage/on-disk-oauth-storage";
 
@@ -128,6 +128,8 @@ export class OAuthProviderFactory {
         directory: params.tokenDirectory,
         filePrefix: [params.filePrefix, this._id].filter(Boolean).join("-"),
       });
+    } else if (params.storage === "custom") {
+      this._storage = params.storageInstance;
     } else {
       this._storage = new InMemoryOAuthStorage();
     }
@@ -162,6 +164,12 @@ export type OAuthProviderFactoryParams =
     }
   | {
       storage: "memory";
+      baseCallbackUrl: string;
+      id?: string;
+    }
+  | {
+      storage: "custom";
+      storageInstance: AbstractOAuthStorage;
       baseCallbackUrl: string;
       id?: string;
     };

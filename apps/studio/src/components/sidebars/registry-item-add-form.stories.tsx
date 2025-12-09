@@ -16,6 +16,7 @@ const mockPlaybooks: PlaybookList = [
     id: "dev-playbook",
     name: "Development Playbook",
     description: "Main development playbook",
+    userId: "test-user-id",
     prompts: undefined,
     servers: [],
     paths: {
@@ -27,6 +28,7 @@ const mockPlaybooks: PlaybookList = [
     id: "staging-playbook",
     name: "Staging Playbook",
     description: "Staging environment playbook",
+    userId: "test-user-id",
     prompts: undefined,
     servers: [],
     paths: {
@@ -38,6 +40,7 @@ const mockPlaybooks: PlaybookList = [
     id: "production-playbook",
     name: "Production Playbook",
     description: "Production environment playbook",
+    userId: "test-user-id",
     prompts: undefined,
     servers: [],
     paths: {

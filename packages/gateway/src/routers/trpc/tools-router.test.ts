@@ -1,4 +1,7 @@
-import { type CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import {
+  type CallToolResult,
+  type TextContent,
+} from "@modelcontextprotocol/sdk/types.js";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { GatewayRouterOutputs } from "../../client";
 import { IntegrationTestHarness } from "../../test/integration";
@@ -9,6 +12,10 @@ describe("Tools Router", () => {
 
   beforeAll(async () => {
     harness = await IntegrationTestHarness.start();
+    await harness.register({
+      email: "test@example.com",
+      password: "password123",
+    });
   });
 
   afterAll(async () => {
@@ -16,13 +23,21 @@ describe("Tools Router", () => {
   });
 
   beforeEach(async () => {
-    await harness.purge();
+    await harness.initializeDatabase(true);
     playbook = await harness.client.store.create.mutate({
       name: "Test Playbook",
-      servers: [
-        harness.getConfigForTarget("echo"),
-        harness.getConfigForTarget("kitchenSink"),
-      ],
+    });
+    const echoConfig = harness.getConfigForTarget("echo");
+    await harness.client.store.addHTTPServer.mutate({
+      playbookId: playbook.id,
+      name: echoConfig.name,
+      url: echoConfig.transport.url,
+    });
+    const kitchenSinkConfig = harness.getConfigForTarget("kitchenSink");
+    await harness.client.store.addHTTPServer.mutate({
+      playbookId: playbook.id,
+      name: kitchenSinkConfig.name,
+      url: kitchenSinkConfig.transport.url,
     });
   });
 
@@ -109,7 +124,12 @@ describe("Tools Router", () => {
         },
       })) as CallToolResult;
 
-      expect(JSON.parse(result?.content?.[0]?.text as string)).toEqual({
+      const content = result?.content?.[0];
+      const text =
+        content && content.type === "text"
+          ? (content as TextContent).text
+          : undefined;
+      expect(JSON.parse(text as string)).toEqual({
         message: "hello",
       });
     });

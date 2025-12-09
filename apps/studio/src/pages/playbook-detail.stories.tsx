@@ -1,4 +1,7 @@
-import { PlaybookSectionClients } from "@director.run/design/components/playbooks-clients/playbook-section-clients.tsx";
+import {
+  type ConnectionInfo,
+  PlaybookSectionConnect,
+} from "@director.run/design/components/playbooks-clients/playbook-section-connect.tsx";
 import { PromptList } from "@director.run/design/components/prompts/prompt-list.tsx";
 import { PlaybookServerList } from "@director.run/design/components/servers/server-list.tsx";
 import {
@@ -8,7 +11,6 @@ import {
 } from "@director.run/design/components/split-view.tsx";
 import { ToolList } from "@director.run/design/components/tools/tool-list.tsx";
 import type {
-  Client,
   MCPTool,
   PlaybookDetail,
 } from "@director.run/design/components/types.ts";
@@ -19,20 +21,26 @@ import { SectionTitle } from "@director.run/design/components/ui/section.tsx";
 import { SectionDescription } from "@director.run/design/components/ui/section.tsx";
 import { Tab, Tabs } from "@director.run/design/components/ui/tabs.tsx";
 import { mockTools } from "@director.run/design/test/fixtures/mcp/tools.js";
-import { mockClients } from "@director.run/design/test/fixtures/playbook/clients.ts";
 import { mockPlaybook } from "@director.run/design/test/fixtures/playbook/playbook.ts";
 import { DesktopIcon, NotebookIcon, ToolboxIcon } from "@phosphor-icons/react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { withLayoutView } from "../helpers/decorators";
 
+const mockConnectionInfo: ConnectionInfo = {
+  playbookId: "staging-playbook",
+  apiKey: "sk_test_abc123def456ghi789",
+  streamableUrl: "https://gateway.director.run/mcp/staging-playbook",
+  sseUrl: "https://gateway.director.run/sse/staging-playbook",
+};
+
 const PlaybookDetailComponent = ({
   playbook,
   tools,
-  clients,
+  connectionInfo,
 }: {
   playbook: PlaybookDetail;
-  clients: Client[];
   tools: MCPTool[];
+  connectionInfo: ConnectionInfo;
 }) => (
   <Container size="xl">
     <SplitView>
@@ -74,11 +82,8 @@ const PlaybookDetailComponent = ({
         </Section>
       </SplitViewMain>
       <SplitViewSide>
-        <PlaybookSectionClients
-          playbook={playbook}
-          gatewayBaseUrl={"https://some.url.com"}
-          clients={clients ?? []}
-          onChangeInstall={() => console.log("change install")}
+        <PlaybookSectionConnect
+          connectionInfo={connectionInfo}
           isLoading={false}
         />
       </SplitViewSide>
@@ -101,7 +106,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     playbook: mockPlaybook(),
-    clients: mockClients,
     tools: mockTools(),
+    connectionInfo: mockConnectionInfo,
   },
 };

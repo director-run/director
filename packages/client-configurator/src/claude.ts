@@ -75,8 +75,8 @@ export class ClaudeInstaller extends AbstractClient<ClaudeConfig> {
 
   public async install(
     attributes:
-      | { name: string; sseURL: string }
-      | Array<{ name: string; sseURL: string }>,
+      | { name: string; streamableURL: string }
+      | Array<{ name: string; streamableURL: string }>,
   ): Promise<InstallerResult> {
     if (Array.isArray(attributes)) {
       let requiresRestart = false;
@@ -100,7 +100,12 @@ export class ClaudeInstaller extends AbstractClient<ClaudeConfig> {
     };
     newConfig.mcpServers[this.createServerConfigKey(attributes.name)] = {
       command: "npx",
-      args: ["-y", "@director.run/cli@latest", "http2stdio", attributes.sseURL],
+      args: [
+        "-y",
+        "@director.run/cli@latest",
+        "http2stdio",
+        attributes.streamableURL,
+      ],
       env: {
         LOG_LEVEL: "silent",
       },

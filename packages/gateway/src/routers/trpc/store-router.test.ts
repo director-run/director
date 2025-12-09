@@ -8,6 +8,10 @@ describe("Playbook Router", () => {
 
   beforeAll(async () => {
     harness = await IntegrationTestHarness.start();
+    await harness.register({
+      email: "test@example.com",
+      password: "password123",
+    });
   });
 
   afterAll(async () => {
@@ -15,10 +19,15 @@ describe("Playbook Router", () => {
   });
 
   beforeEach(async () => {
-    await harness.purge();
+    await harness.initializeDatabase(true);
     playbook = await harness.client.store.create.mutate({
       name: "Test Playbook",
-      servers: [harness.getConfigForTarget("echo")],
+    });
+    const echoConfig = harness.getConfigForTarget("echo");
+    await harness.client.store.addHTTPServer.mutate({
+      playbookId: playbook.id,
+      name: echoConfig.name,
+      url: echoConfig.transport.url,
     });
   });
 

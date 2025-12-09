@@ -36,6 +36,7 @@ export const PlaybookSchema = z.object({
   id: requiredStringSchema,
   name: requiredStringSchema,
   description: optionalStringSchema,
+  userId: requiredStringSchema,
   prompts: z.array(PromptSchema).optional(),
   servers: z.array(PlaybookTargetSchema),
 });

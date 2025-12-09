@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@inquirer/prompts": "^7.5.2",
-    "@modelcontextprotocol/sdk": "^1.21.0",
+    "@modelcontextprotocol/sdk": "^1.24.3",
     "@trpc/client": "^11.0.2",
     "@trpc/server": "^11.0.2",
     "commander": "^13.1.0",

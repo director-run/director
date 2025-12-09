@@ -1,4 +1,7 @@
-import { type CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import {
+  type CallToolResult,
+  type TextContent,
+} from "@modelcontextprotocol/sdk/types.js";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { GatewayRouterOutputs } from "../../client";
 import { IntegrationTestHarness } from "../../test/integration";
@@ -121,7 +124,12 @@ describe("Tools Router", () => {
         },
       })) as CallToolResult;
 
-      expect(JSON.parse(result?.content?.[0]?.text as string)).toEqual({
+      const content = result?.content?.[0];
+      const text =
+        content && content.type === "text"
+          ? (content as TextContent).text
+          : undefined;
+      expect(JSON.parse(text as string)).toEqual({
         message: "hello",
       });
     });

@@ -1,6 +1,28 @@
-import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import type {
+  CallToolResult,
+  GetPromptResult,
+  TextContent,
+} from "@modelcontextprotocol/sdk/types.js";
 import { McpError } from "@modelcontextprotocol/sdk/types.js";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
+
+function getTextContent(result: CallToolResult): string | undefined {
+  const content = result.content?.[0];
+  if (content && content.type === "text") {
+    return (content as TextContent).text;
+  }
+  return undefined;
+}
+
+function getPromptTextContent(result: GetPromptResult): string | undefined {
+  const content = result.messages?.[0]?.content;
+  if (content && typeof content === "object" && "type" in content) {
+    if (content.type === "text") {
+      return (content as TextContent).text;
+    }
+  }
+  return undefined;
+}
 import { z } from "zod";
 import { InMemoryClient } from "../client/in-memory-client";
 import { SimpleServer } from "../simple-server";
@@ -127,7 +149,7 @@ describe("client integration tests", () => {
           name: "bar",
           arguments: { message: "Hello, world!" },
         })) as CallToolResult;
-        expect(result.content?.[0].text).toContain("Hello, world!");
+        expect(getTextContent(result)).toContain("Hello, world!");
       });
 
       test("should work with tool prefix", async () => {
@@ -150,7 +172,7 @@ describe("client integration tests", () => {
           name: "prefix__bar",
           arguments: { message: "Hello, world!" },
         })) as CallToolResult;
-        expect(result.content?.[0].text).toContain("Hello, world!");
+        expect(getTextContent(result)).toContain("Hello, world!");
       });
     });
 
@@ -208,7 +230,7 @@ describe("client integration tests", () => {
             message: "Hello, world!",
           },
         })) as CallToolResult;
-        expect(result.content?.[0].text).toContain("Hello, world!");
+        expect(getTextContent(result)).toContain("Hello, world!");
       });
     });
 
@@ -239,7 +261,7 @@ describe("client integration tests", () => {
           },
         })) as CallToolResult;
 
-        expect(result.content?.[0].text).toContain("Hello, world!");
+        expect(getTextContent(result)).toContain("Hello, world!");
       });
 
       test("should call original tools when tool prefix is undefined", async () => {
@@ -250,7 +272,7 @@ describe("client integration tests", () => {
             message: "Hello, world!",
           },
         })) as CallToolResult;
-        expect(result2.content?.[0].text).toContain("Hello, world!");
+        expect(getTextContent(result2)).toContain("Hello, world!");
       });
     });
 
@@ -289,13 +311,13 @@ describe("client integration tests", () => {
           name: "echo",
           arguments: { message: "Hello, world!" },
         })) as CallToolResult;
-        expect(result1.content?.[0].text).toContain("Hello, world!");
+        expect(getTextContent(result1)).toContain("Hello, world!");
 
         const result2 = (await client.callTool({
           name: "foo",
           arguments: { message: "Hello, world!" },
         })) as CallToolResult;
-        expect(result2.content?.[0].text).toContain("Hello, world!");
+        expect(getTextContent(result2)).toContain("Hello, world!");
       });
 
       test("should not call non-included tools", async () => {
@@ -313,7 +335,7 @@ describe("client integration tests", () => {
           name: "prefix__echo",
           arguments: { message: "Hello, world!" },
         })) as CallToolResult;
-        expect(result.content?.[0].text).toContain("Hello, world!");
+        expect(getTextContent(result)).toContain("Hello, world!");
 
         await expect(
           client.callTool({
@@ -365,7 +387,7 @@ describe("client integration tests", () => {
           name: "welcome",
           arguments: { name: "World" },
         });
-        expect(result.messages?.[0].content.text).toContain("Welcome, World!");
+        expect(getPromptTextContent(result)).toContain("Welcome, World!");
       });
     });
 
@@ -413,13 +435,13 @@ describe("client integration tests", () => {
           name: "greeting",
           arguments: { name: "World" },
         });
-        expect(result1.messages?.[0].content.text).toContain("Hello, World!");
+        expect(getPromptTextContent(result1)).toContain("Hello, World!");
 
         const result2 = await client.getPrompt({
           name: "farewell",
           arguments: { name: "World" },
         });
-        expect(result2.messages?.[0].content.text).toContain("Goodbye, World!");
+        expect(getPromptTextContent(result2)).toContain("Goodbye, World!");
       });
 
       test("should not get non-included prompts", async () => {

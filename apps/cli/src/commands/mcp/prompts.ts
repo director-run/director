@@ -6,7 +6,6 @@ import {
 } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { makeTable } from "@director.run/utilities/cli/index";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import type { Prompt } from "@modelcontextprotocol/sdk/types.js";
 import { gatewayClient } from "../../client";
 import { title } from "../../common";
@@ -18,7 +17,7 @@ import type { TransportType } from "./tools";
 async function createPlaybookClient(
   playbookId: string,
   transport: TransportType = "streamable",
-): Promise<Client> {
+): Promise<HTTPClient> {
   const connectionInfo = await gatewayClient.store.getConnectionInfo.query({
     playbookId,
   });
@@ -57,7 +56,7 @@ export function registerPromptsCommand(program: DirectorCommand) {
     );
 }
 
-async function printPrompts(client: Client) {
+async function printPrompts(client: HTTPClient) {
   console.log("");
   console.log(title("prompts"));
   console.log("");

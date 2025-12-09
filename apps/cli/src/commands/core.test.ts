@@ -3,11 +3,10 @@ import path from "node:path";
 import { StdioClient } from "@director.run/mcp/client/stdio-client";
 import { makeEchoServer } from "@director.run/mcp/test/fixtures";
 import { serveOverSSE } from "@director.run/mcp/transport";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 describe("sse2stdio <sse_url>", () => {
-  let client: Client;
+  let client: StdioClient;
   let proxyTargetServerInstance: Server;
 
   beforeAll(async () => {

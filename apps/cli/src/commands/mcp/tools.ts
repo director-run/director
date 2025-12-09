@@ -7,7 +7,6 @@ import {
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { makeTable } from "@director.run/utilities/cli/index";
 import { input } from "@inquirer/prompts";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { gatewayClient } from "../../client";
 import { title } from "../../common";
@@ -20,7 +19,7 @@ export type TransportType = "streamable" | "sse";
 async function createPlaybookClient(
   playbookId: string,
   transport: TransportType = "streamable",
-): Promise<Client> {
+): Promise<HTTPClient> {
   const connectionInfo = await gatewayClient.store.getConnectionInfo.query({
     playbookId,
   });
@@ -109,7 +108,7 @@ export function registerToolsCommand(program: DirectorCommand) {
     );
 }
 
-async function printTools(client: Client) {
+async function printTools(client: HTTPClient) {
   console.log("");
   console.log(title("tools"));
   console.log("");
@@ -138,10 +137,10 @@ export function makeToolTable(tools: Tool[]) {
   return table;
 }
 
-async function printTool(client: Client, toolName: string) {
+async function printTool(client: HTTPClient, toolName: string) {
   const { tools } = await client.listTools();
 
-  const tool = tools.find((tool) => tool.name === toolName);
+  const tool = tools.find((t: Tool) => t.name === toolName);
 
   if (!tool) {
     throw new Error("Tool not found");
@@ -173,13 +172,13 @@ async function printTool(client: Client, toolName: string) {
   console.log();
 }
 
-async function callTool(client: Client, toolName: string) {
+async function callTool(client: HTTPClient, toolName: string) {
   console.log(yellow("******************"));
   console.log(yellow(`* TOOL CALL: ${toolName} *`));
   console.log(yellow("******************"));
   console.log("");
   const { tools } = await client.listTools();
-  const toolToRun = tools.find((tool) => tool.name === toolName);
+  const toolToRun = tools.find((t: Tool) => t.name === toolName);
 
   if (!toolToRun) {
     console.log(yellow("Tool not found"));

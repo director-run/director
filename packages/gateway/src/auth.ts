@@ -100,11 +100,13 @@ export const auth = betterAuth({
       },
       // Enable session creation from API keys so middleware can get userId
       enableSessionForAPIKeys: true,
-      // Disable rate limiting for API keys - these are used for MCP sessions
-      // which can have many requests. Rate limiting should be handled at
-      // the application level if needed.
+      // Enable rate limiting for API keys to prevent brute force and DoS attacks
+      // These limits are generous enough for normal MCP usage while preventing abuse
+      // Configurable via API_KEY_RATE_LIMIT_WINDOW_SECONDS and API_KEY_RATE_LIMIT_MAX_REQUESTS
       rateLimit: {
-        enabled: false,
+        enabled: true,
+        timeWindow: env.API_KEY_RATE_LIMIT_WINDOW_SECONDS * 1000,
+        maxRequests: env.API_KEY_RATE_LIMIT_MAX_REQUESTS,
       },
     }),
   ],

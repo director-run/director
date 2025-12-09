@@ -58,6 +58,17 @@ export const env = createEnv({
       .string()
       .default("false")
       .transform((s) => s === "true"),
+    // API key rate limiting configuration
+    API_KEY_RATE_LIMIT_WINDOW_SECONDS: z
+      .string()
+      .default("60")
+      .transform((s) => parseInt(s, 10))
+      .pipe(z.number().positive()),
+    API_KEY_RATE_LIMIT_MAX_REQUESTS: z
+      .string()
+      .default("1000")
+      .transform((s) => parseInt(s, 10))
+      .pipe(z.number().positive()),
   },
   runtimeEnv: process.env,
   emptyStringAsUndefined: true,

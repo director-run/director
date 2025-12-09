@@ -1,13 +1,13 @@
 name: Deploy
 
 on:
-  # workflow_run:
-  #   workflows: ["CI"]
-  #   types:
-  #     - completed
-  #   branches: [multi-tenancy]
-  push:
-    branches: [ "multi-tenancy" ]
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+    branches: [main]
+  # push:
+  #   branches: [ "main" ]
 
 jobs:
   deploy-gateway:

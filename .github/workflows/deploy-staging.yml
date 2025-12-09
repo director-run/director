@@ -12,7 +12,7 @@ on:
 jobs:
   deploy-gateway:
     name: Gateway
-    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.conclusion == 'success'
     permissions:
       contents: read
       id-token: write
@@ -26,7 +26,7 @@ jobs:
 
   deploy-registry:
     name: Registry
-    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.conclusion == 'success'
     permissions:
       contents: read
       id-token: write

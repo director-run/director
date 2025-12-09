@@ -18,7 +18,7 @@
 
 Director allows you to provide <ins>**playbooks**</ins> to AI Agents. A playbook is a set of <ins>**MCP tools**</ins>, <ins>**prompts**</ins> and <ins>**configuration**</ins>, that give agents new <ins>**skills**</ins>. You can connect Claude, Cursor and VSCode in 1-click, or integrate manually through a single MCP endpoint.
 
-Playbooks are portable and can easily be switched in and out of context. Director is local-first - setip and client integration takes 30 seconds. In addition, Director provides all of the MCP management functionality that you'd expect: tool filtering, logging, strong isolation, and unified OAuth.
+Playbooks are portable and can easily be switched in and out of context. Director is local-first - setup and client integration takes 30 seconds. In addition, Director provides all of the MCP management functionality that you'd expect: tool filtering, logging, strong isolation, and unified OAuth.
 
 <br />
 

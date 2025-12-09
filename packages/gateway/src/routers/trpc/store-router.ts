@@ -1,5 +1,7 @@
 import { HTTPClient } from "@director.run/mcp/client/http-client";
+import { createRegistryClient } from "@director.run/registry/client";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
+import { getLogger } from "@director.run/utilities/logger";
 import { requiredStringSchema } from "@director.run/utilities/schema";
 import { t } from "@director.run/utilities/trpc";
 import { joinURL } from "@director.run/utilities/url";
@@ -13,6 +15,8 @@ import {
 } from "../../helpers";
 import type { PlaybookTarget } from "../../playbooks/playbook";
 import { type AuthenticatedGatewayContext, protectedProcedure } from "./index";
+
+const logger = getLogger("store-router");
 
 const httpTransportSchema = z.object({
   type: z.literal("http"),
@@ -169,6 +173,118 @@ export function createPlaybookStoreRouter() {
 
         return await target.toPlainObject({
           tools: input.queryParams?.includeTools,
+          connectionInfo: true,
+        });
+      }),
+
+    /**
+     * Add a server from the registry by looking up its entry and building
+     * the transport with the provided parameters.
+     */
+    addRegistryServer: protectedProcedure
+      .input(
+        z.object({
+          playbookId: z.string(),
+          registryEntryName: z.string().trim().min(1),
+          parameters: z.record(z.string(), z.string()).optional(),
+        }),
+      )
+      .mutation(async ({ ctx, input }) => {
+        const { playbookStore, userId } = ctx as AuthenticatedGatewayContext;
+
+        if (!env.REGISTRY_URL) {
+          throw new AppError(
+            ErrorCode.BAD_REQUEST,
+            "Registry URL is not configured",
+          );
+        }
+
+        const registryClient = createRegistryClient(env.REGISTRY_URL);
+
+        // Fetch the registry entry
+        let entry;
+        try {
+          entry = await registryClient.entries.getEntryByName.query({
+            name: input.registryEntryName,
+          });
+        } catch (error) {
+          logger.error({
+            message: "failed to fetch registry entry",
+            entryName: input.registryEntryName,
+            error,
+          });
+          throw new AppError(
+            ErrorCode.NOT_FOUND,
+            `Registry entry "${input.registryEntryName}" not found`,
+          );
+        }
+
+        // Get the transport with parameters substituted
+        let transport;
+        try {
+          transport = await registryClient.entries.getTransportForEntry.query({
+            entryName: input.registryEntryName,
+            parameters: input.parameters,
+          });
+        } catch (error) {
+          logger.error({
+            message: "failed to build transport for registry entry",
+            entryName: input.registryEntryName,
+            error,
+          });
+          throw new AppError(
+            ErrorCode.BAD_REQUEST,
+            `Failed to build transport for "${input.registryEntryName}": ${error instanceof Error ? error.message : "Unknown error"}`,
+          );
+        }
+
+        const playbook = await playbookStore.get(input.playbookId, userId);
+
+        // Build the target configuration
+        let targetConfig: PlaybookTarget;
+
+        if (transport.type === "http") {
+          targetConfig = {
+            type: "http",
+            name: entry.name,
+            url: transport.url,
+            headers: transport.headers,
+            source: {
+              name: "registry",
+              entryId: entry.id,
+            },
+          };
+        } else {
+          targetConfig = {
+            type: "stdio",
+            name: entry.name,
+            command: transport.command,
+            args: transport.args,
+            env: transport.env,
+            source: {
+              name: "registry",
+              entryId: entry.id,
+            },
+          };
+        }
+
+        const target = await playbook.addTarget({
+          ...targetConfig,
+          prompts: {
+            include: [], // Disable prompts by default
+          },
+        });
+
+        logger.info({
+          message: "added registry server to playbook",
+          playbookId: input.playbookId,
+          serverName: entry.name,
+          registryEntry: input.registryEntryName,
+          transportType: transport.type,
+        });
+
+        return await target.toPlainObject({
+          tools: false,
           connectionInfo: true,
         });
       }),

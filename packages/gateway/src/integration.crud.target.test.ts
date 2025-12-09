@@ -254,6 +254,41 @@ describe("Playbook Target CRUD operations", () => {
       expect(retrievedTarget.toolsList?.[0].name).toBe("echo");
     });
 
+    describe("addRegistryServer", () => {
+      it("should add a server from the registry and list its tools", async () => {
+        await harness.initializeDatabase(true);
+        const testPlaybook = await harness.client.store.create.mutate({
+          name: "Registry Test Playbook",
+        });
+
+        // Add the hackernews server from the registry
+        const addedServer = await harness.client.store.addRegistryServer.mutate(
+          {
+            playbookId: testPlaybook.id,
+            registryEntryName: "hackernews",
+          },
+        );
+
+        expect(addedServer.name).toBe("hackernews");
+        expect(addedServer.type).toBe("stdio");
+        expect(addedServer.connectionInfo?.status).toBe("connected");
+        expect(addedServer.source).toEqual({
+          name: "registry",
+          entryId: expect.any(String),
+        });
+
+        // List tools to verify the server works
+        const serverWithTools = await harness.client.store.getServer.query({
+          playbookId: testPlaybook.id,
+          serverName: "hackernews",
+          queryParams: { includeTools: true },
+        });
+
+        expect(serverWithTools.toolsList).toBeDefined();
+        expect(serverWithTools.toolsList?.length).toBeGreaterThan(0);
+      });
+    });
+
     describe("valid target", () => {
       let addServerResponse: GatewayRouterOutputs["store"]["addServer"];
       beforeEach(async () => {

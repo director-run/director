@@ -138,20 +138,10 @@ async function addServerFromRegistry(playbookId: string, entryName: string) {
     .run();
   const parameters = await promptForParameters(entry);
   await spinnerWrap(async () => {
-    const transport = await registryClient.entries.getTransportForEntry.query({
-      entryName,
+    await gatewayClient.store.addRegistryServer.mutate({
+      playbookId,
+      registryEntryName: entryName,
       parameters,
-    });
-    await gatewayClient.store.addServer.mutate({
-      playbookId: playbookId,
-      server: {
-        name: entryName,
-        transport,
-        source: {
-          name: "registry",
-          entryId: entry.id,
-        },
-      },
     });
   })
     .start("installing server...")

@@ -1,39 +1,35 @@
-name: Deploy
+name: Production Deploy
 
 on:
   workflow_run:
     workflows: ["CI"]
     types:
       - completed
-    branches: [main]
-  # push:
-  #   branches: [ "main" ]
+    branches: [production]
 
 jobs:
   deploy-gateway:
     name: Gateway
-    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
     permissions:
       contents: read
       id-token: write
     uses: ./.github/workflows/__cloudrun-deploy.yml
     with:
-      environment: staging
-      service_name: director-staging-gateway
+      environment: production
+      service_name: director-production-gateway
       working-directory: packages/gateway
       migrations: true
       seed_enabled: true
 
   deploy-registry:
     name: Registry
-    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
     permissions:
       contents: read
       id-token: write
     uses: ./.github/workflows/__cloudrun-deploy.yml
     with:
-      environment: staging
-      service_name: director-staging-registry
+      environment: production
+      service_name: director-production-registry
       working-directory: apps/registry
       migrations: true
       seed_enabled: true

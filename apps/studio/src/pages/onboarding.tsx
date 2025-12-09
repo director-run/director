@@ -138,7 +138,7 @@ export function GetStartedPage() {
   const handlePlaybookSubmit: SubmitHandler<PlaybookCreateFormValues> = async (
     values,
   ) => {
-    await createPlaybookMutation.mutateAsync({ ...values, servers: [] });
+    await createPlaybookMutation.mutateAsync(values);
   };
 
   const handleMcpSelect = (entry: { name: string }) => {

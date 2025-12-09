@@ -22,7 +22,12 @@ describe("Playbook Router", () => {
     await harness.initializeDatabase(true);
     playbook = await harness.client.store.create.mutate({
       name: "Test Playbook",
-      servers: [harness.getConfigForTarget("echo")],
+    });
+    const echoConfig = harness.getConfigForTarget("echo");
+    await harness.client.store.addHTTPServer.mutate({
+      playbookId: playbook.id,
+      name: echoConfig.name,
+      url: echoConfig.transport.url,
     });
   });
 

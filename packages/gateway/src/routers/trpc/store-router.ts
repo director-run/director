@@ -67,13 +67,9 @@ export type ServerConfigEntry = z.infer<typeof ServerConfigEntrySchema>;
 const PlaybookCreateSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
-  servers: z.array(ServerConfigEntrySchema).optional(),
-  addToolPrefix: z.boolean().optional(),
 });
 
-const PlaybookUpdateSchema = PlaybookCreateSchema.omit({
-  servers: true,
-}).partial();
+const PlaybookUpdateSchema = PlaybookCreateSchema.partial();
 
 const TargetUpdateSchema = ServerConfigEntrySchema.omit({
   transport: true,
@@ -120,7 +116,6 @@ export function createPlaybookStoreRouter() {
             id,
             name: input.name,
             description: input.description ?? undefined,
-            servers: input.servers?.map(oldServerToTargetParams),
             userId,
           })
         ).toPlainObject();
@@ -580,28 +575,3 @@ export function createPlaybookStoreRouter() {
       }),
   });
 }
-
-const oldServerToTargetParams = (server: ServerConfigEntry): PlaybookTarget => {
-  if (server.transport.type === "http") {
-    return {
-      type: server.transport.type,
-      name: server.name,
-      url: server.transport.url,
-      headers: server.transport.headers,
-      tools: server.tools,
-      disabled: server.disabled,
-    };
-  } else if (server.transport.type === "stdio") {
-    return {
-      type: server.transport.type,
-      name: server.name,
-      command: server.transport.command,
-      args: server.transport.args,
-      env: server.transport.env,
-      tools: server.tools,
-      disabled: server.disabled,
-    };
-  } else {
-    throw new AppError(ErrorCode.BAD_REQUEST, "invalid server transport type");
-  }
-};

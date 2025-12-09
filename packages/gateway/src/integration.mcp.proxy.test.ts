@@ -62,10 +62,18 @@ describe("MCP Playbook", () => {
       await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test Playbook",
-        servers: [
-          harness.getConfigForTarget("echo"),
-          harness.getConfigForTarget("kitchenSink"),
-        ],
+      });
+      const echoConfig = harness.getConfigForTarget("echo");
+      await harness.client.store.addHTTPServer.mutate({
+        playbookId: playbook.id,
+        name: echoConfig.name,
+        url: echoConfig.transport.url,
+      });
+      const kitchenSinkConfig = harness.getConfigForTarget("kitchenSink");
+      await harness.client.store.addHTTPServer.mutate({
+        playbookId: playbook.id,
+        name: kitchenSinkConfig.name,
+        url: kitchenSinkConfig.transport.url,
       });
     });
 

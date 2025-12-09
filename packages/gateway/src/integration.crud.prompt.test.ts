@@ -30,7 +30,6 @@ describe("Prompt Capabilities", () => {
       await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test Playbook",
-        servers: [],
       });
       prompt = makePrompt();
 
@@ -85,7 +84,6 @@ describe("Prompt Capabilities", () => {
       await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test Playbook",
-        servers: [],
       });
     });
 
@@ -137,7 +135,6 @@ describe("Prompt Capabilities", () => {
       await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test Playbook",
-        servers: [],
       });
       prompt = makePrompt();
       await harness.client.store.addPrompt.mutate({
@@ -234,7 +231,6 @@ describe("Prompt Capabilities", () => {
       await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test Playbook",
-        servers: [],
       });
 
       await harness.client.store.addPrompt.mutate({

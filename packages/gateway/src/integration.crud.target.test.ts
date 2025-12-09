@@ -26,7 +26,12 @@ describe("Playbook Target CRUD operations", () => {
       await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test Playbook",
-        servers: [harness.getConfigForTarget("echo")],
+      });
+      const echoConfig = harness.getConfigForTarget("echo");
+      await harness.client.store.addHTTPServer.mutate({
+        playbookId: playbook.id,
+        name: echoConfig.name,
+        url: echoConfig.transport.url,
       });
     });
     it("should be able to retrieve a target", async () => {
@@ -62,7 +67,6 @@ describe("Playbook Target CRUD operations", () => {
       await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test Playbook",
-        servers: [],
       });
     });
 
@@ -125,7 +129,6 @@ describe("Playbook Target CRUD operations", () => {
         ).toEqual(
           expect.objectContaining({
             name: "Test Playbook",
-            servers: [],
           }),
         );
 
@@ -136,7 +139,6 @@ describe("Playbook Target CRUD operations", () => {
         ).toEqual(
           expect.objectContaining({
             name: "Test Playbook",
-            servers: [],
           }),
         );
       });
@@ -163,7 +165,6 @@ describe("Playbook Target CRUD operations", () => {
         ).toEqual(
           expect.objectContaining({
             name: "Test Playbook",
-            servers: [],
           }),
         );
 
@@ -174,7 +175,6 @@ describe("Playbook Target CRUD operations", () => {
         ).toEqual(
           expect.objectContaining({
             name: "Test Playbook",
-            servers: [],
           }),
         );
       });
@@ -199,7 +199,6 @@ describe("Playbook Target CRUD operations", () => {
         ).toEqual(
           expect.objectContaining({
             name: "Test Playbook",
-            servers: [],
           }),
         );
 
@@ -210,7 +209,6 @@ describe("Playbook Target CRUD operations", () => {
         ).toEqual(
           expect.objectContaining({
             name: "Test Playbook",
-            servers: [],
           }),
         );
       });
@@ -447,7 +445,12 @@ describe("Playbook Target CRUD operations", () => {
       await harness.initializeDatabase(true);
       playbook = await harness.client.store.create.mutate({
         name: "Test Playbook",
-        servers: [harness.getConfigForTarget("echo")],
+      });
+      const echoConfig = harness.getConfigForTarget("echo");
+      await harness.client.store.addHTTPServer.mutate({
+        playbookId: playbook.id,
+        name: echoConfig.name,
+        url: echoConfig.transport.url,
       });
     });
 
@@ -486,10 +489,18 @@ describe("Playbook Target CRUD operations", () => {
         await harness.initializeDatabase(true);
         playbook = await harness.client.store.create.mutate({
           name: "Test Playbook",
-          servers: [
-            harness.getConfigForTarget("echo"),
-            harness.getConfigForTarget("kitchenSink"),
-          ],
+        });
+        const echoConfig = harness.getConfigForTarget("echo");
+        await harness.client.store.addHTTPServer.mutate({
+          playbookId: playbook.id,
+          name: echoConfig.name,
+          url: echoConfig.transport.url,
+        });
+        const kitchenSinkConfig = harness.getConfigForTarget("kitchenSink");
+        await harness.client.store.addHTTPServer.mutate({
+          playbookId: playbook.id,
+          name: kitchenSinkConfig.name,
+          url: kitchenSinkConfig.transport.url,
         });
         updatedResponse = await harness.client.store.updateServer.mutate({
           playbookId: playbook.id,
@@ -563,10 +574,25 @@ describe("Playbook Target CRUD operations", () => {
         await harness.initializeDatabase(true);
         playbook = await harness.client.store.create.mutate({
           name: "Test Playbook",
-          servers: [
-            { ...harness.getConfigForTarget("echo"), disabled: true },
-            harness.getConfigForTarget("kitchenSink"),
-          ],
+        });
+        // Add echo server and then disable it
+        const echoConfig = harness.getConfigForTarget("echo");
+        await harness.client.store.addHTTPServer.mutate({
+          playbookId: playbook.id,
+          name: echoConfig.name,
+          url: echoConfig.transport.url,
+        });
+        await harness.client.store.updateServer.mutate({
+          playbookId: playbook.id,
+          serverName: echoConfig.name,
+          attributes: { disabled: true },
+        });
+        // Add kitchen-sink server (enabled)
+        const kitchenSinkConfig = harness.getConfigForTarget("kitchenSink");
+        await harness.client.store.addHTTPServer.mutate({
+          playbookId: playbook.id,
+          name: kitchenSinkConfig.name,
+          url: kitchenSinkConfig.transport.url,
         });
       });
       it("should return the disabled target correctly", async () => {

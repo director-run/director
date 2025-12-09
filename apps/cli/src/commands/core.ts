@@ -66,7 +66,6 @@ export function registerCoreCommands(program: DirectorCommand): void {
       actionWithErrorHandler(async (name: string) => {
         const playbook = await gatewayClient.store.create.mutate({
           name,
-          servers: [],
         });
 
         console.log(`playbook ${playbook.id} created`);

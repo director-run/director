@@ -53,10 +53,9 @@ export function PlaybookTargetAddSheet({
     playbookId: playbooks?.[0]?.id ?? undefined,
     server: {
       name: "",
-      type: "stdio" as const,
-      command: "",
-      args: [],
-      env: {},
+      type: "http" as const,
+      url: "",
+      headers: {},
     },
   };
 
@@ -176,7 +175,7 @@ function McpAddFormFields({
   const transportType = useWatch({
     control,
     name: "server.type",
-    defaultValue: "stdio",
+    defaultValue: "http",
   });
 
   return (
@@ -198,8 +197,8 @@ function McpAddFormFields({
           placeholder="Enter server name…"
         />
         <SelectNativeField label="Transport" name="server.type">
-          <option value="stdio">STDIO</option>
           <option value="http">HTTP</option>
+          <option value="stdio">STDIO</option>
         </SelectNativeField>
       </div>
 

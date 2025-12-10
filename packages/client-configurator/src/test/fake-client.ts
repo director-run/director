@@ -11,11 +11,21 @@ type InMemoryEntry = {
   streamableURL: string;
 };
 
+const TEST_CONFIG_KEY_PREFIX = "drctr-test__";
+
 export class FakeClient extends AbstractClient<Record<string, InMemoryEntry>> {
   private store: Map<string, InMemoryEntry> = new Map();
 
-  public constructor(params: { name: string; installables?: Installable[] }) {
-    super({ configPath: "in-memory://config", name: params.name });
+  public constructor(params: {
+    name: string;
+    installables?: Installable[];
+    configKeyPrefix?: string;
+  }) {
+    super({
+      configPath: "in-memory://config",
+      name: params.name,
+      configKeyPrefix: params.configKeyPrefix ?? TEST_CONFIG_KEY_PREFIX,
+    });
     for (const entry of params.installables ?? []) {
       this.store.set(entry.name, {
         name: entry.name,

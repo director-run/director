@@ -9,6 +9,7 @@ import type { ClaudeConfig } from "./claude";
 import type { ClaudeCodeConfig } from "./claude-code";
 import type { CursorConfig } from "./cursor";
 import {
+  TEST_CONFIG_KEY_PREFIX,
   createConfigFile,
   createInstallable,
   createTestClient,
@@ -122,7 +123,7 @@ import type { VSCodeConfig } from "./vscode";
           }
 
           expect(Object.keys(servers)).toContain(
-            `director__${installable.name}`,
+            `${TEST_CONFIG_KEY_PREFIX}${installable.name}`,
           );
         });
 

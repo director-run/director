@@ -1,7 +1,6 @@
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { readJSONFile } from "@director.run/utilities/json";
 import { type Logger, getLogger } from "@director.run/utilities/logger";
-const CONFIG_KEY_PREFIX = "director__";
 
 export type InstallerResult = {
   requiresRestart: boolean;
@@ -13,11 +12,17 @@ export abstract class AbstractClient<T> {
   protected logger: Logger;
   public readonly configPath: string;
   public readonly name: string;
+  protected readonly configKeyPrefix: string;
 
-  public constructor(params: { configPath: string; name: string }) {
+  public constructor(params: {
+    configPath: string;
+    name: string;
+    configKeyPrefix: string;
+  }) {
     this.configPath = params.configPath;
     this.isInitialized = false;
     this.name = params.name;
+    this.configKeyPrefix = params.configKeyPrefix;
     this.logger = getLogger(`client-configurator/${this.name}`);
   }
 
@@ -84,16 +89,16 @@ export abstract class AbstractClient<T> {
   }
 
   protected createServerConfigKey(name: string) {
-    return `${CONFIG_KEY_PREFIX}${name}`;
+    return `${this.configKeyPrefix}${name}`;
   }
 
   protected isManagedConfigKey(key: string) {
-    return key.startsWith(CONFIG_KEY_PREFIX);
+    return key.startsWith(this.configKeyPrefix);
   }
 
   protected toDisplayName(key: string) {
     return this.isManagedConfigKey(key)
-      ? key.replace(CONFIG_KEY_PREFIX, "")
+      ? key.replace(this.configKeyPrefix, "")
       : key;
   }
 

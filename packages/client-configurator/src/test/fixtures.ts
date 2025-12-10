@@ -17,6 +17,8 @@ import { type Installable } from "../types";
 import { AbstractClient } from "../types";
 import { type VSCodeConfig, VSCodeInstaller } from "../vscode";
 
+export const TEST_CONFIG_KEY_PREFIX = "drctr-test__";
+
 export function createVSCodeConfig(entries: Array<Installable>): VSCodeConfig {
   return {
     mcp: {
@@ -148,21 +150,25 @@ export function createTestClient(
     case "vscode":
       installer = new VSCodeInstaller({
         configPath: getConfigPath(target),
+        configKeyPrefix: TEST_CONFIG_KEY_PREFIX,
       });
       break;
     case "cursor":
       installer = new CursorInstaller({
         configPath: getConfigPath(target),
+        configKeyPrefix: TEST_CONFIG_KEY_PREFIX,
       });
       break;
     case "claude":
       installer = new ClaudeInstaller({
         configPath: getConfigPath(target),
+        configKeyPrefix: TEST_CONFIG_KEY_PREFIX,
       });
       break;
     case "claude-code":
       installer = new ClaudeCodeInstaller({
         configPath: getConfigPath(target),
+        configKeyPrefix: TEST_CONFIG_KEY_PREFIX,
       });
       break;
     default:

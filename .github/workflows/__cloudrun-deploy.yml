@@ -27,7 +27,7 @@ env:
 
 jobs:
   build:
-    name: Build & Push Image
+    name: Build
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
 
@@ -82,7 +82,7 @@ jobs:
           docker push ${{ vars.REPOSITORY_URL }}/${{ env.IMAGE_NAME }}:latest
 
   migrate:
-    name: Run Database Migrations
+    name: Migrate
     needs: build
     if: ${{ inputs.migrations }}
     runs-on: ubuntu-latest
@@ -124,7 +124,7 @@ jobs:
           DATABASE_URL=$DATABASE_URL bun run db:push
 
   deploy:
-    name: Deploy to Cloud Run
+    name: Deploy
     needs: [build, migrate]
     if: ${{ always() && needs.build.result == 'success' && (needs.migrate.result == 'success' || needs.migrate.result == 'skipped') }}
     runs-on: ubuntu-latest
@@ -151,7 +151,7 @@ jobs:
             --region ${{ vars.REGION }}
 
   seed:
-    name: Seed Database
+    name: Seed
     needs: deploy
     if: ${{ inputs.seed_enabled }}
     runs-on: ubuntu-latest

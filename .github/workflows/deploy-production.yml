@@ -4,13 +4,19 @@ on:
   push:
     branches: [production]
 
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
 jobs:
   ci:
     name: CI
     uses: ./.github/workflows/__ci.yml
+    with:
+      build: false
 
   deploy-gateway:
-    name: Deploy Gateway
+    name: Gateway
     needs: ci
     permissions:
       contents: read
@@ -24,7 +30,7 @@ jobs:
       seed_enabled: true
 
   deploy-registry:
-    name: Deploy Registry
+    name: Registry
     needs: ci
     permissions:
       contents: read

@@ -1,5 +1,10 @@
 on:
   workflow_call:
+    inputs:
+      build:
+        required: false
+        type: boolean
+        default: true
 
 env:
   NODE_ENV: test
@@ -103,6 +108,7 @@ jobs:
 
   build:
     name: Build
+    if: ${{ inputs.build }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

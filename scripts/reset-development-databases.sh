@@ -1,0 +1,17 @@
+#!/bin/bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+# Drop gateway databases (IF EXISTS to avoid errors when databases don't exist)
+docker exec -it director-postgres psql -U postgres -c "DROP DATABASE IF EXISTS \"director-gateway-test\";"
+docker exec -it director-postgres psql -U postgres -c "DROP DATABASE IF EXISTS \"director-gateway-dev\";"
+
+# # Create gateway databases
+docker exec -it director-postgres psql -U postgres -c "CREATE DATABASE \"director-gateway-test\";"
+docker exec -it director-postgres psql -U postgres -c "CREATE DATABASE \"director-gateway-dev\";"
+
+cd apps/gateway 
+
+bun run dotenvx run -f env/.env.development -- bun run db:push 
+bun run dotenvx run -f env/.env.test -- bun run db:push 

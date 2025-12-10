@@ -177,18 +177,36 @@ jobs:
 
       - name: Seed database
         run: |
-          # Get the service config as JSON
+          JOB_NAME="${{ inputs.service_name }}-seed"
+
+          # Get env vars from the deployed service
           SERVICE_CONFIG=$(gcloud run services describe ${{ inputs.service_name }} \
             --region ${{ vars.REGION }} \
             --format=json)
 
-          # Extract service URL and management API key from the deployed container
-          SERVICE_URL=$(echo "$SERVICE_CONFIG" | jq -r '.status.url')
-          MANAGEMENT_API_KEY=$(echo "$SERVICE_CONFIG" | jq -r '.spec.template.spec.containers[0].env[] | select(.name=="MANAGEMENT_API_KEY") | .value')
+          # Extract environment variables and format for job creation
+          ENV_VARS=$(echo "$SERVICE_CONFIG" | jq -r '.spec.template.spec.containers[0].env | map("\(.name)=\(.value)") | join(",")')
 
-          # Call the seed endpoint with management API key
-          curl -X POST "${SERVICE_URL}/api/management/seed" \
-            -H "Authorization: Bearer ${MANAGEMENT_API_KEY}" \
-            -H "Content-Type: application/json" \
-            -d '{"password": "${{ vars.SEED_USER_PASSWORD }}"}' \
-            --fail-with-body
+          # Create or update the seed job with the same image and env vars
+          gcloud run jobs create "$JOB_NAME" \
+            --image ${{ vars.REPOSITORY_URL }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            --region ${{ vars.REGION }} \
+            --set-env-vars "$ENV_VARS" \
+            --command "bun" \
+            --args "seed.js" \
+            --max-retries 0 \
+            --task-timeout 300s \
+            2>/dev/null || \
+          gcloud run jobs update "$JOB_NAME" \
+            --image ${{ vars.REPOSITORY_URL }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            --region ${{ vars.REGION }} \
+            --set-env-vars "$ENV_VARS" \
+            --command "bun" \
+            --args "seed.js" \
+            --max-retries 0 \
+            --task-timeout 300s
+
+          # Execute the job and wait for completion
+          gcloud run jobs execute "$JOB_NAME" \
+            --region ${{ vars.REGION }} \
+            --wait

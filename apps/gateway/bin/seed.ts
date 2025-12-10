@@ -5,14 +5,17 @@ import { env } from "../src/env";
 import { PlaybookStore } from "../src/playbooks/playbook-store";
 import { initializeTestDatabase } from "../src/test/db";
 
-if (!process.env.SEED_USER_PASSWORD) {
+if (!env.DANGEROUSLY_ENABLE_SEEDING) {
+  throw new Error("Seeding is not enabled");
+}
+
+if (!env.SEED_USER_EMAIL) {
   throw new Error("SEED_USER_PASSWORD must be set");
 }
 
-const SEED_USER = {
-  email: "user@director.run",
-  password: process.env.SEED_USER_PASSWORD,
-};
+if (!env.SEED_USER_PASSWORD) {
+  throw new Error("SEED_USER_PASSWORD must be set");
+}
 
 const HACKERNEWS_SERVER = {
   name: "hackernews",
@@ -21,10 +24,6 @@ const HACKERNEWS_SERVER = {
   args: ["--from", "git+https://github.com/erithwik/mcp-hn", "mcp-hn"],
 };
 
-/**
- * Creates a user with email/password credentials directly in the database.
- * This bypasses the better-auth HTTP API for seeding purposes.
- */
 async function createSeedUser(
   database: Database,
   params: { email: string; password: string },
@@ -40,7 +39,6 @@ async function createSeedUser(
     status: "ACTIVE",
   });
 
-  // better-auth stores passwords in the account table with providerId "credential"
   await database.drizzle.insert(accountTable).values({
     id: generateRandomString(32, "a-z", "A-Z", "0-9"),
     userId,
@@ -63,8 +61,11 @@ async function seed() {
     await initializeTestDatabase({ database, keepUsers: false });
 
     // Create user
-    console.log(`Creating user: ${SEED_USER.email}`);
-    const user = await createSeedUser(database, SEED_USER);
+    console.log(`Creating user: ${env.SEED_USER_EMAIL}`);
+    const user = await createSeedUser(database, {
+      email: env.SEED_USER_EMAIL as string,
+      password: env.SEED_USER_PASSWORD as string,
+    });
     console.log(`User created with id: ${user.id}`);
 
     // Create PlaybookStore

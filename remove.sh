@@ -1,1 +1,0 @@
-bun cli remove test fetch

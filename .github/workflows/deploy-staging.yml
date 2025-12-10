@@ -50,7 +50,7 @@ jobs:
 
   create-production-pr:
     name: Create Production PR
-    needs: [deploy-gateway, deploy-registry]
+    needs: ci
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

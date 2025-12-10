@@ -20,6 +20,10 @@ on:
         type: string
         default: .
 
+permissions:
+  contents: read
+  id-token: write
+
 env:
   IMAGE_NAME: ${{ inputs.service_name }}
   BUN_VERSION: "1.3.2"

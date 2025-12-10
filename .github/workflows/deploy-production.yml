@@ -4,6 +4,10 @@ on:
   push:
     branches: [production]
 
+permissions:
+  contents: read
+  id-token: write
+
 concurrency:
   group: production-deploy
   cancel-in-progress: false

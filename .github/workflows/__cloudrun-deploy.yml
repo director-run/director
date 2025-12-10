@@ -1,5 +1,3 @@
-name: Deploy to Cloud Run
-
 on:
   workflow_call:
     inputs:
@@ -22,20 +20,27 @@ on:
         type: string
         default: .
 
+permissions:
+  contents: read
+  id-token: write
+
 env:
   IMAGE_NAME: ${{ inputs.service_name }}
   BUN_VERSION: "1.3.2"
   NODE_VERSION: "22"
 
 jobs:
-  deploy:
-    name: Cloudrun
+  build:
+    name: Build
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
 
     permissions:
       contents: read
       id-token: write
+
+    outputs:
+      image_tag: ${{ github.sha }}
 
     steps:
       - uses: actions/checkout@v4
@@ -80,23 +85,97 @@ jobs:
           docker push ${{ vars.REPOSITORY_URL }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
           docker push ${{ vars.REPOSITORY_URL }}/${{ env.IMAGE_NAME }}:latest
 
+  migrate:
+    name: Migrate
+    needs: build
+    if: ${{ inputs.migrations }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.SERVICE_ACCOUNT_EMAIL }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
       - name: Run database migrations
-        if: ${{ inputs.migrations }}
         working-directory: ${{ inputs.working-directory }}
         run: |
           DATABASE_URL=$(gcloud run services describe ${{ inputs.service_name }} \
             --region ${{ vars.REGION }} \
             --format=json | jq -r '.spec.template.spec.containers[0].env[] | select(.name=="DATABASE_URL") | .value')
           DATABASE_URL=$DATABASE_URL bun run db:push
-          
+
+  deploy:
+    name: Deploy
+    needs: [build, migrate]
+    if: ${{ always() && needs.build.result == 'success' && (needs.migrate.result == 'success' || needs.migrate.result == 'skipped') }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.SERVICE_ACCOUNT_EMAIL }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy ${{ inputs.service_name }} \
             --image ${{ vars.REPOSITORY_URL }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
             --region ${{ vars.REGION }}
 
+  seed:
+    name: Seed
+    needs: deploy
+    if: ${{ inputs.seed_enabled }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.SERVICE_ACCOUNT_EMAIL }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
       - name: Seed database
-        if: ${{ inputs.seed_enabled }}
         run: |
           # Get the service config as JSON
           SERVICE_CONFIG=$(gcloud run services describe ${{ inputs.service_name }} \
@@ -113,4 +192,3 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{"password": "${{ vars.SEED_USER_PASSWORD }}"}' \
             --fail-with-body
-         

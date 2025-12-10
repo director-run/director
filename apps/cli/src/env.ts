@@ -35,8 +35,8 @@ export const env = createEnv({
       .string()
       .default("false")
       .transform((s) => s === "true"),
-    GATEWAY_URL: z.string().url().default("https://app.staging.ex0.co"),
-    STUDIO_URL: z.string().url().default("https://app.staging.ex0.co/studio"),
+    GATEWAY_URL: z.string().url().default("https://gateway.director.run"),
+    STUDIO_URL: z.string().url().default("https://gateway.director.run/studio"),
     USER_EMAIL: z.string().email().optional(),
     USER_PASSWORD: z.string().optional(),
   },

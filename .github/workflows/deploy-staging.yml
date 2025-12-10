@@ -1,18 +1,27 @@
 name: Staging Deploy
 
 on:
-  workflow_run:
-    workflows: ["CI"]
-    types:
-      - completed
+  push:
     branches: [main]
-  # push:
-  #   branches: [ "main" ]
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: staging-deploy
+  cancel-in-progress: false
 
 jobs:
+  ci:
+    name: CI
+    uses: ./.github/workflows/__ci.yml
+    with:
+      build: false
+
   deploy-gateway:
     name: Gateway
-    if: github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.conclusion == 'success'
+    needs: ci
     permissions:
       contents: read
       id-token: write
@@ -26,7 +35,7 @@ jobs:
 
   deploy-registry:
     name: Registry
-    if: github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.conclusion == 'success'
+    needs: ci
     permissions:
       contents: read
       id-token: write

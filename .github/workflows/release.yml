@@ -5,6 +5,8 @@ on:
     branches:
       - main
 
+permissions: {}
+
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 env:
@@ -18,9 +20,7 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: write
-      packages: write
       pull-requests: write
-      actions: read
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4

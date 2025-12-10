@@ -1,0 +1,17 @@
+name: PR Check
+
+on:
+  pull_request:
+    branches: [main, production]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: CI
+    uses: ./.github/workflows/__ci.yml

@@ -187,24 +187,28 @@ jobs:
           # Extract environment variables and format for job creation
           ENV_VARS=$(echo "$SERVICE_CONFIG" | jq -r '.spec.template.spec.containers[0].env | map("\(.name)=\(.value)") | join(",")')
 
-          # Create or update the seed job with the same image and env vars
-          gcloud run jobs create "$JOB_NAME" \
-            --image ${{ vars.REPOSITORY_URL }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
-            --region ${{ vars.REGION }} \
-            --set-env-vars "$ENV_VARS" \
-            --command "bun" \
-            --args "seed.js" \
-            --max-retries 0 \
-            --task-timeout 300s \
-            2>/dev/null || \
-          gcloud run jobs update "$JOB_NAME" \
-            --image ${{ vars.REPOSITORY_URL }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
-            --region ${{ vars.REGION }} \
-            --set-env-vars "$ENV_VARS" \
-            --command "bun" \
-            --args "seed.js" \
-            --max-retries 0 \
-            --task-timeout 300s
+          # Check if job exists
+          if gcloud run jobs describe "$JOB_NAME" --region ${{ vars.REGION }} &>/dev/null; then
+            echo "Updating existing job..."
+            gcloud run jobs update "$JOB_NAME" \
+              --image ${{ vars.REPOSITORY_URL }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+              --region ${{ vars.REGION }} \
+              --set-env-vars "$ENV_VARS" \
+              --command "bun" \
+              --args "seed.js" \
+              --max-retries 0 \
+              --task-timeout 300s
+          else
+            echo "Creating new job..."
+            gcloud run jobs create "$JOB_NAME" \
+              --image ${{ vars.REPOSITORY_URL }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+              --region ${{ vars.REGION }} \
+              --set-env-vars "$ENV_VARS" \
+              --command "bun" \
+              --args "seed.js" \
+              --max-retries 0 \
+              --task-timeout 300s
+          fi
 
           # Execute the job and wait for completion
           gcloud run jobs execute "$JOB_NAME" \

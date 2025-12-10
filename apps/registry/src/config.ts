@@ -10,6 +10,10 @@ export const env = createEnv({
     DATABASE_URL: z.string(),
     MANAGEMENT_API_KEY: z.string().optional(),
     BASE_URL: z.string().default("https://registry.director.run"),
+    DANGEROUSLY_ENRICH_TOOLS_DURING_SEED: z
+      .string()
+      .default("false")
+      .transform((s) => s === "true"),
   },
 });
 

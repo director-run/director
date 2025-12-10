@@ -14,7 +14,7 @@ if (isTest()) {
   });
 } else if (isDevelopment()) {
   dotenv.config({
-    path: path.join(__dirname, "../env/.env.dev"),
+    path: path.join(__dirname, "../env/.env.development"),
     override: true,
   });
 }
@@ -48,7 +48,11 @@ export const env = createEnv({
       .string()
       .default("")
       .transform((s) => s.split(",").filter(Boolean)),
-    MANAGEMENT_API_KEY: z.string().optional(),
+    DANGEROUSLY_ENABLE_SEEDING: z
+      .string()
+      .default("false")
+      .transform((s) => s === "true"),
+    SEED_USER_EMAIL: z.string().optional(),
     SEED_USER_PASSWORD: z.string().optional(),
     DANGEROUSLY_ALLOW_ARBITRARY_STDIO_SERVERS: z
       .string()

@@ -31,7 +31,7 @@ jobs:
       service_name: director-production-gateway
       working-directory: apps/gateway
       migrations: true
-      seed_enabled: true
+      seed_enabled: false
 
   deploy-registry:
     name: Registry

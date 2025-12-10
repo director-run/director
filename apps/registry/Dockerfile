@@ -15,4 +15,4 @@ ENV PORT=3080
 
 EXPOSE 3080
 
-CMD ["bun", "api.js"]
+CMD ["bun", "server.js"]

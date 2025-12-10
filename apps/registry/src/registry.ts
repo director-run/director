@@ -7,7 +7,6 @@ import { logRequests } from "@director.run/utilities/middleware/index";
 import cors from "cors";
 import express, { type Express } from "express";
 import { type Store, createStore } from "./db/store";
-import { createManagementRouter } from "./routers/management";
 import { createTRPCExpressMiddleware } from "./routers/trpc";
 
 const logger = getLogger("registry");
@@ -44,7 +43,6 @@ export class Registry {
     app.use("/assets", express.static(path.join(process.cwd(), "public")));
     app.use(express.json());
     app.use("/trpc", createTRPCExpressMiddleware({ store }));
-    app.use("/api/management", createManagementRouter({ store }));
     app.all("*", notFoundHandler);
     app.use(errorRequestHandler);
 

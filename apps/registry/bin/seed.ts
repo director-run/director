@@ -1,37 +1,43 @@
 #!/usr/bin/env -S node --no-warnings --enable-source-maps
 
+import { getLogger } from "@director.run/utilities/logger";
 import { env } from "../src/config";
+import { createStore } from "../src/db/store";
+import { enrichEntries } from "../src/enrichment/enrich";
+import { enrichEntryToolsWithStore } from "../src/enrichment/enrich-tools";
+import { entries } from "../src/seed/entries";
+
+const logger = getLogger("seed");
 
 async function seed() {
-  const baseUrl = `http://localhost:${env.PORT}`;
-  const url = `${baseUrl}/api/management/seed`;
+  const store = createStore({ connectionString: env.DATABASE_URL });
+  logger.info("[1/3] seeding from file...");
 
-  if (!env.MANAGEMENT_API_KEY) {
-    console.error("Error: MANAGEMENT_API_KEY is not set");
-    process.exit(1);
-  }
-
-  console.log(`Seeding database via ${url}...`);
-
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${env.MANAGEMENT_API_KEY}`,
-      "Content-Type": "application/json",
-    },
+  const populateResult = await store.entries.addEntries(entries, {
+    state: "published",
+    ignoreDuplicates: true,
+  });
+  logger.info({
+    countInserted: populateResult.countInserted,
+    message: "[1/3] seed complete",
   });
 
-  if (!response.ok) {
-    const error = await response.text();
-    console.error(`Seed failed with status ${response.status}: ${error}`);
-    process.exit(1);
+  logger.info("[2/3] enriching entries...");
+  await enrichEntries(store);
+  logger.info("[2/3] enrich complete");
+
+  if (env.DANGEROUSLY_ENRICH_TOOLS_DURING_SEED) {
+    logger.info("[3/3] enriching tools...");
+    await enrichEntryToolsWithStore(store);
+    logger.info("[3/3] tools enriched");
+  } else {
+    logger.info(
+      "skipping tool enrichment as DANGEROUSLY_ENRICH_TOOLS_DURING_SEED is not set",
+    );
   }
 
-  const result = await response.json();
-  console.log("Seed completed successfully:", result);
+  logger.info("Registry seeded successfully");
+  await store.close();
 }
 
-seed().catch((error) => {
-  console.error("Seed failed:", error);
-  process.exit(1);
-});
+await seed();

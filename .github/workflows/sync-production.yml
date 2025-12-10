@@ -1,0 +1,61 @@
+# Sync Production Branch
+#
+# This workflow ensures the `production` branch stays exactly in sync with
+# `main` after a production deploy PR is merged.
+#
+# WHY THIS EXISTS:
+# ----------------
+# GitHub's merge methods (merge commit, squash, rebase) all create new commits,
+# causing `production` to diverge from `main` even when the code is identical.
+# This results in GitHub showing "X commits ahead/behind" and suggesting
+# unnecessary PRs between the branches.
+#
+# HOW IT WORKS:
+# -------------
+# 1. deploy-staging.yml deploys to staging and creates a PR: main → production
+# 2. When that PR is merged, this workflow triggers
+# 3. It force-pushes `production` to point to the exact same commit as `main`
+# 4. This triggers deploy-production.yml (on push to production)
+#
+# The result: `production` always points to the same commit as `main` after
+# a production deploy, with no commit history divergence.
+#
+# REQUIREMENTS:
+# -------------
+# - The `production` branch must NOT have a ruleset blocking force pushes
+#   (or must have a bypass for github-actions[bot])
+
+name: Sync Production
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [production]
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    name: Sync Production to Main
+    # Only run if PR was merged (not just closed) and came from main
+    if: github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Force update production to match main exactly
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Reset production to point to the exact same commit as main.
+          # This eliminates the merge commit and keeps both branches identical.
+          git checkout production
+          git reset --hard origin/main
+          git push --force origin production
+
+          echo "✓ Production branch now points to $(git rev-parse HEAD)"

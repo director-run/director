@@ -26,6 +26,7 @@ export const ENV_FILE_PATH = envFilePath;
 
 export const env = createEnv({
   server: {
+    CLIENT_KEY_PREFIX: z.string().default("drctr__"),
     REGISTRY_URL: z.string().url().default("https://registry.director.run"),
     REGISTRY_API_KEY: z.string().optional(),
     AUTH_TOKEN_FILE: z

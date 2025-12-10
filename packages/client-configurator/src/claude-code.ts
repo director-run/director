@@ -17,10 +17,11 @@ export class ClaudeCodeInstaller extends AbstractClient<ClaudeCodeConfig> {
     return await os.isFilePresent(this.configPath);
   }
 
-  public constructor(params: { configPath?: string }) {
+  public constructor(params: { configPath?: string; configKeyPrefix: string }) {
     super({
       configPath: params.configPath || os.getConfigFileForApp(App.CLAUDE_CODE),
       name: "claude-code",
+      configKeyPrefix: params.configKeyPrefix,
     });
   }
 

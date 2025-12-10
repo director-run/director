@@ -13,7 +13,11 @@ export type ConnectionDetails = {
 };
 
 export class ClientStore {
-  public constructor() {}
+  private readonly configKeyPrefix: string;
+
+  public constructor(params: { configKeyPrefix: string }) {
+    this.configKeyPrefix = params.configKeyPrefix;
+  }
 
   public get(name: string): AbstractClient<unknown> {
     const clients = this.all();
@@ -30,10 +34,10 @@ export class ClientStore {
 
   public all(): AbstractClient<unknown>[] {
     return [
-      new ClaudeInstaller({}),
-      new CursorInstaller({}),
-      new VSCodeInstaller({}),
-      new ClaudeCodeInstaller({}),
+      new ClaudeInstaller({ configKeyPrefix: this.configKeyPrefix }),
+      new CursorInstaller({ configKeyPrefix: this.configKeyPrefix }),
+      new VSCodeInstaller({ configKeyPrefix: this.configKeyPrefix }),
+      new ClaudeCodeInstaller({ configKeyPrefix: this.configKeyPrefix }),
     ];
   }
 
@@ -96,5 +100,3 @@ export class ClientStore {
     return await Promise.all(this.all().map((client) => client.getStatus()));
   }
 }
-
-export const clientStore = new ClientStore();

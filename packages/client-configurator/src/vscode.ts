@@ -19,10 +19,11 @@ export class VSCodeInstaller extends AbstractClient<VSCodeConfig> {
     return await os.isFilePresent(this.configPath);
   }
 
-  public constructor(params: { configPath?: string }) {
+  public constructor(params: { configPath?: string; configKeyPrefix: string }) {
     super({
       configPath: params.configPath || os.getConfigFileForApp(App.VSCODE),
       name: "vscode",
+      configKeyPrefix: params.configKeyPrefix,
     });
   }
 

@@ -1,10 +1,10 @@
-import { clientStore } from "@director.run/client-configurator/client-store";
 import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import {
   actionWithErrorHandler,
   makeTable,
 } from "@director.run/utilities/cli/index";
 import { attributeTable } from "@director.run/utilities/cli/index";
+import { clientStore } from "../client-store";
 
 export function registerClientCommands(program: DirectorCommand): void {
   const command = new DirectorCommand("client").description(
@@ -47,13 +47,11 @@ export function registerClientCommands(program: DirectorCommand): void {
 
   command
     .debugCommand("config <clientName>")
-    .description("Open claude config file")
+    .description("Open client config file")
     .action(
-      actionWithErrorHandler(async (_clientName: string) => {
-        console.log(
-          "Opening client config is not supported via router from CLI.",
-        );
-        await Promise.resolve();
+      actionWithErrorHandler(async (clientName: string) => {
+        const client = clientStore.get(clientName);
+        await client.openConfig();
       }),
     );
 

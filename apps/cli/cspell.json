@@ -5,7 +5,7 @@
     "package.json",
     "bun.lock",
     "**/dist/**",
-    "src/config.ts"
+    "src/env.ts"
   ],
   "words": [
     "streamable",

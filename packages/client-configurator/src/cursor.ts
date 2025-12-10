@@ -18,10 +18,11 @@ export class CursorInstaller extends AbstractClient<CursorConfig> {
     return await os.isFilePresent(this.configPath);
   }
 
-  public constructor(params: { configPath?: string }) {
+  public constructor(params: { configPath?: string; configKeyPrefix: string }) {
     super({
       configPath: params.configPath || os.getConfigFileForApp(App.CURSOR),
       name: "cursor",
+      configKeyPrefix: params.configKeyPrefix,
     });
   }
 

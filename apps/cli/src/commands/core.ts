@@ -1,7 +1,4 @@
-import {
-  type ClientId,
-  clientStore,
-} from "@director.run/client-configurator/client-store";
+import { type ClientId } from "@director.run/client-configurator/client-store";
 import { proxyHTTPToStdio } from "@director.run/mcp/transport";
 import {
   DirectorCommand,
@@ -11,6 +8,7 @@ import { makeTable } from "@director.run/utilities/cli/index";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { joinURL } from "@director.run/utilities/url";
 import { gatewayClient } from "../client";
+import { clientStore } from "../client-store";
 import { env } from "../env";
 import { registerAddCommand } from "./core/add";
 import { registerAuthCommand } from "./core/authenticate";

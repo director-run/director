@@ -10,7 +10,7 @@ if (!env.DANGEROUSLY_ENABLE_SEEDING) {
 }
 
 if (!env.SEED_USER_EMAIL) {
-  throw new Error("SEED_USER_PASSWORD must be set");
+  throw new Error("SEED_USER_EMAIL must be set");
 }
 
 if (!env.SEED_USER_PASSWORD) {

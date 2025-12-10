@@ -48,7 +48,6 @@ export const env = createEnv({
       .string()
       .default("")
       .transform((s) => s.split(",").filter(Boolean)),
-    MANAGEMENT_API_KEY: z.string().optional(),
     DANGEROUSLY_ENABLE_SEEDING: z
       .string()
       .default("false")

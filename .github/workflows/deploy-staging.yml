@@ -67,6 +67,8 @@ jobs:
       - name: Create Pull Request
         env:
           GH_TOKEN: ${{ github.token }}
+          COMMIT_MESSAGE: ${{ steps.commit.outputs.message }}
+          COMMIT_SHA: ${{ github.sha }}
         run: |
           # Close any existing PR from main to production
           EXISTING_PR=$(gh pr list --base production --head main --json number --jq '.[0].number')
@@ -80,11 +82,11 @@ jobs:
           gh pr create \
             --base production \
             --head main \
-            --title "[Production Deploy] ${{ steps.commit.outputs.message }}" \
+            --title "[Production Deploy] $COMMIT_MESSAGE" \
             --body "Automated PR to deploy staging changes to production.
 
-## Commit
-${{ github.sha }}
+          ## Commit
+          $COMMIT_SHA
 
-## Changes
-${{ steps.commit.outputs.message }}"
+          ## Changes
+          $COMMIT_MESSAGE"

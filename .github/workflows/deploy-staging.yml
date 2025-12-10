@@ -7,6 +7,7 @@ on:
 permissions:
   contents: read
   id-token: write
+  pull-requests: write
 
 concurrency:
   group: staging-deploy
@@ -46,3 +47,44 @@ jobs:
       working-directory: apps/registry
       migrations: true
       seed_enabled: true
+
+  create-production-pr:
+    name: Create Production PR
+    needs: [deploy-gateway, deploy-registry]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get commit message
+        id: commit
+        run: |
+          COMMIT_MESSAGE=$(git log -1 --format=%s)
+          echo "message=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Close any existing PR from main to production
+          EXISTING_PR=$(gh pr list --base production --head main --json number --jq '.[0].number')
+
+          if [ -n "$EXISTING_PR" ]; then
+            echo "Closing existing PR #$EXISTING_PR"
+            gh pr close "$EXISTING_PR"
+          fi
+
+          # Create new PR
+          gh pr create \
+            --base production \
+            --head main \
+            --title "[Production Deploy] ${{ steps.commit.outputs.message }}" \
+            --body "Automated PR to deploy staging changes to production.
+
+## Commit
+${{ github.sha }}
+
+## Changes
+${{ steps.commit.outputs.message }}"

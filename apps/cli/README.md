@@ -326,7 +326,6 @@ await gateway.playbookStore.create({
 - [`apps/docker`](./apps/docker/README.md) - The Director docker image, which allows you to run Director (and all MCP servers) securely inside a container. Available on [Docker Hub](https://hub.docker.com/r/barnaby/director).
 - [`apps/docs`](./apps/docs/README.md) - Project documentation hosted at [https://docs.director.run](https://docs.director.run)
 - [`apps/registry`](./apps/registry/README.md) - Backend for the registry hosted at [https://registry.director.run](https://registry.director.run)
-- [`apps/sandbox`](./apps/sandbox/README.md) - A tool for running Director (and all MCP servers) securely inside a VM. Apple Silicon only.
 - [`apps/studio`](./apps/studio/README.md) - Director frontend application
 
 ### Internal Packages

@@ -45,7 +45,6 @@
     "@changesets/cli": "^2.29.8",
     "@changesets/get-github-info": "^0.6.0",
     "@director.run/cli": "workspace:*",
-    "@director.run/sandbox": "workspace:*",
     "@director.run/sdk": "workspace:*",
     "@types/bun": "~1.3.4",
     "tsup": "^8.5.1",

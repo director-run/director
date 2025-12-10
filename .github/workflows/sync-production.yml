@@ -25,37 +25,37 @@
 # - The `production` branch must NOT have a ruleset blocking force pushes
 #   (or must have a bypass for github-actions[bot])
 
-name: Sync Production
+# name: Sync Production
 
-on:
-  pull_request:
-    types: [closed]
-    branches: [production]
+# on:
+#   pull_request:
+#     types: [closed]
+#     branches: [production]
 
-permissions:
-  contents: write
+# permissions:
+#   contents: write
 
-jobs:
-  sync:
-    name: Sync Production to Main
-    # Only run if PR was merged (not just closed) and came from main
-    if: github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'main'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+# jobs:
+#   sync:
+#     name: Sync Production to Main
+#     # Only run if PR was merged (not just closed) and came from main
+#     if: github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'main'
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 0
 
-      - name: Force update production to match main exactly
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+#       - name: Force update production to match main exactly
+#         run: |
+#           git config user.name "github-actions[bot]"
+#           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Reset production to point to the exact same commit as main.
-          # This eliminates the merge commit and keeps both branches identical.
-          git checkout production
-          git reset --hard origin/main
-          git push --force origin production
+#           # Reset production to point to the exact same commit as main.
+#           # This eliminates the merge commit and keeps both branches identical.
+#           git checkout production
+#           git reset --hard origin/main
+#           git push --force origin production
 
-          echo "✓ Production branch now points to $(git rev-parse HEAD)"
+#           echo "✓ Production branch now points to $(git rev-parse HEAD)"

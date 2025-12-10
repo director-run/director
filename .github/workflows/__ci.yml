@@ -127,7 +127,7 @@ jobs:
       - name: Setup database schemas
         run: |
           cd apps/registry && DATABASE_URL=postgresql://postgres:travel-china-spend-nothing@localhost:5432/director-registry-test bun run db:push
-          cd ../../packages/gateway && DATABASE_URL=postgresql://postgres:travel-china-spend-nothing@localhost:5432/director-gateway-test bun run db:push
+          cd ../../apps/gateway && DATABASE_URL=postgresql://postgres:travel-china-spend-nothing@localhost:5432/director-gateway-test bun run db:push
       - name: Test
         run: bun run test
 

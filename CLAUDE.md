@@ -6,7 +6,7 @@ Director is an MCP gateway. It allows users to create and manage multiple playbo
 
 We've just migrated director from a single tenant, local first architecture to a multi tenant architecture.
 
-We have a login system, powered by better-auth. In development, we have two components: apps/studio which is the frontend. And packages/gateway that's the backend.
+We have a login system, powered by better-auth. In development, we have two components: apps/studio which is the frontend. And apps/gateway that's the backend.
 
 You can start the frontend by running `bun run studio` from the root of the repo and you can start the backend by running `bun run serve` from the root of the repo. There’s a command called `bun run db:seed` that will seed the development database. It’ll make a test user with the email: [`user@director.run`](mailto:user@director.run) and the password `password`. These credentials are pre-filled on the app login screen.
 
@@ -77,7 +77,7 @@ When implementing changes:
 
 **IMPORTANT**: Always consider the full stack when making changes:
 
-- **Gateway** (`packages/gateway/`) is the backend - API changes here affect all clients
+- **Gateway** (`apps/gateway/`) is the backend - API changes here affect all clients
 - **Studio** (`apps/studio/`) is the web UI client
 - **CLI** (`apps/cli/`) is the command-line client
 
@@ -131,7 +131,7 @@ When building frontend components (Studio, design system):
 
 ### Core Components
 
-**Gateway** (`packages/gateway/`)
+**Gateway** (`apps/gateway/`)
 - Implements proxy pattern aggregating MCP servers
 - Serves unified interface to clients via standard MCP transports (HTTP Streamable, Stdio, SSE)
 - Manages `ProxyServer` instances through `ProxyServerStore`

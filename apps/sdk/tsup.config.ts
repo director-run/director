@@ -8,7 +8,7 @@ export default defineConfig({
     compilerOptions: {
       baseUrl: ".",
       paths: {
-        "@director.run/gateway/*": ["../../packages/gateway/src/*"],
+        "@director.run/gateway/*": ["../../apps/gateway/src/*"],
         "@director.run/mcp/*": ["../../packages/mcp/src/*"],
         "@director.run/utilities/*": ["../../packages/utilities/src/*"],
         "@director.run/client-configurator/*": [

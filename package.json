@@ -32,12 +32,12 @@
     "version-packages": "changeset version",
     "version-packages-formatted": "changeset version && bun run format",
     "release-packages": "bun run build && changeset publish",
-    "serve": "NODE_ENV=development bun run ./packages/gateway/bin/server.ts",
-    "serve:dev": "NODE_ENV=development bun --watch ./packages/gateway/bin/server.ts",
-    "reset": "bun run ./packages/gateway/bin/reset.ts",
+    "serve": "NODE_ENV=development bun run ./apps/gateway/bin/server.ts",
+    "serve:dev": "NODE_ENV=development bun --watch ./apps/gateway/bin/server.ts",
+    "reset": "bun run ./apps/gateway/bin/reset.ts",
     "check": "bun run lint && bun run typecheck && bun run test && bun run build",
-    "db:push": "cd packages/gateway && NODE_ENV=development bun run db:push",
-    "db:seed": "NODE_ENV=development bun run packages/gateway/bin/seed.ts"
+    "db:push": "cd apps/gateway && NODE_ENV=development bun run db:push",
+    "db:seed": "NODE_ENV=development bun run apps/gateway/bin/seed.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

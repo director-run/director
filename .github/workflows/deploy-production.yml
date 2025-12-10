@@ -10,7 +10,7 @@ jobs:
     uses: ./.github/workflows/__ci.yml
 
   deploy-gateway:
-    name: Gateway
+    name: Deploy Gateway
     needs: ci
     permissions:
       contents: read
@@ -24,7 +24,7 @@ jobs:
       seed_enabled: true
 
   deploy-registry:
-    name: Registry
+    name: Deploy Registry
     needs: ci
     permissions:
       contents: read

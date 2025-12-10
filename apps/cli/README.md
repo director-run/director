@@ -332,7 +332,7 @@ await gateway.playbookStore.create({
 ### Internal Packages
 
 - [`packages/client-configurator`](./packages/client-configurator/README.md) - Library for managing MCP client configuration files
-- [`packages/gateway`](./packages/gateway/README.md) - Core gateway and playbook logic
+- [`apps/gateway`](./apps/gateway/README.md) - Core gateway and playbook logic
 - [`packages/mcp`](./packages/mcp/README.md) - Extensions to MCP SDK that add middleware functionality
 - [`packages/utilities`](./packages/utilities/README.md) - Shared utilities used across all packages and apps
 - [`packages/design`](./packages/design/README.md) - Design system: reusable UI components, hooks, and styles for all Director apps

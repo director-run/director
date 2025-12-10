@@ -29,7 +29,7 @@ jobs:
     with:
       environment: production
       service_name: director-production-gateway
-      working-directory: packages/gateway
+      working-directory: apps/gateway
       migrations: true
       seed_enabled: true
 

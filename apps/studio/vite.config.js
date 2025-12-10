@@ -10,7 +10,7 @@ export default defineConfig({
   base: basePath,
   resolve: {
     alias: {
-      "@director.run/gateway": resolve(__dirname, "../../packages/gateway/src"),
+      "@director.run/gateway": resolve(__dirname, "../../apps/gateway/src"),
       "@director.run/registry": resolve(__dirname, "../../apps/registry/src"),
       "@director.run/utilities": resolve(
         __dirname,

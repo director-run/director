@@ -4,10 +4,16 @@ on:
   push:
     branches: [main]
 
+concurrency:
+  group: staging-deploy
+  cancel-in-progress: false
+
 jobs:
   ci:
     name: CI
     uses: ./.github/workflows/__ci.yml
+    with:
+      build: false
 
   deploy-gateway:
     name: Gateway

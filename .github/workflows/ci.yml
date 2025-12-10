@@ -1,8 +1,6 @@
 name: CI
 
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main, production]
 
@@ -12,5 +10,4 @@ concurrency:
 
 jobs:
   ci:
-    name: CI
     uses: ./.github/workflows/__ci.yml

@@ -1,5 +1,3 @@
-name: CI (Reusable)
-
 on:
   workflow_call:
 

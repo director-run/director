@@ -27,9 +27,9 @@ async function seed() {
   logger.info("[2/3] enrich complete");
 
   if (env.DANGEROUSLY_ENRICH_TOOLS_DURING_SEED) {
-    logger.info("[3/3] enriching entries...");
+    logger.info("[3/3] enriching tools...");
     await enrichEntryToolsWithStore(store);
-    logger.info("[3/3] enriching entries...");
+    logger.info("[3/3] tools enriched");
   } else {
     logger.info(
       "skipping tool enrichment as DANGEROUSLY_ENRICH_TOOLS_DURING_SEED is not set",

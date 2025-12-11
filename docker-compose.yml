@@ -4,7 +4,7 @@ name: director-development
 
 services:
   postgres:
-    image: postgres
+    image: postgres:17
     container_name: director-postgres
     environment:
       - POSTGRES_PASSWORD=travel-china-spend-nothing

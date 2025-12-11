@@ -50,3 +50,4 @@ public/swe-worker*
 director.config.development.yaml
 .secrets/
 .playwright-mcp
+.claude

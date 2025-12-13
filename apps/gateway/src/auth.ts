@@ -1,7 +1,7 @@
 import { getLogger } from "@director.run/utilities/logger";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { apiKey } from "better-auth/plugins";
+import { apiKey, mcp } from "better-auth/plugins";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
@@ -24,6 +24,10 @@ export const auth = betterAuth({
       account: schema.accountTable,
       verification: schema.verificationTable,
       apikey: schema.apikeyTable,
+      // MCP OAuth plugin tables
+      oauthApplication: schema.oauthApplicationTable,
+      oauthAccessToken: schema.oauthAccessTokenTable,
+      oauthConsent: schema.oauthConsentTable,
     },
   }),
   emailAndPassword: {
@@ -108,6 +112,14 @@ export const auth = betterAuth({
         timeWindow: env.API_KEY_RATE_LIMIT_WINDOW_SECONDS * 1000,
         maxRequests: env.API_KEY_RATE_LIMIT_MAX_REQUESTS,
       },
+    }),
+    // MCP OAuth 2.0 server plugin for authenticating MCP clients
+    mcp({
+      // The login page for OAuth authorization - users will be redirected here
+      // to approve access. The page will receive OAuth params to continue the flow.
+      loginPage: "/connect",
+      // The resource identifier for protected resource metadata
+      resource: env.BASE_URL,
     }),
   ],
 });

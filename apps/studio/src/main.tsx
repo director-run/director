@@ -13,6 +13,7 @@ import {
 } from "./contexts/backend-context";
 import { GlobalErrorBoundary } from "./helpers/global-error-boundary";
 import { usePlaybooks } from "./hooks/use-playbooks";
+import { ConnectPage } from "./pages/connect-page";
 import { LoginPage } from "./pages/login-page";
 import { OAuthCallbackPage } from "./pages/oauth-callback-page";
 import { GetStartedPage } from "./pages/onboarding";
@@ -77,6 +78,8 @@ export const App = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/waitlist" element={<WaitlistPage />} />
+        {/* OAuth connection page - handles MCP client authorization */}
+        <Route path="/connect" element={<ConnectPage />} />
         <Route element={<ProtectedRoute />}>
           <Route
             path="/oauth/:playbookId/:targetId/callback"

@@ -53,3 +53,4 @@ director.config.development.yaml
 .claude
 scripts/mcp-setup.sh
 ./mcp.json.claude
+mcp.json

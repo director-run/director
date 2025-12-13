@@ -149,6 +149,37 @@ export class Gateway {
 
     this.app.all("/api/auth/*", toNodeHandler(auth));
 
+    //
+    // MCP Oauth authentication for clients
+    //
+    // Proxy well-known OAuth endpoints from root to better-auth paths
+    // MCP clients look for these at /.well-known/ per RFC 9728
+    this.app.get("/.well-known/oauth-protected-resource", (_req, res) => {
+      res.redirect(307, "/api/auth/.well-known/oauth-protected-resource");
+    });
+    this.app.get("/.well-known/oauth-authorization-server", (_req, res) => {
+      res.redirect(307, "/api/auth/.well-known/oauth-authorization-server");
+    });
+
+    // Redirect /connect to Studio's connect page
+    // This is the loginPage configured in better-auth's MCP plugin
+    this.app.get("/connect", (req, res) => {
+      // Preserve all query params (OAuth params)
+      const queryString = req.url.includes("?")
+        ? req.url.substring(req.url.indexOf("?"))
+        : "";
+
+      if (this.studioAssetsPath) {
+        // Production: redirect to hosted studio
+        res.redirect(`/studio/connect${queryString}`);
+      } else if (isDevelopment()) {
+        // Development: redirect to dev studio server
+        res.redirect(`http://localhost:3000/connect${queryString}`);
+      } else {
+        res.status(404).send("Studio not available");
+      }
+    });
+
     this.app.use(
       "/trpc",
       createTRPCExpressMiddleware({

@@ -15,3 +15,5 @@ cd apps/gateway
 
 bun run dotenvx run -f env/.env.development -- bun run db:push 
 bun run dotenvx run -f env/.env.test -- bun run db:push 
+
+NODE_ENV=development bun run bin/seed.ts

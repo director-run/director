@@ -51,3 +51,5 @@ director.config.development.yaml
 .secrets/
 .playwright-mcp
 .claude
+scripts/mcp-setup.sh
+./mcp.json.claude

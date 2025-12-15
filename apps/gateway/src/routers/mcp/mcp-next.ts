@@ -97,7 +97,7 @@ export function createMcpNextRouter({
   const router = express.Router();
   const transports: Map<string, StreamableHTTPServerTransport> = new Map();
 
-  router.use(express.json());
+  // Note: express.json() is applied at the parent MCP router level
 
   // Apply OAuth authentication middleware
   router.use("/:playbook_id/mcp-next", requireMcpOAuth());

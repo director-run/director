@@ -24,8 +24,7 @@ export const createStreamableRouter = ({
   const router = express.Router();
   const transports: Map<string, StreamableHTTPServerTransport> = new Map();
 
-  router.use(express.json());
-  // router.use("/:playbook_id", requireAPIKeyAuth());
+  // Note: express.json() is applied at the parent MCP router level
   router.post(
     "/:playbook_id/mcp",
     asyncHandler(async (req, res) => {

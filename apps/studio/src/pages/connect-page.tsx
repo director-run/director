@@ -1,55 +1,53 @@
 import { ConnectPage as ConnectPageComponent } from "@director.run/design/components/pages/auth/connect.tsx";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { GATEWAY_URL } from "../config";
 import { useAuth } from "../contexts/auth-context.tsx";
+import { gatewayClient } from "../contexts/backend-context.tsx";
+import { authClient } from "../lib/auth-client.ts";
 
 /**
- * OAuth connection page for MCP clients.
+ * OAuth consent page for MCP clients.
  *
- * This page is the `loginPage` configured in better-auth's MCP plugin.
- * When an MCP client initiates OAuth, better-auth redirects here.
+ * This page serves as BOTH the `loginPage` AND `consentPage` for better-auth's
+ * MCP plugin. When an MCP client initiates OAuth, better-auth redirects here.
  *
- * Flow:
- * 1. MCP client requests authorization at /api/auth/mcp/authorize
- * 2. better-auth stores OAuth params in session and redirects here
- * 3. User logs in (if not authenticated)
- * 4. After login, user approves the authorization
- * 5. We redirect back to the authorize endpoint to complete the flow
+ * Two flows:
+ * 1. NOT AUTHENTICATED: Shows login form. After login, better-auth continues
+ *    the OAuth flow automatically via the oidc_login_prompt cookie.
+ * 2. AUTHENTICATED: Shows consent UI with approve/deny buttons.
+ *    User approves → better-auth returns redirect URL with auth code.
  */
 export function ConnectPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [searchParams] = useSearchParams();
-
   const { login, isAuthenticated, isInitializing } = useAuth();
 
-  // Extract OAuth params from URL (these are passed by better-auth)
+  // Consent flow params (provided by better-auth when user is authenticated)
+  const consentCode = searchParams.get("consent_code");
   const clientId = searchParams.get("client_id");
   const scope = searchParams.get("scope") || "";
-  const redirectUri = searchParams.get("redirect_uri");
-  const state = searchParams.get("state");
-  const responseType = searchParams.get("response_type");
-  const codeChallenge = searchParams.get("code_challenge");
-  const codeChallengeMethod = searchParams.get("code_challenge_method");
 
-  // Parse scopes from space-separated string
+  // Fetch consent info to get redirect_uri (not in URL params for security)
+  const consentInfoQuery = gatewayClient.auth.getConsentInfo.useQuery(
+    { consentCode: consentCode || "" },
+    { enabled: isAuthenticated && Boolean(consentCode) },
+  );
+
+  // Parse scopes for display
   const scopes = scope
     ? scope.split(" ").filter((s: string) => s.length > 0)
     : ["mcp:tools", "mcp:resources", "mcp:prompts"];
 
-  // Get client name from client_id (or use a default)
   const clientName = clientId || "MCP Client";
 
-  // Handle login form submission
+  // Handle login - after success, better-auth continues OAuth flow automatically
   const handleLogin = useCallback(
     async (credentials: { email: string; password: string }) => {
       try {
         setError(null);
         setIsLoading(true);
         await login(credentials);
-        // After login, the OAuth flow will continue
-        // We stay on this page to show the approval UI
       } catch (err) {
         setError(err as Error);
       } finally {
@@ -59,86 +57,62 @@ export function ConnectPage() {
     [login],
   );
 
-  // Handle approval - redirect back to authorize endpoint
-  const handleApprove = useCallback(() => {
+  // Handle consent approval
+  const handleApprove = useCallback(async () => {
+    if (!consentCode) {
+      setError(new Error("Missing consent code"));
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
 
     try {
-      // Reconstruct the authorization URL with all params
-      const authorizeUrl = new URL(`${GATEWAY_URL}/api/auth/mcp/authorize`);
+      const result = await authClient.oauth2.consent({
+        accept: true,
+        consent_code: consentCode,
+      });
 
-      // Add all the OAuth params
-      if (clientId) {
-        authorizeUrl.searchParams.set("client_id", clientId);
-      }
-      if (redirectUri) {
-        authorizeUrl.searchParams.set("redirect_uri", redirectUri);
-      }
-      if (responseType) {
-        authorizeUrl.searchParams.set("response_type", responseType);
-      }
-      if (scope) {
-        authorizeUrl.searchParams.set("scope", scope);
-      }
-      if (state) {
-        authorizeUrl.searchParams.set("state", state);
-      }
-      if (codeChallenge) {
-        authorizeUrl.searchParams.set("code_challenge", codeChallenge);
-      }
-      if (codeChallengeMethod) {
-        authorizeUrl.searchParams.set(
-          "code_challenge_method",
-          codeChallengeMethod,
-        );
+      if (result.error) {
+        throw new Error(result.error.message || "Consent failed");
       }
 
-      // Redirect to the authorize endpoint to complete the flow
-      window.location.href = authorizeUrl.toString();
+      if (result.data?.redirectURI) {
+        window.location.href = result.data.redirectURI;
+      } else {
+        throw new Error("No redirect URL received");
+      }
     } catch (err) {
       setError(err as Error);
       setIsLoading(false);
     }
-  }, [
-    clientId,
-    redirectUri,
-    responseType,
-    scope,
-    state,
-    codeChallenge,
-    codeChallengeMethod,
-  ]);
+  }, [consentCode]);
 
-  // Handle denial - redirect back with error
-  const handleDeny = useCallback(() => {
-    if (redirectUri) {
-      const denyUrl = new URL(redirectUri);
-      denyUrl.searchParams.set("error", "access_denied");
-      denyUrl.searchParams.set(
-        "error_description",
-        "User denied the authorization request",
-      );
-      if (state) {
-        denyUrl.searchParams.set("state", state);
+  // Handle consent denial
+  const handleDeny = useCallback(async () => {
+    if (!consentCode) {
+      window.location.href = "/";
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const result = await authClient.oauth2.consent({
+        accept: false,
+        consent_code: consentCode,
+      });
+
+      if (result.data?.redirectURI) {
+        window.location.href = result.data.redirectURI;
+      } else {
+        window.location.href = "/";
       }
-      window.location.href = denyUrl.toString();
-    } else {
-      // No redirect URI, just go home
+    } catch {
       window.location.href = "/";
     }
-  }, [redirectUri, state]);
-
-  // Auto-approve if user is already authenticated and this is a callback
-  // (This provides a smoother UX for returning users)
-  useEffect(() => {
-    // If user is authenticated and we have OAuth params, auto-approve after a brief delay
-    // This gives the user a moment to see what's happening
-    if (isAuthenticated && !isInitializing && clientId) {
-      // Show the approval UI briefly before auto-approving
-      // User can still click Deny if they want
-    }
-  }, [isAuthenticated, isInitializing, clientId]);
+  }, [consentCode]);
 
   if (isInitializing) {
     return (
@@ -155,6 +129,7 @@ export function ConnectPage() {
       isAuthenticated={isAuthenticated}
       clientName={clientName}
       scopes={scopes}
+      redirectUri={consentInfoQuery.data?.redirectUri || null}
       onApprove={handleApprove}
       onDeny={handleDeny}
       defaultValues={{ email: "", password: "" }}

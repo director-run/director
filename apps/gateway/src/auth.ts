@@ -1,3 +1,4 @@
+import { encrypt } from "@director.run/utilities/crypto";
 import { getLogger } from "@director.run/utilities/logger";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -5,7 +6,6 @@ import { apiKey, mcp } from "better-auth/plugins";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
-import { encrypt } from "./crypto";
 import * as schema from "./db/schema";
 import { env } from "./env";
 
@@ -116,10 +116,20 @@ export const auth = betterAuth({
     // MCP OAuth 2.0 server plugin for authenticating MCP clients
     mcp({
       // The login page for OAuth authorization - users will be redirected here
-      // to approve access. The page will receive OAuth params to continue the flow.
+      // to authenticate. The page will receive OAuth params to continue the flow.
       loginPage: "/connect",
       // The resource identifier for protected resource metadata
       resource: env.BASE_URL,
+      // OIDC configuration - includes consent page for security
+      oidcConfig: {
+        // Required by OIDCOptions type, but overridden by MCP plugin's loginPage
+        loginPage: "/connect",
+        // The consent page where users explicitly approve access.
+        // CRITICAL: Without this, better-auth skips the consent screen entirely
+        // even when prompt=consent is set, which is a major security issue.
+        // We use the same /connect page which handles both login and consent.
+        consentPage: "/connect",
+      },
     }),
   ],
 });

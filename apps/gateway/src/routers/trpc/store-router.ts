@@ -1,5 +1,6 @@
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { createRegistryClient } from "@director.run/registry/client";
+import { decrypt, encrypt } from "@director.run/utilities/crypto";
 import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { requiredStringSchema } from "@director.run/utilities/schema";
@@ -8,7 +9,6 @@ import { t } from "@director.run/utilities/trpc";
 import { joinURL } from "@director.run/utilities/url";
 import { z } from "zod";
 import { auth } from "../../auth";
-import { decrypt, encrypt } from "../../crypto";
 import { env } from "../../env";
 import {
   getSSEPathForPlaybook,

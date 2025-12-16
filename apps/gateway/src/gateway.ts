@@ -147,6 +147,22 @@ export class Gateway {
       }),
     );
 
+    // SECURITY: Force consent screen for MCP OAuth authorize requests
+    // Without this, better-auth skips consent for already-logged-in users
+    // when clients don't include prompt=consent in their request
+    this.app.get("/api/auth/mcp/authorize", (req, res, next) => {
+      // If prompt is not set to consent, redirect with prompt=consent added
+      if (req.query.prompt !== "consent") {
+        const url = new URL(
+          req.originalUrl,
+          `${req.protocol}://${req.get("host")}`,
+        );
+        url.searchParams.set("prompt", "consent");
+        return res.redirect(url.toString());
+      }
+      next();
+    });
+
     this.app.all("/api/auth/*", toNodeHandler(auth));
 
     //

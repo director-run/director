@@ -1,6 +1,6 @@
+import { encrypt } from "@director.run/utilities/crypto";
 import { t } from "@director.run/utilities/trpc";
 import { auth } from "../../auth";
-import { encrypt } from "../../crypto";
 import { env } from "../../env";
 import { type AuthenticatedGatewayContext, protectedProcedure } from "./index";
 

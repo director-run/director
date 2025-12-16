@@ -5,6 +5,7 @@ import {
   makeKitchenSinkServer,
 } from "@director.run/mcp/test/fixtures";
 import { serveOverSSE, serveOverStreamable } from "@director.run/mcp/transport";
+import { decrypt } from "@director.run/utilities/crypto";
 import { requiredStringSchema } from "@director.run/utilities/schema";
 import { z } from "zod";
 import {
@@ -12,7 +13,6 @@ import {
   register as clientRegister,
   createGatewayClient,
 } from "../client";
-import { decrypt } from "../crypto";
 import { Database } from "../db/database";
 import { env } from "../env";
 import { Gateway } from "../gateway";

@@ -17,6 +17,7 @@ export function ConnectPage(props: Props) {
     isAuthenticated,
     clientName,
     scopes,
+    redirectUri,
     onApprove,
     onDeny,
     // Login props
@@ -68,6 +69,17 @@ export function ConnectPage(props: Props) {
                   ))}
                 </ul>
               </div>
+
+              {redirectUri && (
+                <div className="rounded-lg border border-accent bg-accent-subtle/50 p-3">
+                  <p className="mb-1 font-medium text-fg text-xs">
+                    After approval, you will be redirected to:
+                  </p>
+                  <p className="break-all font-mono text-fg-subtle text-xs">
+                    {redirectUri}
+                  </p>
+                </div>
+              )}
 
               <div className="flex gap-3">
                 <Button
@@ -171,6 +183,7 @@ type Props = {
   isAuthenticated: boolean;
   clientName: string | null;
   scopes: string[];
+  redirectUri: string | null;
   onApprove: () => void;
   onDeny: () => void;
   // Login props (used when not authenticated)

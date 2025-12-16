@@ -39,7 +39,9 @@ export function ConnectPage() {
     ? scope.split(" ").filter((s: string) => s.length > 0)
     : ["mcp:tools", "mcp:resources", "mcp:prompts"];
 
-  const clientName = clientId || "MCP Client";
+  // Use friendly name from OAuth application, fall back to client_id, then generic
+  const clientName =
+    consentInfoQuery.data?.clientName || clientId || "MCP Client";
 
   // Handle login - after success, better-auth continues OAuth flow automatically
   const handleLogin = useCallback(

@@ -2,7 +2,7 @@ import { t } from "@director.run/utilities/trpc";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
-import { verificationTable } from "../../db/schema";
+import { oauthApplicationTable, verificationTable } from "../../db/schema";
 import { type AuthenticatedGatewayContext, protectedProcedure } from "./index";
 
 /**
@@ -60,9 +60,22 @@ export function createAuthRouter() {
             });
           }
 
+          // Fetch the friendly client name from the OAuth application table
+          let clientName: string | null = null;
+          const appResult = await db
+            .select({ name: oauthApplicationTable.name })
+            .from(oauthApplicationTable)
+            .where(eq(oauthApplicationTable.clientId, value.clientId))
+            .limit(1);
+
+          if (appResult.length > 0) {
+            clientName = appResult[0].name;
+          }
+
           return {
             redirectUri: value.redirectURI,
             clientId: value.clientId,
+            clientName,
             scope: value.scope,
           };
         } catch {

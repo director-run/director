@@ -1,4 +1,4 @@
-import { apiKeyClient } from "better-auth/client/plugins";
+import { apiKeyClient, oidcClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 import { GATEWAY_URL } from "../config";
 
@@ -7,7 +7,7 @@ export const authClient = createAuthClient({
   fetchOptions: {
     credentials: "include",
   },
-  plugins: [apiKeyClient()],
+  plugins: [apiKeyClient(), oidcClient()],
 });
 
 export const { signIn, signUp, signOut, useSession } = authClient;

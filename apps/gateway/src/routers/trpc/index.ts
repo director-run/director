@@ -7,6 +7,7 @@ import type { UserStatus } from "../../db/schema";
 import { env } from "../../env";
 import { PlaybookStore } from "../../playbooks/playbook-store";
 import { getStatus } from "../../status";
+import { createAuthRouter } from "./auth-router";
 import { createSettingsRouter } from "./settings-router";
 import { createPlaybookStoreRouter } from "./store-router";
 import { createToolsRouter } from "./tools-router";
@@ -52,6 +53,7 @@ export function createAppRouter() {
     health: publicProcedure.query(({ ctx }) => {
       return getStatus(ctx.cliVersion);
     }),
+    auth: createAuthRouter(),
     store: createPlaybookStoreRouter(),
     tools: createToolsRouter(),
     settings: createSettingsRouter(),

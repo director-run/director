@@ -2,6 +2,7 @@ import { AppError, ErrorCode } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
 import { asyncHandler } from "@director.run/utilities/middleware/index";
 import { Telemetry } from "@director.run/utilities/telemetry";
+import { joinURL } from "@director.run/utilities/url";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 import express from "express";
@@ -49,7 +50,11 @@ function requireMcpOAuth() {
       if (!session) {
         // Return 401 with WWW-Authenticate header per MCP OAuth spec (RFC 9728)
         // Clients expect well-known endpoints at root level
-        const resourceMetadataUrl = `${env.BASE_URL}/.well-known/oauth-protected-resource`;
+        // Use joinURL to avoid double slashes when BASE_URL has trailing slash
+        const resourceMetadataUrl = joinURL(
+          env.BASE_URL,
+          ".well-known/oauth-protected-resource",
+        );
         res.setHeader(
           "WWW-Authenticate",
           `Bearer resource_metadata="${resourceMetadataUrl}"`,
@@ -67,7 +72,11 @@ function requireMcpOAuth() {
     } catch (error) {
       logger.error({ message: "OAuth authentication error", error });
       // Return 401 with proper header even on errors (RFC 9728)
-      const resourceMetadataUrl = `${env.BASE_URL}/.well-known/oauth-protected-resource`;
+      // Use joinURL to avoid double slashes when BASE_URL has trailing slash
+      const resourceMetadataUrl = joinURL(
+        env.BASE_URL,
+        ".well-known/oauth-protected-resource",
+      );
       res.setHeader(
         "WWW-Authenticate",
         `Bearer resource_metadata="${resourceMetadataUrl}"`,

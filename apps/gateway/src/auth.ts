@@ -1,3 +1,4 @@
+import { encrypt } from "@director.run/utilities/crypto";
 import { getLogger } from "@director.run/utilities/logger";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -5,7 +6,6 @@ import { apiKey, mcp } from "better-auth/plugins";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
-import { encrypt } from "./crypto";
 import * as schema from "./db/schema";
 import { env } from "./env";
 

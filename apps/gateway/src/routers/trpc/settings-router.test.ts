@@ -1,5 +1,5 @@
+import { decrypt } from "@director.run/utilities/crypto";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { decrypt } from "../../crypto";
 import { env } from "../../env";
 import { IntegrationTestHarness } from "../../test/integration";
 

@@ -177,6 +177,113 @@ export const oauthCredentialsTable = pgTable(
   ],
 );
 
+//
+// MCP OAuth tables (required by better-auth's MCP plugin)
+//
+// These tables implement OAuth 2.0 for MCP clients (Cursor, Claude Code, etc.)
+// Flow: Client registers → User approves → Tokens issued → Client authenticates
+//
+
+/**
+ * Registered OAuth clients (MCP applications).
+ *
+ * When an MCP client first connects, it performs Dynamic Client Registration
+ * (RFC 7591) and receives a client_id/client_secret stored here.
+ *
+ * Examples: Cursor, Claude Code, or any MCP-compatible client.
+ */
+export const oauthApplicationTable = pgTable(
+  "oauth_application",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    icon: text("icon"),
+    metadata: text("metadata"),
+    clientId: text("client_id").notNull().unique(),
+    clientSecret: text("client_secret"),
+    redirectUrls: text("redirect_urls").notNull(),
+    type: text("type").notNull(),
+    disabled: boolean("disabled").default(false),
+    userId: text("user_id").references(() => userTable.id, {
+      onDelete: "cascade",
+    }),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [index("oauth_application_userId_idx").on(table.userId)],
+);
+
+/**
+ * OAuth access and refresh tokens.
+ *
+ * After user approval, tokens are issued and stored here. MCP clients include
+ * the access_token in requests to authenticate. Refresh tokens allow clients
+ * to get new access tokens without re-prompting the user.
+ */
+export const oauthAccessTokenTable = pgTable(
+  "oauth_access_token",
+  {
+    id: text("id").primaryKey(),
+    accessToken: text("access_token").notNull().unique(),
+    refreshToken: text("refresh_token").notNull().unique(),
+    accessTokenExpiresAt: timestamp("access_token_expires_at").notNull(),
+    refreshTokenExpiresAt: timestamp("refresh_token_expires_at").notNull(),
+    clientId: text("client_id")
+      .notNull()
+      .references(() => oauthApplicationTable.clientId, {
+        onDelete: "cascade",
+      }),
+    userId: text("user_id").references(() => userTable.id, {
+      onDelete: "cascade",
+    }),
+    scopes: text("scopes").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("oauth_access_token_clientId_idx").on(table.clientId),
+    index("oauth_access_token_userId_idx").on(table.userId),
+  ],
+);
+
+/**
+ * User consent records.
+ *
+ * Tracks which users have approved which clients. This allows skipping the
+ * approval prompt for clients the user has already authorized.
+ */
+export const oauthConsentTable = pgTable(
+  "oauth_consent",
+  {
+    id: text("id").primaryKey(),
+    clientId: text("client_id")
+      .notNull()
+      .references(() => oauthApplicationTable.clientId, {
+        onDelete: "cascade",
+      }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => userTable.id, { onDelete: "cascade" }),
+    scopes: text("scopes").notNull(),
+    consentGiven: boolean("consent_given").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("oauth_consent_clientId_idx").on(table.clientId),
+    index("oauth_consent_userId_idx").on(table.userId),
+  ],
+);
+
 // API key table for better-auth's apiKey plugin
 export const apikeyTable = pgTable(
   "apikey",

@@ -1,66 +1,47 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import type {
-  CallToolResult,
-  GetPromptResult,
-} from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
+import { SimpleServer } from "../src/simple-server";
 import { serveOverStreamable } from "../src/transport";
 
 async function main() {
-  const server = new McpServer(
-    {
-      name: "simple-streamable-http-server",
-      version: "1.0.0",
-    },
-    { capabilities: { logging: {} } },
-  );
+  const server = new SimpleServer("prompts-example");
 
-  server.registerTool(
-    "greet",
-    {
-      title: "Greeting Tool", // Display name for UI
-      description: "A simple greeting tool",
-      inputSchema: z.object({
+  server
+    .tool("greet")
+    .schema(
+      z.object({
         name: z.string().describe("Name to greet"),
       }),
-    },
-    async ({ name }): Promise<CallToolResult> => {
-      return await {
-        content: [
-          {
-            type: "text",
-            text: `Hello, ${name}!`,
-          },
-        ],
-      };
-    },
-  );
+    )
+    .description("A simple greeting tool")
+    .handle(({ name }) => {
+      return Promise.resolve({
+        greeting: `Hello, ${name}!`,
+      });
+    });
 
-  server.registerPrompt(
-    "greeting-template",
-    {
-      title: "Greeting Template", // Display name for UI
-      description: "A simple greeting prompt template",
-      argsSchema: z.object({
+  server
+    .prompt("greeting-template")
+    .schema(
+      z.object({
         name: z.string().describe("Name to include in greeting"),
       }),
-    },
-    async ({ name }): Promise<GetPromptResult> => {
-      return await {
+    )
+    .description("A simple greeting prompt template")
+    .handle(({ name }) => {
+      return {
         messages: [
           {
-            role: "user",
+            role: "user" as const,
             content: {
-              type: "text",
+              type: "text" as const,
               text: `Please greet ${name} in a friendly manner.`,
             },
           },
         ],
       };
-    },
-  );
+    });
 
-  await serveOverStreamable(server.server, 9001);
+  await serveOverStreamable(server, 9001);
 }
 
 main();

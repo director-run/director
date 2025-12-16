@@ -1,7 +1,6 @@
 import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
 import { getLogger } from "@director.run/utilities/logger";
-import { parseMCPMessageBody } from "@director.run/utilities/mcp";
 import { asyncHandler } from "@director.run/utilities/middleware/index";
 import { Telemetry } from "@director.run/utilities/telemetry";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
@@ -84,7 +83,9 @@ export const createSSERouter = ({
         // TODO: Add a test case for this.
         throw new AppError(ErrorCode.BAD_REQUEST, "No sessionId provided");
       }
-      const body = await parseMCPMessageBody(req);
+
+      // Body is already parsed by express.json() middleware at the parent router level
+      const body = req.body;
 
       logger.info({
         message: "Message received",

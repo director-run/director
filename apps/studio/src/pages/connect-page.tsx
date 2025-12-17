@@ -1,10 +1,13 @@
 import { ConnectPage as ConnectPageComponent } from "@director.run/design/components/pages/auth/connect.tsx";
 import { useCallback, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import {
+  DANGEROUSLY_PREFILL_LOGIN_EMAIL,
+  DANGEROUSLY_PREFILL_LOGIN_PASSWORD,
+} from "../config.ts";
 import { useAuth } from "../contexts/auth-context.tsx";
 import { gatewayClient } from "../contexts/backend-context.tsx";
 import { authClient } from "../lib/auth-client.ts";
-
 /**
  * OAuth consent page for MCP clients.
  *
@@ -134,7 +137,10 @@ export function ConnectPage() {
       redirectUri={consentInfoQuery.data?.redirectUri || null}
       onApprove={handleApprove}
       onDeny={handleDeny}
-      defaultValues={{ email: "", password: "" }}
+      defaultValues={{
+        email: DANGEROUSLY_PREFILL_LOGIN_EMAIL || "",
+        password: DANGEROUSLY_PREFILL_LOGIN_PASSWORD || "",
+      }}
       onLogin={handleLogin}
       signupLink={
         <Link to="/signup" className="text-fg underline hover:no-underline">

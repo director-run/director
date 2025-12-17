@@ -22,7 +22,6 @@ async function start() {
 
   await Gateway.start({
     database,
-    baseUrl: env.BASE_URL,
     port: env.PORT,
     studioAssetsPath: getStudioAssetsPath(),
   });

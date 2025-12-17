@@ -6,14 +6,12 @@ import type { Database } from "../../db/database";
 import type { UserStatus } from "../../db/schema";
 import { env } from "../../env";
 import { PlaybookStore } from "../../playbooks/playbook-store";
-import { getStatus } from "../../status";
 import { createAuthRouter } from "./auth-router";
 import { createSettingsRouter } from "./settings-router";
 import { createPlaybookStoreRouter } from "./store-router";
 import { createToolsRouter } from "./tools-router";
 
 export type GatewayContext = {
-  cliVersion: string | null;
   playbookStore: PlaybookStore;
   database: Database;
   userId: string | undefined;
@@ -50,8 +48,8 @@ export const protectedProcedure = publicProcedure.use(enforceUserIsAuthed);
 
 export function createAppRouter() {
   return t.router({
-    health: publicProcedure.query(({ ctx }) => {
-      return getStatus(ctx.cliVersion);
+    health: publicProcedure.query(() => {
+      return { status: "ok" };
     }),
     auth: createAuthRouter(),
     store: createPlaybookStoreRouter(),
@@ -69,10 +67,7 @@ export function createTRPCExpressMiddleware({
 }): ReturnType<typeof trpcExpress.createExpressMiddleware> {
   return trpcExpress.createExpressMiddleware({
     router: createAppRouter(),
-    createContext: async ({ req, res }): Promise<GatewayContext> => {
-      const headerValue = res.getHeader("x-cli-version");
-      const cliVersion = typeof headerValue === "string" ? headerValue : null;
-
+    createContext: async ({ req }): Promise<GatewayContext> => {
       let userId: string | undefined = undefined;
       let userStatus: UserStatus | undefined = undefined;
 
@@ -87,7 +82,6 @@ export function createTRPCExpressMiddleware({
       }
 
       return {
-        cliVersion,
         playbookStore,
         database,
         userId,

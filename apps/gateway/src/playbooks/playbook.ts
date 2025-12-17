@@ -15,10 +15,6 @@ import {
 } from "../capabilities/prompt-manager";
 import type { Database } from "../db/database";
 import {
-  getSSEPathForPlaybook,
-  getStreamablePathForPlaybook,
-} from "../helpers";
-import {
   type PlaybookHTTPTarget,
   PlaybookHTTPTargetSchema,
   type PlaybookParams,
@@ -92,6 +88,14 @@ export class Playbook extends ProxyServer {
 
   get userId() {
     return this._userId;
+  }
+
+  get streamablePath() {
+    return `/playbooks/${this.id}/mcp`;
+  }
+
+  get ssePath() {
+    return `/playbooks/${this.id}/sse`;
   }
 
   public async addTarget(
@@ -328,8 +332,8 @@ export class Playbook extends ProxyServer {
           ),
       ),
       paths: {
-        streamable: getStreamablePathForPlaybook(this.id),
-        sse: getSSEPathForPlaybook(this.id),
+        streamable: this.streamablePath,
+        sse: this.ssePath,
       },
     };
   }

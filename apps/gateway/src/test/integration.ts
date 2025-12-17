@@ -158,7 +158,6 @@ export class IntegrationTestHarness {
 
     const gateway = await Gateway.start({
       database,
-      baseUrl: baseURL,
       port: env.PORT,
     });
 

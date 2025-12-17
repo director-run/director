@@ -1,6 +1,4 @@
 import type { GatewayRouterOutputs } from "@director.run/gateway/client";
-import { getSSEPathForPlaybook } from "@director.run/gateway/helpers";
-import { getStreamablePathForPlaybook } from "@director.run/gateway/helpers";
 import {
   blue,
   green,
@@ -111,11 +109,8 @@ export function printPlaybookDetails(
       id,
       name,
       description: description ?? "--",
-      streamableURL: joinURL(
-        env.GATEWAY_URL,
-        getStreamablePathForPlaybook(playbook.id),
-      ),
-      sseURL: joinURL(env.GATEWAY_URL, getSSEPathForPlaybook(playbook.id)),
+      streamableURL: joinURL(env.GATEWAY_URL, playbook.paths.streamable),
+      sseURL: joinURL(env.GATEWAY_URL, playbook.paths.sse),
     }),
   );
 

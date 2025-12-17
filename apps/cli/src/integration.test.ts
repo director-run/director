@@ -29,7 +29,6 @@ describe("CLI integration tests", () => {
 
     gateway = await Gateway.start({
       database,
-      baseUrl: baseURL,
       port: env.PORT,
     });
 

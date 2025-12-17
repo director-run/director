@@ -27,7 +27,6 @@ export class Gateway {
   public readonly database: Database;
   private app: express.Express;
   private studioAssetsPath?: string;
-  private baseUrl: string;
   public readonly port: number;
 
   private constructor(attribs: {
@@ -35,13 +34,11 @@ export class Gateway {
     database: Database;
     telemetry?: Telemetry;
     studioAssetsPath?: string;
-    baseUrl: string;
     port: number;
   }) {
     this.playbookStore = attribs.playbookStore;
     this.database = attribs.database;
     this.studioAssetsPath = attribs.studioAssetsPath;
-    this.baseUrl = attribs.baseUrl;
     this.port = attribs.port;
 
     this.app = express();
@@ -138,7 +135,6 @@ export class Gateway {
       studioAssetsPath?: string;
       database: Database;
       telemetry?: Telemetry;
-      baseUrl: string;
       port: number;
     },
     successCallback?: () => void,
@@ -147,7 +143,7 @@ export class Gateway {
     const playbookStore = await PlaybookStore.create({
       database: attribs.database,
       telemetry: attribs.telemetry,
-      baseCallbackUrl: attribs.baseUrl,
+      baseCallbackUrl: env.BASE_URL,
     });
 
     attribs.telemetry?.trackEvent("gateway_start");
@@ -157,7 +153,6 @@ export class Gateway {
       playbookStore,
       telemetry: attribs.telemetry,
       studioAssetsPath: attribs.studioAssetsPath,
-      baseUrl: attribs.baseUrl,
       port: attribs.port,
     });
 

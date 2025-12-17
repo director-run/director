@@ -19,7 +19,6 @@ import { registerGetCommand } from "./core/get";
 import { registerLoginCommand } from "./core/login";
 import { registerRemoveCommand } from "./core/remove";
 import { registerSignupCommand } from "./core/signup";
-import { registerStatusCommand } from "./core/status";
 import { registerStudioCommand } from "./core/studio";
 import { registerUpdateCommand } from "./core/update";
 
@@ -121,7 +120,6 @@ export function registerCoreCommands(program: DirectorCommand): void {
     });
 
   registerConfigCommand(program);
-  registerStatusCommand(program);
 
   registerDebugCommands(program);
 }

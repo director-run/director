@@ -10,10 +10,6 @@ import { joinURL } from "@director.run/utilities/url";
 import { z } from "zod";
 import { auth } from "../../auth";
 import { env } from "../../env";
-import {
-  getSSEPathForPlaybook,
-  getStreamablePathForPlaybook,
-} from "../../helpers";
 import type { PlaybookTarget } from "../../playbooks/playbook";
 import { type AuthenticatedGatewayContext, protectedProcedure } from "./index";
 
@@ -586,11 +582,8 @@ export function createPlaybookStoreRouter() {
         }
 
         // Build URLs without API key (key returned separately for obfuscation)
-        const streamablePath = getStreamablePathForPlaybook(playbookId);
-        const ssePath = getSSEPathForPlaybook(playbookId);
-
-        const streamableUrl = joinURL(env.BASE_URL, streamablePath);
-        const sseUrl = joinURL(env.BASE_URL, ssePath);
+        const streamableUrl = joinURL(env.BASE_URL, playbook.streamablePath);
+        const sseUrl = joinURL(env.BASE_URL, playbook.ssePath);
 
         return {
           playbookId,

@@ -55,10 +55,10 @@ export class Gateway {
     );
     this.app.use(logRequests());
     if (this.studioAssetsPath) {
-      logger.debug({
-        message: "serving studio assets from",
-        distPath: this.studioAssetsPath,
-      });
+      // logger.debug({
+      //   message: "serving studio assets from",
+      //   distPath: this.studioAssetsPath,
+      // });
       this.app.use(
         "/studio",
         spaMiddleware({
@@ -74,10 +74,14 @@ export class Gateway {
       this.app.get("/", (_, res) => {
         res.redirect("/studio");
       });
-    } else {
-      logger.warn({
-        message: "studioAssetsPath not provided, studio will not be available",
+    } else if (isDevelopment()) {
+      this.app.use("/studio", (req, res) => {
+        res.redirect(`http://localhost:3000${req.originalUrl}`);
       });
+
+      // logger.warn({
+      //   message: "studioAssetsPath not provided, studio will not be available",
+      // });
     }
 
     this.app.use(
@@ -107,20 +111,20 @@ export class Gateway {
             code,
             userId,
           );
-          if (this.studioAssetsPath) {
-            // Redirect to hosted studio callback page
-            return {
-              redirectUrl: joinURL(
-                this.baseUrl,
-                `studio/oauth/${factoryId}/${providerId}/callback`,
-              ),
-            };
-          } else if (isDevelopment()) {
-            // redirect to dev studio callback page
-            return {
-              redirectUrl: `http://localhost:3000/oauth/${factoryId}/${providerId}/callback`,
-            };
-          }
+          // if (this.studioAssetsPath) {
+          // Redirect to hosted studio callback page
+          return {
+            redirectUrl: joinURL(
+              this.baseUrl,
+              `studio/oauth/${factoryId}/${providerId}/callback`,
+            ),
+          };
+          // } else if (isDevelopment()) {
+          //   // redirect to dev studio callback page
+          //   return {
+          //     redirectUrl: `http://localhost:3000/oauth/${factoryId}/${providerId}/callback`,
+          //   };
+          // }
         },
         onAuthorizationError: (factoryId, providerId, error) => {
           logger.error({
@@ -128,21 +132,21 @@ export class Gateway {
             message: `failed to authorize ${factoryId} ${providerId}: ${error.message}`,
           });
           // Only expose the error message to the client, not stack traces or internal details
-          const safeErrorMessage = encodeURIComponent(error.message);
-          if (this.studioAssetsPath) {
-            // Redirect to hosted studio callback page
-            return {
-              redirectUrl: joinURL(
-                this.baseUrl,
-                `studio/oauth/${factoryId}/${providerId}/callback?error=${safeErrorMessage}`,
-              ),
-            };
-          } else if (isDevelopment()) {
-            // redirect to dev studio callback page
-            return {
-              redirectUrl: `http://localhost:3000/oauth/${factoryId}/${providerId}/callback?error=${safeErrorMessage}`,
-            };
-          }
+          // const safeErrorMessage = encodeURIComponent(error.message);
+          // if (this.studioAssetsPath) {
+          // Redirect to hosted studio callback page
+          return {
+            redirectUrl: joinURL(
+              this.baseUrl,
+              `studio/oauth/${factoryId}/${providerId}/callback?error=${encodeURIComponent(error.message)}`,
+            ),
+          };
+          // } else if (isDevelopment()) {
+          //   // redirect to dev studio callback page
+          //   return {
+          //     redirectUrl: `http://localhost:3000/oauth/${factoryId}/${providerId}/callback?error=${safeErrorMessage}`,
+          //   };
+          // }
         },
       }),
     );
@@ -203,13 +207,13 @@ export class Gateway {
         database: this.database,
       }),
     );
-    this.app.get("/", (_, res, next) => {
-      if (this.studioAssetsPath) {
-        res.redirect("/studio");
-      } else {
-        return next();
-      }
-    });
+    // this.app.get("/", (_, res) => {
+    //   // if (this.studioAssetsPath) {
+    //   res.redirect("/studio");
+    //   // } else {
+    //   //   return next();
+    //   // }
+    // });
     this.app.all("*", notFoundHandler);
     this.app.use(errorRequestHandler);
   }

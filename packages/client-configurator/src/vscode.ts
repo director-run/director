@@ -109,7 +109,7 @@ export class VSCodeInstaller extends AbstractClient<VSCodeConfig> {
       },
     };
     newConfig.mcp.servers[this.createServerConfigKey(entry.name)] = {
-      url: entry.sseURL,
+      url: entry.streamableURL,
     };
     await this.updateConfig(newConfig);
     return {

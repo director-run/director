@@ -110,7 +110,6 @@ export function printPlaybookDetails(
       name,
       description: description ?? "--",
       streamableURL: joinURL(env.GATEWAY_URL, playbook.paths.streamable),
-      sseURL: joinURL(env.GATEWAY_URL, playbook.paths.sse),
     }),
   );
 

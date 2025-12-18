@@ -25,7 +25,7 @@ export function registerAddCommand(program: DirectorCommand) {
     .addOption(
       makeOption({
         flags: "-u,--url <url>",
-        description: "add a streamable or sse server by specifying the url",
+        description: "add an HTTP server by specifying the url",
       }),
     )
     .addOption(

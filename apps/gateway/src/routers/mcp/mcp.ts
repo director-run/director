@@ -3,7 +3,6 @@ import type { Database } from "../../db/database";
 import { requireAPIKeyAuth } from "../../middleware/auth";
 import type { PlaybookStore } from "../../playbooks/playbook-store";
 import { createMcpNextRouter } from "./mcp-next";
-import { createSSERouter } from "./sse";
 import { createStreamableRouter } from "./streamable";
 
 export function createMCPRouter({
@@ -28,12 +27,6 @@ export function createMCPRouter({
 
   // API key authentication for legacy endpoints
   router.use(requireAPIKeyAuth());
-
-  router.use(
-    createSSERouter({
-      playbookStore,
-    }),
-  );
 
   router.use(
     createStreamableRouter({

@@ -30,7 +30,6 @@ const mockConnectionInfo: ConnectionInfo = {
   playbookId: "staging-playbook",
   apiKey: "sk_test_abc123def456ghi789",
   streamableUrl: "https://gateway.director.run/mcp/staging-playbook",
-  sseUrl: "https://gateway.director.run/sse/staging-playbook",
 };
 
 const PlaybookDetailComponent = ({

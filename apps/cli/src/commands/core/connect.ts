@@ -27,9 +27,8 @@ export function registerConnectCommand(program: DirectorCommand) {
               playbookId,
             });
 
-          // Build full URLs with API key
+          // Build full URL with API key
           const streamableUrlWithKey = `${connectionInfo.streamableUrl}?key=${connectionInfo.apiKey}`;
-          const sseUrlWithKey = `${connectionInfo.sseUrl}?key=${connectionInfo.apiKey}`;
 
           // Build stdio command config
           const stdioCommand = {
@@ -51,7 +50,6 @@ export function registerConnectCommand(program: DirectorCommand) {
               clientId: options.target as ClientId,
               name: connectionInfo.playbookId,
               connectionDetails: {
-                sseUrl: sseUrlWithKey,
                 streamableUrl: streamableUrlWithKey,
               },
             });
@@ -71,7 +69,6 @@ export function registerConnectCommand(program: DirectorCommand) {
             console.log(
               whiteBold("HTTP Streamable:") + " " + streamableUrlWithKey,
             );
-            console.log(whiteBold("HTTP SSE:") + " " + sseUrlWithKey);
             console.log(
               whiteBold("Stdio:"),
               JSON.stringify(stdioCommand, null, 2),

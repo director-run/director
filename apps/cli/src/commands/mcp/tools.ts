@@ -1,9 +1,6 @@
 import { HTTPClient } from "@director.run/mcp/client/http-client";
 import { blue, yellow } from "@director.run/utilities/cli/colors";
-import {
-  DirectorCommand,
-  makeOption,
-} from "@director.run/utilities/cli/director-command";
+import { DirectorCommand } from "@director.run/utilities/cli/director-command";
 import { actionWithErrorHandler } from "@director.run/utilities/cli/index";
 import { makeTable } from "@director.run/utilities/cli/index";
 import { input } from "@inquirer/prompts";
@@ -11,100 +8,50 @@ import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { gatewayClient } from "../../client";
 import { title } from "../../common";
 
-export type TransportType = "streamable" | "sse";
-
 /**
  * Creates an authenticated MCP client for a playbook.
  */
-async function createPlaybookClient(
-  playbookId: string,
-  transport: TransportType = "streamable",
-): Promise<HTTPClient> {
+async function createPlaybookClient(playbookId: string): Promise<HTTPClient> {
   const connectionInfo = await gatewayClient.store.getConnectionInfo.query({
     playbookId,
   });
   // Build URL with API key
-  const baseUrl =
-    transport === "sse" ? connectionInfo.sseUrl : connectionInfo.streamableUrl;
-  const urlWithKey = `${baseUrl}?key=${connectionInfo.apiKey}`;
+  const urlWithKey = `${connectionInfo.streamableUrl}?key=${connectionInfo.apiKey}`;
   return HTTPClient.createAndConnectToHTTP(urlWithKey);
-}
-
-function transportOption() {
-  return makeOption({
-    flags: "--transport <type>",
-    description: "Transport type to use for connection",
-    defaultValue: "streamable",
-    choices: ["streamable", "sse"],
-  });
 }
 
 export function registerToolsCommand(program: DirectorCommand) {
   program
     .command("list-tools <playbookId>")
     .description("List tools on a playbook")
-    .addOption(transportOption())
     .action(
-      actionWithErrorHandler(
-        async (playbookId: string, options: { transport: TransportType }) => {
-          const client = await createPlaybookClient(
-            playbookId,
-            options.transport,
-          );
-          await printTools(client);
-          await client.close();
-        },
-      ),
+      actionWithErrorHandler(async (playbookId: string) => {
+        const client = await createPlaybookClient(playbookId);
+        await printTools(client);
+        await client.close();
+      }),
     );
 
   program
     .command("get-tool <playbookId> <toolName>")
     .description("Get the details of a tool")
-    .addOption(transportOption())
     .action(
-      actionWithErrorHandler(
-        async (
-          playbookId: string,
-          toolName: string,
-          options: { transport: TransportType },
-        ) => {
-          const client = await createPlaybookClient(
-            playbookId,
-            options.transport,
-          );
-          await printTool(client, toolName);
-          await client.close();
-        },
-      ),
+      actionWithErrorHandler(async (playbookId: string, toolName: string) => {
+        const client = await createPlaybookClient(playbookId);
+        await printTool(client, toolName);
+        await client.close();
+      }),
     );
 
   program
     .command("call-tool <playbookId> <toolName>")
-    .addOption(
-      makeOption({
-        flags: "-a,--argument <key=value>",
-        description:
-          "set arguments in key=value format (can be used multiple times)",
-        variadic: true,
-      }),
-    )
-    .addOption(transportOption())
     .description("Call a tool on a playbook")
     .action(
-      actionWithErrorHandler(
-        async (
-          playbookId: string,
-          toolName: string,
-          options: { transport: TransportType },
-        ) => {
-          const client = await createPlaybookClient(
-            playbookId,
-            options.transport,
-          );
-          await callTool(client, toolName);
-          await client.close();
-        },
-      ),
+      actionWithErrorHandler(async (playbookId: string, toolName: string) => {
+        const client = await createPlaybookClient(playbookId);
+        await callTool(client, toolName);
+        await client.close();
+      }),
     );
 }
 

@@ -21,7 +21,6 @@ const mockPlaybooks: PlaybookList = [
     servers: [],
     paths: {
       streamable: "/ws/dev-playbook",
-      sse: "/ws/dev-playbook",
     },
   },
   {
@@ -33,7 +32,6 @@ const mockPlaybooks: PlaybookList = [
     servers: [],
     paths: {
       streamable: "/ws/staging-playbook",
-      sse: "/ws/staging-playbook",
     },
   },
 ];

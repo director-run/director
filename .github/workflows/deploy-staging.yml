@@ -20,7 +20,7 @@ jobs:
     with:
       build: false
 
-  deploy-gateway:
+  deploy-app:
     name: Gateway
     needs: ci
     permissions:
@@ -29,7 +29,7 @@ jobs:
     uses: ./.github/workflows/__cloudrun-deploy.yml
     with:
       environment: staging
-      service_name: director-staging-gateway
+      service_name: director-staging-app
       working-directory: apps/gateway
       migrations: true
       seed_enabled: true

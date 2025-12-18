@@ -583,13 +583,11 @@ export function createPlaybookStoreRouter() {
 
         // Build URLs without API key (key returned separately for obfuscation)
         const streamableUrl = joinURL(env.BASE_URL, playbook.streamablePath);
-        const sseUrl = joinURL(env.BASE_URL, playbook.ssePath);
 
         return {
           playbookId,
           apiKey,
           streamableUrl,
-          sseUrl,
         };
       }),
   });

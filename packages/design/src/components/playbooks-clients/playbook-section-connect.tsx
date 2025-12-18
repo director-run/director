@@ -13,7 +13,6 @@ export interface ConnectionInfo {
   playbookId: string;
   apiKey: string;
   streamableUrl: string;
-  sseUrl: string;
 }
 
 export interface PlaybookSectionConnectProps {

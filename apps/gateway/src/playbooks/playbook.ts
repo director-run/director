@@ -94,10 +94,6 @@ export class Playbook extends ProxyServer {
     return `/playbooks/${this.id}/mcp`;
   }
 
-  get ssePath() {
-    return `/playbooks/${this.id}/sse`;
-  }
-
   public async addTarget(
     server: PlaybookTarget | ProxyTarget,
     params: { throwOnError: boolean } = { throwOnError: true },
@@ -333,7 +329,6 @@ export class Playbook extends ProxyServer {
       ),
       paths: {
         streamable: this.streamablePath,
-        sse: this.ssePath,
       },
     };
   }

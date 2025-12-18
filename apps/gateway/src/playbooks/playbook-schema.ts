@@ -47,6 +47,5 @@ export type PlaybookPlainObject = Omit<PlaybookParams, "servers"> & {
   servers: (HTTPClientPlainObject | StdioClientPlainObject)[];
   paths: {
     streamable: string;
-    sse: string;
   };
 };

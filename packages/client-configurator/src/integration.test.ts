@@ -60,7 +60,6 @@ import type { VSCodeConfig } from "./vscode";
           entries: [
             {
               name: "not_managed_by_director",
-              sseURL: faker.internet.url(),
               streamableURL: faker.internet.url(),
             },
           ],

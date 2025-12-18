@@ -24,7 +24,7 @@ export function createVSCodeConfig(entries: Array<Installable>): VSCodeConfig {
     mcp: {
       servers: entries.reduce(
         (acc, entry) => {
-          acc[entry.name] = { url: entry.sseURL };
+          acc[entry.name] = { url: entry.streamableURL };
           return acc;
         },
         {} as Record<string, { url: string }>,
@@ -37,7 +37,7 @@ export function createCursorConfig(entries: Array<Installable>): CursorConfig {
   return {
     mcpServers: entries.reduce(
       (acc, entry) => {
-        acc[entry.name] = { url: entry.sseURL };
+        acc[entry.name] = { url: entry.streamableURL };
         return acc;
       },
       {} as Record<string, { url: string }>,
@@ -51,7 +51,12 @@ export function createClaudeConfig(entries: Array<Installable>): ClaudeConfig {
       (acc, entry) => {
         acc[entry.name] = {
           command: "npx",
-          args: ["-y", "@director.run/cli@latest", "http2stdio", entry.sseURL],
+          args: [
+            "-y",
+            "@director.run/cli@latest",
+            "http2stdio",
+            entry.streamableURL,
+          ],
           env: {
             LOG_LEVEL: "silent",
           },
@@ -78,12 +83,10 @@ export function createClaudeCodeConfig(
 }
 
 export function createInstallable(): {
-  sseURL: string;
   name: string;
   streamableURL: string;
 } {
   return {
-    sseURL: faker.internet.url(),
     name: [faker.hacker.noun(), faker.string.uuid()].join("-"),
     streamableURL: faker.internet.url(),
   };

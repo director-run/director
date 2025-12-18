@@ -8,7 +8,6 @@ import { AppError, ErrorCode } from "@director.run/utilities/error";
 export type ClientId = "claude" | "claude-code" | "cursor" | "vscode";
 
 export type ConnectionDetails = {
-  sseUrl: string;
   streamableUrl: string;
 };
 
@@ -75,7 +74,6 @@ export class ClientStore {
 
     const result = await client.install({
       name,
-      sseURL: connectionDetails.sseUrl,
       streamableURL: connectionDetails.streamableUrl,
     });
 

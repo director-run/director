@@ -11,7 +11,6 @@ const mockConnectionInfo: ConnectionInfo = {
   playbookId: "playbook-1",
   apiKey: "sk_test_abc123def456ghi789",
   streamableUrl: "https://gateway.director.run/mcp/playbook-1",
-  sseUrl: "https://gateway.director.run/sse/playbook-1",
 };
 
 const meta = {

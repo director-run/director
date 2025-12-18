@@ -130,6 +130,5 @@ export abstract class AbstractClient<T> {
 
 export type Installable = {
   name: string;
-  sseURL: string;
   streamableURL: string;
 };

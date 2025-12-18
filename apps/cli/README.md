@@ -176,7 +176,7 @@ CORE COMMANDS
    add <playbookId> [options]                    Add a server to a playbook.
    remove <playbookId> <serverName>              Remove a server from a playbook
    update <playbookId> [serverName] [options]    Update playbook attributes
-   http2stdio <url>                              Proxy an HTTP connection (sse or streamable) to a stdio stream
+   http2stdio <url>                              Proxy an HTTP connection to a stdio stream
    env [options]                                 Print environment variables
    status                                        Get the status of the director
 

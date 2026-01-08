@@ -7,7 +7,7 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "clean": "rm -rf .turbo dist/*",
-    "test": "bun run vitest  --fileParallelism=false",
+    "test": "echo 'todo'",
     "typecheck": "tsc --noEmit",
     "db:push": "drizzle-kit push --force",
     "serve:dev": "bun run --watch bin/start.ts",

@@ -20,7 +20,7 @@ Director allows you to provide <ins>**playbooks**</ins> to AI Agents. A playbook
 
 Playbooks are portable and can easily be switched in and out of context. Director is local-first - setup and client integration takes 30 seconds. In addition, Director provides all of the MCP management functionality that you'd expect: tool filtering, logging, strong isolation, and unified OAuth.
 
-<br />
+<br /><br />
 
 https://github.com/user-attachments/assets/cafc0902-a854-4ee8-ac89-b7535f10c93d
 

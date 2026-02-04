@@ -1,5 +1,8 @@
 import { AppError, ErrorCode } from "@director.run/utilities/error";
-import { readJSONFile } from "@director.run/utilities/json";
+import {
+  readJSONFile,
+  type ReadJSONFileOptions,
+} from "@director.run/utilities/json";
 import { type Logger, getLogger } from "@director.run/utilities/logger";
 
 export type InstallerResult = {
@@ -26,6 +29,14 @@ export abstract class AbstractClient<T> {
     this.logger = getLogger(`client-configurator/${this.name}`);
   }
 
+  /**
+   * Override this method to specify custom options for reading the config file.
+   * For example, VSCode settings.json supports comments (JSONC format).
+   */
+  protected getReadJSONFileOptions(): ReadJSONFileOptions | undefined {
+    return undefined;
+  }
+
   protected async initialize() {
     if (this.isInitialized && this.config) {
       return;
@@ -47,7 +58,10 @@ export abstract class AbstractClient<T> {
     }
 
     try {
-      this.config = await readJSONFile<T>(this.configPath);
+      this.config = await readJSONFile<T>(
+        this.configPath,
+        this.getReadJSONFileOptions(),
+      );
       this.isInitialized = true;
     } catch (error) {
       // check if the error is a syntax error

@@ -3,7 +3,10 @@ import path from "node:path";
 import { isTest } from "@director.run/utilities/env";
 import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
-import { writeJSONFile } from "@director.run/utilities/json";
+import {
+  writeJSONFile,
+  type ReadJSONFileOptions,
+} from "@director.run/utilities/json";
 import { os, App } from "@director.run/utilities/os/index";
 import {
   AbstractClient,
@@ -25,6 +28,14 @@ export class VSCodeInstaller extends AbstractClient<VSCodeConfig> {
       name: "vscode",
       configKeyPrefix: params.configKeyPrefix,
     });
+  }
+
+  /**
+   * VSCode settings.json supports comments (JSONC format).
+   * We need to use the JSONC parser to handle this.
+   */
+  protected getReadJSONFileOptions(): ReadJSONFileOptions {
+    return { jsonc: true };
   }
 
   protected async initialize() {

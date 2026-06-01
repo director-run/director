@@ -21,7 +21,7 @@
     "@types/lodash": "^4.17.13",
     "type-fest": "^4.40.0",
     "typescript": "^5.8.3",
-    "vitest": "^3.1.1"
+    "vitest": "^4.1.8"
   },
   "dependencies": {
     "@director.run/utilities": "workspace:*",

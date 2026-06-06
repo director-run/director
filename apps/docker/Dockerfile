@@ -1,36 +1,37 @@
-FROM node:20-slim
+FROM oven/bun:1.1-slim AS builder
 
-# Update dependencies
-RUN apt-get update 
+WORKDIR /app
 
-# Install dependencies
-RUN apt-get install -y \
+# Copy the monorepo source code
+COPY . .
+
+# Install dependencies and build
+RUN bun install
+RUN bun run build
+
+FROM oven/bun:1.1-slim AS runner
+WORKDIR /app
+
+# Install system dependencies that might be needed by MCP servers
+RUN apt-get update && apt-get install -y \
     curl \
     git \
     python3-pip \
-    pipx 
+    pipx \
+    && rm -rf /var/lib/apt/lists/*
 
-# Used by many MCP servers
+# Install uv for Python MCP servers
 RUN pipx install uv
-
-# Add pipx bin directory to PATH so uvx is available
 ENV PATH="/root/.local/bin:${PATH}"
 
-# Create director directory for volume mounting
+# Create director directory
 RUN mkdir -p /root/.director
 
-# Install Director CLI globally
-RUN npm install -g @director.run/cli@latest
+# Copy built files and dependencies from builder
+COPY --from=builder /app /app
 
-# Set default port
 ENV GATEWAY_PORT=8080
-
-# Expose the gateway port
 EXPOSE ${GATEWAY_PORT}
 
-# Create a simple healthcheck
-# HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-#   CMD curl -f http://localhost:${GATEWAY_PORT}/health || exit 1
-
-# Run director serve
-CMD ["sh", "-c", "director serve"]
+# Run the local built CLI
+CMD ["bun", "run", "./apps/cli/bin/cli.ts", "serve"]

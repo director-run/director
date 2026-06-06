@@ -10,6 +10,17 @@ const LOG_ERROR_STACK = process.env.LOG_ERROR_STACK === "true";
 
 export type Logger = pino.Logger;
 
+const stream = LOG_PRETTY
+  ? pinoPretty({
+      colorize: true,
+      translateTime: "HH:MM:ss",
+      ignore: "pid,hostname",
+      destination: 2,
+      // uncomment to hide json objects for any level other than trace or debug
+      // hideObject: !["trace", "debug"].includes(LOG_LEVEL.toLowerCase()),
+    })
+  : pino.destination(2);
+
 const logger = pino(
   {
     level: LOG_LEVEL.toLowerCase(),
@@ -39,15 +50,7 @@ const logger = pino(
       },
     },
   },
-  LOG_PRETTY
-    ? pinoPretty({
-        colorize: true,
-        translateTime: "HH:MM:ss",
-        ignore: "pid,hostname",
-        // uncomment to hide json objects for any level other than trace or debug
-        // hideObject: !["trace", "debug"].includes(LOG_LEVEL.toLowerCase()),
-      })
-    : undefined,
+  stream
 );
 
 export const getLogger = (name: string): Logger => logger.child({ name });

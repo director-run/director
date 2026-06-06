@@ -18,11 +18,11 @@ RUN apt-get update && apt-get install -y \
     git \
     python3-pip \
     python3-venv \
+    pipx \
     && rm -rf /var/lib/apt/lists/*
 
-# Install pipx and uv for Python MCP servers
-RUN pip install --no-cache-dir pipx && \
-    pipx install uv
+# Install uv for Python MCP servers using pipx
+RUN pipx install uv
 ENV PATH="/root/.local/bin:${PATH}"
 
 # Create director directory

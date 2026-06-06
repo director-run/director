@@ -62,6 +62,10 @@ export const env = createEnv({
       .string()
       .default("false")
       .transform((s) => s === "true"),
+    DISABLE_SIGNUPS: z
+      .string()
+      .default("false")
+      .transform((s) => s === "true"),
     // API key rate limiting configuration
     API_KEY_RATE_LIMIT_WINDOW_SECONDS: z
       .string()

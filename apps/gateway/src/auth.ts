@@ -48,6 +48,14 @@ export const auth = betterAuth({
   databaseHooks: {
     user: {
       create: {
+        before: async (user) => {
+          if (env.DISABLE_SIGNUPS) {
+            throw new Error("Signups are disabled on this instance");
+          }
+          return {
+            data: user,
+          };
+        },
         after: async (user) => {
           // Create a default API key for the new user and store encrypted
           try {

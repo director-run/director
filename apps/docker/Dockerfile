@@ -1,4 +1,4 @@
-FROM oven/bun:1.1-slim AS builder
+FROM oven/bun:1-slim AS builder
 
 WORKDIR /app
 
@@ -9,7 +9,7 @@ COPY . .
 RUN bun install
 RUN bun run build
 
-FROM oven/bun:1.1-slim AS runner
+FROM oven/bun:1-slim AS runner
 WORKDIR /app
 
 # Install system dependencies that might be needed by MCP servers
@@ -17,11 +17,12 @@ RUN apt-get update && apt-get install -y \
     curl \
     git \
     python3-pip \
-    pipx \
+    python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
-# Install uv for Python MCP servers
-RUN pipx install uv
+# Install pipx and uv for Python MCP servers
+RUN pip install --no-cache-dir pipx && \
+    pipx install uv
 ENV PATH="/root/.local/bin:${PATH}"
 
 # Create director directory

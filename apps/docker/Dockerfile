@@ -34,5 +34,8 @@ COPY --from=builder /app /app
 ENV GATEWAY_PORT=8080
 EXPOSE ${GATEWAY_PORT}
 
+# Create director symlink for dokploy environments
+RUN ln -s /app/apps/cli/bin/cli.ts /usr/local/bin/director && chmod +x /usr/local/bin/director
+
 # Run the local built CLI
 CMD ["bun", "run", "./apps/cli/bin/cli.ts", "serve"]

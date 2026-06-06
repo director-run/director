@@ -39,5 +39,5 @@ RUN echo '#!/bin/sh' > /usr/local/bin/director && \
     echo 'exec bun run /app/apps/cli/bin/cli.ts "$@"' >> /usr/local/bin/director && \
     chmod +x /usr/local/bin/director
 
-# Run the local built CLI
-CMD ["bun", "run", "/app/apps/cli/bin/cli.ts", "serve"]
+# Run the gateway server
+CMD ["bun", "run", "/app/apps/gateway/bin/server.ts"]

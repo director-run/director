@@ -55,6 +55,10 @@ export function createAppRouter() {
     store: createPlaybookStoreRouter(),
     tools: createToolsRouter(),
     settings: createSettingsRouter(),
+    authCheck: publicProcedure.query(({ ctx }) => {
+      const context = ctx as GatewayContext;
+      return { userId: context.userId, headers: "Check console" };
+    }),
   });
 }
 
@@ -74,6 +78,9 @@ export function createTRPCExpressMiddleware({
       const session = await auth.api.getSession({
         headers: req.headers as Record<string, string>,
       });
+
+      console.log("TRPC createContext req.headers:", req.headers);
+      console.log("TRPC createContext session:", session);
 
       if (session) {
         userId = session.user.id;

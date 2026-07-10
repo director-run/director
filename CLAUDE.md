@@ -110,6 +110,13 @@ When building frontend components (Studio, design system):
    - Reusable presentational components: `packages/design/src/components/`
    - App-specific containers/pages: `apps/studio/src/pages/` or `apps/studio/src/components/`
 
+4. **Theming and Dark Mode**:
+   - Style with the semantic tokens defined in `apps/studio/src/globals.css` (`bg`, `fg`, `fg-subtle`, `surface`, `accent`, `accent-subtle`, `success`, `success-fg`, `destructive`, `destructive-fg`, `overlay`)
+   - The default Tailwind palette is disabled (`--color-*: initial`) — classes like `text-green-500` or `bg-red-50` silently produce no CSS
+   - Use the semantic shadow utilities (`shadow-hairline`, `shadow-raised`, `shadow-panel`, `shadow-popover`) instead of hardcoded `shadow-[...]` values
+   - Components must render correctly in both light and dark mode (`.dark` class); add a `DarkMode` story variant (`globals: { darkMode: true }`) alongside new stories
+   - See `packages/design/README.md` for the full token reference
+
 ### Testing Requirements
 
 - Write tests for new functionality

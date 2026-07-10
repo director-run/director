@@ -49,3 +49,8 @@ export const Error: Story = {
     error: { message: "Authorization failed. Please try again." } as Error,
   },
 };
+
+export const ConsentDarkMode: Story = {
+  args: { isAuthenticated: true, scopes, redirectUri },
+  globals: { darkMode: true },
+};

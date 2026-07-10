@@ -102,7 +102,7 @@ export function PlaybookSectionConnect({
         </SectionTitle>
       </SectionHeader>
 
-      <div className="flex w-full flex-col gap-y-0 overflow-hidden rounded-xl bg-accent-subtle shadow-[0_0_0_0.5px_rgba(55,50,46,0.15)]">
+      <div className="flex w-full flex-col gap-y-0 overflow-hidden rounded-xl bg-accent-subtle shadow-hairline">
         <div className="flex flex-col gap-y-4 p-4">
           <SelectNative
             className="w-full"
@@ -134,7 +134,7 @@ export function PlaybookSectionConnect({
                 disabled={isLoading || !displayCommand}
               >
                 {copied ? (
-                  <CheckIcon className="text-green-500" />
+                  <CheckIcon className="text-success-fg" />
                 ) : (
                   <CopyIcon />
                 )}

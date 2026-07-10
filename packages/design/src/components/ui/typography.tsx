@@ -13,7 +13,7 @@ export const textVariants = cva("", {
     },
     invisibles: {
       false: "",
-      true: "[&:not(p)]:before:mr-2 [&:not(p)]:before:text-gray-8 [&:not(p)]:before:tracking-widest",
+      true: "[&:not(p)]:before:mr-2 [&:not(p)]:before:text-fg-subtle [&:not(p)]:before:tracking-widest",
     },
   },
   defaultVariants: {

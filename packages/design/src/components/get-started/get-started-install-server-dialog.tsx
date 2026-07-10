@@ -70,7 +70,7 @@ function GetStartedInstallServerDialogPresentation({
 
         {/* Mobile version */}
         <div className="-bottom-5 sticky inset-x-0 px-4 pt-4 md:hidden">
-          <div className="rounded-xl bg-accent-subtle p-4 shadow-[0_0_0_0.5px_rgba(55,50,46,0.2)]">
+          <div className="rounded-xl bg-accent-subtle p-4 shadow-hairline">
             {mcp && (
               <RegistryInstallForm
                 registryEntry={mcp}

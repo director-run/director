@@ -31,7 +31,7 @@ export function LoginForm({
       defaultValues={
         defaultValues ? defaultValues : { email: "", password: "" }
       }
-      className="gap-y-0 overflow-hidden rounded-xl bg-accent-subtle shadow-[0_0_0_0.5px_rgba(55,50,46,0.15)]"
+      className="gap-y-0 overflow-hidden rounded-xl bg-accent-subtle shadow-hairline"
       onSubmit={(values) => {
         onSubmit({
           email: values.email,

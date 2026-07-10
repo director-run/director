@@ -36,7 +36,7 @@ function SheetContent({
       <SheetPrimitive.Content
         className={cn(
           "popover fixed inset-y-1 right-1 z-50 flex w-[calc(100%-0.5rem)] flex-col overflow-hidden rounded-xl transition ease-in-out sm:max-w-xl",
-          "shadow-[0_0_10px_6px_rgba(55,50,46,0.13),_0_0_0_0.5px_rgba(55,50,46,0.25)]",
+          "shadow-panel",
           "radix-state-[open]:slide-in-from-right radix-state-[open]:animate-in radix-state-[open]:duration-300",
           "radix-state-[closed]:slide-out-to-right radix-state-[closed]:animate-out radix-state-[closed]:duration-200",
           className,

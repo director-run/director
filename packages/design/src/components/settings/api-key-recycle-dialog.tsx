@@ -92,7 +92,7 @@ export function ApiKeyRecycleDialog({
                 <div className="flex size-8 shrink-0 items-center justify-center rounded-r-md border-[0.5px] border-fg/20 bg-accent-subtle">
                   <Button size="icon" variant="ghost" onClick={handleCopy}>
                     {copied ? (
-                      <CheckIcon className="text-green-500" />
+                      <CheckIcon className="text-success-fg" />
                     ) : (
                       <CopyIcon />
                     )}

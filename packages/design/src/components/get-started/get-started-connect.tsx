@@ -119,7 +119,7 @@ export function GetStartedConnect({
             onClick={handleCopy}
             disabled={isLoading || !displayCommand}
           >
-            {copied ? <CheckIcon className="text-green-500" /> : <CopyIcon />}
+            {copied ? <CheckIcon className="text-success-fg" /> : <CopyIcon />}
           </Button>
         </div>
       </div>

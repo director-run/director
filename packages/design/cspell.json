@@ -10,5 +10,11 @@
     "tsconfig.tsbuildinfo",
     "src/test/fixtures/**"
   ],
-  "words": ["modelcontextprotocol", "invisibles", "streamable", "waitlist"]
+  "words": [
+    "modelcontextprotocol",
+    "invisibles",
+    "keyline",
+    "streamable",
+    "waitlist"
+  ]
 }

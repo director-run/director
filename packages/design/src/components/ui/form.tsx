@@ -149,7 +149,7 @@ function FormLabel(props: React.ComponentProps<typeof LabelPrimitive.Root>) {
 
   return (
     <Label
-      className={cn(error && "text-destructive", className)}
+      className={cn(error && "text-destructive-fg", className)}
       htmlFor={formItemId}
       {...rest}
     />
@@ -199,7 +199,7 @@ function FormMessage(props: React.ComponentProps<"p">) {
   return (
     <p
       id={formMessageId}
-      className={cn("text-accent-red text-sm", className)}
+      className={cn("text-destructive-fg text-sm", className)}
       {...rest}
     >
       {body}

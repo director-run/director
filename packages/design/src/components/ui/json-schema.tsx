@@ -200,7 +200,7 @@ const UnionTypeRenderer: React.FC<UnionTypeRendererProps> = ({
     <div className="mt-4">
       <div className="mb-3 flex items-center gap-2">
         <Badge className="font-mono text-xs">{unionType}</Badge>
-        <span className="text-gray-600 text-sm">
+        <span className="text-fg-subtle text-sm">
           {getUnionDescription(unionType)}
         </span>
       </div>
@@ -345,7 +345,7 @@ function PropertyConstraints({ property }: { property: JsonSchemaProperty }) {
   }
 
   return (
-    <div className="mb-2 text-gray-500 text-sm">
+    <div className="mb-2 text-fg-subtle text-sm">
       {constraints.map(([key, value]) => (
         <div key={key}>
           <span className="font-medium">{key}:</span> {value}
@@ -361,7 +361,7 @@ function PropertyDefault({ property }: { property: JsonSchemaProperty }) {
   }
 
   return (
-    <div className="text-gray-600 text-sm">
+    <div className="text-fg-subtle text-sm">
       <span className="font-medium">Default:</span>{" "}
       {JSON.stringify(property.default)}
     </div>
@@ -374,7 +374,7 @@ function PropertyExample({ property }: { property: JsonSchemaProperty }) {
   }
 
   return (
-    <div className="text-gray-600 text-sm">
+    <div className="text-fg-subtle text-sm">
       <span className="font-medium">Example:</span>{" "}
       {JSON.stringify(property.example)}
     </div>

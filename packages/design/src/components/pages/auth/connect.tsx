@@ -46,12 +46,12 @@ export function ConnectPage(props: Props) {
               </SectionHeader>
 
               {error && (
-                <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-600 text-sm">
+                <div className="rounded-lg bg-destructive p-4 text-destructive-fg text-sm">
                   {error.message}
                 </div>
               )}
 
-              <div className="rounded-xl bg-accent-subtle p-4 shadow-[0_0_0_0.5px_rgba(55,50,46,0.15)]">
+              <div className="rounded-xl bg-accent-subtle p-4 shadow-hairline">
                 <p className="mb-3 font-medium text-fg text-sm">
                   This will allow the application to:
                 </p>
@@ -119,7 +119,7 @@ export function ConnectPage(props: Props) {
               </SectionHeader>
 
               {error && (
-                <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-600 text-sm">
+                <div className="rounded-lg bg-destructive p-4 text-destructive-fg text-sm">
                   {error.message}
                 </div>
               )}

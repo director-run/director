@@ -102,7 +102,7 @@ When building frontend components (Studio, design system):
 
 2. **Storybook Requirement**:
    - When creating a new dumb/presentational component, you MUST also create a Storybook story
-   - Stories go in `packages/design/src/components/` alongside the component
+   - Stories live in `apps/studio/src/` (Storybook runs from the studio app): design-system coverage in `src/kitchen-sink/`, app-specific stories alongside their components
    - Stories should demonstrate all component variants and states
    - Use the `*.stories.tsx` naming convention
 
@@ -114,7 +114,7 @@ When building frontend components (Studio, design system):
    - Style with the semantic tokens defined in `apps/studio/src/globals.css` (`bg`, `fg`, `fg-subtle`, `surface`, `accent`, `accent-subtle`, `success`, `success-fg`, `destructive`, `destructive-fg`, `overlay`)
    - The default Tailwind palette is disabled (`--color-*: initial`) — classes like `text-green-500` or `bg-red-50` silently produce no CSS
    - Use the semantic shadow utilities (`shadow-hairline`, `shadow-raised`, `shadow-panel`, `shadow-popover`) instead of hardcoded `shadow-[...]` values
-   - Components must render correctly in both light and dark mode (`.dark` class); add a `DarkMode` story variant (`globals: { darkMode: true }`) alongside new stories
+   - Components must render correctly in both light and dark mode (`.dark` class); add dark story variants (`globals: { darkMode: true }`) alongside new stories — named `DarkMode`, or state-specific like `ConsentDarkMode`
    - See `packages/design/README.md` for the full token reference
 
 ### Testing Requirements
@@ -161,8 +161,8 @@ When building frontend components (Studio, design system):
 
 ### Development Standards
 
-- **Package Manager**: Bun (version ~1.2.5)
-- **Node Version**: ~23.10.0
+- **Package Manager**: Bun (version 1.3.2)
+- **Node Version**: >=22.0.0
 - **Monorepo**: Turborepo with workspaces
 - **Linting**: Biome with strict rules (no default exports, no explicit any)
 - **Testing**: Vitest with file parallelism disabled

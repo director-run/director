@@ -37,6 +37,11 @@ automatically:
 - `shadow-panel` — sheets and side panels
 - `shadow-popover` — popovers, dropdowns, dialogs
 
+The underlying `--elevation-*` custom properties in `globals.css` are
+implementation-private (they exist so the raw vars don't self-reference
+the `--shadow-*` theme keys under `@theme inline`) — use the `shadow-*`
+utilities, not the vars.
+
 ### Storybook
 
 Stories run from `apps/studio` (`bun run storybook` at the repo root). The

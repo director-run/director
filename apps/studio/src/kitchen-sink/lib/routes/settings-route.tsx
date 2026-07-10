@@ -3,10 +3,8 @@ import { LayoutViewContent } from "@director.run/design/components/layout/layout
 import { SettingsPage } from "@director.run/design/components/pages/settings.tsx";
 import { toast } from "@director.run/design/components/ui/toast.tsx";
 import { useState } from "react";
-import { kitchenSinkApiKey } from "../fixtures";
+import { delay, kitchenSinkApiKey } from "../fixtures";
 import type { KitchenSinkPageState } from "../types";
-
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const GENERATED_API_KEY = "dk_live_9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c";
 
@@ -43,7 +41,10 @@ export function SettingsRoute({ pageState }: SettingsRouteProps) {
           onRecycleApiKey={regenerate}
           onClearNewApiKey={() => setNewApiKey(null)}
           onCopyApiKey={(text) => {
-            void navigator.clipboard?.writeText(text);
+            if (!navigator.clipboard) {
+              return;
+            }
+            void navigator.clipboard.writeText(text);
             toast({
               title: "Copied",
               description: "The API key was copied to your clipboard.",

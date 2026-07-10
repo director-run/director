@@ -4,8 +4,7 @@ import { PlaybookCreate } from "@director.run/design/components/pages/playbook-n
 import type { PlaybookFormData } from "@director.run/design/components/playbooks/playbook-form.tsx";
 import { toast } from "@director.run/design/components/ui/toast.tsx";
 import { useState } from "react";
-
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+import { delay } from "../fixtures";
 
 interface PlaybookNewRouteProps {
   onCreate: (values: { name: string; description?: string }) => void;

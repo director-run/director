@@ -15,9 +15,8 @@ import {
 import { toast } from "@director.run/design/components/ui/toast.tsx";
 import { mockRegistryEntryList } from "@director.run/design/test/fixtures/registry/entry-list.ts";
 import { useState } from "react";
+import { delay } from "../fixtures";
 import type { KitchenSinkNavigate, KitchenSinkPageState } from "../types";
-
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const PAGE_SIZE = 6;
 

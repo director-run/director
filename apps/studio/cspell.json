@@ -8,5 +8,12 @@
     "**/dist/**",
     "dist-storybook/**"
   ],
-  "words": ["streamable", "waitlist"]
+  "words": [
+    "hackernews",
+    "modelcontextprotocol",
+    "streamable",
+    "summarise",
+    "triaging",
+    "waitlist"
+  ]
 }

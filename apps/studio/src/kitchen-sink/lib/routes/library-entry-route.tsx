@@ -27,9 +27,8 @@ import { toast } from "@director.run/design/components/ui/toast.tsx";
 import { mockRegistryEntryList } from "@director.run/design/test/fixtures/registry/entry-list.ts";
 import { mockRegistryEntry } from "@director.run/design/test/fixtures/registry/entry.ts";
 import { useState } from "react";
+import { delay } from "../fixtures";
 import type { KitchenSinkNavigate, KitchenSinkPageState } from "../types";
-
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 interface LibraryEntryRouteProps {
   entryName: string;

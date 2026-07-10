@@ -31,12 +31,15 @@ import { Tab, Tabs } from "@director.run/design/components/ui/tabs.tsx";
 import { toast } from "@director.run/design/components/ui/toast.tsx";
 import { DesktopIcon, NotebookIcon, ToolboxIcon } from "@phosphor-icons/react";
 import { useState } from "react";
+import { delay } from "../fixtures";
 import type { KitchenSinkNavigate, KitchenSinkPageState } from "../types";
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 const slugify = (value: string) =>
-  value.trim().toLowerCase().replace(/\s+/g, "-") || "prompt";
+  value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "prompt";
 
 interface PlaybookDetailRouteProps {
   playbook: PlaybookDetail;

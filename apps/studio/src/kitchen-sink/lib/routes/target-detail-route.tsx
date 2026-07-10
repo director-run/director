@@ -47,9 +47,8 @@ import {
   TrashIcon,
 } from "@phosphor-icons/react";
 import { useState } from "react";
+import { delay } from "../fixtures";
 import type { KitchenSinkNavigate, KitchenSinkPageState } from "../types";
-
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 interface TargetDetailRouteProps {
   playbook: PlaybookDetail;

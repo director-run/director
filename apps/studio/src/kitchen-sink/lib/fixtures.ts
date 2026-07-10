@@ -1,6 +1,10 @@
 import type { ConnectionInfo } from "@director.run/design/components/playbooks-clients/playbook-section-connect.tsx";
 import type { PlaybookDetail } from "@director.run/design/components/types.ts";
 
+/** Shared fake-latency helper for the mock routes' async handlers. */
+export const delay = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
 /**
  * Three named playbooks with a deliberate spread of connection statuses
  * (connected / disconnected / unauthorized / error) so every server state in
@@ -131,6 +135,7 @@ export function kitchenSinkPlaybooks(): PlaybookDetail[] {
           connectionInfo: {
             status: "connected",
             lastConnectedAt: new Date("2026-06-02T14:05:00.000Z"),
+            isAuthenticated: true,
           },
         },
       ],

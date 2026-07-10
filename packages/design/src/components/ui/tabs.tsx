@@ -49,8 +49,8 @@ function Tabs({ default: defaultValue, className, children }: TabsProps) {
             data-slot="tabs-trigger"
             className={cn(
               "inline-flex flex-1 cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-md px-3 py-1 font-[450] text-fg text-sm transition-[color,box-shadow]",
-              "radix-state-[active]:bg-surface radix-state-[active]:shadow-[0_3px_9px_0px_rgba(55,50,46,0.07),_0_0_0_0.5px_rgba(55,50,46,0.15)]",
-              "radix-state-[inactive]:hover:bg-surface/50 radix-state-[inactive]:hover:shadow-[0_0_0_0.5px_rgba(55,50,46,0.15)]",
+              "radix-state-[active]:bg-surface radix-state-[active]:shadow-raised",
+              "radix-state-[inactive]:hover:bg-surface/50 radix-state-[inactive]:hover:shadow-hairline",
               "disabled:pointer-events-none disabled:opacity-50 has-[svg:first-child]:pl-2.5",
               "[&_svg:not([class*='size-'])]:size-4.5 [&_svg]:pointer-events-none [&_svg]:shrink-0",
             )}

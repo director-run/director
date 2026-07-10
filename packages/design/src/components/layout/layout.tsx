@@ -60,7 +60,7 @@ export function LayoutView({
     <div
       className={cn(
         "@container/page overflow-hidden text-fg",
-        "flex grow flex-col rounded-md bg-surface shadow-[0_0_0_0.5px_rgba(55,50,46,0.2)]",
+        "flex grow flex-col rounded-md bg-surface shadow-hairline",
         className,
       )}
       {...props}
@@ -98,7 +98,7 @@ export function LayoutViewHeader({
           <SheetPrimitive.Content
             className={cn(
               "fixed inset-y-0 left-0 z-50 h-full w-full max-w-[220px] bg-bg text-fg transition ease-in-out",
-              "shadow-[0_0_10px_3px_rgba(55,50,46,0.13),_0_0_0_0.5px_rgba(55,50,46,0.2)] outline-none",
+              "shadow-panel outline-none",
               "overflow-y-auto overflow-x-hidden",
               "radix-state-[closed]:slide-out-to-left radix-state-[closed]:animate-out radix-state-[closed]:duration-200",
               "radix-state-[open]:slide-in-from-left radix-state-[open]:animate-in radix-state-[open]:duration-300",

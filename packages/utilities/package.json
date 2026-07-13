@@ -34,6 +34,7 @@
     "content-type": "^1.0.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "jsonc-parser": "^3.3.1",
     "lodash": "^4.17.21",
     "node-machine-id": "^1.1.12",
     "ora": "^8.2.0",

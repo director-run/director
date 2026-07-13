@@ -26,6 +26,10 @@ export abstract class AbstractClient<T> {
     this.logger = getLogger(`client-configurator/${this.name}`);
   }
 
+  protected getReadJSONFileOptions(): ReadJSONFileOptions | undefined {
+    return undefined;
+  }
+
   protected async initialize() {
     if (this.isInitialized && this.config) {
       return;
@@ -47,7 +51,7 @@ export abstract class AbstractClient<T> {
     }
 
     try {
-      this.config = await readJSONFile<T>(this.configPath);
+      this.config = await readJSONFile<T>(this.configPath, this.getReadJSONFileOptions());
       this.isInitialized = true;
     } catch (error) {
       // check if the error is a syntax error

@@ -3,7 +3,7 @@ import path from "node:path";
 import { isTest } from "@director.run/utilities/env";
 import { ErrorCode } from "@director.run/utilities/error";
 import { AppError } from "@director.run/utilities/error";
-import { writeJSONFile } from "@director.run/utilities/json";
+import { type ReadJSONFileOptions, writeJSONFile } from "@director.run/utilities/json";
 import { os, App } from "@director.run/utilities/os/index";
 import {
   AbstractClient,
@@ -12,6 +12,10 @@ import {
 } from "./types";
 
 export class VSCodeInstaller extends AbstractClient<VSCodeConfig> {
+  protected getReadJSONFileOptions(): ReadJSONFileOptions {
+    return { jsonc: true };
+  }
+
   public async isClientPresent() {
     return await os.isAppInstalled(App.VSCODE);
   }

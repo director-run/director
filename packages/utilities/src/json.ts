@@ -3,7 +3,7 @@ import { existsSync } from "node:fs";
 import { dirname } from "node:path";
 import { AppError, ErrorCode } from "./error";
 
-import { parse } from "jsonc-parser";
+import { parse, printParseErrorCode, type ParseError } from "jsonc-parser";
 
 export type ReadJSONFileOptions = {
   jsonc?: boolean;
@@ -21,10 +21,10 @@ export async function readJSONFile<T = unknown>(
   const data = new TextDecoder().decode(buffer);
   
   if (options?.jsonc) {
-    const errors: any[] = [];
+    const errors: ParseError[] = [];
     const parsed = parse(data, errors, { allowTrailingComma: true });
     if (errors.length > 0) {
-      throw new SyntaxError(`JSONC parse error: ${errors.map(e => e.error).join(', ')}`);
+      throw new SyntaxError(`JSONC parse error: ${errors.map(e => printParseErrorCode(e.error)).join(', ')}`);
     }
     return parsed as T;
   }

@@ -1,5 +1,5 @@
 import { AppError, ErrorCode } from "@director.run/utilities/error";
-import { readJSONFile } from "@director.run/utilities/json";
+import { readJSONFile, type ReadJSONFileOptions } from "@director.run/utilities/json";
 import { type Logger, getLogger } from "@director.run/utilities/logger";
 
 export type InstallerResult = {

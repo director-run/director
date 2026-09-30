@@ -2,18 +2,6 @@
 
 ## Design System
 
-### Sanitize raw HTML in registry markdown rendering
-
-**What:** Filter or sanitize the raw HTML that `packages/design/src/components/ui/markdown.tsx` renders via `rehypeRaw` (e.g. rehype-sanitize, or an `allowElement` allowlist that drops `<style>`, `<script>`, `<iframe>` and inline `style` attributes).
-
-**Why:** Registry readmes and MCP tool descriptions are untrusted third-party content. With `rehypeRaw` unfiltered, a malicious readme can inject `<style>` blocks or inline styles and restyle the entire page — spoof UI, hide consent dialogs, or corrupt theming.
-
-**Context:** Flagged by adversarial review on PR #487 (dark mode). Pre-existing, not introduced by that PR — arbitrary CSS injection is possible regardless of token naming. `Markdown` is used for registry item readmes and tool descriptions. Start at `markdown.tsx` where `rehypeRaw` is registered; decide whether any raw HTML is actually needed (if not, dropping `rehypeRaw` entirely is the simplest fix).
-
-**Effort:** S
-**Priority:** P1
-**Depends on:** None
-
 ### Remove ghost shadcn tokens from form components
 
 **What:** Replace non-resolving utility classes (`border-input`, `ring-ring`, `text-foreground`, `text-muted-foreground`, `shadow-xs`, `decoration-gray-10/12`) in `input.tsx`, `textarea.tsx`, `select-native.tsx`, `switch.tsx`, `typography.tsx`, and `playbook-manual-connection-dialog.tsx` with the semantic tokens from `apps/studio/src/globals.css`.

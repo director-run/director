@@ -2,7 +2,16 @@ import { cn } from "../../helpers/cn";
 
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
+import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
+
+// Readmes and tool descriptions are third party content. Keep the GitHub
+// style HTML allowlist, but drop <style> together with its contents instead
+// of leaving the CSS behind as visible text.
+const sanitizeSchema = {
+  ...defaultSchema,
+  strip: [...(defaultSchema.strip ?? []), "style"],
+};
 
 export function SimpleMarkdown({
   children,
@@ -63,7 +72,7 @@ export function Markdown({
     <div className={cn("prose", className)}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeRaw]}
+        rehypePlugins={[rehypeRaw, [rehypeSanitize, sanitizeSchema]]}
         components={{
           table: ({ children }) => (
             <div className="max-w-full overflow-x-auto overflow-y-auto">
